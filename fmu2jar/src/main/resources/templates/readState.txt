@@ -1,0 +1,16 @@
+
+    public String readAllStates() {
+	 
+        StringBuilder sb = new StringBuilder();
+        ModelDescription modelDescription = this.fmu.getModelDescription();
+        ModelVariables vars = modelDescription.getModelVariables();
+        for (int i = 0; i < vars.size(); ++i) {
+            ScalarVariable var = vars.get(i);
+            String name = var.getName();
+            String type = var.getTypeName();
+            sb.append(name).append(" ").append('(').append(type)
+            .append(')').append(":\t").append(var.getValue());
+        }
+        return sb.toString();
+		
+    }

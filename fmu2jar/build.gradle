@@ -1,0 +1,13 @@
+
+version = '0.1-SNAPSHOT'
+
+dependencies {
+
+    compile group: 'org.javassist', name: 'javassist', version: '3.22.0-GA'
+    compile group: 'org.jtwig', name: 'jtwig-core', version: '5.86.1.RELEASE'
+
+    compile project(':import')
+
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+

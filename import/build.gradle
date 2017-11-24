@@ -1,0 +1,14 @@
+
+
+version = '0.1-SNAPSHOT'
+
+dependencies {
+
+    compile group: 'org.apache.commons', name: 'commons-math3', version: '3.6.1'
+
+    compile group: 'net.java.dev.jna', name: 'jna', version: '4.5.0'
+    compile group: 'net.java.dev.jna', name: 'jna-platform', version: '4.5.0'
+
+}
+
+

@@ -1,0 +1,27 @@
+
+	
+	{
+        File file = new File("{{modelName}}.fmu");
+        if (!file.exists()) {
+            InputStream in = null;
+            FileOutputStream fos = null;
+            try {
+                in = getClass().getResourceAsStream("/fmu/{{modelName}}.fmu");
+                fos = new FileOutputStream(file);
+                byte[] buffer = new byte[1024];
+                int length;
+                while ((length = in.read(buffer)) > 0) {
+                    fos.write(buffer, 0, length);
+                }
+                fos.flush();
+
+            } finally {
+
+                in.close();
+                fos.close();
+
+            }
+        }
+        fmu = new CoSimulationFmu(new FmuFile(file));
+	}
+    
