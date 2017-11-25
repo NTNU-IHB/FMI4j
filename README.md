@@ -1,5 +1,6 @@
 # FMI4j #
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 FMI4j is a software library for dealing with Functional Mock-up Units in Kotlin/Java.
 Currently it consists of two parts:
