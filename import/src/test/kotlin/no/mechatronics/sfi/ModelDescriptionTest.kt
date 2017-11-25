@@ -1,5 +1,6 @@
 package no.mechatronics.sfi
 
+import no.mechatronics.sfi.modeldescription.CoSimulationModelDescription
 import no.mechatronics.sfi.modeldescription.ModelDescription
 import org.apache.commons.io.IOUtils
 import org.junit.Assert

@@ -25,18 +25,23 @@ import javax.xml.bind.annotation.*
 open class ModelDescription {
 
     companion object {
-        fun parseModelDescription(xml: String): ModelDescription {
-            return JAXB.unmarshal(StringReader(xml), ModelDescription::class.java)
+
+        internal fun <T: ModelDescription> parseModelDescription(xml: String, type: Class<T>): T {
+            return JAXB.unmarshal(StringReader(xml), type)
         }
 
-        fun parseModelDescription(url: URL): ModelDescription = parseModelDescription(url.openStream())
-        fun parseModelDescription(file: File): ModelDescription = parseModelDescription(FileInputStream(file))
+        @JvmStatic
+        fun parseModelDescription(xml: String): ModelDescription = parseModelDescription(xml, ModelDescription::class.java)
+        @JvmStatic
+        fun parseModelDescription(url: URL): ModelDescription = parseModelDescription(url.openStream(), ModelDescription::class.java)
+        @JvmStatic
+        fun parseModelDescription(file: File): ModelDescription = parseModelDescription(FileInputStream(file), ModelDescription::class.java)
 
 
-        fun parseModelDescription(stream: InputStream): ModelDescription {
+        internal fun <T : ModelDescription> parseModelDescription(stream: InputStream, type: Class<T>): T {
 
             val modelDescriptionFile = "modelDescription.xml"
-            var modelDescription: ModelDescription? = null
+            var modelDescription: T? = null
             ZipInputStream(stream).use {
 
                 var nextEntry: ZipEntry? = it.nextEntry
@@ -44,7 +49,7 @@ open class ModelDescription {
 
                     val name = nextEntry.name
                     if (name.equals(modelDescriptionFile)) {
-                        modelDescription = parseModelDescription(IOUtils.toString(it, Charset.forName("UTF-8")))
+                        modelDescription = parseModelDescription(IOUtils.toString(it, Charset.forName("UTF-8")), type)
                     }
 
                     nextEntry = it.nextEntry
@@ -213,9 +218,12 @@ open class ModelDescription {
 class CoSimulationModelDescription : ModelDescription() {
 
     companion object {
-        fun parseModelDescription(xml: String) : CoSimulationModelDescription {
-            return JAXB.unmarshal(StringReader(xml), CoSimulationModelDescription::class.java)
-        }
+        @JvmStatic
+        fun parseModelDescription(xml: String) : CoSimulationModelDescription = ModelDescription.parseModelDescription(xml, CoSimulationModelDescription::class.java)
+        @JvmStatic
+        fun parseModelDescription(url: URL): CoSimulationModelDescription = ModelDescription.parseModelDescription(url.openStream(), CoSimulationModelDescription::class.java)
+        @JvmStatic
+        fun parseModelDescription(file: File): CoSimulationModelDescription = ModelDescription.parseModelDescription(FileInputStream(file), CoSimulationModelDescription::class.java)
     }
 
     /**
@@ -363,9 +371,12 @@ class CoSimulationModelDescription : ModelDescription() {
 class ModelExchangeModelDescription : ModelDescription() {
 
     companion object {
-        fun parseModelDescription(xml: String) : ModelExchangeModelDescription {
-            return JAXB.unmarshal(StringReader(xml), ModelExchangeModelDescription::class.java)
-        }
+        @JvmStatic
+        fun parseModelDescription(xml: String) : ModelExchangeModelDescription = ModelDescription.parseModelDescription(xml, ModelExchangeModelDescription::class.java)
+        @JvmStatic
+        fun parseModelDescription(url: URL): ModelExchangeModelDescription = ModelDescription.parseModelDescription(url.openStream(), ModelExchangeModelDescription::class.java)
+        @JvmStatic
+        fun parseModelDescription(file: File): ModelExchangeModelDescription = ModelDescription.parseModelDescription(FileInputStream(file), ModelExchangeModelDescription::class.java)
     }
 
     /**
