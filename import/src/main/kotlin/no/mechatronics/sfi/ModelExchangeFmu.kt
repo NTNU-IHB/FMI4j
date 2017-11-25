@@ -12,21 +12,20 @@ import java.io.File
 import java.net.URL
 
 
-open class ModelExchangeFmu(
+open class ModelExchangeFmu @JvmOverloads constructor(
 
         fmuFile: FmuFile,
         val integrator: FirstOrderIntegrator,
-        visible: Boolean,
-        loggingOn: Boolean
+        visible: Boolean = false,
+        loggingOn: Boolean = false
 
 ) : Fmu<ModelExchangeLibraryWrapper, ModelExchangeModelDescription>(ModelExchangeHelper(fmuFile, visible, loggingOn)) {
 
-    constructor(fmuFile: FmuFile, firstOrderIntegrator: FirstOrderIntegrator) : this(fmuFile, firstOrderIntegrator, false,  false)
+    @JvmOverloads
+    constructor(file: File, firstOrderIntegrator: FirstOrderIntegrator, visible: Boolean = false, loggingOn: Boolean = false) : this(FmuFile(file), firstOrderIntegrator, visible, loggingOn)
 
-    constructor(file: File, firstOrderIntegrator: FirstOrderIntegrator, visible: Boolean, loggingOn: Boolean) : this(FmuFile(file), firstOrderIntegrator, visible, loggingOn)
-    constructor(url: URL, firstOrderIntegrator: FirstOrderIntegrator, visible: Boolean, loggingOn: Boolean) : this(FmuFile(url), firstOrderIntegrator, visible, loggingOn)
-    constructor(file: File, firstOrderIntegrator: FirstOrderIntegrator) : this(FmuFile(file), firstOrderIntegrator, false, false)
-    constructor(url: URL, firstOrderIntegrator: FirstOrderIntegrator) : this(FmuFile(url), firstOrderIntegrator, false, false)
+    @JvmOverloads
+    constructor(url: URL, firstOrderIntegrator: FirstOrderIntegrator, visible: Boolean = false, loggingOn: Boolean = false) : this(FmuFile(url), firstOrderIntegrator, visible, loggingOn)
 
     private val eventInfo: Fmi2EventInfo
 

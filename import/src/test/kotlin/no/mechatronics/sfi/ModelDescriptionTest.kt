@@ -14,10 +14,10 @@ class ModelDescriptionTest {
     @Before
     fun setUp() {
 
-        val resourceAsStream = javaClass.classLoader.getResource("v2/cs/ControlledTemperature/modelDescription.xml")
+        val resourceAsStream = javaClass.classLoader.getResource("v2/cs/ControlledTemperature/ControlledTemperature.fmu")
         Assert.assertNotNull(resourceAsStream)
-        val xml = IOUtils.toString(resourceAsStream, Charset.forName("UTF-8"))
-        modelDescription = ModelDescription.parseModelDescription(xml)
+      //  val xml = IOUtils.toString(resourceAsStream, Charset.forName("UTF-8"))
+        modelDescription = ModelDescription.parseModelDescription(resourceAsStream)
     }
 
 

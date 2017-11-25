@@ -115,13 +115,13 @@ sealed class Fmi2LibraryWrapper<E : Fmi2Library>(protected var library: E?) {
     /**
      * @see Fmi2Library.fmi2Terminate
      */
-    fun terminate(): Fmi2Status {
+    fun terminate(): Boolean {
         if (!isTerminated) {
             val status = updateStatus(Fmi2Status.valueOf(library!!.fmi2Terminate(c!!)))
             isTerminated = true
-            return status
+            return true
         }
-        return Fmi2Status.Discard
+        return false
     }
 
     /**
@@ -134,7 +134,7 @@ sealed class Fmi2LibraryWrapper<E : Fmi2Library>(protected var library: E?) {
     /**
      * @see Fmi2Library.fmi2FreeInstance
      */
-    fun freeInstance() {
+    fun freeInstance() : Boolean {
 
         if (library != null) {
             library!!.fmi2FreeInstance(c!!)
@@ -143,8 +143,11 @@ sealed class Fmi2LibraryWrapper<E : Fmi2Library>(protected var library: E?) {
             System.gc()
 
             isInstanceFreed = true
+            return true
 
         }
+
+        return false
 
     }
 

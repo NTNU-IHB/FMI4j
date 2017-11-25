@@ -1,7 +1,4 @@
 
-group = 'no.mechatronics.sfi.fmu2jar'
-version = '0.1-SNAPSHOT'
-
 dependencies {
 
     compile group: 'org.javassist', name: 'javassist', version: '3.22.0-GA'

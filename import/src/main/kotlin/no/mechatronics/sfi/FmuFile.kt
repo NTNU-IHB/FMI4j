@@ -17,7 +17,19 @@ import java.util.zip.ZipFile
 
 class FmuFile {
 
-    private val LOG = LoggerFactory.getLogger(FmuFile::class.java)
+    companion object {
+        private val LOG = LoggerFactory.getLogger(FmuFile::class.java)
+        private val MAP = mutableMapOf<File, Int>()
+
+        fun new(file: File) {
+
+        }
+
+        fun new(url: URL) {
+
+        }
+
+    }
 
     private val RESOURCES_FOLDER = "resources"
     private val BINARIES_FOLDER = "binaries"
@@ -101,39 +113,22 @@ class FmuFile {
 
     fun dispose() {
         if (fmuFile.exists()) {
-            var count = 0
-            var success = false
-            while (!success) {
-                try {
-                    FileUtils.deleteDirectory(fmuFile)
-                    success = true
-                    LOG.debug("Deleted fmu folder: {}", fmuFile)
-                } catch (ex: IOException) {
-                    LOG.warn("Failed to delete fmu folder: {}", fmuFile)
-                    try {
-                        Thread.sleep(10)
-                    } catch (ex1: InterruptedException) {
-                        LOG.error("Interrupted", ex)
-                    }
 
-                }
+            Runtime.getRuntime().addShutdownHook(Thread {
+                disposeImmidiate()
+            })
 
-                if (count++ > 1) {
-                    Runtime.getRuntime().addShutdownHook(Thread {
+        }
 
-                        if (fmuFile.exists()) {
-                            try {
-                                FileUtils.deleteDirectory(fmuFile)
-                                LOG.debug("Deleted fmu folder: {}", fmuFile)
-                            } catch (ex: IOException) {
-                                LOG.warn("Failed to delete fmu folder: {}", fmuFile)
-                            }
+    }
 
-                        }
-
-                    })
-                    break
-                }
+    fun disposeImmidiate() {
+        if (fmuFile.exists()) {
+            LOG.debug("preparing to delete extracted FMU folder and all its contents: {}", fmuFile)
+            if (fmuFile.deleteRecursively()) {
+                LOG.debug("Deleted fmu folder: {}", fmuFile)
+            } else {
+                LOG.warn("Failed to delete fmu folder: {}", fmuFile)
             }
 
         }
@@ -196,6 +191,10 @@ class FmuFile {
         }
 
         LOG.debug("Extracted fmu into location {}", dir)
+    }
+
+    override fun toString(): String {
+        return "FmuFile(fmuFile=${fmuFile.absolutePath})"
     }
 
 

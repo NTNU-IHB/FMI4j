@@ -6,6 +6,7 @@ import no.mechatronics.sfi.FmuFile;
 import no.mechatronics.sfi.ModelExchangeFmu;
 import org.apache.commons.math3.ode.FirstOrderIntegrator;
 import org.apache.commons.math3.ode.nonstiff.ClassicalRungeKuttaIntegrator;
+import org.apache.commons.math3.ode.nonstiff.EulerIntegrator;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -26,10 +27,11 @@ public class ModelExchangeTest {
         FirstOrderIntegrator integrator;
        // integrator= new DormandPrince853Integrator(1E-12, 1.0, 1E-10, 1E-10);
         //integrator = new AdamsBashforthIntegrator(100, 1E-10, 1.0, 1E-10, 1E-10);
-         integrator = new ClassicalRungeKuttaIntegrator(1E-3);
-        // integrator = new EulerIntegrator(1E-3);
+         //integrator = new ClassicalRungeKuttaIntegrator(1E-3);
+         integrator = new EulerIntegrator(1E-3);
 
-        fmu = new ModelExchangeFmu(new FmuFile(url), integrator);
+       fmu = new ModelExchangeFmu(url, integrator, false, false);
+
     }
 
     @After
@@ -53,13 +55,12 @@ public class ModelExchangeTest {
         double microStep = 1E-3;
         double macroStep = 1E-2;
 
-        while (fmu.getCurrentTime() < 5) {
+        while (fmu.getCurrentTime() < 1) {
+
             fmu.step(microStep, macroStep);
+
             System.out.println("t=" + fmu.getCurrentTime() + "height=" + h.getValue());
         }
-
-        fmu.terminate();
-
 
 
     }

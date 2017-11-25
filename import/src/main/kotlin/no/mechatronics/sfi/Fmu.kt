@@ -94,7 +94,9 @@ class VariablesWriter internal constructor(
 
 abstract class Fmu<E : Fmi2LibraryWrapper<*>, T : ModelDescription> {
 
-    private val LOG = LoggerFactory.getLogger(Fmu::class.java)
+    companion object {
+        private val LOG = LoggerFactory.getLogger(Fmu::class.java)
+    }
 
     val wrapper: E
     val fmuFile: FmuFile
@@ -189,10 +191,11 @@ abstract class Fmu<E : Fmi2LibraryWrapper<*>, T : ModelDescription> {
      */
     @JvmOverloads
     fun terminate(freeInstance: Boolean = true) {
-        wrapper.terminate()
-        LOG.info("FMU {} terminated!", modelDescription.modelName)
-        if (freeInstance) {
-            freeInstance()
+        if (wrapper.terminate()) {
+            LOG.info("FMU {} terminated!", modelDescription.modelName)
+            if (freeInstance) {
+                freeInstance()
+            }
         }
     }
 
@@ -208,9 +211,10 @@ abstract class Fmu<E : Fmi2LibraryWrapper<*>, T : ModelDescription> {
      * @see Fmi2Library.fmi2FreeInstance
      */
     fun freeInstance() {
-        wrapper.freeInstance()
-        LOG.info("FMU {} instance freed!", modelDescription.modelName)
-        fmuFile.dispose()
+       if ( wrapper.freeInstance()) {
+           LOG.info("FMU '{}' instance freed!", modelDescription.modelName)
+           fmuFile.dispose()
+       }
     }
 
     fun getInteger(vr: Int) = wrapper.getInteger(vr)
@@ -308,20 +312,20 @@ abstract class Fmu<E : Fmi2LibraryWrapper<*>, T : ModelDescription> {
 
     }
 
-    fun getDirectionalDerivative(vUnknown_ref: IntArray, vKnown_ref: IntArray, dvKnown: DoubleArray, dvUnknown: DoubleArray) : Fmi2Status
+    fun getDirectionalDerivative(vUnknown_ref: IntArray, vKnown_ref: IntArray, dvKnown: DoubleArray, dvUnknown: DoubleArray)
             = wrapper.getDirectionalDerivative(vUnknown_ref, vKnown_ref, dvKnown, dvUnknown)
 
-    fun getFMUState(fmuState: Pointer): Pointer = wrapper.getFMUState(fmuState)
+    fun getFMUState(fmuState: Pointer) = wrapper.getFMUState(fmuState)
 
-    fun setFMUState(fmuState: Pointer) : Fmi2Status = wrapper.setFMUState(fmuState)
+    fun setFMUState(fmuState: Pointer) = wrapper.setFMUState(fmuState)
 
-    fun freeFMUState(fmuState: Pointer) : Fmi2Status = wrapper.freeFMUState(fmuState)
+    fun freeFMUState(fmuState: Pointer) = wrapper.freeFMUState(fmuState)
 
     fun serializedFMUStateSize(fmuState: Pointer): Int = wrapper.serializedFMUStateSize(fmuState)
 
-    fun serializeFMUState(fmuState: Pointer): ByteArray = wrapper.serializeFMUState(fmuState)
+    fun serializeFMUState(fmuState: Pointer) = wrapper.serializeFMUState(fmuState)
 
-    fun deSerializeFMUState(serializedState: ByteArray): Pointer = wrapper.deSerializeFMUState(serializedState)
+    fun deSerializeFMUState(serializedState: ByteArray) = wrapper.deSerializeFMUState(serializedState)
 
     private fun assignStartValues() {
 

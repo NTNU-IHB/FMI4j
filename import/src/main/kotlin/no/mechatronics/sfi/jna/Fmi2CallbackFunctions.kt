@@ -10,12 +10,11 @@ import java.util.HashSet
 import org.slf4j.LoggerFactory
 
 
-
 open class Fmi2CallbackFunctions : Structure() {
 
     private val LOG = LoggerFactory.getLogger(Fmi2CallbackFunctions::class.java)
 
-    object Pointers : HashSet<Pointer>()
+    object POINTERS : HashSet<Pointer>()
     class ByValue : Fmi2CallbackFunctions(), Structure.ByValue
 
     @JvmField
@@ -46,14 +45,12 @@ open class Fmi2CallbackFunctions : Structure() {
 
     interface CallbackLogger : Callback {
 
-        operator fun invoke(c: Pointer, instanceName: String, status: Int, category: String, message: String, args: Pointer)
+        operator fun invoke(c: Pointer?, instanceName: String, status: Int, category: String, message: String, args: Pointer?)
     }
 
     inner class FmiCallbackLoggerImpl : CallbackLogger {
 
-        private val LOG = LoggerFactory.getLogger(FmiCallbackLoggerImpl::class.java)
-
-        override fun invoke(c: Pointer, instanceName: String, status: Int, category: String, message: String, args: Pointer) {
+        override fun invoke(c: Pointer?, instanceName: String, status: Int, category: String, message: String, args: Pointer?) {
             LOG.info("InstanceName: {}, status: {}, category: {}, message: {}", instanceName, Fmi2Status.valueOf(status), category, message)
         }
 
@@ -67,12 +64,17 @@ open class Fmi2CallbackFunctions : Structure() {
     inner class CallbackAllocateMemoryImpl : CallbackAllocateMemory {
 
         override fun invoke(nobj: Int, size: Int): Pointer {
-            var nobj = nobj
-            if (nobj <= 0) {
-                nobj = 1
+
+
+            var nobj_ = nobj
+            if (nobj_ <= 0) {
+                nobj_ = 1
             }
-            val memory = Memory((nobj * size).toLong())
-            Pointers.add(memory)
+            val size = (nobj_ * size).toLong();
+            LOG.debug("CallbackAllocateMemoryImpl, {}", size)
+            val memory = Memory(size)
+            memory.align(Structure.ALIGN_GNUC)
+            POINTERS.add(memory)
             return memory
         }
 
@@ -87,7 +89,12 @@ open class Fmi2CallbackFunctions : Structure() {
 
         override fun invoke(pointer: Pointer) {
 
-            Pointers.remove(pointer)
+            LOG.debug("CallbackFreeMemoryImpl")
+
+            if (!POINTERS.remove(pointer)) {
+                LOG.warn("Failed to remove pointer!")
+            }
+
         }
 
     }
@@ -100,7 +107,7 @@ open class Fmi2CallbackFunctions : Structure() {
     inner class StepFinishedImpl : StepFinished {
 
         override fun invoke(c: Pointer, status: Int) {
-
+            LOG.debug("StepFinished")
         }
 
     }

@@ -3,7 +3,16 @@ package no.mechatronics.sfi.modeldescription
 import no.mechatronics.sfi.modeldescription.cs.CoSimulationInfo
 import no.mechatronics.sfi.modeldescription.log.Category
 import no.mechatronics.sfi.modeldescription.me.ModelExchangeInfo
+import org.apache.commons.io.IOUtils
+import java.io.File
+import java.io.FileInputStream
+import java.io.InputStream
 import java.io.StringReader
+import java.lang.IllegalArgumentException
+import java.net.URL
+import java.nio.charset.Charset
+import java.util.zip.ZipEntry
+import java.util.zip.ZipInputStream
 import javax.xml.bind.JAXB
 import javax.xml.bind.annotation.*
 
@@ -16,9 +25,41 @@ import javax.xml.bind.annotation.*
 open class ModelDescription {
 
     companion object {
-        fun parseModelDescription(xml: String) : ModelDescription {
+        fun parseModelDescription(xml: String): ModelDescription {
             return JAXB.unmarshal(StringReader(xml), ModelDescription::class.java)
         }
+
+        fun parseModelDescription(url: URL): ModelDescription = parseModelDescription(url.openStream())
+        fun parseModelDescription(file: File): ModelDescription = parseModelDescription(FileInputStream(file))
+
+
+        fun parseModelDescription(stream: InputStream): ModelDescription {
+
+            val modelDescriptionFile = "modelDescription.xml"
+            var modelDescription: ModelDescription? = null
+            ZipInputStream(stream).use {
+
+                var nextEntry: ZipEntry? = it.nextEntry
+                while (nextEntry != null) {
+
+                    val name = nextEntry.name
+                    if (name.equals(modelDescriptionFile)) {
+                        modelDescription = parseModelDescription(IOUtils.toString(it, Charset.forName("UTF-8")))
+                    }
+
+                    nextEntry = it.nextEntry
+                }
+
+            }
+
+            if (modelDescription == null) {
+                throw IllegalArgumentException("Input is not an valid FMU! No $modelDescriptionFile present!")
+            }
+
+            return modelDescription!!
+
+        }
+
     }
 
     /**

@@ -1,15 +1,11 @@
 package no.mechatronics.sfi;
 
 
-import no.mechatronics.sfi.CoSimulationFmu;
-import no.mechatronics.sfi.FmuFile;
-import no.mechatronics.sfi.VariableReader;
 import no.mechatronics.sfi.jna.Fmi2Status;
 import no.mechatronics.sfi.modeldescription.RealVariable;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -23,7 +19,7 @@ public class CoSimulationFmuTest {
         final URL url = getClass().getClassLoader().getResource("v2/cs/ControlledTemperature/ControlledTemperature.fmu");
         Assert.assertNotNull(url);
 
-        fmu = new CoSimulationFmu(new FmuFile(url));
+        fmu = new CoSimulationFmu(url, false, true);
     }
 
     @After

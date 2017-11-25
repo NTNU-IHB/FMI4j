@@ -1,6 +1,7 @@
 
 group = 'no.mechatronics.sfi.fmi4j'
 version = '0.1-SNAPSHOT'
+archivesBaseName = "fmi4j-import"
 
 dependencies {
 
@@ -25,7 +26,7 @@ uploadArchives {
             }
 
             pom.project {
-                name 'fmi4j-import'
+                name archivesBaseName
                 packaging 'jar'
                 // optionally artifactId can be defined here
                 description 'FMI for Model Exchange & Co-simulation import for Java'

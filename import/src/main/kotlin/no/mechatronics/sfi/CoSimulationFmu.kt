@@ -8,21 +8,21 @@ import java.io.File
 import java.net.URL
 
 
-class CoSimulationFmu(
+class CoSimulationFmu @JvmOverloads constructor(
 
         fmuFile: FmuFile,
-        visible: Boolean,
-        loggingOn: Boolean
+        visible: Boolean = false,
+        loggingOn: Boolean = false
 
 
 ) : Fmu<CoSimulationLibraryWrapper, CoSimulationModelDescription>(CoSimulationHelper(fmuFile, visible, loggingOn)) {
 
-    constructor(fmuFile: FmuFile) : this(fmuFile, false, false)
 
-    constructor(file: File, visible: Boolean, loggingOn: Boolean) : this(FmuFile(file), visible, loggingOn)
-    constructor(url: URL, visible: Boolean, loggingOn: Boolean) : this(FmuFile(url), visible, loggingOn)
-    constructor(file: File) : this(FmuFile(file), false, false)
-    constructor(url: URL) : this(FmuFile(url), false, false)
+    @JvmOverloads
+    constructor(file: File, visible: Boolean = false, loggingOn: Boolean = false) : this(FmuFile(file), visible, loggingOn)
+    @JvmOverloads
+    constructor(url: URL, visible: Boolean = false, loggingOn: Boolean = false) : this(FmuFile(url), visible, loggingOn)
+
 
     fun doStep(dt: Double) : Fmi2Status {
         val status = wrapper.doStep(currentTime, dt, true)
