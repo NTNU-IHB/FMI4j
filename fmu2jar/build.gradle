@@ -1,4 +1,5 @@
 
+group = 'no.mechatronics.sfi.fmu2jar'
 version = '0.1-SNAPSHOT'
 
 dependencies {
@@ -10,4 +11,5 @@ dependencies {
 
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }
+
 
