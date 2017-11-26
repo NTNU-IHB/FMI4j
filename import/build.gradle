@@ -1,6 +1,6 @@
 
 group = 'no.mechatronics.sfi.fmi4j'
-version = '0.1-SNAPSHOT'
+version = '0.1-ALPHA-1'
 archivesBaseName = "fmi4j-import"
 
 dependencies {
@@ -29,7 +29,7 @@ uploadArchives {
                 name archivesBaseName
                 packaging 'jar'
                 // optionally artifactId can be defined here
-                description 'FMI for Model Exchange & Co-simulation import for Java'
+                description 'A Java/Kotlin library for dealing with Functional Mock-up Units (FMUs) on the JVM platform'
                 url 'https://github.com/SFI-Mechatronics/fmi4j'
 
                 scm {
@@ -49,7 +49,7 @@ uploadArchives {
                     developer {
                         id 'laht'
                         name 'Lars Ivar Hatledal'
-                        email 'larsivarhatledal@gmail.com'
+                        email 'laht@ntnu.no'
                     }
                 }
             }
