@@ -66,5 +66,7 @@ build/
 .idea/
 out/
 
+fmi4j.iml
+
 /**/out/
 /**/build/
