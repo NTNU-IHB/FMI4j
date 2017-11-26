@@ -65,14 +65,13 @@ open class Fmi2CallbackFunctions : Structure() {
 
         override fun invoke(nobj: Int, size: Int): Pointer {
 
-
             var nobj_ = nobj
             if (nobj_ <= 0) {
                 nobj_ = 1
             }
-            val size = (nobj_ * size).toLong();
+            val malloc = (nobj_ * size).toLong();
             LOG.debug("CallbackAllocateMemoryImpl, {}", size)
-            val memory = Memory(size)
+            val memory = Memory(malloc)
             memory.align(Structure.ALIGN_GNUC)
             POINTERS.add(memory)
             return memory

@@ -18,16 +18,8 @@ import java.util.zip.ZipFile
 class FmuFile {
 
     companion object {
+
         private val LOG = LoggerFactory.getLogger(FmuFile::class.java)
-        private val MAP = mutableMapOf<File, Int>()
-
-        fun new(file: File) {
-
-        }
-
-        fun new(url: URL) {
-
-        }
 
     }
 
