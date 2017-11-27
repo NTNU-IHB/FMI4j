@@ -30,7 +30,9 @@ import java.util.logging.Level;
 import java.util.zip.*;
 import javassist.*;
 import javassist.bytecode.*;
-import no.mechatronics.sfi.modeldescription.ScalarVariable;
+import no.mechatronics.sfi.fmi4j.fmu.CoSimulationFmu;
+import no.mechatronics.sfi.fmi4j.fmu.FmuFile;
+import no.mechatronics.sfi.fmi4j.modeldescription.types.ScalarVariable;
 import org.apache.commons.io.*;
 import org.jtwig.JtwigModel;
 import org.jtwig.JtwigTemplate;
@@ -69,11 +71,11 @@ public class Fmu2Jar {
         try {
             ClassPool pool = new ClassPool(ClassPool.getDefault());
 
-            pool.importPackage("no.mechatronics.sfi.FmuFile");
-            pool.importPackage("no.mechatronics.sfi.CoSimulationFmu");
-            pool.importPackage("no.sfi.mechatronics.fmi4j.ModelDescription");
-            pool.importPackage("no.sfi.mechatronics.fmi4j.ModelVariables");
-            pool.importPackage("no.sfi.mechatronics.fmi4j.ScalarVariable");
+            pool.importPackage("no.mechatronics.sfi.fmi4j.fmu.FmuFile");
+            pool.importPackage("no.mechatronics.sfi.fmi4j.fmu.CoSimulationFmu");
+            pool.importPackage("no.mechatronics.sfi.fmi4j.ModelDescription");
+            pool.importPackage("no.mechatronics.sfi.fmi4j.ModelVariables");
+            pool.importPackage("no.mechatronics.sfi.fmi4j.ScalarVariable");
             pool.importPackage("java.io");
             myClass = pool.makeClass(PACKAGE_NAME + fmuName);
 
