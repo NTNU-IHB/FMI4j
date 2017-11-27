@@ -1,7 +1,7 @@
 
 group = 'no.mechatronics.sfi.fmi4j'
 version = '0.1-ALPHA-1'
-archivesBaseName = "fmi4j-import"
+archivesBaseName = "fmi-import"
 
 dependencies {
 
