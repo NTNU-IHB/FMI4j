@@ -2,21 +2,19 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/no.mechatronics.sfi.fmi4j/fmi4j-import/badge.svg)](https://maven-badges.herokuapp.com/maven-central/no.mechatronics.sfi.fmi4j/fmi4j-import)
+
+
 FMI4j is a software library for dealing with Functional Mock-up Units in Kotlin/Java.
 Currently it consists of two parts:
 
-# FMI Import
+## FMI Import
 
 Allows FMUs for Model Exhange and Co-simulation (version 2.0 only) to be imported in Java applications.
 For Model Exchange, solvers are also included
 
 
-# FMU2Jar
-
-Tool for packaging an FMU into a Java library. This allows you to use the FMU as any other Java library. 
-
-
-# Co-simulation example
+#### Co-simulation example
 
 ```java
 
@@ -35,7 +33,7 @@ fmu.terminate();
 ```
 
 
-# Model-exchange example
+#### Model-exchange example
 
 ```java
 
@@ -52,3 +50,7 @@ while (fmu.getCurrentTime() < 5) {
 fmu.terminate();
 
 ```
+
+## FMU2Jar
+
+Tool for packaging an FMU into a Java library. This allows you to use the FMU as any other Java library. 
