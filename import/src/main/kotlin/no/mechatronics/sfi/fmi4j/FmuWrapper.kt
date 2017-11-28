@@ -3,6 +3,7 @@ package no.mechatronics.sfi.fmi4j
 import no.mechatronics.sfi.fmi4j.fmu.CoSimulationFmu
 import no.mechatronics.sfi.fmi4j.fmu.Fmu
 import no.mechatronics.sfi.fmi4j.fmu.ModelExchangeFmu
+import org.apache.commons.math3.ode.FirstOrderIntegrator
 
 
 interface IFmuWrapper {
@@ -44,7 +45,8 @@ class CSWrapper(
 }
 
 class MEWrapper(
-        override val fmu: ModelExchangeFmu
+        override val fmu: ModelExchangeFmu,
+        integrator: FirstOrderIntegrator
 ) : FmuWrapper(fmu) {
 
     override fun step(dt: Double) {
