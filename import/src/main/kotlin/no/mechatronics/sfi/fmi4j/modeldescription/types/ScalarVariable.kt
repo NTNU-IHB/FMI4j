@@ -1,6 +1,6 @@
 package no.mechatronics.sfi.fmi4j.modeldescription.types
 
-import no.mechatronics.sfi.fmi4j.jna.lib.wrapper.Fmi2LibraryWrapper
+import no.mechatronics.sfi.fmi4j.wrapper.Fmi2Wrapper
 import org.w3c.dom.Node
 import javax.xml.bind.JAXBContext
 import javax.xml.bind.annotation.*
@@ -283,7 +283,7 @@ internal class BooleanAttribute  {
 
 abstract class VariableBase<E>(v : ScalarVariableImpl) : IScalarVariable by v, ScalarVariable<E> {
 
-    protected lateinit var wrapper : Fmi2LibraryWrapper<*>
+    protected lateinit var wrapper : Fmi2Wrapper<*>
 
 }
 

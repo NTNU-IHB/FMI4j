@@ -1,4 +1,4 @@
-package no.mechatronics.sfi.fmi4j.jna.lib
+package no.mechatronics.sfi.fmi4j.jna
 
 import com.sun.jna.Pointer
 import com.sun.jna.ptr.ByteByReference

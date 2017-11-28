@@ -71,7 +71,7 @@ open class Fmi2CallbackFunctions : Structure() {
                 nobj_ = 1
             }
             val malloc = (nobj_ * size).toLong();
-            LOG.debug("CallbackAllocateMemoryImpl, {}", size)
+           // LOG.debug("CallbackAllocateMemoryImpl, {}", size)
             val memory = Memory(malloc)
             memory.align(Structure.ALIGN_GNUC)
             POINTERS.add(memory)
@@ -89,7 +89,7 @@ open class Fmi2CallbackFunctions : Structure() {
 
         override fun invoke(pointer: Pointer) {
 
-            LOG.debug("CallbackFreeMemoryImpl")
+           // LOG.debug("CallbackFreeMemoryImpl")
 
             if (!POINTERS.remove(pointer)) {
                 LOG.warn("Failed to remove pointer!")

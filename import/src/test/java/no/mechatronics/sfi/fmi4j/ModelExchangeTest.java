@@ -16,7 +16,7 @@ import java.net.URL;
 
 public class ModelExchangeTest {
 
-    ModelExchangeFmu fmu;
+    MEWrapper fmu;
 
     @Before
     public void setUp() throws IOException {
@@ -29,7 +29,7 @@ public class ModelExchangeTest {
          //integrator = new ClassicalRungeKuttaIntegrator(1E-3);
          integrator = new EulerIntegrator(1E-3);
 
-       fmu = new ModelExchangeFmu(url, integrator, false, false);
+       fmu = new MEWrapper(new ModelExchangeFmu(url,false, false), integrator);
 
     }
 
@@ -37,35 +37,35 @@ public class ModelExchangeTest {
     public void tearDown() {
         if (fmu != null) {
             fmu.terminate();
-            Assert.assertTrue(fmu.getLastStatus() == Fmi2Status.OK);
+          //  Assert.assertTrue(fmu.getLastStatus() == Fmi2Status.OK);
         }
     }
 
     @org.junit.Test
-    public void test() throws IOException {
+    public void test() {
 
 
         RealVariable h = fmu.getModelVariables().getReal("h");
-        h.setStart(5.0);
+        h.setStart(1.0);
 
         fmu.init();
-        Assert.assertTrue(fmu.getLastStatus() == Fmi2Status.OK);
+       // Assert.assertTrue(fmu.getLastStatus() == Fmi2Status.OK);
 
-        double microStep = 1E-3;
         double macroStep = 1E-2;
 
-        while (fmu.getCurrentTime() < 1) {
-
-            fmu.step(microStep, macroStep);
+        while (fmu.getCurrentTime() < 5) {
 
             System.out.println("t=" + fmu.getCurrentTime() + "height=" + h.getValue());
-        }
+
+            fmu.doStep( macroStep);
+
+       }
 
 
     }
 
     void readme() {
-
+/*
         FirstOrderIntegrator integrator = new ClassicalRungeKuttaIntegrator(1E-3);
         ModelExchangeFmu fmu = new ModelExchangeFmu(new File("path/to/fmu.fmu"), integrator);
         fmu.init();
@@ -73,11 +73,11 @@ public class ModelExchangeTest {
         double microStep = 1E-3;
         double macroStep = 1E-2;
         while (fmu.getCurrentTime() < 5) {
-            fmu.step(microStep, macroStep);
+            fmu.doStep(macroStep);
         }
 
         fmu.terminate();
-
+*/
     }
 
 }

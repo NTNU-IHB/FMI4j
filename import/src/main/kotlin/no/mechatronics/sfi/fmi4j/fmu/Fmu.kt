@@ -1,7 +1,6 @@
 package no.mechatronics.sfi.fmi4j.fmu
 
-import com.sun.jna.Pointer
-import no.mechatronics.sfi.fmi4j.jna.lib.wrapper.Fmi2LibraryWrapper
+import no.mechatronics.sfi.fmi4j.wrapper.Fmi2Wrapper
 import no.mechatronics.sfi.fmi4j.jna.enums.Fmi2Status
 import no.mechatronics.sfi.fmi4j.jna.enums.Fmi2Type
 import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescription
@@ -11,7 +10,7 @@ import org.slf4j.LoggerFactory
 import java.util.logging.Level
 import java.util.logging.Logger
 
-abstract class FmuHelper<E : Fmi2LibraryWrapper<*>, T : ModelDescription>(
+abstract class FmuHelper<E : Fmi2Wrapper<*>, T : ModelDescription>(
         val fmuFile: FmuFile,
         val fmi2Type: Fmi2Type,
         val visible: Boolean,
@@ -23,12 +22,7 @@ abstract class FmuHelper<E : Fmi2LibraryWrapper<*>, T : ModelDescription>(
 
 }
 
-
-abstract class Fmu<E : Fmi2LibraryWrapper<*>, T : ModelDescription> {
-
-    companion object {
-        private val LOG = LoggerFactory.getLogger(Fmu::class.java)
-    }
+interface IFmu<E: Fmi2Wrapper<*>, T: ModelDescription> {
 
     val wrapper: E
     val fmuFile: FmuFile
@@ -40,26 +34,41 @@ abstract class Fmu<E : Fmi2LibraryWrapper<*>, T : ModelDescription> {
     val modelVariables: ModelVariables
         get() = modelDescription.modelVariables
 
-
     val isTerminated: Boolean
         get() = wrapper.isTerminated
 
     val isInstanceFreed: Boolean
         get() = wrapper.isInstanceFreed
 
-    var currentTime: Double = 0.0
-        protected set
+    var currentTime: Double
 
+}
+
+
+abstract class Fmu<E : Fmi2Wrapper<*>, T : ModelDescription>(
+        helper: FmuHelper<E, T>
+) : IFmu<E, T> {
+
+    companion object {
+        private val LOG = LoggerFactory.getLogger(Fmu::class.java)
+    }
+
+    override val wrapper: E
+    override val fmuFile: FmuFile
+    override val modelDescription: T
+
+    override var currentTime: Double = 0.0
 
     private val map: MutableMap<String, IntArray> = HashMap()
 
+    init {
 
-    constructor(helper: FmuHelper<E, T>) {
         this.fmuFile = helper.fmuFile
         this.wrapper = helper.wrapper
         this.modelDescription = helper.modelDescription
 
-        this.wrapper.instantiate(modelDescription.modelIdentifier, helper.fmi2Type, modelDescription.guid, fmuFile.getResourcesPath(), helper.visible, helper.loggingOn)
+        this.wrapper.instantiate(modelDescription.modelIdentifier, helper.fmi2Type,
+                modelDescription.guid, fmuFile.getResourcesPath(), helper.visible, helper.loggingOn)
         injectWrapperInVariables()
     }
 
@@ -91,12 +100,12 @@ abstract class Fmu<E : Fmi2LibraryWrapper<*>, T : ModelDescription> {
     }
 
     @JvmOverloads
-    open fun init(setup: ExperimentSetup = ExperimentSetup()): Boolean {
+    open fun init(setup: Experiment = Experiment()): Boolean {
 
         assignStartValues()
 
         if (setup.useDefaultExperiment && modelDescription.defaultExperiment != null) {
-            val de = modelDescription.defaultExperiment
+            val de = modelDescription.defaultExperiment!!
             currentTime = de.startTime
             wrapper.setupExperiment(true, de.tolerance, currentTime, true, de.stopTime)
         } else {
@@ -247,15 +256,15 @@ abstract class Fmu<E : Fmi2LibraryWrapper<*>, T : ModelDescription> {
     fun getDirectionalDerivative(vUnknown_ref: IntArray, vKnown_ref: IntArray, dvKnown: DoubleArray, dvUnknown: DoubleArray)
             = wrapper.getDirectionalDerivative(vUnknown_ref, vKnown_ref, dvKnown, dvUnknown)
 
-    fun getFMUState(fmuState: Pointer) = wrapper.getFMUState(fmuState)
+    fun getFMUState() = wrapper.getFMUState()
 
-    fun setFMUState(fmuState: Pointer) = wrapper.setFMUState(fmuState)
+    fun setFMUState(fmuState: Fmi2Wrapper.FmuState) = wrapper.setFMUState(fmuState)
 
-    fun freeFMUState(fmuState: Pointer) = wrapper.freeFMUState(fmuState)
+    fun freeFMUState(fmuState: Fmi2Wrapper.FmuState) = wrapper.freeFMUState(fmuState)
 
-    fun serializedFMUStateSize(fmuState: Pointer): Int = wrapper.serializedFMUStateSize(fmuState)
+    fun serializedFMUStateSize(fmuState: Fmi2Wrapper.FmuState): Int = wrapper.serializedFMUStateSize(fmuState)
 
-    fun serializeFMUState(fmuState: Pointer) = wrapper.serializeFMUState(fmuState)
+    fun serializeFMUState(fmuState: Fmi2Wrapper.FmuState) = wrapper.serializeFMUState(fmuState)
 
     fun deSerializeFMUState(serializedState: ByteArray) = wrapper.deSerializeFMUState(serializedState)
 

@@ -1,7 +1,7 @@
 package no.mechatronics.sfi.fmi4j.fmu
 
 
-data class ExperimentSetup(
+data class Experiment(
 
         val startTime: Double = 0.0,
         val stopTime: Double = 0.0,

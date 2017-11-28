@@ -1,4 +1,4 @@
-package no.mechatronics.sfi.fmi4j.jna.lib
+package no.mechatronics.sfi.fmi4j.jna
 
 
 import com.sun.jna.Library
@@ -165,7 +165,7 @@ interface Fmi2Library : Library {
     <fmiModelDescription> <ModelExchange / CoSimulation canGetAndSetFMUstate in =
     "true"> in the XML file is explicitly set to true (see sections 3.3.1 and 4.3.1).
      */
-    fun fmi2SetFMUstate(c: Pointer, state: PointerByReference): Int
+    fun fmi2SetFMUstate(c: Pointer, state: Pointer): Int
 
     /**
      * fmi2FreeFMUstate frees all memory and other resources allocated with the fmi2GetFMUstate

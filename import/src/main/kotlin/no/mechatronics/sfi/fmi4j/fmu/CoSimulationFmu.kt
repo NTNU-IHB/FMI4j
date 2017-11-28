@@ -4,7 +4,7 @@ import com.sun.jna.Pointer
 import no.mechatronics.sfi.fmi4j.jna.enums.Fmi2Status
 import no.mechatronics.sfi.fmi4j.jna.enums.Fmi2StatusKind
 import no.mechatronics.sfi.fmi4j.jna.enums.Fmi2Type
-import no.mechatronics.sfi.fmi4j.jna.lib.wrapper.Fmi2CoSimulationLibraryWrapper
+import no.mechatronics.sfi.fmi4j.wrapper.Fmi2CoSimulationWrapper
 import no.mechatronics.sfi.fmi4j.modeldescription.cs.CoSimulationModelDescription
 import java.io.File
 import java.net.URL
@@ -14,18 +14,16 @@ private class CoSimulationHelper(
         fmuFile: FmuFile,
         visible: Boolean,
         loggingOn: Boolean
-) : FmuHelper<Fmi2CoSimulationLibraryWrapper, CoSimulationModelDescription>(fmuFile, Fmi2Type.CoSimulation, visible, loggingOn) {
+) : FmuHelper<Fmi2CoSimulationWrapper, CoSimulationModelDescription>(fmuFile, Fmi2Type.CoSimulation, visible, loggingOn) {
 
-    override val wrapper: Fmi2CoSimulationLibraryWrapper by lazy {
-        Fmi2CoSimulationLibraryWrapper(fmuFile.getLibraryFolderPath(), fmuFile.getLibraryName(modelDescription))
+    override val wrapper: Fmi2CoSimulationWrapper by lazy {
+        Fmi2CoSimulationWrapper(fmuFile.getLibraryFolderPath(), fmuFile.getLibraryName(modelDescription))
     }
 
     override val modelDescription: CoSimulationModelDescription by lazy {
         CoSimulationModelDescription.parseModelDescription(fmuFile.getModelDescriptionXml())
     }
 }
-
-
 
 class CoSimulationFmu @JvmOverloads constructor(
 
@@ -34,7 +32,7 @@ class CoSimulationFmu @JvmOverloads constructor(
         loggingOn: Boolean = false
 
 
-) : Fmu<Fmi2CoSimulationLibraryWrapper, CoSimulationModelDescription>(CoSimulationHelper(fmuFile, visible, loggingOn)) {
+) : Fmu<Fmi2CoSimulationWrapper, CoSimulationModelDescription>(CoSimulationHelper(fmuFile, visible, loggingOn)) {
 
 
     @JvmOverloads
@@ -57,11 +55,11 @@ class CoSimulationFmu @JvmOverloads constructor(
     fun getRealOutputDerivatives(vr: IntArray, order: IntArray, value: DoubleArray)
             = wrapper.getRealOutputDerivatives(vr, order, value)
 
-    fun getStatus(c: Pointer, s: Fmi2StatusKind) = wrapper.getStatus(c, s)
-    fun getRealStatus(c: Pointer, s: Fmi2StatusKind): Double = wrapper.getRealStatus(c, s)
-    fun getIntegerStatus(c: Pointer, s: Fmi2StatusKind): Int = wrapper.getIntegerStatus(c, s)
-    fun getBooleanStatus(c: Pointer, s: Fmi2StatusKind): Boolean = wrapper.getBooleanStatus(c, s)
-    fun getStringStatus(c: Pointer, s: Fmi2StatusKind): String = wrapper.getStringStatus(c, s)
+    fun getStatus(s: Fmi2StatusKind) = wrapper.getStatus(s)
+    fun getRealStatus(s: Fmi2StatusKind): Double = wrapper.getRealStatus(s)
+    fun getIntegerStatus(s: Fmi2StatusKind): Int = wrapper.getIntegerStatus(s)
+    fun getBooleanStatus(s: Fmi2StatusKind): Boolean = wrapper.getBooleanStatus(s)
+    fun getStringStatus(s: Fmi2StatusKind): String = wrapper.getStringStatus(s)
 
 }
 
