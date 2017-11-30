@@ -120,8 +120,8 @@ abstract class Fmu<E : Fmi2Wrapper<*>, T : ModelDescription>(
     /**
      * @see Fmi2Library.fmi2Reset
      */
-    fun reset() : Fmi2Status {
-        return wrapper.reset()
+    fun reset() : Boolean {
+        return wrapper.reset() == Fmi2Status.OK
     }
 
     fun getInteger(vr: Int) = wrapper.getInteger(vr)

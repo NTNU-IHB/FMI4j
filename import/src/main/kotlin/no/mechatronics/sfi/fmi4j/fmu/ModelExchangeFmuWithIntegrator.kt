@@ -157,8 +157,13 @@ class ModelExchangeFmuWithIntegrator(
 
     }
 
+    override fun reset() = fmu.reset()
+
     override fun terminate() = fmu.terminate()
 
-    fun getLastStatus()  = fmu.getLastStatus()
+    override fun getLastStatus()  = fmu.getLastStatus()
 
+    override fun write(name: String) = fmu.write(name)
+
+    override fun read(name: String) = fmu.read(name)
 }

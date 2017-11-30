@@ -14,7 +14,7 @@ import java.net.URL;
 
 public class CoSimulationFmuTest {
 
-    CoSimulationFmu fmu;
+    Fmi2Simulation fmu;
 
     @Before
     public void setUp() throws IOException {
@@ -28,7 +28,6 @@ public class CoSimulationFmuTest {
 
     @After
     public void tearDown() {
-        System.out.println("tearDown");
         if (fmu != null) {
             fmu.terminate();
             Assert.assertTrue(fmu.getLastStatus() == Fmi2Status.OK);
