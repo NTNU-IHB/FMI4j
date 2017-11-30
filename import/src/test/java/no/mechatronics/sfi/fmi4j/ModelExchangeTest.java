@@ -1,22 +1,21 @@
 package no.mechatronics.sfi.fmi4j;
 
 import no.mechatronics.sfi.fmi4j.fmu.ModelExchangeFmu;
+import no.mechatronics.sfi.fmi4j.fmu.ModelExchangeFmuWithIntegrator;
 import no.mechatronics.sfi.fmi4j.jna.enums.Fmi2Status;
 import no.mechatronics.sfi.fmi4j.modeldescription.types.RealVariable;
 import org.apache.commons.math3.ode.FirstOrderIntegrator;
-import org.apache.commons.math3.ode.nonstiff.ClassicalRungeKuttaIntegrator;
 import org.apache.commons.math3.ode.nonstiff.EulerIntegrator;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
 public class ModelExchangeTest {
 
-    MEWrapper fmu;
+    ModelExchangeFmuWithIntegrator fmu;
 
     @Before
     public void setUp() throws IOException {
@@ -29,7 +28,7 @@ public class ModelExchangeTest {
          //integrator = new ClassicalRungeKuttaIntegrator(1E-3);
          integrator = new EulerIntegrator(1E-3);
 
-       fmu = new MEWrapper(new ModelExchangeFmu(url,false, false), integrator);
+       fmu = new ModelExchangeFmuWithIntegrator(new ModelExchangeFmu(url,false, false), integrator);
 
     }
 
@@ -37,7 +36,7 @@ public class ModelExchangeTest {
     public void tearDown() {
         if (fmu != null) {
             fmu.terminate();
-          //  Assert.assertTrue(fmu.getLastStatus() == Fmi2Status.OK);
+            Assert.assertTrue(fmu.getLastStatus() == Fmi2Status.OK);
         }
     }
 
@@ -46,12 +45,12 @@ public class ModelExchangeTest {
 
 
         RealVariable h = fmu.getModelVariables().getReal("h");
-        h.setStart(1.0);
+        h.setStart(5.0);
 
         fmu.init();
-       // Assert.assertTrue(fmu.getLastStatus() == Fmi2Status.OK);
+        Assert.assertTrue(fmu.getLastStatus() == Fmi2Status.OK);
 
-        double macroStep = 1E-2;
+        double macroStep = 1E-1;
 
         while (fmu.getCurrentTime() < 5) {
 

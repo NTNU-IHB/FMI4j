@@ -24,7 +24,6 @@ private class ModelExchangeHelper(
     }
 }
 
-
 open class ModelExchangeFmu @JvmOverloads constructor(
 
         fmuFile: FmuFile,
@@ -38,10 +37,6 @@ open class ModelExchangeFmu @JvmOverloads constructor(
 
     @JvmOverloads
     constructor(url: URL, visible: Boolean = false, loggingOn: Boolean = false) : this(FmuFile(url), visible, loggingOn)
-
-    private val eventInfo: Fmi2EventInfo by lazy {
-        Fmi2EventInfo()
-    }
 
     val ode: FirstOrderDifferentialEquations by lazy {
         object : FirstOrderDifferentialEquations {
@@ -66,7 +61,7 @@ open class ModelExchangeFmu @JvmOverloads constructor(
 
     fun newDiscreteStates(eventInfo: Fmi2EventInfo) = wrapper.newDiscreteStates(eventInfo)
 
-    fun completedIntegratorStep(): Pair<Boolean, Boolean> = wrapper.completedIntegratorStep()
+    fun completedIntegratorStep() = wrapper.completedIntegratorStep()
 
     fun getDerivatives(derivatives: DoubleArray) = wrapper.getDerivatives(derivatives)
 

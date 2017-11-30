@@ -77,11 +77,18 @@ class Fmi2ModelExchangeWrapper(
         return updateStatus(Fmi2Status.valueOf(library.fmi2NewDiscreteStates(c, eventInfo)))
     }
 
-    fun completedIntegratorStep() : Pair<Boolean, Boolean> {
+
+    data class CompletedIntegratorStep(
+            val enterEventMode: Boolean,
+            val terminateSimulation: Boolean
+    )
+
+
+    fun completedIntegratorStep() : CompletedIntegratorStep {
         updateStatus(Fmi2Status.valueOf(
                 library.fmi2CompletedIntegratorStep(c, convert(true),
                         enterEventMode, terminateSimulation)))
-        return Pair(convert(enterEventMode.value), convert(terminateSimulation.value))
+        return CompletedIntegratorStep(convert(enterEventMode.value), convert(terminateSimulation.value))
     }
 
     /**

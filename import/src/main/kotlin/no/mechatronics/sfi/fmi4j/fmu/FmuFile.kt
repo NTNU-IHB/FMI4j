@@ -21,6 +21,121 @@ class FmuFile {
 
         private val LOG = LoggerFactory.getLogger(FmuFile::class.java)
 
+        private val FMI4J_PREFIX = "fmi4j_"
+        private val map: MutableMap<String, File> = HashMap()
+
+
+        init {
+
+            fun deleteFile(fmuFile: File) {
+                LOG.debug("Preparing to delete extracted FMU folder and all its contents: {}", fmuFile)
+                var tries = 0
+                val maxTries = 5
+                var deletedSucessfully = false
+                do  {
+
+                    try {
+                        FileUtils.forceDelete(fmuFile)
+                        deletedSucessfully = true
+                    }catch (ex: Exception){
+                        println(ex)
+                        Thread.sleep(100)
+                    }
+
+
+                } while(!deletedSucessfully && tries++ < maxTries)
+
+                if (deletedSucessfully) {
+                    LOG.debug("Deleted fmu folder: {}", fmuFile)
+                } else {
+                    LOG.warn("Failed to delete fmu folder after {} unsuccessful attempts: {}", maxTries, fmuFile)
+                }
+            }
+
+            Runtime.getRuntime().addShutdownHook(Thread {
+                for (file in map.values) {
+                    deleteFile(file)
+                }
+            })
+        }
+
+
+        @Throws(IOException::class)
+        private fun extractToTempFolder(url: URL): File {
+
+
+            val modelDescription = ModelDescription.parseModelDescription(url)
+            val guid = modelDescription.guid
+
+            if (guid in map) {
+                LOG.info("Re-using previously extracted FMU with name {}", modelDescription.modelName)
+                return map[guid]!!
+            }
+            val baseName = FilenameUtils.getBaseName(url.toString())
+            val tmp = Files.createTempFile(FMI4J_PREFIX + baseName, ".fmu").toFile()
+            val data = IOUtils.toByteArray(url)
+            FileUtils.writeByteArrayToFile(tmp, data)
+
+            LOG.debug("Copied fmu from url into {}", tmp)
+
+            val extractToTempFolder = extractToTempFolder(tmp)
+
+            Files.deleteIfExists(tmp.toPath())
+            LOG.debug("Deleted temp fmu file retrieved from url {}", tmp)
+
+            val file = extractToTempFolder
+            map[guid] = file
+            return file
+
+        }
+
+        @Throws(IOException::class)
+        private fun extractToTempFolder(fmuFile: File): File {
+
+            val modelDescription = ModelDescription.parseModelDescription(fmuFile)
+            val guid = modelDescription.guid
+            if (guid in map) {
+                LOG.info("Re-using previously extracted FMU with name {}", modelDescription.modelName)
+                return map[guid]!!
+            }
+
+            val baseName = FilenameUtils.getBaseName(fmuFile.name).replace(FMI4J_PREFIX, "")
+            val tmpFolder = Files.createTempDirectory(FMI4J_PREFIX + baseName).toFile()
+            extractTo(fmuFile, tmpFolder)
+            map[guid] = tmpFolder
+            return tmpFolder
+
+        }
+
+        @Throws(IOException::class)
+        private fun extractTo(fmuFile: File, dir: File) {
+            ZipFile(fmuFile).use { zipFile ->
+                val enu = zipFile.entries()
+
+                while (enu.hasMoreElements()) {
+                    val zipEntry = enu.nextElement() as ZipEntry
+                    val name = zipEntry.name
+
+                    if (!zipEntry.isDirectory) {
+
+                        val child = File(dir, name)
+                        val data = IOUtils.toByteArray(zipFile.getInputStream(zipEntry))
+                        FileUtils.writeByteArrayToFile(child, data)
+
+                    }
+
+                }
+
+            }
+
+            val res = File(dir, "resources")
+            if (!res.exists()) {
+                res.mkdir()
+            }
+
+            LOG.debug("Extracted fmu into location {}", dir)
+        }
+
     }
 
     private val RESOURCES_FOLDER = "resources"
@@ -31,8 +146,6 @@ class FmuFile {
     private val MAC_OS_LIBRARY_EXTENSION = ".dylib"
     private val WINDOWS_LIBRARY_EXTENSION = ".dll"
     private val LINUX_LIBRARY_EXTENSION = ".so"
-
-    private val FMI4J_PREFIX = "fmi4j_"
 
     private val fmuFile: File
 
@@ -101,110 +214,6 @@ class FmuFile {
 
     fun getResourcesPath(): String {
         return "file:///" + File(fmuFile, RESOURCES_FOLDER).absolutePath.replace("\\", "/")
-    }
-
-    fun dispose() {
-        if (fmuFile.exists()) {
-
-            Runtime.getRuntime().addShutdownHook(Thread {
-                disposeImmidiate()
-            })
-
-        }
-
-    }
-
-    fun disposeImmidiate() {
-        if (fmuFile.exists()) {
-            LOG.debug("preparing to delete extracted FMU folder and all its contents: {}", fmuFile)
-            var tries = 0
-            val maxTries = 5
-            var deletedSucessfully: Boolean
-            do  {
-
-                try {
-                    FileUtils.forceDelete(fmuFile)
-                    deletedSucessfully = true
-                }catch (ex: Exception){
-                    println(ex)
-                    deletedSucessfully = false
-                }
-
-
-              //  deletedSucessfully = fmuFile.deleteRecursively()
-
-                if(!deletedSucessfully) {
-                    Thread.sleep(100)
-                }
-
-            } while(!deletedSucessfully && tries++ < maxTries)
-
-            if (deletedSucessfully) {
-                LOG.debug("Deleted fmu folder: {}", fmuFile)
-            } else {
-                LOG.warn("Failed to delete fmu folder after {} unsuccsessful attempts: {}", maxTries, fmuFile)
-            }
-
-        }
-    }
-
-
-    @Throws(IOException::class)
-    private fun extractToTempFolder(url: URL): File {
-
-        val basename = FilenameUtils.getBaseName(url.toString())
-        val tmp = Files.createTempFile(FMI4J_PREFIX + basename, ".fmu").toFile()
-        val data = IOUtils.toByteArray(url)
-        FileUtils.writeByteArrayToFile(tmp, data)
-
-        LOG.debug("Copied fmu from url into {}", tmp)
-
-        val extractToTempFolder = extractToTempFolder(tmp)
-
-        Files.deleteIfExists(tmp.toPath())
-        LOG.debug("Deleted temp fmu file retrieved from url {}", tmp)
-
-        return extractToTempFolder
-
-    }
-
-    @Throws(IOException::class)
-    private fun extractToTempFolder(fmuFile: File): File {
-
-        val baseName = FilenameUtils.getBaseName(fmuFile.name).replace(FMI4J_PREFIX, "")
-        val tmpFolder = Files.createTempDirectory(FMI4J_PREFIX + baseName).toFile()
-        extractTo(fmuFile, tmpFolder)
-        return tmpFolder
-
-    }
-
-    @Throws(IOException::class)
-    private fun extractTo(fmuFile: File, dir: File) {
-        ZipFile(fmuFile).use { zipFile ->
-            val enu = zipFile.entries()
-
-            while (enu.hasMoreElements()) {
-                val zipEntry = enu.nextElement() as ZipEntry
-                val name = zipEntry.name
-
-                if (!zipEntry.isDirectory) {
-
-                    val child = File(dir, name)
-                    val data = IOUtils.toByteArray(zipFile.getInputStream(zipEntry))
-                    FileUtils.writeByteArrayToFile(child, data)
-
-                }
-
-            }
-
-        }
-
-        val res = File(dir, "resources")
-        if (!res.exists()) {
-            res.mkdir()
-        }
-
-        LOG.debug("Extracted fmu into location {}", dir)
     }
 
     override fun toString(): String {

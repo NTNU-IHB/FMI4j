@@ -1,5 +1,6 @@
 package no.mechatronics.sfi.fmi4j.fmu
 
+import com.sun.org.apache.xpath.internal.operations.Bool
 import no.mechatronics.sfi.fmi4j.wrapper.Fmi2Wrapper
 import no.mechatronics.sfi.fmi4j.jna.enums.Fmi2Status
 import no.mechatronics.sfi.fmi4j.jna.enums.Fmi2Type
@@ -22,42 +23,24 @@ abstract class FmuHelper<E : Fmi2Wrapper<*>, T : ModelDescription>(
 
 }
 
-interface IFmu<E: Fmi2Wrapper<*>, T: ModelDescription> {
-
-    val wrapper: E
-    val fmuFile: FmuFile
-    val modelDescription: T
-
-    val modelName: String
-        get() =  modelDescription.modelName
-
-    val modelVariables: ModelVariables
-        get() = modelDescription.modelVariables
-
-    val isTerminated: Boolean
-        get() = wrapper.isTerminated
-
-    val isInstanceFreed: Boolean
-        get() = wrapper.isInstanceFreed
-
-    var currentTime: Double
-
-}
-
 
 abstract class Fmu<E : Fmi2Wrapper<*>, T : ModelDescription>(
         helper: FmuHelper<E, T>
-) : IFmu<E, T> {
+) {
 
     companion object {
         private val LOG = LoggerFactory.getLogger(Fmu::class.java)
     }
 
-    override val wrapper: E
-    override val fmuFile: FmuFile
-    override val modelDescription: T
+    val wrapper: E
+    val fmuFile: FmuFile
+    val modelDescription: T
+    val modelVariables: ModelVariables
+    get() {
+       return modelDescription.modelVariables
+    }
 
-    override var currentTime: Double = 0.0
+     var currentTime: Double = 0.0
 
     private val map: MutableMap<String, IntArray> = HashMap()
 
@@ -99,19 +82,17 @@ abstract class Fmu<E : Fmi2Wrapper<*>, T : ModelDescription>(
         return VariableReader(this, valueReference)
     }
 
-    @JvmOverloads
-    open fun init(setup: Experiment = Experiment()): Boolean {
+
+    fun init() = init(0.0)
+    fun init(start :Double) = init(start, -1.0)
+    open fun init(start: Double, stop: Double): Boolean {
 
         assignStartValues()
 
-        if (setup.useDefaultExperiment && modelDescription.defaultExperiment != null) {
-            val de = modelDescription.defaultExperiment!!
-            currentTime = de.startTime
-            wrapper.setupExperiment(true, de.tolerance, currentTime, true, de.stopTime)
-        } else {
-            currentTime = setup.startTime
-            wrapper.setupExperiment(setup.toleranceDefined, setup.tolerance, currentTime, setup.stopDefined, setup.stopTime)
-        }
+        val stopDefined = stop > start
+        currentTime = start
+        wrapper.setupExperiment(true, 1E-4, currentTime, stopDefined, if (stopDefined) stop else Double.MAX_VALUE)
+
 
         wrapper.enterInitializationMode()
         if (getLastStatus() !== Fmi2Status.OK) {
@@ -126,36 +107,21 @@ abstract class Fmu<E : Fmi2Wrapper<*>, T : ModelDescription>(
 
     /**
      * Terminates the FMU
-     * @param freeInstance should be free the FMU instance as well?
      * @see Fmi2Library.fmi2Terminate
-     * @see Fmi2Library.fmi2FreeInstance
      */
-    @JvmOverloads
-    fun terminate(freeInstance: Boolean = true) {
+    fun terminate() : Boolean {
         if (wrapper.terminate()) {
             LOG.info("FMU {} terminated!", modelDescription.modelName)
-            if (freeInstance) {
-                freeInstance()
-            }
+            return true
         }
+        return false
     }
 
     /**
      * @see Fmi2Library.fmi2Reset
      */
     fun reset() : Fmi2Status {
-        LOG.info("Resetting FMU..")
         return wrapper.reset()
-    }
-
-    /**
-     * @see Fmi2Library.fmi2FreeInstance
-     */
-    fun freeInstance() {
-       if ( wrapper.freeInstance()) {
-           LOG.info("FMU '{}' instance freed!", modelDescription.modelName)
-           fmuFile.dispose()
-       }
     }
 
     fun getInteger(vr: Int) = wrapper.getInteger(vr)
@@ -273,14 +239,12 @@ abstract class Fmu<E : Fmi2Wrapper<*>, T : ModelDescription>(
         modelVariables.variables.forEach {
 
             if (it.start != null) {
-
                 when(it) {
                     is IntegerVariable -> it.value = it.start!!
                     is RealVariable -> it.value = it.start!!
                     is StringVariable -> it.value = it.start!!
                     is BooleanVariable -> it.value = it.start!!
                 }
-
             }
 
         }

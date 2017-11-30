@@ -51,7 +51,7 @@ open class ModelDescription {
                 while (nextEntry != null) {
 
                     val name = nextEntry.name
-                    if (name.equals(modelDescriptionFile)) {
+                    if (name == (modelDescriptionFile)) {
                         modelDescription = parseModelDescription(IOUtils.toString(it, Charset.forName("UTF-8")), type)
                     }
 

@@ -22,6 +22,8 @@ public class CoSimulationFmuTest {
         Assert.assertNotNull(url);
 
         fmu = new CoSimulationFmu(url);
+
+
     }
 
     @After
@@ -29,8 +31,6 @@ public class CoSimulationFmuTest {
         System.out.println("tearDown");
         if (fmu != null) {
             fmu.terminate();
-            Assert.assertTrue(fmu.isTerminated());
-            Assert.assertTrue(fmu.isInstanceFreed());
             Assert.assertTrue(fmu.getLastStatus() == Fmi2Status.OK);
         }
     }

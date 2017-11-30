@@ -10,16 +10,36 @@ import no.mechatronics.sfi.fmi4j.jna.enums.Fmi2Type
 import no.mechatronics.sfi.fmi4j.jna.Fmi2Library
 import no.mechatronics.sfi.fmi4j.jna.structs.Fmi2CallbackFunctions
 import org.slf4j.LoggerFactory
+import java.util.concurrent.atomic.AtomicInteger
 
 
 abstract class Fmi2Wrapper<E: Fmi2Library>(
    libraryFolder: String,
-   libraryName: String,
+   private val libraryName: String,
    type: Class<E>
 ) {
 
     private companion object {
-        val LOG = LoggerFactory.getLogger(Fmi2Wrapper::class.java)
+
+         val LOG = LoggerFactory.getLogger(Fmi2Wrapper::class.java)
+
+         val map: MutableMap<String, AtomicInteger> = hashMapOf<String, AtomicInteger>()
+
+         fun reference(libraryName: String) {
+            if (libraryName !in map) {
+                map[libraryName] = AtomicInteger(1)
+            } else {
+                map[libraryName]!!.incrementAndGet()
+            }
+        }
+
+         fun unreference(libraryName: String) : Boolean {
+            if (libraryName in map) {
+                return map[libraryName]!!.decrementAndGet() == 0
+            }
+            return false
+        }
+
     }
 
     internal var state: FmiState = FmiState.START
@@ -42,6 +62,7 @@ abstract class Fmi2Wrapper<E: Fmi2Library>(
     init {
         System.setProperty("jna.library.path", libraryFolder)
         _library = Native.loadLibrary(libraryName, type)!!
+        reference(libraryName)
     }
 
     private val vr: IntArray by lazy {
@@ -139,7 +160,11 @@ abstract class Fmi2Wrapper<E: Fmi2Library>(
      */
     fun terminate(): Boolean {
         if (!isTerminated) {
-            val status = updateStatus(Fmi2Status.valueOf(library.fmi2Terminate(c)))
+            val terminate = library.fmi2Terminate(c);
+            if (unreference(libraryName)) {
+                freeInstance()
+            }
+            updateStatus(Fmi2Status.valueOf(terminate))
             isTerminated = true
             return true
         }
@@ -156,13 +181,15 @@ abstract class Fmi2Wrapper<E: Fmi2Library>(
     /**
      * @see Fmi2library.fmi2FreeInstance
      */
-    fun freeInstance() : Boolean {
+    private fun freeInstance() : Boolean {
 
         if (_library != null) {
             library.fmi2FreeInstance(c)
 
             _library = null
             System.gc()
+
+            LOG.info("$libraryName freed")
 
             isInstanceFreed = true
             return true

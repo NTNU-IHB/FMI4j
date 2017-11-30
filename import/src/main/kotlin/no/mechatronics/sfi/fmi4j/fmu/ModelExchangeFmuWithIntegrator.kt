@@ -1,32 +1,24 @@
-package no.mechatronics.sfi.fmi4j
+package no.mechatronics.sfi.fmi4j.fmu
 
-import com.sun.jna.Pointer
-import no.mechatronics.sfi.fmi4j.fmu.CoSimulationFmu
-import no.mechatronics.sfi.fmi4j.fmu.Fmu
-import no.mechatronics.sfi.fmi4j.fmu.IFmu
-import no.mechatronics.sfi.fmi4j.fmu.ModelExchangeFmu
-import no.mechatronics.sfi.fmi4j.jna.enums.Fmi2Status
+import no.mechatronics.sfi.fmi4j.Fmi2Simulation
 import no.mechatronics.sfi.fmi4j.jna.structs.Fmi2EventInfo
-import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescription
-import no.mechatronics.sfi.fmi4j.modeldescription.cs.CoSimulationModelDescription
-import no.mechatronics.sfi.fmi4j.modeldescription.me.ModelExchangeModelDescription
 import org.apache.commons.math3.ode.FirstOrderDifferentialEquations
 import org.apache.commons.math3.ode.FirstOrderIntegrator
 import org.apache.commons.math3.ode.nonstiff.EulerIntegrator
 
 
-
-class MEWrapper(
+class ModelExchangeFmuWithIntegrator(
         val fmu: ModelExchangeFmu,
-        val integrator: FirstOrderIntegrator
-) {
+        val integrator: FirstOrderIntegrator = EulerIntegrator(1E-2)
+) : Fmi2Simulation {
 
-    val modelDescription = fmu.modelDescription
-    val modelVariables = fmu.modelVariables
-    val currentTime: Double
+    override val modelDescription = fmu.modelDescription
+    override val modelVariables = fmu.modelVariables
+    override val currentTime: Double
     get() {
         return fmu.currentTime
     }
+    override val fmuFile: FmuFile = fmu.fmuFile
 
     private val states: DoubleArray
     private val derivatives: DoubleArray
@@ -59,34 +51,37 @@ class MEWrapper(
 
     }
 
-     fun init() {
 
-         fmu.init()
+     override fun init() = init(0.0)
+     override fun init(start: Double) = init(start, -1.0)
+     override fun init(start: Double, stop: Double) : Boolean {
 
-        eventInfo.setNewDiscreteStatesNeededTrue()
-        eventInfo.setTerminateSimulationFalse()
+        if (fmu.init(start, stop)) {
+            eventInfo.setNewDiscreteStatesNeededTrue()
+            eventInfo.setTerminateSimulationFalse()
 
-        while (eventInfo.getNewDiscreteStatesNeeded() && !eventInfo.getTerminateSimulation()) {
-            fmu.newDiscreteStates(eventInfo)
+            while (eventInfo.getNewDiscreteStatesNeeded() && !eventInfo.getTerminateSimulation()) {
+                fmu.newDiscreteStates(eventInfo)
+            }
+            fmu.enterContinuousTimeMode()
+            fmu.getEventIndicators(eventIndicators)
+
+            return true
         }
-        fmu.enterContinuousTimeMode()
-        fmu.getEventIndicators(eventIndicators)
+
+        return false
+
     }
 
-     fun doStep(dt: Double) {
+     override fun doStep(dt: Double): Boolean {
 
-         var t  = currentTime
+         assert(dt > 0)
 
+        var t  = currentTime
         val stopTime =  t + dt
 
-        if (stopTime <  t) {
-            throw IllegalArgumentException("stopTime < currentTime")
-        }
-
-        var tNext = dt
+        var tNext: Double
         while ( t < stopTime) {
-
-          //  println("microStep= " + integrator.currentSignedStepsize)
 
             tNext = Math.min( t +  dt, stopTime);
 
@@ -98,21 +93,21 @@ class MEWrapper(
             var stateEvent = false
             if (tNext -  t > 1E-12) {
                 val solve = solve(tNext)
-                stateEvent = solve.first
-                t = solve.second
+                stateEvent = solve.stateEvent
+                t = solve.time
             } else {
                 t = tNext
             }
 
-            fmu.setTime( t)
+            fmu.setTime( t )
 
             val completedIntegratorStep =  fmu.completedIntegratorStep()
-            if (completedIntegratorStep.second) {
+            if (completedIntegratorStep.terminateSimulation) {
                 terminate()
-                throw RuntimeException("FMU needed to terminate!")
+                return false
             }
 
-            val stepEvent = completedIntegratorStep.first
+            val stepEvent = completedIntegratorStep.enterEventMode
 
             if (timeEvent || stateEvent || stepEvent) {
                 fmu.enterEventMode()
@@ -127,16 +122,22 @@ class MEWrapper(
             }
 
         }
+         return true
     }
 
-    private fun solve(tNext:Double) : Pair<Boolean, Double> {
+    private data class SolveResult(
+            val stateEvent: Boolean,
+            val time: Double
+    )
+
+    private fun solve(tNext:Double) : SolveResult {
 
         fmu.getContinuousStates(states)
         fmu.getDerivatives(derivatives)
 
         val dt = tNext - currentTime
 
-        val t = integrator.integrate(ode, currentTime, states, currentTime + dt, states)
+        integrator.integrate(ode, currentTime, states, currentTime + dt, states)
 
         fmu.setContinousStates(states)
 
@@ -152,10 +153,12 @@ class MEWrapper(
             if (stateEvent) break
         }
 
-        return Pair(stateEvent, t)
+        return SolveResult(stateEvent, tNext)
 
     }
 
-    fun terminate() = fmu.terminate()
+    override fun terminate() = fmu.terminate()
+
+    fun getLastStatus()  = fmu.getLastStatus()
 
 }
