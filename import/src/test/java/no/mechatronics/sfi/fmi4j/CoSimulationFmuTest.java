@@ -22,7 +22,7 @@ public class CoSimulationFmuTest {
         Assert.assertNotNull(url);
 
         fmu = new CoSimulationFmu(url);
-        
+
     }
 
     @After

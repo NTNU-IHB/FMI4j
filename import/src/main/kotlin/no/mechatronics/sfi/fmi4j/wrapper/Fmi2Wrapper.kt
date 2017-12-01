@@ -397,9 +397,8 @@ abstract class Fmi2Wrapper<E: Fmi2Library>(
     @JvmOverloads
     fun getFMUState(fmuState: FmuState = FmuState()): FmuState {
         state.isCallLegalDuringState(FmiMethod.fmi2GetFMUstate)
-        val state = FmuState()
-        updateStatus(Fmi2Status.valueOf(library.fmi2GetFMUstate(c, state.pointerByReference)))
-        return state
+        updateStatus(Fmi2Status.valueOf(library.fmi2GetFMUstate(c, fmuState.pointerByReference)))
+        return fmuState
     }
 
     fun setFMUState(fmuState: FmuState) : Fmi2Status {
