@@ -73,8 +73,8 @@ class ModelExchangeFmuWithIntegrator(
                 }
             }
             fmu.enterContinuousTimeMode()
-           // fmu.getContinuousStates(states)
-            fmu.getEventIndicators(eventIndicators)
+            fmu.getContinuousStates(states)
+           // fmu.getEventIndicators(eventIndicators)
 
             return true
         }
@@ -87,29 +87,29 @@ class ModelExchangeFmuWithIntegrator(
 
         assert(dt > 0)
 
-        var t  = currentTime
-        val stopTime =  t + dt
+        var time  = currentTime
+        val stopTime =  time + dt
 
-        var tNext: Double
-        while ( t < stopTime) {
+        var tNext = stopTime
+        while ( time < stopTime) {
 
-            tNext = Math.min( t +  dt, stopTime);
+            tNext = Math.min( time +  dt, stopTime);
 
-            val timeEvent = eventInfo.getNextEventTimeDefined() != false && eventInfo.nextEventTime <= t
+            val timeEvent = eventInfo.getNextEventTimeDefined() != false && eventInfo.nextEventTime <= time
             if (timeEvent) {
                 tNext = eventInfo.nextEventTime
             }
 
             var stateEvent = false
-            if (tNext -  t > 1E-12) {
+            if (tNext -  time > 1E-12) {
                 val solve = solve(tNext)
                 stateEvent = solve.stateEvent
-                t = solve.time
+                time = solve.time
             } else {
-                t = tNext
+                time = tNext
             }
 
-            fmu.setTime( t )
+            fmu.setTime( time )
 
             val completedIntegratorStep =  fmu.completedIntegratorStep()
             if (completedIntegratorStep.terminateSimulation) {
