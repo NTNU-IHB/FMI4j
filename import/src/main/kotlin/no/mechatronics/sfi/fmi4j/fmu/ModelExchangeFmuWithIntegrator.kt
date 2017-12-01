@@ -73,8 +73,8 @@ class ModelExchangeFmuWithIntegrator(
                 }
             }
             fmu.enterContinuousTimeMode()
-            fmu.getContinuousStates(states)
-           // fmu.getEventIndicators(eventIndicators)
+           // fmu.getContinuousStates(states)
+            fmu.getEventIndicators(eventIndicators)
 
             return true
         }
@@ -90,7 +90,7 @@ class ModelExchangeFmuWithIntegrator(
         var time  = currentTime
         val stopTime =  time + dt
 
-        var tNext = stopTime
+        var tNext: Double
         while ( time < stopTime) {
 
             tNext = Math.min( time +  dt, stopTime);

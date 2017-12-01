@@ -137,7 +137,7 @@ internal class FmiState private constructor(
                 FmiMethod.fmi2GetTypesPlatform, FmiMethod.fmi2GetVersion, FmiMethod.fmi2SetDebugLogging, FmiMethod.fmi2FreeInstance, FmiMethod.fmi2Terminate,
                 FmiMethod.fmi2Reset, FmiMethod.fmi2GetReal, FmiMethod.fmi2GetInteger, FmiMethod.fmi2GetBoolean, FmiMethod.fmi2GetString,
                 FmiMethod.fmi2SetReal, FmiMethod.fmi2GetFMUstate, FmiMethod.fmi2SetFMUstate, FmiMethod.fmi2FreeFMUstate, FmiMethod.fmi2DeSerializeFMUstate,
-                FmiMethod.fmi2GetDirectionalDerivative, FmiMethod.fmi2EnterEventMode,
+                FmiMethod.fmi2GetDirectionalDerivative, FmiMethod.fmi2EnterEventMode, FmiMethod.fmi2CompletedIntegratorStep,
                 FmiMethod.fmi2SetTime, FmiMethod.fmi2SetContinuousStates, FmiMethod.fmi2GetEventIndicators, FmiMethod.fmi2GetContinuousStates,
                 FmiMethod.fmi2GetDerivatives, FmiMethod.fmi2GetNominalsOfContinuousStates)
 
