@@ -11,6 +11,16 @@ import no.mechatronics.sfi.fmi4j.jna.Fmi2Library
 import no.mechatronics.sfi.fmi4j.jna.structs.Fmi2CallbackFunctions
 import org.slf4j.LoggerFactory
 import java.util.concurrent.atomic.AtomicInteger
+import java.util.function.Supplier
+
+class FmuState {
+
+    val pointer: Pointer = Pointer.NULL
+    val pointerByReference: PointerByReference by lazy {
+        PointerByReference(pointer)
+    }
+
+}
 
 
 abstract class Fmi2Wrapper<E: Fmi2Library>(
@@ -42,8 +52,6 @@ abstract class Fmi2Wrapper<E: Fmi2Library>(
 
     }
 
-    internal var state: FmiState = FmiState.START
-
     private var _library: E?
     
     protected val library: E
@@ -51,18 +59,30 @@ abstract class Fmi2Wrapper<E: Fmi2Library>(
 
     protected lateinit var c: Pointer
 
-    private val functions: Fmi2CallbackFunctions = Fmi2CallbackFunctions.ByValue()
+    private val functions: Fmi2CallbackFunctions
+
+    var lastStatus: Fmi2Status = Fmi2Status.NONE
+    private set
+
+    internal var state: FmiState = FmiState.START
 
     var isTerminated: Boolean = false
         private set
 
     var isInstanceFreed: Boolean = false
         private set
+
     
     init {
         System.setProperty("jna.library.path", libraryFolder)
         _library = Native.loadLibrary(libraryName, type)!!
         reference(libraryName)
+        functions = Fmi2CallbackFunctions.ByValue()
+    }
+
+    protected fun updateStatus(staus: Fmi2Status) : Fmi2Status {
+        lastStatus = staus
+        return staus
     }
 
     private val vr: IntArray by lazy {
@@ -85,9 +105,6 @@ abstract class Fmi2Wrapper<E: Fmi2Library>(
         ByteArray(1)
     }
 
-    var lastStatus: Fmi2Status = Fmi2Status.NONE
-        private set
-
     /**
      * @see Fmi2library.fmi2GetTypesPlatform
      */
@@ -100,16 +117,11 @@ abstract class Fmi2Wrapper<E: Fmi2Library>(
     val version: String
         get() = library.fmi2GetVersion()
 
-    protected fun updateStatus(status: Fmi2Status) : Fmi2Status {
-        this.lastStatus = status
-        return status
-    }
 
     /**
      * @see Fmi2library.fmi2SetDebugLogging
      */
     fun setDebugLogging(loggingOn: Boolean, nCategories: Int, categories: Array<String>) : Fmi2Status {
-         state.isCallLegalDuringState(FmiMethod.fmi2SetDebugLogging)
          return updateStatus(Fmi2Status.valueOf(library.fmi2SetDebugLogging(c,
                  convert(loggingOn), nCategories, categories)))
     }
@@ -159,13 +171,16 @@ abstract class Fmi2Wrapper<E: Fmi2Library>(
      * @see Fmi2library.fmi2Terminate
      */
     fun terminate(): Boolean {
+
         if (!isTerminated) {
+            state.isCallLegalDuringState(FmiMethod.fmi2Terminate)
             val terminate = library.fmi2Terminate(c);
             if (unreference(libraryName)) {
                 freeInstance()
             }
-            updateStatus(Fmi2Status.valueOf(terminate))
+            updateState(updateStatus(Fmi2Status.valueOf(terminate)), FmiState.TERMINATED)
             isTerminated = true
+
             return true
         }
         return false
@@ -175,7 +190,8 @@ abstract class Fmi2Wrapper<E: Fmi2Library>(
      * @see Fmi2library.fmi2Reset
      */
     fun reset() : Fmi2Status {
-        return updateStatus(Fmi2Status.valueOf(library.fmi2Reset(c)))
+        state.isCallLegalDuringState(FmiMethod.fmi2Reset)
+        return updateState(updateStatus(Fmi2Status.valueOf(library.fmi2Reset(c))), FmiState.INSTANTIATED)
     }
 
     /**
@@ -184,6 +200,7 @@ abstract class Fmi2Wrapper<E: Fmi2Library>(
     private fun freeInstance() : Boolean {
 
         if (_library != null) {
+            state.isCallLegalDuringState(FmiMethod.fmi2FreeInstance)
             library.fmi2FreeInstance(c)
 
             _library = null
@@ -197,7 +214,6 @@ abstract class Fmi2Wrapper<E: Fmi2Library>(
         }
 
         return false
-
     }
 
     /**
@@ -217,7 +233,6 @@ abstract class Fmi2Wrapper<E: Fmi2Library>(
         getInteger(vr, value)
         return value
     }
-
 
     /**
      * @see Fmi2library.fmi2GetInteger
@@ -373,49 +388,46 @@ abstract class Fmi2Wrapper<E: Fmi2Library>(
     }
 
     fun getDirectionalDerivative(vUnknown_ref: IntArray, vKnown_ref: IntArray, dvKnown: DoubleArray, dvUnknown: DoubleArray) : Fmi2Status {
+        state.isCallLegalDuringState(FmiMethod.fmi2GetDirectionalDerivative)
         return updateStatus(Fmi2Status.valueOf(library.fmi2GetDirectionalDerivative(c,
                 vUnknown_ref, vUnknown_ref.size, vKnown_ref, vKnown_ref.size, dvKnown, dvUnknown)))
     }
 
-    class FmuState {
-
-        val pointer: Pointer = Pointer.NULL
-
-        val pointerByReference: PointerByReference by lazy {
-            PointerByReference(pointer)
-        }
-
-    }
 
     @JvmOverloads
-    fun getFMUState(fmuState: FmuState = FmuState()): Fmi2Wrapper.FmuState {
-        val state = FmuState()
-        updateStatus(Fmi2Status.valueOf(library.fmi2GetFMUstate(c, state.pointerByReference)))
-        return state
+    fun getFMUState(fmuState: FmuState = FmuState()): FmuState {
+        state.isCallLegalDuringState(FmiMethod.fmi2GetFMUstate)
+        updateStatus(Fmi2Status.valueOf(library.fmi2GetFMUstate(c, fmuState.pointerByReference)))
+        return fmuState
     }
 
-    fun setFMUState(state: FmuState) : Fmi2Status {
-        return updateStatus(Fmi2Status.valueOf(library.fmi2SetFMUstate(c, state.pointer)))
+    fun setFMUState(fmuState: FmuState) : Fmi2Status {
+        state.isCallLegalDuringState(FmiMethod.fmi2SetFMUstate)
+        return updateStatus(Fmi2Status.valueOf(library.fmi2SetFMUstate(c, fmuState.pointer)))
     }
 
-    fun freeFMUState(state: FmuState) : Fmi2Status {
-        return updateStatus(Fmi2Status.valueOf(library.fmi2FreeFMUstate(c, state.pointerByReference)))
+    fun freeFMUState(fmuState: FmuState) : Fmi2Status {
+        state.isCallLegalDuringState(FmiMethod.fmi2FreeFMUstate)
+        return updateStatus(Fmi2Status.valueOf(library.fmi2FreeFMUstate(c, fmuState.pointerByReference)))
     }
 
-    fun serializedFMUStateSize(state: FmuState): Int {
+    fun serializedFMUStateSize(fmuState: FmuState): Int {
+        state.isCallLegalDuringState(FmiMethod.fmi2SerializedFMUstateSize)
         val memory = Memory(Pointer.SIZE.toLong())
-        updateStatus(Fmi2Status.valueOf(library.fmi2SerializedFMUstateSize(c, state.pointer, memory)))
+        updateStatus(Fmi2Status.valueOf(library.fmi2SerializedFMUstateSize(c, fmuState.pointer, memory)))
         return memory.getInt(0)
     }
 
-    fun serializeFMUState(state: FmuState): ByteArray {
-        val size = serializedFMUStateSize(state)
+    fun serializeFMUState(fmuState: FmuState): ByteArray {
+        state.isCallLegalDuringState(FmiMethod.fmi2SerializeFMUstate)
+        val size = serializedFMUStateSize(fmuState)
         val buffer = ByteArray(size)
-        updateStatus(Fmi2Status.valueOf(library.fmi2SerializeFMUstate(c, state.pointer, buffer, size)))
+        updateStatus(Fmi2Status.valueOf(library.fmi2SerializeFMUstate(c, fmuState.pointer, buffer, size)))
         return buffer
     }
 
     fun deSerializeFMUState(serializedState: ByteArray): FmuState {
+        state.isCallLegalDuringState(FmiMethod.fmi2DeSerializeFMUstate)
         val state = FmuState()
         updateStatus(Fmi2Status.valueOf(library.fmi2DeSerializeFMUstate(c, serializedState, serializedState.size, state.pointerByReference)))
         return state

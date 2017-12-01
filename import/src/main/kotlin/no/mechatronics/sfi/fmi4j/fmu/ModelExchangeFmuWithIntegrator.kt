@@ -5,12 +5,17 @@ import no.mechatronics.sfi.fmi4j.jna.structs.Fmi2EventInfo
 import org.apache.commons.math3.ode.FirstOrderDifferentialEquations
 import org.apache.commons.math3.ode.FirstOrderIntegrator
 import org.apache.commons.math3.ode.nonstiff.EulerIntegrator
+import org.slf4j.LoggerFactory
 
 
 class ModelExchangeFmuWithIntegrator(
         val fmu: ModelExchangeFmu,
         val integrator: FirstOrderIntegrator = EulerIntegrator(1E-2)
 ) : Fmi2Simulation {
+
+    private companion object {
+        val LOG = LoggerFactory.getLogger(ModelExchangeFmu::class.java)
+    }
 
     override val modelDescription = fmu.modelDescription
     override val modelVariables = fmu.modelVariables
@@ -60,10 +65,15 @@ class ModelExchangeFmuWithIntegrator(
             eventInfo.setNewDiscreteStatesNeededTrue()
             eventInfo.setTerminateSimulationFalse()
 
-            while (eventInfo.getNewDiscreteStatesNeeded() && !eventInfo.getTerminateSimulation()) {
+            while (eventInfo.getNewDiscreteStatesNeeded()) {
                 fmu.newDiscreteStates(eventInfo)
+                if (eventInfo.getTerminateSimulation()) {
+                    terminate()
+                    return false
+                }
             }
             fmu.enterContinuousTimeMode()
+           // fmu.getContinuousStates(states)
             fmu.getEventIndicators(eventIndicators)
 
             return true
@@ -75,34 +85,35 @@ class ModelExchangeFmuWithIntegrator(
 
      override fun doStep(dt: Double): Boolean {
 
-         assert(dt > 0)
+        assert(dt > 0)
 
-        var t  = currentTime
-        val stopTime =  t + dt
+        var time  = currentTime
+        val stopTime =  time + dt
 
         var tNext: Double
-        while ( t < stopTime) {
+        while ( time < stopTime) {
 
-            tNext = Math.min( t +  dt, stopTime);
+            tNext = Math.min( time +  dt, stopTime);
 
-            val timeEvent = eventInfo.getNextEventTimeDefined() != false && eventInfo.nextEventTime <= t
+            val timeEvent = eventInfo.getNextEventTimeDefined() != false && eventInfo.nextEventTime <= time
             if (timeEvent) {
                 tNext = eventInfo.nextEventTime
             }
 
             var stateEvent = false
-            if (tNext -  t > 1E-12) {
+            if (tNext -  time > 1E-12) {
                 val solve = solve(tNext)
                 stateEvent = solve.stateEvent
-                t = solve.time
+                time = solve.time
             } else {
-                t = tNext
+                time = tNext
             }
 
-            fmu.setTime( t )
+            fmu.setTime( time )
 
             val completedIntegratorStep =  fmu.completedIntegratorStep()
             if (completedIntegratorStep.terminateSimulation) {
+
                 terminate()
                 return false
             }
@@ -136,8 +147,7 @@ class ModelExchangeFmuWithIntegrator(
         fmu.getDerivatives(derivatives)
 
         val dt = tNext - currentTime
-
-        integrator.integrate(ode, currentTime, states, currentTime + dt, states)
+        val t = integrator.integrate(ode, currentTime, states, currentTime + dt, states)
 
         fmu.setContinousStates(states)
 
@@ -153,7 +163,7 @@ class ModelExchangeFmuWithIntegrator(
             if (stateEvent) break
         }
 
-        return SolveResult(stateEvent, tNext)
+        return SolveResult(stateEvent, t)
 
     }
 
