@@ -13,12 +13,16 @@ class ModelVariables : Iterable<ScalarVariable<*>> {
 
     val variables: List<ScalarVariable<*>>
     get() {
+
         if (_variables == null) {
-            return emptyList()
+             return emptyList()
         } else {
-            return _variables ?: throw AssertionError()
+           return _variables!!
         }
+
     }
+
+
 
     fun getValueReference(name: String) : Int? {
         return variables.firstOrNull({it.name.equals(name)})?.valueReference
@@ -36,7 +40,12 @@ class ModelVariables : Iterable<ScalarVariable<*>> {
     /**
      * Get model variable by index
      */
-    fun get(index: Int) = variables.get(index)
+    fun getByIndex(index: Int) = variables.get(index)
+
+    fun getByValueReference(vr: Int) : ScalarVariable<*>? {
+        return variables
+                .firstOrNull{it.valueReference == vr}
+    }
 
     /**
      * Get model variable by name

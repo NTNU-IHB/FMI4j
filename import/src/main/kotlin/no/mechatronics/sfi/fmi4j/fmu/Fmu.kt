@@ -7,7 +7,11 @@ import no.mechatronics.sfi.fmi4j.jna.enums.Fmi2Type
 import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescription
 import no.mechatronics.sfi.fmi4j.modeldescription.ModelVariables
 import no.mechatronics.sfi.fmi4j.modeldescription.types.*
+import no.mechatronics.sfi.fmi4j.wrapper.FmiMethod
+import no.mechatronics.sfi.fmi4j.wrapper.FmiState
+import no.mechatronics.sfi.fmi4j.wrapper.FmuState
 import org.slf4j.LoggerFactory
+import java.util.function.Supplier
 import java.util.logging.Level
 import java.util.logging.Logger
 
@@ -28,8 +32,8 @@ abstract class Fmu<E : Fmi2Wrapper<*>, T : ModelDescription>(
         helper: FmuHelper<E, T>
 ) {
 
-    companion object {
-        private val LOG = LoggerFactory.getLogger(Fmu::class.java)
+    private companion object {
+        val LOG = LoggerFactory.getLogger(Fmu::class.java)
     }
 
     val wrapper: E
@@ -44,6 +48,8 @@ abstract class Fmu<E : Fmi2Wrapper<*>, T : ModelDescription>(
 
     private val map: MutableMap<String, IntArray> = HashMap()
 
+
+
     init {
 
         this.fmuFile = helper.fmuFile
@@ -55,15 +61,26 @@ abstract class Fmu<E : Fmi2Wrapper<*>, T : ModelDescription>(
         injectWrapperInVariables()
     }
 
+//    protected fun updateStatus(status: Fmi2Status) : Fmi2Status {
+//        this.lastStatus = status
+//
+//        when (status) {
+//            Fmi2Status.Error -> state = FmiState.ERROR
+//            Fmi2Status.Fatal -> state = FmiState.FATAL
+//        }
+//
+//        return status
+//    }
+
     /**
      * @see Fmi2Library.fmi2GetTypesPlatform
      */
-    fun getTypesPlatform(): String =  wrapper.typesPlatform
+    fun getTypesPlatform() = wrapper.typesPlatform
 
     /**
      * @see Fmi2Library.fmi2GetVersion
      */
-    fun getVersion(): String = wrapper.version
+    fun getVersion() = wrapper.version
 
     /**
      * @see Fmi2Library.fmi2SetDebugLogging
@@ -81,7 +98,6 @@ abstract class Fmu<E : Fmi2Wrapper<*>, T : ModelDescription>(
         val valueReference = modelVariables.get(name)!!.valueReference
         return VariableReader(this, valueReference)
     }
-
 
     fun init() = init(0.0)
     fun init(start :Double) = init(start, -1.0)
@@ -124,13 +140,33 @@ abstract class Fmu<E : Fmi2Wrapper<*>, T : ModelDescription>(
         return wrapper.reset() == Fmi2Status.OK
     }
 
-    fun getInteger(vr: Int) = wrapper.getInteger(vr)
+    fun checkGetScalar(vr: Int) : Boolean {
+
+        val variable = modelVariables.getByValueReference(vr)
+        if (variable == null) {
+            return false
+        } else if (variable.causality == Causality.output) {
+            return true
+        } else {
+            return variable is RealVariable && variable.derivative != null
+        }
+    }
+
+    fun getInteger(vr: Int) : Int {
+        wrapper.state.isCallLegalDuringState(FmiMethod.fmi2GetInteger, Supplier { checkGetScalar(vr) }, "During this state, such a call is only valid for a variable with causality = \"output\" or\n" +
+                " continuous-time states or state derivatives (if element <Derivatives> is present)")
+        return wrapper.getInteger(vr)
+    }
 
     fun getInteger(vr: IntArray) = wrapper.getInteger(vr)
 
     fun getInteger(vr: IntArray, value: IntArray) = wrapper.getInteger(vr, value)
 
-    fun getReal(vr: Int) : Double = wrapper.getReal(vr)
+    fun getReal(vr: Int) : Double {
+        wrapper.state.isCallLegalDuringState(FmiMethod.fmi2GetReal, Supplier { checkGetScalar(vr) }, "During this state, such a call is only valid for a variable with causality = \"output\" or\n" +
+                " continuous-time states or state derivatives (if element <Derivatives> is present)")
+        return wrapper.getReal(vr)
+    }
 
     fun getReal(vr: IntArray) = wrapper.getReal(vr)
 
@@ -224,13 +260,13 @@ abstract class Fmu<E : Fmi2Wrapper<*>, T : ModelDescription>(
 
     fun getFMUState() = wrapper.getFMUState()
 
-    fun setFMUState(fmuState: Fmi2Wrapper.FmuState) = wrapper.setFMUState(fmuState)
+    fun setFMUState(fmuState: FmuState) = wrapper.setFMUState(fmuState)
 
-    fun freeFMUState(fmuState: Fmi2Wrapper.FmuState) = wrapper.freeFMUState(fmuState)
+    fun freeFMUState(fmuState: FmuState) = wrapper.freeFMUState(fmuState)
 
-    fun serializedFMUStateSize(fmuState: Fmi2Wrapper.FmuState): Int = wrapper.serializedFMUStateSize(fmuState)
+    fun serializedFMUStateSize(fmuState: FmuState): Int = wrapper.serializedFMUStateSize(fmuState)
 
-    fun serializeFMUState(fmuState: Fmi2Wrapper.FmuState) = wrapper.serializeFMUState(fmuState)
+    fun serializeFMUState(fmuState: FmuState) = wrapper.serializeFMUState(fmuState)
 
     fun deSerializeFMUState(serializedState: ByteArray) = wrapper.deSerializeFMUState(serializedState)
 

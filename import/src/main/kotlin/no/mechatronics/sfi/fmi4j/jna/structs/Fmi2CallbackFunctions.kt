@@ -13,9 +13,12 @@ import org.slf4j.LoggerFactory
 
 open class Fmi2CallbackFunctions : Structure() {
 
-    private val LOG = LoggerFactory.getLogger(Fmi2CallbackFunctions::class.java)
+    private companion object {
+        val LOG = LoggerFactory.getLogger(Fmi2CallbackFunctions::class.java)
+        val POINTERS : MutableSet<Pointer> = HashSet()
+    }
 
-    object POINTERS : HashSet<Pointer>()
+
     class ByValue : Fmi2CallbackFunctions(), Structure.ByValue
 
     @JvmField

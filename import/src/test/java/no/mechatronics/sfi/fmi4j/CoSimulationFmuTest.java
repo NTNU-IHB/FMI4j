@@ -38,7 +38,7 @@ public class CoSimulationFmuTest {
     public void test() throws Exception {
 
         final RealVariable startTemp = fmu.getModelVariables().getReal("HeatCapacity1.T0");
-
+        
         fmu.init();
 
         Assert.assertTrue(fmu.getLastStatus() == Fmi2Status.OK);
