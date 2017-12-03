@@ -194,7 +194,7 @@ internal class FmiState private constructor(
     internal fun isCallLegalDuringState(fmiMethod: FmiMethod, additionalRestrictions: Supplier<Boolean>? = null, msg: String? = "") : Boolean {
 
         if (fmiMethod.bit and allowedStates == 0) {
-            LOG.warn("FMI method {} cannot be called during {} state", fmiMethod.name, name)
+            LOG.warn("FMI method {} cannot be called during {} state!", fmiMethod.name, name)
             return false
         } else {
 

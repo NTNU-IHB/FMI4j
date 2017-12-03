@@ -24,6 +24,7 @@
 
 package no.mechatronics.sfi.fmi4j.wrapper
 
+import com.sun.jna.Library
 import com.sun.jna.Memory
 import com.sun.jna.Native
 import com.sun.jna.Pointer
@@ -37,6 +38,62 @@ import org.slf4j.LoggerFactory
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.function.Supplier
 
+data class LibraryPath<E>(
+        val dir: String,
+        val name: String,
+        val type: Class<E>
+) {
+
+    var library: E? = null
+    var isDisposed: Boolean = false
+    private set
+
+    private companion object {
+
+        val LOG = LoggerFactory.getLogger(LibraryPath::class.java)
+        val map: MutableMap<LibraryPath<*>, AtomicInteger> = HashMap()
+
+//        fun reference(path: LibraryPath<*>) {
+//            if (path !in map) {
+//                map[path] = AtomicInteger(1)
+//            } else {
+//                map[path]!!.incrementAndGet()
+//            }
+//        }
+//
+//        fun unreference(path: LibraryPath<*>) : Boolean {
+//            if (path in map) {
+//                val count = map[path]!!.decrementAndGet()
+//                if (count == 0) {
+//                    map.remove(path)
+//                    return true
+//                }
+//            }
+//            return false
+//        }
+    }
+
+    init {
+        //reference(this)
+        System.setProperty("jna.library.path",dir)
+        library = Native.loadLibrary(name, type)
+        LOG.info("Loaded native library '{}'", name)
+    }
+
+    // fun unreference() = Companion.unreference(this)
+
+    fun dispose() {
+        if (!isDisposed) {
+            library = null
+            System.gc()
+
+            isDisposed = true
+            LOG.info("${name} freed")
+        }
+    }
+
+}
+
 class FmuState {
 
     val pointer: Pointer = Pointer.NULL
@@ -46,40 +103,18 @@ class FmuState {
 
 }
 
-
 abstract class Fmi2Wrapper<E: Fmi2Library>(
-   libraryFolder: String,
-   private val libraryName: String,
-   type: Class<E>
+   private val libraryPath: LibraryPath<E>
 ) {
 
     private companion object {
-
          val LOG = LoggerFactory.getLogger(Fmi2Wrapper::class.java)
-
-         val map: MutableMap<String, AtomicInteger> = hashMapOf<String, AtomicInteger>()
-
-         fun reference(libraryName: String) {
-            if (libraryName !in map) {
-                map[libraryName] = AtomicInteger(1)
-            } else {
-                map[libraryName]!!.incrementAndGet()
-            }
-        }
-
-         fun unreference(libraryName: String) : Boolean {
-            if (libraryName in map) {
-                return map[libraryName]!!.decrementAndGet() == 0
-            }
-            return false
-        }
-
     }
 
-    private var _library: E?
-    
     protected val library: E
-        get() = _library!!
+        get() {
+            return libraryPath.library!!
+        }
 
     protected lateinit var c: Pointer
 
@@ -93,14 +128,7 @@ abstract class Fmi2Wrapper<E: Fmi2Library>(
     var isTerminated: Boolean = false
         private set
 
-    var isInstanceFreed: Boolean = false
-        private set
-
-    
     init {
-        System.setProperty("jna.library.path", libraryFolder)
-        _library = Native.loadLibrary(libraryName, type)!!
-        reference(libraryName)
         functions = Fmi2CallbackFunctions.ByValue()
     }
 
@@ -127,6 +155,10 @@ abstract class Fmi2Wrapper<E: Fmi2Library>(
 
     private val bv: ByteArray by lazy {
         ByteArray(1)
+    }
+
+    fun getStateString(): String {
+        return state.name
     }
 
     /**
@@ -199,11 +231,12 @@ abstract class Fmi2Wrapper<E: Fmi2Library>(
         if (!isTerminated) {
             state.isCallLegalDuringState(FmiMethod.fmi2Terminate)
             val terminate = library.fmi2Terminate(c);
-            if (unreference(libraryName)) {
-                freeInstance()
-            }
             updateState(updateStatus(Fmi2Status.valueOf(terminate)), FmiState.TERMINATED)
             isTerminated = true
+
+            // if (libraryPath.unreference()) {
+            freeInstance()
+            // }
 
             return true
         }
@@ -223,16 +256,13 @@ abstract class Fmi2Wrapper<E: Fmi2Library>(
      */
     private fun freeInstance() : Boolean {
 
-        if (_library != null) {
+        if (!libraryPath.isDisposed) {
+
             state.isCallLegalDuringState(FmiMethod.fmi2FreeInstance)
             library.fmi2FreeInstance(c)
 
-            _library = null
-            System.gc()
+            libraryPath.dispose()
 
-            LOG.info("$libraryName freed")
-
-            isInstanceFreed = true
             return true
 
         }
@@ -384,7 +414,7 @@ abstract class Fmi2Wrapper<E: Fmi2Library>(
     /**
      * @see Fmi2library.fmi2SetString
      */
-    fun setString(vr: IntArray, value: Array<String>) : Fmi2Status {
+    fun setString(vr: IntArray, value: Array<out String>) : Fmi2Status {
         return updateStatus(Fmi2Status.valueOf(library.fmi2SetString(c, vr, vr.size, value)))
     }
 

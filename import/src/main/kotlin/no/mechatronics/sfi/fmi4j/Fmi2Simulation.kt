@@ -47,6 +47,8 @@ interface Fmi2Simulation {
     fun reset() : Boolean
     fun terminate() : Boolean
 
+    fun isTerminated() : Boolean
+
     fun getLastStatus() : Fmi2Status
 
 }

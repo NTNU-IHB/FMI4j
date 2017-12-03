@@ -41,12 +41,12 @@ import java.util.zip.ZipFile
 
 class FmuFile {
 
-    companion object {
+    private companion object {
 
-        private val LOG = LoggerFactory.getLogger(FmuFile::class.java)
+         val LOG = LoggerFactory.getLogger(FmuFile::class.java)
 
-        private val FMI4J_PREFIX = "fmi4j_"
-        private val map: MutableMap<String, File> = HashMap()
+         val FMI4J_PREFIX = "fmi4j_"
+         val map: MutableMap<String, File> = HashMap()
 
 
         init {

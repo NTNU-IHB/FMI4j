@@ -51,7 +51,6 @@ abstract class FmuHelper<E : Fmi2Wrapper<*>, T : ModelDescription>(
 
 }
 
-
 abstract class Fmu<E : Fmi2Wrapper<*>, T : ModelDescription>(
         helper: FmuHelper<E, T>
 ) {
@@ -68,10 +67,9 @@ abstract class Fmu<E : Fmi2Wrapper<*>, T : ModelDescription>(
        return modelDescription.modelVariables
     }
 
-     var currentTime: Double = 0.0
+    var currentTime: Double = 0.0
 
     private val map: MutableMap<String, IntArray> = HashMap()
-
 
 
     init {
@@ -85,17 +83,6 @@ abstract class Fmu<E : Fmi2Wrapper<*>, T : ModelDescription>(
         injectWrapperInVariables()
     }
 
-//    protected fun updateStatus(status: Fmi2Status) : Fmi2Status {
-//        this.lastStatus = status
-//
-//        when (status) {
-//            Fmi2Status.Error -> state = FmiState.ERROR
-//            Fmi2Status.Fatal -> state = FmiState.FATAL
-//        }
-//
-//        return status
-//    }
-
     /**
      * @see Fmi2Library.fmi2GetTypesPlatform
      */
@@ -105,6 +92,8 @@ abstract class Fmu<E : Fmi2Wrapper<*>, T : ModelDescription>(
      * @see Fmi2Library.fmi2GetVersion
      */
     fun getVersion() = wrapper.version
+
+    fun isTerminated() = wrapper.isTerminated
 
     /**
      * @see Fmi2Library.fmi2SetDebugLogging
@@ -139,6 +128,7 @@ abstract class Fmu<E : Fmi2Wrapper<*>, T : ModelDescription>(
             return false
         }
         wrapper.exitInitializationMode()
+
         return getLastStatus() === Fmi2Status.OK
 
     }
@@ -246,7 +236,7 @@ abstract class Fmu<E : Fmi2Wrapper<*>, T : ModelDescription>(
 
     fun setString( valueReference: Int, value: String) = wrapper.setString(valueReference, value)
 
-    fun setString(vr: IntArray, value: Array<String>) = wrapper.setString(vr, value)
+    fun setString(vr: IntArray, value: Array<out String>) = wrapper.setString(vr, value)
 
     fun setStringArray(name: String, values: Array<String>) : Fmi2Status {
 

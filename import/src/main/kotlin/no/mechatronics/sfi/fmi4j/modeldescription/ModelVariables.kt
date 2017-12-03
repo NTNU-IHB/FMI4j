@@ -46,8 +46,6 @@ class ModelVariables : Iterable<ScalarVariable<*>> {
 
     }
 
-
-
     fun getValueReference(name: String) : Int? {
         return variables.firstOrNull({it.name.equals(name)})?.valueReference
     }

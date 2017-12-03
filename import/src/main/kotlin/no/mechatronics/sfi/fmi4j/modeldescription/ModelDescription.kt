@@ -63,6 +63,8 @@ open class ModelDescription {
         fun parseModelDescription(url: URL): ModelDescription = parseModelDescription(url.openStream(), ModelDescription::class.java)
         @JvmStatic
         fun parseModelDescription(file: File): ModelDescription = parseModelDescription(FileInputStream(file), ModelDescription::class.java)
+        @JvmStatic
+        fun parseModelDescription(inputStream: InputStream): ModelDescription = parseModelDescription(inputStream, ModelDescription::class.java)
 
 
         internal fun <T : ModelDescription> parseModelDescription(stream: InputStream, type: Class<T>): T {
@@ -104,8 +106,8 @@ open class ModelDescription {
     private set
     /**
      * The name of the model as used in the modeling environment that
-    generated the XML file, such as
-    “Modelica.Mechanics.Rotational.Examples.CoupledClutches”.
+     * generated the XML file, such as
+     * “Modelica.Mechanics.Rotational.Examples.CoupledClutches”.
      */
     @XmlAttribute
     lateinit var modelName: String
@@ -126,7 +128,7 @@ open class ModelDescription {
     val license: String? = null
     /**
      * Optional information on the intellectual property copyright for this FMU.
-    [Example: copyright = “© My Company 2011”].
+     * [Example: copyright = “© My Company 2011”].
      */
     @XmlAttribute
     val copyright: String? = null
@@ -184,13 +186,13 @@ open class ModelDescription {
 
     /**
      * Defines the structure of the model. Especially, the ordered lists of
-    outputs, continuous-time states and initial unknowns (the unknowns
-    during Initialization Mode) are defined here. Furthermore, the
-    dependency of the unkowns from the knowns can be optionally
-    defined. [This information can be, for example used to compute
-    efficiently a sparse Jacobian for simulation or to utilize the
-    input/output dependency in order to detect that in some cases there
-    are actually no algebraic loops when connecting FMUs together
+     * outputs, continuous-time states and initial unknowns (the unknowns
+     * during Initialization Mode) are defined here. Furthermore, the
+     * dependency of the unkowns from the knowns can be optionally
+     * defined. [This information can be, for example used to compute
+     * efficiently a sparse Jacobian for simulation or to utilize the
+     * input/output dependency in order to detect that in some cases there
+     * are actually no algebraic loops when connecting FMUs together
      */
     @XmlElement(name = "ModelStructure")
     lateinit var modelStructure: ModelStructure
@@ -198,7 +200,7 @@ open class ModelDescription {
 
     /**
      * A global list of log categories that can be set to define the log
-    information that is supported from the FMU.
+     * information that is supported from the FMU.
      */
     @XmlElementWrapper(name = "LogCategories")
     @XmlElement(name = "Category")

@@ -25,7 +25,6 @@
 package no.mechatronics.sfi.fmi4j.fmu
 
 
-
 class VariableReader internal constructor(
         private val fmu: Fmu<*, *>,
         private val valueReference: Int

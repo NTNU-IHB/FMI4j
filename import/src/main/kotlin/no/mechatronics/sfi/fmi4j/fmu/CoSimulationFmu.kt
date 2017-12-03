@@ -58,13 +58,6 @@ class CoSimulationFmu @JvmOverloads constructor(
 
 ) : Fmu<Fmi2CoSimulationWrapper, CoSimulationModelDescription>(CoSimulationHelper(fmuFile, visible, loggingOn)), Fmi2Simulation {
 
-
-    @JvmOverloads
-    constructor(file: File, visible: Boolean = false, loggingOn: Boolean = false) : this(FmuFile(file), visible, loggingOn)
-    @JvmOverloads
-    constructor(url: URL, visible: Boolean = false, loggingOn: Boolean = false) : this(FmuFile(url), visible, loggingOn)
-
-
    override fun doStep(dt: Double) : Boolean {
         val status = wrapper.doStep(currentTime, dt, true)
         currentTime += dt

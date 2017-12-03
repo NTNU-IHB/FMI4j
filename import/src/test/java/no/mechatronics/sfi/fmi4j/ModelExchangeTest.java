@@ -24,6 +24,7 @@
 
 package no.mechatronics.sfi.fmi4j;
 
+import no.mechatronics.sfi.fmi4j.fmu.FmuFile;
 import no.mechatronics.sfi.fmi4j.fmu.ModelExchangeFmu;
 import no.mechatronics.sfi.fmi4j.fmu.ModelExchangeFmuWithIntegrator;
 import no.mechatronics.sfi.fmi4j.jna.enums.Fmi2Status;
@@ -42,7 +43,7 @@ import java.net.URL;
 
 public class ModelExchangeTest {
 
-    ModelExchangeFmuWithIntegrator fmu;
+    Fmi2Simulation fmu;
 
     @Before
     public void setUp() throws IOException {
@@ -55,7 +56,7 @@ public class ModelExchangeTest {
         // integrator = new ClassicalRungeKuttaIntegrator(1E-3);
          integrator = new EulerIntegrator(1E-3);
 
-       fmu = new ModelExchangeFmuWithIntegrator(new ModelExchangeFmu(url,false, false), integrator);
+       fmu = new ModelExchangeFmuWithIntegrator(new FmuFile(url), integrator, false, false);
 
     }
 

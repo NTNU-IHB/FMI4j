@@ -43,7 +43,7 @@ data class CompletedIntegratorStep(
 class Fmi2ModelExchangeWrapper(
         libraryFolder: String,
         libraryName: String
-) : Fmi2Wrapper<Fmi2ModelExchangeLibrary>(libraryFolder, libraryName, Fmi2ModelExchangeLibrary::class.java) {
+) : Fmi2Wrapper<Fmi2ModelExchangeLibrary>(LibraryPath(libraryFolder, libraryName, Fmi2ModelExchangeLibrary::class.java)) {
 
 
     private val enterEventMode: ByteByReference = ByteByReference()

@@ -55,19 +55,19 @@ class VariablesWriter internal constructor(
         private val valueReference: IntArray
 ) {
 
-    fun with(data: IntArray) {
+    fun with(vararg data: Int) {
         fmu.setInteger(valueReference, data)
     }
 
-    fun with(data: DoubleArray) {
+    fun with(vararg data: Double) {
         fmu.setReal(valueReference, data)
     }
 
-    fun with(data: Array<String>) {
+    fun with(vararg data: String) {
         fmu.setString(valueReference, data)
     }
 
-    fun with(data: BooleanArray) {
+    fun with(vararg data: Boolean) {
         fmu.setBoolean(valueReference, data)
     }
 

@@ -56,12 +56,6 @@ open class ModelExchangeFmu @JvmOverloads constructor(
 
 ) : Fmu<Fmi2ModelExchangeWrapper, ModelExchangeModelDescription>(ModelExchangeHelper(fmuFile, visible, loggingOn)) {
 
-    @JvmOverloads
-    constructor(file: File, visible: Boolean = false, loggingOn: Boolean = false) : this(FmuFile(file), visible, loggingOn)
-
-    @JvmOverloads
-    constructor(url: URL, visible: Boolean = false, loggingOn: Boolean = false) : this(FmuFile(url), visible, loggingOn)
-
     val ode: FirstOrderDifferentialEquations by lazy {
         object : FirstOrderDifferentialEquations {
             override fun getDimension(): Int =  modelDescription.numberOfContinuousStates
