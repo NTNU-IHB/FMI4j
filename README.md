@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/no.mechatronics.sfi.fmi4j/fmi4j-import/badge.svg)](https://maven-badges.herokuapp.com/maven-central/no.mechatronics.sfi.fmi4j/fmi4j-import)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/no.mechatronics.sfi.fmi4j/fmi-import/badge.svg)](https://maven-badges.herokuapp.com/maven-central/no.mechatronics.sfi.fmi4j/fmi-import)
 
 
 FMI4j is a software library for dealing with Functional Mock-up Units in Kotlin/Java.
@@ -18,13 +18,11 @@ For Model Exchange, solvers are also included
 
 ```java
 
-CoSimulationFmu fmu = new CoSimulationFmu(new File("path/to/fmu.fmu"));
+Fmi2Simulation fmu = new CoSimulationFmu(new FmuFilenew File("path/to/fmu.fmu")));
 fmu.init();
 
-double t = 0;
 double dt = 1d/100;
-
-while (t < 10) {
+while (fmu.getCurrentTime() < 10) {
     fmu.doStep(dt);
 }
 
@@ -38,13 +36,12 @@ fmu.terminate();
 ```java
 
 FirstOrderIntegrator integrator = new ClassicalRungeKuttaIntegrator(1E-3);
-ModelExchangeFmu fmu = new ModelExchangeFmu(new File("path/to/fmu.fmu"), integrator);
+Fmi2Simulation fmu = new ModelExchangeFmuWithIntegrator(new FmuFile(new File("path/to/fmu.fmu")), integrator);
 fmu.init();
 
-double microStep = 1E-3;
-double macroStep = 1E-2;
+double dt = 1d/100;
 while (fmu.getCurrentTime() < 5) {
-    fmu.step(microStep, macroStep);
+    fmu.step(dt);
 }
 
 fmu.terminate();
