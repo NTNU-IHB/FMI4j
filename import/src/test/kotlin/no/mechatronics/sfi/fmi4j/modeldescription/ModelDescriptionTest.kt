@@ -24,6 +24,7 @@
 
 package no.mechatronics.sfi.fmi4j.modeldescription
 
+import no.mechatronics.sfi.fmi4j.modeldescription.cs.CoSimulationModelDescription
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
@@ -38,7 +39,7 @@ class ModelDescriptionTest {
         val resourceAsStream = javaClass.classLoader.getResource("v2/cs/ControlledTemperature/ControlledTemperature.fmu")
         Assert.assertNotNull(resourceAsStream)
       //  val xml = IOUtils.toString(resourceAsStream, Charset.forName("UTF-8"))
-        modelDescription = ModelDescription.parseModelDescription(resourceAsStream)
+        modelDescription = CoSimulationModelDescription.parseModelDescription(resourceAsStream)
     }
 
 

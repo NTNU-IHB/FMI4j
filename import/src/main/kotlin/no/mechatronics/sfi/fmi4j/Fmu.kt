@@ -22,17 +22,18 @@
  * THE SOFTWARE.
  */
 
-package no.mechatronics.sfi.fmi4j.fmu
+package no.mechatronics.sfi.fmi4j
 
-import com.sun.org.apache.xpath.internal.operations.Bool
+import no.mechatronics.sfi.fmi4j.misc.DirectionalDerivatives
+import no.mechatronics.sfi.fmi4j.misc.FmuFile
+import no.mechatronics.sfi.fmi4j.misc.VariableReader
+import no.mechatronics.sfi.fmi4j.misc.VariableWriter
 import no.mechatronics.sfi.fmi4j.wrapper.Fmi2Wrapper
 import no.mechatronics.sfi.fmi4j.jna.enums.Fmi2Status
 import no.mechatronics.sfi.fmi4j.jna.enums.Fmi2Type
-import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescription
-import no.mechatronics.sfi.fmi4j.modeldescription.ModelVariables
-import no.mechatronics.sfi.fmi4j.modeldescription.types.*
+import no.mechatronics.sfi.fmi4j.modeldescription.*
+import no.mechatronics.sfi.fmi4j.modeldescription.enums.*
 import no.mechatronics.sfi.fmi4j.wrapper.FmiMethod
-import no.mechatronics.sfi.fmi4j.wrapper.FmiState
 import no.mechatronics.sfi.fmi4j.wrapper.FmuState
 import org.slf4j.LoggerFactory
 import java.util.function.Supplier
@@ -257,14 +258,42 @@ abstract class Fmu<E : Fmi2Wrapper<*>, T : ModelDescription>(
 
     }
 
-    fun getDirectionalDerivative(vUnknown_ref: IntArray, vKnown_ref: IntArray, dvKnown: DoubleArray, dvUnknown: DoubleArray)
-            = wrapper.getDirectionalDerivative(vUnknown_ref, vKnown_ref, dvKnown, dvUnknown)
+    fun getDirectionalDerivative(d: DirectionalDerivatives): Fmi2Status {
+        if (!modelDescription.providesDirectionalDerivative) {
+            LOG.warn("FMU does not provide directional derivatives")
+            return Fmi2Status.Discard
+        } else {
+            return wrapper.getDirectionalDerivative(d.vUnknown_ref, d.vKnown_ref, d.dvKnown, d.dvUnknown)
+        }
+    }
 
-    fun getFMUState() = wrapper.getFMUState()
 
-    fun setFMUState(fmuState: FmuState) = wrapper.setFMUState(fmuState)
+    fun getFMUState() : FmuState? {
+        if (!modelDescription.canGetAndSetFMUstate) {
+            LOG.warn("FMU cannot get and set FMU state")
+            return null
+        } else {
+            return wrapper.getFMUState()
+        }
+    }
 
-    fun freeFMUState(fmuState: FmuState) = wrapper.freeFMUState(fmuState)
+    fun setFMUState(fmuState: FmuState): Fmi2Status {
+        if (!modelDescription.canGetAndSetFMUstate) {
+            LOG.warn("FMU cannot get and set FMU state")
+            return Fmi2Status.Discard
+        } else {
+            return wrapper.setFMUState(fmuState)
+        }
+    }
+
+    fun freeFMUState(fmuState: FmuState) : Fmi2Status {
+        if (!modelDescription.canGetAndSetFMUstate) {
+            LOG.warn("FMU cannot get and set FMU state")
+            return Fmi2Status.Discard
+        } else {
+            return wrapper.freeFMUState(fmuState)
+        }
+    }
 
     fun serializedFMUStateSize(fmuState: FmuState): Int = wrapper.serializedFMUStateSize(fmuState)
 

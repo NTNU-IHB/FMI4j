@@ -3,8 +3,7 @@
 package no.mechatronics.sfi.fmu2jar
 
 import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescription
-import no.mechatronics.sfi.fmi4j.modeldescription.types.ScalarVariable
-import org.apache.commons.cli.Options
+import no.mechatronics.sfi.fmi4j.modeldescription.ScalarVariable
 import org.apache.commons.io.FileUtils
 import org.apache.commons.io.IOUtils
 import org.jtwig.JtwigModel

@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package no.mechatronics.sfi.fmi4j.modeldescription.types
+package no.mechatronics.sfi.fmi4j.modeldescription.enums
 
 import javax.xml.bind.annotation.adapters.XmlAdapter
 

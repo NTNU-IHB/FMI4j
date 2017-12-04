@@ -26,7 +26,6 @@ package no.mechatronics.sfi.fmi4j.modeldescription.me
 
 import javax.xml.bind.annotation.XmlAttribute
 
-
 internal class ModelExchangeInfo {
 
     @XmlAttribute

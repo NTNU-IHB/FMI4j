@@ -25,17 +25,13 @@
 package no.mechatronics.sfi.fmi4j;
 
 
-import kotlin.Unit;
-import kotlin.jvm.functions.Function1;
-import no.mechatronics.sfi.fmi4j.fmu.CoSimulationFmu;
-import no.mechatronics.sfi.fmi4j.fmu.FmuFile;
-import no.mechatronics.sfi.fmi4j.fmu.VariableReader;
+import no.mechatronics.sfi.fmi4j.misc.VariableReader;
 import no.mechatronics.sfi.fmi4j.jna.enums.Fmi2Status;
-import no.mechatronics.sfi.fmi4j.modeldescription.types.RealVariable;
+import no.mechatronics.sfi.fmi4j.modeldescription.RealVariable;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
-import java.io.File;
+
 import java.io.IOException;
 import java.net.URL;
 
@@ -48,7 +44,7 @@ public class CoSimulationFmuTest {
         final URL url = getClass().getClassLoader().getResource("v2/cs/ControlledTemperature/ControlledTemperature.fmu");
         Assert.assertNotNull(url);
 
-        fmu =  CoSimulationFmu.newBuilder(url)
+        fmu = CoSimulationFmu.newBuilder(url)
                 .loggingOn(true)
                 .build();
     }

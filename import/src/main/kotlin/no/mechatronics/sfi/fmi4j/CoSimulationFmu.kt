@@ -22,9 +22,9 @@
  * THE SOFTWARE.
  */
 
-package no.mechatronics.sfi.fmi4j.fmu
+package no.mechatronics.sfi.fmi4j
 
-import no.mechatronics.sfi.fmi4j.Fmi2Simulation
+import no.mechatronics.sfi.fmi4j.misc.FmuFile
 import no.mechatronics.sfi.fmi4j.jna.enums.Fmi2Status
 import no.mechatronics.sfi.fmi4j.jna.enums.Fmi2StatusKind
 import no.mechatronics.sfi.fmi4j.jna.enums.Fmi2Type
@@ -69,10 +69,8 @@ open class CoSimulationFmu: Fmu<Fmi2CoSimulationWrapper, CoSimulationModelDescri
         CoSimulationModelDescription.parseModelDescription(fmuFile.getModelDescriptionXml())
     }
 
-    protected constructor(builder: Builder) : super(builder.fmuFile) {
-
+    protected constructor(builder: Builder): super(builder.fmuFile) {
         super.instantiate(Fmi2Type.CoSimulation, builder.visible, builder.loggingOn)
-
     }
 
     override fun doStep(dt: Double) : Boolean {

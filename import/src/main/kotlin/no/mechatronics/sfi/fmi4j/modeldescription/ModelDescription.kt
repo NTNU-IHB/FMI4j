@@ -25,8 +25,6 @@
 package no.mechatronics.sfi.fmi4j.modeldescription
 
 import no.mechatronics.sfi.fmi4j.modeldescription.cs.CoSimulationInfo
-import no.mechatronics.sfi.fmi4j.modeldescription.cs.CoSimulationModelDescription
-import no.mechatronics.sfi.fmi4j.modeldescription.me.ModelExchangeModelDescription
 import no.mechatronics.sfi.fmi4j.modeldescription.log.Category
 import no.mechatronics.sfi.fmi4j.modeldescription.me.ModelExchangeInfo
 import no.mechatronics.sfi.fmi4j.modeldescription.structure.ModelStructure
@@ -43,11 +41,9 @@ import java.util.zip.ZipInputStream
 import javax.xml.bind.JAXB
 import javax.xml.bind.annotation.*
 
+private const val MODEL_DESC_FILE = "modelDescription.xml"
+
 @XmlRootElement(name = "fmiModelDescription")
-@XmlSeeAlso(
-        CoSimulationModelDescription::class,
-        ModelExchangeModelDescription::class
-)
 @XmlAccessorType(XmlAccessType.FIELD)
 open class ModelDescription {
 
@@ -69,7 +65,6 @@ open class ModelDescription {
 
         internal fun <T : ModelDescription> parseModelDescription(stream: InputStream, type: Class<T>): T {
 
-            val modelDescriptionFile = "modelDescription.xml"
             var modelDescription: T? = null
             ZipInputStream(stream).use {
 
@@ -77,7 +72,7 @@ open class ModelDescription {
                 while (nextEntry != null) {
 
                     val name = nextEntry.name
-                    if (name == (modelDescriptionFile)) {
+                    if (name == MODEL_DESC_FILE) {
                         modelDescription = parseModelDescription(IOUtils.toString(it, Charset.forName("UTF-8")), type)
                     }
 
@@ -87,7 +82,7 @@ open class ModelDescription {
             }
 
             if (modelDescription == null) {
-                throw IllegalArgumentException("Input is not an valid FMU! No $modelDescriptionFile present!")
+                throw IllegalArgumentException("Input is not an valid FMU! No $MODEL_DESC_FILE present!")
             }
 
             return modelDescription!!
@@ -225,14 +220,74 @@ open class ModelDescription {
      * @return
      */
     val modelIdentifier: String
-    get() {
-        if (cs != null) {
-            return cs.modelIdentifier!!
-        } else if (me != null) {
-            return me.modelIdentifier!!
+        get() {
+            if (cs != null) {
+                return cs.modelIdentifier!!
+            } else if (me != null) {
+                return me.modelIdentifier!!
+            }
+            throw IllegalStateException()
         }
-        throw IllegalStateException()
-    }
+
+    val needsExecutionTool: Boolean
+        get() {
+            if (cs != null) {
+                return cs.needsExecutionTool
+            } else if (me != null) {
+                return me.needsExecutionTool
+            }
+            throw IllegalStateException()
+        }
+
+    val canBeInstantiatedOnlyOncePerProcess: Boolean
+        get() {
+            if (cs != null) {
+                return cs.canBeInstantiatedOnlyOncePerProcess
+            } else if (me != null) {
+                return me.canBeInstantiatedOnlyOncePerProcess
+            }
+            throw IllegalStateException()
+        }
+
+    val canNotUseMemoryManagementFunctions: Boolean
+        get() {
+            if (cs != null) {
+                return cs.canNotUseMemoryManagementFunctions
+            } else if (me != null) {
+                return me.canNotUseMemoryManagementFunctions
+            }
+            throw IllegalStateException()
+        }
+
+    val canGetAndSetFMUstate: Boolean
+        get() {
+            if (cs != null) {
+                return cs.canGetAndSetFMUstate
+            } else if (me != null) {
+                return me.canGetAndSetFMUstate
+            }
+            throw IllegalStateException()
+        }
+
+    val canSerializeFMUstate: Boolean
+        get() {
+            if (cs != null) {
+                return cs.canSerializeFMUstate
+            } else if (me != null) {
+                return me.canSerializeFMUstate
+            }
+            throw IllegalStateException()
+        }
+
+    val providesDirectionalDerivative: Boolean
+        get() {
+            if (cs != null) {
+                return cs.providesDirectionalDerivative
+            } else if (me != null) {
+                return me.providesDirectionalDerivative
+            }
+            throw IllegalStateException()
+        }
 
     val numberOfContinuousStates: Int
         get() = modelStructure.derivatives.size

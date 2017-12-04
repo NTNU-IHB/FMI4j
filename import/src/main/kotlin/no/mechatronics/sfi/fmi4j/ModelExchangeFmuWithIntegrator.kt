@@ -22,9 +22,9 @@
  * THE SOFTWARE.
  */
 
-package no.mechatronics.sfi.fmi4j.fmu
+package no.mechatronics.sfi.fmi4j
 
-import no.mechatronics.sfi.fmi4j.Fmi2Simulation
+import no.mechatronics.sfi.fmi4j.misc.FmuFile
 import no.mechatronics.sfi.fmi4j.jna.structs.Fmi2EventInfo
 import org.apache.commons.math3.ode.FirstOrderIntegrator
 import org.apache.commons.math3.ode.nonstiff.EulerIntegrator
@@ -44,7 +44,7 @@ class ModelExchangeFmuWithIntegrator : ModelExchangeFmu, Fmi2Simulation {
         @JvmStatic
         fun newBuilder(url: URL) = Builder(FmuFile(url))
         @JvmStatic
-        inline fun newBuilder(file: File) = Builder(FmuFile(file))
+        fun newBuilder(file: File) = Builder(FmuFile(file))
         fun build(fmuFile: FmuFile, block: Builder.() -> Unit) = Builder(fmuFile).apply(block).build()
         fun build(url: URL, block: Builder.() -> Unit) = Builder(FmuFile(url)).apply(block).build()
         fun build(file: File, block: Builder.() -> Unit) = Builder(FmuFile(file)).apply(block).build()
@@ -55,9 +55,9 @@ class ModelExchangeFmuWithIntegrator : ModelExchangeFmu, Fmi2Simulation {
              fmuFile: FmuFile
     ) : ModelExchangeFmu.Builder(fmuFile) {
 
-        internal lateinit var integrator: FirstOrderIntegrator
+        lateinit var firstOrderIntegrator: FirstOrderIntegrator
 
-        fun integrator(integrator: FirstOrderIntegrator) = apply { this.integrator = integrator }
+        fun integrator(integrator: FirstOrderIntegrator) = apply { this.firstOrderIntegrator = integrator }
 
         override fun visible(value: Boolean): Builder {
             super.visible(value)
@@ -69,9 +69,9 @@ class ModelExchangeFmuWithIntegrator : ModelExchangeFmu, Fmi2Simulation {
             return this
         }
 
-        override fun build() : ModelExchangeFmuWithIntegrator{
-             if (integrator == null) {
-                 integrator = EulerIntegrator(1E-3)
+        override fun build() : ModelExchangeFmuWithIntegrator {
+             if (!this::firstOrderIntegrator.isInitialized) {
+                 this.firstOrderIntegrator = EulerIntegrator(1E-3)
              }
              return ModelExchangeFmuWithIntegrator(this)
         }
@@ -89,16 +89,16 @@ class ModelExchangeFmuWithIntegrator : ModelExchangeFmu, Fmi2Simulation {
 
     private constructor(builder: Builder) : super(builder) {
 
-        integrator = builder.integrator
+        this.integrator = builder.firstOrderIntegrator
 
         val numberOfContinuousStates = modelDescription.numberOfContinuousStates
         val numberOfEventIndicators = modelDescription.numberOfEventIndicators
 
-        states = DoubleArray(numberOfContinuousStates)
-        derivatives = DoubleArray(numberOfContinuousStates)
+        this.states = DoubleArray(numberOfContinuousStates)
+        this.derivatives = DoubleArray(numberOfContinuousStates)
 
-        preEventIndicators = DoubleArray(numberOfEventIndicators)
-        eventIndicators = DoubleArray(numberOfEventIndicators)
+        this.preEventIndicators = DoubleArray(numberOfEventIndicators)
+        this.eventIndicators = DoubleArray(numberOfEventIndicators)
     }
 
      override fun init(start: Double, stop: Double) : Boolean {

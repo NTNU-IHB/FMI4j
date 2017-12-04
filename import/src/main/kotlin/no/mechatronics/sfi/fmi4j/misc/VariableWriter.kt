@@ -22,8 +22,9 @@
  * THE SOFTWARE.
  */
 
-package no.mechatronics.sfi.fmi4j.fmu
+package no.mechatronics.sfi.fmi4j.misc
 
+import no.mechatronics.sfi.fmi4j.Fmu
 import no.mechatronics.sfi.fmi4j.jna.enums.Fmi2Status
 
 

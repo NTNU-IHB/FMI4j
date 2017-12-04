@@ -1,11 +1,11 @@
 package no.mechatronics.sfi.fmu2jar
 
 import no.mechatronics.sfi.fmi4j.Fmi2Simulation
-import no.mechatronics.sfi.fmi4j.fmu.FmuFile
-import no.mechatronics.sfi.fmi4j.fmu.CoSimulationFmu
+import no.mechatronics.sfi.fmi4j.FmuFile
+import no.mechatronics.sfi.fmi4j.CoSimulationFmu
 import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescription
 import no.mechatronics.sfi.fmi4j.modeldescription.ModelVariables
-import no.mechatronics.sfi.fmi4j.modeldescription.types.ScalarVariable
+import no.mechatronics.sfi.fmi4j.modeldescription.ScalarVariable
 
 
 
@@ -18,7 +18,7 @@ class {{modelName}} private constructor(
         val fmuFile: FmuFile
 
         init {
-            fmuFile = FmuFile(javaClass.classLoader.getResource("{{fileName}}"))
+            fmuFile = FmuFile({{modelName}}.javaClass.classLoader.getResource("{{fileName}}"))
         }
 
         @JvmStatic

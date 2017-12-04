@@ -22,29 +22,39 @@
  * THE SOFTWARE.
  */
 
-package no.mechatronics.sfi.fmi4j.fmu
+package no.mechatronics.sfi.fmi4j.modeldescription.enums
 
+import javax.xml.bind.annotation.adapters.XmlAdapter
 
-class VariableReader internal constructor(
-        private val fmu: Fmu<*, *>,
-        private val valueReference: Int
-) {
-
-    fun asInteger() : Int = fmu.getInteger(valueReference)
-    fun asReal() : Double = fmu.getReal(valueReference)
-    fun asString() : String = fmu.getString(valueReference)
-    fun asBoolean() : Boolean = fmu.getBoolean(valueReference)
-
+enum class Initial {
+    /**
+     * The variable is initialized with the start value (provided under Real,
+     * Integer, Boolean, String or Enumeration).
+     */
+    exact,
+    /**
+     * The variable is an iteration variable of an algebraic loop and the
+     * iteration at initialization starts with the start value.
+     */
+    approx,
+    /**
+     * The variable is calculated from other variables during initialization. It
+     * is not allowed to provide a “start” value.
+     */
+    calculated;
 }
 
-class VariablesReader internal constructor(
-        private val fmu: Fmu<*, *>,
-        private val valueReference: IntArray
-) {
 
-    fun asInteger() : IntArray = fmu.getInteger(valueReference)
-    fun asReal() : DoubleArray = fmu.getReal(valueReference)
-    fun asString() : Array<String> = fmu.getString(valueReference)
-    fun asBoolean() : BooleanArray = fmu.getBoolean(valueReference)
+class InitialAdapter : XmlAdapter<String, Initial>() {
+
+    @Override
+    override fun unmarshal(v: String) : Initial {
+        return Initial.valueOf(v);
+    }
+
+    @Override
+    override fun marshal(v: Initial) : String {
+        TODO("not implemented")
+    }
 
 }

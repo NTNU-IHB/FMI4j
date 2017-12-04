@@ -22,8 +22,9 @@
  * THE SOFTWARE.
  */
 
-package no.mechatronics.sfi.fmi4j.fmu
+package no.mechatronics.sfi.fmi4j
 
+import no.mechatronics.sfi.fmi4j.misc.FmuFile
 import no.mechatronics.sfi.fmi4j.jna.structs.Fmi2EventInfo
 import no.mechatronics.sfi.fmi4j.jna.enums.Fmi2Type
 import no.mechatronics.sfi.fmi4j.wrapper.Fmi2ModelExchangeWrapper

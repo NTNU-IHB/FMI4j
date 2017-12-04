@@ -63,7 +63,6 @@ class Main  {
           } catch(ex: Exception) {
               ex.printStackTrace(System.out)
               error("Application error..")
-              ex.printStackTrace()
           }
 
 
