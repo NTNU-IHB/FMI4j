@@ -33,12 +33,33 @@ import no.mechatronics.sfi.fmi4j.modeldescription.cs.CoSimulationModelDescriptio
 import java.io.File
 import java.net.URL
 
+open class CoSimulationFmu: Fmu<Fmi2CoSimulationWrapper, CoSimulationModelDescription>, Fmi2Simulation {
 
-private class CoSimulationHelper(
-        fmuFile: FmuFile,
-        visible: Boolean,
-        loggingOn: Boolean
-) : FmuHelper<Fmi2CoSimulationWrapper, CoSimulationModelDescription>(fmuFile, Fmi2Type.CoSimulation, visible, loggingOn) {
+    class Builder(
+            val fmuFile: FmuFile
+    ) {
+
+        internal var visible: Boolean = false
+        internal var loggingOn: Boolean = false
+
+        fun visible(value: Boolean) = apply { this.visible = value }
+        fun loggingOn(value: Boolean) = apply { this.loggingOn = value }
+
+        fun build() = CoSimulationFmu(this)
+
+    }
+
+    companion object {
+        @JvmStatic
+        fun newBuilder(fmuFile: FmuFile) = Builder(fmuFile)
+        @JvmStatic
+        fun newBuilder(url: URL) = Builder(FmuFile(url))
+        @JvmStatic
+        fun newBuilder(file: File) = Builder(FmuFile(file))
+        fun build(fmuFile: FmuFile, block: Builder.() -> Unit) = Builder(fmuFile).apply(block).build()
+        fun build(url: URL, block: Builder.() -> Unit) = Builder(FmuFile(url)).apply(block).build()
+        fun build(file: File, block: Builder.() -> Unit) = Builder(FmuFile(file)).apply(block).build()
+    }
 
     override val wrapper: Fmi2CoSimulationWrapper by lazy {
         Fmi2CoSimulationWrapper(fmuFile.getLibraryFolderPath(), fmuFile.getLibraryName(modelDescription))
@@ -47,20 +68,17 @@ private class CoSimulationHelper(
     override val modelDescription: CoSimulationModelDescription by lazy {
         CoSimulationModelDescription.parseModelDescription(fmuFile.getModelDescriptionXml())
     }
-}
 
-class CoSimulationFmu @JvmOverloads constructor(
+    protected constructor(builder: Builder) : super(builder.fmuFile) {
 
-        fmuFile: FmuFile,
-        visible: Boolean = false,
-        loggingOn: Boolean = false
+        super.instantiate(Fmi2Type.CoSimulation, builder.visible, builder.loggingOn)
 
+    }
 
-) : Fmu<Fmi2CoSimulationWrapper, CoSimulationModelDescription>(CoSimulationHelper(fmuFile, visible, loggingOn)), Fmi2Simulation {
-
-   override fun doStep(dt: Double) : Boolean {
+    override fun doStep(dt: Double) : Boolean {
         val status = wrapper.doStep(currentTime, dt, true)
         currentTime += dt
+
         return status == Fmi2Status.OK
     }
 
@@ -73,10 +91,10 @@ class CoSimulationFmu @JvmOverloads constructor(
             = wrapper.getRealOutputDerivatives(vr, order, value)
 
     fun getStatus(s: Fmi2StatusKind) = wrapper.getStatus(s)
-    fun getRealStatus(s: Fmi2StatusKind): Double = wrapper.getRealStatus(s)
-    fun getIntegerStatus(s: Fmi2StatusKind): Int = wrapper.getIntegerStatus(s)
-    fun getBooleanStatus(s: Fmi2StatusKind): Boolean = wrapper.getBooleanStatus(s)
-    fun getStringStatus(s: Fmi2StatusKind): String = wrapper.getStringStatus(s)
+    fun getRealStatus(s: Fmi2StatusKind) = wrapper.getRealStatus(s)
+    fun getIntegerStatus(s: Fmi2StatusKind) = wrapper.getIntegerStatus(s)
+    fun getBooleanStatus(s: Fmi2StatusKind) = wrapper.getBooleanStatus(s)
+    fun getStringStatus(s: Fmi2StatusKind) = wrapper.getStringStatus(s)
 
 }
 

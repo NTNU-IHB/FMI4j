@@ -32,29 +32,21 @@ import org.apache.commons.math3.ode.FirstOrderDifferentialEquations
 import java.io.File
 import java.net.URL
 
+open class ModelExchangeFmu : Fmu<Fmi2ModelExchangeWrapper, ModelExchangeModelDescription> {
 
-private class ModelExchangeHelper(
-        fmuFile: FmuFile,
-        visible: Boolean,
-        loggingOn: Boolean
-) : FmuHelper<Fmi2ModelExchangeWrapper, ModelExchangeModelDescription>(fmuFile, Fmi2Type.ModelExchange, visible, loggingOn) {
+    open class Builder(
+            val fmuFile: FmuFile
+    ) {
 
-    override val wrapper: Fmi2ModelExchangeWrapper by lazy {
-        Fmi2ModelExchangeWrapper(fmuFile.getLibraryFolderPath(), fmuFile.getLibraryName(modelDescription))
+        internal var visible: Boolean = false
+        internal var loggingOn: Boolean = false
+
+        open fun visible(value: Boolean) = apply { this.visible = value }
+        open fun loggingOn(value: Boolean)= apply { this.loggingOn = value }
+
+        open fun build() = ModelExchangeFmu(this)
+
     }
-
-    override val modelDescription: ModelExchangeModelDescription by lazy {
-        ModelExchangeModelDescription.parseModelDescription(fmuFile.getModelDescriptionXml())
-    }
-}
-
-open class ModelExchangeFmu @JvmOverloads constructor(
-
-        fmuFile: FmuFile,
-        visible: Boolean = false,
-        loggingOn: Boolean = false
-
-) : Fmu<Fmi2ModelExchangeWrapper, ModelExchangeModelDescription>(ModelExchangeHelper(fmuFile, visible, loggingOn)) {
 
     val ode: FirstOrderDifferentialEquations by lazy {
         object : FirstOrderDifferentialEquations {
@@ -64,6 +56,30 @@ open class ModelExchangeFmu @JvmOverloads constructor(
                 getDerivatives(yDot!!)
             }
         }
+    }
+
+    companion object {
+        @JvmStatic
+        fun newBuilder(fmuFile: FmuFile) = Builder(fmuFile)
+        @JvmStatic
+        fun newBuilder(url: URL) = Builder(FmuFile(url))
+        @JvmStatic
+        fun newBuilder(file: File) = Builder(FmuFile(file))
+        fun build(fmuFile: FmuFile, block: Builder.() -> Unit) = Builder(fmuFile).apply(block).build()
+        fun build(url: URL, block: Builder.() -> Unit) = Builder(FmuFile(url)).apply(block).build()
+        fun build(file: File, block: Builder.() -> Unit) = Builder(FmuFile(file)).apply(block).build()
+    }
+
+    override val wrapper: Fmi2ModelExchangeWrapper by lazy {
+        Fmi2ModelExchangeWrapper(fmuFile.getLibraryFolderPath(), fmuFile.getLibraryName(modelDescription))
+    }
+
+    override val modelDescription: ModelExchangeModelDescription by lazy {
+        ModelExchangeModelDescription.parseModelDescription(fmuFile.getModelDescriptionXml())
+    }
+
+    protected constructor(builder: Builder) : super(builder.fmuFile) {
+        super.instantiate(Fmi2Type.ModelExchange, builder.visible, builder.loggingOn)
     }
 
     fun setTime(time: Double) {

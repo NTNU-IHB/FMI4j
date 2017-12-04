@@ -39,47 +39,30 @@ import java.util.function.Supplier
 import java.util.logging.Level
 import java.util.logging.Logger
 
-abstract class FmuHelper<E : Fmi2Wrapper<*>, T : ModelDescription>(
-        val fmuFile: FmuFile,
-        val fmi2Type: Fmi2Type,
-        val visible: Boolean,
-        val loggingOn: Boolean
-) {
-
-    abstract val wrapper: E
-    abstract val modelDescription: T
-
-}
 
 abstract class Fmu<E : Fmi2Wrapper<*>, T : ModelDescription>(
-        helper: FmuHelper<E, T>
+        val fmuFile: FmuFile
 ) {
 
     private companion object {
-        val LOG = LoggerFactory.getLogger(Fmu::class.java)
+        val LOG : org.slf4j.Logger = LoggerFactory.getLogger(Fmu::class.java)
     }
 
-    val wrapper: E
-    val fmuFile: FmuFile
-    val modelDescription: T
+    abstract val wrapper: E
+    abstract val modelDescription: T
     val modelVariables: ModelVariables
     get() {
        return modelDescription.modelVariables
     }
 
     var currentTime: Double = 0.0
+    protected set
 
     private val map: MutableMap<String, IntArray> = HashMap()
 
-
-    init {
-
-        this.fmuFile = helper.fmuFile
-        this.wrapper = helper.wrapper
-        this.modelDescription = helper.modelDescription
-
-        this.wrapper.instantiate(modelDescription.modelIdentifier, helper.fmi2Type,
-                modelDescription.guid, fmuFile.getResourcesPath(), helper.visible, helper.loggingOn)
+    protected fun instantiate(fmi2Type: Fmi2Type, visible: Boolean, loggingOn: Boolean) {
+        this.wrapper.instantiate(modelDescription.modelIdentifier, fmi2Type,
+                modelDescription.guid, fmuFile.getResourcesPath(), visible, loggingOn)
         injectWrapperInVariables()
     }
 

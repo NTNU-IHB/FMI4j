@@ -25,6 +25,8 @@
 package no.mechatronics.sfi.fmi4j;
 
 
+import kotlin.Unit;
+import kotlin.jvm.functions.Function1;
 import no.mechatronics.sfi.fmi4j.fmu.CoSimulationFmu;
 import no.mechatronics.sfi.fmi4j.fmu.FmuFile;
 import no.mechatronics.sfi.fmi4j.fmu.VariableReader;
@@ -46,8 +48,9 @@ public class CoSimulationFmuTest {
         final URL url = getClass().getClassLoader().getResource("v2/cs/ControlledTemperature/ControlledTemperature.fmu");
         Assert.assertNotNull(url);
 
-        fmu = new CoSimulationFmu(new FmuFile(url));
-
+        fmu =  CoSimulationFmu.newBuilder(url)
+                .loggingOn(true)
+                .build();
     }
 
     @After
@@ -107,14 +110,16 @@ public class CoSimulationFmuTest {
         }
 
 
-        CoSimulationFmu fmu2 = new CoSimulationFmu(new FmuFile(getClass().getClassLoader().getResource("v2/cs/ControlledTemperature/ControlledTemperature.fmu")));
+        CoSimulationFmu fmu2 = CoSimulationFmu.newBuilder(getClass().getClassLoader()
+                        .getResource("v2/cs/ControlledTemperature/ControlledTemperature.fmu")).build();
         fmu2.init();
 
         Assert.assertTrue(fmu2.getLastStatus() == Fmi2Status.OK);
         fmu2.doStep(1d/100);
         Assert.assertTrue(fmu2.getLastStatus() == Fmi2Status.OK);
 
-        CoSimulationFmu fmu3 = new CoSimulationFmu(new FmuFile(getClass().getClassLoader().getResource("v2/cs/ControlledTemperature/ControlledTemperature.fmu")));
+        CoSimulationFmu fmu3 = CoSimulationFmu.newBuilder(getClass().getClassLoader()
+                .getResource("v2/cs/ControlledTemperature/ControlledTemperature.fmu")).build();
         fmu3.init();
 
         Assert.assertTrue(fmu3.getLastStatus() == Fmi2Status.OK);
@@ -134,7 +139,8 @@ public class CoSimulationFmuTest {
 
     void readme() throws  IOException {
 
-        CoSimulationFmu fmu = new CoSimulationFmu(new FmuFile(new File("path/to/fmu.fmu")));
+        CoSimulationFmu fmu = CoSimulationFmu.newBuilder(getClass().getClassLoader()
+                .getResource("v2/cs/ControlledTemperature/ControlledTemperature.fmu")).build();
         fmu.init();
 
         double t = 0;

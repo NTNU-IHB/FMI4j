@@ -54,9 +54,12 @@ public class ModelExchangeTest {
         //integrator= new DormandPrince853Integrator(1E-8, 1.0, 1E-10, 1E-10);
 //        integrator = new AdamsBashforthIntegrator(100, 1E-10, 1.0, 1E-10, 1E-10);
         // integrator = new ClassicalRungeKuttaIntegrator(1E-3);
-         integrator = new EulerIntegrator(1E-3);
+         //integrator = new EulerIntegrator(1E-3);
 
-       fmu = new ModelExchangeFmuWithIntegrator(new FmuFile(url), integrator, false, false);
+       fmu =  ModelExchangeFmuWithIntegrator.newBuilder(url)
+               .loggingOn(true)
+               .integrator(new ClassicalRungeKuttaIntegrator(1E-3))
+               .build();
 
     }
 

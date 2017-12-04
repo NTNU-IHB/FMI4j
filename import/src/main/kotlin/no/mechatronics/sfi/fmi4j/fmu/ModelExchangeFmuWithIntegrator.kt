@@ -28,20 +28,57 @@ import no.mechatronics.sfi.fmi4j.Fmi2Simulation
 import no.mechatronics.sfi.fmi4j.jna.structs.Fmi2EventInfo
 import org.apache.commons.math3.ode.FirstOrderIntegrator
 import org.apache.commons.math3.ode.nonstiff.EulerIntegrator
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import java.io.File
+import java.net.URL
 
 
-class ModelExchangeFmuWithIntegrator @JvmOverloads constructor(
-        fmuFile: FmuFile,
-        val integrator: FirstOrderIntegrator = EulerIntegrator(1E-2),
-        visible: Boolean = false,
-        loggingOn: Boolean = false
-) : ModelExchangeFmu(fmuFile, visible, loggingOn), Fmi2Simulation {
+class ModelExchangeFmuWithIntegrator : ModelExchangeFmu, Fmi2Simulation {
 
-    private companion object {
-        val LOG = LoggerFactory.getLogger(ModelExchangeFmu::class.java)
+    companion object {
+        private val LOG: Logger = LoggerFactory.getLogger(ModelExchangeFmu::class.java)
+
+        @JvmStatic
+        fun newBuilder(fmuFile: FmuFile) = Builder(fmuFile)
+        @JvmStatic
+        fun newBuilder(url: URL) = Builder(FmuFile(url))
+        @JvmStatic
+        inline fun newBuilder(file: File) = Builder(FmuFile(file))
+        fun build(fmuFile: FmuFile, block: Builder.() -> Unit) = Builder(fmuFile).apply(block).build()
+        fun build(url: URL, block: Builder.() -> Unit) = Builder(FmuFile(url)).apply(block).build()
+        fun build(file: File, block: Builder.() -> Unit) = Builder(FmuFile(file)).apply(block).build()
+
     }
 
+    class Builder(
+             fmuFile: FmuFile
+    ) : ModelExchangeFmu.Builder(fmuFile) {
+
+        internal lateinit var integrator: FirstOrderIntegrator
+
+        fun integrator(integrator: FirstOrderIntegrator) = apply { this.integrator = integrator }
+
+        override fun visible(value: Boolean): Builder {
+            super.visible(value)
+            return this
+        }
+
+        override fun loggingOn(value: Boolean): Builder {
+            super.loggingOn(value)
+            return this
+        }
+
+        override fun build() : ModelExchangeFmuWithIntegrator{
+             if (integrator == null) {
+                 integrator = EulerIntegrator(1E-3)
+             }
+             return ModelExchangeFmuWithIntegrator(this)
+        }
+
+    }
+
+    private val integrator: FirstOrderIntegrator
     private val states: DoubleArray
     private val derivatives: DoubleArray
 
@@ -50,7 +87,9 @@ class ModelExchangeFmuWithIntegrator @JvmOverloads constructor(
 
     private val eventInfo: Fmi2EventInfo = Fmi2EventInfo()
 
-    init {
+    private constructor(builder: Builder) : super(builder) {
+
+        integrator = builder.integrator
 
         val numberOfContinuousStates = modelDescription.numberOfContinuousStates
         val numberOfEventIndicators = modelDescription.numberOfEventIndicators
@@ -60,7 +99,6 @@ class ModelExchangeFmuWithIntegrator @JvmOverloads constructor(
 
         preEventIndicators = DoubleArray(numberOfEventIndicators)
         eventIndicators = DoubleArray(numberOfEventIndicators)
-
     }
 
      override fun init(start: Double, stop: Double) : Boolean {
