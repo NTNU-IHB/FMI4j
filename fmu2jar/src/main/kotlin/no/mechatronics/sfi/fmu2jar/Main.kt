@@ -1,4 +1,3 @@
-@file:JvmName("Main")
 
 package no.mechatronics.sfi.fmu2jar
 
@@ -7,58 +6,69 @@ import org.apache.commons.cli.Options
 import java.io.File
 
 
-const val FMU_FILE = "fmu"
-const val OUTPUT_FOLDER = "outputFolder"
-const val MAVEN_LOCAL_OPT = "mavenLocal"
+class Main  {
+
+  companion object {
+
+      const val FMU_FILE = "fmu"
+      const val OUTPUT_FOLDER = "outputFolder"
+      const val MAVEN_LOCAL_OPT = "mavenLocal"
 
 
-fun main(args: Array<String>) {
+      @JvmStatic
+      public fun main(args: Array<String>) {
 
-    if (args.size == 0) {
-        println("No input.. exiting")
-    }
+          if (args.size == 0) {
+              println("No input.. exiting")
+          }
 
-    try {
-        val options = Options().apply {
-            addOption(FMU_FILE, true, "Path to the FMU")
-            addOption(MAVEN_LOCAL_OPT, false, "Should the .jar be published to maven local?")
-            addOption(OUTPUT_FOLDER, true, "Specify where to copy the generated .jar. Not needed if $MAVEN_LOCAL_OPT=true")
-        }
+          try {
+              val options = Options().apply {
+                  addOption(FMU_FILE, true, "Path to the FMU")
+                  addOption(MAVEN_LOCAL_OPT, false, "Should the .jar be published to maven local?")
+                  addOption(OUTPUT_FOLDER, true, "Specify where to copy the generated .jar. Not needed if $MAVEN_LOCAL_OPT=true")
+              }
 
-        val parser = DefaultParser()
-        val cmd = parser.parse(options, args)
+              val parser = DefaultParser()
+              val cmd = parser.parse(options, args)
 
-        var outputFolder: File? = null
-        var mavenLocal: Boolean = false
-        var fmuFile: File? = null
+              var outputFolder: File? = null
+              var mavenLocal: Boolean = false
+              var fmuFile: File? = null
 
-        with(cmd) {
+              with(cmd) {
 
-            getOptionValue(FMU_FILE)?.let { path ->
-                val file = File(path)
-                if (file.exists() && file.name.endsWith(".fmu", true)) {
-                    fmuFile = file
-                } else {
-                    error("Not a valid file: ${file.absolutePath}")
-                }
-            }
+                  getOptionValue(FMU_FILE)?.let { path ->
+                      val file = File(path.replace("\\", "/"))
+                      if (file.exists() && file.name.endsWith(".fmu", true)) {
+                          fmuFile = file
+                      } else {
+                          error("Not a valid file: ${file.absolutePath}")
+                      }
+                  }
 
-            mavenLocal = hasOption(MAVEN_LOCAL_OPT)
+                  mavenLocal = hasOption(MAVEN_LOCAL_OPT)
 
-            getOptionValue(OUTPUT_FOLDER)?.let {
-                outputFolder = File(it)
-            }
+                  getOptionValue(OUTPUT_FOLDER)?.let {
+                      outputFolder = File(it.replace("\\", "/"))
+                  }
 
-        }
+              }
 
-        fmuFile?.let {
-            with (Fmu2Jar(it)) {
-                generateJar(GenerateOptions(mavenLocal, outputFolder))
-            }
-        }
-    } catch(ex: Exception) {
-        error("Application error")
-    }
+              fmuFile?.let {
+                  with (Fmu2Jar(it)) {
+                      generateJar(GenerateOptions(mavenLocal, outputFolder))
+                  }
+              }
+          } catch(ex: Exception) {
+              ex.printStackTrace(System.out)
+              error("Application error..")
+              ex.printStackTrace()
+          }
 
+
+      }
+
+  }
 
 }

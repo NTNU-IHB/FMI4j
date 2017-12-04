@@ -22,7 +22,7 @@ class GenerateOptions(
 ) {
     init {
         if (outputFolder == null && !mavenLocal) {
-            outputFolder = File("")
+            outputFolder = File("").absoluteFile
         }
     }
 }
@@ -182,7 +182,7 @@ class Fmu2Jar(
                 File(parentDir, "build/libs/${modelDescription.modelName}-1.0-SNAPSHOT.jar").let { src ->
                     if (src.exists()) {
                         FileUtils.copyFileToDirectory(src.absoluteFile, outputFolder.absoluteFile)
-                        println("Wrote FMU to directory '${parentDir.absolutePath}'")
+                        println("Wrote FMU to directory '${outputFolder.absolutePath}'")
                     }
                 }
             }
