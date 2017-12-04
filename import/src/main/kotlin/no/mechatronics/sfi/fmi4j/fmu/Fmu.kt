@@ -101,15 +101,20 @@ abstract class Fmu<E : Fmi2Wrapper<*>, T : ModelDescription>(
     fun setDebugLogging(loggingOn: Boolean, nCategories: Int, categories: Array<String>)
             =  wrapper.setDebugLogging(loggingOn, nCategories, categories)
 
+    fun write(vr: Int) : VariableWriter {
+        return VariableWriter(this, vr)
+    }
+
+    fun read(vr: Int) : VariableReader {
+        return VariableReader(this, vr)
+    }
 
     fun write(name: String) : VariableWriter {
-        val valueReference = modelVariables.get(name)!!.valueReference
-        return VariableWriter(this, valueReference)
+        return write(modelVariables.get(name)!!.valueReference)
     }
 
     fun read(name: String) : VariableReader {
-        val valueReference = modelVariables.get(name)!!.valueReference
-        return VariableReader(this, valueReference)
+        return read(modelVariables.get(name)!!.valueReference)
     }
 
     fun init() = init(0.0)

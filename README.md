@@ -50,4 +50,10 @@ fmu.terminate();
 
 ## FMU2Jar
 
-Tool for packaging an FMU into a Java library. This allows you to use the FMU as any other Java library. 
+Command line tool for packaging an FMU into a Java library. This allows you to use the FMU as any other Java library. 
+
+### Usage
+
+fmi2jar -fmu "fmu/location.fmu" -outputFolder "where/to/put/generated/jar"
+
+add -mavenLocal if you want the .jar to be installed in your local maven repository
