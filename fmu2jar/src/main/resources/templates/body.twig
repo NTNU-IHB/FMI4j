@@ -1,0 +1,16 @@
+package no.mechatronics.sfi.fmu2jar
+
+import no.mechatronics.sfi.fmi4j.Fmi2Simulation
+import no.mechatronics.sfi.fmi4j.fmu.FmuFile
+import no.mechatronics.sfi.fmi4j.ModelDescription
+import no.mechatronics.sfi.fmi4j.ModelVariables
+import no.mechatronics.sfi.fmi4j.ScalarVariable
+
+
+class {{modelName}} (
+    val fmu: Fmi2Simulation
+) : Fmi2Simulation by fmu {
+
+    {{instanceMethods}}
+
+}

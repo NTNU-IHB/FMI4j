@@ -40,6 +40,9 @@ interface Fmi2Simulation {
     fun write(name: String) : VariableWriter
     fun read(name: String) : VariableReader
 
+    fun write(vr: Int) : VariableWriter
+    fun read(vr: Int) : VariableReader
+
     fun init() : Boolean
     fun init(start: Double) : Boolean
     fun init(start: Double, stop: Double): Boolean
@@ -52,3 +55,4 @@ interface Fmi2Simulation {
     fun getLastStatus() : Fmi2Status
 
 }
+
