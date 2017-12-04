@@ -1,3 +1,27 @@
+/*
+ * The MIT License
+ *
+ * Copyright 2017. Norwegian University of Technology
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING  FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
 package no.mechatronics.sfi.fmi4j.fmu
 
 import com.sun.org.apache.xpath.internal.operations.Bool
@@ -27,7 +51,6 @@ abstract class FmuHelper<E : Fmi2Wrapper<*>, T : ModelDescription>(
 
 }
 
-
 abstract class Fmu<E : Fmi2Wrapper<*>, T : ModelDescription>(
         helper: FmuHelper<E, T>
 ) {
@@ -44,10 +67,9 @@ abstract class Fmu<E : Fmi2Wrapper<*>, T : ModelDescription>(
        return modelDescription.modelVariables
     }
 
-     var currentTime: Double = 0.0
+    var currentTime: Double = 0.0
 
     private val map: MutableMap<String, IntArray> = HashMap()
-
 
 
     init {
@@ -61,17 +83,6 @@ abstract class Fmu<E : Fmi2Wrapper<*>, T : ModelDescription>(
         injectWrapperInVariables()
     }
 
-//    protected fun updateStatus(status: Fmi2Status) : Fmi2Status {
-//        this.lastStatus = status
-//
-//        when (status) {
-//            Fmi2Status.Error -> state = FmiState.ERROR
-//            Fmi2Status.Fatal -> state = FmiState.FATAL
-//        }
-//
-//        return status
-//    }
-
     /**
      * @see Fmi2Library.fmi2GetTypesPlatform
      */
@@ -81,6 +92,8 @@ abstract class Fmu<E : Fmi2Wrapper<*>, T : ModelDescription>(
      * @see Fmi2Library.fmi2GetVersion
      */
     fun getVersion() = wrapper.version
+
+    fun isTerminated() = wrapper.isTerminated
 
     /**
      * @see Fmi2Library.fmi2SetDebugLogging
@@ -115,6 +128,7 @@ abstract class Fmu<E : Fmi2Wrapper<*>, T : ModelDescription>(
             return false
         }
         wrapper.exitInitializationMode()
+
         return getLastStatus() === Fmi2Status.OK
 
     }
@@ -222,7 +236,7 @@ abstract class Fmu<E : Fmi2Wrapper<*>, T : ModelDescription>(
 
     fun setString( valueReference: Int, value: String) = wrapper.setString(valueReference, value)
 
-    fun setString(vr: IntArray, value: Array<String>) = wrapper.setString(vr, value)
+    fun setString(vr: IntArray, value: Array<out String>) = wrapper.setString(vr, value)
 
     fun setStringArray(name: String, values: Array<String>) : Fmi2Status {
 
