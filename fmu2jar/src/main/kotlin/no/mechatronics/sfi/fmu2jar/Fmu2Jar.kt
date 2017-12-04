@@ -16,10 +16,31 @@ import java.nio.file.Files
 import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
 
+class GenerateOptions(
+        val mavenLocal: Boolean,
+        var outputFolder: File?
+) {
+    init {
+        if (outputFolder == null && !mavenLocal) {
+            outputFolder = File("")
+        }
+    }
+}
 
 class Fmu2Jar(
-        private val modelDescription: ModelDescription
+        private val file:File
 ) {
+
+    private val modelDescription: ModelDescription
+
+    init {
+
+        if (!file.name.endsWith(".fmu", true)) {
+            throw IllegalArgumentException("File '${file.absolutePath}' is not and FMU!")
+        }
+
+        modelDescription = ModelDescription.Companion.parseModelDescription(file)
+    }
 
     private fun copyBuildFile(parentDir: File) {
         IOUtils.copy(javaClass.classLoader.getResourceAsStream("build.gradle"), FileOutputStream(File(parentDir, "build.gradle")))
@@ -79,7 +100,6 @@ class Fmu2Jar(
 
     private fun generateSet(variable: ScalarVariable<*>, sb :StringBuilder) {
 
-
         sb.append("""
             fun set${convertVariableName1(variable)}(value: ${fmiTypeToKotlinType(variable)}) {
                 fmu.write(${variable.valueReference}).with(value)
@@ -104,6 +124,7 @@ class Fmu2Jar(
         return JtwigTemplate.classpathTemplate("templates/body.twig")
                 .render(JtwigModel.newModel()
                         .with("modelName", modelDescription.modelName)
+                        .with("fileName", file.name)
                         .with("instanceMethods", generateInstanceMethods()))
     }
 
@@ -119,15 +140,14 @@ class Fmu2Jar(
 
     }
 
-    class GenerateOptions(
-            val mavenLocal: Boolean,
-            var outputFolder: File?
-    ) {
-        init {
-            if (outputFolder == null && !mavenLocal) {
-                outputFolder = File("")
+    private fun copyFmuFile(parentDir: File) {
+        File(parentDir, "src/main/resources").apply {
+            if (!parentDir.exists()) {
+                com.google.common.io.Files.createParentDirs(this)
             }
+            FileUtils.copyFileToDirectory(file, this)
         }
+
     }
 
     fun generateJar(options: GenerateOptions) {
@@ -139,6 +159,7 @@ class Fmu2Jar(
 
             println(parentDir.absolutePath)
 
+            copyFmuFile(parentDir)
             copyBuildFile(parentDir)
             copyGradleWrapper(parentDir)
             copySourceFile(parentDir)
@@ -166,7 +187,9 @@ class Fmu2Jar(
                 }
             }
         } finally {
-            tempDirectory.deleteRecursively()
+            if(tempDirectory.deleteRecursively()) {
+                println("Deleted folder '${tempDirectory.absolutePath}'")
+            }
         }
 
     }

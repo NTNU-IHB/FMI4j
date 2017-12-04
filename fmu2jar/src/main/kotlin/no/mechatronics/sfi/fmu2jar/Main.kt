@@ -2,7 +2,6 @@
 
 package no.mechatronics.sfi.fmu2jar
 
-import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescription
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.Options
 import java.io.File
@@ -53,8 +52,8 @@ fun main(args: Array<String>) {
         }
 
         fmuFile?.let {
-            with (Fmu2Jar(ModelDescription.Companion.parseModelDescription(it))) {
-                generateJar(Fmu2Jar.GenerateOptions(mavenLocal, outputFolder))
+            with (Fmu2Jar(it)) {
+                generateJar(GenerateOptions(mavenLocal, outputFolder))
             }
         }
     } catch(ex: Exception) {
