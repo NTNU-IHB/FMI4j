@@ -76,7 +76,7 @@ class Fmi2CoSimulationWrapper(
     fun getStatus(s: Fmi2StatusKind): Fmi2Status {
         state.isCallLegalDuringState(FmiMethod.fmi2GetStatus)
         val i = IntByReference()
-        updateStatus(Fmi2Status.valueOf(library.fmi2GetIntegerStatus(c, s, i)))
+        updateStatus(Fmi2Status.valueOf(library.fmi2GetIntegerStatus(c, s.code, i)))
         return Fmi2Status.valueOf(i.value)
     }
 
@@ -86,7 +86,7 @@ class Fmi2CoSimulationWrapper(
     fun getRealStatus(s: Fmi2StatusKind): Double {
         state.isCallLegalDuringState(FmiMethod.fmi2GetRealStatus)
         val d = DoubleByReference()
-        updateStatus(Fmi2Status.valueOf(library.fmi2GetRealStatus(c, s, d)))
+        updateStatus(Fmi2Status.valueOf(library.fmi2GetRealStatus(c, s.code, d)))
         return d.value
     }
 
@@ -96,7 +96,7 @@ class Fmi2CoSimulationWrapper(
     fun getIntegerStatus(s: Fmi2StatusKind): Int {
         state.isCallLegalDuringState(FmiMethod.fmi2GetIntegerStatus)
         val i = IntByReference()
-        updateStatus(Fmi2Status.valueOf(library.fmi2GetIntegerStatus(c, s, i)))
+        updateStatus(Fmi2Status.valueOf(library.fmi2GetIntegerStatus(c, s.code, i)))
         return i.value
     }
 
@@ -106,7 +106,7 @@ class Fmi2CoSimulationWrapper(
     fun getBooleanStatus(s: Fmi2StatusKind): Boolean {
         state.isCallLegalDuringState(FmiMethod.fmi2GetBooleanStatus)
         val b = ByteByReference()
-        updateStatus(Fmi2Status.valueOf(library.fmi2GetBooleanStatus(c, s, b)))
+        updateStatus(Fmi2Status.valueOf(library.fmi2GetBooleanStatus(c, s.code, b)))
         return convert(b.value)
     }
 
@@ -116,7 +116,7 @@ class Fmi2CoSimulationWrapper(
     fun getStringStatus(s: Fmi2StatusKind): String {
         state.isCallLegalDuringState(FmiMethod.fmi2GetStringStatus)
         val str = StringByReference()
-        updateStatus(Fmi2Status.valueOf(library.fmi2GetStringStatus(c, s, str)))
+        updateStatus(Fmi2Status.valueOf(library.fmi2GetStringStatus(c, s.code, str)))
         return str.value
     }
 

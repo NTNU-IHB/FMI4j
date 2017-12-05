@@ -41,14 +41,14 @@ interface Fmi2CoSimulationLibrary : Fmi2Library {
 
     fun fmi2CancelStep(c: Pointer): Int
 
-    fun fmi2GetStatus(c: Pointer, s: Fmi2StatusKind, value: IntByReference): Int
+    fun fmi2GetStatus(c: Pointer, s: Int, value: IntByReference): Int
 
-    fun fmi2GetRealStatus(c: Pointer, s: Fmi2StatusKind, value: DoubleByReference): Int
+    fun fmi2GetRealStatus(c: Pointer, s: Int, value: DoubleByReference): Int
 
-    fun fmi2GetIntegerStatus(c: Pointer, s: Fmi2StatusKind, value: IntByReference): Int
+    fun fmi2GetIntegerStatus(c: Pointer, s: Int, value: IntByReference): Int
 
-    fun fmi2GetBooleanStatus(c: Pointer, s: Fmi2StatusKind, value: ByteByReference): Int
+    fun fmi2GetBooleanStatus(c: Pointer, s: Int, value: ByteByReference): Int
 
-    fun fmi2GetStringStatus(c: Pointer, s: Fmi2StatusKind, value: StringByReference): Int
+    fun fmi2GetStringStatus(c: Pointer, s: Int, value: StringByReference): Int
 
 }

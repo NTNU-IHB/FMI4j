@@ -24,19 +24,18 @@
 
 package no.mechatronics.sfi.fmi4j.wrapper
 
-import com.sun.jna.Library
 import com.sun.jna.Memory
 import com.sun.jna.Native
 import com.sun.jna.Pointer
-import com.sun.jna.ptr.PointerByReference
 import no.mechatronics.sfi.fmi4j.jna.convert
 import no.mechatronics.sfi.fmi4j.jna.enums.Fmi2Status
 import no.mechatronics.sfi.fmi4j.jna.enums.Fmi2Type
 import no.mechatronics.sfi.fmi4j.jna.Fmi2Library
 import no.mechatronics.sfi.fmi4j.jna.structs.Fmi2CallbackFunctions
+import no.mechatronics.sfi.fmi4j.misc.ArrayBuffers
+import no.mechatronics.sfi.fmi4j.misc.FmuState
 import org.slf4j.LoggerFactory
-import java.util.concurrent.atomic.AtomicInteger
-import java.util.function.Supplier
+
 
 private const val LIBRARY_PATH = "jna.library.path"
 
@@ -72,14 +71,6 @@ data class LibraryPath<E>(
 
 }
 
-class FmuState {
-
-    val pointer: Pointer = Pointer.NULL
-    val pointerByReference: PointerByReference by lazy {
-        PointerByReference(pointer)
-    }
-
-}
 
 abstract class Fmi2Wrapper<E: Fmi2Library>(
    private val libraryPath: LibraryPath<E>
@@ -97,6 +88,7 @@ abstract class Fmi2Wrapper<E: Fmi2Library>(
     protected lateinit var c: Pointer
 
     private val functions: Fmi2CallbackFunctions
+    private val buffers: ArrayBuffers by lazy { ArrayBuffers() }
 
     var lastStatus: Fmi2Status = Fmi2Status.NONE
     private set
@@ -113,26 +105,6 @@ abstract class Fmi2Wrapper<E: Fmi2Library>(
     protected fun updateStatus(staus: Fmi2Status) : Fmi2Status {
         lastStatus = staus
         return staus
-    }
-
-    private val vr: IntArray by lazy {
-        IntArray(1)
-    }
-
-    private val iv: IntArray by lazy {
-        IntArray(1)
-    }
-
-    private val rv: DoubleArray by lazy {
-        DoubleArray(1)
-    }
-
-    private val sv: Array<String> by lazy {
-        Array<String>(1, {""})
-    }
-
-    private val bv: ByteArray by lazy {
-        ByteArray(1)
     }
 
     fun getStateString(): String {
@@ -164,7 +136,7 @@ abstract class Fmi2Wrapper<E: Fmi2Library>(
     @Throws(Exception::class)
     fun instantiate(instanceName: String, type: Fmi2Type, guid: String, resourceLocation: String, visible: Boolean, loggingOn: Boolean) {
         state.isCallLegalDuringState(FmiMethod.fmi2Instantiate)
-        this.c = library.fmi2Instantiate(instanceName, type.id, guid,
+        this.c = library.fmi2Instantiate(instanceName, type.code, guid,
                 resourceLocation, functions,
                 convert(visible), convert(loggingOn))
         state = FmiState.INSTANTIATED
@@ -238,7 +210,6 @@ abstract class Fmi2Wrapper<E: Fmi2Library>(
 
             state.isCallLegalDuringState(FmiMethod.fmi2FreeInstance)
             library.fmi2FreeInstance(c)
-
             libraryPath.dispose()
 
             return true
@@ -252,9 +223,11 @@ abstract class Fmi2Wrapper<E: Fmi2Library>(
      * @see Fmi2library.fmi2GetInteger
      */
     fun getInteger(valueReference: Int) : Int {
-        vr.set(0, valueReference)
-        getInteger(vr, iv)
-        return iv.get(0)
+        with(buffers) {
+            vr[0] = valueReference
+            getInteger(vr, iv)
+            return iv[0]
+        }
     }
 
     /**
@@ -275,9 +248,11 @@ abstract class Fmi2Wrapper<E: Fmi2Library>(
     }
 
     fun getReal(valueReference: Int) : Double {
-        vr.set(0, valueReference)
-        getReal(vr, rv)
-        return rv.get(0)
+        with(buffers) {
+            vr[0] = valueReference
+            getReal(vr, rv)
+            return rv[0]
+        }
     }
 
     fun getReal(vr: IntArray) : DoubleArray {
@@ -292,9 +267,11 @@ abstract class Fmi2Wrapper<E: Fmi2Library>(
     }
 
     fun getString(valueReference: Int) : String {
-        vr.set(0, valueReference)
-        getString(vr, sv)
-        return sv.get(0)
+        with(buffers) {
+            vr[0] = valueReference
+            getString(vr, sv)
+            return sv[0]
+        }
     }
 
     fun getString(vr: IntArray) : Array<String> {
@@ -312,9 +289,11 @@ abstract class Fmi2Wrapper<E: Fmi2Library>(
      * @see Fmi2library.fmi2GetBoolean
      */
     fun getBoolean(valueReference: Int) : Boolean {
-        vr.set(0, valueReference)
-        getBoolean(vr, bv)
-        return convert(bv.get(0))
+        with(buffers) {
+            vr[0] = valueReference
+            getBoolean(vr, bv)
+            return convert(bv[0])
+        }
     }
 
     /**
@@ -352,9 +331,11 @@ abstract class Fmi2Wrapper<E: Fmi2Library>(
      * @see Fmi2library.fmi2SetInteger
      */
     fun setInteger( valueReference: Int, value: Int) : Fmi2Status {
-        vr.set(0, valueReference)
-        iv.set(0, value)
-        return setInteger(vr, iv)
+        with(buffers) {
+            vr[0] = valueReference
+            iv[0] = value
+            return setInteger(vr, iv)
+        }
     }
 
     /**
@@ -368,9 +349,11 @@ abstract class Fmi2Wrapper<E: Fmi2Library>(
      * @see Fmi2library.fmi2SetReal
      */
     fun setReal( valueReference: Int, value: Double) : Fmi2Status {
-        vr.set(0, valueReference)
-        rv.set(0, value)
-        return setReal(vr, rv)
+        with(buffers) {
+            vr[0] = valueReference
+            rv[0] = value
+            return setReal(vr, rv)
+        }
     }
 
     /**
@@ -384,9 +367,11 @@ abstract class Fmi2Wrapper<E: Fmi2Library>(
      * @see Fmi2library.fmi2SetString
      */
     fun setString( valueReference: Int, value: String) : Fmi2Status {
-        vr.set(0, valueReference)
-        sv.set(0, value)
-        return setString(vr, sv)
+        with(buffers) {
+            vr[0] = valueReference
+            sv[0] = value
+            return setString(vr, sv)
+        }
     }
 
     /**
@@ -400,9 +385,11 @@ abstract class Fmi2Wrapper<E: Fmi2Library>(
      * @see Fmi2library.fmi2SetBoolean
      */
     fun setBoolean( valueReference: Int, value: Boolean) : Fmi2Status {
-        vr.set(0, valueReference)
-        bv.set(0, convert(value))
-        return setBoolean(vr, bv)
+        with(buffers) {
+            vr[0] = valueReference
+            bv[0] = convert(value)
+            return setBoolean(vr, bv)
+        }
     }
 
     /**

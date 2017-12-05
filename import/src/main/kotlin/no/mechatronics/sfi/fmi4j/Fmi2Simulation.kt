@@ -49,7 +49,9 @@ interface Fmi2Simulation {
     fun init(start: Double) : Boolean
     fun init(start: Double, stop: Double): Boolean
     fun doStep(dt: Double) : Boolean
+
     fun reset() : Boolean
+    fun reset(requireReinit: Boolean) : Boolean
     fun terminate() : Boolean
 
     fun isTerminated() : Boolean

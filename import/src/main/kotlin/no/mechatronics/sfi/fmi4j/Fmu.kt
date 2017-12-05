@@ -24,17 +24,14 @@
 
 package no.mechatronics.sfi.fmi4j
 
-import no.mechatronics.sfi.fmi4j.misc.DirectionalDerivatives
-import no.mechatronics.sfi.fmi4j.misc.FmuFile
-import no.mechatronics.sfi.fmi4j.misc.VariableReader
-import no.mechatronics.sfi.fmi4j.misc.VariableWriter
 import no.mechatronics.sfi.fmi4j.wrapper.Fmi2Wrapper
 import no.mechatronics.sfi.fmi4j.jna.enums.Fmi2Status
 import no.mechatronics.sfi.fmi4j.jna.enums.Fmi2Type
+import no.mechatronics.sfi.fmi4j.misc.*
 import no.mechatronics.sfi.fmi4j.modeldescription.*
 import no.mechatronics.sfi.fmi4j.modeldescription.enums.*
 import no.mechatronics.sfi.fmi4j.wrapper.FmiMethod
-import no.mechatronics.sfi.fmi4j.wrapper.FmuState
+import no.mechatronics.sfi.fmi4j.wrapper.FmiState
 import org.slf4j.LoggerFactory
 import java.util.function.Supplier
 import java.util.logging.Level
@@ -160,8 +157,21 @@ abstract class Fmu<E : Fmi2Wrapper<*>, T : ModelDescription> (
     /**
      * @see Fmi2Library.fmi2Reset
      */
-    fun reset() : Boolean {
-        return wrapper.reset() == Fmi2Status.OK
+    fun reset() = reset(true)
+
+    /**
+     * @see Fmi2Library.fmi2Reset
+     */
+    fun reset(requireReinit: Boolean) : Boolean {
+         if (wrapper.reset() == Fmi2Status.OK) {
+            if (requireReinit) {
+                isInitialized = false
+            } else {
+                wrapper.state = FmiState.INITIALISATION_MODE
+            }
+             return true
+         }
+        return false
     }
 
     fun checkGetScalar(vr: Int) : Boolean {

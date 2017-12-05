@@ -25,7 +25,7 @@
 package no.mechatronics.sfi.fmi4j.jna.enums
 
 
-enum class Fmi2Type private constructor(val id: Int) {
+enum class Fmi2Type private constructor(val code: Int) {
 
     ModelExchange(0),
     CoSimulation(1)
