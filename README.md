@@ -18,8 +18,16 @@ For Model Exchange, solvers are also included
 
 ```java
 
-Fmi2Simulation fmu = new CoSimulationFmu(new FmuFilenew File("path/to/fmu.fmu")));
+Fmi2Simulation fmu = new CoSimulationFmu(new File("path/to/fmu.fmu"));
+
+//or
+// fmu = CoSimulationFmu.newBuilder(new File(..))
+//  .loggingOn(true)
+// .build()
+
 fmu.init();
+
+
 
 double dt = 1d/100;
 while (fmu.getCurrentTime() < 10) {
@@ -31,12 +39,12 @@ fmu.terminate();
 ```
 
 
-#### Model-exchange example
+#### Model-exchange(with integrator) example
 
 ```java
 
 FirstOrderIntegrator integrator = new ClassicalRungeKuttaIntegrator(1E-3);
-Fmi2Simulation fmu = new ModelExchangeFmuWithIntegrator(new FmuFile(new File("path/to/fmu.fmu")), integrator);
+Fmi2Simulation fmu = new ModelExchangeFmuWithIntegrator(new File("path/to/fmu.fmu"), integrator);
 fmu.init();
 
 double dt = 1d/100;
@@ -51,9 +59,18 @@ fmu.terminate();
 ## FMU2Jar
 
 Command line tool for packaging an FMU into a Java library. This allows you to use the FMU as any other Java library. 
+The generated library also exposes all variables from the FMU through a type safe API.
+
+E.g. an FMU with a variable named "Controller.speed" of type Real, will have the methods
+
+```java
+    public double getController_speed()
+    public void setController_speed(double value)
+``` 
 
 ### Usage
 
+```
 fmi2jar -fmu "fmu/location.fmu" -outputFolder "where/to/put/generated/jar"
-
-add -mavenLocal if you want the .jar to be installed in your local maven repository
+```
+add ```-mavenLocal``` if you want the .jar to be installed in your local maven repository

@@ -38,6 +38,8 @@ import org.slf4j.LoggerFactory
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.function.Supplier
 
+private const val LIBRARY_PATH = "jna.library.path"
+
 data class LibraryPath<E>(
         val dir: String,
         val name: String,
@@ -51,44 +53,20 @@ data class LibraryPath<E>(
     private companion object {
 
         val LOG = LoggerFactory.getLogger(LibraryPath::class.java)
-        val map: MutableMap<LibraryPath<*>, AtomicInteger> = HashMap()
 
-//        fun reference(path: LibraryPath<*>) {
-//            if (path !in map) {
-//                map[path] = AtomicInteger(1)
-//            } else {
-//                map[path]!!.incrementAndGet()
-//            }
-//        }
-//
-//        fun unreference(path: LibraryPath<*>) : Boolean {
-//            if (path in map) {
-//                val count = map[path]!!.decrementAndGet()
-//                if (count == 0) {
-//                    map.remove(path)
-//                    return true
-//                }
-//            }
-//            return false
-//        }
     }
 
     init {
-        //reference(this)
-        System.setProperty("jna.library.path",dir)
+        System.setProperty(LIBRARY_PATH,dir)
         library = Native.loadLibrary(name, type)
-        LOG.info("Loaded native library '{}'", name)
+        LOG.debug("Loaded native library '{}'", name)
     }
-
-    // fun unreference() = Companion.unreference(this)
 
     fun dispose() {
         if (!isDisposed) {
             library = null
             System.gc()
-
             isDisposed = true
-            LOG.info("${name} freed")
         }
     }
 
@@ -234,9 +212,9 @@ abstract class Fmi2Wrapper<E: Fmi2Library>(
             updateState(updateStatus(Fmi2Status.valueOf(terminate)), FmiState.TERMINATED)
             isTerminated = true
 
-            // if (libraryPath.unreference()) {
-            freeInstance()
-            // }
+           Runtime.getRuntime().addShutdownHook(Thread({
+               freeInstance()
+           }))
 
             return true
         }

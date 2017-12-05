@@ -24,7 +24,6 @@
 
 package no.mechatronics.sfi.fmi4j.modeldescription
 
-import no.mechatronics.sfi.fmi4j.modeldescription.types.*
 import javax.xml.bind.annotation.*
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter
 

@@ -25,7 +25,9 @@
 
 package no.mechatronics.sfi.fmi4j
 
-import no.mechatronics.sfi.fmi4j.fmu.*
+import no.mechatronics.sfi.fmi4j.misc.FmuFile
+import no.mechatronics.sfi.fmi4j.misc.VariableReader
+import no.mechatronics.sfi.fmi4j.misc.VariableWriter
 import no.mechatronics.sfi.fmi4j.jna.enums.Fmi2Status
 import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescription
 import no.mechatronics.sfi.fmi4j.modeldescription.ModelVariables

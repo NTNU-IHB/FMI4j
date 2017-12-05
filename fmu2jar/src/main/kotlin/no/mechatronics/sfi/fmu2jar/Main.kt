@@ -60,10 +60,10 @@ class Main  {
                       generateJar(GenerateOptions(mavenLocal, outputFolder))
                   }
               }
+
           } catch(ex: Exception) {
               ex.printStackTrace(System.out)
               error("Application error..")
-              ex.printStackTrace()
           }
 
 

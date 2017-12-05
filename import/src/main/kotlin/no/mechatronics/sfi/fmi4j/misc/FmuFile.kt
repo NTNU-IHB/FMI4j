@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package no.mechatronics.sfi.fmi4j.fmu
+package no.mechatronics.sfi.fmi4j.misc
 
 import com.sun.jna.Platform
 import java.io.File
@@ -92,7 +92,7 @@ class FmuFile {
             val guid = modelDescription.guid
 
             if (guid in map) {
-                LOG.info("Re-using previously extracted FMU with name {}", modelDescription.modelName)
+                LOG.debug("Re-using previously extracted FMU with name {}", modelDescription.modelName)
                 return map[guid]!!
             }
             val baseName = FilenameUtils.getBaseName(url.toString())
@@ -119,7 +119,7 @@ class FmuFile {
             val modelDescription = ModelDescription.parseModelDescription(fmuFile)
             val guid = modelDescription.guid
             if (guid in map) {
-                LOG.info("Re-using previously extracted FMU with name {}", modelDescription.modelName)
+                LOG.debug("Re-using previously extracted FMU with name {}", modelDescription.modelName)
                 return map[guid]!!
             }
 

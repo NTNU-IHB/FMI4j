@@ -24,15 +24,11 @@
 
 package no.mechatronics.sfi.fmi4j;
 
-import no.mechatronics.sfi.fmi4j.fmu.FmuFile;
-import no.mechatronics.sfi.fmi4j.fmu.ModelExchangeFmu;
-import no.mechatronics.sfi.fmi4j.fmu.ModelExchangeFmuWithIntegrator;
 import no.mechatronics.sfi.fmi4j.jna.enums.Fmi2Status;
-import no.mechatronics.sfi.fmi4j.modeldescription.types.RealVariable;
+import no.mechatronics.sfi.fmi4j.misc.FmuFile;
+import no.mechatronics.sfi.fmi4j.modeldescription.RealVariable;
 import org.apache.commons.math3.ode.FirstOrderIntegrator;
-import org.apache.commons.math3.ode.nonstiff.AdamsBashforthIntegrator;
 import org.apache.commons.math3.ode.nonstiff.ClassicalRungeKuttaIntegrator;
-import org.apache.commons.math3.ode.nonstiff.DormandPrince853Integrator;
 import org.apache.commons.math3.ode.nonstiff.EulerIntegrator;
 import org.junit.After;
 import org.junit.Assert;
@@ -43,7 +39,7 @@ import java.net.URL;
 
 public class ModelExchangeTest {
 
-    Fmi2Simulation fmu;
+    private Fmi2Simulation fmu;
 
     @Before
     public void setUp() throws IOException {
@@ -56,7 +52,10 @@ public class ModelExchangeTest {
         // integrator = new ClassicalRungeKuttaIntegrator(1E-3);
          integrator = new EulerIntegrator(1E-3);
 
-       fmu = new ModelExchangeFmuWithIntegrator(new FmuFile(url), integrator, false, false);
+        fmu = ModelExchangeFmuWithIntegrator.newBuilder(url)
+               .loggingOn(false)
+               .integrator(integrator)
+               .build();
 
     }
 

@@ -22,8 +22,9 @@
  * THE SOFTWARE.
  */
 
-package no.mechatronics.sfi.fmi4j.modeldescription.types
+package no.mechatronics.sfi.fmi4j.modeldescription
 
+import no.mechatronics.sfi.fmi4j.modeldescription.enums.*
 import no.mechatronics.sfi.fmi4j.wrapper.Fmi2Wrapper
 import org.w3c.dom.Node
 import javax.xml.bind.JAXBContext

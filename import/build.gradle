@@ -1,7 +1,10 @@
 
 group = 'no.mechatronics.sfi.fmi4j'
-version = '0.1-ALPHA-3-SNAPSHOT'
+version = '0.1-ALPHA-5-SNAPSHOT'
 archivesBaseName = "fmi-import"
+
+apply plugin: 'maven'
+apply plugin: 'signing'
 
 dependencies {
 
@@ -10,6 +13,24 @@ dependencies {
     compile group: 'net.java.dev.jna', name: 'jna', version: '4.5.0'
     compile group: 'net.java.dev.jna', name: 'jna-platform', version: '4.5.0'
 
+}
+
+task sourcesJar(type: Jar, dependsOn: classes, description: 'Creates a jar from the source files.') {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+task javadocJar (type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives javadocJar, sourcesJar
+}
+
+signing {
+    sign configurations.archives
 }
 
 uploadArchives {
