@@ -39,7 +39,7 @@ fmu.terminate();
 ```
 
 
-#### Model-exchange example
+#### Model-exchange(with integrator) example
 
 ```java
 
@@ -59,9 +59,18 @@ fmu.terminate();
 ## FMU2Jar
 
 Command line tool for packaging an FMU into a Java library. This allows you to use the FMU as any other Java library. 
+The generated library also exposes all variables from the FMU through a type safe API.
+
+E.g. an FMU with a variable named "Controller.speed" of type Real, will have the methods
+
+```java
+    public double getController_speed()
+    public void setController_speed(double value)
+``` 
 
 ### Usage
 
+```
 fmi2jar -fmu "fmu/location.fmu" -outputFolder "where/to/put/generated/jar"
-
-add -mavenLocal if you want the .jar to be installed in your local maven repository
+```
+add ```-mavenLocal``` if you want the .jar to be installed in your local maven repository
