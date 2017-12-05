@@ -25,9 +25,11 @@
 package no.mechatronics.sfi.fmi4j;
 
 import no.mechatronics.sfi.fmi4j.jna.enums.Fmi2Status;
+import no.mechatronics.sfi.fmi4j.misc.FmuFile;
 import no.mechatronics.sfi.fmi4j.modeldescription.RealVariable;
 import org.apache.commons.math3.ode.FirstOrderIntegrator;
 import org.apache.commons.math3.ode.nonstiff.ClassicalRungeKuttaIntegrator;
+import org.apache.commons.math3.ode.nonstiff.EulerIntegrator;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -37,7 +39,7 @@ import java.net.URL;
 
 public class ModelExchangeTest {
 
-    Fmi2Simulation fmu;
+    private Fmi2Simulation fmu;
 
     @Before
     public void setUp() throws IOException {
@@ -48,11 +50,11 @@ public class ModelExchangeTest {
         //integrator= new DormandPrince853Integrator(1E-8, 1.0, 1E-10, 1E-10);
 //        integrator = new AdamsBashforthIntegrator(100, 1E-10, 1.0, 1E-10, 1E-10);
         // integrator = new ClassicalRungeKuttaIntegrator(1E-3);
-         //integrator = new EulerIntegrator(1E-3);
+         integrator = new EulerIntegrator(1E-3);
 
-       fmu =  ModelExchangeFmuWithIntegrator.newBuilder(url)
-               .loggingOn(true)
-               .integrator(new ClassicalRungeKuttaIntegrator(1E-3))
+        fmu = ModelExchangeFmuWithIntegrator.newBuilder(url)
+               .loggingOn(false)
+               .integrator(integrator)
                .build();
 
     }

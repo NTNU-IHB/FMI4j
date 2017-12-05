@@ -33,10 +33,23 @@ import org.slf4j.LoggerFactory
 import java.io.File
 import java.net.URL
 
+object InstanceHolder {
+    val defaultIntegrator: FirstOrderIntegrator by lazy {EulerIntegrator(1E-3)}
+}
 
-class ModelExchangeFmuWithIntegrator : ModelExchangeFmu, Fmi2Simulation {
+class ModelExchangeFmuWithIntegrator @JvmOverloads constructor(
+        fmuFile: FmuFile,
+        private val integrator: FirstOrderIntegrator = InstanceHolder.defaultIntegrator
+) : ModelExchangeFmu(fmuFile), Fmi2Simulation {
+
+    @JvmOverloads
+    constructor(url: URL, integrator: FirstOrderIntegrator = InstanceHolder.defaultIntegrator) : this(FmuFile(url), integrator)
+    @JvmOverloads
+    constructor(file: File, integrator: FirstOrderIntegrator = InstanceHolder.defaultIntegrator) : this(FmuFile(file), integrator)
+
 
     companion object {
+
         private val LOG: Logger = LoggerFactory.getLogger(ModelExchangeFmu::class.java)
 
         @JvmStatic
@@ -55,30 +68,23 @@ class ModelExchangeFmuWithIntegrator : ModelExchangeFmu, Fmi2Simulation {
              fmuFile: FmuFile
     ) : ModelExchangeFmu.Builder(fmuFile) {
 
-        lateinit var firstOrderIntegrator: FirstOrderIntegrator
-
+        var firstOrderIntegrator: FirstOrderIntegrator? = null
         fun integrator(integrator: FirstOrderIntegrator) = apply { this.firstOrderIntegrator = integrator }
 
-        override fun visible(value: Boolean): Builder {
-            super.visible(value)
-            return this
-        }
+        override fun visible(value: Boolean) = apply { this.visible = value }
+        override fun loggingOn(value: Boolean) = apply { this.loggingOn = value }
 
-        override fun loggingOn(value: Boolean): Builder {
-            super.loggingOn(value)
-            return this
-        }
-
-        override fun build() : ModelExchangeFmuWithIntegrator {
-             if (!this::firstOrderIntegrator.isInitialized) {
-                 this.firstOrderIntegrator = EulerIntegrator(1E-3)
-             }
-             return ModelExchangeFmuWithIntegrator(this)
+        override fun build(): ModelExchangeFmuWithIntegrator {
+            if (firstOrderIntegrator == null) {
+                return ModelExchangeFmuWithIntegrator(fmuFile).apply { instantiate(visible, loggingOn) }
+            } else {
+                return ModelExchangeFmuWithIntegrator(fmuFile, firstOrderIntegrator!!).apply { instantiate(visible, loggingOn) }
+            }
         }
 
     }
 
-    private val integrator: FirstOrderIntegrator
+
     private val states: DoubleArray
     private val derivatives: DoubleArray
 
@@ -87,9 +93,7 @@ class ModelExchangeFmuWithIntegrator : ModelExchangeFmu, Fmi2Simulation {
 
     private val eventInfo: Fmi2EventInfo = Fmi2EventInfo()
 
-    private constructor(builder: Builder) : super(builder) {
-
-        this.integrator = builder.firstOrderIntegrator
+    init {
 
         val numberOfContinuousStates = modelDescription.numberOfContinuousStates
         val numberOfEventIndicators = modelDescription.numberOfEventIndicators

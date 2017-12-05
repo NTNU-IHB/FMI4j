@@ -33,19 +33,24 @@ import no.mechatronics.sfi.fmi4j.modeldescription.cs.CoSimulationModelDescriptio
 import java.io.File
 import java.net.URL
 
-open class CoSimulationFmu: Fmu<Fmi2CoSimulationWrapper, CoSimulationModelDescription>, Fmi2Simulation {
+open class CoSimulationFmu (
+        fmuFile: FmuFile
+): Fmu<Fmi2CoSimulationWrapper, CoSimulationModelDescription>(fmuFile), Fmi2Simulation {
+
+    constructor(url: URL) : this(FmuFile(url))
+    constructor(file: File) : this(FmuFile(file))
 
     class Builder(
-            val fmuFile: FmuFile
+         private val fmuFile: FmuFile
     ) {
 
-        internal var visible: Boolean = false
-        internal var loggingOn: Boolean = false
+         private var visible = false
+         private var loggingOn = false
 
-        fun visible(value: Boolean) = apply { this.visible = value }
-        fun loggingOn(value: Boolean) = apply { this.loggingOn = value }
+         fun visible(value: Boolean) = apply { this.visible = value }
+         fun loggingOn(value: Boolean)  = apply { this.loggingOn = value }
 
-        fun build() = CoSimulationFmu(this)
+         fun build() = CoSimulationFmu(fmuFile).apply { instantiate(visible, loggingOn) }
 
     }
 
@@ -61,6 +66,8 @@ open class CoSimulationFmu: Fmu<Fmi2CoSimulationWrapper, CoSimulationModelDescri
         fun build(file: File, block: Builder.() -> Unit) = Builder(FmuFile(file)).apply(block).build()
     }
 
+    override val fmi2Type = Fmi2Type.CoSimulation
+
     override val wrapper: Fmi2CoSimulationWrapper by lazy {
         Fmi2CoSimulationWrapper(fmuFile.getLibraryFolderPath(), fmuFile.getLibraryName(modelDescription))
     }
@@ -69,9 +76,6 @@ open class CoSimulationFmu: Fmu<Fmi2CoSimulationWrapper, CoSimulationModelDescri
         CoSimulationModelDescription.parseModelDescription(fmuFile.getModelDescriptionXml())
     }
 
-    protected constructor(builder: Builder): super(builder.fmuFile) {
-        super.instantiate(Fmi2Type.CoSimulation, builder.visible, builder.loggingOn)
-    }
 
     override fun doStep(dt: Double) : Boolean {
         val status = wrapper.doStep(currentTime, dt, true)

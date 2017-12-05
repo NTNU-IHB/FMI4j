@@ -41,7 +41,7 @@ import java.util.logging.Level
 import java.util.logging.Logger
 
 
-abstract class Fmu<E : Fmi2Wrapper<*>, T : ModelDescription>(
+abstract class Fmu<E : Fmi2Wrapper<*>, T : ModelDescription> (
         val fmuFile: FmuFile
 ) {
 
@@ -50,6 +50,7 @@ abstract class Fmu<E : Fmi2Wrapper<*>, T : ModelDescription>(
     }
 
     abstract val wrapper: E
+    abstract val fmi2Type: Fmi2Type
     abstract val modelDescription: T
     val modelVariables: ModelVariables
     get() {
@@ -59,12 +60,20 @@ abstract class Fmu<E : Fmi2Wrapper<*>, T : ModelDescription>(
     var currentTime: Double = 0.0
     protected set
 
+    var isInstantiated = false
+    private set
+    var isInitialized = false
+    private set
     private val map: MutableMap<String, IntArray> = HashMap()
 
-    protected fun instantiate(fmi2Type: Fmi2Type, visible: Boolean, loggingOn: Boolean) {
-        this.wrapper.instantiate(modelDescription.modelIdentifier, fmi2Type,
-                modelDescription.guid, fmuFile.getResourcesPath(), visible, loggingOn)
-        injectWrapperInVariables()
+    @JvmOverloads
+    protected fun instantiate(visible: Boolean = false, loggingOn: Boolean = false) {
+        if (!isInstantiated) {
+            this.wrapper.instantiate(modelDescription.modelIdentifier, fmi2Type,
+                    modelDescription.guid, fmuFile.getResourcesPath(), visible, loggingOn)
+            injectWrapperInVariables()
+            isInstantiated = true
+        }
     }
 
     /**
@@ -105,20 +114,32 @@ abstract class Fmu<E : Fmi2Wrapper<*>, T : ModelDescription>(
     fun init(start :Double) = init(start, -1.0)
     open fun init(start: Double, stop: Double): Boolean {
 
-        assignStartValues()
+        if (!isInitialized) {
 
-        val stopDefined = stop > start
-        currentTime = start
-        wrapper.setupExperiment(true, 1E-4, currentTime, stopDefined, if (stopDefined) stop else Double.MAX_VALUE)
+            if (!isInstantiated) {
+                instantiate()
+            }
+
+            assignStartValues()
+
+            val stopDefined = stop > start
+            currentTime = start
+            wrapper.setupExperiment(true, 1E-4, currentTime, stopDefined, if (stopDefined) stop else Double.MAX_VALUE)
 
 
-        wrapper.enterInitializationMode()
-        if (getLastStatus() !== Fmi2Status.OK) {
-            return false
+            wrapper.enterInitializationMode()
+            if (getLastStatus() !== Fmi2Status.OK) {
+                return false
+            }
+            wrapper.exitInitializationMode()
+
+            isInitialized = true
+
+            return getLastStatus() === Fmi2Status.OK
+
         }
-        wrapper.exitInitializationMode()
 
-        return getLastStatus() === Fmi2Status.OK
+        return false
 
     }
 
@@ -130,7 +151,7 @@ abstract class Fmu<E : Fmi2Wrapper<*>, T : ModelDescription>(
      */
     fun terminate() : Boolean {
         if (wrapper.terminate()) {
-            LOG.info("FMU {} terminated!", modelDescription.modelName)
+            LOG.debug("FMU {} terminated!", modelDescription.modelName)
             return true
         }
         return false
