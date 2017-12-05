@@ -6,8 +6,6 @@ import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescription
 import no.mechatronics.sfi.fmi4j.modeldescription.ScalarVariable
 import org.apache.commons.io.FileUtils
 import org.apache.commons.io.IOUtils
-import org.jtwig.JtwigModel
-import org.jtwig.JtwigTemplate
 import java.io.File
 import java.io.FileOutputStream
 import java.nio.charset.Charset
@@ -56,7 +54,7 @@ class Fmu2Jar(
 
                         if (!file.exists()) {
                             if (!file.parentFile.exists()) {
-                                com.google.common.io.Files.createParentDirs(file)
+                                Files.createDirectories(file.parentFile.toPath())
                             }
 
                             FileOutputStream(file).use { fis ->
@@ -119,20 +117,12 @@ class Fmu2Jar(
         return sb.toString()
     }
 
-    private fun generateClassSource() :String {
-        return JtwigTemplate.classpathTemplate("templates/body.twig")
-                .render(JtwigModel.newModel()
-                        .with("modelName", modelDescription.modelName)
-                        .with("fileName", file.name)
-                        .with("instanceMethods", generateInstanceMethods()))
-    }
-
     private fun copySourceFile(parentDir: File) {
-        val src = generateClassSource()
+        val src = generateBody(modelDescription.modelName, file.name, generateInstanceMethods())
 
         File(parentDir, "src/main/kotlin/no/mechatronics/sfi/fmu2jar/${modelDescription.modelName}.kt").apply {
             if (!parentFile.exists()) {
-                com.google.common.io.Files.createParentDirs(this)
+                Files.createDirectories(file.parentFile.toPath())
             }
             FileUtils.writeStringToFile(this, src, Charset.forName("UTF-8"))
         }
@@ -142,7 +132,7 @@ class Fmu2Jar(
     private fun copyFmuFile(parentDir: File) {
         File(parentDir, "src/main/resources").apply {
             if (!parentDir.exists()) {
-                com.google.common.io.Files.createParentDirs(this)
+                Files.createDirectories(file.parentFile.toPath())
             }
             FileUtils.copyFileToDirectory(file, this)
         }
@@ -156,7 +146,7 @@ class Fmu2Jar(
             val parentDir = File(tempDirectory, modelDescription.modelName)
             parentDir.mkdir()
 
-            println(parentDir.absolutePath)
+           // println(parentDir.absolutePath)
 
             copyFmuFile(parentDir)
             copyBuildFile(parentDir)
@@ -190,6 +180,48 @@ class Fmu2Jar(
                 println("Deleted folder '${tempDirectory.absolutePath}'")
             }
         }
+
+    }
+
+    private fun generateBody(modelName: String, fileName: String, instanceMethods: String) : String {
+
+        return """
+
+            package no.mechatronics.sfi.fmu2jar
+
+            import no.mechatronics.sfi.fmi4j.misc.FmuFile
+            import no.mechatronics.sfi.fmi4j.Fmi2Simulation
+            import no.mechatronics.sfi.fmi4j.CoSimulationFmu
+            import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescription
+            import no.mechatronics.sfi.fmi4j.modeldescription.ModelVariables
+            import no.mechatronics.sfi.fmi4j.modeldescription.ScalarVariable
+
+
+
+            class $modelName private constructor(
+                val fmu: Fmi2Simulation
+            ) : Fmi2Simulation by fmu {
+
+                companion object {
+
+                    val fmuFile: FmuFile
+
+                    init {
+                        fmuFile = FmuFile($modelName::class.java.classLoader.getResource("$fileName"))
+                    }
+
+                    @JvmStatic
+                    fun build() : $modelName {
+                        return $modelName(CoSimulationFmu(fmuFile))
+                    }
+
+                }
+
+                $instanceMethods
+
+            }
+
+            """
 
     }
 
