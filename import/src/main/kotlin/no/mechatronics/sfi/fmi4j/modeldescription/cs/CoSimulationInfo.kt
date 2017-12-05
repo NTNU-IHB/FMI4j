@@ -24,43 +24,49 @@
 
 package no.mechatronics.sfi.fmi4j.modeldescription.cs
 
-import javax.xml.bind.annotation.XmlAttribute
+import no.mechatronics.sfi.fmi4j.misc.SourceFile
+import javax.xml.bind.annotation.*
 
-internal class CoSimulationInfo (
-
-    @XmlAttribute
-    val modelIdentifier: String? = null,
-
-    @XmlAttribute
-    val needsExecutionTool: Boolean = false,
+@XmlAccessorType(XmlAccessType.FIELD)
+internal class CoSimulationInfo {
 
     @XmlAttribute
-    val canHandleVariableCommunicationStepSize: Boolean = false,
+    val modelIdentifier: String? = null
 
     @XmlAttribute
-    val canInterpolateInputs: Boolean = false,
+    val needsExecutionTool: Boolean = false
 
     @XmlAttribute
-    val maxOutputDerivativeOrder: Int = 0,
+    val canHandleVariableCommunicationStepSize: Boolean = false
 
     @XmlAttribute
-    val canRunAsynchronuosly: Boolean = false,
+    val canInterpolateInputs: Boolean = false
 
     @XmlAttribute
-    val canBeInstantiatedOnlyOncePerProcess: Boolean = false,
+    val maxOutputDerivativeOrder: Int = 0
 
     @XmlAttribute
-    val canNotUseMemoryManagementFunctions: Boolean = false,
+    val canRunAsynchronuosly: Boolean = false
 
     @XmlAttribute
-    val canGetAndSetFMUstate: Boolean = false,
+    val canBeInstantiatedOnlyOncePerProcess: Boolean = false
 
     @XmlAttribute
-    val canSerializeFMUstate: Boolean = false,
+    val canNotUseMemoryManagementFunctions: Boolean = false
+
+    @XmlAttribute
+    val canGetAndSetFMUstate: Boolean = false
+
+    @XmlAttribute
+    val canSerializeFMUstate: Boolean = false
 
     @XmlAttribute
     val providesDirectionalDerivative: Boolean = false
-){
+
+    @XmlElementWrapper(name = "SourceFiles")
+    @XmlElement(name = "File")
+    var sourceFiles: List<SourceFile>? = null
+
     override fun toString(): String {
         return "CoSimulationInfo{modelIdentifier=$modelIdentifier, needsExecutionTool=$needsExecutionTool, canHandleVariableCommunicationStepSize=$canHandleVariableCommunicationStepSize, canInterpolateInputs=$canInterpolateInputs, maxOutputDerivativeOrder=$maxOutputDerivativeOrder, canRunAsynchronuosly=$canRunAsynchronuosly, canBeInstantiatedOnlyOncePerProcess=$canBeInstantiatedOnlyOncePerProcess, canNotUseMemoryManagementFunctions=$canNotUseMemoryManagementFunctions, canGetAndSetFMUstate=$canGetAndSetFMUstate, canSerializeFMUstate=$canSerializeFMUstate, providesDirectionalDerivative=$providesDirectionalDerivative}"
     }

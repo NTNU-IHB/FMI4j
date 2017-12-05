@@ -24,12 +24,12 @@
 
 package no.mechatronics.sfi.fmi4j.modeldescription
 
+import no.mechatronics.sfi.fmi4j.misc.SourceFile
 import no.mechatronics.sfi.fmi4j.modeldescription.cs.CoSimulationInfo
 import no.mechatronics.sfi.fmi4j.modeldescription.log.Category
 import no.mechatronics.sfi.fmi4j.modeldescription.me.ModelExchangeInfo
 import no.mechatronics.sfi.fmi4j.modeldescription.structure.ModelStructure
 import org.apache.commons.io.IOUtils
-import java.io.File
 import java.io.FileInputStream
 import java.io.InputStream
 import java.io.StringReader
@@ -58,7 +58,7 @@ open class ModelDescription {
         @JvmStatic
         fun parseModelDescription(url: URL): ModelDescription = parseModelDescription(url.openStream(), ModelDescription::class.java)
         @JvmStatic
-        fun parseModelDescription(file: File): ModelDescription = parseModelDescription(FileInputStream(file), ModelDescription::class.java)
+        fun parseModelDescription(file: java.io.File): ModelDescription = parseModelDescription(FileInputStream(file), ModelDescription::class.java)
         @JvmStatic
         fun parseModelDescription(inputStream: InputStream): ModelDescription = parseModelDescription(inputStream, ModelDescription::class.java)
 
@@ -201,6 +201,7 @@ open class ModelDescription {
     @XmlElement(name = "Category")
     val logCategories: List<Category>? = null
 
+
     @XmlElement(name = "CoSimulation")
     internal val cs: CoSimulationInfo? = null
 
@@ -285,6 +286,16 @@ open class ModelDescription {
                 return cs.providesDirectionalDerivative
             } else if (me != null) {
                 return me.providesDirectionalDerivative
+            }
+            throw IllegalStateException()
+        }
+
+    val sourceFiles: List<SourceFile>
+        get() {
+            if (cs != null) {
+                return cs.sourceFiles ?: emptyList()
+            } else if (me != null) {
+                return me.sourceFiles ?: emptyList()
             }
             throw IllegalStateException()
         }

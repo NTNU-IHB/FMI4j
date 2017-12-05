@@ -40,6 +40,9 @@ class ModelDescriptionTest {
         Assert.assertNotNull(resourceAsStream)
       //  val xml = IOUtils.toString(resourceAsStream, Charset.forName("UTF-8"))
         modelDescription = CoSimulationModelDescription.parseModelDescription(resourceAsStream)
+
+        println(modelDescription.sourceFiles)
+
     }
 
 

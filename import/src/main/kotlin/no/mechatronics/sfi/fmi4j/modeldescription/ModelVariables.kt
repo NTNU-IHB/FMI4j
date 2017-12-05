@@ -36,13 +36,7 @@ class ModelVariables : Iterable<ScalarVariable<*>> {
 
     val variables: List<ScalarVariable<*>>
     get() {
-
-        if (_variables == null) {
-             return emptyList()
-        } else {
-           return _variables!!
-        }
-
+        return _variables ?: emptyList()
     }
 
     fun getValueReference(name: String) : Int? {
