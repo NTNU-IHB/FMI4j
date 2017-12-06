@@ -24,7 +24,6 @@
 
 package no.mechatronics.sfi.fmi4j
 
-import no.mechatronics.sfi.fmi4j.misc.FmuFile
 import no.mechatronics.sfi.fmi4j.proxy.enums.Fmi2Status
 import no.mechatronics.sfi.fmi4j.proxy.enums.Fmi2StatusKind
 import no.mechatronics.sfi.fmi4j.proxy.enums.Fmi2Type

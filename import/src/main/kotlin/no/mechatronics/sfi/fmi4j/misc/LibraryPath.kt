@@ -1,15 +1,16 @@
 package no.mechatronics.sfi.fmi4j.misc
 
 import com.sun.jna.Native
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
 
 private const val LIBRARY_PATH = "jna.library.path"
 
 class LibraryPath<E>(
-        val dir: String,
-        val name: String,
-        val type: Class<E>
+        private val dir: String,
+        private val name: String,
+        private val type: Class<E>
 ) {
 
     var library: E? = null
@@ -18,7 +19,7 @@ class LibraryPath<E>(
 
     private companion object {
 
-        val LOG = LoggerFactory.getLogger(LibraryPath::class.java)
+        val LOG : Logger = LoggerFactory.getLogger(LibraryPath::class.java)
 
     }
 

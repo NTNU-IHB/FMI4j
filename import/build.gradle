@@ -1,6 +1,6 @@
 
 group = 'no.mechatronics.sfi.fmi4j'
-version = '0.1-ALPHA-5-SNAPSHOT'
+version = '0.1-ALPHA-6-SNAPSHOT'
 archivesBaseName = "fmi-import"
 
 apply plugin: 'maven'

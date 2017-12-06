@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package no.mechatronics.sfi.fmi4j.misc
+package no.mechatronics.sfi.fmi4j
 
 import com.sun.jna.Platform
 import java.io.File
