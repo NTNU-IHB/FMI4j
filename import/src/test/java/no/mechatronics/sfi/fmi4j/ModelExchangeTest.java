@@ -52,7 +52,7 @@ public class ModelExchangeTest {
         // integrator = new EulerIntegrator(1E-3);
 
         fmu = ModelExchangeFmuWithIntegrator.newBuilder(url)
-               .loggingOn(false)
+               .loggingOn(true)
                .integrator(integrator)
                .build();
 
@@ -78,7 +78,7 @@ public class ModelExchangeTest {
 
         double macroStep = 1.0/100;
 
-        while (fmu.getCurrentTime() < 10) {
+        while (fmu.getCurrentTime() < 1) {
 
             System.out.println("t=" + fmu.getCurrentTime() + ", height=" + h.getValue());
 

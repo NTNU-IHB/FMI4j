@@ -25,10 +25,7 @@
 package no.mechatronics.sfi.fmi4j.proxy.structs
 
 
-import com.sun.jna.Callback
-import com.sun.jna.Memory
-import com.sun.jna.Pointer
-import com.sun.jna.Structure
+import com.sun.jna.*
 import no.mechatronics.sfi.fmi4j.proxy.enums.Fmi2Status
 import java.util.Arrays
 import java.util.HashSet
@@ -79,6 +76,7 @@ open class Fmi2CallbackFunctions : Structure() {
     inner class FmiCallbackLoggerImpl : CallbackLogger {
 
         override fun invoke(c: Pointer?, instanceName: String, status: Int, category: String, message: String, args: Pointer?) {
+
             LOG.info("InstanceName: {}, status: {}, category: {}, message: {}", instanceName, Fmi2Status.valueOf(status), category, message)
         }
 
@@ -97,10 +95,10 @@ open class Fmi2CallbackFunctions : Structure() {
             if (nobj_ <= 0) {
                 nobj_ = 1
             }
-            val malloc = (nobj_ * size).toLong();
-           // LOG.debug("CallbackAllocateMemoryImpl, {}", size)
+
+            val malloc = Native.malloc((nobj* size).toLong())
             val memory = Memory(malloc)
-            memory.align(Structure.ALIGN_GNUC)
+             memory.align(Structure.ALIGN_GNUC)
             POINTERS.add(memory)
             return memory
         }
@@ -121,6 +119,7 @@ open class Fmi2CallbackFunctions : Structure() {
             if (!POINTERS.remove(pointer)) {
                 LOG.warn("Failed to remove pointer!")
             }
+            //Native.free(Pointer.nativeValue(pointer))
 
         }
 
