@@ -110,25 +110,23 @@ public class ScalarVariableImpl : IScalarVariable {
      * @inheritDoc
      */
     @XmlAttribute
-    @XmlJavaTypeAdapter(CausalityAdapter::class)
     override val causality: Causality? = null
 
     /**
      * @inheritDoc
      */
     @XmlAttribute
-    @XmlJavaTypeAdapter(VariabilityAdapter::class)
     override val variability: Variability? = null
 
     /**
      * @inheritDoc
      */
     @XmlAttribute
-    @XmlJavaTypeAdapter(InitialAdapter::class)
-    override val initial: Initial? = null
+    override var initial: Initial? = null
 
     @XmlAttribute(name="valueReference")
     private val _valueReference: Int? = null
+
 
     /**
      * @inheritDoc

@@ -94,6 +94,8 @@ class VariableNamingConventionTest {
           println(md.variableNamingConvention)
 
 
+
+
         Assert.assertTrue(md.fmiVersion == "2.0")
         Assert.assertTrue(md.variableNamingConvention == VariableNamingConvention.STRUCTURED)
     }

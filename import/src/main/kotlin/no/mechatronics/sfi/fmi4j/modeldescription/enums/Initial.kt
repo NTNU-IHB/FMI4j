@@ -24,37 +24,30 @@
 
 package no.mechatronics.sfi.fmi4j.modeldescription.enums
 
+import javax.xml.bind.annotation.XmlEnum
+import javax.xml.bind.annotation.XmlEnumValue
+import javax.xml.bind.annotation.XmlType
 import javax.xml.bind.annotation.adapters.XmlAdapter
 
+@XmlType
+@XmlEnum(String::class)
 enum class Initial {
     /**
      * The variable is initialized with the start value (provided under Real,
      * Integer, Boolean, String or Enumeration).
      */
-    exact,
+    @XmlEnumValue("exact") EXACT,
+
     /**
      * The variable is an iteration variable of an algebraic loop and the
      * iteration at initialization starts with the start value.
      */
-    approx,
+    @XmlEnumValue("approx") APPROX,
+
     /**
      * The variable is calculated from other variables during initialization. It
      * is not allowed to provide a “start” value.
      */
-    calculated;
+    @XmlEnumValue("calculated") CALCULATED;
 }
 
-
-class InitialAdapter : XmlAdapter<String, Initial>() {
-
-    @Override
-    override fun unmarshal(v: String) : Initial {
-        return Initial.valueOf(v);
-    }
-
-    @Override
-    override fun marshal(v: Initial) : String {
-        TODO("not implemented")
-    }
-
-}

@@ -175,7 +175,7 @@ abstract class Fmu<E : Fmi2Wrapper<*>, T : ModelDescription> (
         val variable = modelVariables.getByValueReference(vr)
         if (variable == null) {
             return false
-        } else if (variable.causality == Causality.output) {
+        } else if (variable.causality == Causality.OUTPUT) {
             return true
         } else {
             return variable is RealVariable && variable.derivative != null
