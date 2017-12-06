@@ -87,8 +87,6 @@ add ```-mavenLocal``` if you want the .jar to be installed in your local maven r
 
 
 Here is an example of how the  generated code looks like:
-Notice how the javadoc is populated with info from the ```modelDescription.xml```, and variables are sorted by their causality.
-
 
 ```kotlin
 
@@ -129,10 +127,12 @@ class ControlledTemperature private constructor(
             }
             
             
-            ....
+            ...
             
     }
     
 }
 
 ```
+
+Notice how the javadoc is populated with info from the ```modelDescription.xml```, and variables are sorted by their causality.
