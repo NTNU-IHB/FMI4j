@@ -32,17 +32,11 @@ class ModelVariables : Iterable<ScalarVariable<*>> {
 
     @XmlElement(name = "ScalarVariable")
     @XmlJavaTypeAdapter(ScalarVariableAdapter::class)
-    private var _variables: List<ScalarVariable<*>>? = null
+    private val _variables: List<ScalarVariable<*>>? = null
 
     val variables: List<ScalarVariable<*>>
     get() {
-
-        if (_variables == null) {
-             return emptyList()
-        } else {
-           return _variables!!
-        }
-
+        return _variables ?: emptyList()
     }
 
     fun getValueReference(name: String) : Int? {

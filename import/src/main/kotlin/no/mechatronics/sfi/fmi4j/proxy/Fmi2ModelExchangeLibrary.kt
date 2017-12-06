@@ -22,19 +22,45 @@
  * THE SOFTWARE.
  */
 
-package no.mechatronics.sfi.fmi4j.wrapper
+package no.mechatronics.sfi.fmi4j.proxy
 
+import com.sun.jna.Pointer
 import com.sun.jna.ptr.ByteByReference
-import no.mechatronics.sfi.fmi4j.jna.convert
-import no.mechatronics.sfi.fmi4j.jna.enums.Fmi2Status
-import no.mechatronics.sfi.fmi4j.jna.Fmi2ModelExchangeLibrary
-import no.mechatronics.sfi.fmi4j.jna.structs.Fmi2EventInfo
+import no.mechatronics.sfi.fmi4j.proxy.enums.Fmi2Status
+import no.mechatronics.sfi.fmi4j.proxy.structs.Fmi2EventInfo
+import no.mechatronics.sfi.fmi4j.misc.LibraryPath
+import no.mechatronics.sfi.fmi4j.misc.FmiMethod
+import no.mechatronics.sfi.fmi4j.misc.FmiState
+import no.mechatronics.sfi.fmi4j.misc.convert
 
 
-data class CompletedIntegratorStep(
-        val enterEventMode: Boolean,
-        val terminateSimulation: Boolean
-)
+interface Fmi2ModelExchangeLibrary : Fmi2Library {
+
+    fun fmi2SetTime(c: Pointer, time: Double): Int
+
+    fun fmi2SetContinuousStates(c: Pointer, x: DoubleArray, nx: Int): Int
+
+    fun fmi2EnterEventMode(c: Pointer): Int
+
+    fun fmi2EnterContinuousTimeMode(c: Pointer): Int
+
+    fun fmi2NewDiscreteStates(c: Pointer, eventInfo: Fmi2EventInfo): Int
+
+    fun fmi2CompletedIntegratorStep(c: Pointer,
+                                    noSetFMUStatePriorToCurrentPoint: Byte,
+                                    enterEventMode: ByteByReference,
+                                    terminateSimulation: ByteByReference): Int
+
+    fun fmi2GetDerivatives(c: Pointer, derivatives: DoubleArray, nx: Int): Int
+
+    fun fmi2GetEventIndicators(c: Pointer, eventIndicators: DoubleArray, ni: Int): Int
+
+    fun fmi2GetContinuousStates(c: Pointer, x: DoubleArray, nx: Int): Int
+
+    fun fmi2GetNominalsOfContinuousStates(c: Pointer, x_nominal: DoubleArray, nx: Int): Int
+
+}
+
 
 /**
  *
@@ -196,6 +222,13 @@ class Fmi2ModelExchangeWrapper(
         state.isCallLegalDuringState(FmiMethod.fmi2GetNominalsOfContinuousStates)
         return updateStatus(Fmi2Status.valueOf(library.fmi2GetNominalsOfContinuousStates(c, x_nominal, x_nominal.size)))
     }
+
+
+    class CompletedIntegratorStep(
+            val enterEventMode: Boolean,
+            val terminateSimulation: Boolean
+    )
+
 
 
 }

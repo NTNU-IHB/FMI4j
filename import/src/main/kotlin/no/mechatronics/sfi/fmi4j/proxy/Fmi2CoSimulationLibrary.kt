@@ -22,16 +22,38 @@
  * THE SOFTWARE.
  */
 
-package no.mechatronics.sfi.fmi4j.wrapper
+package no.mechatronics.sfi.fmi4j.proxy
 
+import com.sun.jna.Pointer
 import com.sun.jna.ptr.ByteByReference
 import com.sun.jna.ptr.DoubleByReference
 import com.sun.jna.ptr.IntByReference
-import no.mechatronics.sfi.fmi4j.jna.convert
-import no.mechatronics.sfi.fmi4j.jna.enums.Fmi2Status
-import no.mechatronics.sfi.fmi4j.jna.enums.Fmi2StatusKind
-import no.mechatronics.sfi.fmi4j.jna.Fmi2CoSimulationLibrary
-import no.mechatronics.sfi.fmi4j.jna.StringByReference
+import no.mechatronics.sfi.fmi4j.proxy.enums.Fmi2Status
+import no.mechatronics.sfi.fmi4j.proxy.enums.Fmi2StatusKind
+import no.mechatronics.sfi.fmi4j.misc.*
+
+
+interface Fmi2CoSimulationLibrary : Fmi2Library {
+
+    fun fmi2SetRealInputDerivatives(c: Pointer, vr: IntArray, nvr: Int, order: IntArray, value: DoubleArray): Int
+
+    fun fmi2GetRealOutputDerivatives(c: Pointer, vr: IntArray, nvr: Int, order: IntArray, value: DoubleArray): Int
+
+    fun fmi2DoStep(c: Pointer, currentCommunicationPoint: Double, communicationStepSize: Double, noSetFMUStatePriorToCurrent: Byte): Int
+
+    fun fmi2CancelStep(c: Pointer): Int
+
+    fun fmi2GetStatus(c: Pointer, s: Int, value: IntByReference): Int
+
+    fun fmi2GetRealStatus(c: Pointer, s: Int, value: DoubleByReference): Int
+
+    fun fmi2GetIntegerStatus(c: Pointer, s: Int, value: IntByReference): Int
+
+    fun fmi2GetBooleanStatus(c: Pointer, s: Int, value: ByteByReference): Int
+
+    fun fmi2GetStringStatus(c: Pointer, s: Int, value: StringByReference): Int
+
+}
 
 
 class Fmi2CoSimulationWrapper(
@@ -76,7 +98,7 @@ class Fmi2CoSimulationWrapper(
     fun getStatus(s: Fmi2StatusKind): Fmi2Status {
         state.isCallLegalDuringState(FmiMethod.fmi2GetStatus)
         val i = IntByReference()
-        updateStatus(Fmi2Status.valueOf(library.fmi2GetIntegerStatus(c, s, i)))
+        updateStatus(Fmi2Status.valueOf(library.fmi2GetIntegerStatus(c, s.code, i)))
         return Fmi2Status.valueOf(i.value)
     }
 
@@ -86,7 +108,7 @@ class Fmi2CoSimulationWrapper(
     fun getRealStatus(s: Fmi2StatusKind): Double {
         state.isCallLegalDuringState(FmiMethod.fmi2GetRealStatus)
         val d = DoubleByReference()
-        updateStatus(Fmi2Status.valueOf(library.fmi2GetRealStatus(c, s, d)))
+        updateStatus(Fmi2Status.valueOf(library.fmi2GetRealStatus(c, s.code, d)))
         return d.value
     }
 
@@ -96,7 +118,7 @@ class Fmi2CoSimulationWrapper(
     fun getIntegerStatus(s: Fmi2StatusKind): Int {
         state.isCallLegalDuringState(FmiMethod.fmi2GetIntegerStatus)
         val i = IntByReference()
-        updateStatus(Fmi2Status.valueOf(library.fmi2GetIntegerStatus(c, s, i)))
+        updateStatus(Fmi2Status.valueOf(library.fmi2GetIntegerStatus(c, s.code, i)))
         return i.value
     }
 
@@ -106,7 +128,7 @@ class Fmi2CoSimulationWrapper(
     fun getBooleanStatus(s: Fmi2StatusKind): Boolean {
         state.isCallLegalDuringState(FmiMethod.fmi2GetBooleanStatus)
         val b = ByteByReference()
-        updateStatus(Fmi2Status.valueOf(library.fmi2GetBooleanStatus(c, s, b)))
+        updateStatus(Fmi2Status.valueOf(library.fmi2GetBooleanStatus(c, s.code, b)))
         return convert(b.value)
     }
 
@@ -116,7 +138,7 @@ class Fmi2CoSimulationWrapper(
     fun getStringStatus(s: Fmi2StatusKind): String {
         state.isCallLegalDuringState(FmiMethod.fmi2GetStringStatus)
         val str = StringByReference()
-        updateStatus(Fmi2Status.valueOf(library.fmi2GetStringStatus(c, s, str)))
+        updateStatus(Fmi2Status.valueOf(library.fmi2GetStringStatus(c, s.code, str)))
         return str.value
     }
 

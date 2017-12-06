@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package no.mechatronics.sfi.fmi4j.jna.structs
+package no.mechatronics.sfi.fmi4j.proxy.structs
 
 
 import com.sun.jna.Structure

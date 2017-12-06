@@ -24,12 +24,12 @@
 
 package no.mechatronics.sfi.fmi4j.modeldescription
 
+import no.mechatronics.sfi.fmi4j.misc.SourceFile
 import no.mechatronics.sfi.fmi4j.modeldescription.cs.CoSimulationInfo
 import no.mechatronics.sfi.fmi4j.modeldescription.log.Category
 import no.mechatronics.sfi.fmi4j.modeldescription.me.ModelExchangeInfo
 import no.mechatronics.sfi.fmi4j.modeldescription.structure.ModelStructure
 import org.apache.commons.io.IOUtils
-import java.io.File
 import java.io.FileInputStream
 import java.io.InputStream
 import java.io.StringReader
@@ -40,6 +40,7 @@ import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
 import javax.xml.bind.JAXB
 import javax.xml.bind.annotation.*
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter
 
 private const val MODEL_DESC_FILE = "modelDescription.xml"
 
@@ -58,7 +59,7 @@ open class ModelDescription {
         @JvmStatic
         fun parseModelDescription(url: URL): ModelDescription = parseModelDescription(url.openStream(), ModelDescription::class.java)
         @JvmStatic
-        fun parseModelDescription(file: File): ModelDescription = parseModelDescription(FileInputStream(file), ModelDescription::class.java)
+        fun parseModelDescription(file: java.io.File): ModelDescription = parseModelDescription(FileInputStream(file), ModelDescription::class.java)
         @JvmStatic
         fun parseModelDescription(inputStream: InputStream): ModelDescription = parseModelDescription(inputStream, ModelDescription::class.java)
 
@@ -152,12 +153,12 @@ open class ModelDescription {
      * ScalarVariable / name” and in “TypeDefinitions / Type /
      * name” follow a particular convention. For the details, see section 2.2.9.
      * Currently standardized are:
-     * • “flat”: A list of strings (the default).
-     * • “structured“: Hierarchical names with “.” as hierarchy separator,
+     * • “FLAT”: A list of strings (the default).
+     * • “STRUCTURED“: Hierarchical names with “.” as hierarchy separator,
      * and with array elements and derivative characterization.
      */
     @XmlAttribute
-    val variableNamingConvention: String? = null
+    val variableNamingConvention: VariableNamingConvention? = null
     /**
      * Optional date and time when the XML file was generated. The format is
      * a subset of “xs:dateTime” and should be: “YYYY-MM-DDThh:mm:ssZ"
@@ -166,7 +167,7 @@ open class ModelDescription {
      * [Example: "2009-12-08T14:33:22Z"].
      */
     @XmlAttribute
-    val generationDateAndTime: String = ""
+    val generationDateAndTime: String? = null
 
     @XmlElement(name = "DefaultExperiment")
     val defaultExperiment: DefaultExperiment? = null
@@ -200,6 +201,7 @@ open class ModelDescription {
     @XmlElementWrapper(name = "LogCategories")
     @XmlElement(name = "Category")
     val logCategories: List<Category>? = null
+
 
     @XmlElement(name = "CoSimulation")
     internal val cs: CoSimulationInfo? = null
@@ -285,6 +287,16 @@ open class ModelDescription {
                 return cs.providesDirectionalDerivative
             } else if (me != null) {
                 return me.providesDirectionalDerivative
+            }
+            throw IllegalStateException()
+        }
+
+    val sourceFiles: List<SourceFile>
+        get() {
+            if (cs != null) {
+                return cs.sourceFiles ?: emptyList()
+            } else if (me != null) {
+                return me.sourceFiles ?: emptyList()
             }
             throw IllegalStateException()
         }

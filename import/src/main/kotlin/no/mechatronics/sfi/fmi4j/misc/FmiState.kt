@@ -22,10 +22,9 @@
  * THE SOFTWARE.
  */
 
-package no.mechatronics.sfi.fmi4j.wrapper
+package no.mechatronics.sfi.fmi4j.misc
 
 import org.slf4j.LoggerFactory
-import java.util.function.Predicate
 import java.util.function.Supplier
 
 
@@ -125,10 +124,10 @@ internal class FmiState private constructor(
 
 ////////////////////////////////////////////////////////////////////////CO-SIMULATION///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         @JvmStatic val STEP_COMPLETE = FmiState("STEP_COMPLETE",
-                FmiMethod.fmi2GetTypesPlatform, FmiMethod.fmi2GetVersion, FmiMethod.fmi2SetDebugLogging, FmiMethod.fmi2FreeInstance, FmiMethod.fmi2Terminate,
-                FmiMethod.fmi2Reset, FmiMethod.fmi2GetReal, FmiMethod.fmi2GetInteger, FmiMethod.fmi2GetBoolean, FmiMethod.fmi2GetString, FmiMethod.fmi2GetFMUstate,
-                FmiMethod.fmi2SetFMUstate, FmiMethod.fmi2FreeFMUstate, FmiMethod.fmi2DeSerializeFMUstate, FmiMethod.fmi2GetDirectionalDerivative, FmiMethod.fmi2SetRealInputDerivatives,
-                FmiMethod.fmi2GetStatus, FmiMethod.fmi2GetRealStatus, FmiMethod.fmi2GetIntegerStatus, FmiMethod.fmi2GetBooleanStatus, FmiMethod.fmi2GetStringStatus)
+        FmiMethod.fmi2GetTypesPlatform, FmiMethod.fmi2GetVersion, FmiMethod.fmi2SetDebugLogging, FmiMethod.fmi2FreeInstance, FmiMethod.fmi2Terminate,
+        FmiMethod.fmi2Reset, FmiMethod.fmi2GetReal, FmiMethod.fmi2GetInteger, FmiMethod.fmi2GetBoolean, FmiMethod.fmi2GetString, FmiMethod.fmi2GetFMUstate,
+        FmiMethod.fmi2SetFMUstate, FmiMethod.fmi2FreeFMUstate, FmiMethod.fmi2DeSerializeFMUstate, FmiMethod.fmi2GetDirectionalDerivative, FmiMethod.fmi2SetRealInputDerivatives,
+        FmiMethod.fmi2GetStatus, FmiMethod.fmi2GetRealStatus, FmiMethod.fmi2GetIntegerStatus, FmiMethod.fmi2GetBooleanStatus, FmiMethod.fmi2GetStringStatus)
 
         @JvmStatic val STEP_IN_PROGRESS = FmiState("STEP_IN_PROGRESS",
                 FmiMethod.fmi2GetTypesPlatform, FmiMethod.fmi2GetVersion, FmiMethod.fmi2SetDebugLogging, FmiMethod.fmi2FreeInstance, FmiMethod.fmi2Terminate,
@@ -150,12 +149,12 @@ internal class FmiState private constructor(
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////MODEL EXCHANGE/////////////////////////////////////////////////////////////////////////////////////////////////////////////
         @JvmStatic val EVENT_MODE = FmiState("EVENT_MODE",
-                FmiMethod.fmi2GetTypesPlatform, FmiMethod.fmi2GetVersion, FmiMethod.fmi2SetDebugLogging, FmiMethod.fmi2FreeInstance, FmiMethod.fmi2Terminate,
-                FmiMethod.fmi2Reset, FmiMethod.fmi2GetReal, FmiMethod.fmi2GetInteger, FmiMethod.fmi2GetBoolean, FmiMethod.fmi2GetString,
-                FmiMethod.fmi2SetReal, FmiMethod.fmi2SetInteger, FmiMethod.fmi2SetBoolean, FmiMethod.fmi2SetString, FmiMethod.fmi2GetFMUstate,
-                FmiMethod.fmi2SetFMUstate, FmiMethod.fmi2FreeFMUstate, FmiMethod.fmi2DeSerializeFMUstate, FmiMethod.fmi2GetDirectionalDerivative, FmiMethod.fmi2EnterEventMode,
-                FmiMethod.fmi2NewDiscreteStates, FmiMethod.fmi2EnterContinuousTimeMode, FmiMethod.fmi2SetTime, FmiMethod.fmi2GetEventIndicators, FmiMethod.fmi2GetContinuousStates,
-                FmiMethod.fmi2GetDerivatives, FmiMethod.fmi2GetNominalsOfContinuousStates)
+        FmiMethod.fmi2GetTypesPlatform, FmiMethod.fmi2GetVersion, FmiMethod.fmi2SetDebugLogging, FmiMethod.fmi2FreeInstance, FmiMethod.fmi2Terminate,
+        FmiMethod.fmi2Reset, FmiMethod.fmi2GetReal, FmiMethod.fmi2GetInteger, FmiMethod.fmi2GetBoolean, FmiMethod.fmi2GetString,
+        FmiMethod.fmi2SetReal, FmiMethod.fmi2SetInteger, FmiMethod.fmi2SetBoolean, FmiMethod.fmi2SetString, FmiMethod.fmi2GetFMUstate,
+        FmiMethod.fmi2SetFMUstate, FmiMethod.fmi2FreeFMUstate, FmiMethod.fmi2DeSerializeFMUstate, FmiMethod.fmi2GetDirectionalDerivative, FmiMethod.fmi2EnterEventMode,
+        FmiMethod.fmi2NewDiscreteStates, FmiMethod.fmi2EnterContinuousTimeMode, FmiMethod.fmi2SetTime, FmiMethod.fmi2GetEventIndicators, FmiMethod.fmi2GetContinuousStates,
+        FmiMethod.fmi2GetDerivatives, FmiMethod.fmi2GetNominalsOfContinuousStates)
 
         @JvmStatic val CONTINUOUS_TIME_MODE = FmiState("CONTINUOUS_TIME_MODE",
                 FmiMethod.fmi2GetTypesPlatform, FmiMethod.fmi2GetVersion, FmiMethod.fmi2SetDebugLogging, FmiMethod.fmi2FreeInstance, FmiMethod.fmi2Terminate,

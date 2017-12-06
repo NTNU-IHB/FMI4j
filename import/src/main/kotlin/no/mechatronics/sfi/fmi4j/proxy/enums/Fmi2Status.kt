@@ -22,13 +22,33 @@
  * THE SOFTWARE.
  */
 
-package no.mechatronics.sfi.fmi4j.jna.enums
+package no.mechatronics.sfi.fmi4j.proxy.enums
+
+import java.util.*
+import kotlin.streams.toList
+
+enum class Fmi2Status private constructor(val code: Int) {
+
+    NONE(-1),
+    OK(0),
+    Warning(1),
+    Discard(2),
+    Error(3),
+    Fatal(4),
+    Pending(5);
 
 
-enum class Fmi2Type private constructor(val id: Int) {
+    companion object {
 
-    ModelExchange(0),
-    CoSimulation(1)
+        @JvmStatic
+        fun valueOf(i: Int): Fmi2Status {
+            for (status in values()) {
+                if (i == status.code) {
+                    return status
+                }
+            }
+            throw IllegalArgumentException("$i not in range of ${Arrays.stream(values()).map { it.code }.toList()}")
+        }
+    }
 
 }
-

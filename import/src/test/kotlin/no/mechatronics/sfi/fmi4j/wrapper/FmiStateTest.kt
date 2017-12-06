@@ -24,6 +24,8 @@
 
 package no.mechatronics.sfi.fmi4j.wrapper
 
+import no.mechatronics.sfi.fmi4j.misc.FmiMethod
+import no.mechatronics.sfi.fmi4j.misc.FmiState
 import org.junit.Test
 
 import org.junit.Assert.*

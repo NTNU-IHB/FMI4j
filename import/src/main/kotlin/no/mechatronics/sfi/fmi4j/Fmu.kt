@@ -24,17 +24,14 @@
 
 package no.mechatronics.sfi.fmi4j
 
-import no.mechatronics.sfi.fmi4j.misc.DirectionalDerivatives
-import no.mechatronics.sfi.fmi4j.misc.FmuFile
-import no.mechatronics.sfi.fmi4j.misc.VariableReader
-import no.mechatronics.sfi.fmi4j.misc.VariableWriter
-import no.mechatronics.sfi.fmi4j.wrapper.Fmi2Wrapper
-import no.mechatronics.sfi.fmi4j.jna.enums.Fmi2Status
-import no.mechatronics.sfi.fmi4j.jna.enums.Fmi2Type
+import no.mechatronics.sfi.fmi4j.proxy.enums.Fmi2Status
+import no.mechatronics.sfi.fmi4j.proxy.enums.Fmi2Type
+import no.mechatronics.sfi.fmi4j.misc.*
 import no.mechatronics.sfi.fmi4j.modeldescription.*
 import no.mechatronics.sfi.fmi4j.modeldescription.enums.*
-import no.mechatronics.sfi.fmi4j.wrapper.FmiMethod
-import no.mechatronics.sfi.fmi4j.wrapper.FmuState
+import no.mechatronics.sfi.fmi4j.misc.FmiMethod
+import no.mechatronics.sfi.fmi4j.misc.FmiState
+import no.mechatronics.sfi.fmi4j.proxy.Fmi2Wrapper
 import org.slf4j.LoggerFactory
 import java.util.function.Supplier
 import java.util.logging.Level
@@ -160,8 +157,21 @@ abstract class Fmu<E : Fmi2Wrapper<*>, T : ModelDescription> (
     /**
      * @see Fmi2Library.fmi2Reset
      */
-    fun reset() : Boolean {
-        return wrapper.reset() == Fmi2Status.OK
+    fun reset() = reset(true)
+
+    /**
+     * @see Fmi2Library.fmi2Reset
+     */
+    fun reset(requireReinit: Boolean) : Boolean {
+         if (wrapper.reset() == Fmi2Status.OK) {
+            if (requireReinit) {
+                isInitialized = false
+            } else {
+                wrapper.state = FmiState.INITIALISATION_MODE
+            }
+             return true
+         }
+        return false
     }
 
     fun checkGetScalar(vr: Int) : Boolean {
@@ -281,7 +291,7 @@ abstract class Fmu<E : Fmi2Wrapper<*>, T : ModelDescription> (
 
     fun getDirectionalDerivative(d: DirectionalDerivatives): Fmi2Status {
         if (!modelDescription.providesDirectionalDerivative) {
-            LOG.warn("FMU does not provide directional derivatives")
+            LOG.warn("Method call not allowed, FMU does not provide directional derivatives!")
             return Fmi2Status.Discard
         } else {
             return wrapper.getDirectionalDerivative(d.vUnknown_ref, d.vKnown_ref, d.dvKnown, d.dvUnknown)
@@ -291,7 +301,7 @@ abstract class Fmu<E : Fmi2Wrapper<*>, T : ModelDescription> (
 
     fun getFMUState() : FmuState? {
         if (!modelDescription.canGetAndSetFMUstate) {
-            LOG.warn("FMU cannot get and set FMU state")
+            LOG.warn("Method call not allowed, FMU cannot get and set FMU state!")
             return null
         } else {
             return wrapper.getFMUState()
@@ -300,7 +310,7 @@ abstract class Fmu<E : Fmi2Wrapper<*>, T : ModelDescription> (
 
     fun setFMUState(fmuState: FmuState): Fmi2Status {
         if (!modelDescription.canGetAndSetFMUstate) {
-            LOG.warn("FMU cannot get and set FMU state")
+            LOG.warn("Method call not allowed, FMU cannot get and set FMU state!")
             return Fmi2Status.Discard
         } else {
             return wrapper.setFMUState(fmuState)
@@ -309,7 +319,7 @@ abstract class Fmu<E : Fmi2Wrapper<*>, T : ModelDescription> (
 
     fun freeFMUState(fmuState: FmuState) : Fmi2Status {
         if (!modelDescription.canGetAndSetFMUstate) {
-            LOG.warn("FMU cannot get and set FMU state")
+            LOG.warn("Method call not allowed, FMU cannot get and set FMU state!")
             return Fmi2Status.Discard
         } else {
             return wrapper.freeFMUState(fmuState)

@@ -24,10 +24,11 @@
 
 package no.mechatronics.sfi.fmi4j.modeldescription
 
-import no.mechatronics.sfi.fmi4j.modeldescription.cs.CoSimulationModelDescription
+import org.apache.commons.io.IOUtils
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
+import java.nio.charset.Charset
 
 class ModelDescriptionTest {
 
@@ -38,10 +39,9 @@ class ModelDescriptionTest {
 
         val resourceAsStream = javaClass.classLoader.getResource("v2/cs/ControlledTemperature/ControlledTemperature.fmu")
         Assert.assertNotNull(resourceAsStream)
-      //  val xml = IOUtils.toString(resourceAsStream, Charset.forName("UTF-8"))
-        modelDescription = CoSimulationModelDescription.parseModelDescription(resourceAsStream)
-    }
+        modelDescription = ModelDescription.parseModelDescription(resourceAsStream)
 
+    }
 
     @Test
     fun getFmiVersion() {
@@ -77,6 +77,25 @@ class ModelDescriptionTest {
         Assert.assertEquals("-", value)
         println("licence=$value")
 
+    }
+
+}
+
+class VariableNamingConventionTest {
+
+    @Test
+    fun getVariableNamingConvention()  {
+        val xml = IOUtils.toString(ModelDescriptionTest::class.java.classLoader.getResourceAsStream("v2/cs/ControlledTemperature/modelDescription.xml"), Charset.forName("UTF-8"))
+        Assert.assertNotNull(xml)
+        //  println(xml)
+
+        val md = ModelDescription.parseModelDescription(xml)
+
+          println(md.variableNamingConvention)
+
+
+        Assert.assertTrue(md.fmiVersion == "2.0")
+        Assert.assertTrue(md.variableNamingConvention == VariableNamingConvention.STRUCTURED)
     }
 
 }

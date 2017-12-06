@@ -15,4 +15,5 @@ open class DirectionalDerivatives(
         dvKnown = DoubleArray(size)
         dvUnknown = DoubleArray(size)
     }
+
 }

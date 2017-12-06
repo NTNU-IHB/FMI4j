@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package no.mechatronics.sfi.fmi4j.misc
+package no.mechatronics.sfi.fmi4j
 
 import com.sun.jna.Platform
 import java.io.File
@@ -38,6 +38,14 @@ import java.nio.file.Files
 import java.util.zip.ZipEntry
 import java.util.zip.ZipFile
 
+private const val RESOURCES_FOLDER = "resources"
+private const val BINARIES_FOLDER = "binaries"
+private const val MAC_OS_FOLDER = "darwin"
+private const val WINDOWS_FOLDER = "win"
+private const val LINUX_FOLDER = "linux"
+private const val MAC_OS_LIBRARY_EXTENSION = ".dylib"
+private const val WINDOWS_LIBRARY_EXTENSION = ".dll"
+private const val LINUX_LIBRARY_EXTENSION = ".so"
 
 class FmuFile {
 
@@ -59,10 +67,8 @@ class FmuFile {
                 do  {
 
                     try {
-                        FileUtils.forceDelete(fmuFile)
-                        deletedSucessfully = true
+                        deletedSucessfully = fmuFile.deleteRecursively()
                     }catch (ex: Exception){
-                        println(ex)
                         Thread.sleep(100)
                     }
 
@@ -101,15 +107,14 @@ class FmuFile {
             FileUtils.writeByteArrayToFile(tmp, data)
 
             LOG.debug("Copied fmu from url into {}", tmp)
-
             val extractToTempFolder = extractToTempFolder(tmp)
 
             Files.deleteIfExists(tmp.toPath())
             LOG.debug("Deleted temp fmu file retrieved from url {}", tmp)
 
-            val file = extractToTempFolder
-            map[guid] = file
-            return file
+           return extractToTempFolder.also {
+               map[guid] = it
+           }
 
         }
 
@@ -124,10 +129,11 @@ class FmuFile {
             }
 
             val baseName = FilenameUtils.getBaseName(fmuFile.name).replace(FMI4J_PREFIX, "")
-            val tmpFolder = Files.createTempDirectory(FMI4J_PREFIX + baseName).toFile()
-            extractTo(fmuFile, tmpFolder)
-            map[guid] = tmpFolder
-            return tmpFolder
+            return Files.createTempDirectory(FMI4J_PREFIX + baseName).toFile().also {
+                extractTo(fmuFile, it)
+                map[guid] = it
+            }
+
 
         }
 
@@ -162,14 +168,7 @@ class FmuFile {
 
     }
 
-    private val RESOURCES_FOLDER = "resources"
-    private val BINARIES_FOLDER = "binaries"
-    private val MAC_OS_FOLDER = "darwin"
-    private val WINDOWS_FOLDER = "win"
-    private val LINUX_FOLDER = "linux"
-    private val MAC_OS_LIBRARY_EXTENSION = ".dylib"
-    private val WINDOWS_LIBRARY_EXTENSION = ".dll"
-    private val LINUX_LIBRARY_EXTENSION = ".so"
+
 
     private val fmuFile: File
 

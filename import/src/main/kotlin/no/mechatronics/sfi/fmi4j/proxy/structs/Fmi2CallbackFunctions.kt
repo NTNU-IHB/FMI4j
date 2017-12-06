@@ -22,14 +22,14 @@
  * THE SOFTWARE.
  */
 
-package no.mechatronics.sfi.fmi4j.jna.structs
+package no.mechatronics.sfi.fmi4j.proxy.structs
 
 
 import com.sun.jna.Callback
 import com.sun.jna.Memory
 import com.sun.jna.Pointer
 import com.sun.jna.Structure
-import no.mechatronics.sfi.fmi4j.jna.enums.Fmi2Status
+import no.mechatronics.sfi.fmi4j.proxy.enums.Fmi2Status
 import java.util.Arrays
 import java.util.HashSet
 import org.slf4j.LoggerFactory

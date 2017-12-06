@@ -24,8 +24,10 @@
 
 package no.mechatronics.sfi.fmi4j.modeldescription.me
 
-import javax.xml.bind.annotation.XmlAttribute
+import no.mechatronics.sfi.fmi4j.misc.SourceFile
+import javax.xml.bind.annotation.*
 
+@XmlAccessorType(XmlAccessType.FIELD)
 internal class ModelExchangeInfo {
 
     @XmlAttribute
@@ -51,6 +53,10 @@ internal class ModelExchangeInfo {
 
     @XmlAttribute
     val providesDirectionalDerivative: Boolean = false
+
+    @XmlElementWrapper(name = "SourceFiles")
+    @XmlElement(name = "File")
+    val sourceFiles: List<SourceFile>? = null
 
     override fun toString(): String {
         return "ModelExchangeInfo{modelIdentifier=$modelIdentifier, needsExecutionTool=$needsExecutionTool, completedIntegratorStepNotNeeded=$completedIntegratorStepNotNeeded, canBeInstantiatedOnlyOncePerProcess=$canBeInstantiatedOnlyOncePerProcess, canNotUseMemoryManagementFunctions=$canNotUseMemoryManagementFunctions, canGetAndSetFMUstate=$canGetAndSetFMUstate, canSerializeFMUstate=$canSerializeFMUstate, providesDirectionalDerivative=$providesDirectionalDerivative}"

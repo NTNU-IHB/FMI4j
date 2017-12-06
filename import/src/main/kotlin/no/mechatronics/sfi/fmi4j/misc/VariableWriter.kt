@@ -25,7 +25,7 @@
 package no.mechatronics.sfi.fmi4j.misc
 
 import no.mechatronics.sfi.fmi4j.Fmu
-import no.mechatronics.sfi.fmi4j.jna.enums.Fmi2Status
+import no.mechatronics.sfi.fmi4j.proxy.enums.Fmi2Status
 
 
 class VariableWriter internal constructor(

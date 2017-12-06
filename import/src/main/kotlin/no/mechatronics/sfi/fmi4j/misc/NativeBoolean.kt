@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package no.mechatronics.sfi.fmi4j.jna
+package no.mechatronics.sfi.fmi4j.misc
 
 
 internal fun convert(fmi2Boolean: Byte): Boolean {

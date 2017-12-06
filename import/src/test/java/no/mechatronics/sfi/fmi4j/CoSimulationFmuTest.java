@@ -26,18 +26,17 @@ package no.mechatronics.sfi.fmi4j;
 
 
 import no.mechatronics.sfi.fmi4j.misc.VariableReader;
-import no.mechatronics.sfi.fmi4j.jna.enums.Fmi2Status;
+import no.mechatronics.sfi.fmi4j.proxy.enums.Fmi2Status;
 import no.mechatronics.sfi.fmi4j.modeldescription.RealVariable;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
-
 import java.io.IOException;
 import java.net.URL;
 
 public class CoSimulationFmuTest {
 
-    Fmi2Simulation fmu;
+    private FmiSimulation fmu;
 
     @Before
     public void setUp() throws IOException {
@@ -90,7 +89,7 @@ public class CoSimulationFmuTest {
 
         }
 
-        fmu.reset();
+        fmu.reset(false);
 
         Assert.assertTrue(fmu.getLastStatus() == Fmi2Status.OK);
 
@@ -102,6 +101,7 @@ public class CoSimulationFmuTest {
             if (i == 0) {
                 Assert.assertEquals(first1, value, 0);
             }
+            System.out.println(value);
 
         }
 

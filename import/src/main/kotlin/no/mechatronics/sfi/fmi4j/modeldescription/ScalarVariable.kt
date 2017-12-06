@@ -25,7 +25,7 @@
 package no.mechatronics.sfi.fmi4j.modeldescription
 
 import no.mechatronics.sfi.fmi4j.modeldescription.enums.*
-import no.mechatronics.sfi.fmi4j.wrapper.Fmi2Wrapper
+import no.mechatronics.sfi.fmi4j.proxy.Fmi2Wrapper
 import org.w3c.dom.Node
 import javax.xml.bind.JAXBContext
 import javax.xml.bind.annotation.*
@@ -36,8 +36,8 @@ interface IScalarVariable {
 
     /**
      * The full, unique name of the variable. Every variable is uniquely identified within an FMU
-    instance by this name or by its ScalarVariable index (the element position in the
-    ModelVariables list; the first list element has index=1).
+     * instance by this name or by its ScalarVariable index (the element position in the
+     * ModelVariables list; the first list element has index=1).
      */
     val name: String
     val declaredType: String
@@ -51,11 +51,11 @@ interface IScalarVariable {
 
     /**
      * A handle of the variable to efficiently identify the variable value in the model interface.
-    This handle is a secret of the tool that generated the C functions. It is not required to be
-    unique. The only guarantee is that valueReference is sufficient to identify the respective variable value in the call of the C functions. This implies that it is unique for a
-    particular base data type (Real, Integer/Enumeration, Boolean, String) with
-    exception of variables that have identical values (such variables are also called “alias”
-    variables). This attribute is “required”.
+     * This handle is a secret of the tool that generated the C functions. It is not required to be
+     * unique. The only guarantee is that valueReference is sufficient to identify the respective variable value in the call of the C functions. This implies that it is unique for a
+     * particular base data type (Real, Integer/Enumeration, Boolean, String) with
+     * exception of variables that have identical values (such variables are also called “alias”
+     * variables). This attribute is “required”.
      */
     val valueReference: Int
 
@@ -65,21 +65,20 @@ interface ScalarVariable<E> : IScalarVariable {
 
     val typeName: String
     /**
-     * /**
+     *
      * Initial or guess value of variable. This value is also stored in the C functions
-    [Therefore, calling fmi2SetXXX to set start values is only necessary, if a different
-    value as stored in the xml file is desired.] The interpretation of start is defined by
-    ScalarVariable / initial. A different start value can be provided with an
-    fmi2SetXXX function before fmi2ExitInitializationMode is called (but not
-    for variables with variability = ″constant″).
-    [The standard approach is to set the start value before
-    fmi2EnterInitializationMode. However, if the initialization shall be modified
-    in the calling environment (e.g. changing from initialization of states to steadystate
-    initialization), it is also possible to use the start value as iteration variable of
-    an algebraic loop: Via an additional condition in the environment, such as 𝑥̇ = 0,
-    the actual start value is determined.]
+     * [Therefore, calling fmi2SetXXX to set start values is only necessary, if a different
+     * value as stored in the xml file is desired.] The interpretation of start is defined by
+     * ScalarVariable / initial. A different start value can be provided with an
+     * fmi2SetXXX function before fmi2ExitInitializationMode is called (but not
+     * for variables with variability = ″constant″).
+     * [The standard approach is to set the start value before
+     * fmi2EnterInitializationMode. However, if the initialization shall be modified
+     * in the calling environment (e.g. changing from initialization of states to steadystate
+     * initialization), it is also possible to use the start value as iteration variable of
+     * an algebraic loop: Via an additional condition in the environment, such as 𝑥̇ = 0,
+     * the actual start value is determined.]
     */
-     */
     var start: E?
     var value: E
 
@@ -129,7 +128,7 @@ public class ScalarVariableImpl : IScalarVariable {
     override val initial: Initial? = null
 
     @XmlAttribute(name="valueReference")
-    private var _valueReference: Int? = null
+    private val _valueReference: Int? = null
 
     /**
      * @inheritDoc
@@ -140,16 +139,16 @@ public class ScalarVariableImpl : IScalarVariable {
         }
 
     @XmlElement(name="Integer")
-    internal var integerAttribute: IntegerAttribute? = null
+    internal val integerAttribute: IntegerAttribute? = null
 
     @XmlElement(name="Real")
-    internal var realAttribute: RealAttribute? = null
+    internal val realAttribute: RealAttribute? = null
 
     @XmlElement(name="String")
-    internal var stringAttribute: StringAttribute? = null
+    internal val stringAttribute: StringAttribute? = null
 
     @XmlElement(name="Boolean")
-    internal var booleanAttribute: BooleanAttribute? = null
+    internal val booleanAttribute: BooleanAttribute? = null
 
     override fun toString(): String {
         return "ScalarVariableImpl(name='$name', declaredType='$declaredType', description='$description', causality=$causality, variability=$variability, initial=$initial)"
@@ -162,22 +161,20 @@ public class ScalarVariableImpl : IScalarVariable {
 internal class IntegerAttribute {
 
     /**
-     * /**
      * Minimum value of variable (variable Value ≥ min). If not defined, the
-    minimum is the largest negative number that can be represented on the
-    machine. The min definition is an information from the FMU to the
-    environment defining the region in which the FMU is designed to operate, see
-    also comment after this table.
-    */
+     * minimum is the largest negative number that can be represented on the
+     * machine. The min definition is an information from the FMU to the
+     * environment defining the region in which the FMU is designed to operate, see
+     * also comment after this table.
      */
     @XmlAttribute
     val min: Int? = null
     /**
      * Maximum value of variable (variableValue ≤ max). If not defined, the
-    maximum is the largest positive number that can be represented on the
-    machine. The max definition is an information from the FMU to the
-    environment defining the region in which the FMU is designed to operate, see
-    also comment after this table.
+     * maximum is the largest positive number that can be represented on the
+     * machine. The max definition is an information from the FMU to the
+     * environment defining the region in which the FMU is designed to operate, see
+     * also comment after this table.
      */
     @XmlAttribute
     val max: Int? = null
@@ -203,21 +200,21 @@ internal class RealAttribute {
     val min: Double? = null
     /**
      * Maximum value of variable (variableValue ≤ max). If not defined, the
-    maximum is the largest positive number that can be represented on the
-    machine. The max definition is an information from the FMU to the
-    environment defining the region in which the FMU is designed to operate, see
-    also comment after this table.
+     * maximum is the largest positive number that can be represented on the
+     * machine. The max definition is an information from the FMU to the
+     * environment defining the region in which the FMU is designed to operate, see
+     * also comment after this table.
      */
     @XmlAttribute
     val max: Double? = null
     /**
      * Nominal value of variable. If not defined and no other information about the
-    nominal value is available, then nominal = 1 is assumed.
-    [The nominal value of a variable can be, for example used to determine the
-    absolute tolerance for this variable as needed by numerical algorithms:
-    absoluteTolerance = nominal*tolerance*0.01
-    where tolerance is, e.g., the relative tolerance defined in
-    <DefaultExperiment>, see section 2.2.5.]
+     * nominal value is available, then nominal = 1 is assumed.
+     * [The nominal value of a variable can be, for example used to determine the
+     * absolute tolerance for this variable as needed by numerical algorithms:
+     * absoluteTolerance = nominal*tolerance*0.01
+     * where tolerance is, e.g., the relative tolerance defined in
+     * <DefaultExperiment>, see section 2.2.5.]
      */
     @XmlAttribute
     val nominal : Double?  = null
@@ -233,13 +230,12 @@ internal class RealAttribute {
     val derivative: Int? = null
     /**
      * If true, indicates that the variable gets during time integration much larger
-    than its nominal value nominal. [Typical examples are the monotonically
-    increasing rotation angles of crank shafts and the longitudinal position of a
-    vehicle along the track in long distance simulations. This information can, for
-    example, be used to increase numerical stability and accuracy by setting the
-    corresponding bound for the relative error to zero (relative tolerance = 0.0), if
-    the corresponding variable or an alias of it is a continuous state variable.]
-
+     * than its nominal value nominal. [Typical examples are the monotonically
+     * increasing rotation angles of crank shafts and the longitudinal position of a
+     * vehicle along the track in long distance simulations. This information can, for
+     * example, be used to increase numerical stability and accuracy by setting the
+     * corresponding bound for the relative error to zero (relative tolerance = 0.0), if
+     * the corresponding variable or an alias of it is a continuous state variable.]
      */
     @XmlAttribute
     val unbounded: Boolean? = null
@@ -253,31 +249,31 @@ internal class RealAttribute {
     val reint: Boolean = false
     /**
      * Physical quantity of the variable, for example “Angle”, or “Energy”. The
-    quantity names are not standardized.
+     * quantity names are not standardized.
      */
     @XmlAttribute
     val quantity: String? = null
     /**
      * Unit of the variable defined with UnitDefinitions.Unit.name that is used
-    for the model equations [, for example “N.m”: in this case a Unit.name =
-    "N.m" must be present under UnitDefinitions].
+     * for the model equations [, for example “N.m”: in this case a Unit.name =
+     * "N.m" must be present under UnitDefinitions].
      */
     @XmlAttribute
     val unit: String? = null
     /**
      * Default display unit. The conversion to the “unit” is defined with the element
-    “<fmiModelDescription><UnitDefinitions>”. If the corresponding
-    “displayUnit” is not defined under <UnitDefinitions> <Unit>
-    <DisplayUnit>, then displayUnit is ignored. It is an error if
-    displayUnit is defined in element Real, but unit is not, or unit is not
-    defined under <UnitDefinitions><Unit>.
+     * “<fmiModelDescription><UnitDefinitions>”. If the corresponding
+     * “displayUnit” is not defined under <UnitDefinitions> <Unit>
+     * <DisplayUnit>, then displayUnit is ignored. It is an error if
+     * displayUnit is defined in element Real, but unit is not, or unit is not
+     * defined under <UnitDefinitions><Unit>.
      */
     @XmlAttribute
     val displayUnit: String? = null
     /**
      * If this attribute is true, then the “offset” of “displayUnit” must be ignored
-    (for example 10 degree Celsius = 10 Kelvin if “relativeQuantity = true”
-    and not 283,15 Kelvin).
+     * (for example 10 degree Celsius = 10 Kelvin if “relativeQuantity = true”
+     * and not 283,15 Kelvin).
      */
     @XmlAttribute
     val relativeQuantity: String? = null
@@ -291,7 +287,7 @@ internal class StringAttribute  {
      * @inheritDoc
      */
     @XmlAttribute
-     var start: String? = null
+     val start: String? = null
 
 }
 
@@ -302,7 +298,7 @@ internal class BooleanAttribute  {
      * @inheritDoc
      */
     @XmlAttribute
-     var start: Boolean? = null
+     val start: Boolean? = null
 
 }
 
@@ -453,10 +449,11 @@ class ScalarVariableAdapter : XmlAdapter<Any, ScalarVariable<*>>() {
         val node = v as Node
         val child = node.childNodes.item(0)
 
-        val ctx = JAXBContext.newInstance(ScalarVariableImpl::class.java)
-        val unmarshaller = ctx.createUnmarshaller()
-
-        val unmarshal = unmarshaller.unmarshal(node, ScalarVariableImpl::class.java).value
+        val unmarshal by lazy {
+            val ctx = JAXBContext.newInstance(ScalarVariableImpl::class.java)
+            val unmarshaller = ctx.createUnmarshaller()
+            unmarshaller.unmarshal(node, ScalarVariableImpl::class.java).value
+        }
 
             when (child.nodeName) {
 
@@ -464,7 +461,7 @@ class ScalarVariableAdapter : XmlAdapter<Any, ScalarVariable<*>>() {
                 "Real" -> return RealVariable(unmarshal)
                 "String" -> return StringVariable(unmarshal)
                 "Boolean" -> return BooleanVariable(unmarshal)
-                else -> throw RuntimeException("not good")
+                else -> throw RuntimeException("Error parsing XML. Unable to understand of what type the ScalarVariable is..")
 
             }
 
@@ -474,5 +471,6 @@ class ScalarVariableAdapter : XmlAdapter<Any, ScalarVariable<*>>() {
     override fun marshal(v: ScalarVariable<*>?): Any {
         TODO("not implemented")
     }
+
 }
 

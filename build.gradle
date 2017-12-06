@@ -29,8 +29,6 @@ subprojects {
 
         compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"
 
-        compile group: 'commons-io', name: 'commons-io', version: '2.5'
-
         compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.21'
         runtime group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.7.21'
 
@@ -43,8 +41,6 @@ subprojects {
     compileTestKotlin {
         kotlinOptions.jvmTarget = "1.8"
     }
-
-
 
 
 
