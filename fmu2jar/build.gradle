@@ -9,7 +9,7 @@ repositories {
 
 dependencies {
 
-    // compile group: 'no.mechatronics.sfi.fmu2jar', name: "ControlledTemperature", "version": "1.0-SNAPSHOT" //for testing
+     //compile group: 'no.mechatronics.sfi.fmu2jar', name: "ControlledTemperature", "version": "1.0-SNAPSHOT" //for testing
 
     compile group: 'commons-cli', name: 'commons-cli', version: '1.4'
 

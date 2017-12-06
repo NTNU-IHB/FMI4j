@@ -72,3 +72,67 @@ E.g. an FMU with a variable named "Controller.speed" of type Real, will have the
 fmi2jar -fmu "fmu/location.fmu" -out "where/to/put/generated/jar"
 ```
 add ```-mavenLocal``` if you want the .jar to be installed in your local maven repository
+
+#### API example from kotlin
+```kotlin
+    with(ControlledTemperature.build()) { 
+        val temperature_Reference: Double = parameters.getTemperatureSource_T()        
+    }
+```
+
+```java
+    ControlledTemperature fmu = ControlledTemperature.build().build();
+    double temperature_Reference = fmu.getParameters().getTemperatureSource_T()
+```
+
+
+Here is an example of how the  generated code looks like:
+Notice how the javadoc is populated with info from the ```modelDescription.xml```, and variables are sorted by their causality.
+
+
+```kotlin
+
+class ControlledTemperature private constructor(
+    val fmu: FmiSimulation
+) : FmiSimulation by fmu {
+
+    companion object {
+        // fmu unpacking code
+    }
+
+    val inputs = Inputs()
+    val outputs = Outputs()
+    val parameters = Parameters()
+    val calculatedParameters = CalculatedParameters()
+    val locals = Locals()
+
+    inner class Inputs {
+    }
+
+    inner class Outputs {
+
+        
+            /**
+             * Causality=OUTPUT
+             * Variability=CONTINUOUS
+             */
+            fun getTemperature_Reference(): Double {
+                return fmu.read(46).asReal()
+            }
+            
+            /**
+             * Causality=OUTPUT
+             * Variability=CONTINUOUS
+             */
+            fun getTemperature_Room(): Double {
+                return fmu.read(47).asReal()
+            }
+            
+            
+            ....
+            
+    }
+    
+}
+
+```
