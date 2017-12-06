@@ -73,13 +73,13 @@ fmi2jar -fmu "fmu/location.fmu" -out "where/to/put/generated/jar"
 ```
 add ```-mavenLocal``` if you want the .jar to be installed in your local maven repository
 
-#### API example from kotlin
+##### API example from kotlin
 ```kotlin
     with(ControlledTemperature.build()) { 
         val temperature_Reference: Double = parameters.getTemperatureSource_T()        
     }
 ```
-
+##### API example from java
 ```java
     ControlledTemperature fmu = ControlledTemperature.build().build();
     double temperature_Reference = fmu.getParameters().getTemperatureSource_T()
