@@ -25,6 +25,7 @@
 package no.mechatronics.sfi.fmi4j
 
 import no.mechatronics.sfi.fmi4j.proxy.structs.Fmi2EventInfo
+import org.apache.commons.math3.ode.FirstOrderDifferentialEquations
 import org.apache.commons.math3.ode.FirstOrderIntegrator
 import org.apache.commons.math3.ode.nonstiff.EulerIntegrator
 import org.slf4j.Logger
@@ -92,6 +93,22 @@ class ModelExchangeFmuWithIntegrator @JvmOverloads constructor(
 
     private val eventInfo: Fmi2EventInfo = Fmi2EventInfo()
 
+    override var currentTime: Double = 0.0
+        protected set
+
+    val ode: FirstOrderDifferentialEquations by lazy {
+        object : FirstOrderDifferentialEquations {
+            override fun getDimension(): Int =  modelDescription.numberOfContinuousStates
+
+            override fun computeDerivatives(time: Double, y: DoubleArray, yDot: DoubleArray) {
+
+                getDerivatives(yDot)
+
+            }
+        }
+    }
+
+
     init {
 
         val numberOfContinuousStates = modelDescription.numberOfContinuousStates
@@ -107,6 +124,7 @@ class ModelExchangeFmuWithIntegrator @JvmOverloads constructor(
      override fun init(start: Double, stop: Double) : Boolean {
 
         if (super.init(start, stop)) {
+            currentTime = start
             eventInfo.setNewDiscreteStatesNeededTrue()
             eventInfo.setTerminateSimulationFalse()
 
@@ -118,7 +136,7 @@ class ModelExchangeFmuWithIntegrator @JvmOverloads constructor(
                 }
             }
             enterContinuousTimeMode()
-           // fmu.getContinuousStates(states)
+            //getContinuousStates(states)
             getEventIndicators(eventIndicators)
 
             return true
@@ -136,29 +154,28 @@ class ModelExchangeFmuWithIntegrator @JvmOverloads constructor(
         val stopTime =  time + dt
 
         var tNext: Double
-        while ( time < stopTime) {
+        while ( time < stopTime ) {
 
             tNext = Math.min( time +  dt, stopTime);
 
-            val timeEvent = eventInfo.getNextEventTimeDefined() != false && eventInfo.nextEventTime <= time
+            val timeEvent = eventInfo.getNextEventTimeDefined() && eventInfo.nextEventTime <= time
             if (timeEvent) {
                 tNext = eventInfo.nextEventTime
             }
 
             var stateEvent = false
-            if (tNext -  time > 1E-12) {
-                val solve = solve(tNext)
+            if (tNext -  time > 1E-13) {
+                val solve = solve(time, tNext)
                 stateEvent = solve.stateEvent
                 time = solve.time
             } else {
                 time = tNext
             }
 
-            setTime( time )
+            setTime(time)
 
             val completedIntegratorStep =  completedIntegratorStep()
             if (completedIntegratorStep.terminateSimulation) {
-
                 terminate()
                 return false
             }
@@ -171,13 +188,19 @@ class ModelExchangeFmuWithIntegrator @JvmOverloads constructor(
                 eventInfo.setNewDiscreteStatesNeededTrue()
                 eventInfo.setTerminateSimulationFalse()
 
-                while (eventInfo.getNewDiscreteStatesNeeded() && !eventInfo.getTerminateSimulation()) {
+                while (eventInfo.getNewDiscreteStatesNeeded()) {
                     newDiscreteStates(eventInfo)
+                    if (eventInfo.getTerminateSimulation()) {
+                        terminate()
+                        return false
+                    }
                 }
                 enterContinuousTimeMode()
             }
 
+
         }
+         currentTime = time
          return true
     }
 
@@ -186,13 +209,13 @@ class ModelExchangeFmuWithIntegrator @JvmOverloads constructor(
             val time: Double
     )
 
-    private fun solve(tNext:Double) : SolveResult {
+    private fun solve(t: Double, tNext:Double) : SolveResult {
 
         getContinuousStates(states)
-        getDerivatives(derivatives)
+        //getDerivatives(derivatives)
 
-        val dt = tNext - currentTime
-        val t = integrator.integrate(ode, currentTime, states, currentTime + dt, states)
+        val dt = tNext - t
+        val t = integrator.integrate(ode, t, states, currentTime + dt, states)
 
         setContinousStates(states)
 

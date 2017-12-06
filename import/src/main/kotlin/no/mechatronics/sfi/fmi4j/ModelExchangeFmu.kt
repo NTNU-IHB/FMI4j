@@ -53,16 +53,6 @@ open class ModelExchangeFmu(
 
     }
 
-    val ode: FirstOrderDifferentialEquations by lazy {
-        object : FirstOrderDifferentialEquations {
-            override fun getDimension(): Int =  modelDescription.numberOfContinuousStates
-
-            override fun computeDerivatives(t: Double, y: DoubleArray?, yDot: DoubleArray?) {
-                getDerivatives(yDot!!)
-            }
-        }
-    }
-
     companion object {
         @JvmStatic
         fun newBuilder(fmuFile: FmuFile) = Builder(fmuFile)
@@ -85,10 +75,7 @@ open class ModelExchangeFmu(
         ModelExchangeModelDescription.parseModelDescription(fmuFile.getModelDescriptionXml())
     }
 
-    fun setTime(time: Double) {
-        currentTime = time
-        wrapper.setTime(currentTime)
-    }
+    fun setTime(time: Double) = wrapper.setTime(time)
 
     fun setContinousStates(x: DoubleArray) = wrapper.setContinousStates(x)
 

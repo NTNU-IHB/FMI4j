@@ -80,6 +80,15 @@ open class CoSimulationFmu (
         CoSimulationModelDescription.parseModelDescription(fmuFile.getModelDescriptionXml())
     }
 
+    override var currentTime: Double = 0.0
+        protected set
+
+    override fun init(start: Double, stop: Double): Boolean {
+        return super.init(start, stop).also {
+            currentTime = start
+        }
+
+    }
 
     override fun doStep(dt: Double) : Boolean {
 

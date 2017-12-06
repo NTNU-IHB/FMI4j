@@ -54,9 +54,6 @@ abstract class Fmu<E : Fmi2Wrapper<*>, T : ModelDescription> (
        return modelDescription.modelVariables
     }
 
-    var currentTime: Double = 0.0
-    protected set
-
     var isInstantiated = false
     private set
     var isInitialized = false
@@ -120,8 +117,7 @@ abstract class Fmu<E : Fmi2Wrapper<*>, T : ModelDescription> (
             assignStartValues()
 
             val stopDefined = stop > start
-            currentTime = start
-            wrapper.setupExperiment(true, 1E-4, currentTime, stopDefined, if (stopDefined) stop else Double.MAX_VALUE)
+            wrapper.setupExperiment(true, 1E-4, start, stopDefined, if (stopDefined) stop else Double.MAX_VALUE)
 
 
             wrapper.enterInitializationMode()

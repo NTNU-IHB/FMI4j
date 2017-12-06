@@ -27,6 +27,7 @@ package no.mechatronics.sfi.fmi4j;
 import no.mechatronics.sfi.fmi4j.proxy.enums.Fmi2Status;
 import no.mechatronics.sfi.fmi4j.modeldescription.RealVariable;
 import org.apache.commons.math3.ode.FirstOrderIntegrator;
+import org.apache.commons.math3.ode.nonstiff.ClassicalRungeKuttaIntegrator;
 import org.apache.commons.math3.ode.nonstiff.EulerIntegrator;
 import org.junit.After;
 import org.junit.Assert;
@@ -47,8 +48,8 @@ public class ModelExchangeTest {
         FirstOrderIntegrator integrator;
         //integrator= new DormandPrince853Integrator(1E-8, 1.0, 1E-10, 1E-10);
 //        integrator = new AdamsBashforthIntegrator(100, 1E-10, 1.0, 1E-10, 1E-10);
-        // integrator = new ClassicalRungeKuttaIntegrator(1E-3);
-         integrator = new EulerIntegrator(1E-3);
+         integrator = new ClassicalRungeKuttaIntegrator(1E-3);
+        // integrator = new EulerIntegrator(1E-3);
 
         fmu = ModelExchangeFmuWithIntegrator.newBuilder(url)
                .loggingOn(false)
@@ -77,7 +78,7 @@ public class ModelExchangeTest {
 
         double macroStep = 1.0/100;
 
-        while (fmu.getCurrentTime() < 5) {
+        while (fmu.getCurrentTime() < 10) {
 
             System.out.println("t=" + fmu.getCurrentTime() + ", height=" + h.getValue());
 
