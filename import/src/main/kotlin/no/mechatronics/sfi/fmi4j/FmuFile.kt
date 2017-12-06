@@ -93,7 +93,6 @@ class FmuFile {
         @Throws(IOException::class)
         private fun extractToTempFolder(url: URL): File {
 
-
             val modelDescription = ModelDescription.parseModelDescription(url)
             val guid = modelDescription.guid
 

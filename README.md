@@ -69,6 +69,6 @@ E.g. an FMU with a variable named "Controller.speed" of type Real, will have the
 ### Usage
 
 ```
-fmi2jar -fmu "fmu/location.fmu" -outputFolder "where/to/put/generated/jar"
+fmi2jar -fmu "fmu/location.fmu" -out "where/to/put/generated/jar"
 ```
 add ```-mavenLocal``` if you want the .jar to be installed in your local maven repository
