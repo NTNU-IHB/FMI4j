@@ -26,7 +26,7 @@ class GenerateOptions(
 }
 
 class Fmu2Jar(
-        private val file:File
+        private val file: File
 ) {
 
     private val modelDescription: ModelDescription
@@ -151,3 +151,4 @@ class Fmu2Jar(
 
 
 }
+

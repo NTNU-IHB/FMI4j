@@ -11,12 +11,12 @@ class Main  {
   companion object {
 
       const val FMU_FILE = "fmu"
-      const val OUTPUT_FOLDER = "outputFolder"
+      const val OUTPUT_FOLDER = "out"
       const val MAVEN_LOCAL_OPT = "mavenLocal"
 
 
       @JvmStatic
-      public fun main(args: Array<String>) {
+      fun main(args: Array<String>) {
 
           if (args.size == 0) {
               println("No input.. exiting")
