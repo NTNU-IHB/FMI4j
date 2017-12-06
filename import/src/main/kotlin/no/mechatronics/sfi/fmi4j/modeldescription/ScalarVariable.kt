@@ -25,7 +25,7 @@
 package no.mechatronics.sfi.fmi4j.modeldescription
 
 import no.mechatronics.sfi.fmi4j.modeldescription.enums.*
-import no.mechatronics.sfi.fmi4j.wrapper.Fmi2Wrapper
+import no.mechatronics.sfi.fmi4j.proxy.Fmi2Wrapper
 import org.w3c.dom.Node
 import javax.xml.bind.JAXBContext
 import javax.xml.bind.annotation.*
@@ -128,7 +128,7 @@ public class ScalarVariableImpl : IScalarVariable {
     override val initial: Initial? = null
 
     @XmlAttribute(name="valueReference")
-    private var _valueReference: Int? = null
+    private val _valueReference: Int? = null
 
     /**
      * @inheritDoc
@@ -139,16 +139,16 @@ public class ScalarVariableImpl : IScalarVariable {
         }
 
     @XmlElement(name="Integer")
-    internal var integerAttribute: IntegerAttribute? = null
+    internal val integerAttribute: IntegerAttribute? = null
 
     @XmlElement(name="Real")
-    internal var realAttribute: RealAttribute? = null
+    internal val realAttribute: RealAttribute? = null
 
     @XmlElement(name="String")
-    internal var stringAttribute: StringAttribute? = null
+    internal val stringAttribute: StringAttribute? = null
 
     @XmlElement(name="Boolean")
-    internal var booleanAttribute: BooleanAttribute? = null
+    internal val booleanAttribute: BooleanAttribute? = null
 
     override fun toString(): String {
         return "ScalarVariableImpl(name='$name', declaredType='$declaredType', description='$description', causality=$causality, variability=$variability, initial=$initial)"
@@ -161,13 +161,11 @@ public class ScalarVariableImpl : IScalarVariable {
 internal class IntegerAttribute {
 
     /**
-     * /**
      * Minimum value of variable (variable Value ≥ min). If not defined, the
      * minimum is the largest negative number that can be represented on the
      * machine. The min definition is an information from the FMU to the
      * environment defining the region in which the FMU is designed to operate, see
      * also comment after this table.
-    */
      */
     @XmlAttribute
     val min: Int? = null
@@ -289,7 +287,7 @@ internal class StringAttribute  {
      * @inheritDoc
      */
     @XmlAttribute
-     var start: String? = null
+     val start: String? = null
 
 }
 
@@ -300,7 +298,7 @@ internal class BooleanAttribute  {
      * @inheritDoc
      */
     @XmlAttribute
-     var start: Boolean? = null
+     val start: Boolean? = null
 
 }
 
@@ -473,5 +471,6 @@ class ScalarVariableAdapter : XmlAdapter<Any, ScalarVariable<*>>() {
     override fun marshal(v: ScalarVariable<*>?): Any {
         TODO("not implemented")
     }
+
 }
 

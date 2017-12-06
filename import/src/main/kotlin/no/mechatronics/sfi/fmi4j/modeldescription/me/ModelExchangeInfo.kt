@@ -56,7 +56,7 @@ internal class ModelExchangeInfo {
 
     @XmlElementWrapper(name = "SourceFiles")
     @XmlElement(name = "File")
-    var sourceFiles: List<SourceFile>? = null
+    val sourceFiles: List<SourceFile>? = null
 
     override fun toString(): String {
         return "ModelExchangeInfo{modelIdentifier=$modelIdentifier, needsExecutionTool=$needsExecutionTool, completedIntegratorStepNotNeeded=$completedIntegratorStepNotNeeded, canBeInstantiatedOnlyOncePerProcess=$canBeInstantiatedOnlyOncePerProcess, canNotUseMemoryManagementFunctions=$canNotUseMemoryManagementFunctions, canGetAndSetFMUstate=$canGetAndSetFMUstate, canSerializeFMUstate=$canSerializeFMUstate, providesDirectionalDerivative=$providesDirectionalDerivative}"

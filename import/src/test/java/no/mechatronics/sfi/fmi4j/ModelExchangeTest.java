@@ -24,11 +24,9 @@
 
 package no.mechatronics.sfi.fmi4j;
 
-import no.mechatronics.sfi.fmi4j.jna.enums.Fmi2Status;
-import no.mechatronics.sfi.fmi4j.misc.FmuFile;
+import no.mechatronics.sfi.fmi4j.proxy.enums.Fmi2Status;
 import no.mechatronics.sfi.fmi4j.modeldescription.RealVariable;
 import org.apache.commons.math3.ode.FirstOrderIntegrator;
-import org.apache.commons.math3.ode.nonstiff.ClassicalRungeKuttaIntegrator;
 import org.apache.commons.math3.ode.nonstiff.EulerIntegrator;
 import org.junit.After;
 import org.junit.Assert;
@@ -39,7 +37,7 @@ import java.net.URL;
 
 public class ModelExchangeTest {
 
-    private Fmi2Simulation fmu;
+    private FmiSimulation fmu;
 
     @Before
     public void setUp() throws IOException {
@@ -77,7 +75,7 @@ public class ModelExchangeTest {
         fmu.init();
         Assert.assertTrue(fmu.getLastStatus() == Fmi2Status.OK);
 
-        double macroStep = 1E-1;
+        double macroStep = 1.0/100;
 
         while (fmu.getCurrentTime() < 5) {
 

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<fmiModelDescription fmiVersion="2.0" modelName="ControlledTemperature" guid="{06c2700b-b39c-4895-9151-304ddde28443}" generationTool="20-sim" numberOfEventIndicators="0" copyright="Controllab Products B.V." license="-">
+<fmiModelDescription fmiVersion="2.0" modelName="ControlledTemperature" guid="{06c2700b-b39c-4895-9151-304ddde28443}" generationTool="20-sim" numberOfEventIndicators="0" copyright="Controllab Products B.V." license="-" variableNamingConvention="structured">
 <CoSimulation modelIdentifier="ControlledTemperature" needsExecutionTool="false" canHandleVariableCommunicationStepSize="true" canInterpolateInputs="false" maxOutputDerivativeOrder="0" canRunAsynchronuously="false" canBeInstantiatedOnlyOncePerProcess="false" canNotUseMemoryManagementFunctions="true" canGetAndSetFMUstate="false" canSerializeFMUstate="false" providesDirectionalDerivative="false">
 <SourceFiles>
 <File name="EulerAngles.c" />

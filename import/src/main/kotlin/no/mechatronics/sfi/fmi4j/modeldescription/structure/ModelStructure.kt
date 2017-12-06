@@ -30,15 +30,26 @@ import javax.xml.bind.annotation.XmlElement
 import javax.xml.bind.annotation.XmlElementWrapper
 
 
+@XmlAccessorType(XmlAccessType.FIELD)
+class Unknown(
+        val index: Int = 0
+) {
+    override fun toString(): String {
+        return "Unknown(index=$index)"
+    }
+}
+
+
+
 /**
  * Defines the structure of the model. Especially, the ordered lists of
-outputs, continuous-time states and initial unknowns (the unknowns
-during Initialization Mode) are defined here. Furthermore, the
-dependency of the unkowns from the knowns can be optionally
-defined. [This information can be, for example used to compute
-efficiently a sparse Jacobian for simulation or to utilize the
-input/output dependency in order to detect that in some cases there
-are actually no algebraic loops when connecting FMUs together].
+ * outputs, continuous-time states and initial unknowns (the unknowns
+ * during Initialization Mode) are defined here. Furthermore, the
+ * dependency of the unkowns from the knowns can be optionally
+ * defined. [This information can be, for example used to compute
+ * efficiently a sparse Jacobian for simulation or to utilize the
+ * input/output dependency in order to detect that in some cases there
+ * are actually no algebraic loops when connecting FMUs together].
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 class ModelStructure {

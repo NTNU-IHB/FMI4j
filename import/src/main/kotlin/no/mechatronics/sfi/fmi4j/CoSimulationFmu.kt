@@ -25,11 +25,11 @@
 package no.mechatronics.sfi.fmi4j
 
 import no.mechatronics.sfi.fmi4j.misc.FmuFile
-import no.mechatronics.sfi.fmi4j.jna.enums.Fmi2Status
-import no.mechatronics.sfi.fmi4j.jna.enums.Fmi2StatusKind
-import no.mechatronics.sfi.fmi4j.jna.enums.Fmi2Type
-import no.mechatronics.sfi.fmi4j.wrapper.Fmi2CoSimulationWrapper
+import no.mechatronics.sfi.fmi4j.proxy.enums.Fmi2Status
+import no.mechatronics.sfi.fmi4j.proxy.enums.Fmi2StatusKind
+import no.mechatronics.sfi.fmi4j.proxy.enums.Fmi2Type
 import no.mechatronics.sfi.fmi4j.modeldescription.cs.CoSimulationModelDescription
+import no.mechatronics.sfi.fmi4j.proxy.Fmi2CoSimulationWrapper
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.File
@@ -37,7 +37,7 @@ import java.net.URL
 
 open class CoSimulationFmu (
         fmuFile: FmuFile
-): Fmu<Fmi2CoSimulationWrapper, CoSimulationModelDescription>(fmuFile), Fmi2Simulation {
+): Fmu<Fmi2CoSimulationWrapper, CoSimulationModelDescription>(fmuFile), FmiSimulation {
 
     constructor(url: URL) : this(FmuFile(url))
     constructor(file: File) : this(FmuFile(file))

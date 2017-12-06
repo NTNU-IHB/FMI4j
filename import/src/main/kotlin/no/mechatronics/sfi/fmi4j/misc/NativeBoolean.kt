@@ -22,33 +22,13 @@
  * THE SOFTWARE.
  */
 
-package no.mechatronics.sfi.fmi4j.jna
-
-import com.sun.jna.Pointer
-import com.sun.jna.ptr.ByteByReference
-import com.sun.jna.ptr.DoubleByReference
-import com.sun.jna.ptr.IntByReference
-import no.mechatronics.sfi.fmi4j.jna.enums.Fmi2StatusKind
+package no.mechatronics.sfi.fmi4j.misc
 
 
-interface Fmi2CoSimulationLibrary : Fmi2Library {
+internal fun convert(fmi2Boolean: Byte): Boolean {
+    return fmi2Boolean.toInt() != 0
+}
 
-    fun fmi2SetRealInputDerivatives(c: Pointer, vr: IntArray, nvr: Int, order: IntArray, value: DoubleArray): Int
-
-    fun fmi2GetRealOutputDerivatives(c: Pointer, vr: IntArray, nvr: Int, order: IntArray, value: DoubleArray): Int
-
-    fun fmi2DoStep(c: Pointer, currentCommunicationPoint: Double, communicationStepSize: Double, noSetFMUStatePriorToCurrent: Byte): Int
-
-    fun fmi2CancelStep(c: Pointer): Int
-
-    fun fmi2GetStatus(c: Pointer, s: Int, value: IntByReference): Int
-
-    fun fmi2GetRealStatus(c: Pointer, s: Int, value: DoubleByReference): Int
-
-    fun fmi2GetIntegerStatus(c: Pointer, s: Int, value: IntByReference): Int
-
-    fun fmi2GetBooleanStatus(c: Pointer, s: Int, value: ByteByReference): Int
-
-    fun fmi2GetStringStatus(c: Pointer, s: Int, value: StringByReference): Int
-
+internal fun convert(b: Boolean): Byte {
+    return (if (b) 1 else 0).toByte()
 }

@@ -190,7 +190,7 @@ class Fmu2Jar(
             package no.mechatronics.sfi.fmu2jar
 
             import no.mechatronics.sfi.fmi4j.misc.FmuFile
-            import no.mechatronics.sfi.fmi4j.Fmi2Simulation
+            import no.mechatronics.sfi.fmi4j.FmiSimulation
             import no.mechatronics.sfi.fmi4j.CoSimulationFmu
             import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescription
             import no.mechatronics.sfi.fmi4j.modeldescription.ModelVariables
@@ -199,8 +199,8 @@ class Fmu2Jar(
 
 
             class $modelName private constructor(
-                val fmu: Fmi2Simulation
-            ) : Fmi2Simulation by fmu {
+                val fmu: FmiSimulation
+            ) : FmiSimulation by fmu {
 
                 companion object {
 

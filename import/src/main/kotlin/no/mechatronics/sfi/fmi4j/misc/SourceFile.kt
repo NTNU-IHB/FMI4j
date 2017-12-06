@@ -10,5 +10,9 @@ class SourceFile {
     @XmlAttribute
     val name: String = ""
 
+    override fun toString(): String {
+        return "SourceFile(name='$name')"
+    }
+
 
 }

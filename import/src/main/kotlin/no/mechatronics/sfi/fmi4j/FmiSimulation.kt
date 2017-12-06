@@ -1,3 +1,4 @@
+
 /*
  * The MIT License
  *
@@ -22,13 +23,40 @@
  * THE SOFTWARE.
  */
 
-package no.mechatronics.sfi.fmi4j.jna.enums
+package no.mechatronics.sfi.fmi4j
 
+import no.mechatronics.sfi.fmi4j.misc.FmuFile
+import no.mechatronics.sfi.fmi4j.misc.VariableReader
+import no.mechatronics.sfi.fmi4j.misc.VariableWriter
+import no.mechatronics.sfi.fmi4j.proxy.enums.Fmi2Status
+import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescription
+import no.mechatronics.sfi.fmi4j.modeldescription.ModelVariables
 
-enum class Fmi2Type private constructor(val code: Int) {
+interface FmiSimulation {
 
-    ModelExchange(0),
-    CoSimulation(1)
+    val fmuFile: FmuFile
+    val modelDescription: ModelDescription
+    val modelVariables: ModelVariables
+    val currentTime: Double
+
+    fun write(name: String) : VariableWriter
+    fun read(name: String) : VariableReader
+
+    fun write(vr: Int) : VariableWriter
+    fun read(vr: Int) : VariableReader
+
+    fun init() : Boolean
+    fun init(start: Double) : Boolean
+    fun init(start: Double, stop: Double): Boolean
+    fun doStep(dt: Double) : Boolean
+
+    fun reset() : Boolean
+    fun reset(requireReinit: Boolean) : Boolean
+    fun terminate() : Boolean
+
+    fun isTerminated() : Boolean
+
+    fun getLastStatus() : Fmi2Status
 
 }
 

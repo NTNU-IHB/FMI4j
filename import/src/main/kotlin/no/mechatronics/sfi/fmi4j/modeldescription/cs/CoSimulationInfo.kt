@@ -65,7 +65,7 @@ internal class CoSimulationInfo {
 
     @XmlElementWrapper(name = "SourceFiles")
     @XmlElement(name = "File")
-    var sourceFiles: List<SourceFile>? = null
+    val sourceFiles: List<SourceFile>? = null
 
     override fun toString(): String {
         return "CoSimulationInfo{modelIdentifier=$modelIdentifier, needsExecutionTool=$needsExecutionTool, canHandleVariableCommunicationStepSize=$canHandleVariableCommunicationStepSize, canInterpolateInputs=$canInterpolateInputs, maxOutputDerivativeOrder=$maxOutputDerivativeOrder, canRunAsynchronuosly=$canRunAsynchronuosly, canBeInstantiatedOnlyOncePerProcess=$canBeInstantiatedOnlyOncePerProcess, canNotUseMemoryManagementFunctions=$canNotUseMemoryManagementFunctions, canGetAndSetFMUstate=$canGetAndSetFMUstate, canSerializeFMUstate=$canSerializeFMUstate, providesDirectionalDerivative=$providesDirectionalDerivative}"

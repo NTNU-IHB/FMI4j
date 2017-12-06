@@ -1,4 +1,3 @@
-
 /*
  * The MIT License
  *
@@ -23,40 +22,33 @@
  * THE SOFTWARE.
  */
 
-package no.mechatronics.sfi.fmi4j
+package no.mechatronics.sfi.fmi4j.proxy.enums
 
-import no.mechatronics.sfi.fmi4j.misc.FmuFile
-import no.mechatronics.sfi.fmi4j.misc.VariableReader
-import no.mechatronics.sfi.fmi4j.misc.VariableWriter
-import no.mechatronics.sfi.fmi4j.jna.enums.Fmi2Status
-import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescription
-import no.mechatronics.sfi.fmi4j.modeldescription.ModelVariables
+import java.util.*
+import kotlin.streams.toList
 
-interface Fmi2Simulation {
+enum class Fmi2Status private constructor(val code: Int) {
 
-    val fmuFile: FmuFile
-    val modelDescription: ModelDescription
-    val modelVariables: ModelVariables
-    val currentTime: Double
+    NONE(-1),
+    OK(0),
+    Warning(1),
+    Discard(2),
+    Error(3),
+    Fatal(4),
+    Pending(5);
 
-    fun write(name: String) : VariableWriter
-    fun read(name: String) : VariableReader
 
-    fun write(vr: Int) : VariableWriter
-    fun read(vr: Int) : VariableReader
+    companion object {
 
-    fun init() : Boolean
-    fun init(start: Double) : Boolean
-    fun init(start: Double, stop: Double): Boolean
-    fun doStep(dt: Double) : Boolean
-
-    fun reset() : Boolean
-    fun reset(requireReinit: Boolean) : Boolean
-    fun terminate() : Boolean
-
-    fun isTerminated() : Boolean
-
-    fun getLastStatus() : Fmi2Status
+        @JvmStatic
+        fun valueOf(i: Int): Fmi2Status {
+            for (status in values()) {
+                if (i == status.code) {
+                    return status
+                }
+            }
+            throw IllegalArgumentException("$i not in range of ${Arrays.stream(values()).map { it.code }.toList()}")
+        }
+    }
 
 }
-

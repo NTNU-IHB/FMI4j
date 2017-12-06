@@ -22,13 +22,13 @@
  * THE SOFTWARE.
  */
 
-package no.mechatronics.sfi.fmi4j.jna
+package no.mechatronics.sfi.fmi4j.proxy.enums
 
 
-internal fun convert(fmi2Boolean: Byte): Boolean {
-    return fmi2Boolean.toInt() != 0
+enum class Fmi2Type private constructor(val code: Int) {
+
+    ModelExchange(0),
+    CoSimulation(1)
+
 }
 
-internal fun convert(b: Boolean): Byte {
-    return (if (b) 1 else 0).toByte()
-}

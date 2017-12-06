@@ -25,10 +25,10 @@
 package no.mechatronics.sfi.fmi4j
 
 import no.mechatronics.sfi.fmi4j.misc.FmuFile
-import no.mechatronics.sfi.fmi4j.jna.structs.Fmi2EventInfo
-import no.mechatronics.sfi.fmi4j.jna.enums.Fmi2Type
-import no.mechatronics.sfi.fmi4j.wrapper.Fmi2ModelExchangeWrapper
+import no.mechatronics.sfi.fmi4j.proxy.structs.Fmi2EventInfo
+import no.mechatronics.sfi.fmi4j.proxy.enums.Fmi2Type
 import no.mechatronics.sfi.fmi4j.modeldescription.me.ModelExchangeModelDescription
+import no.mechatronics.sfi.fmi4j.proxy.Fmi2ModelExchangeWrapper
 import org.apache.commons.math3.ode.FirstOrderDifferentialEquations
 import java.io.File
 import java.net.URL

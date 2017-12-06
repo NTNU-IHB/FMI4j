@@ -1,6 +1,7 @@
 package no.mechatronics.sfi.fmi4j.misc
 
-class ArrayBuffers {
+internal class ArrayBuffers {
+
     val vr: IntArray by lazy {
         IntArray(1)
     }
@@ -20,4 +21,5 @@ class ArrayBuffers {
     val bv: ByteArray by lazy {
         ByteArray(1)
     }
+
 }

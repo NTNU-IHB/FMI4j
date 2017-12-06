@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package no.mechatronics.sfi.fmi4j.jna.enums
+package no.mechatronics.sfi.fmi4j.proxy.enums
 
 import java.util.*
 import kotlin.streams.toList

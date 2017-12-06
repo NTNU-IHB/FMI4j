@@ -25,7 +25,7 @@
 package no.mechatronics.sfi.fmi4j
 
 import no.mechatronics.sfi.fmi4j.misc.FmuFile
-import no.mechatronics.sfi.fmi4j.jna.structs.Fmi2EventInfo
+import no.mechatronics.sfi.fmi4j.proxy.structs.Fmi2EventInfo
 import org.apache.commons.math3.ode.FirstOrderIntegrator
 import org.apache.commons.math3.ode.nonstiff.EulerIntegrator
 import org.slf4j.Logger
@@ -40,7 +40,7 @@ object InstanceHolder {
 class ModelExchangeFmuWithIntegrator @JvmOverloads constructor(
         fmuFile: FmuFile,
         private val integrator: FirstOrderIntegrator = InstanceHolder.defaultIntegrator
-) : ModelExchangeFmu(fmuFile), Fmi2Simulation {
+) : ModelExchangeFmu(fmuFile), FmiSimulation {
 
     @JvmOverloads
     constructor(url: URL, integrator: FirstOrderIntegrator = InstanceHolder.defaultIntegrator) : this(FmuFile(url), integrator)

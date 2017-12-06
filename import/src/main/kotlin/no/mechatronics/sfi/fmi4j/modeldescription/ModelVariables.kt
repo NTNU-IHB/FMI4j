@@ -32,7 +32,7 @@ class ModelVariables : Iterable<ScalarVariable<*>> {
 
     @XmlElement(name = "ScalarVariable")
     @XmlJavaTypeAdapter(ScalarVariableAdapter::class)
-    private var _variables: List<ScalarVariable<*>>? = null
+    private val _variables: List<ScalarVariable<*>>? = null
 
     val variables: List<ScalarVariable<*>>
     get() {
