@@ -28,7 +28,6 @@ import com.sun.jna.Pointer
 import com.sun.jna.ptr.ByteByReference
 import no.mechatronics.sfi.fmi4j.proxy.enums.Fmi2Status
 import no.mechatronics.sfi.fmi4j.proxy.structs.Fmi2EventInfo
-import no.mechatronics.sfi.fmi4j.misc.LibraryPath
 import no.mechatronics.sfi.fmi4j.misc.FmiMethod
 import no.mechatronics.sfi.fmi4j.misc.FmiState
 import no.mechatronics.sfi.fmi4j.misc.convert
@@ -69,7 +68,7 @@ interface Fmi2ModelExchangeLibrary : Fmi2Library {
 class Fmi2ModelExchangeWrapper(
         libraryFolder: String,
         libraryName: String
-) : Fmi2Wrapper<Fmi2ModelExchangeLibrary>(LibraryPath(libraryFolder, libraryName, Fmi2ModelExchangeLibrary::class.java)) {
+) : Fmi2Wrapper<Fmi2ModelExchangeLibrary>(libraryFolder, libraryName, Fmi2ModelExchangeLibrary::class.java) {
 
 
     private val enterEventMode: ByteByReference = ByteByReference()

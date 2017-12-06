@@ -59,7 +59,7 @@ interface Fmi2CoSimulationLibrary : Fmi2Library {
 class Fmi2CoSimulationWrapper(
         libraryFolder: String,
         libraryName: String
-) : Fmi2Wrapper<Fmi2CoSimulationLibrary>(LibraryPath(libraryFolder, libraryName, Fmi2CoSimulationLibrary::class.java)) {
+) : Fmi2Wrapper<Fmi2CoSimulationLibrary>(libraryFolder, libraryName, Fmi2CoSimulationLibrary::class.java) {
 
     /**
      * @see Fmi2CoSimulationlibrary.fmi2SetRealInputDerivatives

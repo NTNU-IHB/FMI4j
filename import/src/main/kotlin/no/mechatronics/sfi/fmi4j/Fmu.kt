@@ -49,15 +49,14 @@ abstract class Fmu<E : Fmi2Wrapper<*>, T : ModelDescription> (
     abstract val wrapper: E
     abstract val fmi2Type: Fmi2Type
     abstract val modelDescription: T
-    val modelVariables: ModelVariables
-    get() {
-       return modelDescription.modelVariables
-    }
+    val modelVariables: ModelVariables by lazy { modelDescription.modelVariables }
 
     var isInstantiated = false
     private set
+
     var isInitialized = false
     private set
+
     private val map: MutableMap<String, IntArray> = HashMap()
 
     @JvmOverloads

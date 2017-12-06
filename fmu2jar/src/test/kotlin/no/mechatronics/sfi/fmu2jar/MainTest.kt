@@ -19,7 +19,9 @@ class MainTest {
 
     @After
     fun tearDown() {
-        tmp.deleteRecursively()
+        if(tmp.deleteRecursively()) {
+            println("Deleted generated folder and all it's contents")
+        }
     }
 
     @Test
@@ -29,10 +31,12 @@ class MainTest {
                 "-fmu",
                 "C:\\Users\\laht\\IdeaProjects\\FMI4j\\import\\src\\test\\resources\\v2\\cs\\ControlledTemperature\\ControlledTemperature.fmu",
                 "-out",
-                tmp.absolutePath
+                tmp.absolutePath,
+                "-mavenLocal"
         )
 
         Main.main(args)
 
     }
 }
+

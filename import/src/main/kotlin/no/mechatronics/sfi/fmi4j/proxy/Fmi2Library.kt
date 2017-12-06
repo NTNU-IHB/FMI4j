@@ -27,12 +27,14 @@ package no.mechatronics.sfi.fmi4j.proxy
 
 import com.sun.jna.Library
 import com.sun.jna.Memory
+import com.sun.jna.Native
 import com.sun.jna.Pointer
 import com.sun.jna.ptr.*
 import no.mechatronics.sfi.fmi4j.proxy.enums.Fmi2Status
 import no.mechatronics.sfi.fmi4j.proxy.enums.Fmi2Type
 import no.mechatronics.sfi.fmi4j.proxy.structs.Fmi2CallbackFunctions
 import no.mechatronics.sfi.fmi4j.misc.*
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
 
@@ -247,24 +249,28 @@ interface Fmi2Library : Library {
 
 
 
-
 abstract class Fmi2Wrapper<E: Fmi2Library>(
-        private val libraryPath: LibraryPath<E>
+          dir: String,
+          name: String,
+          type: Class<E>
 ) {
 
     private companion object {
         val LOG = LoggerFactory.getLogger(Fmi2Wrapper::class.java)
     }
 
+    protected lateinit var c: Pointer
+
+    private val functions: Fmi2CallbackFunctions
+    private val buffers: ArrayBuffers by lazy { ArrayBuffers() }
+
+    private val libraryPath: LibraryPath<E> = LibraryPath(dir, name, type)
+
     protected val library: E
         get() {
             return libraryPath.library!!
         }
 
-    protected lateinit var c: Pointer
-
-    private val functions: Fmi2CallbackFunctions
-    private val buffers: ArrayBuffers by lazy { ArrayBuffers() }
 
     var lastStatus: Fmi2Status = Fmi2Status.NONE
         private set
@@ -626,6 +632,41 @@ abstract class Fmi2Wrapper<E: Fmi2Library>(
         val state = FmuState()
         updateStatus(Fmi2Status.valueOf(library.fmi2DeSerializeFMUstate(c, serializedState, serializedState.size, state.pointerByReference)))
         return state
+    }
+
+}
+
+
+private const val LIBRARY_PATH = "jna.library.path"
+
+internal class LibraryPath<E>(
+        private val dir: String,
+        private val name: String,
+        private val type: Class<E>
+) {
+
+    var library: E? = null
+    var isDisposed: Boolean = false
+        private set
+
+    private companion object {
+
+        val LOG : Logger = LoggerFactory.getLogger(LibraryPath::class.java)
+
+    }
+
+    init {
+        System.setProperty(LIBRARY_PATH,dir)
+        library = Native.loadLibrary(name, type)
+        LOG.debug("Loaded native library '{}'", name)
+    }
+
+    fun dispose() {
+        if (!isDisposed) {
+            library = null
+            System.gc()
+            isDisposed = true
+        }
     }
 
 }
