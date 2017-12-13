@@ -56,16 +56,15 @@ interface Fmi2CoSimulationLibrary : Fmi2Library {
 }
 
 
-class Fmi2CoSimulationWrapper(
-        libraryFolder: String,
-        libraryName: String
-) : Fmi2Wrapper<Fmi2CoSimulationLibrary>(libraryFolder, libraryName, Fmi2CoSimulationLibrary::class.java) {
+class CoSimulationLibraryWrapper(
+        c: Pointer,
+        library: LibraryProvider<Fmi2CoSimulationLibrary>
+) : Fmi2LibraryWrapper<Fmi2CoSimulationLibrary>(c, library) {
 
     /**
      * @see Fmi2CoSimulationlibrary.fmi2SetRealInputDerivatives
      */
     fun setRealInputDerivatives(vr: IntArray, order: IntArray, value: DoubleArray) : Fmi2Status {
-        state.isCallLegalDuringState(FmiMethod.fmi2SetRealInputDerivatives)
         return updateStatus(Fmi2Status.valueOf(library.fmi2SetRealInputDerivatives(c, vr, vr.size, order, value)))
     }
 
@@ -73,7 +72,6 @@ class Fmi2CoSimulationWrapper(
      * @see Fmi2CoSimulationlibrary.fmi2GetRealOutputDerivatives
      */
     fun getRealOutputDerivatives(vr: IntArray, order: IntArray, value: DoubleArray) : Fmi2Status {
-        state.isCallLegalDuringState(FmiMethod.fmi2GetRealOutputDerivatives)
         return updateStatus(Fmi2Status.valueOf(library.fmi2GetRealOutputDerivatives(c, vr, vr.size, order, value)))
     }
 
@@ -88,15 +86,13 @@ class Fmi2CoSimulationWrapper(
      * @see Fmi2CoSimulationlibrary.fmi2CancelStep
      */
     fun cancelStep() : Fmi2Status {
-        state.isCallLegalDuringState(FmiMethod.fmi2CancelStep)
-        return updateState(updateStatus(Fmi2Status.valueOf(library.fmi2CancelStep(c))), FmiState.STEP_CANCELED)
+        return (updateStatus(Fmi2Status.valueOf(library.fmi2CancelStep(c))))
     }
 
     /**
      * @see Fmi2CoSimulationlibrary.fmi2GetStatus
      */
     fun getStatus(s: Fmi2StatusKind): Fmi2Status {
-        state.isCallLegalDuringState(FmiMethod.fmi2GetStatus)
         val i = IntByReference()
         updateStatus(Fmi2Status.valueOf(library.fmi2GetIntegerStatus(c, s.code, i)))
         return Fmi2Status.valueOf(i.value)
@@ -106,7 +102,6 @@ class Fmi2CoSimulationWrapper(
      * @see Fmi2CoSimulationlibrary.fmi2GetRealStatus
      */
     fun getRealStatus(s: Fmi2StatusKind): Double {
-        state.isCallLegalDuringState(FmiMethod.fmi2GetRealStatus)
         val d = DoubleByReference()
         updateStatus(Fmi2Status.valueOf(library.fmi2GetRealStatus(c, s.code, d)))
         return d.value
@@ -116,7 +111,6 @@ class Fmi2CoSimulationWrapper(
      * @see Fmi2CoSimulationlibrary.fmi2GetIntegerStatus
      */
     fun getIntegerStatus(s: Fmi2StatusKind): Int {
-        state.isCallLegalDuringState(FmiMethod.fmi2GetIntegerStatus)
         val i = IntByReference()
         updateStatus(Fmi2Status.valueOf(library.fmi2GetIntegerStatus(c, s.code, i)))
         return i.value
@@ -126,7 +120,6 @@ class Fmi2CoSimulationWrapper(
      * @see Fmi2CoSimulationlibrary.fmi2GetBooleanStatus
      */
     fun getBooleanStatus(s: Fmi2StatusKind): Boolean {
-        state.isCallLegalDuringState(FmiMethod.fmi2GetBooleanStatus)
         val b = ByteByReference()
         updateStatus(Fmi2Status.valueOf(library.fmi2GetBooleanStatus(c, s.code, b)))
         return convert(b.value)
@@ -136,7 +129,6 @@ class Fmi2CoSimulationWrapper(
      * @see Fmi2CoSimulationlibrary.fmi2GetStringStatus
      */
     fun getStringStatus(s: Fmi2StatusKind): String {
-        state.isCallLegalDuringState(FmiMethod.fmi2GetStringStatus)
         val str = StringByReference()
         updateStatus(Fmi2Status.valueOf(library.fmi2GetStringStatus(c, s.code, str)))
         return str.value

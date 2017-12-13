@@ -36,6 +36,7 @@ import java.net.URL;
 
 public class CoSimulationFmuTest {
 
+    private FmuBuilder builder;
     private FmiSimulation fmu;
 
     @Before
@@ -43,9 +44,9 @@ public class CoSimulationFmuTest {
         final URL url = getClass().getClassLoader().getResource("v2/cs/ControlledTemperature/ControlledTemperature.fmu");
         Assert.assertNotNull(url);
 
-        fmu = CoSimulationFmu.newBuilder(url)
-                .loggingOn(true)
-                .build();
+        builder =  new FmuBuilder(url);
+        fmu = builder.asCoSimulationFmu().newInstance();
+
     }
 
     @After
@@ -62,7 +63,6 @@ public class CoSimulationFmuTest {
         final RealVariable startTemp = fmu.getModelVariables().getReal("HeatCapacity1.T0");
         
         fmu.init();
-        System.out.println(((CoSimulationFmu) fmu).getWrapper().getStateString());
 
         Assert.assertTrue(fmu.getLastStatus() == Fmi2Status.OK);
         Assert.assertEquals(0.1, fmu.getModelVariables().getReal("HeatCapacity1.C").getStart(), 0);
@@ -105,28 +105,12 @@ public class CoSimulationFmuTest {
 
         }
 
+        fmu.terminate();
 
-        CoSimulationFmu fmu2 = CoSimulationFmu.newBuilder(getClass().getClassLoader()
-                        .getResource("v2/cs/ControlledTemperature/ControlledTemperature.fmu")).build();
+        CoSimulationFmu fmu2 = builder.asCoSimulationFmu().newInstance();
         fmu2.init();
-
-        Assert.assertTrue(fmu2.getLastStatus() == Fmi2Status.OK);
-        fmu2.doStep(1d/100);
-        Assert.assertTrue(fmu2.getLastStatus() == Fmi2Status.OK);
-
-        CoSimulationFmu fmu3 = CoSimulationFmu.newBuilder(getClass().getClassLoader()
-                .getResource("v2/cs/ControlledTemperature/ControlledTemperature.fmu")).build();
-        fmu3.init();
-
-        Assert.assertTrue(fmu3.getLastStatus() == Fmi2Status.OK);
-        fmu3.doStep(1d/100);
-        Assert.assertTrue(fmu3.getLastStatus() == Fmi2Status.OK);
-
-        fmu3.terminate();
-        Assert.assertTrue(fmu3.getLastStatus() == Fmi2Status.OK);
-
+        System.out.println(fmu2.read("Temperature_Room").asReal());
         fmu2.terminate();
-        Assert.assertTrue(fmu2.getLastStatus() == Fmi2Status.OK);
 
 
 
@@ -135,19 +119,19 @@ public class CoSimulationFmuTest {
 
     void readme() throws  IOException {
 
-        CoSimulationFmu fmu = CoSimulationFmu.newBuilder(getClass().getClassLoader()
-                .getResource("v2/cs/ControlledTemperature/ControlledTemperature.fmu")).build();
-        fmu.init();
-
-        double t = 0;
-        double dt = 1d/100;
-
-        while (t < 10) {
-            fmu.doStep(dt);
-            Assert.assertTrue(fmu.getLastStatus() == Fmi2Status.OK);
-        }
-
-        fmu.terminate();
+//        CoSimulationFmu fmu = CoSimulationFmu.newBuilder(getClass().getClassLoader()
+//                .getResource("v2/cs/ControlledTemperature/ControlledTemperature.fmu")).build();
+//        fmu.init();
+//
+//        double t = 0;
+//        double dt = 1d/100;
+//
+//        while (t < 10) {
+//            fmu.doStep(dt);
+//            Assert.assertTrue(fmu.getLastStatus() == Fmi2Status.OK);
+//        }
+//
+//        fmu.terminate();
 
     }
 
