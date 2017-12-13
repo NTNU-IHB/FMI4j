@@ -30,13 +30,17 @@ import no.mechatronics.sfi.fmi4j.proxy.enums.Fmi2Status
 import java.util.Arrays
 import java.util.HashSet
 import org.slf4j.LoggerFactory
+import sun.security.krb5.Confounder.bytes
+import com.sun.jna.Memory
+
+
 
 
 open class Fmi2CallbackFunctions : Structure() {
 
     private companion object {
         val LOG = LoggerFactory.getLogger(Fmi2CallbackFunctions::class.java)
-        val POINTERS : MutableSet<Pointer> = HashSet()
+        val POINTERS : MutableMap<Pointer, Memory> = HashMap()
     }
 
 
@@ -89,17 +93,21 @@ open class Fmi2CallbackFunctions : Structure() {
 
     inner class CallbackAllocateMemoryImpl : CallbackAllocateMemory {
 
-        override fun invoke(nobj: Int, size: Int): Pointer {
+        override fun invoke(numberOfObjectsValue: Int, size: Int): Pointer {
 
-            var nobj_ = nobj
-            if (nobj_ <= 0) {
-                nobj_ = 1
+            var nobj = numberOfObjectsValue
+            if (nobj <= 0) {
+                nobj = 1
             }
 
-            val malloc = Native.malloc((nobj* size).toLong())
-            val memory = Memory(malloc)
-             memory.align(Structure.ALIGN_GNUC)
-            POINTERS.add(memory)
+            val bytes = nobj * size;
+            val memory = Memory(bytes.toLong())
+           // memory.align(4)
+            memory.clear()
+
+            val pointer = memory.share(0)
+            POINTERS.put(pointer, memory)
+
             return memory
         }
 
@@ -116,9 +124,8 @@ open class Fmi2CallbackFunctions : Structure() {
 
            // LOG.debug("CallbackFreeMemoryImpl")
 
-            if (!POINTERS.remove(pointer)) {
-                LOG.warn("Failed to remove pointer!")
-            }
+            POINTERS.remove(pointer)
+            System.gc()
             //Native.free(Pointer.nativeValue(pointer))
 
         }

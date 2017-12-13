@@ -1,5 +1,6 @@
 package no.mechatronics.sfi.fmu2jar
 
+import no.mechatronics.sfi.fmu2jar.controlledtemperature.ControlledTemperature
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -36,6 +37,10 @@ class MainTest {
         )
 
         Main.main(args)
+
+
+        ControlledTemperature
+
 
     }
 }
