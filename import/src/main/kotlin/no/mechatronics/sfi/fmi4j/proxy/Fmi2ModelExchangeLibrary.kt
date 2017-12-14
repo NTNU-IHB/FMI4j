@@ -28,8 +28,6 @@ import com.sun.jna.Pointer
 import com.sun.jna.ptr.ByteByReference
 import no.mechatronics.sfi.fmi4j.proxy.enums.Fmi2Status
 import no.mechatronics.sfi.fmi4j.proxy.structs.Fmi2EventInfo
-import no.mechatronics.sfi.fmi4j.misc.FmiMethod
-import no.mechatronics.sfi.fmi4j.misc.FmiState
 import no.mechatronics.sfi.fmi4j.misc.LibraryProvider
 import no.mechatronics.sfi.fmi4j.misc.convert
 
@@ -100,7 +98,7 @@ class ModelExchangeLibraryWrapper(
      *
      * @param x
      */
-    fun setContinousStates(x: DoubleArray) : Fmi2Status {
+    fun setContinuousStates(x: DoubleArray) : Fmi2Status {
         return updateStatus(Fmi2Status.valueOf(library.fmi2SetContinuousStates(c, x, x.size)))
     }
 

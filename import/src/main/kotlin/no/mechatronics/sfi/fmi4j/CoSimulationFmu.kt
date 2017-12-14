@@ -7,7 +7,7 @@ import no.mechatronics.sfi.fmi4j.proxy.enums.Fmi2StatusKind
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-class CoSimulationFmu(
+class CoSimulationFmu internal constructor(
         fmuFile: FmuFile,
         modelDescription: CoSimulationModelDescription,
         wrapper: CoSimulationLibraryWrapper

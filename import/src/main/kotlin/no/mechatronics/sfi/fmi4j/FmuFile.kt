@@ -52,7 +52,7 @@ private const val FMI4J_FILE_PREFIX = "fmi4j_"
 
 class FmuFile {
 
-    internal companion object {
+    private companion object {
 
          val LOG: Logger = LoggerFactory.getLogger(FmuFile::class.java)
 

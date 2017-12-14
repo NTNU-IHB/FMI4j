@@ -28,6 +28,7 @@ package no.mechatronics.sfi.fmi4j;
 import no.mechatronics.sfi.fmi4j.misc.VariableReader;
 import no.mechatronics.sfi.fmi4j.proxy.enums.Fmi2Status;
 import no.mechatronics.sfi.fmi4j.modeldescription.RealVariable;
+import org.apache.commons.math3.ode.nonstiff.EulerIntegrator;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -105,13 +106,10 @@ public class CoSimulationFmuTest {
 
         }
 
-        fmu.terminate();
-
-        CoSimulationFmu fmu2 = builder.asCoSimulationFmu().newInstance();
-        fmu2.init();
-        System.out.println(fmu2.read("Temperature_Room").asReal());
-        fmu2.terminate();
-
+        try (FmiSimulation fmu2 = builder.asCoSimulationFmu().newInstance()) {
+            fmu2.init();
+            System.out.println(fmu2.read("Temperature_Room").asReal());
+        }
 
 
     }

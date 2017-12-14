@@ -11,7 +11,7 @@ import org.apache.commons.math3.ode.FirstOrderDifferentialEquations
 import org.apache.commons.math3.ode.FirstOrderIntegrator
 
 
-open class ModelExchangeFmu(
+open class ModelExchangeFmu internal constructor(
         fmuFile: FmuFile,
         modelDescription: ModelExchangeModelDescription,
         wrapper: ModelExchangeLibraryWrapper
@@ -19,7 +19,7 @@ open class ModelExchangeFmu(
 
     fun setTime(time: Double) = wrapper.setTime(time)
 
-    fun setContinousStates(x: DoubleArray) = wrapper.setContinousStates(x)
+    fun setContinuousStates(x: DoubleArray) = wrapper.setContinuousStates(x)
 
     fun enterEventMode() = wrapper.enterEventMode()
 
@@ -39,7 +39,7 @@ open class ModelExchangeFmu(
 
 }
 
-class ModelExchangeFmuWithIntegrator(
+class ModelExchangeFmuWithIntegrator internal constructor(
         private val fmu: ModelExchangeFmu,
         private val integrator: FirstOrderIntegrator
 ) : FmiSimulation  {
@@ -94,6 +94,10 @@ class ModelExchangeFmuWithIntegrator(
     override fun reset(requireReinit: Boolean) = fmu.reset(requireReinit)
     override fun terminate() = fmu.terminate()
 
+    override fun close() {
+        terminate()
+    }
+
     override fun isTerminated() = fmu.isTerminated()
 
     override fun getLastStatus() = fmu.getLastStatus()
@@ -129,6 +133,8 @@ class ModelExchangeFmuWithIntegrator(
     override fun doStep(dt: Double): Boolean {
 
         assert(dt > 0)
+
+        println(currentTime)
 
         var time  = currentTime
         val stopTime =  time + dt
@@ -184,7 +190,7 @@ class ModelExchangeFmuWithIntegrator(
         return true
     }
 
-    private data class SolveResult(
+    private class SolveResult(
             val stateEvent: Boolean,
             val time: Double
     )
@@ -195,9 +201,9 @@ class ModelExchangeFmuWithIntegrator(
         //getDerivatives(derivatives)
 
         val dt = tNext - t
-        val t = integrator.integrate(ode, t, states, currentTime + dt, states)
+        val integratedTime = integrator.integrate(ode, t, states, currentTime + dt, states)
 
-        fmu.setContinousStates(states)
+        fmu.setContinuousStates(states)
 
         for (i in preEventIndicators.indices) {
             preEventIndicators[i] = eventIndicators[i]
@@ -211,7 +217,7 @@ class ModelExchangeFmuWithIntegrator(
             if (stateEvent) break
         }
 
-        return SolveResult(stateEvent, t)
+        return SolveResult(stateEvent, integratedTime)
 
     }
 

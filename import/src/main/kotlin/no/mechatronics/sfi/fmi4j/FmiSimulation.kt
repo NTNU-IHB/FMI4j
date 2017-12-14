@@ -31,7 +31,7 @@ import no.mechatronics.sfi.fmi4j.proxy.enums.Fmi2Status
 import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescription
 import no.mechatronics.sfi.fmi4j.modeldescription.ModelVariables
 
-interface FmiSimulation {
+interface FmiSimulation : AutoCloseable {
 
     val fmuFile: FmuFile
     val modelDescription: ModelDescription

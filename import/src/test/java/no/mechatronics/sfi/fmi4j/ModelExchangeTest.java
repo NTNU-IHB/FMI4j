@@ -68,7 +68,6 @@ public class ModelExchangeTest {
     @org.junit.Test
     public void test() {
 
-
         RealVariable h = fmu.getModelVariables().getReal("h");
         h.setStart(5.0);
 

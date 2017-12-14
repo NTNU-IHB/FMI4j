@@ -209,6 +209,14 @@ open class ModelDescription {
     @XmlElement(name = "ModelExchange")
     internal val me: ModelExchangeInfo? = null
 
+    fun isCoSimulationFmu(): Boolean {
+        return cs != null
+    }
+
+    fun isMeSimulationFmu(): Boolean  {
+        return me != null
+    }
+
     /**
      * Short class name according to C syntax, for
      * example “A_B_C”. Used as prefix for FMI

@@ -122,7 +122,7 @@ open class Fmi2CallbackFunctions : Structure() {
 
         override fun invoke(pointer: Pointer) {
 
-           // LOG.debug("CallbackFreeMemoryImpl")
+            LOG.debug("CallbackFreeMemoryImpl")
 
             POINTERS.remove(pointer)
             System.gc()
