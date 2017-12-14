@@ -28,8 +28,7 @@ import com.sun.jna.Pointer
 import com.sun.jna.ptr.ByteByReference
 import no.mechatronics.sfi.fmi4j.proxy.enums.Fmi2Status
 import no.mechatronics.sfi.fmi4j.proxy.structs.Fmi2EventInfo
-import no.mechatronics.sfi.fmi4j.misc.FmiMethod
-import no.mechatronics.sfi.fmi4j.misc.FmiState
+import no.mechatronics.sfi.fmi4j.misc.LibraryProvider
 import no.mechatronics.sfi.fmi4j.misc.convert
 
 
@@ -65,10 +64,10 @@ interface Fmi2ModelExchangeLibrary : Fmi2Library {
  *
  * @author laht
  */
-class Fmi2ModelExchangeWrapper(
-        libraryFolder: String,
-        libraryName: String
-) : Fmi2Wrapper<Fmi2ModelExchangeLibrary>(libraryFolder, libraryName, Fmi2ModelExchangeLibrary::class.java) {
+class ModelExchangeLibraryWrapper(
+        c: Pointer,
+        library: LibraryProvider<Fmi2ModelExchangeLibrary>
+) : Fmi2LibraryWrapper<Fmi2ModelExchangeLibrary>(c, library) {
 
 
     private val enterEventMode: ByteByReference = ByteByReference()
@@ -99,8 +98,7 @@ class Fmi2ModelExchangeWrapper(
      *
      * @param x
      */
-    fun setContinousStates(x: DoubleArray) : Fmi2Status {
-        state.isCallLegalDuringState(FmiMethod.fmi2SetContinuousStates)
+    fun setContinuousStates(x: DoubleArray) : Fmi2Status {
         return updateStatus(Fmi2Status.valueOf(library.fmi2SetContinuousStates(c, x, x.size)))
     }
 
@@ -110,8 +108,7 @@ class Fmi2ModelExchangeWrapper(
      * “frozen”).
      */
     fun enterEventMode() : Fmi2Status {
-        state.isCallLegalDuringState(FmiMethod.fmi2EnterEventMode)
-        return updateState(updateStatus(Fmi2Status.valueOf(library.fmi2EnterEventMode(c))), FmiState.EVENT_MODE)
+        return (updateStatus(Fmi2Status.valueOf(library.fmi2EnterEventMode(c))))
     }
 
     /**
@@ -126,17 +123,14 @@ class Fmi2ModelExchangeWrapper(
      * state selection might be performed with this function. ]
      */
     fun enterContinuousTimeMode() : Fmi2Status {
-        state.isCallLegalDuringState(FmiMethod.fmi2EnterContinuousTimeMode)
-        return updateState(updateStatus(Fmi2Status.valueOf(library.fmi2EnterContinuousTimeMode(c))), FmiState.CONTINUOUS_TIME_MODE)
+        return (updateStatus(Fmi2Status.valueOf(library.fmi2EnterContinuousTimeMode(c))))
     }
 
     fun newDiscreteStates(eventInfo: Fmi2EventInfo) : Fmi2Status {
-        state.isCallLegalDuringState(FmiMethod.fmi2NewDiscreteStates)
         return updateStatus(Fmi2Status.valueOf(library.fmi2NewDiscreteStates(c, eventInfo)))
     }
 
     fun completedIntegratorStep() : CompletedIntegratorStep {
-        state.isCallLegalDuringState(FmiMethod.fmi2CompletedIntegratorStep)
         updateStatus(Fmi2Status.valueOf(
                 library.fmi2CompletedIntegratorStep(c, convert(true),
                         enterEventMode, terminateSimulation)))
@@ -162,7 +156,6 @@ class Fmi2ModelExchangeWrapper(
      * @param derivatives
      */
     fun getDerivatives(derivatives: DoubleArray) : Fmi2Status {
-        state.isCallLegalDuringState(FmiMethod.fmi2GetDerivatives)
         return updateStatus(Fmi2Status.valueOf(library.fmi2GetDerivatives(c, derivatives, derivatives.size)))
     }
 
@@ -185,7 +178,6 @@ class Fmi2ModelExchangeWrapper(
      * @param eventIndicators
      */
     fun getEventIndicators(eventIndicators: DoubleArray) : Fmi2Status {
-        state.isCallLegalDuringState(FmiMethod.fmi2GetEventIndicators)
         return updateStatus(Fmi2Status.valueOf(library.fmi2GetEventIndicators(c, eventIndicators, eventIndicators.size)))
     }
 
@@ -198,7 +190,6 @@ class Fmi2ModelExchangeWrapper(
      * @param x
      */
     fun getContinuousStates(x: DoubleArray) : Fmi2Status {
-        state.isCallLegalDuringState(FmiMethod.fmi2GetContinuousStates)
         return updateStatus(Fmi2Status.valueOf(library.fmi2GetContinuousStates(c, x, x.size)))
     }
 
@@ -218,17 +209,13 @@ class Fmi2ModelExchangeWrapper(
      * @param x_nominal
      */
     fun getNominalsOfContinuousStates(x_nominal: DoubleArray) : Fmi2Status {
-        state.isCallLegalDuringState(FmiMethod.fmi2GetNominalsOfContinuousStates)
         return updateStatus(Fmi2Status.valueOf(library.fmi2GetNominalsOfContinuousStates(c, x_nominal, x_nominal.size)))
     }
-
 
     class CompletedIntegratorStep(
             val enterEventMode: Boolean,
             val terminateSimulation: Boolean
     )
-
-
 
 }
 

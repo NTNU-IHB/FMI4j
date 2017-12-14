@@ -24,52 +24,52 @@
 
 package no.mechatronics.sfi.fmi4j.misc
 
-import no.mechatronics.sfi.fmi4j.Fmu
+import no.mechatronics.sfi.fmi4j.proxy.Fmi2LibraryWrapper
 import no.mechatronics.sfi.fmi4j.proxy.enums.Fmi2Status
 
 
 class VariableWriter internal constructor(
-        private val fmu: Fmu<*, *>,
+        private val wrapper: Fmi2LibraryWrapper<*>,
         private val valueReference: Int
 ) {
 
     fun with(data: Int) : Fmi2Status {
-        return fmu.setInteger(valueReference, data)
+        return wrapper.setInteger(valueReference, data)
     }
 
     fun with(data: Double) : Fmi2Status {
-        return fmu.setReal(valueReference, data)
+        return wrapper.setReal(valueReference, data)
     }
 
     fun with(data: String) : Fmi2Status {
-        return fmu.setString(valueReference, data)
+        return wrapper.setString(valueReference, data)
     }
 
     fun with(data: Boolean) : Fmi2Status {
-        return fmu.setBoolean(valueReference, data)
+        return wrapper.setBoolean(valueReference, data)
     }
 
 }
 
 class VariablesWriter internal constructor(
-        private val fmu: Fmu<*, *>,
+        private val wrapper: Fmi2LibraryWrapper<*>,
         private val valueReference: IntArray
 ) {
 
     fun with(vararg data: Int) {
-        fmu.setInteger(valueReference, data)
+        wrapper.setInteger(valueReference, data)
     }
 
     fun with(vararg data: Double) {
-        fmu.setReal(valueReference, data)
+        wrapper.setReal(valueReference, data)
     }
 
     fun with(vararg data: String) {
-        fmu.setString(valueReference, data)
+        wrapper.setString(valueReference, data)
     }
 
     fun with(vararg data: Boolean) {
-        fmu.setBoolean(valueReference, data)
+        wrapper.setBoolean(valueReference, data)
     }
 
 }

@@ -51,10 +51,9 @@ public class ModelExchangeTest {
          integrator = new ClassicalRungeKuttaIntegrator(1E-3);
         // integrator = new EulerIntegrator(1E-3);
 
-        fmu = ModelExchangeFmuWithIntegrator.newBuilder(url)
-               .loggingOn(true)
-               .integrator(integrator)
-               .build();
+        fmu = new FmuBuilder(url)
+                .asModelExchangeFmuWithIntegrator(integrator)
+                .newInstance();
 
     }
 
@@ -68,7 +67,6 @@ public class ModelExchangeTest {
 
     @org.junit.Test
     public void test() {
-
 
         RealVariable h = fmu.getModelVariables().getReal("h");
         h.setStart(5.0);

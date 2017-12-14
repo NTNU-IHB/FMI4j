@@ -25,12 +25,11 @@
 package no.mechatronics.sfi.fmi4j.modeldescription
 
 import no.mechatronics.sfi.fmi4j.modeldescription.enums.*
-import no.mechatronics.sfi.fmi4j.proxy.Fmi2Wrapper
+import no.mechatronics.sfi.fmi4j.proxy.Fmi2LibraryWrapper
 import org.w3c.dom.Node
 import javax.xml.bind.JAXBContext
 import javax.xml.bind.annotation.*
 import javax.xml.bind.annotation.adapters.XmlAdapter
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter
 
 interface IScalarVariable {
 
@@ -311,10 +310,9 @@ internal class BooleanAttribute  {
 
 abstract class VariableBase<E>(v : ScalarVariableImpl) : IScalarVariable by v, ScalarVariable<E> {
 
-    protected lateinit var wrapper : Fmi2Wrapper<*>
+    protected lateinit var wrapper : Fmi2LibraryWrapper<*>
 
 }
-
 
 class IntegerVariable(v : ScalarVariableImpl) : VariableBase<Int>(v) {
 
