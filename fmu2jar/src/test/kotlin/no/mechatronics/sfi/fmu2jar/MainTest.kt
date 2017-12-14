@@ -1,6 +1,5 @@
 package no.mechatronics.sfi.fmu2jar
 
-import no.mechatronics.sfi.fmu2jar.controlledtemperature.ControlledTemperature
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -21,7 +20,7 @@ class MainTest {
     @After
     fun tearDown() {
         if(tmp.deleteRecursively()) {
-            println("Deleted generated folder and all it's contents")
+            println("Deleted generated folder and all it's contents: ${tmp.absolutePath}")
         }
     }
 
@@ -37,10 +36,6 @@ class MainTest {
         )
 
         Main.main(args)
-
-
-        ControlledTemperature
-
 
     }
 }

@@ -18,12 +18,11 @@ For Model Exchange, solvers are also included
 
 ```java
 
-FmiSimulation fmu = new CoSimulationFmu(new File("path/to/fmu.fmu"));
+FmiSimulation fmu = new FmuBuilder(new File("path/to/fmu.fmu"))
+                        .asCoSimulationFmu()
+                        .newInstance();
 
-//or
-// fmu = CoSimulationFmu.newBuilder(new File(...))
-//  .loggingOn(true)
-// .build()
+//set start values
 
 fmu.init();
 
@@ -32,7 +31,7 @@ while (fmu.getCurrentTime() < 10) {
     fmu.doStep(dt);
 }
 
-fmu.terminate();
+fmu.terminate(); //can also use try with resources
 
 ```
 
@@ -42,7 +41,13 @@ fmu.terminate();
 ```java
 
 FirstOrderIntegrator integrator = new ClassicalRungeKuttaIntegrator(1E-3);
-FmiSimulation fmu = new ModelExchangeFmuWithIntegrator(new File("path/to/fmu.fmu"), integrator);
+
+FmiSimulation fmu = new FmuBuilder(new File("path/to/fmu.fmu"))
+                        .asModelExchangeFmuWithIntegrator(integrator)
+                        .newInstance();
+
+//set start values
+
 fmu.init();
 
 double dt = 1d/100;
@@ -50,7 +55,7 @@ while (fmu.getCurrentTime() < 5) {
     fmu.step(dt);
 }
 
-fmu.terminate();
+fmu.terminate(); //can also use try with resources
 
 ```
 

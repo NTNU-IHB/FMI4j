@@ -93,14 +93,9 @@ open class Fmi2CallbackFunctions : Structure() {
 
     inner class CallbackAllocateMemoryImpl : CallbackAllocateMemory {
 
-        override fun invoke(numberOfObjectsValue: Int, size: Int): Pointer {
+        override fun invoke(nobj: Int, size: Int): Pointer {
 
-            var nobj = numberOfObjectsValue
-            if (nobj <= 0) {
-                nobj = 1
-            }
-
-            val bytes = nobj * size;
+            val bytes = (if (nobj <= 0) 1 else nobj) * size;
             val memory = Memory(bytes.toLong())
            // memory.align(4)
             memory.clear()

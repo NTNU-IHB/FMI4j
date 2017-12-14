@@ -15,6 +15,7 @@ object CodeGeneration {
 package no.mechatronics.sfi.fmu2jar.${modelName.toLowerCase()}
 
 import no.mechatronics.sfi.fmi4j.FmuFile
+import no.mechatronics.sfi.fmi4j.FmuBuilder
 import no.mechatronics.sfi.fmi4j.FmiSimulation
 import no.mechatronics.sfi.fmi4j.CoSimulationFmu
 import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescription
@@ -37,7 +38,8 @@ class $modelName private constructor(
 
         @JvmStatic
         fun build() : $modelName {
-            return $modelName(CoSimulationFmu(fmuFile))
+            val builder = FmuBuilder(fmuFile)
+            return $modelName(builder.asCoSimulationFmu().newInstance())
         }
 
     }
