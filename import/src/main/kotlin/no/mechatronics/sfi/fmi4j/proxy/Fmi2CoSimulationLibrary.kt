@@ -53,7 +53,13 @@ interface Fmi2CoSimulationLibrary : Fmi2Library {
 
     fun fmi2GetStringStatus(c: Pointer, s: Int, value: StringByReference): Int
 
+    /**
+     * Extension method
+     */
+    fun fmi2GetMaxStepsize(c: Pointer, value: DoubleByReference) : Int
+
 }
+
 
 
 class CoSimulationLibraryWrapper(
@@ -61,77 +67,109 @@ class CoSimulationLibraryWrapper(
         library: LibraryProvider<Fmi2CoSimulationLibrary>
 ) : Fmi2LibraryWrapper<Fmi2CoSimulationLibrary>(c, library) {
 
+    private val intByReference: IntByReference by lazy { 
+        IntByReference()
+    }
+
+    private val realByReference: DoubleByReference by lazy {
+        DoubleByReference()
+    }
+
+    private val stringByReference: StringByReference by lazy {
+        StringByReference()
+    }
+
+    private val booleanByReference: ByteByReference by lazy {
+        ByteByReference()
+    }
+
+    fun getMaxStepsize() : Double {
+        return realByReference.let {
+            updateStatus(library.fmi2GetMaxStepsize(c, it))
+            it.value
+        }
+    }
+
     /**
      * @see Fmi2CoSimulationlibrary.fmi2SetRealInputDerivatives
      */
     fun setRealInputDerivatives(vr: IntArray, order: IntArray, value: DoubleArray) : Fmi2Status {
-        return updateStatus(Fmi2Status.valueOf(library.fmi2SetRealInputDerivatives(c, vr, vr.size, order, value)))
+        return updateStatus((library.fmi2SetRealInputDerivatives(c, vr, vr.size, order, value)))
     }
 
     /**
      * @see Fmi2CoSimulationlibrary.fmi2GetRealOutputDerivatives
      */
     fun getRealOutputDerivatives(vr: IntArray, order: IntArray, value: DoubleArray) : Fmi2Status {
-        return updateStatus(Fmi2Status.valueOf(library.fmi2GetRealOutputDerivatives(c, vr, vr.size, order, value)))
+        return updateStatus((library.fmi2GetRealOutputDerivatives(c, vr, vr.size, order, value)))
     }
 
     /**
      * @see Fmi2CoSimulationlibrary.fmi2DoStep
      */
     fun doStep(t: Double, dt: Double, noSetFMUStatePriorToCurrent: Boolean) : Fmi2Status {
-        return updateStatus(Fmi2Status.valueOf(library.fmi2DoStep(c, t, dt, convert(noSetFMUStatePriorToCurrent))))
+        return updateStatus((library.fmi2DoStep(c, t, dt, convert(noSetFMUStatePriorToCurrent))))
     }
 
     /**
      * @see Fmi2CoSimulationlibrary.fmi2CancelStep
      */
     fun cancelStep() : Fmi2Status {
-        return (updateStatus(Fmi2Status.valueOf(library.fmi2CancelStep(c))))
+        return (updateStatus((library.fmi2CancelStep(c))))
     }
 
     /**
      * @see Fmi2CoSimulationlibrary.fmi2GetStatus
      */
     fun getStatus(s: Fmi2StatusKind): Fmi2Status {
-        val i = IntByReference()
-        updateStatus(Fmi2Status.valueOf(library.fmi2GetIntegerStatus(c, s.code, i)))
-        return Fmi2Status.valueOf(i.value)
+        return intByReference.let {
+            updateStatus((library.fmi2GetIntegerStatus(c, s.code, it)))
+            Fmi2Status.valueOf(it.value)
+        }
     }
 
     /**
      * @see Fmi2CoSimulationlibrary.fmi2GetRealStatus
      */
     fun getRealStatus(s: Fmi2StatusKind): Double {
-        val d = DoubleByReference()
-        updateStatus(Fmi2Status.valueOf(library.fmi2GetRealStatus(c, s.code, d)))
-        return d.value
+        return realByReference.let {
+            updateStatus((library.fmi2GetRealStatus(c, s.code, it)))
+            it.value
+        }
+
     }
 
     /**
      * @see Fmi2CoSimulationlibrary.fmi2GetIntegerStatus
      */
     fun getIntegerStatus(s: Fmi2StatusKind): Int {
-        val i = IntByReference()
-        updateStatus(Fmi2Status.valueOf(library.fmi2GetIntegerStatus(c, s.code, i)))
-        return i.value
+       return intByReference.let {
+           updateStatus((library.fmi2GetIntegerStatus(c, s.code, it)))
+           it.value
+       }
+
     }
 
     /**
      * @see Fmi2CoSimulationlibrary.fmi2GetBooleanStatus
      */
     fun getBooleanStatus(s: Fmi2StatusKind): Boolean {
-        val b = ByteByReference()
-        updateStatus(Fmi2Status.valueOf(library.fmi2GetBooleanStatus(c, s.code, b)))
-        return convert(b.value)
+        return booleanByReference.let {
+            updateStatus((library.fmi2GetBooleanStatus(c, s.code, it)))
+            convert(it.value)
+        }
     }
 
     /**
      * @see Fmi2CoSimulationlibrary.fmi2GetStringStatus
      */
     fun getStringStatus(s: Fmi2StatusKind): String {
-        val str = StringByReference()
-        updateStatus(Fmi2Status.valueOf(library.fmi2GetStringStatus(c, s.code, str)))
-        return str.value
+        return stringByReference.let {
+            updateStatus((library.fmi2GetStringStatus(c, s.code, it)))
+            it.value
+        }
+
+
     }
 
 }
