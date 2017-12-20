@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package no.mechatronics.sfi.fmi4j.proxy
+package no.mechatronics.sfi.fmi4j.proxy.cs
 
 import com.sun.jna.Pointer
 import com.sun.jna.ptr.ByteByReference
@@ -31,6 +31,8 @@ import com.sun.jna.ptr.IntByReference
 import no.mechatronics.sfi.fmi4j.proxy.enums.Fmi2Status
 import no.mechatronics.sfi.fmi4j.proxy.enums.Fmi2StatusKind
 import no.mechatronics.sfi.fmi4j.misc.*
+import no.mechatronics.sfi.fmi4j.proxy.Fmi2Library
+import no.mechatronics.sfi.fmi4j.proxy.Fmi2LibraryWrapper
 
 
 interface Fmi2CoSimulationLibrary : Fmi2Library {

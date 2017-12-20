@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package no.mechatronics.sfi.fmi4j.proxy
+package no.mechatronics.sfi.fmi4j.proxy.me
 
 import com.sun.jna.Pointer
 import com.sun.jna.ptr.ByteByReference
@@ -30,6 +30,8 @@ import no.mechatronics.sfi.fmi4j.proxy.enums.Fmi2Status
 import no.mechatronics.sfi.fmi4j.proxy.structs.Fmi2EventInfo
 import no.mechatronics.sfi.fmi4j.misc.LibraryProvider
 import no.mechatronics.sfi.fmi4j.misc.convert
+import no.mechatronics.sfi.fmi4j.proxy.Fmi2Library
+import no.mechatronics.sfi.fmi4j.proxy.Fmi2LibraryWrapper
 
 
 interface Fmi2ModelExchangeLibrary : Fmi2Library {
@@ -212,10 +214,7 @@ class ModelExchangeLibraryWrapper(
         return updateStatus(Fmi2Status.valueOf(library.fmi2GetNominalsOfContinuousStates(c, x_nominal, x_nominal.size)))
     }
 
-    class CompletedIntegratorStep(
-            val enterEventMode: Boolean,
-            val terminateSimulation: Boolean
-    )
+
 
 }
 

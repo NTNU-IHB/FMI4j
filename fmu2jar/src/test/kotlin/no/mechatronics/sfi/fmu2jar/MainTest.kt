@@ -3,8 +3,6 @@ package no.mechatronics.sfi.fmu2jar
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
-
-import org.junit.Assert.*
 import java.io.File
 import java.nio.file.Files
 

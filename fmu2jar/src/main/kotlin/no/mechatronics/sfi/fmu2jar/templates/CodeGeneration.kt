@@ -30,15 +30,15 @@ class $modelName private constructor(
 
     companion object {
 
-        val fmuFile: FmuFile
+        val builder: FmuBuilder
 
         init {
-            fmuFile = FmuFile($modelName::class.java.classLoader.getResource("$fileName"))
+            val fmuFile = FmuFile($modelName::class.java.classLoader.getResource("$fileName"))
+            builder = FmuBuilder(fmuFile)
         }
 
         @JvmStatic
         fun build() : $modelName {
-            val builder = FmuBuilder(fmuFile)
             return $modelName(builder.asCoSimulationFmu().newInstance())
         }
 

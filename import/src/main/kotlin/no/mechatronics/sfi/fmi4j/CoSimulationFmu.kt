@@ -1,7 +1,7 @@
 package no.mechatronics.sfi.fmi4j
 
 import no.mechatronics.sfi.fmi4j.modeldescription.cs.CoSimulationModelDescription
-import no.mechatronics.sfi.fmi4j.proxy.CoSimulationLibraryWrapper
+import no.mechatronics.sfi.fmi4j.proxy.cs.CoSimulationLibraryWrapper
 import no.mechatronics.sfi.fmi4j.proxy.enums.Fmi2Status
 import no.mechatronics.sfi.fmi4j.proxy.enums.Fmi2StatusKind
 import org.slf4j.Logger

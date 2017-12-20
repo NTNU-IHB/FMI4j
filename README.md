@@ -86,7 +86,7 @@ add ```-mavenLocal``` if you want the .jar to be installed in your local maven r
 ```
 ##### API example from java
 ```java
-    ControlledTemperature fmu = ControlledTemperature.build().build();
+    ControlledTemperature fmu = ControlledTemperature.build(); 
     double temperature_Reference = fmu.getParameters().getTemperatureSource_T()
 ```
 

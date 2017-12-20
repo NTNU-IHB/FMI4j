@@ -9,7 +9,11 @@ import no.mechatronics.sfi.fmi4j.modeldescription.VariableBase
 import no.mechatronics.sfi.fmi4j.modeldescription.cs.CoSimulationModelDescription
 import no.mechatronics.sfi.fmi4j.modeldescription.me.ModelExchangeModelDescription
 import no.mechatronics.sfi.fmi4j.proxy.*
+import no.mechatronics.sfi.fmi4j.proxy.cs.CoSimulationLibraryWrapper
+import no.mechatronics.sfi.fmi4j.proxy.cs.Fmi2CoSimulationLibrary
 import no.mechatronics.sfi.fmi4j.proxy.enums.Fmi2Type
+import no.mechatronics.sfi.fmi4j.proxy.me.Fmi2ModelExchangeLibrary
+import no.mechatronics.sfi.fmi4j.proxy.me.ModelExchangeLibraryWrapper
 import no.mechatronics.sfi.fmi4j.proxy.structs.Fmi2CallbackFunctions
 import org.apache.commons.math3.ode.FirstOrderIntegrator
 import java.io.File
