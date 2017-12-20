@@ -38,7 +38,7 @@ class $modelName private constructor(
         }
 
         @JvmStatic
-        fun build() : $modelName {
+        fun newInstance() : $modelName {
             return $modelName(builder.asCoSimulationFmu().newInstance())
         }
 

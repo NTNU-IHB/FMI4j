@@ -42,20 +42,20 @@ fmu.terminate(); //can also use try with resources
 
 FirstOrderIntegrator integrator = new ClassicalRungeKuttaIntegrator(1E-3);
 
-FmiSimulation fmu = new FmuBuilder(new File("path/to/fmu.fmu"))
+try (FmiSimulation fmu = new FmuBuilder(new File("path/to/fmu.fmu"))
                         .asModelExchangeFmuWithIntegrator(integrator)
-                        .newInstance();
+                        .newInstance()) {
 
-//set start values
+    //set start values
 
-fmu.init();
+    fmu.init();
+    
+    double dt = 1d/100;
+    while (fmu.getCurrentTime() < 5) {
+        fmu.step(dt);
+    }
 
-double dt = 1d/100;
-while (fmu.getCurrentTime() < 5) {
-    fmu.step(dt);
 }
-
-fmu.terminate(); //can also use try with resources
 
 ```
 
@@ -80,16 +80,16 @@ add ```-mavenLocal``` if you want the .jar to be installed in your local maven r
 
 ##### API example from kotlin
 ```kotlin
-    with(ControlledTemperature.build()) { 
-        val temperature_Reference: Double = parameters.getTemperatureSource_T()        
-    }
+    ControlledTemperature.newInstance().use{ fmu ->  
+        val temperature_Reference: Double = fmu.parameters.getTemperatureSource_T()        
+    } //fmu has been automatically terminated
 ```
 ##### API example from java
 ```java
-    ControlledTemperature fmu = ControlledTemperature.build(); 
-    double temperature_Reference = fmu.getParameters().getTemperatureSource_T()
+    try (ControlledTemperature fmu = ControlledTemperature.newInstance()) { 
+        double temperature_Reference = fmu.getParameters().getTemperatureSource_T()
+    } //fmu has been automatically terminated
 ```
-
 
 Here is an example of how the  generated code looks like:
 
