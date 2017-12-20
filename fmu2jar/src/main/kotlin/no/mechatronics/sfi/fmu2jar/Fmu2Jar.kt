@@ -70,21 +70,8 @@ class Fmu2Jar(
         }
     }
 
-
-     private fun generateInstanceMethods() :String {
-        val sb = StringBuilder()
-        modelDescription.modelVariables.variables.forEach({
-
-            CodeGeneration.generateGet(it, sb)
-            CodeGeneration.generateSet(it, sb)
-
-
-        })
-        return sb.toString()
-    }
-
     private fun copySourceFile(parentDir: File) {
-        val src = CodeGeneration.generateBody(modelDescription.modelName, file.name, generateInstanceMethods())
+        val src = CodeGeneration.generateBody(modelDescription, file.name)
 
         File(parentDir, "src/main/kotlin/no/mechatronics/sfi/fmu2jar/${modelDescription.modelName}.kt").apply {
             if (!parentFile.exists()) {

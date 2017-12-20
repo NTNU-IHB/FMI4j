@@ -1,55 +1,21 @@
 package no.mechatronics.sfi.fmu2jar.templates
 
-import no.mechatronics.sfi.fmi4j.modeldescription.ScalarVariable
+import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescription
 
 object CodeGeneration {
 
-    private fun convertVariableName1(variable: ScalarVariable<*>): String {
-        return variable.name.let {
-            it.substring(0, 1).capitalize() + it.substring(1, it.length).replace(".", "_")
-        }
-    }
 
+    fun generateBody(modelDescription: ModelDescription, fileName: String = modelDescription.modelName): String {
 
-    private fun fmiTypeToKotlinType(variable: ScalarVariable<*>) : String {
-        when(variable.typeName) {
-            "Integer" -> return "Int"
-            "Real" -> return "Double"
-            "String" -> return "String"
-            "Boolean" -> return "Boolean"
-        }
-        throw IllegalArgumentException()
-    }
-
-
-    fun generateGet(variable: ScalarVariable<*>, sb: StringBuilder) {
-
-        sb.append("""
-            fun get${convertVariableName1(variable)}(): ${fmiTypeToKotlinType(variable)} {
-                return fmu.read(${variable.valueReference}).as${variable.typeName}()
-            }
-            """)
-
-    }
-
-     fun generateSet(variable: ScalarVariable<*>, sb :StringBuilder) {
-
-        sb.append("""
-            fun set${convertVariableName1(variable)}(value: ${fmiTypeToKotlinType(variable)}) {
-                fmu.write(${variable.valueReference}).with(value)
-            }
-            """)
-
-    }
-
-
-    fun generateBody(modelName: String, fileName: String, instanceMethods: String): String {
+        val modelName = modelDescription.modelName
+        val modelVariables = modelDescription.modelVariables
 
         return """
 
-package no.mechatronics.sfi.fmu2jar
+package no.mechatronics.sfi.fmu2jar.${modelName.toLowerCase()}
 
 import no.mechatronics.sfi.fmi4j.FmuFile
+import no.mechatronics.sfi.fmi4j.FmuBuilder
 import no.mechatronics.sfi.fmi4j.FmiSimulation
 import no.mechatronics.sfi.fmi4j.CoSimulationFmu
 import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescription
@@ -64,20 +30,55 @@ class $modelName private constructor(
 
     companion object {
 
-        val fmuFile: FmuFile
+        val builder: FmuBuilder
 
         init {
-            fmuFile = FmuFile($modelName::class.java.classLoader.getResource("$fileName"))
+            val fmuFile = FmuFile($modelName::class.java.classLoader.getResource("$fileName"))
+            builder = FmuBuilder(fmuFile)
         }
 
         @JvmStatic
-        fun build() : $modelName {
-            return $modelName(CoSimulationFmu(fmuFile))
+        fun newInstance() : $modelName {
+            return $modelName(builder.asCoSimulationFmu().newInstance())
         }
 
     }
 
-    $instanceMethods
+    val inputs = Inputs()
+    val outputs = Outputs()
+    val parameters = Parameters()
+    val calculatedParameters = CalculatedParameters()
+    val locals = Locals()
+
+    inner class Inputs {
+
+        ${VariableAccessorsTemplate.generateInputsBody(modelVariables)}
+
+    }
+
+    inner class Outputs {
+
+        ${VariableAccessorsTemplate.generateOutputsBody(modelVariables)}
+
+    }
+
+    inner class Parameters {
+
+        ${VariableAccessorsTemplate.generateParametersBody(modelVariables)}
+
+    }
+
+    inner class CalculatedParameters {
+
+        ${VariableAccessorsTemplate.generateCalculatedParametersBody(modelVariables)}
+
+    }
+
+    inner class Locals {
+
+        ${VariableAccessorsTemplate.generateLocalsBody(modelVariables)}
+
+    }
 
 }
 

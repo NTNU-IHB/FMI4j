@@ -18,7 +18,7 @@ class Main  {
       @JvmStatic
       fun main(args: Array<String>) {
 
-          if (args.size == 0) {
+          if (args.isEmpty()) {
               println("No input.. exiting")
           }
 

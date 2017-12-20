@@ -18,12 +18,11 @@ For Model Exchange, solvers are also included
 
 ```java
 
-FmiSimulation fmu = new CoSimulationFmu(new File("path/to/fmu.fmu"));
+FmiSimulation fmu = new FmuBuilder(new File("path/to/fmu.fmu"))
+                        .asCoSimulationFmu()
+                        .newInstance();
 
-//or
-// fmu = CoSimulationFmu.newBuilder(new File(...))
-//  .loggingOn(true)
-// .build()
+//set start values
 
 fmu.init();
 
@@ -32,7 +31,7 @@ while (fmu.getCurrentTime() < 10) {
     fmu.doStep(dt);
 }
 
-fmu.terminate();
+fmu.terminate(); //can also use try with resources
 
 ```
 
@@ -42,15 +41,21 @@ fmu.terminate();
 ```java
 
 FirstOrderIntegrator integrator = new ClassicalRungeKuttaIntegrator(1E-3);
-FmiSimulation fmu = new ModelExchangeFmuWithIntegrator(new File("path/to/fmu.fmu"), integrator);
-fmu.init();
 
-double dt = 1d/100;
-while (fmu.getCurrentTime() < 5) {
-    fmu.step(dt);
+try (FmiSimulation fmu = new FmuBuilder(new File("path/to/fmu.fmu"))
+                        .asModelExchangeFmuWithIntegrator(integrator)
+                        .newInstance()) {
+
+    //set start values
+
+    fmu.init();
+    
+    double dt = 1d/100;
+    while (fmu.getCurrentTime() < 5) {
+        fmu.step(dt);
+    }
+
 }
-
-fmu.terminate();
 
 ```
 
@@ -72,3 +77,67 @@ E.g. an FMU with a variable named "Controller.speed" of type Real, will have the
 fmi2jar -fmu "fmu/location.fmu" -out "where/to/put/generated/jar"
 ```
 add ```-mavenLocal``` if you want the .jar to be installed in your local maven repository
+
+##### API example from kotlin
+```kotlin
+    ControlledTemperature.newInstance().use{ fmu ->  
+        val temperature_Reference: Double = fmu.parameters.getTemperatureSource_T()        
+    } //fmu has been automatically terminated
+```
+##### API example from java
+```java
+    try (ControlledTemperature fmu = ControlledTemperature.newInstance()) { 
+        double temperature_Reference = fmu.getParameters().getTemperatureSource_T()
+    } //fmu has been automatically terminated
+```
+
+Here is an example of how the  generated code looks like:
+
+```kotlin
+
+class ControlledTemperature private constructor(
+    val fmu: FmiSimulation
+) : FmiSimulation by fmu {
+
+    companion object {
+        // fmu unpacking code
+    }
+
+    val inputs = Inputs()
+    val outputs = Outputs()
+    val parameters = Parameters()
+    val calculatedParameters = CalculatedParameters()
+    val locals = Locals()
+
+    inner class Inputs {
+    }
+
+    inner class Outputs {
+
+        
+            /**
+             * Causality=OUTPUT
+             * Variability=CONTINUOUS
+             */
+            fun getTemperature_Reference(): Double {
+                return fmu.read(46).asReal()
+            }
+            
+            /**
+             * Causality=OUTPUT
+             * Variability=CONTINUOUS
+             */
+            fun getTemperature_Room(): Double {
+                return fmu.read(47).asReal()
+            }
+            
+            
+            ...
+            
+    }
+    
+}
+
+```
+
+Notice how the javadoc is populated with info from the ```modelDescription.xml```, and variables are sorted by their causality.

@@ -25,12 +25,11 @@
 package no.mechatronics.sfi.fmi4j.modeldescription
 
 import no.mechatronics.sfi.fmi4j.modeldescription.enums.*
-import no.mechatronics.sfi.fmi4j.proxy.Fmi2Wrapper
+import no.mechatronics.sfi.fmi4j.proxy.Fmi2LibraryWrapper
 import org.w3c.dom.Node
 import javax.xml.bind.JAXBContext
 import javax.xml.bind.annotation.*
 import javax.xml.bind.annotation.adapters.XmlAdapter
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter
 
 interface IScalarVariable {
 
@@ -110,25 +109,23 @@ public class ScalarVariableImpl : IScalarVariable {
      * @inheritDoc
      */
     @XmlAttribute
-    @XmlJavaTypeAdapter(CausalityAdapter::class)
     override val causality: Causality? = null
 
     /**
      * @inheritDoc
      */
     @XmlAttribute
-    @XmlJavaTypeAdapter(VariabilityAdapter::class)
     override val variability: Variability? = null
 
     /**
      * @inheritDoc
      */
     @XmlAttribute
-    @XmlJavaTypeAdapter(InitialAdapter::class)
-    override val initial: Initial? = null
+    override var initial: Initial? = null
 
     @XmlAttribute(name="valueReference")
     private val _valueReference: Int? = null
+
 
     /**
      * @inheritDoc
@@ -191,13 +188,14 @@ internal class RealAttribute {
 
     /**
      * Minimum value of variable (variable Value ≥ min). If not defined, the
-    minimum is the largest negative number that can be represented on the
-    machine. The min definition is an information from the FMU to the
-    environment defining the region in which the FMU is designed to operate, see
-    also comment after this table.
+     * minimum is the largest negative number that can be represented on the
+     * machine. The min definition is an information from the FMU to the
+     * environment defining the region in which the FMU is designed to operate, see
+     * also comment after this table.
      */
     @XmlAttribute
     val min: Double? = null
+
     /**
      * Maximum value of variable (variableValue ≤ max). If not defined, the
      * maximum is the largest positive number that can be represented on the
@@ -207,6 +205,7 @@ internal class RealAttribute {
      */
     @XmlAttribute
     val max: Double? = null
+
     /**
      * Nominal value of variable. If not defined and no other information about the
      * nominal value is available, then nominal = 1 is assumed.
@@ -218,16 +217,19 @@ internal class RealAttribute {
      */
     @XmlAttribute
     val nominal : Double?  = null
+
     /**
      * @inheritDoc
      */
     @XmlAttribute
     var start: Double? = null
+
     /**
      * If present, this variable is the derivative of variable with ScalarVariable index "derivative",
      */
     @XmlAttribute
     val derivative: Int? = null
+
     /**
      * If true, indicates that the variable gets during time integration much larger
      * than its nominal value nominal. [Typical examples are the monotonically
@@ -247,12 +249,14 @@ internal class RealAttribute {
      */
     @XmlAttribute
     val reint: Boolean = false
+
     /**
      * Physical quantity of the variable, for example “Angle”, or “Energy”. The
      * quantity names are not standardized.
      */
     @XmlAttribute
     val quantity: String? = null
+
     /**
      * Unit of the variable defined with UnitDefinitions.Unit.name that is used
      * for the model equations [, for example “N.m”: in this case a Unit.name =
@@ -260,6 +264,7 @@ internal class RealAttribute {
      */
     @XmlAttribute
     val unit: String? = null
+
     /**
      * Default display unit. The conversion to the “unit” is defined with the element
      * “<fmiModelDescription><UnitDefinitions>”. If the corresponding
@@ -270,6 +275,7 @@ internal class RealAttribute {
      */
     @XmlAttribute
     val displayUnit: String? = null
+
     /**
      * If this attribute is true, then the “offset” of “displayUnit” must be ignored
      * (for example 10 degree Celsius = 10 Kelvin if “relativeQuantity = true”
@@ -304,10 +310,9 @@ internal class BooleanAttribute  {
 
 abstract class VariableBase<E>(v : ScalarVariableImpl) : IScalarVariable by v, ScalarVariable<E> {
 
-    protected lateinit var wrapper : Fmi2Wrapper<*>
+    protected lateinit var wrapper : Fmi2LibraryWrapper<*>
 
 }
-
 
 class IntegerVariable(v : ScalarVariableImpl) : VariableBase<Int>(v) {
 

@@ -25,21 +25,22 @@
 package no.mechatronics.sfi.fmi4j.proxy.structs
 
 
-import com.sun.jna.Callback
-import com.sun.jna.Memory
-import com.sun.jna.Pointer
-import com.sun.jna.Structure
+import com.sun.jna.*
 import no.mechatronics.sfi.fmi4j.proxy.enums.Fmi2Status
 import java.util.Arrays
 import java.util.HashSet
 import org.slf4j.LoggerFactory
+import sun.security.krb5.Confounder.bytes
+import com.sun.jna.Memory
+
+
 
 
 open class Fmi2CallbackFunctions : Structure() {
 
     private companion object {
         val LOG = LoggerFactory.getLogger(Fmi2CallbackFunctions::class.java)
-        val POINTERS : MutableSet<Pointer> = HashSet()
+        val POINTERS : MutableMap<Pointer, Memory> = HashMap()
     }
 
 
@@ -79,6 +80,7 @@ open class Fmi2CallbackFunctions : Structure() {
     inner class FmiCallbackLoggerImpl : CallbackLogger {
 
         override fun invoke(c: Pointer?, instanceName: String, status: Int, category: String, message: String, args: Pointer?) {
+
             LOG.info("InstanceName: {}, status: {}, category: {}, message: {}", instanceName, Fmi2Status.valueOf(status), category, message)
         }
 
@@ -93,15 +95,14 @@ open class Fmi2CallbackFunctions : Structure() {
 
         override fun invoke(nobj: Int, size: Int): Pointer {
 
-            var nobj_ = nobj
-            if (nobj_ <= 0) {
-                nobj_ = 1
-            }
-            val malloc = (nobj_ * size).toLong();
-           // LOG.debug("CallbackAllocateMemoryImpl, {}", size)
-            val memory = Memory(malloc)
-            memory.align(Structure.ALIGN_GNUC)
-            POINTERS.add(memory)
+            val bytes = (if (nobj <= 0) 1 else nobj) * size;
+            val memory = Memory(bytes.toLong())
+           // memory.align(4)
+            memory.clear()
+
+            val pointer = memory.share(0)
+            POINTERS.put(pointer, memory)
+
             return memory
         }
 
@@ -116,11 +117,11 @@ open class Fmi2CallbackFunctions : Structure() {
 
         override fun invoke(pointer: Pointer) {
 
-           // LOG.debug("CallbackFreeMemoryImpl")
+            LOG.debug("CallbackFreeMemoryImpl")
 
-            if (!POINTERS.remove(pointer)) {
-                LOG.warn("Failed to remove pointer!")
-            }
+            POINTERS.remove(pointer)
+            System.gc()
+            //Native.free(Pointer.nativeValue(pointer))
 
         }
 

@@ -63,6 +63,9 @@ internal class CoSimulationInfo {
     @XmlAttribute
     val providesDirectionalDerivative: Boolean = false
 
+    @XmlAttribute
+    val canGetAndSetFMUState: Boolean = false
+
     @XmlElementWrapper(name = "SourceFiles")
     @XmlElement(name = "File")
     val sourceFiles: List<SourceFile>? = null

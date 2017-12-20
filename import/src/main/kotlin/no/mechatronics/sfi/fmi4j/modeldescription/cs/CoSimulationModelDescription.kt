@@ -178,4 +178,11 @@ class CoSimulationModelDescription : ModelDescription() {
         return cs!!.providesDirectionalDerivative
     }
 
+    /**
+     * FMI extension
+     */
+    fun canGetAndSetFMUState(): Boolean {
+        return cs!!.canGetAndSetFMUState
+    }
+
 }

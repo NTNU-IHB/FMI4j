@@ -32,6 +32,7 @@ import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescription
 import org.apache.commons.io.FileUtils
 import org.apache.commons.io.FilenameUtils
 import org.apache.commons.io.IOUtils
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.nio.charset.Charset
 import java.nio.file.Files
@@ -47,15 +48,15 @@ private const val MAC_OS_LIBRARY_EXTENSION = ".dylib"
 private const val WINDOWS_LIBRARY_EXTENSION = ".dll"
 private const val LINUX_LIBRARY_EXTENSION = ".so"
 
+private const val FMI4J_FILE_PREFIX = "fmi4j_"
+
 class FmuFile {
 
     private companion object {
 
-         val LOG = LoggerFactory.getLogger(FmuFile::class.java)
+         val LOG: Logger = LoggerFactory.getLogger(FmuFile::class.java)
 
-         val FMI4J_PREFIX = "fmi4j_"
          val map: MutableMap<String, File> = HashMap()
-
 
         init {
 
@@ -101,7 +102,7 @@ class FmuFile {
                 return map[guid]!!
             }
             val baseName = FilenameUtils.getBaseName(url.toString())
-            val tmp = Files.createTempFile(FMI4J_PREFIX + baseName, ".fmu").toFile()
+            val tmp = Files.createTempFile(FMI4J_FILE_PREFIX + baseName, ".fmu").toFile()
             val data = IOUtils.toByteArray(url)
             FileUtils.writeByteArrayToFile(tmp, data)
 
@@ -127,8 +128,8 @@ class FmuFile {
                 return map[guid]!!
             }
 
-            val baseName = FilenameUtils.getBaseName(fmuFile.name).replace(FMI4J_PREFIX, "")
-            return Files.createTempDirectory(FMI4J_PREFIX + baseName).toFile().also {
+            val baseName = FilenameUtils.getBaseName(fmuFile.name).replace(FMI4J_FILE_PREFIX, "")
+            return Files.createTempDirectory(FMI4J_FILE_PREFIX + baseName).toFile().also {
                 extractTo(fmuFile, it)
                 map[guid] = it
             }

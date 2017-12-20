@@ -362,7 +362,7 @@
 <Real />
 </ScalarVariable>
 <ScalarVariable name="Temperature_Room" valueReference="47" variability="continuous" causality="output">
-<Real />
+<Real min="2" max="4"/>
 </ScalarVariable>
 <ScalarVariable name="HeatCapacity1.p.dQ" valueReference="50" variability="continuous" causality="local">
 <Real />
