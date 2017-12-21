@@ -30,6 +30,7 @@ import no.mechatronics.sfi.fmi4j.modeldescription.log.Category
 import no.mechatronics.sfi.fmi4j.modeldescription.me.ModelExchangeInfo
 import no.mechatronics.sfi.fmi4j.modeldescription.structure.ModelStructure
 import org.apache.commons.io.IOUtils
+import java.io.File
 import java.io.FileInputStream
 import java.io.InputStream
 import java.io.StringReader
@@ -50,23 +51,20 @@ open class ModelDescription {
 
     companion object {
 
-        internal fun <T: ModelDescription> parseModelDescription(xml: String, type: Class<T>): T {
-            return JAXB.unmarshal(StringReader(xml), type)
-        }
+        internal fun <T: ModelDescription> parseModelDescription(xml: String, type: Class<T>): T = JAXB.unmarshal(StringReader(xml), type)
 
         @JvmStatic
         fun parseModelDescription(xml: String): ModelDescription = parseModelDescription(xml, ModelDescription::class.java)
         @JvmStatic
         fun parseModelDescription(url: URL): ModelDescription = parseModelDescription(url.openStream(), ModelDescription::class.java)
         @JvmStatic
-        fun parseModelDescription(file: java.io.File): ModelDescription = parseModelDescription(FileInputStream(file), ModelDescription::class.java)
+        fun parseModelDescription(file: File): ModelDescription = parseModelDescription(FileInputStream(file), ModelDescription::class.java)
         @JvmStatic
         fun parseModelDescription(inputStream: InputStream): ModelDescription = parseModelDescription(inputStream, ModelDescription::class.java)
 
+        @JvmStatic
+        fun exctractModelDescriptionXml(stream: InputStream): String {
 
-        internal fun <T : ModelDescription> parseModelDescription(stream: InputStream, type: Class<T>): T {
-
-            var modelDescription: T? = null
             ZipInputStream(stream).use {
 
                 var nextEntry: ZipEntry? = it.nextEntry
@@ -74,7 +72,7 @@ open class ModelDescription {
 
                     val name = nextEntry.name
                     if (name == MODEL_DESC_FILE) {
-                        modelDescription = parseModelDescription(IOUtils.toString(it, Charset.forName("UTF-8")), type)
+                        return IOUtils.toString(it, Charset.forName("UTF-8"))
                     }
 
                     nextEntry = it.nextEntry
@@ -82,11 +80,16 @@ open class ModelDescription {
 
             }
 
-            if (modelDescription == null) {
-                throw IllegalArgumentException("Input is not an valid FMU! No $MODEL_DESC_FILE present!")
+            throw IllegalArgumentException("Input is not an valid FMU! No $MODEL_DESC_FILE present!")
+
+        }
+
+        internal fun <T : ModelDescription> parseModelDescription(stream: InputStream, type: Class<T>): T {
+
+            return exctractModelDescriptionXml(stream).let {
+                parseModelDescription(it, type)
             }
 
-            return modelDescription!!
 
         }
 

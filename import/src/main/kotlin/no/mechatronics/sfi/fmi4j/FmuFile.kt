@@ -49,6 +49,7 @@ private const val WINDOWS_LIBRARY_EXTENSION = ".dll"
 private const val LINUX_LIBRARY_EXTENSION = ".so"
 
 private const val FMI4J_FILE_PREFIX = "fmi4j_"
+private const val MODEL_DESC = "modelDescription.xml"
 
 class FmuFile {
 
@@ -64,19 +65,19 @@ class FmuFile {
                 LOG.debug("Preparing to delete extracted FMU folder and all its contents: {}", fmuFile)
                 var tries = 0
                 val maxTries = 5
-                var deletedSucessfully = false
+                var deletedSuccessfully = false
                 do  {
 
                     try {
-                        deletedSucessfully = fmuFile.deleteRecursively()
+                        deletedSuccessfully = fmuFile.deleteRecursively()
                     }catch (ex: Exception){
                         Thread.sleep(100)
                     }
 
 
-                } while(!deletedSucessfully && tries++ < maxTries)
+                } while(!deletedSuccessfully && tries++ < maxTries)
 
-                if (deletedSucessfully) {
+                if (deletedSuccessfully) {
                     LOG.debug("Deleted fmu folder: {}", fmuFile)
                 } else {
                     LOG.warn("Failed to delete fmu folder after {} unsuccessful attempts: {}", maxTries, fmuFile)
@@ -187,10 +188,9 @@ class FmuFile {
     }
 
     fun getModelDescriptionFile(): File {
-        return File(fmuFile, "modelDescription.xml")
+        return File(fmuFile, MODEL_DESC)
     }
 
-    @Throws(IOException::class)
     fun getModelDescriptionXml(): String {
         return FileUtils.readFileToString(getModelDescriptionFile(), Charset.forName("UTF-8"))
     }

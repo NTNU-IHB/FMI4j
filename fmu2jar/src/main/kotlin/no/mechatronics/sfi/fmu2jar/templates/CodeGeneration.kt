@@ -30,7 +30,7 @@ class $modelName private constructor(
 
     companion object {
 
-        val builder: FmuBuilder
+        private val builder: FmuBuilder
 
         init {
             val fmuFile = FmuFile($modelName::class.java.classLoader.getResource("$fileName"))
