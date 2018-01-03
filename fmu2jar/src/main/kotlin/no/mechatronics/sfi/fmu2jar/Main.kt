@@ -10,9 +10,9 @@ class Main  {
 
   companion object {
 
-      const val FMU_FILE = "fmu"
-      const val OUTPUT_FOLDER = "out"
-      const val MAVEN_LOCAL_OPT = "mavenLocal"
+      private const val FMU_FILE = "fmu"
+      private const val OUTPUT_FOLDER = "out"
+      private const val MAVEN_LOCAL_OPT = "mavenLocal"
 
 
       @JvmStatic
@@ -36,7 +36,7 @@ class Main  {
               var mavenLocal: Boolean = false
               var fmuFile: File? = null
 
-              with(cmd) {
+              cmd.apply {
 
                   getOptionValue(FMU_FILE)?.let { path ->
                       val file = File(path.replace("\\", "/"))

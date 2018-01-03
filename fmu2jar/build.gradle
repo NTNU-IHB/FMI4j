@@ -3,17 +3,23 @@ apply plugin: "application"
 
 mainClassName = "no.mechatronics.sfi.fmu2jar.Main"
 
+def debug = false
+
 repositories {
-    //mavenLocal()
+    if (debug) {
+        mavenLocal()
+    }
 }
 
 dependencies {
 
-    //compile group: 'no.mechatronics.sfi.fmu2jar', name: "ControlledTemperature", "version": "1.0-SNAPSHOT" //for testing
+    if (debug) {
+        compile group: 'no.mechatronics.sfi.fmu2jar', name: "ControlledTemperature", "version": "1.0-SNAPSHOT"
+    }
 
     compile group: 'commons-cli', name: 'commons-cli', version: '1.4'
 
-    compile project(':import')
+    compile project(':fmi-import')
 
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }

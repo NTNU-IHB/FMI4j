@@ -99,8 +99,6 @@ class Fmu2Jar(
             val parentDir = File(tempDirectory, modelDescription.modelName)
             parentDir.mkdir()
 
-           // println(parentDir.absolutePath)
-
             copyFmuFile(parentDir)
             copyBuildFile(parentDir)
             copyGradleWrapper(parentDir)
