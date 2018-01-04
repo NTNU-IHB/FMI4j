@@ -4,6 +4,7 @@ version = '0.1-ALPHA-7-SNAPSHOT'
 
 apply plugin: 'maven'
 apply plugin: 'signing'
+apply plugin: 'maven-publish'
 
 dependencies {
 
@@ -77,5 +78,15 @@ uploadArchives {
         }
     }
 }
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+        }
+    }
+}
+
+build.finalizedBy(publishToMavenLocal)
 
 
