@@ -2,6 +2,7 @@
 package no.mechatronics.sfi.fmu2jar
 
 import org.apache.commons.cli.DefaultParser
+import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.Options
 import java.io.File
 
@@ -10,6 +11,7 @@ class Main  {
 
   companion object {
 
+      private const val HELP = "help"
       private const val FMU_FILE = "fmu"
       private const val OUTPUT_FOLDER = "out"
       private const val MAVEN_LOCAL_OPT = "mavenLocal"
@@ -18,19 +20,19 @@ class Main  {
       @JvmStatic
       fun main(args: Array<String>) {
 
-          if (args.isEmpty()) {
-              println("No input.. exiting")
+          val options = Options().apply {
+              addOption(HELP, false, "Displays this message")
+              addOption(FMU_FILE, true, "Path to the FMU")
+              addOption(MAVEN_LOCAL_OPT, false, "Should the .jar be published to maven local?")
+              addOption(OUTPUT_FOLDER, true, "Specify where to copy the generated .jar. Not needed if $MAVEN_LOCAL_OPT=true")
+          }
+
+          val cmd = DefaultParser().parse(options, args)
+          if (args.isEmpty() || cmd.hasOption(HELP)) {
+              HelpFormatter().printHelp("fmu2jar", options)
           }
 
           try {
-              val options = Options().apply {
-                  addOption(FMU_FILE, true, "Path to the FMU")
-                  addOption(MAVEN_LOCAL_OPT, false, "Should the .jar be published to maven local?")
-                  addOption(OUTPUT_FOLDER, true, "Specify where to copy the generated .jar. Not needed if $MAVEN_LOCAL_OPT=true")
-              }
-
-              val parser = DefaultParser()
-              val cmd = parser.parse(options, args)
 
               var outputFolder: File? = null
               var mavenLocal: Boolean = false

@@ -21,10 +21,11 @@ sourceCompatibility = 1.8
 
 repositories {
     mavenCentral()
+    mavenLocal()
 }
 
 dependencies {
-    compile "no.mechatronics.sfi.fmi4j:fmi-import:0.1-ALPHA-6"
+    compile "no.mechatronics.sfi.fmi4j:fmi-import:0.1-ALPHA-7-SNAPSHOT"
 }
 
 task sourcesJar(type: Jar, dependsOn: classes, description: 'Creates a jar from the source files.') {

@@ -96,7 +96,7 @@ class FmuFile {
         @Throws(IOException::class)
         private fun extractToTempFolder(url: URL): File {
 
-            val modelDescription = ModelDescriptionParser.parseModelDescription(url)
+            val modelDescription = ModelDescriptionParser.parse(url)
             val guid = modelDescription.guid
 
             if (guid in map) {

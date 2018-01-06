@@ -48,13 +48,13 @@ private const val MODEL_DESC_FILE = "modelDescription.xml"
 object ModelDescriptionParser {
 
     @JvmStatic
-    fun parseModelDescription(xml: String): IModelDescription = parse(xml, ModelDescriptionXmlTemplate::class.java).generate()
+    fun parse(xml: String): IModelDescription = parse(xml, ModelDescriptionXmlTemplate::class.java).generate()
     @JvmStatic
-    fun parseModelDescription(url: URL): IModelDescription = parse(url.openStream(), ModelDescriptionXmlTemplate::class.java).generate()
+    fun parse(url: URL): IModelDescription = parse(url.openStream(), ModelDescriptionXmlTemplate::class.java).generate()
     @JvmStatic
     fun parse(file: File): IModelDescription = parse(FileInputStream(file), ModelDescriptionXmlTemplate::class.java).generate()
     @JvmStatic
-    fun parseModelDescription(inputStream: InputStream): IModelDescription = parse(inputStream, ModelDescriptionXmlTemplate::class.java).generate()
+    fun parse(inputStream: InputStream): IModelDescription = parse(inputStream, ModelDescriptionXmlTemplate::class.java).generate()
 
     internal fun <T: ModelDescriptionXmlTemplate> parse(xml: String, type: Class<T>): T = JAXB.unmarshal(StringReader(xml), type)
     internal fun <T : ModelDescriptionXmlTemplate> parse(stream: InputStream, type: Class<T>): T = exctractModelDescriptionXml(stream).let { parse(it, type) }

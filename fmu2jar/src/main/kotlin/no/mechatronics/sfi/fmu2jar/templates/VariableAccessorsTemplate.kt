@@ -67,7 +67,6 @@ object VariableAccessorsTemplate {
 
             if (v is RealVariable) {
 
-
                 if (v.min != null) {
                    append("$tab * max=").append(v.min!!).append('\n')
                 }
@@ -79,9 +78,7 @@ object VariableAccessorsTemplate {
                     append("$tab * nominal=").append(v.nominal!!).append('\n')
                 }
 
-
             }
-
 
             append("$tab */")
 
@@ -92,25 +89,26 @@ object VariableAccessorsTemplate {
     }
 
 
-    fun generateGet(variable: ScalarVariable<*>, sb: StringBuilder) {
+    private fun generateGet(variable: ScalarVariable<*>, sb: StringBuilder) {
 
         sb.append("""
-            ${generateJavaDoc(variable)}
-            fun get${capitalizeFirstLetterAndReplaceDotsWithSlash(variable)}(): ${fmiTypeToKotlinType(variable)} {
-                return fmu.read(${variable.valueReference}).as${variable.typeName}()
-            }
+
+        ${generateJavaDoc(variable)}
+        fun get${capitalizeFirstLetterAndReplaceDotsWithSlash(variable)}(): ${fmiTypeToKotlinType(variable)} {
+            return fmu.read(${variable.valueReference}).as${variable.typeName}()
+        }
             """)
 
     }
 
-    fun generateSet(variable: ScalarVariable<*>, sb :StringBuilder) {
+    private fun generateSet(variable: ScalarVariable<*>, sb :StringBuilder) {
 
         sb.append("""
 
-            ${generateJavaDoc(variable)}
-            fun set${capitalizeFirstLetterAndReplaceDotsWithSlash(variable)}(value: ${fmiTypeToKotlinType(variable)}) {
-                fmu.write(${variable.valueReference}).with(value)
-            }
+        ${generateJavaDoc(variable)}
+        fun set${capitalizeFirstLetterAndReplaceDotsWithSlash(variable)}(value: ${fmiTypeToKotlinType(variable)}) {
+            fmu.write(${variable.valueReference}).with(value)
+        }
             """)
 
     }
