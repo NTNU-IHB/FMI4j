@@ -69,7 +69,7 @@ class CoSimulationFmuBuilder(
             .parse(fmuFile.getModelDescriptionXml())
 
     init {
-        if (!modelDescription.isCoSimulationFmu()) {
+        if (!modelDescription.isCoSimulationFmu) {
             throw IllegalStateException("This FMU is NOT built for Co-simulation!")
         }
     }
@@ -102,7 +102,7 @@ open class ModelExchangeFmuBuilder(
             .parse(fmuFile.getModelDescriptionXml())
 
     init {
-        if (!modelDescription.isMeSimulationFmu()) {
+        if (!modelDescription.isMeSimulationFmu) {
             throw IllegalStateException("This FMU is NOT built for Model Exchange!")
         }
     }
@@ -135,7 +135,7 @@ open class ModelExchangeFmuWithIntegratorBuilder(
     private val modelDescription: IModelExchangeModelDescription = ModelExchangeModelDescriptionParser
             .parse(fmuFile.getModelDescriptionXml())
     init {
-        if (!modelDescription.isMeSimulationFmu()) {
+        if (!modelDescription.isMeSimulationFmu) {
             throw IllegalStateException("This FMU is NOT built for Model Exchange!")
         }
     }
