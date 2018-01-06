@@ -22,9 +22,10 @@
  * THE SOFTWARE.
  */
 
-package no.mechatronics.sfi.fmi4j
+package no.mechatronics.sfi.fmi4j.fmu
 
-import no.mechatronics.sfi.fmi4j.modeldescription.me.ModelExchangeModelDescription
+import no.mechatronics.sfi.fmi4j.FmiSimulation
+import no.mechatronics.sfi.fmi4j.modeldescription.me.IModelExchangeModelDescription
 import no.mechatronics.sfi.fmi4j.proxy.me.ModelExchangeLibraryWrapper
 import no.mechatronics.sfi.fmi4j.proxy.structs.Fmi2EventInfo
 import org.apache.commons.math3.ode.FirstOrderDifferentialEquations
@@ -33,9 +34,9 @@ import org.apache.commons.math3.ode.FirstOrderIntegrator
 
 open class ModelExchangeFmu internal constructor(
         fmuFile: FmuFile,
-        modelDescription: ModelExchangeModelDescription,
+        modelDescription: IModelExchangeModelDescription,
         wrapper: ModelExchangeLibraryWrapper
-): AbstractFmu<ModelExchangeModelDescription, ModelExchangeLibraryWrapper>(fmuFile, modelDescription, wrapper) {
+): AbstractFmu<IModelExchangeModelDescription, ModelExchangeLibraryWrapper>(fmuFile, modelDescription, wrapper) {
 
     fun setTime(time: Double) = wrapper.setTime(time)
 
@@ -62,7 +63,7 @@ open class ModelExchangeFmu internal constructor(
 class ModelExchangeFmuWithIntegrator internal constructor(
         private val fmu: ModelExchangeFmu,
         private val integrator: FirstOrderIntegrator
-) : FmiSimulation  {
+) : FmiSimulation {
 
     private val states: DoubleArray
     private val derivatives: DoubleArray
@@ -140,7 +141,7 @@ class ModelExchangeFmuWithIntegrator internal constructor(
                 }
             }
             fmu.enterContinuousTimeMode()
-            //getContinuousStates(states)
+            fmu.getContinuousStates(states)
             fmu.getEventIndicators(eventIndicators)
 
             return true
@@ -218,7 +219,7 @@ class ModelExchangeFmuWithIntegrator internal constructor(
     private fun solve(t: Double, tNext:Double) : SolveResult {
 
         fmu.getContinuousStates(states)
-        //getDerivatives(derivatives)
+        fmu.getDerivatives(derivatives)
 
         val dt = tNext - t
         val integratedTime = integrator.integrate(ode, t, states, currentTime + dt, states)

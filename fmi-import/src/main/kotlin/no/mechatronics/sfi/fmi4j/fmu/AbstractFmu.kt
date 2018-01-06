@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package no.mechatronics.sfi.fmi4j
+package no.mechatronics.sfi.fmi4j.fmu
 
 import no.mechatronics.sfi.fmi4j.misc.*
 import no.mechatronics.sfi.fmi4j.modeldescription.*
@@ -33,7 +33,7 @@ import no.mechatronics.sfi.fmi4j.proxy.enums.Fmi2Status
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-abstract class AbstractFmu<E: ModelDescription, T: Fmi2LibraryWrapper<*>> internal constructor(
+abstract class AbstractFmu<E: IModelDescription, T: Fmi2LibraryWrapper<*>> internal constructor(
         val fmuFile: FmuFile,
         val modelDescription: E,
         val wrapper: T

@@ -22,13 +22,14 @@
  * THE SOFTWARE.
  */
 
-package no.mechatronics.sfi.fmi4j
+package no.mechatronics.sfi.fmi4j.fmu
 
 import com.sun.jna.Platform
+import no.mechatronics.sfi.fmi4j.modeldescription.IModelDescription
+import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescriptionParser
 import java.io.File
 import java.io.IOException
 import java.net.URL
-import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescription
 import org.apache.commons.io.FileUtils
 import org.apache.commons.io.FilenameUtils
 import org.apache.commons.io.IOUtils
@@ -95,7 +96,7 @@ class FmuFile {
         @Throws(IOException::class)
         private fun extractToTempFolder(url: URL): File {
 
-            val modelDescription = ModelDescription.parseModelDescription(url)
+            val modelDescription = ModelDescriptionParser.parseModelDescription(url)
             val guid = modelDescription.guid
 
             if (guid in map) {
@@ -122,7 +123,7 @@ class FmuFile {
         @Throws(IOException::class)
         private fun extractToTempFolder(fmuFile: File): File {
 
-            val modelDescription = ModelDescription.parseModelDescription(fmuFile)
+            val modelDescription = ModelDescriptionParser.parse(fmuFile)
             val guid = modelDescription.guid
             if (guid in map) {
                 LOG.debug("Re-using previously extracted FMU with name {}", modelDescription.modelName)
@@ -223,7 +224,7 @@ class FmuFile {
         return if (Platform.is64Bit()) "64" else "32"
     }
 
-    fun getLibraryName(desc: ModelDescription): String {
+    fun getLibraryName(desc: IModelDescription): String {
         return "${desc.modelIdentifier}${getLibraryExtension()}"
     }
 
@@ -231,7 +232,7 @@ class FmuFile {
         return File(fmuFile, BINARIES_FOLDER + File.separator + getLibraryFolderName() + getBitness()).absolutePath
     }
 
-    fun getFullLibraryPath(desc: ModelDescription): String {
+    fun getFullLibraryPath(desc: IModelDescription): String {
         return File(fmuFile, BINARIES_FOLDER + File.separator + getLibraryFolderName() + getBitness() + File.separator + desc.modelIdentifier + getLibraryExtension()).absolutePath
     }
 

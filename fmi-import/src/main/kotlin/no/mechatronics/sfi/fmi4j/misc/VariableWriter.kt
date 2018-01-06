@@ -27,50 +27,44 @@ package no.mechatronics.sfi.fmi4j.misc
 import no.mechatronics.sfi.fmi4j.proxy.Fmi2LibraryWrapper
 import no.mechatronics.sfi.fmi4j.proxy.enums.Fmi2Status
 
+interface IVariableWriter {
+
+    fun with(data: Int) : Fmi2Status
+    fun with(data: Double) : Fmi2Status
+    fun with(data: String) : Fmi2Status
+    fun with(data: Boolean) : Fmi2Status
+
+}
 
 class VariableWriter internal constructor(
         private val wrapper: Fmi2LibraryWrapper<*>,
         private val valueReference: Int
-) {
+): IVariableWriter {
 
-    fun with(data: Int) : Fmi2Status {
-        return wrapper.setInteger(valueReference, data)
-    }
+    override fun with(data: Int) = wrapper.setInteger(valueReference, data)
+    override fun with(data: Double) = wrapper.setReal(valueReference, data)
+    override fun with(data: String) = wrapper.setString(valueReference, data)
+    override fun with(data: Boolean) = wrapper.setBoolean(valueReference, data)
 
-    fun with(data: Double) : Fmi2Status {
-        return wrapper.setReal(valueReference, data)
-    }
+}
 
-    fun with(data: String) : Fmi2Status {
-        return wrapper.setString(valueReference, data)
-    }
-
-    fun with(data: Boolean) : Fmi2Status {
-        return wrapper.setBoolean(valueReference, data)
-    }
-
+interface IVariablesWriter {
+    fun with(vararg  data: Int) : Fmi2Status
+    fun with(vararg data: Double) : Fmi2Status
+    fun with(vararg data: String) : Fmi2Status
+    fun with(vararg data: Boolean) : Fmi2Status
 }
 
 class VariablesWriter internal constructor(
         private val wrapper: Fmi2LibraryWrapper<*>,
         private val valueReference: IntArray
-) {
+) : IVariablesWriter {
 
-    fun with(vararg data: Int) {
-        wrapper.setInteger(valueReference, data)
-    }
+    override fun with(vararg data: Int) =  wrapper.setInteger(valueReference, data)
+    override fun with(vararg data: Double) = wrapper.setReal(valueReference, data)
+    override fun with(vararg data: String) = wrapper.setString(valueReference, data)
+    override fun with(vararg data: Boolean) = wrapper.setBoolean(valueReference, data)
 
-    fun with(vararg data: Double) {
-        wrapper.setReal(valueReference, data)
-    }
-
-    fun with(vararg data: String) {
-        wrapper.setString(valueReference, data)
-    }
-
-    fun with(vararg data: Boolean) {
-        wrapper.setBoolean(valueReference, data)
-    }
 
 }
 

@@ -14,10 +14,10 @@ object CodeGeneration {
 
 package no.mechatronics.sfi.fmu2jar.${modelName.toLowerCase()}
 
-import no.mechatronics.sfi.fmi4j.FmuFile
-import no.mechatronics.sfi.fmi4j.FmuBuilder
+import no.mechatronics.sfi.fmi4j.fmu.FmuFile
+import no.mechatronics.sfi.fmi4j.fmu.FmuBuilder
 import no.mechatronics.sfi.fmi4j.FmiSimulation
-import no.mechatronics.sfi.fmi4j.CoSimulationFmu
+import no.mechatronics.sfi.fmi4j.fmu.CoSimulationFmu
 import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescription
 import no.mechatronics.sfi.fmi4j.modeldescription.ModelVariables
 import no.mechatronics.sfi.fmi4j.modeldescription.ScalarVariable

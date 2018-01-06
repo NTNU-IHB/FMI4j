@@ -25,10 +25,11 @@
 package no.mechatronics.sfi.fmi4j;
 
 
+import no.mechatronics.sfi.fmi4j.fmu.FmuBuilder;
+import no.mechatronics.sfi.fmi4j.misc.IVariableReader;
 import no.mechatronics.sfi.fmi4j.misc.VariableReader;
 import no.mechatronics.sfi.fmi4j.proxy.enums.Fmi2Status;
 import no.mechatronics.sfi.fmi4j.modeldescription.RealVariable;
-import org.apache.commons.math3.ode.nonstiff.EulerIntegrator;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -70,7 +71,7 @@ public class CoSimulationFmuTest {
 
         Assert.assertEquals(0.1, fmu.getModelVariables().getReal("HeatCapacity1.C").getStart(), 0);
 
-        VariableReader read = fmu.read("Temperature_Room");
+        IVariableReader read = fmu.read("Temperature_Room");
 
         final RealVariable r = fmu.getModelVariables().getReal("Temperature_Room");
         Assert.assertNotNull(r);

@@ -26,27 +26,40 @@ package no.mechatronics.sfi.fmi4j.misc
 
 import no.mechatronics.sfi.fmi4j.proxy.Fmi2LibraryWrapper
 
+interface IVariableReader {
+    fun asInteger() : Int
+    fun asReal() : Double
+    fun asString() : String
+    fun asBoolean() : Boolean
+}
 
 class VariableReader internal constructor(
         private val wrapper: Fmi2LibraryWrapper<*>,
         private val valueReference: Int
-) {
+) : IVariableReader {
 
-    fun asInteger() : Int = wrapper.getInteger(valueReference)
-    fun asReal() : Double = wrapper.getReal(valueReference)
-    fun asString() : String = wrapper.getString(valueReference)
-    fun asBoolean() : Boolean = wrapper.getBoolean(valueReference)
+    override fun asInteger() : Int = wrapper.getInteger(valueReference)
+    override fun asReal() : Double = wrapper.getReal(valueReference)
+    override fun asString() : String = wrapper.getString(valueReference)
+    override fun asBoolean() : Boolean = wrapper.getBoolean(valueReference)
 
+}
+
+interface IVariablesReader {
+    fun asInteger() : IntArray
+    fun asReal() : DoubleArray
+    fun asString() : Array<String>
+    fun asBoolean() : BooleanArray
 }
 
 class VariablesReader internal constructor(
         private val wrapper: Fmi2LibraryWrapper<*>,
         private val valueReference: IntArray
-) {
+): IVariablesReader {
 
-    fun asInteger() : IntArray = wrapper.getInteger(valueReference)
-    fun asReal() : DoubleArray = wrapper.getReal(valueReference)
-    fun asString() : Array<String> = wrapper.getString(valueReference)
-    fun asBoolean() : BooleanArray = wrapper.getBoolean(valueReference)
+    override fun asInteger() : IntArray = wrapper.getInteger(valueReference)
+    override fun asReal() : DoubleArray = wrapper.getReal(valueReference)
+    override fun asString() : Array<String> = wrapper.getString(valueReference)
+    override fun asBoolean() : BooleanArray = wrapper.getBoolean(valueReference)
 
 }

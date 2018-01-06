@@ -24,24 +24,25 @@
 
 package no.mechatronics.sfi.fmi4j
 
-import no.mechatronics.sfi.fmi4j.misc.VariableReader
-import no.mechatronics.sfi.fmi4j.misc.VariableWriter
+import no.mechatronics.sfi.fmi4j.fmu.FmuFile
+import no.mechatronics.sfi.fmi4j.misc.IVariableReader
+import no.mechatronics.sfi.fmi4j.misc.IVariableWriter
+import no.mechatronics.sfi.fmi4j.modeldescription.IModelDescription
 import no.mechatronics.sfi.fmi4j.proxy.enums.Fmi2Status
-import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescription
 import no.mechatronics.sfi.fmi4j.modeldescription.ModelVariables
 
 interface FmiSimulation : AutoCloseable {
 
     val fmuFile: FmuFile
-    val modelDescription: ModelDescription
+    val modelDescription: IModelDescription
     val modelVariables: ModelVariables
     val currentTime: Double
 
-    fun write(name: String) : VariableWriter
-    fun read(name: String) : VariableReader
+    fun write(name: String) : IVariableWriter
+    fun read(name: String) : IVariableReader
 
-    fun write(vr: Int) : VariableWriter
-    fun read(vr: Int) : VariableReader
+    fun write(vr: Int) : IVariableWriter
+    fun read(vr: Int) : IVariableReader
 
     fun init() : Boolean
     fun init(start: Double) : Boolean

@@ -24,24 +24,24 @@
 
 package no.mechatronics.sfi.fmi4j.modeldescription.cs
 
-import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescription
+import no.mechatronics.sfi.fmi4j.modeldescription.IModelDescription
+import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescriptionParser
+import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescriptionXmlTemplate
 import java.io.File
 import java.io.FileInputStream
 import java.net.URL
 import javax.xml.bind.annotation.XmlRootElement
 
+object CoSimulationModelDescriptionParser {
+    @JvmStatic
+    fun parse(xml: String) : ICoSimulationModelDescription = ModelDescriptionParser.parse(xml, CoSimulationModelDescriptionXmlTemplate::class.java).generate()
+    @JvmStatic
+    fun parse(url: URL): ICoSimulationModelDescription = ModelDescriptionParser.parse(url.openStream(), CoSimulationModelDescriptionXmlTemplate::class.java).generate()
+    @JvmStatic
+    fun parse(file: File): ICoSimulationModelDescription = ModelDescriptionParser.parse(FileInputStream(file), CoSimulationModelDescriptionXmlTemplate::class.java).generate()
+}
 
-@XmlRootElement(name = "fmiModelDescription")
-class CoSimulationModelDescription : ModelDescription() {
-
-    companion object {
-        @JvmStatic
-        fun parseModelDescription(xml: String) : CoSimulationModelDescription = ModelDescription.parseModelDescription(xml, CoSimulationModelDescription::class.java)
-        @JvmStatic
-        fun parseModelDescription(url: URL): CoSimulationModelDescription = ModelDescription.parseModelDescription(url.openStream(), CoSimulationModelDescription::class.java)
-        @JvmStatic
-        fun parseModelDescription(file: File): CoSimulationModelDescription = ModelDescription.parseModelDescription(FileInputStream(file), CoSimulationModelDescription::class.java)
-    }
+interface ICoSimulationModelDescription : IModelDescription {
 
     /**
      * The slave is able to provide derivatives of
@@ -53,26 +53,7 @@ class CoSimulationModelDescription : ModelDescription() {
      * @return
      */
     val maxOutputDerivativeOrder: Int
-        get() = cs!!.maxOutputDerivativeOrder
 
-    /**
-     * If true, a tool is needed to execute the
-     * model. The FMU just contains the
-     * communication to this tool (see Figure 8).
-     * [Typically, this information is only utilized for
-     * information purposes. For example a
-     * co-simulation master can inform the user
-     * that a tool has to be available on the
-     * computer where the slave is instantiated.
-     * The name of the tool can be taken from
-     * attribute generationTool of
-     * fmiModelDescription. ]
-     *
-     * @return
-     */
-    fun needsExecutionTool(): Boolean {
-        return cs!!.needsExecutionTool
-    }
 
     /**
      * The slave can handle variable
@@ -84,9 +65,7 @@ class CoSimulationModelDescription : ModelDescription() {
      *
      * @return
      */
-    fun canHandleVariableCommunicationStepSize(): Boolean {
-        return cs!!.canHandleVariableCommunicationStepSize
-    }
+    val canHandleVariableCommunicationStepSize: Boolean
 
     /**
      * The slave is able to interpolate continuous
@@ -96,9 +75,7 @@ class CoSimulationModelDescription : ModelDescription() {
      *
      * @return
      */
-    fun canInterpolateInputs(): Boolean {
-        return cs!!.canInterpolateInputs
-    }
+    val canInterpolateInputs: Boolean
 
     /**
      * This flag describes the ability to carry out the
@@ -106,83 +83,56 @@ class CoSimulationModelDescription : ModelDescription() {
      *
      * @return
      */
-    fun canRunAsynchronuosly(): Boolean {
-        return cs!!.canRunAsynchronuosly
-    }
+    val canRunAsynchronuosly: Boolean
 
-    /**
-     * This flag indicates cases (especially for
-     * embedded code), where only one instance
-     * per FMU is possible
-     * (multiple instantiation is default = false; if
-     * multiple instances are needed, the FMUs
-     * must be instantiated in different processes).
-     *
-     * @return
-     */
-    fun canBeInstantiatedOnlyOncePerProcess(): Boolean {
-        return cs!!.canBeInstantiatedOnlyOncePerProcess
-    }
+}
 
-    /**
-     * If true, the slave uses its own functions for
-     * memory allocation and freeing only. The
-     * callback functions allocateMemory and
-     * freeMemory given in fmi2Instantiate are
-     * ignored.
-     *
-     * @return
-     */
-    fun canNotUseMemoryManagementFunctions(): Boolean {
-        return cs!!.canNotUseMemoryManagementFunctions
-    }
+@XmlRootElement(name = "fmiModelDescription")
+internal class CoSimulationModelDescriptionXmlTemplate() : ModelDescriptionXmlTemplate() {
 
-    /**
-     * If true, the environment can inquire the
-     * internal FMU state and can restore it. That
-     * is, fmi2GetFMUstate, fmi2SetFMUstate,
-     * and fmi2FreeFMUstate are supported by
-     * the FMU.
-     *
-     * @return
-     */
-    fun canGetAndSetFMUstate(): Boolean {
-        return cs!!.canGetAndSetFMUstate
-    }
+    override fun generate() = CoSimulationModelDescriptionImpl(super.generate())
 
-    /**
-     * If true, the environment can serialize the
-     * internal FMU state, in other words
-     * fmi2SerializedFMUstateSize,
-     * fmi2SerializeFMUstate,
-     * fmi2DeSerializeFMUstate are supported
-     * by the FMU. If this is the case, then flag
-     * canGetAndSetFMUstate must be true as
-     * well.
-     *
-     * @return
-     */
-    fun canSerializeFMUstate(): Boolean {
-        return cs!!.canSerializeFMUstate
-    }
+    inner class CoSimulationModelDescriptionImpl(
+            val modelDescription: IModelDescription
+    ) : IModelDescription by modelDescription, ICoSimulationModelDescription {
 
-    /**
-     * If true, the directional derivative of the
-     * equations at communication points can be
-     * computed with
-     * fmi2GetDirectionalDerivative(..)
-     *
-     * @return
-     */
-    fun providesDirectionalDerivative(): Boolean {
-        return cs!!.providesDirectionalDerivative
-    }
+        override val maxOutputDerivativeOrder: Int
+            get() = cs!!.maxOutputDerivativeOrder
 
-    /**
-     * FMI extension
-     */
-    fun canGetAndSetFMUState(): Boolean {
-        return cs!!.canGetAndSetFMUState
-    }
+        override val needsExecutionTool: Boolean
+            get() = cs!!.needsExecutionTool
 
+        override val canHandleVariableCommunicationStepSize: Boolean
+            get() = cs!!.canHandleVariableCommunicationStepSize
+
+
+        override val canInterpolateInputs: Boolean
+            get() = cs!!.canInterpolateInputs
+
+
+        override val canRunAsynchronuosly: Boolean
+            get() = cs!!.canRunAsynchronuosly
+
+
+        override val canBeInstantiatedOnlyOncePerProcess: Boolean
+            get() = cs!!.canBeInstantiatedOnlyOncePerProcess
+
+
+        override val canNotUseMemoryManagementFunctions: Boolean
+            get() = cs!!.canNotUseMemoryManagementFunctions
+
+
+        override val canGetAndSetFMUstate: Boolean
+            get() = cs!!.canGetAndSetFMUstate
+
+
+        override val canSerializeFMUstate: Boolean
+            get() = cs!!.canSerializeFMUstate
+
+
+        override val providesDirectionalDerivative: Boolean
+            get() = cs!!.providesDirectionalDerivative
+
+
+    }
 }

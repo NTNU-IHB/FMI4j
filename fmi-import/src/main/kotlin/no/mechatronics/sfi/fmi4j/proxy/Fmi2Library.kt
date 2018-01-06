@@ -486,7 +486,7 @@ abstract class Fmi2LibraryWrapper<E: Fmi2Library> (
     /**
      * @see Fmi2library.fmi2SetReal
      */
-    fun setReal( valueReference: Int, value: Double) : Fmi2Status {
+    fun setReal(valueReference: Int, value: Double) : Fmi2Status {
         with(buffers) {
             vr[0] = valueReference
             rv[0] = value
@@ -504,7 +504,7 @@ abstract class Fmi2LibraryWrapper<E: Fmi2Library> (
     /**
      * @see Fmi2library.fmi2SetString
      */
-    fun setString( valueReference: Int, value: String) : Fmi2Status {
+    fun setString(valueReference: Int, value: String) : Fmi2Status {
         with(buffers) {
             vr[0] = valueReference
             sv[0] = value
@@ -522,7 +522,7 @@ abstract class Fmi2LibraryWrapper<E: Fmi2Library> (
     /**
      * @see Fmi2library.fmi2SetBoolean
      */
-    fun setBoolean( valueReference: Int, value: Boolean) : Fmi2Status {
+    fun setBoolean(valueReference: Int, value: Boolean) : Fmi2Status {
         with(buffers) {
             vr[0] = valueReference
             bv[0] = convert(value)

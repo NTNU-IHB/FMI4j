@@ -32,14 +32,14 @@ import java.nio.charset.Charset
 
 class ModelDescriptionTest {
 
-    private lateinit var modelDescription: ModelDescription
+    private lateinit var modelDescription: IModelDescription
 
     @Before
     fun setUp() {
 
         val resourceAsStream = javaClass.classLoader.getResource("v2/cs/ControlledTemperature/ControlledTemperature.fmu")
         Assert.assertNotNull(resourceAsStream)
-        modelDescription = ModelDescription.parseModelDescription(resourceAsStream)
+        modelDescription = ModelDescriptionParser.parseModelDescription(resourceAsStream)
 
     }
 
@@ -89,11 +89,9 @@ class VariableNamingConventionTest {
         Assert.assertNotNull(xml)
         //  println(xml)
 
-        val md = ModelDescription.parseModelDescription(xml)
+        val md = ModelDescriptionParser.parseModelDescription(xml)
 
-          println(md.variableNamingConvention)
-
-
+        println(md.variableNamingConvention)
 
 
         Assert.assertTrue(md.fmiVersion == "2.0")

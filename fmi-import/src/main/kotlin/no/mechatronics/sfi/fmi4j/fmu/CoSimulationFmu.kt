@@ -22,9 +22,10 @@
  * THE SOFTWARE.
  */
 
-package no.mechatronics.sfi.fmi4j
+package no.mechatronics.sfi.fmi4j.fmu
 
-import no.mechatronics.sfi.fmi4j.modeldescription.cs.CoSimulationModelDescription
+import no.mechatronics.sfi.fmi4j.FmiSimulation
+import no.mechatronics.sfi.fmi4j.modeldescription.cs.ICoSimulationModelDescription
 import no.mechatronics.sfi.fmi4j.proxy.cs.CoSimulationLibraryWrapper
 import no.mechatronics.sfi.fmi4j.proxy.enums.Fmi2Status
 import no.mechatronics.sfi.fmi4j.proxy.enums.Fmi2StatusKind
@@ -33,9 +34,9 @@ import org.slf4j.LoggerFactory
 
 class CoSimulationFmu internal constructor(
         fmuFile: FmuFile,
-        modelDescription: CoSimulationModelDescription,
+        modelDescription: ICoSimulationModelDescription,
         wrapper: CoSimulationLibraryWrapper
-) : AbstractFmu<CoSimulationModelDescription, CoSimulationLibraryWrapper>(fmuFile, modelDescription, wrapper), FmiSimulation {
+) : AbstractFmu<ICoSimulationModelDescription, CoSimulationLibraryWrapper>(fmuFile, modelDescription, wrapper), FmiSimulation {
 
     private companion object {
         val LOG: Logger = LoggerFactory.getLogger(CoSimulationFmu::class.java)
