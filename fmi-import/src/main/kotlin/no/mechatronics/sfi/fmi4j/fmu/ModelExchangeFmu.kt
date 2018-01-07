@@ -25,6 +25,11 @@
 package no.mechatronics.sfi.fmi4j.fmu
 
 import no.mechatronics.sfi.fmi4j.FmiSimulation
+import no.mechatronics.sfi.fmi4j.misc.*
+import no.mechatronics.sfi.fmi4j.modeldescription.BooleanVariable
+import no.mechatronics.sfi.fmi4j.modeldescription.IntegerVariable
+import no.mechatronics.sfi.fmi4j.modeldescription.RealVariable
+import no.mechatronics.sfi.fmi4j.modeldescription.StringVariable
 import no.mechatronics.sfi.fmi4j.modeldescription.me.IModelExchangeModelDescription
 import no.mechatronics.sfi.fmi4j.proxy.me.ModelExchangeLibraryWrapper
 import no.mechatronics.sfi.fmi4j.proxy.structs.Fmi2EventInfo
@@ -63,7 +68,7 @@ open class ModelExchangeFmu internal constructor(
 class ModelExchangeFmuWithIntegrator internal constructor(
         private val fmu: ModelExchangeFmu,
         private val integrator: FirstOrderIntegrator
-) : FmiSimulation {
+) : FmiSimulation, IAccessorProvider by fmu {
 
     private val states: DoubleArray
     private val derivatives: DoubleArray
@@ -104,12 +109,6 @@ class ModelExchangeFmuWithIntegrator internal constructor(
         this.preEventIndicators = DoubleArray(numberOfEventIndicators)
         this.eventIndicators = DoubleArray(numberOfEventIndicators)
     }
-
-    override fun write(name: String) = fmu.write(name)
-    override fun read(name: String) = fmu.read(name)
-
-    override fun write(vr: Int) = fmu.write(vr)
-    override fun read(vr: Int) = fmu.read(vr)
 
     override fun reset() = fmu.reset()
     override fun reset(requireReinit: Boolean) = fmu.reset(requireReinit)

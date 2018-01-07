@@ -71,10 +71,7 @@ public class CoSimulationFmuTest {
 
         Assert.assertEquals(0.1, fmu.getModelVariables().getReal("HeatCapacity1.C").getStart(), 0);
 
-        IVariableReader read = fmu.read("Temperature_Room");
-
-        final RealVariable r = fmu.getModelVariables().getReal("Temperature_Room");
-        Assert.assertNotNull(r);
+        IVariableReader read = fmu.getReader("Temperature_Room");
 
         double first1 = Double.NaN;
 
@@ -98,7 +95,7 @@ public class CoSimulationFmuTest {
         for (int i = 0; i < 5; i++) {
             fmu.doStep(1d / 100);
             Assert.assertTrue(fmu.getLastStatus() == Fmi2Status.OK);
-            double value = r.getValue();
+            double value = read.asReal();
             Assert.assertTrue(fmu.getLastStatus() == Fmi2Status.OK);
             if (i == 0) {
                 Assert.assertEquals(first1, value, 0);
@@ -109,7 +106,7 @@ public class CoSimulationFmuTest {
 
         try (FmiSimulation fmu2 = builder.asCoSimulationFmu().newInstance()) {
             fmu2.init();
-            System.out.println(fmu2.read("Temperature_Room").asReal());
+            System.out.println(fmu2.getReader("Temperature_Room").asReal());
         }
 
 

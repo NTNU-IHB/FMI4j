@@ -1,6 +1,7 @@
 package no.mechatronics.sfi.fmu2jar
 
 import org.junit.After
+import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import org.slf4j.Logger
@@ -31,9 +32,12 @@ class MainTest {
     @Test
     fun main() {
 
+        val file = File("src\\test\\resources\\ControlledTemperature.fmu")
+        Assert.assertTrue(file.exists())
+
         val args = arrayOf<String>(
                 "-fmu",
-                "C:\\Users\\laht\\IdeaProjects\\FMI4j\\fmi-import\\src\\test\\resources\\v2\\cs\\ControlledTemperature\\ControlledTemperature.fmu",
+                file.absolutePath,
                 "-out",
                 tmp.absolutePath,
                 "-mavenLocal"

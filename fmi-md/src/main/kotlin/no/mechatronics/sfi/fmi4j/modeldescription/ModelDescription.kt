@@ -24,7 +24,6 @@
 
 package no.mechatronics.sfi.fmi4j.modeldescription
 
-import no.mechatronics.sfi.fmi4j.misc.SourceFile
 import no.mechatronics.sfi.fmi4j.modeldescription.cs.CoSimulationInfo
 import no.mechatronics.sfi.fmi4j.modeldescription.log.Category
 import no.mechatronics.sfi.fmi4j.modeldescription.me.ModelExchangeInfo

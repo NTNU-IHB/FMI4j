@@ -71,6 +71,7 @@ public class ModelExchangeTest {
         RealVariable h = fmu.getModelVariables().getReal("h");
         h.setStart(5.0);
 
+
         if (fmu.init()) {
             //Assert.assertTrue(fmu.getLastStatus() == Fmi2Status.OK);
 
@@ -78,7 +79,7 @@ public class ModelExchangeTest {
 
             while (fmu.getCurrentTime() < 1) {
 
-                System.out.println("t=" + fmu.getCurrentTime() + ", height=" + h.getValue());
+                System.out.println("t=" + fmu.getCurrentTime() + ", height=" + fmu.getReader(h).read());
                 fmu.doStep( macroStep);
 
             }

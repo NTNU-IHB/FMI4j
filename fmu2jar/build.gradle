@@ -19,7 +19,7 @@ dependencies {
 
     compile group: 'commons-cli', name: 'commons-cli', version: '1.4'
 
-    compile project(':fmi-import')
+    compile project(':fmi-md')
 
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }

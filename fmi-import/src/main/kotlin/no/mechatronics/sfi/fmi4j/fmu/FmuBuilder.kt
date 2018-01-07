@@ -31,7 +31,6 @@ import com.sun.jna.Pointer
 import no.mechatronics.sfi.fmi4j.misc.LibraryProvider
 import no.mechatronics.sfi.fmi4j.misc.convert
 import no.mechatronics.sfi.fmi4j.modeldescription.IModelDescription
-import no.mechatronics.sfi.fmi4j.modeldescription.VariableBase
 import no.mechatronics.sfi.fmi4j.modeldescription.cs.CoSimulationModelDescriptionParser
 import no.mechatronics.sfi.fmi4j.modeldescription.cs.ICoSimulationModelDescription
 import no.mechatronics.sfi.fmi4j.modeldescription.me.IModelExchangeModelDescription
@@ -86,8 +85,6 @@ class CoSimulationFmuBuilder(
         val lib = if (modelDescription.canBeInstantiatedOnlyOncePerProcess) loadLibrary() else libraryProvider
         val c = instantiate(fmuFile, modelDescription, lib.get(), Fmi2Type.CoSimulation, visible, loggingOn)
         val wrapper = CoSimulationLibraryWrapper(c, lib)
-        injectWrapperInVariables(modelDescription, wrapper)
-
         return CoSimulationFmu(fmuFile, modelDescription, wrapper)
 
     }
@@ -119,8 +116,6 @@ open class ModelExchangeFmuBuilder(
         val lib = if (modelDescription.canBeInstantiatedOnlyOncePerProcess) loadLibrary() else libraryProvider
         val c = instantiate(fmuFile, modelDescription, lib.get(), Fmi2Type.ModelExchange, visible, loggingOn)
         val wrapper = ModelExchangeLibraryWrapper(c, lib)
-        injectWrapperInVariables(modelDescription, wrapper)
-
         return ModelExchangeFmu(fmuFile, modelDescription, wrapper)
 
     }
@@ -152,8 +147,6 @@ open class ModelExchangeFmuWithIntegratorBuilder(
         val lib = if (modelDescription.canBeInstantiatedOnlyOncePerProcess) loadLibrary() else library
         val c = instantiate(fmuFile, modelDescription, lib.get(), Fmi2Type.ModelExchange, visible, loggingOn)
         val wrapper = ModelExchangeLibraryWrapper(c, library)
-        injectWrapperInVariables(modelDescription, wrapper)
-
         return ModelExchangeFmuWithIntegrator(ModelExchangeFmu(fmuFile, modelDescription, wrapper), integrator)
 
     }
@@ -172,15 +165,5 @@ private fun instantiate(fmuFile: FmuFile, modelDescription: IModelDescription, l
             convert(visible), convert(loggingOn))
 }
 
-
-fun injectWrapperInVariables(modelDescription: IModelDescription, wrapper: Fmi2LibraryWrapper<*>) {
-
-    val f = VariableBase::class.java.getDeclaredField("wrapper")
-    f.isAccessible = true
-    modelDescription.modelVariables.forEach{
-        f.set(it, wrapper)
-    }
-
-}
 
 

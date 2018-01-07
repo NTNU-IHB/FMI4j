@@ -37,7 +37,7 @@ abstract class AbstractFmu<E: IModelDescription, T: Fmi2LibraryWrapper<*>> inter
         val fmuFile: FmuFile,
         val modelDescription: E,
         val wrapper: T
-) : AutoCloseable {
+) : IAccessorProvider, AutoCloseable {
 
     private companion object {
         val LOG: Logger = LoggerFactory.getLogger(AbstractFmu::class.java)
@@ -68,21 +68,19 @@ abstract class AbstractFmu<E: IModelDescription, T: Fmi2LibraryWrapper<*>> inter
     fun setDebugLogging(loggingOn: Boolean, nCategories: Int, categories: Array<String>)
             =  wrapper.setDebugLogging(loggingOn, nCategories, categories)
 
-    fun write(vr: Int) : VariableWriter {
-        return VariableWriter(wrapper, vr)
-    }
+    override fun getWriter(vr: Int) = VariableWriter(wrapper, vr)
+    override fun getWriter(name: String) = getWriter(modelVariables.get(name)!!.valueReference)
+    override fun getWriter(variable: IntegerVariable) = IntWriter(wrapper, variable.valueReference)
+    override fun getWriter(variable: RealVariable) = RealWriter(wrapper, variable.valueReference)
+    override fun getWriter(variable: StringVariable) = StringWriter(wrapper, variable.valueReference)
+    override fun getWriter(variable: BooleanVariable) = BooleanWriter(wrapper, variable.valueReference)
 
-    fun read(vr: Int) : VariableReader {
-        return VariableReader(wrapper, vr)
-    }
-
-    fun write(name: String) : VariableWriter {
-        return write(modelVariables.get(name)!!.valueReference)
-    }
-
-    fun read(name: String) : VariableReader {
-        return read(modelVariables.get(name)!!.valueReference)
-    }
+    override fun getReader(vr: Int) = VariableReader(wrapper, vr)
+    override fun getReader(name: String) = getReader(modelVariables.get(name)!!.valueReference)
+    override fun getReader(variable: IntegerVariable) = IntReader(wrapper, variable.valueReference)
+    override fun getReader(variable: RealVariable) = RealReader(wrapper, variable.valueReference)
+    override fun getReader(variable: StringVariable) = StringReader(wrapper, variable.valueReference)
+    override fun getReader(variable: BooleanVariable) = BooleanReader(wrapper, variable.valueReference)
 
     fun init() = init(0.0)
     fun init(start :Double) = init(start, -1.0)
@@ -241,7 +239,7 @@ abstract class AbstractFmu<E: IModelDescription, T: Fmi2LibraryWrapper<*>> inter
     }
 
 
-    fun setBoolean( valueReference: Int, value: Boolean) = wrapper.setBoolean(valueReference, value)
+    fun setBoolean(valueReference: Int, value: Boolean) = wrapper.setBoolean(valueReference, value)
 
     fun setBoolean(vr: IntArray, value: BooleanArray) = wrapper.setBoolean(vr, value)
 
@@ -307,10 +305,10 @@ abstract class AbstractFmu<E: IModelDescription, T: Fmi2LibraryWrapper<*>> inter
 
             if (it.start != null) {
                 when(it) {
-                    is IntegerVariable -> it.value = it.start!!
-                    is RealVariable -> it.value = it.start!!
-                    is StringVariable -> it.value = it.start!!
-                    is BooleanVariable -> it.value = it.start!!
+                    is IntegerVariable -> setInteger(it.valueReference, it.start!!)
+                    is RealVariable -> setReal(it.valueReference, it.start!!)
+                    is StringVariable -> setString(it.valueReference, it.start!!)
+                    is BooleanVariable -> setBoolean(it.valueReference, it.start!!)
                 }
             }
 

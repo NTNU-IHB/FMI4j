@@ -25,7 +25,6 @@
 package no.mechatronics.sfi.fmi4j.modeldescription
 
 import no.mechatronics.sfi.fmi4j.modeldescription.enums.*
-import no.mechatronics.sfi.fmi4j.proxy.Fmi2LibraryWrapper
 import org.w3c.dom.Node
 import javax.xml.bind.JAXBContext
 import javax.xml.bind.annotation.*
@@ -79,7 +78,6 @@ interface ScalarVariable<E> : IScalarVariable {
      * the actual start value is determined.]
     */
     var start: E?
-    var value: E
 
 }
 
@@ -308,13 +306,8 @@ internal class BooleanAttribute  {
 
 }
 
-abstract class VariableBase<E>(v : ScalarVariableImpl) : IScalarVariable by v, ScalarVariable<E> {
 
-    protected lateinit var wrapper : Fmi2LibraryWrapper<*>
-
-}
-
-class IntegerVariable(v : ScalarVariableImpl) : VariableBase<Int>(v) {
+class IntegerVariable(v : ScalarVariableImpl) : IScalarVariable by v, ScalarVariable<Int> {
 
 
     /**
@@ -331,10 +324,6 @@ class IntegerVariable(v : ScalarVariableImpl) : VariableBase<Int>(v) {
      */
     override var start = v.integerAttribute!!.start
 
-    override var value: Int
-        get() = wrapper.getInteger(valueReference)
-        set(value) {wrapper.setInteger(valueReference, value)}
-
     override val typeName: String
         get() = "Integer"
 
@@ -345,7 +334,7 @@ class IntegerVariable(v : ScalarVariableImpl) : VariableBase<Int>(v) {
 
 }
 
-class RealVariable(v : ScalarVariableImpl) : VariableBase<Double>(v) {
+class RealVariable(v : ScalarVariableImpl) : IScalarVariable by v, ScalarVariable<Double> {
 
     /**
      * @see RealAttribute.min
@@ -389,10 +378,6 @@ class RealVariable(v : ScalarVariableImpl) : VariableBase<Double>(v) {
      */
     override var start = v.realAttribute!!.start
 
-    override var value: Double
-        get() = wrapper.getReal(valueReference)
-        set(value) {wrapper.setReal(valueReference, value)}
-
     override val typeName: String
         get() = "Real"
 
@@ -403,16 +388,12 @@ class RealVariable(v : ScalarVariableImpl) : VariableBase<Double>(v) {
 
 }
 
-class StringVariable(v : ScalarVariableImpl) : VariableBase<String>(v) {
+class StringVariable(v : ScalarVariableImpl) : IScalarVariable by v, ScalarVariable<String> {
 
     /**
      * @see StringAttribute.start
      */
     override var start = v.stringAttribute!!.start
-
-    override var value: String
-        get() = wrapper.getString(valueReference)
-        set(value) {wrapper.setString(valueReference, value)}
 
     override val typeName: String
         get() = "String"
@@ -424,16 +405,12 @@ class StringVariable(v : ScalarVariableImpl) : VariableBase<String>(v) {
 
 }
 
-class BooleanVariable(v : ScalarVariableImpl) : VariableBase<Boolean>(v) {
+class BooleanVariable(v : ScalarVariableImpl) : IScalarVariable by v, ScalarVariable<Boolean> {
 
     /**
      * @see BooleanAttribute.start
      */
     override var start = v.booleanAttribute!!.start
-
-    override var value: Boolean
-        get() = wrapper.getBoolean(valueReference)
-        set(value) {wrapper.setBoolean(valueReference, value)}
 
     override val typeName: String
         get() = "Boolean"

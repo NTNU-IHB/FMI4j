@@ -1,6 +1,6 @@
 
 group = 'no.mechatronics.sfi.fmi4j'
-version = '0.1-ALPHA-7-SNAPSHOT'
+version = '0.1-SNAPSHOT'
 
 apply plugin: 'maven'
 apply plugin: 'signing'
@@ -8,14 +8,8 @@ apply plugin: 'maven-publish'
 
 dependencies {
 
-    compile group: 'org.apache.commons', name: 'commons-math3', version: '3.6.1'
     compile group: 'commons-io', name: 'commons-io', version: '2.6'
-
-    compile group: 'net.java.dev.jna', name: 'jna', version: '4.5.1'
-    compile group: 'net.java.dev.jna', name: 'jna-platform', version: '4.5.1'
-
-    compile project(':fmi-md')
-
+    
 }
 
 task sourcesJar(type: Jar, dependsOn: classes, description: 'Creates a jar from the source files.') {

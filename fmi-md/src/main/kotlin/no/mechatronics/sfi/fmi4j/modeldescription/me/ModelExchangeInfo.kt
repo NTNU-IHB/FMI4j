@@ -24,7 +24,7 @@
 
 package no.mechatronics.sfi.fmi4j.modeldescription.me
 
-import no.mechatronics.sfi.fmi4j.misc.SourceFile
+import no.mechatronics.sfi.fmi4j.modeldescription.SourceFile
 import javax.xml.bind.annotation.*
 
 @XmlAccessorType(XmlAccessType.FIELD)
