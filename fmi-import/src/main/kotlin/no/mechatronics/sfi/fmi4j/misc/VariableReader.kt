@@ -28,10 +28,10 @@ import no.mechatronics.sfi.fmi4j.proxy.Fmi2LibraryWrapper
 
 
 interface IVariableReader {
-    fun asInteger() : Int
-    fun asReal() : Double
-    fun asString() : String
-    fun asBoolean() : Boolean
+    fun readInteger() : Int
+    fun readReal() : Double
+    fun readString() : String
+    fun readBoolean() : Boolean
 }
 
 class IntReader internal constructor(
@@ -75,18 +75,18 @@ class VariableReader internal constructor(
         valueReference: Int
 ) : VariableAccessor(wrapper, valueReference), IVariableReader {
 
-    override fun asInteger() : Int = wrapper.getInteger(valueReference)
-    override fun asReal() : Double = wrapper.getReal(valueReference)
-    override fun asString() : String = wrapper.getString(valueReference)
-    override fun asBoolean() : Boolean = wrapper.getBoolean(valueReference)
+    override fun readInteger() : Int = wrapper.getInteger(valueReference)
+    override fun readReal() : Double = wrapper.getReal(valueReference)
+    override fun readString() : String = wrapper.getString(valueReference)
+    override fun readBoolean() : Boolean = wrapper.getBoolean(valueReference)
 
 }
 
 interface IVariablesReader {
-    fun asInteger() : IntArray
-    fun asReal() : DoubleArray
-    fun asString() : Array<String>
-    fun asBoolean() : BooleanArray
+    fun readInteger() : IntArray
+    fun readReal() : DoubleArray
+    fun readString() : Array<String>
+    fun readBoolean() : BooleanArray
 }
 
 class VariablesReader internal constructor(
@@ -94,9 +94,9 @@ class VariablesReader internal constructor(
         private val valueReference: IntArray
 ): IVariablesReader {
 
-    override fun asInteger() : IntArray = wrapper.getInteger(valueReference)
-    override fun asReal() : DoubleArray = wrapper.getReal(valueReference)
-    override fun asString() : Array<String> = wrapper.getString(valueReference)
-    override fun asBoolean() : BooleanArray = wrapper.getBoolean(valueReference)
+    override fun readInteger() : IntArray = wrapper.getInteger(valueReference)
+    override fun readReal() : DoubleArray = wrapper.getReal(valueReference)
+    override fun readString() : Array<String> = wrapper.getString(valueReference)
+    override fun readBoolean() : BooleanArray = wrapper.getBoolean(valueReference)
 
 }

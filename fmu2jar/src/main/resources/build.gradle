@@ -29,7 +29,7 @@ repositories {
 }
 
 dependencies {
-    compile "no.mechatronics.sfi.fmi4j:fmi-import:0.1-ALPHA-7-SNAPSHOT"
+    compile "no.mechatronics.sfi.fmi4j:fmi-import:0.1-ALPHA-8-SNAPSHOT"
 }
 
 task sourcesJar(type: Jar, dependsOn: classes, description: 'Creates a jar from the source files.') {

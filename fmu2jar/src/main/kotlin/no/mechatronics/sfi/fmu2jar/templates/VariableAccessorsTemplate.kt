@@ -95,7 +95,7 @@ object VariableAccessorsTemplate {
 
         ${generateJavaDoc(variable)}
         fun get${capitalizeFirstLetterAndReplaceDotsWithSlash(variable)}(): ${fmiTypeToKotlinType(variable)} {
-            return fmu.read(${variable.valueReference}).as${variable.typeName}()
+            return fmu.getReader(${variable.valueReference}).read${variable.typeName}()
         }
             """)
 
@@ -107,7 +107,7 @@ object VariableAccessorsTemplate {
 
         ${generateJavaDoc(variable)}
         fun set${capitalizeFirstLetterAndReplaceDotsWithSlash(variable)}(value: ${fmiTypeToKotlinType(variable)}) {
-            fmu.write(${variable.valueReference}).with(value)
+            fmu.getWriter(${variable.valueReference}).write(value)
         }
             """)
 

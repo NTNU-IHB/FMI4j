@@ -29,10 +29,10 @@ import no.mechatronics.sfi.fmi4j.proxy.enums.Fmi2Status
 
 interface IVariableWriter {
 
-    fun writeInt(data: Int) : Fmi2Status
-    fun writeReal(data: Double) : Fmi2Status
-    fun writeString(data: String) : Fmi2Status
-    fun writeBoolean(data: Boolean) : Fmi2Status
+    fun write(data: Int) : Fmi2Status
+    fun write(data: Double) : Fmi2Status
+    fun write(data: String) : Fmi2Status
+    fun write(data: Boolean) : Fmi2Status
 
 }
 
@@ -77,18 +77,18 @@ class VariableWriter internal constructor(
         private val valueReference: Int
 ): IVariableWriter {
 
-    override fun writeInt(data: Int) = wrapper.setInteger(valueReference, data)
-    override fun writeReal(data: Double) = wrapper.setReal(valueReference, data)
-    override fun writeString(data: String) = wrapper.setString(valueReference, data)
-    override fun writeBoolean(data: Boolean) = wrapper.setBoolean(valueReference, data)
+    override fun write(data: Int) = wrapper.setInteger(valueReference, data)
+    override fun write(data: Double) = wrapper.setReal(valueReference, data)
+    override fun write(data: String) = wrapper.setString(valueReference, data)
+    override fun write(data: Boolean) = wrapper.setBoolean(valueReference, data)
 
 }
 
 interface IVariablesWriter {
-    fun writeInt(vararg  data: Int) : Fmi2Status
-    fun writeReal(vararg data: Double) : Fmi2Status
-    fun writeString(vararg data: String) : Fmi2Status
-    fun writeBoolean(vararg data: Boolean) : Fmi2Status
+    fun write(vararg  data: Int) : Fmi2Status
+    fun write(vararg data: Double) : Fmi2Status
+    fun write(vararg data: String) : Fmi2Status
+    fun write(vararg data: Boolean) : Fmi2Status
 }
 
 class VariablesWriter internal constructor(
@@ -96,10 +96,10 @@ class VariablesWriter internal constructor(
         private val valueReference: IntArray
 ) : IVariablesWriter {
 
-    override fun writeInt(vararg data: Int) =  wrapper.setInteger(valueReference, data)
-    override fun writeReal(vararg data: Double) = wrapper.setReal(valueReference, data)
-    override fun writeString(vararg data: String) = wrapper.setString(valueReference, data)
-    override fun writeBoolean(vararg data: Boolean) = wrapper.setBoolean(valueReference, data)
+    override fun write(vararg data: Int) =  wrapper.setInteger(valueReference, data)
+    override fun write(vararg data: Double) = wrapper.setReal(valueReference, data)
+    override fun write(vararg data: String) = wrapper.setString(valueReference, data)
+    override fun write(vararg data: Boolean) = wrapper.setBoolean(valueReference, data)
 
 
 }

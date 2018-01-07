@@ -7,9 +7,7 @@ apply plugin: 'signing'
 apply plugin: 'maven-publish'
 
 dependencies {
-
     compile group: 'commons-io', name: 'commons-io', version: '2.6'
-
 }
 
 task sourcesJar(type: Jar, dependsOn: classes, description: 'Creates a jar from the source files.') {
