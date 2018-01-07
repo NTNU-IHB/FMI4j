@@ -4,7 +4,6 @@ version = '0.1-ALPHA-7-SNAPSHOT'
 
 apply plugin: 'maven'
 apply plugin: 'signing'
-apply plugin: 'maven-publish'
 
 dependencies {
 
@@ -14,7 +13,11 @@ dependencies {
     compile group: 'net.java.dev.jna', name: 'jna', version: '4.5.1'
     compile group: 'net.java.dev.jna', name: 'jna-platform', version: '4.5.1'
 
-    compile project(':fmi-md')
+    if (version.contains("SNAPSHOT")) {
+        compile project(':fmi-md')
+    } else {
+        compile group: 'no.mechatronics.sfi.fmi4j', name: 'fmi-md', version: '0.1'
+    }
 
 }
 
@@ -81,14 +84,5 @@ uploadArchives {
     }
 }
 
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            from components.java
-        }
-    }
-}
-
-build.finalizedBy(publishToMavenLocal)
 
 

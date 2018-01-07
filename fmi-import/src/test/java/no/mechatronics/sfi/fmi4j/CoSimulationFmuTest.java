@@ -43,7 +43,8 @@ public class CoSimulationFmuTest {
 
     @Before
     public void setUp() throws IOException {
-        final URL url = getClass().getClassLoader().getResource("v2/cs/ControlledTemperature/ControlledTemperature.fmu");
+        final URL url = CoSimulationFmuTest.class.getClassLoader()
+                .getResource("v2/cs/ControlledTemperature/ControlledTemperature.fmu");
         Assert.assertNotNull(url);
 
         builder =  new FmuBuilder(url);
