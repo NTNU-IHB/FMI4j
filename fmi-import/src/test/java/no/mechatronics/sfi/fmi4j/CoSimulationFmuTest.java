@@ -35,6 +35,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import java.io.IOException;
 import java.net.URL;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class CoSimulationFmuTest {
 
@@ -93,12 +94,13 @@ public class CoSimulationFmuTest {
 
         Assert.assertTrue(fmu.getLastStatus() == Fmi2Status.OK);
 
-        for (int i = 0; i < 5; i++) {
+        AtomicBoolean first = new AtomicBoolean(true);
+        while (fmu.getCurrentTime() < 5) {
             fmu.doStep(1d / 100);
             Assert.assertTrue(fmu.getLastStatus() == Fmi2Status.OK);
             double value = read.readReal();
             Assert.assertTrue(fmu.getLastStatus() == Fmi2Status.OK);
-            if (i == 0) {
+            if (first.getAndSet(false)) {
                 Assert.assertEquals(first1, value, 0);
             }
             System.out.println(value);

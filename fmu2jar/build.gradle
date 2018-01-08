@@ -14,12 +14,12 @@ repositories {
 dependencies {
 
     if (debug) {
-        compile group: 'no.mechatronics.sfi.fmu2jar', name: "ControlledTemperature", "version": "1.0-SNAPSHOT"
+        implementation group: 'no.mechatronics.sfi.fmu2jar', name: "ControlledTemperature", "version": "1.0-SNAPSHOT"
     }
 
-    compile group: 'commons-cli', name: 'commons-cli', version: '1.4'
+    implementation project(':fmi-md')
 
-    compile project(':fmi-md')
+    implementation group: 'commons-cli', name: 'commons-cli', version: '1.4'
 
-    testCompile group: 'junit', name: 'junit', version: '4.12'
+    testImplementation group: 'junit', name: 'junit', version: '4.12'
 }
