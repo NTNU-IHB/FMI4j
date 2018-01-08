@@ -38,6 +38,15 @@ interface IScalarVariable {
      * ModelVariables list; the first list element has index=1).
      */
     val name: String
+    /**
+     * If present, name of type defined with TypeDefinitions / SimpleType. The value
+     * defined in the corresponding TypeDefinition (see section 2.2.3) is used as
+     * default. [If, for example “min” is present both in Real (of TypeDefinition) and in
+     * “Real” (of ScalarVariable), then the “min” of ScalarVariable is actually
+     * used.] For Real, Integer, Boolean, String, this attribute is optional. For
+     * Enumeration it is required, because the Enumeration items are defined in
+     * TypeDefinitions / SimpleType.
+     */
     val declaredType: String
     /**
      * An optional description string describing the meaning of the variable
@@ -76,8 +85,8 @@ interface ScalarVariable<E> : IScalarVariable {
      * initialization), it is also possible to use the start value as iteration variable of
      * an algebraic loop: Via an additional condition in the environment, such as 𝑥̇ = 0,
      * the actual start value is determined.]
-    */
-    var start: E?
+     */
+     var start: E?
 
 }
 

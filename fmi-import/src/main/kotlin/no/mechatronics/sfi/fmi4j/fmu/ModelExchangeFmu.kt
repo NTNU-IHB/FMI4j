@@ -81,7 +81,7 @@ class ModelExchangeFmuWithIntegrator internal constructor(
     override var currentTime: Double = 0.0
         private set
 
-    override val fmuFile: FmuFile = fmu.fmuFile
+    val fmuFile: FmuFile = fmu.fmuFile
     override val modelDescription = fmu.modelDescription
     override val modelVariables = fmu.modelVariables
 

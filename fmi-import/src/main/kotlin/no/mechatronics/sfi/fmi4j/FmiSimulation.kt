@@ -32,9 +32,9 @@ import no.mechatronics.sfi.fmi4j.proxy.enums.Fmi2Status
 
 interface FmiSimulation : IAccessorProvider, AutoCloseable {
 
-    val fmuFile: FmuFile
+    //val fmuFile: FmuFile
     val modelDescription: IModelDescription
-    val modelVariables: ModelVariables
+    val modelVariables: IModelVariables
     val currentTime: Double
 
     fun init() : Boolean

@@ -27,41 +27,74 @@ package no.mechatronics.sfi.fmi4j.modeldescription
 import javax.xml.bind.annotation.*
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter
 
+interface IModelVariables: Iterable<ScalarVariable<*>> {
+
+    val variables: List<ScalarVariable<*>>
+
+    fun getValueReference(name: String) : Int
+
+    fun getValueReferences(names: Iterable<String>): IntArray
+
+    /**
+     * Get the number of model variables held by this structure
+     */
+    val size: Int
+
+    fun getVariableNames() : List<String>
+
+    /**
+     * Get model variable by index
+     */
+    fun getByIndex(index: Int): ScalarVariable<*>?
+
+    /**
+     * Get model variable by valueReference
+     */
+    fun getByValueReference(vr: Int) : ScalarVariable<*>?
+
+    /**
+     * Get model variable by name
+     */
+    fun getByName(name: String) : ScalarVariable<*>?
+
+    fun getInteger(name: String) : IntegerVariable?
+
+    fun getReal(name: String) : RealVariable?
+
+    fun getString(name: String) : StringVariable?
+
+    fun getBoolean(name: String) : BooleanVariable?
+
+}
+
 @XmlAccessorType(XmlAccessType.FIELD)
-class ModelVariables : Iterable<ScalarVariable<*>> {
+class ModelVariables : IModelVariables {
 
     @XmlElement(name = "ScalarVariable")
     @XmlJavaTypeAdapter(ScalarVariableAdapter::class)
     private val _variables: List<ScalarVariable<*>>? = null
 
-    val variables: List<ScalarVariable<*>>
+    override val variables: List<ScalarVariable<*>>
     get() {
         return _variables ?: emptyList()
     }
 
-    fun getValueReference(name: String) : Int? {
-        return variables.firstOrNull({it.name == name})?.valueReference
-    }
+    override fun getValueReference(name: String) : Int
+            = variables.firstOrNull({it.name == name})?.valueReference ?: throw IllegalArgumentException("No such variable: $name")
 
-    /**
-     * Get the number of model variables held by this structure
-     */
-    fun size() = variables.size
+    override fun getValueReferences(names: Iterable<String>): IntArray
+            = names.map { getValueReference(it) }.toIntArray()
 
-    /**
-     * Get model variable by index
-     */
-    fun getByIndex(index: Int) = variables.get(index)
+    override val size = variables.size
 
-    fun getByValueReference(vr: Int) : ScalarVariable<*>? {
+    override fun getByIndex(index: Int) = variables.get(index)
+
+    override fun getByValueReference(vr: Int) : ScalarVariable<*>? {
         return variables
                 .firstOrNull{it.valueReference == vr}
     }
 
-    /**
-     * Get model variable by name
-     */
-    fun getByName(name: String) : ScalarVariable<*>? {
+    override fun getByName(name: String) : ScalarVariable<*>? {
         return variables
                 .firstOrNull{it.name.equals(name)}
     }
@@ -73,23 +106,23 @@ class ModelVariables : Iterable<ScalarVariable<*>> {
                 ?.let { it as T }
     }
 
-    fun getInteger(name: String) : IntegerVariable? {
+    override fun getInteger(name: String) : IntegerVariable? {
         return getType(name, IntegerVariable::class.java)
     }
 
-    fun getReal(name: String) : RealVariable? {
+    override fun getReal(name: String) : RealVariable? {
         return getType(name, RealVariable::class.java)
     }
 
-    fun getString(name: String) : StringVariable? {
+    override fun getString(name: String) : StringVariable? {
         return getType(name, StringVariable::class.java)
     }
 
-    fun getBoolean(name: String) : BooleanVariable? {
+    override fun getBoolean(name: String) : BooleanVariable? {
         return getType(name, BooleanVariable::class.java)
     }
 
-    fun getVariableNames() : List<String> {
+    override fun getVariableNames() : List<String> {
         return map { it.name }.toList()
     }
 

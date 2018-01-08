@@ -156,7 +156,7 @@ interface IModelDescription {
      * The central FMU data structure defining all variables of the FMU that
      * are visible/accessible via the FMU functions.
      */
-    val modelVariables: ModelVariables
+    val modelVariables: IModelVariables
 
     /**
      * Defines the structure of the model. Especially, the ordered lists of

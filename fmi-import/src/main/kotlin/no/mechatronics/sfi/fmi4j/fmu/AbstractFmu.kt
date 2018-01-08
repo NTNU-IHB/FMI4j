@@ -46,7 +46,7 @@ abstract class AbstractFmu<E: IModelDescription, T: Fmi2LibraryWrapper<*>> inter
     var isInitialized = false
         private set
 
-    val modelVariables = modelDescription.modelVariables
+    val modelVariables: IModelVariables = modelDescription.modelVariables
 
     private val map: MutableMap<String, IntArray> = HashMap()
 
@@ -69,14 +69,14 @@ abstract class AbstractFmu<E: IModelDescription, T: Fmi2LibraryWrapper<*>> inter
             =  wrapper.setDebugLogging(loggingOn, nCategories, categories)
 
     override fun getWriter(vr: Int) = VariableWriter(wrapper, vr)
-    override fun getWriter(name: String) = getWriter(modelVariables.get(name)!!.valueReference)
+    override fun getWriter(name: String) = getWriter(modelVariables.getByName(name)!!.valueReference)
     override fun getWriter(variable: IntegerVariable) = IntWriter(wrapper, variable.valueReference)
     override fun getWriter(variable: RealVariable) = RealWriter(wrapper, variable.valueReference)
     override fun getWriter(variable: StringVariable) = StringWriter(wrapper, variable.valueReference)
     override fun getWriter(variable: BooleanVariable) = BooleanWriter(wrapper, variable.valueReference)
 
     override fun getReader(vr: Int) = VariableReader(wrapper, vr)
-    override fun getReader(name: String) = getReader(modelVariables.get(name)!!.valueReference)
+    override fun getReader(name: String) = getReader(modelVariables.getByName(name)!!.valueReference)
     override fun getReader(variable: IntegerVariable) = IntReader(wrapper, variable.valueReference)
     override fun getReader(variable: RealVariable) = RealReader(wrapper, variable.valueReference)
     override fun getReader(variable: StringVariable) = StringReader(wrapper, variable.valueReference)
@@ -195,7 +195,7 @@ abstract class AbstractFmu<E: IModelDescription, T: Fmi2LibraryWrapper<*>> inter
             return setInteger(map[name]!!, values)
         } else {
             val names: List<String> = List(values.size, {i -> "$name[$i]"})
-            val vr : IntArray = modelDescription.modelVariables.getValueReferences(names)!!
+            val vr : IntArray = modelDescription.modelVariables.getValueReferences(names)
             map[name] = vr
             return setInteger(vr, values)
         }
@@ -213,7 +213,7 @@ abstract class AbstractFmu<E: IModelDescription, T: Fmi2LibraryWrapper<*>> inter
             return setReal(map[name]!!, values)
         } else {
             val names: List<String> = List(values.size, {i -> "$name[$i]"})
-            val vr : IntArray = modelDescription.modelVariables.getValueReferences(names)!!
+            val vr : IntArray = modelDescription.modelVariables.getValueReferences(names)
             map[name] = vr
             return setReal(vr, values)
         }
@@ -231,7 +231,7 @@ abstract class AbstractFmu<E: IModelDescription, T: Fmi2LibraryWrapper<*>> inter
             return setString(map[name]!!, values)
         } else {
             val names: List<String> = List(values.size, {i -> "$name[$i]"})
-            val vr : IntArray = modelDescription.modelVariables.getValueReferences(names)!!
+            val vr : IntArray = modelDescription.modelVariables.getValueReferences(names)
             map[name] = vr
             return setString(vr, values)
         }
@@ -249,7 +249,7 @@ abstract class AbstractFmu<E: IModelDescription, T: Fmi2LibraryWrapper<*>> inter
             return setBoolean(map[name]!!, values)
         } else {
             val names: List<String> = List(values.size, {i -> "$name[$i]"})
-            val vr : IntArray = modelDescription.modelVariables.getValueReferences(names)!!
+            val vr : IntArray = modelDescription.modelVariables.getValueReferences(names)
             map[name] = vr
             return setBoolean(vr, values)
         }
