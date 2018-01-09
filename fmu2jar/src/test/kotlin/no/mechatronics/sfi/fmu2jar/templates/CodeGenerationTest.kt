@@ -1,10 +1,9 @@
 package no.mechatronics.sfi.fmu2jar.templates
 
-import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescription
-import org.apache.commons.io.FileUtils
+import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescriptionParser
+import org.apache.commons.io.IOUtils
 import org.junit.Assert
 import org.junit.Test
-import java.io.File
 import java.nio.charset.Charset
 
 class CodeGenerationTest {
@@ -12,8 +11,10 @@ class CodeGenerationTest {
     @Test
     fun generateBody() {
 
-        val xml= FileUtils.readFileToString(File("C:\\Users\\laht\\IdeaProjects\\FMI4j\\import\\src\\test\\resources\\v2\\cs\\ControlledTemperature\\modelDescription.xml"), Charset.forName("UTF-8"))
-        val md = ModelDescription.parseModelDescription(xml)
+        val url = javaClass.classLoader.getResource("modelDescription.xml")
+        Assert.assertNotNull(url)
+        val xml = IOUtils.toString(url, Charset.forName("UTF-8"))
+        val md = ModelDescriptionParser.parse(xml)
         Assert.assertNotNull(md)
 
         println( CodeGeneration.generateBody(md) )

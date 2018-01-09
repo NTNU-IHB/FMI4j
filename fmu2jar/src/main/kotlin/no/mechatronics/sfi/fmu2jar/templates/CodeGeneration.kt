@@ -1,27 +1,25 @@
 package no.mechatronics.sfi.fmu2jar.templates
 
-import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescription
+import no.mechatronics.sfi.fmi4j.modeldescription.IModelDescription
+import no.mechatronics.sfi.fmi4j.modeldescription.IModelVariables
 
 object CodeGeneration {
 
 
-    fun generateBody(modelDescription: ModelDescription, fileName: String = modelDescription.modelName): String {
+    fun generateBody(modelDescription: IModelDescription, fileName: String = modelDescription.modelName): String {
 
-        val modelName = modelDescription.modelName
-        val modelVariables = modelDescription.modelVariables
+        val modelName: String = modelDescription.modelName
+        val modelVariables: IModelVariables = modelDescription.modelVariables
 
         return """
 
 package no.mechatronics.sfi.fmu2jar.${modelName.toLowerCase()}
 
-import no.mechatronics.sfi.fmi4j.FmuFile
-import no.mechatronics.sfi.fmi4j.FmuBuilder
+import java.net.URL
 import no.mechatronics.sfi.fmi4j.FmiSimulation
-import no.mechatronics.sfi.fmi4j.CoSimulationFmu
-import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescription
-import no.mechatronics.sfi.fmi4j.modeldescription.ModelVariables
-import no.mechatronics.sfi.fmi4j.modeldescription.ScalarVariable
-
+import no.mechatronics.sfi.fmi4j.fmu.FmuFile
+import no.mechatronics.sfi.fmi4j.fmu.FmuBuilder
+import no.mechatronics.sfi.fmi4j.fmu.CoSimulationFmu
 
 
 class $modelName private constructor(
@@ -30,10 +28,11 @@ class $modelName private constructor(
 
     companion object {
 
-        val builder: FmuBuilder
+        private val builder: FmuBuilder
 
         init {
-            val fmuFile = FmuFile($modelName::class.java.classLoader.getResource("$fileName"))
+            val url: URL? = $modelName::class.java.classLoader.getResource("${fileName}.fmu")
+            val fmuFile = FmuFile(url!!)
             builder = FmuBuilder(fmuFile)
         }
 
@@ -51,33 +50,23 @@ class $modelName private constructor(
     val locals = Locals()
 
     inner class Inputs {
-
         ${VariableAccessorsTemplate.generateInputsBody(modelVariables)}
-
     }
 
     inner class Outputs {
-
         ${VariableAccessorsTemplate.generateOutputsBody(modelVariables)}
-
     }
 
     inner class Parameters {
-
         ${VariableAccessorsTemplate.generateParametersBody(modelVariables)}
-
     }
 
     inner class CalculatedParameters {
-
         ${VariableAccessorsTemplate.generateCalculatedParametersBody(modelVariables)}
-
     }
 
     inner class Locals {
-
         ${VariableAccessorsTemplate.generateLocalsBody(modelVariables)}
-
     }
 
 }

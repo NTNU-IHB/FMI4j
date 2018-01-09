@@ -2,11 +2,14 @@
 
 package no.mechatronics.sfi.fmu2jar
 
-import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescription
-import no.mechatronics.sfi.fmi4j.modeldescription.ScalarVariable
+import no.mechatronics.sfi.fmi4j.modeldescription.IModelDescription
+import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescriptionParser
 import no.mechatronics.sfi.fmu2jar.templates.CodeGeneration
 import org.apache.commons.io.FileUtils
+import org.apache.commons.io.FilenameUtils
 import org.apache.commons.io.IOUtils
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import java.io.File
 import java.io.FileOutputStream
 import java.nio.charset.Charset
@@ -29,7 +32,11 @@ class Fmu2Jar(
         private val file: File
 ) {
 
-    private val modelDescription: ModelDescription
+    companion object {
+        val LOG: Logger = LoggerFactory.getLogger(Fmu2Jar::class.java)
+    }
+
+    private val modelDescription: IModelDescription
 
     init {
 
@@ -37,11 +44,13 @@ class Fmu2Jar(
             throw IllegalArgumentException("File '${file.absolutePath}' is not and FMU!")
         }
 
-        modelDescription = ModelDescription.Companion.parseModelDescription(file)
+        modelDescription = ModelDescriptionParser.parse(file)
     }
 
     private fun copyBuildFile(parentDir: File) {
-        IOUtils.copy(javaClass.classLoader.getResourceAsStream("build.gradle"), FileOutputStream(File(parentDir, "build.gradle")))
+        FileOutputStream(File(parentDir, "build.gradle")).use {
+            IOUtils.copy(javaClass.classLoader.getResourceAsStream("build.gradle"), it)
+        }
     }
 
     private fun copyGradleWrapper(parentDir: File) {
@@ -71,7 +80,7 @@ class Fmu2Jar(
     }
 
     private fun copySourceFile(parentDir: File) {
-        val src = CodeGeneration.generateBody(modelDescription, file.name)
+        val src = CodeGeneration.generateBody(modelDescription, FilenameUtils.getBaseName(file.name))
 
         File(parentDir, "src/main/kotlin/no/mechatronics/sfi/fmu2jar/${modelDescription.modelName}.kt").apply {
             if (!parentFile.exists()) {
@@ -95,24 +104,22 @@ class Fmu2Jar(
     fun generateJar(options: GenerateOptions) {
 
         val tempDirectory = Files.createTempDirectory("fmu2jar_").toFile()
+        val parentDir = File(tempDirectory, modelDescription.modelName)
+        parentDir.mkdir()
+
+        copyFmuFile(parentDir)
+        copyBuildFile(parentDir)
+        copyGradleWrapper(parentDir)
+        copySourceFile(parentDir)
+
         try {
-            val parentDir = File(tempDirectory, modelDescription.modelName)
-            parentDir.mkdir()
-
-           // println(parentDir.absolutePath)
-
-            copyFmuFile(parentDir)
-            copyBuildFile(parentDir)
-            copyGradleWrapper(parentDir)
-            copySourceFile(parentDir)
-
 
             val cmd = mutableListOf("${parentDir.absolutePath}/gradlew.bat", "clean", "build")
             if (options.mavenLocal) {
                 cmd.add("publishToMavenLocal")
             }
 
-            ProcessBuilder()
+            val status = ProcessBuilder()
                     .directory(parentDir)
                     .command(cmd)
                     .redirectError(ProcessBuilder.Redirect.INHERIT)
@@ -120,17 +127,22 @@ class Fmu2Jar(
                     .start()
                     .waitFor()
 
-            options.outputFolder?.let { outputFolder ->
-                File(parentDir, "build/libs/${modelDescription.modelName}-1.0-SNAPSHOT.jar").let { src ->
-                    if (src.exists()) {
-                        FileUtils.copyFileToDirectory(src.absoluteFile, outputFolder.absoluteFile)
-                        println("Wrote FMU to directory '${outputFolder.absolutePath}'")
+            if (status == 0) {
+                options.outputFolder?.let { outputFolder ->
+                    File(parentDir, "build/libs/${modelDescription.modelName}-1.0-SNAPSHOT.jar").let { src ->
+                        if (src.exists()) {
+                            FileUtils.copyFileToDirectory(src.absoluteFile, outputFolder.absoluteFile)
+                            LOG.info("Wrote FMU to directory: {}", outputFolder.absolutePath)
+                        }
                     }
                 }
+            } else {
+                LOG.error("Gradle process returned with an error ($status). Unable to generate jar!")
             }
+
         } finally {
-            if(tempDirectory.deleteRecursively()) {
-                println("Deleted folder '${tempDirectory.absolutePath}'")
+            if(tempDirectory.exists() && tempDirectory.deleteRecursively()) {
+                LOG.info("Deleted temp folder: {}", tempDirectory.absolutePath)
             }
         }
 
