@@ -23,8 +23,8 @@ class ApplicationStarter {
           val options = Options().apply {
               addOption(HELP, false, "Prints this message")
               addOption(FMU_FILE, true, "Path to the FMU")
-              addOption(MAVEN_LOCAL_OPT, false, "Should the .jar be published to maven local?")
-              addOption(OUTPUT_FOLDER, true, "Specify where to copy the generated .jar. Not needed if $MAVEN_LOCAL_OPT=true")
+              addOption(MAVEN_LOCAL_OPT, false, "Should the .jar be published to maven local? (optional)")
+              addOption(OUTPUT_FOLDER, true, "Specify where to copy the generated .jar. Not needed if '-$MAVEN_LOCAL_OPT true'")
           }
 
           val cmd = DefaultParser().parse(options, args)
