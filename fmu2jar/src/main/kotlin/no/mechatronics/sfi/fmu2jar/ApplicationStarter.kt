@@ -7,7 +7,7 @@ import org.apache.commons.cli.Options
 import java.io.File
 
 
-class Main  {
+class ApplicationStarter {
 
   companion object {
 
@@ -21,7 +21,7 @@ class Main  {
       fun main(args: Array<String>) {
 
           val options = Options().apply {
-              addOption(HELP, false, "Displays this message")
+              addOption(HELP, false, "Prints this message")
               addOption(FMU_FILE, true, "Path to the FMU")
               addOption(MAVEN_LOCAL_OPT, false, "Should the .jar be published to maven local?")
               addOption(OUTPUT_FOLDER, true, "Specify where to copy the generated .jar. Not needed if $MAVEN_LOCAL_OPT=true")

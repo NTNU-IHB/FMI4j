@@ -1,9 +1,6 @@
 package no.mechatronics.sfi.fmu2jar.templates
 
-import no.mechatronics.sfi.fmi4j.modeldescription.IntegerVariable
-import no.mechatronics.sfi.fmi4j.modeldescription.ModelVariables
-import no.mechatronics.sfi.fmi4j.modeldescription.RealVariable
-import no.mechatronics.sfi.fmi4j.modeldescription.ScalarVariable
+import no.mechatronics.sfi.fmi4j.modeldescription.*
 import no.mechatronics.sfi.fmi4j.modeldescription.enums.Causality
 
 object VariableAccessorsTemplate {
@@ -30,7 +27,7 @@ object VariableAccessorsTemplate {
 
         return StringBuilder().apply {
 
-            val tab = "\t\t\t"
+            val tab = "\t\t"
 
             append("/**\n")
 
@@ -114,7 +111,7 @@ object VariableAccessorsTemplate {
     }
 
 
-    fun generateInputsBody(modelVariables: ModelVariables) : String {
+    fun generateInputsBody(modelVariables: IModelVariables) : String {
         val sb = StringBuilder()
         modelVariables.variables.filter {
             it.causality == Causality.INPUT
@@ -124,7 +121,7 @@ object VariableAccessorsTemplate {
         return sb.toString()
     }
 
-    fun generateOutputsBody(modelVariables: ModelVariables) : String {
+    fun generateOutputsBody(modelVariables: IModelVariables) : String {
         val sb = StringBuilder()
         modelVariables.variables.filter {
             it.causality == Causality.OUTPUT
@@ -134,7 +131,7 @@ object VariableAccessorsTemplate {
         return sb.toString()
     }
 
-    fun generateCalculatedParametersBody(modelVariables: ModelVariables) : String {
+    fun generateCalculatedParametersBody(modelVariables: IModelVariables) : String {
         val sb = StringBuilder()
         modelVariables.variables.filter {
             it.causality == Causality.CALCULATED_PARAMETER
@@ -145,7 +142,7 @@ object VariableAccessorsTemplate {
     }
 
 
-    fun generateParametersBody(modelVariables: ModelVariables) : String {
+    fun generateParametersBody(modelVariables: IModelVariables) : String {
         val sb = StringBuilder()
         modelVariables.variables.filter {
             it.causality == Causality.PARAMETER
@@ -156,7 +153,7 @@ object VariableAccessorsTemplate {
         return sb.toString()
     }
 
-    fun generateLocalsBody(modelVariables: ModelVariables) : String {
+    fun generateLocalsBody(modelVariables: IModelVariables) : String {
         val sb = StringBuilder()
         modelVariables.variables.filter {
             it.causality == Causality.LOCAL

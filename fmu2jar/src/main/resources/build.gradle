@@ -21,15 +21,13 @@ sourceCompatibility = 1.8
 
 repositories {
     mavenCentral()
-    repositories {
-        maven {
-            url "https://oss.sonatype.org/content/repositories/snapshots"
-        }
-    }
+//    maven {
+//        url "https://oss.sonatype.org/content/repositories/snapshots"
+//    }
 }
 
 dependencies {
-    compile "no.mechatronics.sfi.fmi4j:fmi-import:0.1-ALPHA-8-SNAPSHOT"
+    compile "no.mechatronics.sfi.fmi4j:fmi-import:0.1-ALPHA-8"
 }
 
 task sourcesJar(type: Jar, dependsOn: classes, description: 'Creates a jar from the source files.') {

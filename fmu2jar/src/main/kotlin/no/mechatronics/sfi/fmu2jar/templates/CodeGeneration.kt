@@ -1,14 +1,15 @@
 package no.mechatronics.sfi.fmu2jar.templates
 
 import no.mechatronics.sfi.fmi4j.modeldescription.IModelDescription
+import no.mechatronics.sfi.fmi4j.modeldescription.IModelVariables
 
 object CodeGeneration {
 
 
     fun generateBody(modelDescription: IModelDescription, fileName: String = modelDescription.modelName): String {
 
-        val modelName = modelDescription.modelName
-        val modelVariables = modelDescription.modelVariables
+        val modelName: String = modelDescription.modelName
+        val modelVariables: IModelVariables = modelDescription.modelVariables
 
         return """
 

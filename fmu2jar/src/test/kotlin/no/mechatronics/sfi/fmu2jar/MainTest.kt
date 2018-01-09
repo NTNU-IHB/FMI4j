@@ -15,35 +15,34 @@ class MainTest {
         val LOG: Logger = LoggerFactory.getLogger(MainTest::class.java)
     }
 
-    lateinit var tmp: File
+    lateinit var out: File
 
     @Before
     fun setUp() {
-        tmp = Files.createTempDirectory("fmu2jar_").toFile()
+        out = Files.createTempDirectory("fmu2jar_").toFile()
     }
 
     @After
     fun tearDown() {
-        if(tmp.deleteRecursively()) {
-            LOG.info("Deleted generated folder and all it's contents: ${tmp.absolutePath}")
+        if(out.deleteRecursively()) {
+            LOG.info("Deleted generated folder and all it's contents: ${out.absolutePath}")
         }
     }
 
     @Test
     fun main() {
 
-        val file = File("src\\test\\resources\\ControlledTemperature.fmu")
-        Assert.assertTrue(file.exists())
-
+        val fmu = File("src\\test\\resources\\ControlledTemperature.fmu")
+        Assert.assertTrue(fmu.exists())
         val args = arrayOf<String>(
                 "-fmu",
-                file.absolutePath,
+                fmu.absolutePath,
                 "-out",
-                tmp.absolutePath,
+                out.absolutePath,
                 "-mavenLocal"
         )
 
-        Main.main(args)
+        ApplicationStarter.main(args)
 
     }
 }

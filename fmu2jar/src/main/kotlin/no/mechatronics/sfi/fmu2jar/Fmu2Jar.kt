@@ -6,6 +6,7 @@ import no.mechatronics.sfi.fmi4j.modeldescription.IModelDescription
 import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescriptionParser
 import no.mechatronics.sfi.fmu2jar.templates.CodeGeneration
 import org.apache.commons.io.FileUtils
+import org.apache.commons.io.FilenameUtils
 import org.apache.commons.io.IOUtils
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -79,7 +80,7 @@ class Fmu2Jar(
     }
 
     private fun copySourceFile(parentDir: File) {
-        val src = CodeGeneration.generateBody(modelDescription, file.name)
+        val src = CodeGeneration.generateBody(modelDescription, FilenameUtils.getBaseName(file.name))
 
         File(parentDir, "src/main/kotlin/no/mechatronics/sfi/fmu2jar/${modelDescription.modelName}.kt").apply {
             if (!parentFile.exists()) {
