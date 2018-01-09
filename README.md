@@ -74,9 +74,14 @@ E.g. an FMU with a variable named "Controller.speed" of type Real, will have the
 ### Usage
 
 ```
-java -jar fmu2jar -fmu "fmu/location.fmu" -out "where/to/put/generated/jar"
+usage: java -jar fmu2jar
+ -fmu <arg>    Path to the FMU
+ -help         Prints this message
+ -mavenLocal   Should the .jar be published to maven local? (optional)
+ -out <arg>    Specify where to copy the generated .jar. Not needed if
+               "-mavenLocal true". 
+
 ```
-add ```-mavenLocal``` if you want the .jar to be installed in your local maven repository
 
 ##### API example from kotlin
 ```kotlin
