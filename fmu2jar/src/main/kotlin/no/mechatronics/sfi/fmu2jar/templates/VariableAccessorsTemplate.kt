@@ -22,7 +22,7 @@ object VariableAccessorsTemplate {
         throw IllegalArgumentException()
     }
 
-    fun generateJavaDoc(v: AbstractScalarVariable<*>) : String {
+    fun generateJavaDoc(v: ScalarVariable) : String {
 
         val tab = "\t\t"
 
@@ -62,7 +62,7 @@ object VariableAccessorsTemplate {
     }
 
 
-    private fun generateGet(variable: AbstractScalarVariable<*>, sb: StringBuilder) {
+    private fun generateGet(variable: ScalarVariable, sb: StringBuilder) {
 
         sb.append("""
         ${generateJavaDoc(variable)}
@@ -71,7 +71,7 @@ object VariableAccessorsTemplate {
 
     }
 
-    private fun generateSet(variable: AbstractScalarVariable<*>, sb :StringBuilder) {
+    private fun generateSet(variable: ScalarVariable, sb :StringBuilder) {
 
         sb.append("""
         ${generateJavaDoc(variable)}

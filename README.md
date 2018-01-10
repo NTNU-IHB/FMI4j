@@ -67,8 +67,8 @@ The generated library also exposes all variables from the FMU through a type saf
 E.g. an FMU with a variable named "Controller.speed" of type Real, will have the methods
 
 ```java
-    public double getController_speed()
-    public void setController_speed(double value)
+    public RealReader getController_speedReader()
+    public RealWriter getController_speedWriter()
 ``` 
 
 ### Usage
@@ -86,13 +86,15 @@ usage: java -jar fmu2jar
 ##### API example from kotlin
 ```kotlin
     ControlledTemperature.newInstance().use{ fmu ->  
-        val temperature_Reference: Double = fmu.parameters.getTemperatureSource_T()        
+        val reader: RealReader = fmu.parameters.getTemperatureSource_TReader()
+        val temperature_Reference: Double = reader.read()        
     } //fmu has been automatically terminated
 ```
 ##### API example from java
 ```java
     try (ControlledTemperature fmu = ControlledTemperature.newInstance()) { 
-        double temperature_Reference = fmu.getParameters().getTemperatureSource_T()
+        RealReader reader = fmu.getParameters().getTemperatureSource_TReader();
+        double temperature_Reference = reader.read();
     } //fmu has been automatically terminated
 ```
 
@@ -108,33 +110,35 @@ class ControlledTemperature private constructor(
         // fmu unpacking code
     }
 
-    val inputs = Inputs()
-    val outputs = Outputs()
-    val parameters = Parameters()
-    val calculatedParameters = CalculatedParameters()
     val locals = Locals()
-
-    inner class Inputs {
-    }
-
-    inner class Outputs {
-
-        
-            /**
-             * Causality=OUTPUT
-             * Variability=CONTINUOUS
-             */
-            fun getTemperature_Reference(): Double {
-                return fmu.read(46).asReal()
-            }
+        val inputs = Inputs()
+        val outputs = Outputs()
+        val parameters = Parameters()
+        val calculatedParameters = CalculatedParameters()
+    
+        inner class Inputs {
+            
+        }
+    
+        inner class Outputs {
             
             /**
-             * Causality=OUTPUT
-             * Variability=CONTINUOUS
-             */
-            fun getTemperature_Room(): Double {
-                return fmu.read(47).asReal()
-            }
+    		 * Temperature_Reference
+    		 * Causality=OUTPUT
+    		 * Variability=CONTINUOUS
+    		 */
+            fun getTemperature_ReferenceReader() = fmu.getReader(46).asRealReader()
+                
+            /**
+    		 * Temperature_Room
+    		 * Causality=OUTPUT
+    		 * Variability=CONTINUOUS
+    		 * min=2.0
+    		 * max=4.0
+    		 */
+            fun getTemperature_RoomReader() = fmu.getReader(47).asRealReader()
+                
+        }
             
             
             ...
