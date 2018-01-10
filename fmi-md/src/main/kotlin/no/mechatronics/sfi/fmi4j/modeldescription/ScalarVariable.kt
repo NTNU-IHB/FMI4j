@@ -30,6 +30,12 @@ import javax.xml.bind.JAXBContext
 import javax.xml.bind.annotation.*
 import javax.xml.bind.annotation.adapters.XmlAdapter
 
+enum class VariableType {
+
+    INTEGER, REAL, STRING, BOOLEAN, ENUMERATION
+
+}
+
 interface ScalarVariable {
 
     /**
@@ -93,7 +99,7 @@ abstract class AbstractScalarVariable<E> : ScalarVariable {
      */
      abstract var start: E?
 
-     abstract val typeName: String
+     abstract val type: VariableType
 
 }
 
@@ -349,7 +355,7 @@ class IntegerVariable(v : ScalarVariableImpl) : ScalarVariable by v, AbstractSca
      */
     override var start = v.integerAttribute!!.start
 
-    override val typeName = "Integer"
+    override val type = VariableType.INTEGER
 
     override fun toString(): String {
         return "IntegerVariable(min=$min, max=$max, start=$start)"
@@ -409,7 +415,7 @@ class RealVariable(v : ScalarVariableImpl) : ScalarVariable by v, AbstractScalar
      */
     override var start = v.realAttribute!!.start
 
-    override val typeName = "Real"
+    override val type = VariableType.REAL
 
     override fun toString(): String {
         return "RealVariable(min=$min, max=$max, nominal=$nominal, unbounded=$unbounded, quantity=$quantity, unit=$unit, displayUnit=$displayUnit, relativeQuantity=$relativeQuantity, derivative=$derivative, start=$start)"
@@ -424,7 +430,7 @@ class StringVariable(v : ScalarVariableImpl) : ScalarVariable by v, AbstractScal
      */
     override var start = v.stringAttribute!!.start
 
-    override val typeName = "String"
+    override val type = VariableType.STRING
 
     override fun toString(): String {
         return "StringVariable(start=$start)"
@@ -440,7 +446,7 @@ class BooleanVariable(v : ScalarVariableImpl) : ScalarVariable by v, AbstractSca
      */
     override var start = v.booleanAttribute!!.start
 
-   override val typeName = "Boolean"
+   override val type = VariableType.BOOLEAN
 
     override fun toString(): String {
         return "BooleanVariable(start=$start)"
