@@ -5,24 +5,24 @@ import no.mechatronics.sfi.fmi4j.modeldescription.enums.Causality
 
 object VariableAccessorsTemplate {
 
-    private fun capitalizeFirstLetterAndReplaceDotsWithSlash(variable: ScalarVariable<*>): String {
+    private fun capitalizeFirstLetterAndReplaceDotsWithSlash(variable: ScalarVariable): String {
         return variable.name.let {
             it.substring(0, 1).capitalize() + it.substring(1, it.length).replace(".", "_")
         }
     }
 
 
-    private fun fmiTypeToKotlinType(variable: ScalarVariable<*>) : String {
-        when(variable.typeName) {
-            "Integer" -> return "Int"
-            "Real" -> return "Double"
-            "String" -> return "String"
-            "Boolean" -> return "Boolean"
+    private fun fmiTypeToKotlinType(variable: ScalarVariable) : String {
+        when(variable) {
+            is IntegerVariable -> return "Int"
+            is RealVariable -> return "Double"
+            is StringVariable -> return "String"
+            is BooleanVariable -> return "Boolean"
         }
         throw IllegalArgumentException()
     }
 
-    fun generateJavaDoc(v: ScalarVariable<*>) : String {
+    fun generateJavaDoc(v: AbstractScalarVariable<*>) : String {
 
         val tab = "\t\t"
 
@@ -62,28 +62,26 @@ object VariableAccessorsTemplate {
     }
 
 
-    private fun generateGet(variable: ScalarVariable<*>, sb: StringBuilder) {
+    private fun generateGet(variable: AbstractScalarVariable<*>, sb: StringBuilder) {
 
         sb.append("""
         ${generateJavaDoc(variable)}
         fun get${capitalizeFirstLetterAndReplaceDotsWithSlash(variable)}Reader() = fmu.getReader(${variable.valueReference}).as${variable.typeName}Reader()
-
             """)
 
     }
 
-    private fun generateSet(variable: ScalarVariable<*>, sb :StringBuilder) {
+    private fun generateSet(variable: AbstractScalarVariable<*>, sb :StringBuilder) {
 
         sb.append("""
         ${generateJavaDoc(variable)}
         fun get${capitalizeFirstLetterAndReplaceDotsWithSlash(variable)}Writer() = fmu.getWriter(${variable.valueReference}).as${variable.typeName}Writer()
-
             """)
 
     }
 
 
-    fun generateInputsBody(modelVariables: IModelVariables) : String {
+    fun generateInputsBody(modelVariables: ModelVariables) : String {
         val sb = StringBuilder()
         modelVariables.variables.filter {
             it.causality == Causality.INPUT
@@ -93,7 +91,7 @@ object VariableAccessorsTemplate {
         return sb.toString()
     }
 
-    fun generateOutputsBody(modelVariables: IModelVariables) : String {
+    fun generateOutputsBody(modelVariables: ModelVariables) : String {
         val sb = StringBuilder()
         modelVariables.variables.filter {
             it.causality == Causality.OUTPUT
@@ -103,7 +101,7 @@ object VariableAccessorsTemplate {
         return sb.toString()
     }
 
-    fun generateCalculatedParametersBody(modelVariables: IModelVariables) : String {
+    fun generateCalculatedParametersBody(modelVariables: ModelVariables) : String {
         val sb = StringBuilder()
         modelVariables.variables.filter {
             it.causality == Causality.CALCULATED_PARAMETER
@@ -114,7 +112,7 @@ object VariableAccessorsTemplate {
     }
 
 
-    fun generateParametersBody(modelVariables: IModelVariables) : String {
+    fun generateParametersBody(modelVariables: ModelVariables) : String {
         val sb = StringBuilder()
         modelVariables.variables.filter {
             it.causality == Causality.PARAMETER
@@ -125,7 +123,7 @@ object VariableAccessorsTemplate {
         return sb.toString()
     }
 
-    fun generateLocalsBody(modelVariables: IModelVariables) : String {
+    fun generateLocalsBody(modelVariables: ModelVariables) : String {
         val sb = StringBuilder()
         modelVariables.variables.filter {
             it.causality == Causality.LOCAL

@@ -38,17 +38,28 @@ import javax.xml.bind.annotation.XmlAttribute
  * startTime, stopTime, tolerance and stepSize have already a meaningful default value for the model at
  * hand. Furthermore, for CoSimulation the stepSize defines the preferred communicationStepSize.
  */
+interface DefaultExperiment {
+
+    val startTime: Double
+    val stopTime: Double
+    val tolerance: Double
+    val stepSize: Double
+}
+
+/**
+ * @inheritDoc
+ */
 @XmlAccessorType(XmlAccessType.FIELD)
-class DefaultExperiment{
+class DefaultExperimentImpl: DefaultExperiment {
 
     @XmlAttribute
-    val startTime: Double = 0.0
+    override val startTime: Double = 0.0
     @XmlAttribute
-    val stopTime: Double = 0.0
+    override val stopTime: Double = 0.0
     @XmlAttribute
-    val tolerance: Double = 1E-4
+    override val tolerance: Double = 1E-4
     @XmlAttribute
-    val stepSize: Double = 1.0/100
+    override val stepSize: Double = 1.0/100
 
     override fun toString(): String {
         return "DefaultExperiment(startTime=$startTime, stopTime=$stopTime, tolerance=$tolerance, stepSize=$stepSize)"

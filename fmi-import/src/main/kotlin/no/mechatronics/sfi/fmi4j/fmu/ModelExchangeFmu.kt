@@ -116,7 +116,6 @@ class ModelExchangeFmuWithIntegrator internal constructor(
     }
 
     override fun reset() = fmu.reset()
-    override fun reset(requireReinit: Boolean) = fmu.reset(requireReinit)
     override fun terminate() = fmu.terminate()
 
     override fun close() {

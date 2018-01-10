@@ -27,13 +27,18 @@ package no.mechatronics.sfi.fmi4j.modeldescription.log
 import javax.xml.bind.annotation.XmlAccessType
 import javax.xml.bind.annotation.XmlAccessorType
 
+interface Category {
+    val name: String?
+}
 
 @XmlAccessorType(XmlAccessType.FIELD)
-class Category(
-        val name:String? = null
-){
+class CategoryImpl(
+        override val name:String? = null
+): Category{
+
     override fun toString(): String {
         return "Category(name=$name)"
     }
+
 }
 

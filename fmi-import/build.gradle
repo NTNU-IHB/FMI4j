@@ -17,16 +17,16 @@ if (SNAPSHOT) {
 
 dependencies {
 
-    api group: 'org.apache.commons', name: 'commons-math3', version: '3.6.1'
-    implementation group: 'commons-io', name: 'commons-io', version: '2.6'
+    compile group: 'org.apache.commons', name: 'commons-math3', version: '3.6.1'
+    compile group: 'commons-io', name: 'commons-io', version: '2.6'
 
-    implementation group: 'net.java.dev.jna', name: 'jna', version: '4.5.1'
-    implementation group: 'net.java.dev.jna', name: 'jna-platform', version: '4.5.1'
+    compile group: 'net.java.dev.jna', name: 'jna', version: '4.5.1'
+    compile group: 'net.java.dev.jna', name: 'jna-platform', version: '4.5.1'
 
     if (SNAPSHOT) {
-        api group: 'no.mechatronics.sfi.fmi4j', name: 'fmi-md', version: '0.3-SNAPSHOT'
+        compile group: 'no.mechatronics.sfi.fmi4j', name: 'fmi-md', version: '0.3-SNAPSHOT'
     } else {
-        api group: 'no.mechatronics.sfi.fmi4j', name: 'fmi-md', version: '0.2'
+        compile group: 'no.mechatronics.sfi.fmi4j', name: 'fmi-md', version: '0.2'
     }
 
 }

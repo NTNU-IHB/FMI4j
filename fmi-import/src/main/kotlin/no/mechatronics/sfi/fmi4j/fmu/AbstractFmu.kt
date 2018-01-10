@@ -33,7 +33,7 @@ import no.mechatronics.sfi.fmi4j.proxy.enums.Fmi2Status
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-abstract class AbstractFmu<E: IModelDescription, T: Fmi2LibraryWrapper<*>> internal constructor(
+abstract class AbstractFmu<E: ModelDescription, T: Fmi2LibraryWrapper<*>> internal constructor(
         val fmuFile: FmuFile,
         val modelDescription: E,
         val wrapper: T
@@ -48,7 +48,7 @@ abstract class AbstractFmu<E: IModelDescription, T: Fmi2LibraryWrapper<*>> inter
     var isInitialized = false
         private set
 
-    val modelVariables: IModelVariables = modelDescription.modelVariables
+    val modelVariables: ModelVariables = modelDescription.modelVariables
 
     /**
      * @see Fmi2Library.fmi2GetTypesPlatform

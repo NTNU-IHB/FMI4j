@@ -24,7 +24,7 @@
 
 package no.mechatronics.sfi.fmi4j.modeldescription.me
 
-import no.mechatronics.sfi.fmi4j.modeldescription.IModelDescription
+import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescription
 import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescriptionParser
 import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescriptionXmlTemplate
 import java.io.File
@@ -45,7 +45,7 @@ object ModelExchangeModelDescriptionParser {
 }
 
 
-interface IModelExchangeModelDescription : IModelDescription {
+interface IModelExchangeModelDescription : ModelDescription {
 
     /**
      * The (fixed) number of event indicators for an FMU based on FMI for
@@ -67,8 +67,8 @@ internal class ModelExchangeModelDescriptionXmlTemplate : ModelDescriptionXmlTem
     override fun generate() = ModelExchangenModelDescriptionImpl(super.generate())
 
     inner class ModelExchangenModelDescriptionImpl(
-            val modelDescription: IModelDescription
-    ) : IModelDescription by modelDescription, IModelExchangeModelDescription {
+            val modelDescription: ModelDescription
+    ) : ModelDescription by modelDescription, IModelExchangeModelDescription {
 
         @XmlAttribute
         override val numberOfEventIndicators: Int = 0

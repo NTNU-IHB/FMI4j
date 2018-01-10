@@ -1,12 +1,12 @@
 package no.mechatronics.sfi.fmi4j.misc
 
-import no.mechatronics.sfi.fmi4j.modeldescription.IModelDescription
+import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescription
 import no.mechatronics.sfi.fmi4j.modeldescription.IntegerVariable
 import no.mechatronics.sfi.fmi4j.modeldescription.RealVariable
 import no.mechatronics.sfi.fmi4j.proxy.Fmi2LibraryWrapper
 
 class VariableAccessor internal constructor(
-        private val modelDescription: IModelDescription,
+        private val modelDescription: ModelDescription,
         private val wrapper: Fmi2LibraryWrapper<*>,
         private val valueReference: Int
 ) : VariableReader, VariableWriter {

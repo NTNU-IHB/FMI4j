@@ -32,8 +32,8 @@ interface FmiSimulation : VariableAccessProvider, AutoCloseable {
 
     val version: String
 
-    val modelDescription: IModelDescription
-    val modelVariables: IModelVariables
+    val modelDescription: ModelDescription
+    val modelVariables: ModelVariables
     val currentTime: Double
 
     val isInitialized : Boolean
@@ -45,9 +45,7 @@ interface FmiSimulation : VariableAccessProvider, AutoCloseable {
     fun doStep(dt: Double) : Boolean
 
     fun reset() : Boolean
-    fun reset(requireReinit: Boolean) : Boolean
     fun terminate() : Boolean
-
     fun getLastStatus() : Fmi2Status
 
 }

@@ -27,54 +27,49 @@ package no.mechatronics.sfi.fmi4j.modeldescription
 import javax.xml.bind.annotation.*
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter
 
-interface IModelVariables: Iterable<ScalarVariable<*>> {
-
-    val variables: List<ScalarVariable<*>>
-
-    fun getValueReference(name: String) : Int
-
-    fun getValueReferences(names: Iterable<String>): IntArray
+interface ModelVariables: Iterable<AbstractScalarVariable<*>> {
 
     /**
      * Get the number of model variables held by this structure
      */
     val size: Int
 
-    fun getVariableNames() : List<String>
+    val variables: List<AbstractScalarVariable<*>>
+
+    /**
+     * Get the valueReference of the variable named <name>
+     * @name name
+     */
+    fun getValueReference(name: String) : Int
+
+    fun getValueReferences(names: Iterable<String>): IntArray
 
     /**
      * Get model variable by index
      */
-    fun getByIndex(index: Int): ScalarVariable<*>?
+    fun getByIndex(index: Int): AbstractScalarVariable<*>?
 
     /**
      * Get model variable by valueReference
      */
-    fun getByValueReference(vr: Int) : ScalarVariable<*>?
+    fun getByValueReference(vr: Int) : AbstractScalarVariable<*>?
 
     /**
      * Get model variable by name
      */
-    fun getByName(name: String) : ScalarVariable<*>?
+    fun getByName(name: String) : AbstractScalarVariable<*>?
 
-    fun getInteger(name: String) : IntegerVariable?
-
-    fun getReal(name: String) : RealVariable?
-
-    fun getString(name: String) : StringVariable?
-
-    fun getBoolean(name: String) : BooleanVariable?
 
 }
 
 @XmlAccessorType(XmlAccessType.FIELD)
-class ModelVariables : IModelVariables {
+class ModelVariablesImpl : ModelVariables {
 
     @XmlElement(name = "ScalarVariable")
     @XmlJavaTypeAdapter(ScalarVariableAdapter::class)
-    private val _variables: List<ScalarVariable<*>>? = null
+    private val _variables: List<AbstractScalarVariable<*>>? = null
 
-    override val variables: List<ScalarVariable<*>>
+    override val variables: List<AbstractScalarVariable<*>>
     get() {
         return _variables ?: emptyList()
     }
@@ -89,44 +84,40 @@ class ModelVariables : IModelVariables {
 
     override fun getByIndex(index: Int) = variables.get(index)
 
-    override fun getByValueReference(vr: Int) : ScalarVariable<*>? {
+    override fun getByValueReference(vr: Int) : AbstractScalarVariable<*>? {
         return variables
                 .firstOrNull{it.valueReference == vr}
     }
 
-    override fun getByName(name: String) : ScalarVariable<*>? {
+    override fun getByName(name: String) : AbstractScalarVariable<*>? {
         return variables
-                .firstOrNull{it.name.equals(name)}
+                .firstOrNull{it.name == (name)}
     }
 
-    @SuppressWarnings("unchecked")
-    private fun <T> getType(name: String, type: Class<T>) : T? {
+    private fun <T: ScalarVariable> getType(name: String, type: Class<T>) : T? {
         return variables
-                .firstOrNull { type.isInstance(it) && it.name.equals(name) }
-                ?.let { it as T }
+                .filterIsInstance(type)
+                .firstOrNull { it.name == (name) }
+                ?: throw IllegalArgumentException("No variable of type ${type.simpleName} with name '$name'")
     }
 
-    override fun getInteger(name: String) : IntegerVariable? {
-        return getType(name, IntegerVariable::class.java)
-    }
+//    override fun getInteger(name: String) : IntegerVariable? {
+//        return getType(name, IntegerVariable::class.java)
+//    }
+//
+//    override fun getReal(name: String) : RealVariable? {
+//        return getType(name, RealVariable::class.java)
+//    }
+//
+//    override fun getString(name: String) : StringVariable? {
+//        return getType(name, StringVariable::class.java)
+//    }
+//
+//    override fun getBoolean(name: String) : BooleanVariable? {
+//        return getType(name, BooleanVariable::class.java)
+//    }
 
-    override fun getReal(name: String) : RealVariable? {
-        return getType(name, RealVariable::class.java)
-    }
-
-    override fun getString(name: String) : StringVariable? {
-        return getType(name, StringVariable::class.java)
-    }
-
-    override fun getBoolean(name: String) : BooleanVariable? {
-        return getType(name, BooleanVariable::class.java)
-    }
-
-    override fun getVariableNames() : List<String> {
-        return map { it.name }.toList()
-    }
-
-    override fun iterator(): Iterator<ScalarVariable<*>> {
+    override fun iterator(): Iterator<AbstractScalarVariable<*>> {
         return variables.iterator()
     }
 
