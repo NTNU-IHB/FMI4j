@@ -4,6 +4,9 @@ def debug = false
 if (debug) {
     repositories {
         mavenLocal()
+        maven {
+            url "https://oss.sonatype.org/content/repositories/snapshots/" //fmi-import
+        }
     }
 }
 
@@ -26,7 +29,6 @@ dependencies {
 }
 
 
-
 task fatJar(type: Jar) {
     manifest {
         attributes 'Implementation-Title': 'FMU2Jar',
@@ -44,9 +46,7 @@ sourceSets {
     test {
         java {
             if (!debug) {
-                exclude {
-                    '**/ControlledTemperatureTest.java'
-                }
+                exclude '**/ControlledTemperatureTest.java'
             }
         }
     }

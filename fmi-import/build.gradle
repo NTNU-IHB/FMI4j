@@ -1,6 +1,6 @@
 
 group = 'no.mechatronics.sfi.fmi4j'
-version = '0.1-ALPHA-8'
+version = '0.1-ALPHA-9-SNAPSHOT'
 
 apply plugin: 'maven'
 apply plugin: 'signing'

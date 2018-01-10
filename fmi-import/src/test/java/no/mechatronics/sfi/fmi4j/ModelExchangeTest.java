@@ -25,7 +25,6 @@
 package no.mechatronics.sfi.fmi4j;
 
 import no.mechatronics.sfi.fmi4j.fmu.FmuBuilder;
-import no.mechatronics.sfi.fmi4j.proxy.enums.Fmi2Status;
 import no.mechatronics.sfi.fmi4j.modeldescription.RealVariable;
 import org.apache.commons.math3.ode.FirstOrderIntegrator;
 import org.apache.commons.math3.ode.nonstiff.ClassicalRungeKuttaIntegrator;
