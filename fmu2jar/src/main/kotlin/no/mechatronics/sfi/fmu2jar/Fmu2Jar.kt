@@ -2,7 +2,7 @@
 
 package no.mechatronics.sfi.fmu2jar
 
-import no.mechatronics.sfi.fmi4j.modeldescription.IModelDescription
+import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescription
 import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescriptionParser
 import no.mechatronics.sfi.fmu2jar.templates.CodeGeneration
 import org.apache.commons.io.FileUtils
@@ -36,7 +36,7 @@ class Fmu2Jar(
         val LOG: Logger = LoggerFactory.getLogger(Fmu2Jar::class.java)
     }
 
-    private val modelDescription: IModelDescription
+    private val modelDescription: ModelDescription
 
     init {
 

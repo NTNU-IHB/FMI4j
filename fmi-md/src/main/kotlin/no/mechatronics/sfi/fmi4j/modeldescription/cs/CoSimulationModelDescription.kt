@@ -24,7 +24,7 @@
 
 package no.mechatronics.sfi.fmi4j.modeldescription.cs
 
-import no.mechatronics.sfi.fmi4j.modeldescription.IModelDescription
+import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescription
 import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescriptionParser
 import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescriptionXmlTemplate
 import java.io.File
@@ -41,7 +41,7 @@ object CoSimulationModelDescriptionParser {
     fun parse(file: File): ICoSimulationModelDescription = ModelDescriptionParser.parse(FileInputStream(file), CoSimulationModelDescriptionXmlTemplate::class.java).generate()
 }
 
-interface ICoSimulationModelDescription : IModelDescription {
+interface ICoSimulationModelDescription : ModelDescription {
 
     /**
      * The slave is able to provide derivatives of
@@ -93,8 +93,8 @@ internal class CoSimulationModelDescriptionXmlTemplate() : ModelDescriptionXmlTe
     override fun generate() = CoSimulationModelDescriptionImpl(super.generate())
 
     inner class CoSimulationModelDescriptionImpl(
-            val modelDescription: IModelDescription
-    ) : IModelDescription by modelDescription, ICoSimulationModelDescription {
+            val modelDescription: ModelDescription
+    ) : ModelDescription by modelDescription, ICoSimulationModelDescription {
 
         override val maxOutputDerivativeOrder: Int
             get() = cs!!.maxOutputDerivativeOrder

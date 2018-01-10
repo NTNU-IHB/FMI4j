@@ -32,7 +32,7 @@ import java.nio.charset.Charset
 
 class ModelDescriptionTest {
 
-    private lateinit var modelDescription: IModelDescription
+    private lateinit var modelDescription: ModelDescription
 
     @Before
     fun setUp() {

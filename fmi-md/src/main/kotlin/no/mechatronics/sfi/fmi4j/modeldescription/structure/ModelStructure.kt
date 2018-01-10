@@ -30,17 +30,6 @@ import javax.xml.bind.annotation.XmlElement
 import javax.xml.bind.annotation.XmlElementWrapper
 
 
-@XmlAccessorType(XmlAccessType.FIELD)
-class Unknown(
-        val index: Int = 0
-) {
-    override fun toString(): String {
-        return "Unknown(index=$index)"
-    }
-}
-
-
-
 /**
  * Defines the structure of the model. Especially, the ordered lists of
  * outputs, continuous-time states and initial unknowns (the unknowns
@@ -51,46 +40,43 @@ class Unknown(
  * input/output dependency in order to detect that in some cases there
  * are actually no algebraic loops when connecting FMUs together].
  */
+interface ModelStructure {
+    val outputs: List<Int>
+    val derivatives: List<Unknown>
+    val initialUnknowns: List<Unknown>
+}
+
+/**
+ * @inheritDoc
+ */
 @XmlAccessorType(XmlAccessType.FIELD)
-class ModelStructure {
+class ModelStructureImpl: ModelStructure {
 
     @XmlElementWrapper(name = "Outputs")
     @XmlElement(name = "Unknown")
     private val _outputs: List<Int>? = null
 
-    val outputs: List<Int>
+    override val outputs: List<Int>
         get() {
-            if (_outputs == null) {
-                return emptyList()
-            } else {
-                return _outputs
-            }
+            return _outputs ?: emptyList()
         }
 
     @XmlElementWrapper(name = "Derivatives")
     @XmlElement(name = "Unknown")
-    private val _derivatives: List<Unknown>? = null
+    private val _derivatives: List<UnknownImpl>? = null
 
-    val derivatives: List<Unknown>
+    override val derivatives: List<Unknown>
         get() {
-            if (_derivatives == null) {
-                return emptyList()
-            } else {
-                return _derivatives
-            }
+            return _derivatives ?: emptyList()
         }
 
     @XmlElementWrapper(name = "InitialUnknowns")
     @XmlElement(name = "Unknown")
-    private val _initialUnknowns: List<Unknown>? = null
+    private val _initialUnknowns: List<UnknownImpl>? = null
 
-    val initialUnknowns: List<Unknown>
+    override val initialUnknowns: List<Unknown>
         get() {
-            if (_initialUnknowns == null) {
-                return emptyList()
-            } else {
-                return _initialUnknowns
-            }
+            return _initialUnknowns ?: emptyList()
         }
 
     override fun toString(): String {

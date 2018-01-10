@@ -25,7 +25,6 @@
 package no.mechatronics.sfi.fmi4j;
 
 import no.mechatronics.sfi.fmi4j.fmu.FmuBuilder;
-import no.mechatronics.sfi.fmi4j.proxy.enums.Fmi2Status;
 import no.mechatronics.sfi.fmi4j.modeldescription.RealVariable;
 import org.apache.commons.math3.ode.FirstOrderIntegrator;
 import org.apache.commons.math3.ode.nonstiff.ClassicalRungeKuttaIntegrator;
@@ -68,7 +67,7 @@ public class ModelExchangeTest {
     @org.junit.Test
     public void test() {
 
-        RealVariable h = fmu.getModelVariables().getReal("h");
+        RealVariable h = fmu.getModelVariables().getByName("h").asRealVariable();
         h.setStart(5.0);
 
 

@@ -27,62 +27,88 @@ package no.mechatronics.sfi.fmi4j.misc
 import no.mechatronics.sfi.fmi4j.proxy.Fmi2LibraryWrapper
 import no.mechatronics.sfi.fmi4j.proxy.enums.Fmi2Status
 
-interface IVariableWriter {
+interface VariableWriter {
 
-    fun write(data: Int) : Fmi2Status
-    fun write(data: Double) : Fmi2Status
-    fun write(data: String) : Fmi2Status
-    fun write(data: Boolean) : Fmi2Status
-
-}
-
-class IntWriter(
-        wrapper: Fmi2LibraryWrapper<*>,
-        valueReference: Int
-) : VariableAccessor(wrapper, valueReference) {
-
-    fun write(value: Int) = wrapper.setInteger(valueReference, value)
+    fun asIntWriter(): IntWriter
+    fun asRealWriter(): RealWriter
+    fun asStringWriter(): StringWriter
+    fun asBooleanWriter(): BooleanWriter
 
 }
 
-class RealWriter(
-        wrapper: Fmi2LibraryWrapper<*>,
-        valueReference: Int
-) : VariableAccessor(wrapper, valueReference) {
-
-    fun write(value: Double) = wrapper.setReal(valueReference, value)
-
+interface IntWriter {
+    fun write(value: Int)
 }
 
-class StringWriter(
-        wrapper: Fmi2LibraryWrapper<*>,
-        valueReference: Int
-) : VariableAccessor(wrapper, valueReference) {
-
-    fun write(value: String) = wrapper.setString(valueReference, value)
-
+interface RealWriter {
+    fun write(value: Double)
 }
 
-class BooleanWriter(
-        wrapper: Fmi2LibraryWrapper<*>,
-        valueReference: Int
-) : VariableAccessor(wrapper, valueReference) {
-
-    fun write(value: Boolean) = wrapper.setBoolean(valueReference, value)
-
+interface StringWriter {
+    fun write(value: String)
 }
 
-class VariableWriter internal constructor(
+interface BooleanWriter {
+    fun write(value: Boolean)
+}
+
+class IntWriterImpl(
         private val wrapper: Fmi2LibraryWrapper<*>,
         private val valueReference: Int
-): IVariableWriter {
+) : IntWriter {
 
-    override fun write(data: Int) = wrapper.setInteger(valueReference, data)
-    override fun write(data: Double) = wrapper.setReal(valueReference, data)
-    override fun write(data: String) = wrapper.setString(valueReference, data)
-    override fun write(data: Boolean) = wrapper.setBoolean(valueReference, data)
+    override fun write(value: Int) {
+        wrapper.setInteger(valueReference, value)
+    }
 
 }
+
+class RealWriterImpl(
+        private val wrapper: Fmi2LibraryWrapper<*>,
+        private val valueReference: Int
+) : RealWriter {
+
+    override fun write(value: Double) {
+        wrapper.setReal(valueReference, value)
+    }
+
+}
+
+class StringWriterImpl(
+        private val wrapper: Fmi2LibraryWrapper<*>,
+        private val valueReference: Int
+) : StringWriter {
+
+    override fun write(value: String) {
+        wrapper.setString(valueReference, value)
+    }
+
+}
+
+class BooleanWriterImpl(
+        private val wrapper: Fmi2LibraryWrapper<*>,
+        private val valueReference: Int
+) : BooleanWriter {
+
+    override fun write(value: Boolean) {
+        wrapper.setBoolean(valueReference, value)
+    }
+
+}
+
+//class VariableWriter internal constructor(
+//        private val wrapper: Fmi2LibraryWrapper<*>,
+//        private val valueReference: Int
+//): IVariableWriter {
+//
+//    fun asIntWriter(): IntWriter
+//
+////    override fun write(data: Int) = wrapper.setInteger(valueReference, data)
+////    override fun write(data: Double) = wrapper.setReal(valueReference, data)
+////    override fun write(data: String) = wrapper.setString(valueReference, data)
+////    override fun write(data: Boolean) = wrapper.setBoolean(valueReference, data)
+//
+//}
 
 interface IVariablesWriter {
     fun write(vararg  data: Int) : Fmi2Status

@@ -30,7 +30,13 @@ import javax.xml.bind.JAXBContext
 import javax.xml.bind.annotation.*
 import javax.xml.bind.annotation.adapters.XmlAdapter
 
-interface IScalarVariable {
+enum class VariableType {
+
+    INTEGER, REAL, STRING, BOOLEAN, ENUMERATION
+
+}
+
+interface ScalarVariable {
 
     /**
      * The full, unique name of the variable. Every variable is uniquely identified within an FMU
@@ -38,6 +44,7 @@ interface IScalarVariable {
      * ModelVariables list; the first list element has index=1).
      */
     val name: String
+
     /**
      * If present, name of type defined with TypeDefinitions / SimpleType. The value
      * defined in the corresponding TypeDefinition (see section 2.2.3) is used as
@@ -48,6 +55,7 @@ interface IScalarVariable {
      * TypeDefinitions / SimpleType.
      */
     val declaredType: String
+
     /**
      * An optional description string describing the meaning of the variable
      */
@@ -66,13 +74,16 @@ interface IScalarVariable {
      */
     val valueReference: Int
 
+    fun asIntegerVariable(): IntegerVariable
+    fun asRealVariable(): RealVariable
+    fun asStringVariable(): StringVariable
+    fun asBooleanVariable(): BooleanVariable
+
 }
 
-interface ScalarVariable<E> : IScalarVariable {
+abstract class AbstractScalarVariable<E> : ScalarVariable {
 
-    val typeName: String
     /**
-     *
      * Initial or guess value of variable. This value is also stored in the C functions
      * [Therefore, calling fmi2SetXXX to set start values is only necessary, if a different
      * value as stored in the xml file is desired.] The interpretation of start is defined by
@@ -86,13 +97,15 @@ interface ScalarVariable<E> : IScalarVariable {
      * an algebraic loop: Via an additional condition in the environment, such as 𝑥̇ = 0,
      * the actual start value is determined.]
      */
-     var start: E?
+     abstract var start: E?
+
+     abstract val type: VariableType
 
 }
 
 @XmlRootElement(name="ScalarVariable")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ScalarVariableImpl : IScalarVariable {
+class ScalarVariableImpl : ScalarVariable {
 
     /**
      * @inheritDoc
@@ -154,10 +167,17 @@ public class ScalarVariableImpl : IScalarVariable {
     @XmlElement(name="Boolean")
     internal val booleanAttribute: BooleanAttribute? = null
 
+    override fun asIntegerVariable() = if (integerAttribute != null) IntegerVariable(this) else throw IllegalStateException("Variable $name is not of type Integer!")
+
+    override fun asRealVariable() = if (realAttribute != null) RealVariable(this) else throw IllegalStateException("Variable $name is not of type Real!")
+
+    override fun asStringVariable() = if (stringAttribute != null) StringVariable(this) else throw IllegalStateException("Variable $name is not of type String!")
+
+    override fun asBooleanVariable() = if (booleanAttribute != null) BooleanVariable(this) else throw IllegalStateException("Variable $name is not of type Boolean!")
+
     override fun toString(): String {
         return "ScalarVariableImpl(name='$name', declaredType='$declaredType', description='$description', causality=$causality, variability=$variability, initial=$initial)"
     }
-
 
 }
 
@@ -173,6 +193,7 @@ internal class IntegerAttribute {
      */
     @XmlAttribute
     val min: Int? = null
+
     /**
      * Maximum value of variable (variableValue ≤ max). If not defined, the
      * maximum is the largest positive number that can be represented on the
@@ -182,6 +203,7 @@ internal class IntegerAttribute {
      */
     @XmlAttribute
     val max: Int? = null
+
     /**
      * @inheritDoc
      */
@@ -248,6 +270,7 @@ internal class RealAttribute {
      */
     @XmlAttribute
     val unbounded: Boolean? = null
+
     /**
      * Only for Model exchange
      * <br>
@@ -316,8 +339,7 @@ internal class BooleanAttribute  {
 }
 
 
-class IntegerVariable(v : ScalarVariableImpl) : IScalarVariable by v, ScalarVariable<Int> {
-
+class IntegerVariable(v : ScalarVariableImpl) : ScalarVariable by v, AbstractScalarVariable<Int>() {
 
     /**
      * @see IntegerAttribute.min
@@ -333,50 +355,56 @@ class IntegerVariable(v : ScalarVariableImpl) : IScalarVariable by v, ScalarVari
      */
     override var start = v.integerAttribute!!.start
 
-    override val typeName: String
-        get() = "Integer"
+    override val type = VariableType.INTEGER
 
     override fun toString(): String {
-        return "IntegerVariable2(min=$min, max=$max, start=$start)"
+        return "IntegerVariable(min=$min, max=$max, start=$start)"
     }
-
 
 }
 
-class RealVariable(v : ScalarVariableImpl) : IScalarVariable by v, ScalarVariable<Double> {
+class RealVariable(v : ScalarVariableImpl) : ScalarVariable by v, AbstractScalarVariable<Double>() {
 
     /**
      * @see RealAttribute.min
      */
     val min = v.realAttribute!!.min
+
     /**
      * @see RealAttribute.max
      */
     val max = v.realAttribute!!.max
+
     /**
      * @see RealAttribute.nominal
      */
     val nominal = v.realAttribute!!.nominal
+
     /**
      * @see RealAttribute.unbounded
      */
     val unbounded = v.realAttribute!!.unbounded
+
     /**
      * @see RealAttribute.quantity
      */
     val quantity = v.realAttribute!!.quantity
+
     /**
      * @see RealAttribute.unit
      */
     val unit = v.realAttribute!!.unit
+
     /**
      * @see RealAttribute.displayUnit
      */
     val displayUnit = v.realAttribute!!.displayUnit
+
     /**
      * @see RealAttribute.relativeQuantity
      */
     val relativeQuantity = v.realAttribute!!.relativeQuantity
+
     /**
      * @see RealAttribute.derivative
      */
@@ -387,55 +415,51 @@ class RealVariable(v : ScalarVariableImpl) : IScalarVariable by v, ScalarVariabl
      */
     override var start = v.realAttribute!!.start
 
-    override val typeName: String
-        get() = "Real"
+    override val type = VariableType.REAL
 
     override fun toString(): String {
-        return "RealVariable2(min=$min, max=$max, nominal=$nominal, unbounded=$unbounded, quantity=$quantity, unit=$unit, displayUnit=$displayUnit, relativeQuantity=$relativeQuantity, derivative=$derivative, start=$start)"
+        return "RealVariable(min=$min, max=$max, nominal=$nominal, unbounded=$unbounded, quantity=$quantity, unit=$unit, displayUnit=$displayUnit, relativeQuantity=$relativeQuantity, derivative=$derivative, start=$start)"
     }
-
 
 }
 
-class StringVariable(v : ScalarVariableImpl) : IScalarVariable by v, ScalarVariable<String> {
+class StringVariable(v : ScalarVariableImpl) : ScalarVariable by v, AbstractScalarVariable<String>() {
 
     /**
      * @see StringAttribute.start
      */
     override var start = v.stringAttribute!!.start
 
-    override val typeName: String
-        get() = "String"
+    override val type = VariableType.STRING
 
     override fun toString(): String {
-        return "StringVariable2(start=$start)"
+        return "StringVariable(start=$start)"
     }
 
 
 }
 
-class BooleanVariable(v : ScalarVariableImpl) : IScalarVariable by v, ScalarVariable<Boolean> {
+class BooleanVariable(v : ScalarVariableImpl) : ScalarVariable by v, AbstractScalarVariable<Boolean>() {
 
     /**
      * @see BooleanAttribute.start
      */
     override var start = v.booleanAttribute!!.start
 
-    override val typeName: String
-        get() = "Boolean"
+   override val type = VariableType.BOOLEAN
 
     override fun toString(): String {
-        return "BooleanVariable2(start=$start)"
+        return "BooleanVariable(start=$start)"
     }
 
 
 }
 
 
-class ScalarVariableAdapter : XmlAdapter<Any, ScalarVariable<*>>() {
+class ScalarVariableAdapter : XmlAdapter<Any, AbstractScalarVariable<*>>() {
 
     @Throws(Exception::class)
-    override fun unmarshal(v: Any): ScalarVariable<*> {
+    override fun unmarshal(v: Any): AbstractScalarVariable<*> {
 
         val node = v as Node
         val child = node.childNodes.item(0)
@@ -459,7 +483,7 @@ class ScalarVariableAdapter : XmlAdapter<Any, ScalarVariable<*>>() {
 
     }
 
-    override fun marshal(v: ScalarVariable<*>?): Any {
+    override fun marshal(v: AbstractScalarVariable<*>?): Any {
         TODO("not implemented")
     }
 

@@ -26,8 +26,10 @@ package no.mechatronics.sfi.fmi4j.modeldescription
 
 import no.mechatronics.sfi.fmi4j.modeldescription.cs.CoSimulationInfo
 import no.mechatronics.sfi.fmi4j.modeldescription.log.Category
+import no.mechatronics.sfi.fmi4j.modeldescription.log.CategoryImpl
 import no.mechatronics.sfi.fmi4j.modeldescription.me.ModelExchangeInfo
 import no.mechatronics.sfi.fmi4j.modeldescription.structure.ModelStructure
+import no.mechatronics.sfi.fmi4j.modeldescription.structure.ModelStructureImpl
 import org.apache.commons.io.IOUtils
 import java.io.File
 import java.io.FileInputStream
@@ -47,13 +49,13 @@ private const val MODEL_DESC_FILE = "modelDescription.xml"
 object ModelDescriptionParser {
 
     @JvmStatic
-    fun parse(xml: String): IModelDescription = parse(xml, ModelDescriptionXmlTemplate::class.java).generate()
+    fun parse(xml: String): ModelDescription = parse(xml, ModelDescriptionXmlTemplate::class.java).generate()
     @JvmStatic
-    fun parse(url: URL): IModelDescription = parse(url.openStream(), ModelDescriptionXmlTemplate::class.java).generate()
+    fun parse(url: URL): ModelDescription = parse(url.openStream(), ModelDescriptionXmlTemplate::class.java).generate()
     @JvmStatic
-    fun parse(file: File): IModelDescription = parse(FileInputStream(file), ModelDescriptionXmlTemplate::class.java).generate()
+    fun parse(file: File): ModelDescription = parse(FileInputStream(file), ModelDescriptionXmlTemplate::class.java).generate()
     @JvmStatic
-    fun parse(inputStream: InputStream): IModelDescription = parse(inputStream, ModelDescriptionXmlTemplate::class.java).generate()
+    fun parse(inputStream: InputStream): ModelDescription = parse(inputStream, ModelDescriptionXmlTemplate::class.java).generate()
 
     internal fun <T: ModelDescriptionXmlTemplate> parse(xml: String, type: Class<T>): T = JAXB.unmarshal(StringReader(xml), type)
     internal fun <T : ModelDescriptionXmlTemplate> parse(stream: InputStream, type: Class<T>): T = exctractModelDescriptionXml(stream).let { parse(it, type) }
@@ -84,7 +86,7 @@ object ModelDescriptionParser {
 }
 
 
-interface IModelDescription {
+interface ModelDescription {
 
     /**
      * Version of “FMI for Model Exchange or Co-Simulation” that was used to
@@ -156,7 +158,7 @@ interface IModelDescription {
      * The central FMU data structure defining all variables of the FMU that
      * are visible/accessible via the FMU functions.
      */
-    val modelVariables: IModelVariables
+    val modelVariables: ModelVariables
 
     /**
      * Defines the structure of the model. Especially, the ordered lists of
@@ -251,17 +253,17 @@ internal open class ModelDescriptionXmlTemplate {
     val generationDateAndTime: String? = null
 
     @XmlElement(name = "DefaultExperiment")
-    val defaultExperiment: DefaultExperiment? = null
+    val defaultExperiment: DefaultExperimentImpl? = null
 
     /**
      * The central FMU data structure defining all variables of the FMU that
      * are visible/accessible via the FMU functions.
      */
     @XmlElement(name = "ModelVariables")
-    lateinit var modelVariables: ModelVariables
+    lateinit var modelVariables: ModelVariablesImpl
 
     @XmlElement(name = "ModelStructure")
-    lateinit var modelStructure: ModelStructure
+    lateinit var modelStructure: ModelStructureImpl
 
     /**
      * A global list of log categories that can be set to define the log
@@ -269,8 +271,7 @@ internal open class ModelDescriptionXmlTemplate {
      */
     @XmlElementWrapper(name = "LogCategories")
     @XmlElement(name = "Category")
-    val logCategories: List<Category>? = null
-
+    val logCategories: List<CategoryImpl>? = null
 
     @XmlElement(name = "CoSimulation")
     internal val cs: CoSimulationInfo? = null
@@ -278,11 +279,11 @@ internal open class ModelDescriptionXmlTemplate {
     @XmlElement(name = "ModelExchange")
     internal val me: ModelExchangeInfo? = null
 
-    open fun generate(): IModelDescription = ModelDescriptionImpl()
+    open fun generate(): ModelDescription = ModelDescriptionImpl()
 
     private val that = this
 
-    inner class ModelDescriptionImpl : IModelDescription {
+    inner class ModelDescriptionImpl : ModelDescription {
         override val fmiVersion: String
             get() = that.fmiVersion
         override val modelName: String
@@ -387,7 +388,7 @@ internal open class ModelDescriptionXmlTemplate {
                 throw IllegalStateException()
             }
 
-        override val sourceFiles: List<SourceFile>
+        override val sourceFiles: List<SourceFileImpl>
             get() {
                 if (cs != null) {
                     return cs.sourceFiles ?: emptyList()

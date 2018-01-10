@@ -26,10 +26,6 @@ package no.mechatronics.sfi.fmi4j.fmu
 
 import no.mechatronics.sfi.fmi4j.FmiSimulation
 import no.mechatronics.sfi.fmi4j.misc.*
-import no.mechatronics.sfi.fmi4j.modeldescription.BooleanVariable
-import no.mechatronics.sfi.fmi4j.modeldescription.IntegerVariable
-import no.mechatronics.sfi.fmi4j.modeldescription.RealVariable
-import no.mechatronics.sfi.fmi4j.modeldescription.StringVariable
 import no.mechatronics.sfi.fmi4j.modeldescription.me.IModelExchangeModelDescription
 import no.mechatronics.sfi.fmi4j.proxy.me.ModelExchangeLibraryWrapper
 import no.mechatronics.sfi.fmi4j.proxy.structs.Fmi2EventInfo
@@ -68,7 +64,7 @@ open class ModelExchangeFmu internal constructor(
 class ModelExchangeFmuWithIntegrator internal constructor(
         private val fmu: ModelExchangeFmu,
         private val integrator: FirstOrderIntegrator
-) : FmiSimulation, IAccessorProvider by fmu {
+) : FmiSimulation, VariableAccessProvider by fmu {
 
     private val states: DoubleArray
     private val derivatives: DoubleArray
@@ -78,10 +74,19 @@ class ModelExchangeFmuWithIntegrator internal constructor(
 
     private val eventInfo: Fmi2EventInfo = Fmi2EventInfo()
 
+    override val version
+        get() = fmu.version
+
     override var currentTime: Double = 0.0
         private set
 
-    val fmuFile: FmuFile = fmu.fmuFile
+    override val isInitialized
+        get() = fmu.isInitialized
+
+    override val isTerminated
+        get() = fmu.isTerminated
+
+
     override val modelDescription = fmu.modelDescription
     override val modelVariables = fmu.modelVariables
 
@@ -111,14 +116,11 @@ class ModelExchangeFmuWithIntegrator internal constructor(
     }
 
     override fun reset() = fmu.reset()
-    override fun reset(requireReinit: Boolean) = fmu.reset(requireReinit)
     override fun terminate() = fmu.terminate()
 
     override fun close() {
         terminate()
     }
-
-    override fun isTerminated() = fmu.isTerminated()
 
     override fun getLastStatus() = fmu.getLastStatus()
 

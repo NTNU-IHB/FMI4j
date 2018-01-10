@@ -25,6 +25,7 @@
 package no.mechatronics.sfi.fmi4j.modeldescription.me
 
 import no.mechatronics.sfi.fmi4j.modeldescription.SourceFile
+import no.mechatronics.sfi.fmi4j.modeldescription.SourceFileImpl
 import javax.xml.bind.annotation.*
 
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -56,7 +57,7 @@ internal class ModelExchangeInfo {
 
     @XmlElementWrapper(name = "SourceFiles")
     @XmlElement(name = "File")
-    val sourceFiles: List<SourceFile>? = null
+    val sourceFiles: List<SourceFileImpl>? = null
 
     override fun toString(): String {
         return "ModelExchangeInfo{modelIdentifier=$modelIdentifier, needsExecutionTool=$needsExecutionTool, completedIntegratorStepNotNeeded=$completedIntegratorStepNotNeeded, canBeInstantiatedOnlyOncePerProcess=$canBeInstantiatedOnlyOncePerProcess, canNotUseMemoryManagementFunctions=$canNotUseMemoryManagementFunctions, canGetAndSetFMUstate=$canGetAndSetFMUstate, canSerializeFMUstate=$canSerializeFMUstate, providesDirectionalDerivative=$providesDirectionalDerivative}"

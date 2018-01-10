@@ -4,6 +4,15 @@ def debug = false
 if (debug) {
     repositories {
         mavenLocal()
+        maven {
+            url "https://oss.sonatype.org/content/repositories/snapshots/" //fmi-import
+        }
+    }
+}
+
+repositories {
+    maven {
+        url "https://oss.sonatype.org/content/repositories/snapshots/" //fmi-import
     }
 }
 
@@ -13,7 +22,7 @@ dependencies {
     compile group: 'commons-io', name: 'commons-io', version: '2.6'
     compile group: 'commons-cli', name: 'commons-cli', version: '1.4'
 
-    compile group: 'no.mechatronics.sfi.fmi4j', name: 'fmi-md', version: '0.2'
+    compile group: 'no.mechatronics.sfi.fmi4j', name: 'fmi-md', version: '0.3-SNAPSHOT'
 
     if (debug) {
         dependencies {
@@ -24,7 +33,6 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
 
 }
-
 
 
 task fatJar(type: Jar) {
@@ -44,9 +52,7 @@ sourceSets {
     test {
         java {
             if (!debug) {
-                exclude {
-                    '**/ControlledTemperatureTest.java'
-                }
+                exclude '**/ControlledTemperatureTest.java'
             }
         }
     }
