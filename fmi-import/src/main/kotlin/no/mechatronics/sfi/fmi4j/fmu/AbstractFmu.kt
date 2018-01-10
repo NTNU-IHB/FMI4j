@@ -72,14 +72,14 @@ abstract class AbstractFmu<E: ModelDescription, T: Fmi2LibraryWrapper<*>> intern
             =  wrapper.setDebugLogging(loggingOn, nCategories, categories)
 
     override fun getWriter(vr: Int) = VariableAccessor(modelDescription, wrapper, vr)
-    override fun getWriter(name: String) = VariableAccessor(modelDescription, wrapper, modelVariables.getByName(name)!!.valueReference)
+    override fun getWriter(name: String) = VariableAccessor(modelDescription, wrapper, modelVariables.getByName(name).valueReference)
     override fun getWriter(variable: IntegerVariable) = IntWriterImpl(wrapper, variable.valueReference)
     override fun getWriter(variable: RealVariable) = RealWriterImpl(wrapper, variable.valueReference)
     override fun getWriter(variable: StringVariable) = StringWriterImpl(wrapper, variable.valueReference)
     override fun getWriter(variable: BooleanVariable) = BooleanWriterImpl(wrapper, variable.valueReference)
 
     override fun getReader(vr: Int) = VariableAccessor(modelDescription, wrapper, vr)
-    override fun getReader(name: String) = VariableAccessor(modelDescription, wrapper, modelVariables.getByName(name)!!.valueReference)
+    override fun getReader(name: String) = VariableAccessor(modelDescription, wrapper, modelVariables.getByName(name).valueReference)
     override fun getReader(variable: IntegerVariable) = IntReaderImpl(wrapper, variable.valueReference)
     override fun getReader(variable: RealVariable) = RealReaderImpl(wrapper, variable.valueReference)
     override fun getReader(variable: StringVariable) = StringReaderImpl(wrapper, variable.valueReference)
@@ -148,17 +148,17 @@ abstract class AbstractFmu<E: ModelDescription, T: Fmi2LibraryWrapper<*>> intern
         return false
     }
 
-    fun checkGetScalar(vr: Int) : Boolean {
-
-        val variable = modelVariables.getByValueReference(vr)
-        if (variable == null) {
-            return false
-        } else if (variable.causality == Causality.OUTPUT) {
-            return true
-        } else {
-            return variable is RealVariable && variable.derivative != null
-        }
-    }
+//    fun checkGetScalar(vr: Int) : Boolean {
+//
+//        val variable = modelVariables.getByValueReference(vr)
+//        if (variable == null) {
+//            return false
+//        } else if (variable.causality == Causality.OUTPUT) {
+//            return true
+//        } else {
+//            return variable is RealVariable && variable.derivative != null
+//        }
+//    }
 
     fun readInteger(vr: Int) = wrapper.getInteger(vr)
     fun readInteger(vr: IntArray) = wrapper.getInteger(vr)

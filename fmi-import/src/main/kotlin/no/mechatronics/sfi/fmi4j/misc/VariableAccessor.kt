@@ -13,7 +13,7 @@ class VariableAccessor internal constructor(
 
     override fun asIntWriter(): IntWriter {
 
-        val variable = modelDescription.modelVariables.getByValueReference(valueReference) ?: throw IllegalArgumentException()
+        val variable = modelDescription.modelVariables.getByValueReference(valueReference)
         if (variable is IntegerVariable) {
             return IntWriterImpl(wrapper, valueReference)
         } else {
@@ -23,7 +23,7 @@ class VariableAccessor internal constructor(
     }
     override fun asRealWriter(): RealWriter {
 
-        val variable = modelDescription.modelVariables.getByValueReference(valueReference) ?: throw IllegalArgumentException()
+        val variable = modelDescription.modelVariables.getByValueReference(valueReference)
         if (variable is RealVariable) {
             return RealWriterImpl(wrapper, valueReference)
         } else {
@@ -33,7 +33,7 @@ class VariableAccessor internal constructor(
     }
     override fun asStringWriter(): StringWriter {
 
-        val variable = modelDescription.modelVariables.getByValueReference(valueReference) ?: throw IllegalArgumentException()
+        val variable = modelDescription.modelVariables.getByValueReference(valueReference)
         if (variable is IntegerVariable) {
             return StringWriterImpl(wrapper, valueReference)
         } else {
@@ -43,7 +43,7 @@ class VariableAccessor internal constructor(
     }
     override fun asBooleanWriter(): BooleanWriter {
 
-        val variable = modelDescription.modelVariables.getByValueReference(valueReference) ?: throw IllegalArgumentException()
+        val variable = modelDescription.modelVariables.getByValueReference(valueReference)
         if (variable is IntegerVariable) {
             return BooleanWriterImpl(wrapper, valueReference)
         } else {

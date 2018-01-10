@@ -27,14 +27,14 @@ package no.mechatronics.sfi.fmi4j.modeldescription
 import javax.xml.bind.annotation.*
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter
 
-interface ModelVariables: Iterable<AbstractScalarVariable<*>> {
+interface ModelVariables: Iterable<ScalarVariable> {
 
     /**
      * Get the number of model variables held by this structure
      */
     val size: Int
 
-    val variables: List<AbstractScalarVariable<*>>
+    val variables: List<ScalarVariable>
 
     /**
      * Get the valueReference of the variable named <name>
@@ -47,17 +47,17 @@ interface ModelVariables: Iterable<AbstractScalarVariable<*>> {
     /**
      * Get model variable by index
      */
-    fun getByIndex(index: Int): AbstractScalarVariable<*>?
+    fun getByIndex(index: Int): ScalarVariable
 
     /**
      * Get model variable by valueReference
      */
-    fun getByValueReference(vr: Int) : AbstractScalarVariable<*>?
+    fun getByValueReference(vr: Int) : ScalarVariable
 
     /**
      * Get model variable by name
      */
-    fun getByName(name: String) : AbstractScalarVariable<*>?
+    fun getByName(name: String) : ScalarVariable
 
 
 }
@@ -67,9 +67,9 @@ class ModelVariablesImpl : ModelVariables {
 
     @XmlElement(name = "ScalarVariable")
     @XmlJavaTypeAdapter(ScalarVariableAdapter::class)
-    private val _variables: List<AbstractScalarVariable<*>>? = null
+    private val _variables: List<TypedScalarVariable<*>>? = null
 
-    override val variables: List<AbstractScalarVariable<*>>
+    override val variables: List<ScalarVariable>
     get() {
         return _variables ?: emptyList()
     }
@@ -82,16 +82,18 @@ class ModelVariablesImpl : ModelVariables {
 
     override val size = variables.size
 
-    override fun getByIndex(index: Int) = variables.get(index)
+    override fun getByIndex(index: Int) = variables[index]
 
-    override fun getByValueReference(vr: Int) : AbstractScalarVariable<*>? {
+    override fun getByValueReference(vr: Int) : ScalarVariable {
         return variables
                 .firstOrNull{it.valueReference == vr}
+                ?: throw IllegalArgumentException("No variable with valueReference '$vr'")
     }
 
-    override fun getByName(name: String) : AbstractScalarVariable<*>? {
+    override fun getByName(name: String) : ScalarVariable {
         return variables
                 .firstOrNull{it.name == (name)}
+                ?: throw IllegalArgumentException("No variable with name '$name'")
     }
 
     private fun <T: ScalarVariable> getType(name: String, type: Class<T>) : T? {
@@ -101,25 +103,8 @@ class ModelVariablesImpl : ModelVariables {
                 ?: throw IllegalArgumentException("No variable of type ${type.simpleName} with name '$name'")
     }
 
-//    override fun getInteger(name: String) : IntegerVariable? {
-//        return getType(name, IntegerVariable::class.java)
-//    }
-//
-//    override fun getReal(name: String) : RealVariable? {
-//        return getType(name, RealVariable::class.java)
-//    }
-//
-//    override fun getString(name: String) : StringVariable? {
-//        return getType(name, StringVariable::class.java)
-//    }
-//
-//    override fun getBoolean(name: String) : BooleanVariable? {
-//        return getType(name, BooleanVariable::class.java)
-//    }
+    override fun iterator() = variables.iterator()
 
-    override fun iterator(): Iterator<AbstractScalarVariable<*>> {
-        return variables.iterator()
-    }
 
     override fun toString(): String {
         return "ModelVariables(variables=$variables)"

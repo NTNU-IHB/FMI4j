@@ -10,19 +10,12 @@ if (debug) {
     }
 }
 
-repositories {
-    maven {
-        url "https://oss.sonatype.org/content/repositories/snapshots/" //fmi-import
-    }
-}
-
-
 dependencies {
 
     compile group: 'commons-io', name: 'commons-io', version: '2.6'
     compile group: 'commons-cli', name: 'commons-cli', version: '1.4'
 
-    compile group: 'no.mechatronics.sfi.fmi4j', name: 'fmi-md', version: '0.3-SNAPSHOT'
+    compile group: 'no.mechatronics.sfi.fmi4j', name: 'fmi-md', version: '0.3', changing: true
 
     if (debug) {
         dependencies {

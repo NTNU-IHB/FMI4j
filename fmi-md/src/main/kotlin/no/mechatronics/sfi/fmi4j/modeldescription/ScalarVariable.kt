@@ -30,12 +30,6 @@ import javax.xml.bind.JAXBContext
 import javax.xml.bind.annotation.*
 import javax.xml.bind.annotation.adapters.XmlAdapter
 
-enum class VariableType {
-
-    INTEGER, REAL, STRING, BOOLEAN, ENUMERATION
-
-}
-
 interface ScalarVariable {
 
     /**
@@ -74,32 +68,14 @@ interface ScalarVariable {
      */
     val valueReference: Int
 
+    val typeName: String
+
+    val start: Any?
+
     fun asIntegerVariable(): IntegerVariable
     fun asRealVariable(): RealVariable
     fun asStringVariable(): StringVariable
     fun asBooleanVariable(): BooleanVariable
-
-}
-
-abstract class AbstractScalarVariable<E> : ScalarVariable {
-
-    /**
-     * Initial or guess value of variable. This value is also stored in the C functions
-     * [Therefore, calling fmi2SetXXX to set start values is only necessary, if a different
-     * value as stored in the xml file is desired.] The interpretation of start is defined by
-     * ScalarVariable / initial. A different start value can be provided with an
-     * fmi2SetXXX function before fmi2ExitInitializationMode is called (but not
-     * for variables with variability = ″constant″).
-     * [The standard approach is to set the start value before
-     * fmi2EnterInitializationMode. However, if the initialization shall be modified
-     * in the calling environment (e.g. changing from initialization of states to steadystate
-     * initialization), it is also possible to use the start value as iteration variable of
-     * an algebraic loop: Via an additional condition in the environment, such as 𝑥̇ = 0,
-     * the actual start value is determined.]
-     */
-     abstract var start: E?
-
-     abstract val type: VariableType
 
 }
 
@@ -146,6 +122,9 @@ class ScalarVariableImpl : ScalarVariable {
     @XmlAttribute(name="valueReference")
     private val _valueReference: Int? = null
 
+    override val typeName: String = ""
+
+    override val start: Any? = null
 
     /**
      * @inheritDoc
@@ -339,7 +318,28 @@ internal class BooleanAttribute  {
 }
 
 
-class IntegerVariable(v : ScalarVariableImpl) : ScalarVariable by v, AbstractScalarVariable<Int>() {
+sealed class TypedScalarVariable<E> : ScalarVariable {
+
+    /**
+     * Initial or guess value of variable. This value is also stored in the C functions
+     * [Therefore, calling fmi2SetXXX to set start values is only necessary, if a different
+     * value as stored in the xml file is desired.] The interpretation of start is defined by
+     * ScalarVariable / initial. A different start value can be provided with an
+     * fmi2SetXXX function before fmi2ExitInitializationMode is called (but not
+     * for variables with variability = ″constant″).
+     * [The standard approach is to set the start value before
+     * fmi2EnterInitializationMode. However, if the initialization shall be modified
+     * in the calling environment (e.g. changing from initialization of states to steadystate
+     * initialization), it is also possible to use the start value as iteration variable of
+     * an algebraic loop: Via an additional condition in the environment, such as 𝑥̇ = 0,
+     * the actual start value is determined.]
+     */
+    override abstract var start: E?
+
+}
+
+
+class IntegerVariable(v : ScalarVariableImpl) : ScalarVariable by v, TypedScalarVariable<Int>() {
 
     /**
      * @see IntegerAttribute.min
@@ -355,7 +355,7 @@ class IntegerVariable(v : ScalarVariableImpl) : ScalarVariable by v, AbstractSca
      */
     override var start = v.integerAttribute!!.start
 
-    override val type = VariableType.INTEGER
+    override val typeName = "Integer"
 
     override fun toString(): String {
         return "IntegerVariable(min=$min, max=$max, start=$start)"
@@ -363,7 +363,7 @@ class IntegerVariable(v : ScalarVariableImpl) : ScalarVariable by v, AbstractSca
 
 }
 
-class RealVariable(v : ScalarVariableImpl) : ScalarVariable by v, AbstractScalarVariable<Double>() {
+class RealVariable(v : ScalarVariableImpl) : ScalarVariable by v, TypedScalarVariable<Double>() {
 
     /**
      * @see RealAttribute.min
@@ -415,7 +415,7 @@ class RealVariable(v : ScalarVariableImpl) : ScalarVariable by v, AbstractScalar
      */
     override var start = v.realAttribute!!.start
 
-    override val type = VariableType.REAL
+    override val typeName = "Real"
 
     override fun toString(): String {
         return "RealVariable(min=$min, max=$max, nominal=$nominal, unbounded=$unbounded, quantity=$quantity, unit=$unit, displayUnit=$displayUnit, relativeQuantity=$relativeQuantity, derivative=$derivative, start=$start)"
@@ -423,43 +423,41 @@ class RealVariable(v : ScalarVariableImpl) : ScalarVariable by v, AbstractScalar
 
 }
 
-class StringVariable(v : ScalarVariableImpl) : ScalarVariable by v, AbstractScalarVariable<String>() {
+class StringVariable(v : ScalarVariableImpl) : ScalarVariable by v, TypedScalarVariable<String>() {
 
     /**
      * @see StringAttribute.start
      */
     override var start = v.stringAttribute!!.start
 
-    override val type = VariableType.STRING
+    override val typeName = "String"
 
     override fun toString(): String {
         return "StringVariable(start=$start)"
     }
 
-
 }
 
-class BooleanVariable(v : ScalarVariableImpl) : ScalarVariable by v, AbstractScalarVariable<Boolean>() {
+class BooleanVariable(v : ScalarVariableImpl) : ScalarVariable by v, TypedScalarVariable<Boolean>() {
 
     /**
      * @see BooleanAttribute.start
      */
     override var start = v.booleanAttribute!!.start
 
-   override val type = VariableType.BOOLEAN
+   override val typeName = "Boolean"
 
     override fun toString(): String {
         return "BooleanVariable(start=$start)"
     }
 
-
 }
 
 
-class ScalarVariableAdapter : XmlAdapter<Any, AbstractScalarVariable<*>>() {
+class ScalarVariableAdapter : XmlAdapter<Any, TypedScalarVariable<*>>() {
 
     @Throws(Exception::class)
-    override fun unmarshal(v: Any): AbstractScalarVariable<*> {
+    override fun unmarshal(v: Any): TypedScalarVariable<*> {
 
         val node = v as Node
         val child = node.childNodes.item(0)
@@ -470,20 +468,19 @@ class ScalarVariableAdapter : XmlAdapter<Any, AbstractScalarVariable<*>>() {
             unmarshaller.unmarshal(node, ScalarVariableImpl::class.java).value
         }
 
-            when (child.nodeName) {
+        when (child.nodeName) {
 
-                "Integer" -> return IntegerVariable(unmarshal)
-                "Real" -> return RealVariable(unmarshal)
-                "String" -> return StringVariable(unmarshal)
-                "Boolean" -> return BooleanVariable(unmarshal)
-                else -> throw RuntimeException("Error parsing XML. Unable to understand of what type the ScalarVariable is..")
+            "Integer" -> return IntegerVariable(unmarshal)
+            "Real" -> return RealVariable(unmarshal)
+            "String" -> return StringVariable(unmarshal)
+            "Boolean" -> return BooleanVariable(unmarshal)
+            else -> throw RuntimeException("Error parsing XML. Unable to understand of what type the ScalarVariable is..")
 
-            }
-
+        }
 
     }
 
-    override fun marshal(v: AbstractScalarVariable<*>?): Any {
+    override fun marshal(v: TypedScalarVariable<*>?): Any {
         TODO("not implemented")
     }
 
