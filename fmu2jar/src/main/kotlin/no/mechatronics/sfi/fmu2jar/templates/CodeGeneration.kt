@@ -32,9 +32,8 @@ class $modelName private constructor(
 
         init {
             val url: URL = $modelName::class.java.classLoader.getResource("${fileName}.fmu")!!
-            FmuFile(url).also {
-                this.builder = FmuBuilder(it)
-            }
+            val file = FmuFile(url)
+            this.builder = FmuBuilder(file)
         }
 
         @JvmStatic
