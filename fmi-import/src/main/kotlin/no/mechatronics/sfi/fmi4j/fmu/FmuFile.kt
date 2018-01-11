@@ -25,7 +25,7 @@
 package no.mechatronics.sfi.fmi4j.fmu
 
 import com.sun.jna.Platform
-import no.mechatronics.sfi.fmi4j.modeldescription.IModelDescription
+import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescription
 import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescriptionParser
 import java.io.File
 import java.io.IOException
@@ -224,7 +224,7 @@ class FmuFile {
         return if (Platform.is64Bit()) "64" else "32"
     }
 
-    fun getLibraryName(desc: IModelDescription): String {
+    fun getLibraryName(desc: ModelDescription): String {
         return "${desc.modelIdentifier}${getLibraryExtension()}"
     }
 
@@ -232,7 +232,7 @@ class FmuFile {
         return File(fmuFile, BINARIES_FOLDER + File.separator + getLibraryFolderName() + getBitness()).absolutePath
     }
 
-    fun getFullLibraryPath(desc: IModelDescription): String {
+    fun getFullLibraryPath(desc: ModelDescription): String {
         return File(fmuFile, BINARIES_FOLDER + File.separator + getLibraryFolderName() + getBitness() + File.separator + desc.modelIdentifier + getLibraryExtension()).absolutePath
     }
 

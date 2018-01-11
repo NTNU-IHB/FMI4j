@@ -32,14 +32,14 @@ import java.nio.charset.Charset
 
 class ModelDescriptionTest {
 
-    private lateinit var modelDescription: IModelDescription
+    private lateinit var modelDescription: ModelDescription
 
     @Before
     fun setUp() {
 
-        val resourceAsStream = javaClass.classLoader.getResource("v2/cs/ControlledTemperature/ControlledTemperature.fmu")
-        Assert.assertNotNull(resourceAsStream)
-        modelDescription = ModelDescriptionParser.parse(resourceAsStream)
+        val xml = IOUtils.toString(javaClass.classLoader
+                .getResource("v2/cs/ControlledTemperature/modelDescription.xml"), Charset.defaultCharset())
+        modelDescription = ModelDescriptionParser.parse(xml)
 
     }
 
@@ -76,6 +76,25 @@ class ModelDescriptionTest {
         val value = modelDescription.license
         Assert.assertEquals("-", value)
         println("licence=$value")
+
+    }
+
+    @Test
+    fun testDefaultExperiment() {
+
+        val ex = modelDescription.defaultExperiment!!
+
+        Assert.assertEquals(0.0, ex.startTime, 0.0)
+        Assert.assertEquals(20.0, ex.stopTime, 0.0)
+        Assert.assertEquals(1.0e-4, ex.stepSize, 0.0)
+
+    }
+
+    @Test
+    fun testStartVariables() {
+
+        val variable = modelDescription.modelVariables.getByName("HeatCapacity1.T0").asRealVariable()
+        Assert.assertEquals(298.0, variable.start!!, 0.0)
 
     }
 

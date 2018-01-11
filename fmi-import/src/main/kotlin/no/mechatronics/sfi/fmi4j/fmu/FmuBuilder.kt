@@ -30,7 +30,7 @@ import com.sun.jna.Native
 import com.sun.jna.Pointer
 import no.mechatronics.sfi.fmi4j.misc.LibraryProvider
 import no.mechatronics.sfi.fmi4j.misc.convert
-import no.mechatronics.sfi.fmi4j.modeldescription.IModelDescription
+import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescription
 import no.mechatronics.sfi.fmi4j.modeldescription.cs.CoSimulationModelDescriptionParser
 import no.mechatronics.sfi.fmi4j.modeldescription.cs.ICoSimulationModelDescription
 import no.mechatronics.sfi.fmi4j.modeldescription.me.IModelExchangeModelDescription
@@ -153,12 +153,12 @@ open class ModelExchangeFmuWithIntegratorBuilder(
 
 }
 
-private fun <E: Fmi2Library> loadLibrary(fmuFile: FmuFile, modelDescription: IModelDescription, type: Class<E>): LibraryProvider<E> {
+private fun <E: Fmi2Library> loadLibrary(fmuFile: FmuFile, modelDescription: ModelDescription, type: Class<E>): LibraryProvider<E> {
     System.setProperty(LIBRARY_PATH, fmuFile.getLibraryFolderPath())
     return LibraryProvider(Native.loadLibrary(fmuFile.getLibraryName(modelDescription), type))
 }
 
-private fun instantiate(fmuFile: FmuFile, modelDescription: IModelDescription, library: Fmi2Library, fmiType: Fmi2Type, visible: Boolean, loggingOn: Boolean) : Pointer {
+private fun instantiate(fmuFile: FmuFile, modelDescription: ModelDescription, library: Fmi2Library, fmiType: Fmi2Type, visible: Boolean, loggingOn: Boolean) : Pointer {
     return library.fmi2Instantiate(modelDescription.modelIdentifier,
             fmiType.code, modelDescription.guid,
             fmuFile.getResourcesPath(), Fmi2CallbackFunctions.ByValue(),

@@ -25,9 +25,9 @@
 package no.mechatronics.sfi.fmi4j;
 
 
+import no.mechatronics.sfi.fmi4j.fmu.AbstractFmu;
 import no.mechatronics.sfi.fmi4j.fmu.FmuBuilder;
-import no.mechatronics.sfi.fmi4j.misc.IVariableReader;
-import no.mechatronics.sfi.fmi4j.misc.VariableReader;
+import no.mechatronics.sfi.fmi4j.misc.RealReader;
 import no.mechatronics.sfi.fmi4j.proxy.enums.Fmi2Status;
 import no.mechatronics.sfi.fmi4j.modeldescription.RealVariable;
 import org.junit.After;
@@ -64,16 +64,15 @@ public class CoSimulationFmuTest {
     @org.junit.Test
     public void test() throws Exception {
 
-        final RealVariable startTemp = fmu.getModelVariables().getReal("HeatCapacity1.T0");
+        final RealVariable startTemp = fmu.getModelVariables().getByName("HeatCapacity1.T0").asRealVariable();
         
         fmu.init();
-
         Assert.assertTrue(fmu.getLastStatus() == Fmi2Status.OK);
-        Assert.assertEquals(0.1, fmu.getModelVariables().getReal("HeatCapacity1.C").getStart(), 0);
 
-        Assert.assertEquals(0.1, fmu.getModelVariables().getReal("HeatCapacity1.C").getStart(), 0);
+        RealVariable heatCapacity1_C = fmu.getModelVariables().getByName("HeatCapacity1.C").asRealVariable();
+        Assert.assertEquals(0.1, heatCapacity1_C.getStart(), 0);
 
-        IVariableReader read = fmu.getReader("Temperature_Room");
+        RealReader read = fmu.getReader("Temperature_Room").asRealReader();
 
         double first1 = Double.NaN;
 
@@ -81,7 +80,7 @@ public class CoSimulationFmuTest {
         for (int i = 0; i < 5; i++) {
             fmu.doStep(dt);
             Assert.assertTrue(fmu.getLastStatus() == Fmi2Status.OK);
-            double value = read.readReal();
+            double value = read.read();
             Assert.assertTrue(fmu.getLastStatus() == Fmi2Status.OK);
             if (Double.isNaN(first1)) {
                 first1 = value;
@@ -90,7 +89,7 @@ public class CoSimulationFmuTest {
 
         }
 
-        fmu.reset(false);
+        ((AbstractFmu) fmu).reset(false);
 
         Assert.assertTrue(fmu.getLastStatus() == Fmi2Status.OK);
 
@@ -98,7 +97,7 @@ public class CoSimulationFmuTest {
         while (fmu.getCurrentTime() < 5) {
             fmu.doStep(1d / 100);
             Assert.assertTrue(fmu.getLastStatus() == Fmi2Status.OK);
-            double value = read.readReal();
+            double value = read.read();
             Assert.assertTrue(fmu.getLastStatus() == Fmi2Status.OK);
             if (first.getAndSet(false)) {
                 Assert.assertEquals(first1, value, 0);
@@ -109,29 +108,8 @@ public class CoSimulationFmuTest {
 
         try (FmiSimulation fmu2 = builder.asCoSimulationFmu().newInstance()) {
             fmu2.init();
-            System.out.println(fmu2.getReader("Temperature_Room").readReal());
+            System.out.println(fmu2.getReader("Temperature_Room").asRealReader().read());
         }
 
-
     }
-
-
-    void readme() throws  IOException {
-
-//        CoSimulationFmu fmu = CoSimulationFmu.newBuilder(getClass().getClassLoader()
-//                .getResource("v2/cs/ControlledTemperature/ControlledTemperature.fmu")).build();
-//        fmu.init();
-//
-//        double t = 0;
-//        double dt = 1d/100;
-//
-//        while (t < 10) {
-//            fmu.doStep(dt);
-//            Assert.assertTrue(fmu.getLastStatus() == Fmi2Status.OK);
-//        }
-//
-//        fmu.terminate();
-
-    }
-
 }

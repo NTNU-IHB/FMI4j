@@ -1,12 +1,12 @@
 
 group = 'no.mechatronics.sfi.fmi4j'
-version = '0.3-SNAPSHOT'
+version = '0.4.2-SNAPSHOT'
 
 apply plugin: 'maven'
 apply plugin: 'signing'
 
 dependencies {
-    implementation group: 'commons-io', name: 'commons-io', version: '2.6'
+    compile group: 'commons-io', name: 'commons-io', version: '2.6'
 }
 
 task sourcesJar(type: Jar, dependsOn: classes, description: 'Creates a jar from the source files.') {

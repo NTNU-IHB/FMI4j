@@ -5,76 +5,52 @@ import no.mechatronics.sfi.fmi4j.modeldescription.enums.Causality
 
 object VariableAccessorsTemplate {
 
-
-    private fun capitalizeFirstLetterAndReplaceDotsWithSlash(variable: ScalarVariable<*>): String {
+    private fun capitalizeFirstLetterAndReplaceDotsWithSlash(variable: ScalarVariable): String {
         return variable.name.let {
             it.substring(0, 1).capitalize() + it.substring(1, it.length).replace(".", "_")
         }
     }
 
 
-    private fun fmiTypeToKotlinType(variable: ScalarVariable<*>) : String {
-        when(variable.typeName) {
-            "Integer" -> return "Int"
-            "Real" -> return "Double"
-            "String" -> return "String"
-            "Boolean" -> return "Boolean"
+    private fun fmiTypeToKotlinType(variable: ScalarVariable) : String {
+        when(variable) {
+            is IntegerVariable -> return "Int"
+            is RealVariable -> return "Double"
+            is StringVariable -> return "String"
+            is BooleanVariable -> return "Boolean"
         }
         throw IllegalArgumentException()
     }
 
-    fun generateJavaDoc(v: ScalarVariable<*>) : String {
+    fun generateJavaDoc(v: ScalarVariable) : String {
+
+        val tab = "\t\t"
 
         return StringBuilder().apply {
 
-            val tab = "\t\t"
-
             append("/**\n")
 
+            append("$tab * ").append(v.name).append('\n')
             if (v.description.isNotEmpty()) {
                 append("$tab * ").append(v.description).append('\n')
             }
 
-            if (v.start != null) {
-                append("$tab * Start=").append(v.start).append('\n')
-            }
+            v.start?.also { append("$tab * Start=").append(it).append('\n') }
+            v.causality?.also {  append("$tab * Causality=").append(it).append('\n') }
+            v.variability?.also { append("$tab * Variability=").append(it).append('\n') }
+            v.initial?.also { append("$tab * Initial=").append(it).append('\n') }
 
-            if (v.causality != null) {
-                append("$tab * Causality=").append(v.causality).append('\n')
-            }
-
-            if (v.variability != null) {
-                append("$tab * Variability=").append(v.variability).append('\n')
-            }
-
-            if (v.initial != null) {
-                append("$tab * Initial=").append(v.initial).append('\n')
-            }
-
-            if (v is IntegerVariable) {
-
-                if (v.min != null) {
-                    append("$tab * max=").append(v.min!!).append('\n')
+            when (v) {
+                is IntegerVariable -> {
+                    v.min?.also { append("$tab * min=").append(it).append('\n') }
+                    v.max?.also { append("$tab * max=").append(it).append('\n') }
                 }
-                if (v.max != null) {
-                    append("$tab * max=").append(v.max!!).append('\n')
+                is RealVariable -> {
+                    v.min?.also { append("$tab * min=").append(it).append('\n') }
+                    v.max?.also { append("$tab * max=").append(it).append('\n') }
+                    v.nominal?.also {  append("$tab * nominal=").append(it).append('\n') }
+                    v.unbounded?.also { append("$tab * unbounded=").append(it).append('\n') }
                 }
-
-            }
-
-            if (v is RealVariable) {
-
-                if (v.min != null) {
-                   append("$tab * max=").append(v.min!!).append('\n')
-                }
-                if (v.max != null) {
-                   append("$tab * max=").append(v.max!!).append('\n')
-                }
-
-                if (v.nominal != null) {
-                    append("$tab * nominal=").append(v.nominal!!).append('\n')
-                }
-
             }
 
             append("$tab */")
@@ -86,32 +62,26 @@ object VariableAccessorsTemplate {
     }
 
 
-    private fun generateGet(variable: ScalarVariable<*>, sb: StringBuilder) {
+    private fun generateGet(variable: ScalarVariable, sb: StringBuilder) {
 
         sb.append("""
-
         ${generateJavaDoc(variable)}
-        fun get${capitalizeFirstLetterAndReplaceDotsWithSlash(variable)}(): ${fmiTypeToKotlinType(variable)} {
-            return fmu.getReader(${variable.valueReference}).read${variable.typeName}()
-        }
+        fun get${capitalizeFirstLetterAndReplaceDotsWithSlash(variable)}Reader() = fmu.getReader(${variable.valueReference}).as${variable.typeName}Reader()
             """)
 
     }
 
-    private fun generateSet(variable: ScalarVariable<*>, sb :StringBuilder) {
+    private fun generateSet(variable: ScalarVariable, sb :StringBuilder) {
 
         sb.append("""
-
         ${generateJavaDoc(variable)}
-        fun set${capitalizeFirstLetterAndReplaceDotsWithSlash(variable)}(value: ${fmiTypeToKotlinType(variable)}) {
-            fmu.getWriter(${variable.valueReference}).write(value)
-        }
+        fun get${capitalizeFirstLetterAndReplaceDotsWithSlash(variable)}Writer() = fmu.getWriter(${variable.valueReference}).as${variable.typeName}Writer()
             """)
 
     }
 
 
-    fun generateInputsBody(modelVariables: IModelVariables) : String {
+    fun generateInputsBody(modelVariables: ModelVariables) : String {
         val sb = StringBuilder()
         modelVariables.variables.filter {
             it.causality == Causality.INPUT
@@ -121,7 +91,7 @@ object VariableAccessorsTemplate {
         return sb.toString()
     }
 
-    fun generateOutputsBody(modelVariables: IModelVariables) : String {
+    fun generateOutputsBody(modelVariables: ModelVariables) : String {
         val sb = StringBuilder()
         modelVariables.variables.filter {
             it.causality == Causality.OUTPUT
@@ -131,7 +101,7 @@ object VariableAccessorsTemplate {
         return sb.toString()
     }
 
-    fun generateCalculatedParametersBody(modelVariables: IModelVariables) : String {
+    fun generateCalculatedParametersBody(modelVariables: ModelVariables) : String {
         val sb = StringBuilder()
         modelVariables.variables.filter {
             it.causality == Causality.CALCULATED_PARAMETER
@@ -142,7 +112,7 @@ object VariableAccessorsTemplate {
     }
 
 
-    fun generateParametersBody(modelVariables: IModelVariables) : String {
+    fun generateParametersBody(modelVariables: ModelVariables) : String {
         val sb = StringBuilder()
         modelVariables.variables.filter {
             it.causality == Causality.PARAMETER
@@ -153,7 +123,7 @@ object VariableAccessorsTemplate {
         return sb.toString()
     }
 
-    fun generateLocalsBody(modelVariables: IModelVariables) : String {
+    fun generateLocalsBody(modelVariables: ModelVariables) : String {
         val sb = StringBuilder()
         modelVariables.variables.filter {
             it.causality == Causality.LOCAL

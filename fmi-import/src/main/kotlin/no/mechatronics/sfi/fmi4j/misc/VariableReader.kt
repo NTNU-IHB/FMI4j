@@ -27,60 +27,78 @@ package no.mechatronics.sfi.fmi4j.misc
 import no.mechatronics.sfi.fmi4j.proxy.Fmi2LibraryWrapper
 
 
-interface IVariableReader {
-    fun readInteger() : Int
-    fun readReal() : Double
-    fun readString() : String
-    fun readBoolean() : Boolean
-}
+interface VariableReader {
 
-class IntReader internal constructor(
-        wrapper: Fmi2LibraryWrapper<*>,
-        valueReference: Int
-) : VariableAccessor(wrapper, valueReference) {
-
-    fun read() = wrapper.getInteger(valueReference)
+    fun asIntReader(): IntReader
+    fun asRealReader(): RealReader
+    fun asStringReader(): StringReader
+    fun asBooleanReader(): BooleanReader
 
 }
 
-class RealReader internal constructor(
-        wrapper: Fmi2LibraryWrapper<*>,
-        valueReference: Int
-) : VariableAccessor(wrapper, valueReference) {
+interface IntReader {
+    fun read(): Int
+}
 
-    fun read() = wrapper.getReal(valueReference)
+interface RealReader {
+    fun read(): Double
+}
+
+interface StringReader {
+    fun read(): String
+}
+
+interface BooleanReader {
+    fun read(): Boolean
+}
+
+class IntReaderImpl internal constructor(
+        private val wrapper: Fmi2LibraryWrapper<*>,
+        private val valueReference: Int
+) : IntReader {
+
+    override fun read() = wrapper.getInteger(valueReference)
 
 }
 
-class StringReader internal constructor(
-        wrapper: Fmi2LibraryWrapper<*>,
-        valueReference: Int
-) : VariableAccessor(wrapper, valueReference) {
+class RealReaderImpl internal constructor(
+        private val wrapper: Fmi2LibraryWrapper<*>,
+        private val valueReference: Int
+) : RealReader {
 
-    fun read() = wrapper.getString(valueReference)
-
-}
-
-class BooleanReader internal constructor(
-        wrapper: Fmi2LibraryWrapper<*>,
-        valueReference: Int
-) : VariableAccessor(wrapper, valueReference) {
-
-    fun read() = wrapper.getBoolean(valueReference)
+    override fun read() = wrapper.getReal(valueReference)
 
 }
 
-class VariableReader internal constructor(
-        wrapper: Fmi2LibraryWrapper<*>,
-        valueReference: Int
-) : VariableAccessor(wrapper, valueReference), IVariableReader {
+class StringReaderImpl internal constructor(
+        private val wrapper: Fmi2LibraryWrapper<*>,
+        private val valueReference: Int
+) : StringReader {
 
-    override fun readInteger() : Int = wrapper.getInteger(valueReference)
-    override fun readReal() : Double = wrapper.getReal(valueReference)
-    override fun readString() : String = wrapper.getString(valueReference)
-    override fun readBoolean() : Boolean = wrapper.getBoolean(valueReference)
+    override fun read() = wrapper.getString(valueReference)
 
 }
+
+class BooleanReaderImpl internal constructor(
+        private val wrapper: Fmi2LibraryWrapper<*>,
+        private val valueReference: Int
+) : BooleanReader {
+
+    override fun read() = wrapper.getBoolean(valueReference)
+
+}
+
+//class VariableReaderImpl internal constructor(
+//        wrapper: Fmi2LibraryWrapper<*>,
+//        valueReference: Int
+//) : VariableAccessor(wrapper, valueReference), VariableReader {
+//
+////    override fun readInteger() : Int = wrapper.getInteger(valueReference)
+////    override fun readReal() : Double = wrapper.getReal(valueReference)
+////    override fun readString() : String = wrapper.getString(valueReference)
+////    override fun readBoolean() : Boolean = wrapper.getBoolean(valueReference)
+//
+//}
 
 interface IVariablesReader {
     fun readInteger() : IntArray

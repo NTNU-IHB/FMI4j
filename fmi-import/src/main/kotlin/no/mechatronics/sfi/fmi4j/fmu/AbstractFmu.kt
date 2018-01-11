@@ -33,34 +33,37 @@ import no.mechatronics.sfi.fmi4j.proxy.enums.Fmi2Status
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-abstract class AbstractFmu<E: IModelDescription, T: Fmi2LibraryWrapper<*>> internal constructor(
+abstract class AbstractFmu<E: ModelDescription, T: Fmi2LibraryWrapper<*>> internal constructor(
         val fmuFile: FmuFile,
         val modelDescription: E,
         val wrapper: T
-) : IAccessorProvider, AutoCloseable {
+) : VariableAccessProvider, AutoCloseable {
 
     private companion object {
         val LOG: Logger = LoggerFactory.getLogger(AbstractFmu::class.java)
     }
 
+    private val map: MutableMap<String, IntArray> = HashMap()
+
     var isInitialized = false
         private set
 
-    val modelVariables: IModelVariables = modelDescription.modelVariables
-
-    private val map: MutableMap<String, IntArray> = HashMap()
+    val modelVariables: ModelVariables = modelDescription.modelVariables
 
     /**
      * @see Fmi2Library.fmi2GetTypesPlatform
      */
-    fun getTypesPlatform() = wrapper.typesPlatform
+    val typesPlatform
+        get() = wrapper.typesPlatform
 
     /**
      * @see Fmi2Library.fmi2GetVersion
      */
-    fun getVersion() = wrapper.version
+    val version
+        get() = wrapper.version
 
-    fun isTerminated() = wrapper.isTerminated
+    val isTerminated
+        get() = wrapper.isTerminated
 
     /**
      * @see Fmi2Library.fmi2SetDebugLogging
@@ -68,19 +71,19 @@ abstract class AbstractFmu<E: IModelDescription, T: Fmi2LibraryWrapper<*>> inter
     fun setDebugLogging(loggingOn: Boolean, nCategories: Int, categories: Array<String>)
             =  wrapper.setDebugLogging(loggingOn, nCategories, categories)
 
-    override fun getWriter(vr: Int) = VariableWriter(wrapper, vr)
-    override fun getWriter(name: String) = getWriter(modelVariables.getByName(name)!!.valueReference)
-    override fun getWriter(variable: IntegerVariable) = IntWriter(wrapper, variable.valueReference)
-    override fun getWriter(variable: RealVariable) = RealWriter(wrapper, variable.valueReference)
-    override fun getWriter(variable: StringVariable) = StringWriter(wrapper, variable.valueReference)
-    override fun getWriter(variable: BooleanVariable) = BooleanWriter(wrapper, variable.valueReference)
+    override fun getWriter(vr: Int) = VariableAccessor(modelDescription, wrapper, vr)
+    override fun getWriter(name: String) = VariableAccessor(modelDescription, wrapper, modelVariables.getByName(name).valueReference)
+    override fun getWriter(variable: IntegerVariable) = IntWriterImpl(wrapper, variable.valueReference)
+    override fun getWriter(variable: RealVariable) = RealWriterImpl(wrapper, variable.valueReference)
+    override fun getWriter(variable: StringVariable) = StringWriterImpl(wrapper, variable.valueReference)
+    override fun getWriter(variable: BooleanVariable) = BooleanWriterImpl(wrapper, variable.valueReference)
 
-    override fun getReader(vr: Int) = VariableReader(wrapper, vr)
-    override fun getReader(name: String) = getReader(modelVariables.getByName(name)!!.valueReference)
-    override fun getReader(variable: IntegerVariable) = IntReader(wrapper, variable.valueReference)
-    override fun getReader(variable: RealVariable) = RealReader(wrapper, variable.valueReference)
-    override fun getReader(variable: StringVariable) = StringReader(wrapper, variable.valueReference)
-    override fun getReader(variable: BooleanVariable) = BooleanReader(wrapper, variable.valueReference)
+    override fun getReader(vr: Int) = VariableAccessor(modelDescription, wrapper, vr)
+    override fun getReader(name: String) = VariableAccessor(modelDescription, wrapper, modelVariables.getByName(name).valueReference)
+    override fun getReader(variable: IntegerVariable) = IntReaderImpl(wrapper, variable.valueReference)
+    override fun getReader(variable: RealVariable) = RealReaderImpl(wrapper, variable.valueReference)
+    override fun getReader(variable: StringVariable) = StringReaderImpl(wrapper, variable.valueReference)
+    override fun getReader(variable: BooleanVariable) = BooleanReaderImpl(wrapper, variable.valueReference)
 
     fun init() = init(0.0)
     fun init(start :Double) = init(start, -1.0)
@@ -145,113 +148,119 @@ abstract class AbstractFmu<E: IModelDescription, T: Fmi2LibraryWrapper<*>> inter
         return false
     }
 
-    fun checkGetScalar(vr: Int) : Boolean {
+//    fun checkGetScalar(vr: Int) : Boolean {
+//
+//        val variable = modelVariables.getByValueReference(vr)
+//        if (variable == null) {
+//            return false
+//        } else if (variable.causality == Causality.OUTPUT) {
+//            return true
+//        } else {
+//            return variable is RealVariable && variable.derivative != null
+//        }
+//    }
 
-        val variable = modelVariables.getByValueReference(vr)
-        if (variable == null) {
-            return false
-        } else if (variable.causality == Causality.OUTPUT) {
-            return true
-        } else {
-            return variable is RealVariable && variable.derivative != null
-        }
-    }
-
-    fun getInteger(vr: Int) : Int {
-        return wrapper.getInteger(vr)
-    }
-
-    fun getInteger(vr: IntArray) = wrapper.getInteger(vr)
-
+    fun readInteger(vr: Int) = wrapper.getInteger(vr)
+    fun readInteger(vr: IntArray) = wrapper.getInteger(vr)
     fun getInteger(vr: IntArray, value: IntArray) = wrapper.getInteger(vr, value)
 
-    fun getReal(vr: Int) : Double {
-        return wrapper.getReal(vr)
+    fun readReal(vr: Int) = wrapper.getReal(vr)
+    fun readReal(vr: IntArray) = wrapper.getReal(vr)
+    fun readReal(vr: IntArray, value: DoubleArray) = wrapper.getReal(vr, value)
+
+    fun readString(vr: Int) = wrapper.getString(vr)
+    fun readString(vr: IntArray)  = wrapper.getString(vr)
+    fun readString(vr: IntArray, value: Array<String>) = wrapper.getString(vr, value)
+
+    fun readBoolean(vr: Int) : Boolean = wrapper.getBoolean(vr)
+    fun readBoolean(vr: IntArray) : BooleanArray  = wrapper.getBoolean(vr)
+    fun readBoolean(vr: IntArray, value: BooleanArray) = wrapper.getBoolean(vr, value)
+
+    fun writeInteger(vr: Int, value: Int) {
+        wrapper.setInteger(vr, value)
     }
 
-    fun getReal(vr: IntArray) = wrapper.getReal(vr)
+    fun writeInteger(vr: IntArray, value: IntArray) {
+        wrapper.setInteger(vr, value)
+    }
 
-    fun getReal(vr: IntArray, value: DoubleArray) = wrapper.getReal(vr, value)
-
-    fun getString(vr: Int) = wrapper.getString(vr)
-
-    fun getString(vr: IntArray)  = wrapper.getString(vr)
-
-    fun getString(vr: IntArray, value: Array<String>) = wrapper.getString(vr, value)
-
-    fun getBoolean(vr: Int) : Boolean = wrapper.getBoolean(vr)
-
-    fun getBoolean(vr: IntArray) : BooleanArray  = wrapper.getBoolean(vr)
-
-    fun getBoolean(vr: IntArray, value: BooleanArray) = wrapper.getBoolean(vr, value)
-
-    fun setInteger(vr: Int, value: Int) = wrapper.setInteger(vr, value)
-
-    fun setInteger(vr: IntArray, value: IntArray) = wrapper.setInteger(vr, value)
-
-    fun setIntegerArray(name: String, values: IntArray) : Fmi2Status {
+    fun writeIntegerArray(name: String, values: IntArray) {
 
         if (name in map) {
-            return setInteger(map[name]!!, values)
+            writeInteger(map[name]!!, values)
         } else {
             val names: List<String> = List(values.size, {i -> "$name[$i]"})
-            val vr : IntArray = modelDescription.modelVariables.getValueReferences(names)
-            map[name] = vr
-            return setInteger(vr, values)
+            modelDescription.modelVariables.getValueReferences(names).also {
+                map[name] = it
+                writeInteger(it, values)
+            }
+
         }
 
     }
 
+    fun writeReal(vr: Int, value: Double) {
+        wrapper.setReal(vr, value)
+    }
 
-    fun setReal(vr: Int, value: Double) = wrapper.setReal(vr, value)
+    fun writeReal(vr: IntArray, value: DoubleArray) {
+        wrapper.setReal(vr, value)
+    }
 
-    fun setReal(vr: IntArray, value: DoubleArray) = wrapper.setReal(vr, value)
-
-    fun setRealArray(name: String, values: DoubleArray) : Fmi2Status {
+    fun writeRealArray(name: String, values: DoubleArray) {
 
         if (name in map) {
-            return setReal(map[name]!!, values)
+            writeReal(map[name]!!, values)
         } else {
             val names: List<String> = List(values.size, {i -> "$name[$i]"})
-            val vr : IntArray = modelDescription.modelVariables.getValueReferences(names)
-            map[name] = vr
-            return setReal(vr, values)
+            modelDescription.modelVariables.getValueReferences(names).also {
+                map[name] = it
+                writeReal(it, values)
+            }
         }
 
     }
 
+    fun writeString( valueReference: Int, value: String) {
+        wrapper.setString(valueReference, value)
+    }
 
-    fun setString( valueReference: Int, value: String) = wrapper.setString(valueReference, value)
+    fun writeString(vr: IntArray, value: Array<out String>) {
+        wrapper.setString(vr, value)
+    }
 
-    fun setString(vr: IntArray, value: Array<out String>) = wrapper.setString(vr, value)
-
-    fun setStringArray(name: String, values: Array<String>) : Fmi2Status {
+    fun writeStringArray(name: String, values: Array<String>) {
 
         if (name in map) {
-            return setString(map[name]!!, values)
+            writeString(map[name]!!, values)
         } else {
             val names: List<String> = List(values.size, {i -> "$name[$i]"})
-            val vr : IntArray = modelDescription.modelVariables.getValueReferences(names)
-            map[name] = vr
-            return setString(vr, values)
+            modelDescription.modelVariables.getValueReferences(names).also {
+                map[name] = it
+                writeString(it, values)
+            }
+
         }
 
     }
 
+    fun writeBoolean(valueReference: Int, value: Boolean) {
+        wrapper.setBoolean(valueReference, value)
+    }
 
-    fun setBoolean(valueReference: Int, value: Boolean) = wrapper.setBoolean(valueReference, value)
+    fun writeBoolean(vr: IntArray, value: BooleanArray) {
+        wrapper.setBoolean(vr, value)
+    }
 
-    fun setBoolean(vr: IntArray, value: BooleanArray) = wrapper.setBoolean(vr, value)
-
-    fun setBooleanArray(name: String, values: BooleanArray) : Fmi2Status {
+    fun writeBooleanArray(name: String, values: BooleanArray) {
 
         if (name in map) {
-            return setBoolean(map[name]!!, values)
+            writeBoolean(map[name]!!, values)
         } else {
             val names: List<String> = List(values.size, {i -> "$name[$i]"})
             val vr : IntArray = modelDescription.modelVariables.getValueReferences(names)
             map[name] = vr
-            return setBoolean(vr, values)
+            writeBoolean(vr, values)
         }
 
     }
@@ -301,17 +310,15 @@ abstract class AbstractFmu<E: IModelDescription, T: Fmi2LibraryWrapper<*>> inter
 
     private fun assignStartValues() {
 
-        modelVariables.variables.forEach {
-
-            if (it.start != null) {
-                when(it) {
-                    is IntegerVariable -> setInteger(it.valueReference, it.start!!)
-                    is RealVariable -> setReal(it.valueReference, it.start!!)
-                    is StringVariable -> setString(it.valueReference, it.start!!)
-                    is BooleanVariable -> setBoolean(it.valueReference, it.start!!)
+        modelVariables.variables.forEach { variable ->
+            variable.start?.apply {
+                when(variable) {
+                    is IntegerVariable -> writeInteger(variable.valueReference, variable.start!!)
+                    is RealVariable -> writeReal(variable.valueReference, variable.start!!)
+                    is StringVariable -> writeString(variable.valueReference, variable.start!!)
+                    is BooleanVariable -> writeBoolean(variable.valueReference, variable.start!!)
                 }
             }
-
         }
     }
 

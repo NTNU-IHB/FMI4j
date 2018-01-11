@@ -28,11 +28,15 @@ import javax.xml.bind.annotation.XmlAccessType
 import javax.xml.bind.annotation.XmlAccessorType
 import javax.xml.bind.annotation.XmlAttribute
 
+interface SourceFile {
+    val name: String
+}
+
 @XmlAccessorType(XmlAccessType.FIELD)
-class SourceFile {
+class SourceFileImpl: SourceFile {
 
     @XmlAttribute
-    val name: String = ""
+    override val name: String = ""
 
     override fun toString(): String {
         return "SourceFile(name='$name')"

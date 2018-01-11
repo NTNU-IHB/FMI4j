@@ -1,15 +1,15 @@
 package no.mechatronics.sfi.fmu2jar.templates
 
-import no.mechatronics.sfi.fmi4j.modeldescription.IModelDescription
-import no.mechatronics.sfi.fmi4j.modeldescription.IModelVariables
+import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescription
+import no.mechatronics.sfi.fmi4j.modeldescription.ModelVariables
 
 object CodeGeneration {
 
 
-    fun generateBody(modelDescription: IModelDescription, fileName: String = modelDescription.modelName): String {
+    fun generateBody(modelDescription: ModelDescription, fileName: String = modelDescription.modelName): String {
 
         val modelName: String = modelDescription.modelName
-        val modelVariables: IModelVariables = modelDescription.modelVariables
+        val modelVariables: ModelVariables = modelDescription.modelVariables
 
         return """
 
@@ -31,9 +31,9 @@ class $modelName private constructor(
         private val builder: FmuBuilder
 
         init {
-            val url: URL? = $modelName::class.java.classLoader.getResource("${fileName}.fmu")
-            val fmuFile = FmuFile(url!!)
-            builder = FmuBuilder(fmuFile)
+            val url: URL = $modelName::class.java.classLoader.getResource("${fileName}.fmu")!!
+            val file = FmuFile(url)
+            this.builder = FmuBuilder(file)
         }
 
         @JvmStatic
@@ -43,11 +43,11 @@ class $modelName private constructor(
 
     }
 
+    val locals = Locals()
     val inputs = Inputs()
     val outputs = Outputs()
     val parameters = Parameters()
     val calculatedParameters = CalculatedParameters()
-    val locals = Locals()
 
     inner class Inputs {
         ${VariableAccessorsTemplate.generateInputsBody(modelVariables)}
