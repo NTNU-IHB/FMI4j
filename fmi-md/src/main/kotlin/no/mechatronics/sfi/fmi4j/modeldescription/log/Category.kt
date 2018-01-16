@@ -24,6 +24,7 @@
 
 package no.mechatronics.sfi.fmi4j.modeldescription.log
 
+import java.io.Serializable
 import javax.xml.bind.annotation.XmlAccessType
 import javax.xml.bind.annotation.XmlAccessorType
 
@@ -34,7 +35,7 @@ interface Category {
 @XmlAccessorType(XmlAccessType.FIELD)
 class CategoryImpl(
         override val name:String? = null
-): Category{
+): Category, Serializable {
 
     override fun toString(): String {
         return "Category(name=$name)"

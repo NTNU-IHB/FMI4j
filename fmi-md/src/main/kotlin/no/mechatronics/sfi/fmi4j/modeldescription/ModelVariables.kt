@@ -24,6 +24,7 @@
 
 package no.mechatronics.sfi.fmi4j.modeldescription
 
+import java.io.Serializable
 import javax.xml.bind.annotation.*
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter
 
@@ -42,7 +43,7 @@ interface ModelVariables: Iterable<ScalarVariable> {
      */
     fun getValueReference(name: String) : Int
 
-    fun getValueReferences(names: Iterable<String>): IntArray
+    fun getValueReferences(names: Collection<String>): IntArray
 
     /**
      * Get model variable by index
@@ -59,28 +60,26 @@ interface ModelVariables: Iterable<ScalarVariable> {
      */
     fun getByName(name: String) : ScalarVariable
 
-
 }
 
 @XmlAccessorType(XmlAccessType.FIELD)
-class ModelVariablesImpl : ModelVariables {
+class ModelVariablesImpl : ModelVariables, Serializable {
 
     @XmlElement(name = "ScalarVariable")
     @XmlJavaTypeAdapter(ScalarVariableAdapter::class)
     private val _variables: List<TypedScalarVariable<*>>? = null
 
     override val variables: List<ScalarVariable>
-    get() {
-        return _variables ?: emptyList()
-    }
+        get() = _variables ?: emptyList()
 
     override fun getValueReference(name: String) : Int
             = variables.firstOrNull({it.name == name})?.valueReference ?: throw IllegalArgumentException("No such variable: $name")
 
-    override fun getValueReferences(names: Iterable<String>): IntArray
+    override fun getValueReferences(names: Collection<String>): IntArray
             = names.map { getValueReference(it) }.toIntArray()
 
-    override val size = variables.size
+    override val size
+        get() = variables.size
 
     override fun getByIndex(index: Int) = variables[index]
 

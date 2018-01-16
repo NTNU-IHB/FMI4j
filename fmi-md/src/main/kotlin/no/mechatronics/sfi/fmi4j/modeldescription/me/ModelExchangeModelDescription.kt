@@ -24,34 +24,10 @@
 
 package no.mechatronics.sfi.fmi4j.modeldescription.me
 
-import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescription
-import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescriptionParser
-import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescriptionXmlTemplate
-import java.io.File
-import java.io.FileInputStream
-import java.net.URL
-import javax.xml.bind.annotation.XmlAttribute
-import javax.xml.bind.annotation.XmlRootElement
-
-object ModelExchangeModelDescriptionParser {
-    @JvmStatic
-    fun parse(xml: String): IModelExchangeModelDescription = ModelDescriptionParser.parse(xml, ModelExchangeModelDescriptionXmlTemplate::class.java).generate()
-
-    @JvmStatic
-    fun parse(url: URL): IModelExchangeModelDescription = ModelDescriptionParser.parse(url.openStream(), ModelExchangeModelDescriptionXmlTemplate::class.java).generate()
-
-    @JvmStatic
-    fun parse(file: File): IModelExchangeModelDescription = ModelDescriptionParser.parse(FileInputStream(file), ModelExchangeModelDescriptionXmlTemplate::class.java).generate()
-}
+import no.mechatronics.sfi.fmi4j.modeldescription.*
 
 
-interface IModelExchangeModelDescription : ModelDescription {
-
-    /**
-     * The (fixed) number of event indicators for an FMU based on FMI for
-     * Model Exchange.
-     */
-    val numberOfEventIndicators: Int
+interface ModelExchangeModelDescription : ExtendedModelDescription {
 
     val completedIntegratorStepNotNeeded: Boolean
 
@@ -61,22 +37,32 @@ interface IModelExchangeModelDescription : ModelDescription {
  *
  * @author Lars Ivar Hatledal laht@ntnu.no.
  */
-@XmlRootElement(name = "fmiModelDescription")
-internal class ModelExchangeModelDescriptionXmlTemplate : ModelDescriptionXmlTemplate() {
+class ModelExchangeModelDescriptionImpl(
+         private val modelDescription: ModelDescription,
+         private val me: ModelExchangeXmlNode
+) : ModelDescription by modelDescription, ModelExchangeModelDescription {
 
-    override fun generate() = ModelExchangenModelDescriptionImpl(super.generate())
 
-    inner class ModelExchangenModelDescriptionImpl(
-            val modelDescription: ModelDescription
-    ) : ModelDescription by modelDescription, IModelExchangeModelDescription {
-
-        @XmlAttribute
-        override val numberOfEventIndicators: Int = 0
-
-        override val completedIntegratorStepNotNeeded: Boolean
-            get() = me!!.completedIntegratorStepNotNeeded
-
-    }
+    override val numberOfEventIndicators: Int
+        get() = modelDescription.numberOfEventIndicators
+    override val modelIdentifier: String
+        get() = me.modelIdentifier
+    override val needsExecutionTool: Boolean
+        get() = me.needsExecutionTool
+    override val canBeInstantiatedOnlyOncePerProcess: Boolean
+        get() = me.canBeInstantiatedOnlyOncePerProcess
+    override val canNotUseMemoryManagementFunctions: Boolean
+        get() = me.canNotUseMemoryManagementFunctions
+    override val canGetAndSetFMUstate: Boolean
+        get() = me.canGetAndSetFMUstate
+    override val canSerializeFMUstate: Boolean
+        get() = me.canSerializeFMUstate
+    override val providesDirectionalDerivative: Boolean
+        get() = me.providesDirectionalDerivative
+    override val sourceFiles: List<SourceFile>
+        get() = me.sourceFiles
+    override val completedIntegratorStepNotNeeded: Boolean
+        get() = me.completedIntegratorStepNotNeeded
 
 }
 

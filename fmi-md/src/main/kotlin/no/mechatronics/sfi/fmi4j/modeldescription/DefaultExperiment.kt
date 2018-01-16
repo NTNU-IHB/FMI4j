@@ -24,6 +24,7 @@
 
 package no.mechatronics.sfi.fmi4j.modeldescription
 
+import java.io.Serializable
 import javax.xml.bind.annotation.XmlAccessType
 import javax.xml.bind.annotation.XmlAccessorType
 import javax.xml.bind.annotation.XmlAttribute
@@ -50,7 +51,7 @@ interface DefaultExperiment {
  * @inheritDoc
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-class DefaultExperimentImpl: DefaultExperiment {
+class DefaultExperimentImpl: DefaultExperiment, Serializable {
 
     @XmlAttribute
     override val startTime: Double = 0.0
@@ -62,7 +63,7 @@ class DefaultExperimentImpl: DefaultExperiment {
     override val stepSize: Double = 1.0/100
 
     override fun toString(): String {
-        return "DefaultExperiment(startTime=$startTime, stopTime=$stopTime, tolerance=$tolerance, stepSize=$stepSize)"
+        return "DefaultExperimentImpl(startTime=$startTime, stopTime=$stopTime, tolerance=$tolerance, stepSize=$stepSize)"
     }
 
 }

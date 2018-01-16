@@ -24,6 +24,7 @@
 
 package no.mechatronics.sfi.fmi4j.modeldescription
 
+import java.io.Serializable
 import javax.xml.bind.annotation.XmlAccessType
 import javax.xml.bind.annotation.XmlAccessorType
 import javax.xml.bind.annotation.XmlAttribute
@@ -33,14 +34,13 @@ interface SourceFile {
 }
 
 @XmlAccessorType(XmlAccessType.FIELD)
-class SourceFileImpl: SourceFile {
+class SourceFileImpl: SourceFile, Serializable {
 
     @XmlAttribute
-    override val name: String = ""
+    override lateinit var name: String
 
     override fun toString(): String {
-        return "SourceFile(name='$name')"
+        return "SourceFileImpl(name='$name')"
     }
-
 
 }

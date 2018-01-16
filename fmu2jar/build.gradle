@@ -4,9 +4,9 @@ def debug = false
 if (debug) {
     repositories {
         mavenLocal()
-        maven {
-            url "https://oss.sonatype.org/content/repositories/snapshots/" //fmi-import
-        }
+//        maven {
+//            url "https://oss.sonatype.org/content/repositories/snapshots/" //fmi-import
+//        }
     }
 }
 

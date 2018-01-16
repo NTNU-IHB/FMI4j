@@ -24,6 +24,7 @@
 
 package no.mechatronics.sfi.fmi4j.modeldescription.enums
 
+import java.io.Serializable
 import javax.xml.bind.annotation.XmlEnum
 import javax.xml.bind.annotation.XmlEnumValue
 import javax.xml.bind.annotation.XmlType
@@ -31,7 +32,7 @@ import javax.xml.bind.annotation.adapters.XmlAdapter
 
 @XmlType
 @XmlEnum(String::class)
-enum class Initial {
+enum class Initial: Serializable {
     /**
      * The variable is initialized with the start value (provided under Real,
      * Integer, Boolean, String or Enumeration).

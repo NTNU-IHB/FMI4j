@@ -24,24 +24,15 @@
 
 package no.mechatronics.sfi.fmi4j.modeldescription.cs
 
-import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescription
-import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescriptionParser
-import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescriptionXmlTemplate
+import no.mechatronics.sfi.fmi4j.modeldescription.*
 import java.io.File
 import java.io.FileInputStream
 import java.net.URL
+import javax.xml.bind.annotation.XmlElement
 import javax.xml.bind.annotation.XmlRootElement
 
-object CoSimulationModelDescriptionParser {
-    @JvmStatic
-    fun parse(xml: String) : ICoSimulationModelDescription = ModelDescriptionParser.parse(xml, CoSimulationModelDescriptionXmlTemplate::class.java).generate()
-    @JvmStatic
-    fun parse(url: URL): ICoSimulationModelDescription = ModelDescriptionParser.parse(url.openStream(), CoSimulationModelDescriptionXmlTemplate::class.java).generate()
-    @JvmStatic
-    fun parse(file: File): ICoSimulationModelDescription = ModelDescriptionParser.parse(FileInputStream(file), CoSimulationModelDescriptionXmlTemplate::class.java).generate()
-}
 
-interface ICoSimulationModelDescription : ModelDescription {
+interface CoSimulationModelDescription : ExtendedModelDescription {
 
     /**
      * The slave is able to provide derivatives of
@@ -87,52 +78,36 @@ interface ICoSimulationModelDescription : ModelDescription {
 
 }
 
-@XmlRootElement(name = "fmiModelDescription")
-internal class CoSimulationModelDescriptionXmlTemplate() : ModelDescriptionXmlTemplate() {
 
-    override fun generate() = CoSimulationModelDescriptionImpl(super.generate())
-
-    inner class CoSimulationModelDescriptionImpl(
-            val modelDescription: ModelDescription
-    ) : ModelDescription by modelDescription, ICoSimulationModelDescription {
-
-        override val maxOutputDerivativeOrder: Int
-            get() = cs!!.maxOutputDerivativeOrder
-
-        override val needsExecutionTool: Boolean
-            get() = cs!!.needsExecutionTool
-
-        override val canHandleVariableCommunicationStepSize: Boolean
-            get() = cs!!.canHandleVariableCommunicationStepSize
+class CoSimulationModelDescriptionImpl(
+         modelDescription: ModelDescription,
+         private var cs: CoSimulationXmlNode
+) : ModelDescription by modelDescription, CoSimulationModelDescription {
 
 
-        override val canInterpolateInputs: Boolean
-            get() = cs!!.canInterpolateInputs
+    override val modelIdentifier: String
+        get() = cs.modelIdentifier
+    override val needsExecutionTool: Boolean
+        get() = cs.needsExecutionTool
+    override val canBeInstantiatedOnlyOncePerProcess: Boolean
+        get() = cs.canBeInstantiatedOnlyOncePerProcess
+    override val canNotUseMemoryManagementFunctions: Boolean
+        get() = cs.canNotUseMemoryManagementFunctions
+    override val canGetAndSetFMUstate: Boolean
+        get() = cs.canGetAndSetFMUstate
+    override val canSerializeFMUstate: Boolean
+        get() = cs.canSerializeFMUstate
+    override val providesDirectionalDerivative: Boolean
+        get() = cs.providesDirectionalDerivative
+    override val sourceFiles: List<SourceFile>
+        get() = cs.sourceFiles
+    override val maxOutputDerivativeOrder: Int
+        get() = cs.maxOutputDerivativeOrder
+    override val canHandleVariableCommunicationStepSize: Boolean
+        get() = cs.canHandleVariableCommunicationStepSize
+    override val canInterpolateInputs: Boolean
+        get() = cs.canInterpolateInputs
+    override val canRunAsynchronuosly: Boolean
+        get() = cs.canRunAsynchronuously
 
-
-        override val canRunAsynchronuosly: Boolean
-            get() = cs!!.canRunAsynchronuosly
-
-
-        override val canBeInstantiatedOnlyOncePerProcess: Boolean
-            get() = cs!!.canBeInstantiatedOnlyOncePerProcess
-
-
-        override val canNotUseMemoryManagementFunctions: Boolean
-            get() = cs!!.canNotUseMemoryManagementFunctions
-
-
-        override val canGetAndSetFMUstate: Boolean
-            get() = cs!!.canGetAndSetFMUstate
-
-
-        override val canSerializeFMUstate: Boolean
-            get() = cs!!.canSerializeFMUstate
-
-
-        override val providesDirectionalDerivative: Boolean
-            get() = cs!!.providesDirectionalDerivative
-
-
-    }
 }

@@ -39,7 +39,7 @@ class ModelDescriptionTest {
 
         val xml = IOUtils.toString(javaClass.classLoader
                 .getResource("v2/cs/ControlledTemperature/modelDescription.xml"), Charset.defaultCharset())
-        modelDescription = ModelDescriptionParser.parse(xml)
+        modelDescription = ModelDescriptionParser.parse(xml).asCS()
 
     }
 
