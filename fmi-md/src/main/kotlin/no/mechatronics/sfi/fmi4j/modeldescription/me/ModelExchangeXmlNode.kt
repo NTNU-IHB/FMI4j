@@ -29,6 +29,9 @@ import no.mechatronics.sfi.fmi4j.modeldescription.SourceFileImpl
 import java.io.Serializable
 import javax.xml.bind.annotation.*
 
+/**
+ * @author Lars Ivar Hatledal
+ */
 interface ModelExchangeXmlNode {
 
     val modelIdentifier: String
@@ -43,6 +46,9 @@ interface ModelExchangeXmlNode {
 
 }
 
+/**
+ * @author Lars Ivar Hatledal
+ */
 @XmlAccessorType(XmlAccessType.FIELD)
 internal class ModelExchangeXmlNodeImpl : ModelExchangeXmlNode, Serializable {
 

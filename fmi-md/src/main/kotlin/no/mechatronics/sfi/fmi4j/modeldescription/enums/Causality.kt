@@ -32,6 +32,7 @@ import javax.xml.bind.annotation.adapters.XmlAdapter
 
 /**
  * Enumeration that defines the causality of the variable.
+ *
  * @author Lars Ivar Hatledal laht@ntnu.no.
  */
 @XmlType

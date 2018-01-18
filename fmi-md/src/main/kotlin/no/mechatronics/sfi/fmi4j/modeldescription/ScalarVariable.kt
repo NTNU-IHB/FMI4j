@@ -31,6 +31,9 @@ import javax.xml.bind.JAXBContext
 import javax.xml.bind.annotation.*
 import javax.xml.bind.annotation.adapters.XmlAdapter
 
+/**
+ * @author Lars Ivar Hatledal
+ */
 interface ScalarVariable {
 
     /**
@@ -39,6 +42,11 @@ interface ScalarVariable {
      * ModelVariables list; the first list element has index=1).
      */
     val name: String
+
+    /**
+     * Integer, Real, String, Boolean or Enumeration
+     */
+    val typeName: String
 
     /**
      * If present, name of type defined with TypeDefinitions / SimpleType. The value
@@ -55,8 +63,20 @@ interface ScalarVariable {
      * An optional description string describing the meaning of the variable
      */
     val description: String
+
+    /**
+     * @see Causality
+     */
     val causality: Causality?
+
+    /**
+     * @see Variability
+     */
     val variability: Variability?
+
+    /**
+     * @see Initial
+     */
     val initial: Initial?
 
     /**
@@ -69,8 +89,20 @@ interface ScalarVariable {
      */
     val valueReference: Int
 
-    val typeName: String
-
+    /**
+     * Initial or guess value of variable. This value is also stored in the C functions
+     * [Therefore, calling fmi2SetXXX to set start values is only necessary, if a different
+     * value as stored in the xml file is desired.] The interpretation of start is defined by
+     * ScalarVariable / initial. A different start value can be provided with an
+     * fmi2SetXXX function before fmi2ExitInitializationMode is called (but not
+     * for variables with variability = ″constant″).
+     * [The standard approach is to set the start value before
+     * fmi2EnterInitializationMode. However, if the initialization shall be modified
+     * in the calling environment (e.g. changing from initialization of states to steadystate
+     * initialization), it is also possible to use the start value as iteration variable of
+     * an algebraic loop: Via an additional condition in the environment, such as 𝑥̇ = 0,
+     * the actual start value is determined.]
+     */
     val start: Any?
 
     fun asIntegerVariable(): IntegerVariable
@@ -80,6 +112,9 @@ interface ScalarVariable {
 
 }
 
+/**
+ * @author Lars Ivar Hatledal
+ */
 @XmlRootElement(name="ScalarVariable")
 @XmlAccessorType(XmlAccessType.FIELD)
 class ScalarVariableImpl : ScalarVariable {
@@ -123,17 +158,23 @@ class ScalarVariableImpl : ScalarVariable {
     @XmlAttribute(name="valueReference")
     private val _valueReference: Int? = null
 
-    override val typeName: String = ""
-
-    override val start: Any? = null
-
     /**
      * @inheritDoc
      */
     override val valueReference: Int
         get(){
-            return _valueReference!!
+            return _valueReference ?: throw IllegalStateException("ValueReference was null!")
         }
+
+    /**
+     * @inheritDoc
+     */
+    override val typeName: String = ""
+
+    /**
+     * @inheritDoc
+     */
+    override val start: Any? = null
 
     @XmlElement(name="Integer")
     internal val integerAttribute: IntegerAttribute? = null
@@ -161,6 +202,9 @@ class ScalarVariableImpl : ScalarVariable {
 
 }
 
+/**
+ * @author Lars Ivar Hatedal
+ */
 @XmlAccessorType(XmlAccessType.FIELD)
 internal class IntegerAttribute {
 
@@ -184,9 +228,6 @@ internal class IntegerAttribute {
     @XmlAttribute
     val max: Int? = null
 
-    /**
-     * @inheritDoc
-     */
     @XmlAttribute
     var start: Int? = null
 
@@ -228,7 +269,7 @@ internal class RealAttribute {
     val nominal : Double?  = null
 
     /**
-     * @inheritDoc
+     * @see ScalarVariable.start
      */
     @XmlAttribute
     var start: Double? = null
@@ -296,50 +337,49 @@ internal class RealAttribute {
 
 }
 
+/**
+ * @author Lars Ivar Hatedal
+ */
 @XmlAccessorType(XmlAccessType.FIELD)
 internal class StringAttribute  {
 
     /**
-     * @inheritDoc
+     * @see ScalarVariable.start
      */
     @XmlAttribute
      val start: String? = null
 
 }
 
+/**
+ * @author Lars Ivar Hatedal
+ */
 @XmlAccessorType(XmlAccessType.FIELD)
 internal class BooleanAttribute  {
 
     /**
-     * @inheritDoc
+     * @see ScalarVariable.start
      */
     @XmlAttribute
      val start: Boolean? = null
 
 }
 
-
+/**
+ * @author Lars Ivar Hatedal
+ */
 sealed class TypedScalarVariable<E> : ScalarVariable {
 
     /**
-     * Initial or guess value of variable. This value is also stored in the C functions
-     * [Therefore, calling fmi2SetXXX to set start values is only necessary, if a different
-     * value as stored in the xml file is desired.] The interpretation of start is defined by
-     * ScalarVariable / initial. A different start value can be provided with an
-     * fmi2SetXXX function before fmi2ExitInitializationMode is called (but not
-     * for variables with variability = ″constant″).
-     * [The standard approach is to set the start value before
-     * fmi2EnterInitializationMode. However, if the initialization shall be modified
-     * in the calling environment (e.g. changing from initialization of states to steadystate
-     * initialization), it is also possible to use the start value as iteration variable of
-     * an algebraic loop: Via an additional condition in the environment, such as 𝑥̇ = 0,
-     * the actual start value is determined.]
+     * @inheritDoc
      */
-    override abstract var start: E?
+    abstract override var start: E?
 
 }
 
-
+/**
+ * @author Lars Ivar Hatedal
+ */
 class IntegerVariable(v : ScalarVariableImpl) : ScalarVariable by v, TypedScalarVariable<Int>() {
 
     /**
@@ -352,10 +392,13 @@ class IntegerVariable(v : ScalarVariableImpl) : ScalarVariable by v, TypedScalar
     val max: Int? = v.integerAttribute!!.max
 
     /**
-     * @see IntegerAttribute.start
+     * @see ScalarVariable.start
      */
     override var start = v.integerAttribute!!.start
 
+    /**
+     * @inheritDoc
+     */
     override val typeName = "Integer"
 
     override fun toString(): String {
@@ -364,6 +407,9 @@ class IntegerVariable(v : ScalarVariableImpl) : ScalarVariable by v, TypedScalar
 
 }
 
+/**
+ * @author Lars Ivar Hatedal
+ */
 class RealVariable(v : ScalarVariableImpl) : ScalarVariable by v, TypedScalarVariable<Double>() {
 
     /**
@@ -412,10 +458,13 @@ class RealVariable(v : ScalarVariableImpl) : ScalarVariable by v, TypedScalarVar
     val derivative = v.realAttribute!!.derivative
 
     /**
-     * @see RealAttribute.start
+     * @see ScalarVariable.start
      */
     override var start = v.realAttribute!!.start
 
+    /**
+     * @see ScalarVariable.typeName
+     */
     override val typeName = "Real"
 
     override fun toString(): String {
@@ -424,13 +473,19 @@ class RealVariable(v : ScalarVariableImpl) : ScalarVariable by v, TypedScalarVar
 
 }
 
+/**
+ * @author Lars Ivar Hatedal
+ */
 class StringVariable(v : ScalarVariableImpl) : ScalarVariable by v, TypedScalarVariable<String>() {
 
     /**
-     * @see StringAttribute.start
+     * @see ScalarVariable.start
      */
     override var start = v.stringAttribute!!.start
 
+    /**
+     * @see ScalarVariable.typeName
+     */
     override val typeName = "String"
 
     override fun toString(): String {
@@ -439,14 +494,20 @@ class StringVariable(v : ScalarVariableImpl) : ScalarVariable by v, TypedScalarV
 
 }
 
+/**
+ * @author Lars Ivar Hatedal
+ */
 class BooleanVariable(v : ScalarVariableImpl) : ScalarVariable by v, TypedScalarVariable<Boolean>() {
 
     /**
-     * @see BooleanAttribute.start
+     * @see ScalarVariable.start
      */
     override var start = v.booleanAttribute!!.start
 
-   override val typeName = "Boolean"
+    /**
+     * @see ScalarVariable.typeName
+     */
+    override val typeName = "Boolean"
 
     override fun toString(): String {
         return "BooleanVariable(start=$start)"
@@ -454,7 +515,9 @@ class BooleanVariable(v : ScalarVariableImpl) : ScalarVariable by v, TypedScalar
 
 }
 
-
+/**
+ * @author Lars Ivar Hatledal
+ */
 class ScalarVariableAdapter : XmlAdapter<Any, TypedScalarVariable<*>>() {
 
     @Throws(Exception::class)

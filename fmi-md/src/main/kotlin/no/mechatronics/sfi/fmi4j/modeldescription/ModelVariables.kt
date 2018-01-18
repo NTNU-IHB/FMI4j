@@ -28,68 +28,44 @@ import java.io.Serializable
 import javax.xml.bind.annotation.*
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter
 
+/**
+ * @author Lars Ivar Hatledal
+ */
 interface ModelVariables: Iterable<ScalarVariable> {
 
     /**
      * Get the number of model variables held by this structure
      */
     val size: Int
+        get() = variables.size
 
     val variables: List<ScalarVariable>
+
+    operator fun get(index: Int) = variables[index]
+
+    override fun iterator() = variables.iterator()
 
     /**
      * Get the valueReference of the variable named <name>
      * @name name
      */
     fun getValueReference(name: String) : Int
-
-    fun getValueReferences(names: Collection<String>): IntArray
-
-    /**
-     * Get model variable by index
-     */
-    fun getByIndex(index: Int): ScalarVariable
-
-    /**
-     * Get model variable by valueReference
-     */
-    fun getByValueReference(vr: Int) : ScalarVariable
-
-    /**
-     * Get model variable by name
-     */
-    fun getByName(name: String) : ScalarVariable
-
-}
-
-@XmlAccessorType(XmlAccessType.FIELD)
-class ModelVariablesImpl : ModelVariables, Serializable {
-
-    @XmlElement(name = "ScalarVariable")
-    @XmlJavaTypeAdapter(ScalarVariableAdapter::class)
-    private val _variables: List<TypedScalarVariable<*>>? = null
-
-    override val variables: List<ScalarVariable>
-        get() = _variables ?: emptyList()
-
-    override fun getValueReference(name: String) : Int
             = variables.firstOrNull({it.name == name})?.valueReference ?: throw IllegalArgumentException("No such variable: $name")
 
-    override fun getValueReferences(names: Collection<String>): IntArray
+    fun getValueReferences(names: Collection<String>): IntArray
             = names.map { getValueReference(it) }.toIntArray()
 
-    override val size
-        get() = variables.size
-
-    override fun getByIndex(index: Int) = variables[index]
-
-    override fun getByValueReference(vr: Int) : ScalarVariable {
+    /**
+    * Get model variable by valueReference
+     * @vr valueReference
+    */
+    fun getByValueReference(vr: Int) : ScalarVariable {
         return variables
                 .firstOrNull{it.valueReference == vr}
                 ?: throw IllegalArgumentException("No variable with valueReference '$vr'")
     }
 
-    override fun getByName(name: String) : ScalarVariable {
+     fun getByName(name: String) : ScalarVariable {
         return variables
                 .firstOrNull{it.name == (name)}
                 ?: throw IllegalArgumentException("No variable with name '$name'")
@@ -102,8 +78,20 @@ class ModelVariablesImpl : ModelVariables, Serializable {
                 ?: throw IllegalArgumentException("No variable of type ${type.simpleName} with name '$name'")
     }
 
-    override fun iterator() = variables.iterator()
+}
 
+/**
+ * @author Lars Ivar Hatedal
+ */
+@XmlAccessorType(XmlAccessType.FIELD)
+class ModelVariablesImpl : ModelVariables, Serializable {
+
+    @XmlElement(name = "ScalarVariable")
+    @XmlJavaTypeAdapter(ScalarVariableAdapter::class)
+    private val _variables: List<TypedScalarVariable<*>>? = null
+
+    override val variables: List<ScalarVariable>
+        get() = _variables ?: emptyList()
 
     override fun toString(): String {
         return "ModelVariables(variables=$variables)"

@@ -27,19 +27,84 @@ package no.mechatronics.sfi.fmi4j.modeldescription.log
 import java.io.Serializable
 import javax.xml.bind.annotation.XmlAccessType
 import javax.xml.bind.annotation.XmlAccessorType
+import javax.xml.bind.annotation.XmlAttribute
 
+/**
+ * @author Lars Ivar Hatledal
+ */
 interface Category {
-    val name: String?
+    val name: String
+    val description: String
 }
 
+/**
+ * @author Lars Ivar Hatledal
+ */
 @XmlAccessorType(XmlAccessType.FIELD)
-class CategoryImpl(
-        override val name:String? = null
-): Category, Serializable {
+class CategoryImpl: Category, Serializable {
+
+    @XmlAttribute
+    override lateinit var name: String
+
+    @XmlAttribute
+    override lateinit var description: String
 
     override fun toString(): String {
         return "Category(name=$name)"
     }
 
 }
+
+/**
+ * Log all events (during initialization and simulation).
+ */
+const val LOG_EVENTS = "logEvents"
+
+/**
+ * Log the solution of linear systems of equations if the solution is singular
+ * (and the tool picked one solution of the infinitely many solutions).
+ */
+const val LOG_SINGULAR_LINEAR_SYSTEMS = "logSingularLinearSystems"
+
+/**
+ * Log the solution of nonlinear systems of equations.
+ */
+const val LOG_NON_LINEAR_SYSTEMS ="logNonlinearSystems"
+
+/**
+ * Log the dynamic selection of states.
+ */
+const val LOG_DYNAMIC_STATE_SELECTION = "logDynamicStateSelection"
+
+/**
+ * Log messages when returning fmi2Warning status from any function.
+ */
+const val LOG_STATUS_WARNING = "logStatusWarning"
+
+/**
+ * Log messages when returning fmi2Discard status from any function.
+ */
+const val LOG_STATUS_DISCARD = "logStatusDiscard"
+
+/**
+ * Log messages when returning fmi2Error status from any function.
+ */
+const val LOG_STATUS_ERROR = "logStatusError"
+
+/**
+ * Log messages when returning fmi2Fatal status from any function.
+ */
+const val LOG_STATUS_FATAL = "logStatusFatal"
+
+/**
+ * Log messages when returning fmi2Pending status from any function.
+ */
+const val LOG_STTAUS_PENDING = "logStatusPending"
+
+/**
+ * Log all messages
+ */
+const val LOG_ALL = "logAll"
+
+
 

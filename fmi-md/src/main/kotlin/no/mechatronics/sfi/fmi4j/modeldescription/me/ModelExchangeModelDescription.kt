@@ -26,11 +26,21 @@ package no.mechatronics.sfi.fmi4j.modeldescription.me
 
 import no.mechatronics.sfi.fmi4j.modeldescription.*
 
-
+/**
+ * @author Lars Ivar Hatledal
+ */
 interface ModelExchangeModelDescription : ExtendedModelDescription {
 
+    /**
+     * If true, function
+     * fmi2CompletedIntegratorStep need not to
+     * be called (which gives a slightly more efficient
+     * integration). If it is called, it has no effect.
+     * If false (the default), the function must be called
+     * after every completed integrator step, see
+     * section 3.2.2.
+     */
     val completedIntegratorStepNotNeeded: Boolean
-
 }
 
 /**
@@ -41,7 +51,6 @@ class ModelExchangeModelDescriptionImpl(
          private val modelDescription: ModelDescription,
          private val me: ModelExchangeXmlNode
 ) : ModelDescription by modelDescription, ModelExchangeModelDescription {
-
 
     override val numberOfEventIndicators: Int
         get() = modelDescription.numberOfEventIndicators

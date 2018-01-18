@@ -31,7 +31,9 @@ import java.net.URL
 import javax.xml.bind.annotation.XmlElement
 import javax.xml.bind.annotation.XmlRootElement
 
-
+/**
+ * @author Lars Ivar Hatledal
+ */
 interface CoSimulationModelDescription : ExtendedModelDescription {
 
     /**
@@ -78,12 +80,13 @@ interface CoSimulationModelDescription : ExtendedModelDescription {
 
 }
 
-
+/**
+ * @author Lars Ivar Hatledal
+ */
 class CoSimulationModelDescriptionImpl(
          modelDescription: ModelDescription,
          private var cs: CoSimulationXmlNode
 ) : ModelDescription by modelDescription, CoSimulationModelDescription {
-
 
     override val modelIdentifier: String
         get() = cs.modelIdentifier

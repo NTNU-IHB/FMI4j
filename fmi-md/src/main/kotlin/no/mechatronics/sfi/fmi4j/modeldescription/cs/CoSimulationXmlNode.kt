@@ -29,6 +29,9 @@ import no.mechatronics.sfi.fmi4j.modeldescription.SourceFileImpl
 import java.io.Serializable
 import javax.xml.bind.annotation.*
 
+/**
+ * @author Lars Ivar Hatledal
+ */
 interface CoSimulationXmlNode {
     
     val modelIdentifier: String
@@ -47,6 +50,9 @@ interface CoSimulationXmlNode {
     
 }
 
+/**
+ * @author Lars Ivar Hatledal
+ */
 @XmlAccessorType(XmlAccessType.FIELD)
 internal class CoSimulationXmlNodeImpl : CoSimulationXmlNode, Serializable {
 

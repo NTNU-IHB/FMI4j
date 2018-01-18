@@ -29,13 +29,27 @@ import javax.xml.bind.annotation.XmlAccessType
 import javax.xml.bind.annotation.XmlAccessorType
 import javax.xml.bind.annotation.XmlAttribute
 
+/**
+ * @author Lars Ivar Hatledal
+ */
 interface SourceFile {
+
+    /**
+     * Name of the file including the path to the sources
+     * directory, using forward slash as separator
+     */
     val name: String
 }
 
+/**
+ * @author Lars Ivar Hatledal
+ */
 @XmlAccessorType(XmlAccessType.FIELD)
 class SourceFileImpl: SourceFile, Serializable {
 
+    /**
+     * @inheritDoc
+     */
     @XmlAttribute
     override lateinit var name: String
 

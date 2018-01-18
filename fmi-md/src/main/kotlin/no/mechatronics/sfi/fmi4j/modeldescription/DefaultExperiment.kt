@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2017-2018 Norwegian University of Technology
+ * Copyright 2017-2018 Norwegian University of Technology (NTNU)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -38,9 +38,10 @@ import javax.xml.bind.annotation.XmlAttribute
  * for the first simulation run. A tool may ignore this information. However, it is convenient for a user that
  * startTime, stopTime, tolerance and stepSize have already a meaningful default value for the model at
  * hand. Furthermore, for CoSimulation the stepSize defines the preferred communicationStepSize.
+ *
+ * @author Lars Ivar Hatledal
  */
 interface DefaultExperiment {
-
     val startTime: Double
     val stopTime: Double
     val tolerance: Double
@@ -49,6 +50,8 @@ interface DefaultExperiment {
 
 /**
  * @inheritDoc
+ *
+ * @author Lars Ivar Hatledal
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 class DefaultExperimentImpl: DefaultExperiment, Serializable {

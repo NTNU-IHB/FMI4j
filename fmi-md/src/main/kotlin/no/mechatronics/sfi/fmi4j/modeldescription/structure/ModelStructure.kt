@@ -40,6 +40,8 @@ import javax.xml.bind.annotation.XmlElementWrapper
  * efficiently a sparse Jacobian for simulation or to utilize the
  * input/output dependency in order to detect that in some cases there
  * are actually no algebraic loops when connecting FMUs together].
+ *
+ * @author Lars Ivar Hatledal
  */
 interface ModelStructure {
     val outputs: List<Int>
@@ -49,6 +51,8 @@ interface ModelStructure {
 
 /**
  * @inheritDoc
+ *
+ * @author Lars Ivar Hatledal
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 class ModelStructureImpl: ModelStructure, Serializable {

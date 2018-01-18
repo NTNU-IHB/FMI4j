@@ -30,6 +30,29 @@ import javax.xml.bind.annotation.XmlEnumValue
 import javax.xml.bind.annotation.XmlType
 import javax.xml.bind.annotation.adapters.XmlAdapter
 
+/**
+ * Enumeration that defines how the variable is initialized. It is not allowed to provide a
+ * value for initial if causality = "input" or "independent":
+ * • = "exact": The variable is initialized with the start value (provided under Real,
+ * Integer, Boolean, String or Enumeration).
+ * • = "approx": The variable is an iteration variable of an algebraic loop and the
+ * iteration at initialization starts with the start value.
+ * • = "calculated": The variable is calculated from other variables during initialization.
+ * It is not allowed to provide a “start” value.
+ * If initial is not present, it is defined by the table below based on causality and
+ * variability. If initial = exact or approx, or causality = ″input″ a start
+ * value must be provided. If initial = calculated, or causality = ″independent″ it is
+ * not allowed to provide a start value.
+ * [The environment decides when to use the start value of a variable with causality =
+ * ″input″. Examples: (a) automatic tests of FMUs are performed, and the FMU is tested
+ * by providing the start value as constant input. (b) For a ModelExchange FMU, the
+ * FMU might be part of an algebraic loop. If the input variable is iteration variable of this
+ * algebraic loop, then initialization starts with its start value.].
+ * If fmiSetXXX is not called on a variable with causality = ″input″ then the FMU must
+ * use the start value as value of this input.
+ *
+ * @author Lars Ivar Hatledal
+ */
 @XmlType
 @XmlEnum(String::class)
 enum class Initial: Serializable {
