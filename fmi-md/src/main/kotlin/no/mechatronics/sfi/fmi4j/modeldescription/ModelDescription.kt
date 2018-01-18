@@ -105,6 +105,10 @@ interface ModelDescription {
      */
     val generationDateAndTime: String?
 
+    /**
+     * Provides default settings for the integrator, such as stop time and
+     * relative tolerance.
+     */
     val defaultExperiment: DefaultExperiment?
 
     /**
@@ -144,7 +148,6 @@ interface ModelDescription {
     fun asCS(): CoSimulationModelDescription
 
     fun asME(): ModelExchangeModelDescription
-
 
 }
 

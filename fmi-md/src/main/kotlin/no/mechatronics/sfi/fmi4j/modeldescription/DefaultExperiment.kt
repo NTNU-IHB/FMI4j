@@ -32,7 +32,7 @@ import javax.xml.bind.annotation.XmlAttribute
 
 /**
  * Providing default settings for the integrator, such as stop time and
- * relative tolerance
+ * relative tolerance.
  *
  * DefaultExperiment consists of the optional default start time, stop time, relative tolerance, and step size
  * for the first simulation run. A tool may ignore this information. However, it is convenient for a user that
