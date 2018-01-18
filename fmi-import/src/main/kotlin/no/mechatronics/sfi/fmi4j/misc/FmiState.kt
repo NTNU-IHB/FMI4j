@@ -27,7 +27,10 @@ package no.mechatronics.sfi.fmi4j.misc
 import org.slf4j.LoggerFactory
 import java.util.function.Supplier
 
-
+/**
+ *
+ * @author Lars Ivar Hatledal
+ */
 internal class FmiMethod private constructor(
         val name: String
 ) {

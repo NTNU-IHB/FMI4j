@@ -28,6 +28,10 @@ package no.mechatronics.sfi.fmi4j.proxy.structs
 import com.sun.jna.Structure
 import java.util.Arrays
 
+/**
+ *
+ * @author Lars Ivar Hatledal
+ */
 open class Fmi2EventInfo : Structure() {
 
     @JvmField

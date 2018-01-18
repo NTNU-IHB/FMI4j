@@ -5,6 +5,10 @@ import no.mechatronics.sfi.fmi4j.modeldescription.IntegerVariable
 import no.mechatronics.sfi.fmi4j.modeldescription.RealVariable
 import no.mechatronics.sfi.fmi4j.proxy.Fmi2LibraryWrapper
 
+/**
+ *
+ * @author Lars Ivar Hatledal
+ */
 class VariableAccessor internal constructor(
         private val modelDescription: ModelDescription,
         private val wrapper: Fmi2LibraryWrapper<*>,

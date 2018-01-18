@@ -24,15 +24,15 @@
 
 package no.mechatronics.sfi.fmi4j.modeldescription.me
 
-import no.mechatronics.sfi.fmi4j.modeldescription.SourceFile
-import no.mechatronics.sfi.fmi4j.modeldescription.SourceFileImpl
+import no.mechatronics.sfi.fmi4j.modeldescription.misc.SourceFile
+import no.mechatronics.sfi.fmi4j.modeldescription.misc.SourceFileImpl
 import java.io.Serializable
 import javax.xml.bind.annotation.*
 
 /**
  * @author Lars Ivar Hatledal
  */
-interface ModelExchangeXmlNode {
+interface ModelExchangeData {
 
     val modelIdentifier: String
     val needsExecutionTool: Boolean
@@ -50,7 +50,7 @@ interface ModelExchangeXmlNode {
  * @author Lars Ivar Hatledal
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-internal class ModelExchangeXmlNodeImpl : ModelExchangeXmlNode, Serializable {
+internal class ModelExchangeDataImpl : ModelExchangeData, Serializable {
 
     @XmlAttribute
     override lateinit var modelIdentifier: String

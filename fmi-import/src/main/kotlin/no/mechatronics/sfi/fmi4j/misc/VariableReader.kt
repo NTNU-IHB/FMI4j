@@ -26,14 +26,15 @@ package no.mechatronics.sfi.fmi4j.misc
 
 import no.mechatronics.sfi.fmi4j.proxy.Fmi2LibraryWrapper
 
-
+/**
+ *
+ * @author Lars Ivar Hatledal
+ */
 interface VariableReader {
-
     fun asIntReader(): IntReader
     fun asRealReader(): RealReader
     fun asStringReader(): StringReader
     fun asBooleanReader(): BooleanReader
-
 }
 
 interface IntReader {

@@ -26,41 +26,92 @@ package no.mechatronics.sfi.fmi4j.fmu
 
 import no.mechatronics.sfi.fmi4j.FmiSimulation
 import no.mechatronics.sfi.fmi4j.misc.*
-import no.mechatronics.sfi.fmi4j.modeldescription.me.IModelExchangeModelDescription
+import no.mechatronics.sfi.fmi4j.modeldescription.me.ModelExchangeModelDescription
 import no.mechatronics.sfi.fmi4j.proxy.me.ModelExchangeLibraryWrapper
 import no.mechatronics.sfi.fmi4j.proxy.structs.Fmi2EventInfo
 import org.apache.commons.math3.ode.FirstOrderDifferentialEquations
 import org.apache.commons.math3.ode.FirstOrderIntegrator
 
-
+/**
+ *
+ * @author Lars Ivar Hatledal
+ */
 open class ModelExchangeFmu internal constructor(
         fmuFile: FmuFile,
-        modelDescription: IModelExchangeModelDescription,
+        modelDescription: ModelExchangeModelDescription,
         wrapper: ModelExchangeLibraryWrapper
-): AbstractFmu<IModelExchangeModelDescription, ModelExchangeLibraryWrapper>(fmuFile, modelDescription, wrapper) {
+): AbstractFmu<ModelExchangeModelDescription, ModelExchangeLibraryWrapper>(fmuFile, modelDescription, wrapper) {
 
+    /**
+     * @see ModelExchangeLibraryWrapper.setTime
+     *
+     * @param time
+     */
     fun setTime(time: Double) = wrapper.setTime(time)
 
+    /**
+     * @see ModelExchangeLibraryWrapper.setContinuousStates
+     *
+     * @param x states
+     */
     fun setContinuousStates(x: DoubleArray) = wrapper.setContinuousStates(x)
 
+    /**
+     * @see ModelExchangeLibraryWrapper.enterEventMode
+     */
     fun enterEventMode() = wrapper.enterEventMode()
 
+    /**
+     * @see ModelExchangeLibraryWrapper.enterContinuousTimeMode
+     */
     fun enterContinuousTimeMode() = wrapper.enterContinuousTimeMode()
 
+    /**
+     * @see ModelExchangeLibraryWrapper.newDiscreteStates
+     *
+     * @param eventInfo
+     */
     fun newDiscreteStates(eventInfo: Fmi2EventInfo) = wrapper.newDiscreteStates(eventInfo)
 
+    /**
+     * @see ModelExchangeLibraryWrapper.completedIntegratorStep
+     */
     fun completedIntegratorStep() = wrapper.completedIntegratorStep()
 
+    /**
+     * @see ModelExchangeLibraryWrapper.getDerivatives
+     *
+     * @param derivatives
+     */
     fun getDerivatives(derivatives: DoubleArray) = wrapper.getDerivatives(derivatives)
 
+    /**
+     * @see ModelExchangeLibraryWrapper.getEventIndicators
+     *
+     * @param eventIndicators
+     */
     fun getEventIndicators(eventIndicators: DoubleArray) = wrapper.getEventIndicators(eventIndicators)
 
+    /**
+     * @see ModelExchangeLibraryWrapper.getContinuousStates
+     *
+     * @param x
+     */
     fun getContinuousStates(x: DoubleArray) = wrapper.getContinuousStates(x)
 
+    /**
+     * @see ModelExchangeLibraryWrapper.getNominalsOfContinuousStates
+     *
+     * @param x_nominal
+     */
     fun getNominalsOfContinuousStates(x_nominal: DoubleArray) = wrapper.getNominalsOfContinuousStates(x_nominal)
 
 }
 
+/**
+ *
+ * @author Lars Ivar Hatledal
+ */
 class ModelExchangeFmuWithIntegrator internal constructor(
         private val fmu: ModelExchangeFmu,
         private val integrator: FirstOrderIntegrator
@@ -80,12 +131,23 @@ class ModelExchangeFmuWithIntegrator internal constructor(
     override var currentTime: Double = 0.0
         private set
 
+    /**
+     * @see AbstractFmu.isTerminated
+     */
     override val isInitialized
         get() = fmu.isInitialized
 
+    /**
+     * @see AbstractFmu.isTerminated
+     */
     override val isTerminated
         get() = fmu.isTerminated
 
+    /**
+     * @see AbstractFmu.lastStatus
+     */
+    override val lastStatus
+        get() = fmu.lastStatus
 
     override val modelDescription = fmu.modelDescription
     override val modelVariables = fmu.modelVariables
@@ -122,7 +184,7 @@ class ModelExchangeFmuWithIntegrator internal constructor(
         terminate()
     }
 
-    override fun getLastStatus() = fmu.getLastStatus()
+
 
     override fun init() = init(0.0)
     override fun init(start: Double) = init(start, -1.0)

@@ -24,15 +24,15 @@
 
 package no.mechatronics.sfi.fmi4j.modeldescription.cs
 
-import no.mechatronics.sfi.fmi4j.modeldescription.SourceFile
-import no.mechatronics.sfi.fmi4j.modeldescription.SourceFileImpl
+import no.mechatronics.sfi.fmi4j.modeldescription.misc.SourceFile
+import no.mechatronics.sfi.fmi4j.modeldescription.misc.SourceFileImpl
 import java.io.Serializable
 import javax.xml.bind.annotation.*
 
 /**
  * @author Lars Ivar Hatledal
  */
-interface CoSimulationXmlNode {
+interface CoSimulationData {
     
     val modelIdentifier: String
     val needsExecutionTool: Boolean
@@ -54,7 +54,7 @@ interface CoSimulationXmlNode {
  * @author Lars Ivar Hatledal
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-internal class CoSimulationXmlNodeImpl : CoSimulationXmlNode, Serializable {
+internal class CoSimulationDataImpl : CoSimulationData, Serializable {
 
     @XmlAttribute
     override lateinit var modelIdentifier: String

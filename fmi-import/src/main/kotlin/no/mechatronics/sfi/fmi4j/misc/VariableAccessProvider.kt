@@ -5,6 +5,10 @@ import no.mechatronics.sfi.fmi4j.modeldescription.IntegerVariable
 import no.mechatronics.sfi.fmi4j.modeldescription.RealVariable
 import no.mechatronics.sfi.fmi4j.modeldescription.StringVariable
 
+/**
+ *
+ * @author Lars Ivar Hatledal
+ */
 interface VariableAccessProvider {
 
     fun getWriter(vr: Int) : VariableWriter

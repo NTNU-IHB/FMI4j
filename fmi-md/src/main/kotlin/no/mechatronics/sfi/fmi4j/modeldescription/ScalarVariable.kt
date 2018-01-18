@@ -368,7 +368,7 @@ internal class BooleanAttribute  {
 /**
  * @author Lars Ivar Hatedal
  */
-sealed class TypedScalarVariable<E> : ScalarVariable {
+sealed class TypedScalarVariable<E> : ScalarVariable, Serializable {
 
     /**
      * @inheritDoc

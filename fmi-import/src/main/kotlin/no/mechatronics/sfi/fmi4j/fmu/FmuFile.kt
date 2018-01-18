@@ -52,13 +52,85 @@ private const val LINUX_LIBRARY_EXTENSION = ".so"
 private const val FMI4J_FILE_PREFIX = "fmi4j_"
 private const val MODEL_DESC = "modelDescription.xml"
 
+/**
+ *
+ * @author Lars Ivar Hatledal
+ */
 class FmuFile {
+    private val fmuFile: File
+
+    @Throws(IOException::class)
+    constructor(file: File) {
+        this.fmuFile = extractToTempFolder(file)
+    }
+
+    @Throws(IOException::class)
+    constructor(url: URL) {
+        this.fmuFile = extractToTempFolder(url)
+    }
+
+    private val platformBitness: String
+        get() = if (Platform.is64Bit()) "64" else "32"
+
+    val fmuPath: String
+        get() = "file:///${fmuFile.absolutePath.replace("\\", "/")}"
+
+    /**
+     * Get the file handle for the modelDescription.xml file
+     */
+    private val modelDescriptionFile: File
+        get() = File(fmuFile, MODEL_DESC)
+
+
+    /**
+     * Get the content of the modelDescription.xml file as a String
+     */
+    val modelDescriptionXml: String by lazy {
+         FileUtils.readFileToString(modelDescriptionFile, Charset.forName("UTF-8"))
+    }
+
+    val libraryFolderName: String
+        get() =  when {
+            Platform.isWindows() -> WINDOWS_FOLDER
+            Platform.isLinux() -> LINUX_FOLDER
+            Platform.isMac() -> MAC_OS_FOLDER
+            else -> throw UnsupportedOperationException("OS '${Platform.ARCH}' is unsupported!")
+    }
+
+    val libraryExtension: String
+        get() =  when {
+            Platform.isWindows() -> WINDOWS_LIBRARY_EXTENSION
+            Platform.isLinux() -> LINUX_LIBRARY_EXTENSION
+            Platform.isMac() -> MAC_OS_LIBRARY_EXTENSION
+            else ->  throw UnsupportedOperationException("OS '${Platform.ARCH}' is unsupported!")
+    }
+
+    val libraryFolderPath: String
+        get() = File(fmuFile,BINARIES_FOLDER + File.separator
+                + libraryFolderName + platformBitness).absolutePath
+
+    val resourcesPath: String
+        get() = "file:///${File(fmuFile,
+                RESOURCES_FOLDER).absolutePath.replace("\\", "/")}"
+
+    fun getLibraryName(desc: ModelDescription): String {
+        return "${desc.modelIdentifier}${libraryExtension}"
+    }
+
+    fun getFullLibraryPath(desc: ModelDescription): String {
+        return File(fmuFile,BINARIES_FOLDER + File.separator + libraryFolderName + platformBitness
+                        + File.separator + desc.modelIdentifier + libraryExtension).absolutePath
+    }
+
+    override fun toString(): String {
+        return "FmuFile(fmuFile=${fmuFile.absolutePath})"
+    }
+
 
     private companion object {
 
-         val LOG: Logger = LoggerFactory.getLogger(FmuFile::class.java)
-
-         val map: MutableMap<String, File> = HashMap()
+        val LOG: Logger = LoggerFactory.getLogger(FmuFile::class.java)
+        val map: MutableMap<String, File> = HashMap()
 
         init {
 
@@ -114,9 +186,9 @@ class FmuFile {
             Files.deleteIfExists(tmp.toPath())
             LOG.debug("Deleted temp fmu file retrieved from url {}", tmp)
 
-           return extractToTempFolder.also {
-               map[guid] = it
-           }
+            return extractToTempFolder.also {
+                map[guid] = it
+            }
 
         }
 
@@ -149,100 +221,22 @@ class FmuFile {
                     val name = zipEntry.name
 
                     if (!zipEntry.isDirectory) {
-
                         val child = File(dir, name)
                         val data = IOUtils.toByteArray(zipFile.getInputStream(zipEntry))
                         FileUtils.writeByteArrayToFile(child, data)
-
                     }
-
                 }
-
             }
 
-            val res = File(dir, "resources")
-            if (!res.exists()) {
-                res.mkdir()
+            File(dir, "resources").apply {
+                if (!exists()) {
+                    mkdir()
+                }
             }
 
             LOG.debug("Extracted fmu into location {}", dir)
         }
 
     }
-
-
-
-    private val fmuFile: File
-
-    @Throws(IOException::class)
-    constructor(file: File) {
-        this.fmuFile = extractToTempFolder(file)
-    }
-
-    @Throws(IOException::class)
-    constructor(url: URL) {
-        this.fmuFile = extractToTempFolder(url)
-    }
-
-    fun getFmuPath(): String {
-        return "file:///" + fmuFile.getAbsolutePath().replace("\\", "/")
-    }
-
-    fun getModelDescriptionFile(): File {
-        return File(fmuFile, MODEL_DESC)
-    }
-
-    fun getModelDescriptionXml(): String {
-        return FileUtils.readFileToString(getModelDescriptionFile(), Charset.forName("UTF-8"))
-    }
-
-    fun getLibraryFolderName(): String {
-        return if (Platform.isWindows()) {
-            WINDOWS_FOLDER
-        } else if (Platform.isLinux()) {
-            LINUX_FOLDER
-        } else if (Platform.isMac()) {
-            MAC_OS_FOLDER
-        } else {
-            throw UnsupportedOperationException("OS '${Platform.ARCH}' is unsupported!")
-        }
-    }
-
-    fun getLibraryExtension(): String {
-        return if (Platform.isWindows()) {
-            WINDOWS_LIBRARY_EXTENSION
-        } else if (Platform.isLinux()) {
-            LINUX_LIBRARY_EXTENSION
-        } else if (Platform.isMac()) {
-            MAC_OS_LIBRARY_EXTENSION
-        } else {
-            throw UnsupportedOperationException("OS '${Platform.ARCH}' is unsupported!")
-        }
-    }
-
-    fun getBitness(): String {
-        return if (Platform.is64Bit()) "64" else "32"
-    }
-
-    fun getLibraryName(desc: ModelDescription): String {
-        return "${desc.modelIdentifier}${getLibraryExtension()}"
-    }
-
-    fun getLibraryFolderPath(): String {
-        return File(fmuFile, BINARIES_FOLDER + File.separator + getLibraryFolderName() + getBitness()).absolutePath
-    }
-
-    fun getFullLibraryPath(desc: ModelDescription): String {
-        return File(fmuFile, BINARIES_FOLDER + File.separator + getLibraryFolderName() + getBitness() + File.separator + desc.modelIdentifier + getLibraryExtension()).absolutePath
-    }
-
-    fun getResourcesPath(): String {
-        return "file:///" + File(fmuFile, RESOURCES_FOLDER).absolutePath.replace("\\", "/")
-    }
-
-    override fun toString(): String {
-        return "FmuFile(fmuFile=${fmuFile.absolutePath})"
-    }
-
 
 }

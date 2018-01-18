@@ -24,8 +24,13 @@
 
 package no.mechatronics.sfi.fmi4j.proxy.enums
 
-
-enum class Fmi2Type private constructor(val code: Int) {
+/**
+ *
+ * @author Lars Ivar Hatledal
+ */
+enum class Fmi2Type (
+        val code: Int
+) {
 
     ModelExchange(0),
     CoSimulation(1)

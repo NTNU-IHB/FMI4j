@@ -44,7 +44,7 @@ class Fmu2Jar(
             throw IllegalArgumentException("File '${file.absolutePath}' is not and FMU!")
         }
 
-        modelDescription = ModelDescriptionParser.parse(file)
+        modelDescription = ModelDescriptionParser.parse(file).asCS()
     }
 
     private fun copyBuildFile(parentDir: File) {

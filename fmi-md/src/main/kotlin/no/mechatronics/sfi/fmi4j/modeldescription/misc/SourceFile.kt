@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2017-2018 Norwegian University of Technology (NTNU)
+ * Copyright 2017-2018 Norwegian University of Technology
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,23 +22,39 @@
  * THE SOFTWARE.
  */
 
-package no.mechatronics.sfi.fmi4j.modeldescription
+package no.mechatronics.sfi.fmi4j.modeldescription.misc
 
 import java.io.Serializable
-import javax.xml.bind.annotation.XmlEnum
-import javax.xml.bind.annotation.XmlEnumValue
-import javax.xml.bind.annotation.XmlType
+import javax.xml.bind.annotation.XmlAccessType
+import javax.xml.bind.annotation.XmlAccessorType
+import javax.xml.bind.annotation.XmlAttribute
 
 /**
  * @author Lars Ivar Hatledal
  */
-@XmlType
-@XmlEnum(String::class)
-enum class VariableNamingConvention: Serializable {
+interface SourceFile {
 
-    @XmlEnumValue("flat")
-    FLAT,
-    @XmlEnumValue("structured")
-    STRUCTURED
+    /**
+     * Name of the file including the path to the sources
+     * directory, using forward slash as separator
+     */
+    val name: String
+}
+
+/**
+ * @author Lars Ivar Hatledal
+ */
+@XmlAccessorType(XmlAccessType.FIELD)
+class SourceFileImpl: SourceFile, Serializable {
+
+    /**
+     * @inheritDoc
+     */
+    @XmlAttribute
+    override lateinit var name: String
+
+    override fun toString(): String {
+        return "SourceFileImpl(name='$name')"
+    }
 
 }

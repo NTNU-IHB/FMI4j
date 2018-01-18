@@ -1,6 +1,6 @@
 
 group = 'no.mechatronics.sfi.fmi4j'
-version = '0.2-SNAPSHOT'
+version = '0.1-BETA'
 
 apply plugin: 'maven'
 apply plugin: 'signing'
@@ -24,9 +24,9 @@ dependencies {
     compile group: 'net.java.dev.jna', name: 'jna-platform', version: '4.5.1'
 
     if (SNAPSHOT) {
-        compile group: 'no.mechatronics.sfi.fmi4j', name: 'fmi-md', version: '0.4.2-SNAPSHOT', changing: true
+        compile group: 'no.mechatronics.sfi.fmi4j', name: 'fmi-md', version: '0.4.3-SNAPSHOT', changing: true
     } else {
-        compile group: 'no.mechatronics.sfi.fmi4j', name: 'fmi-md', version: '0.4.1'
+        compile group: 'no.mechatronics.sfi.fmi4j', name: 'fmi-md', version: '0.4.2'
     }
 
 }

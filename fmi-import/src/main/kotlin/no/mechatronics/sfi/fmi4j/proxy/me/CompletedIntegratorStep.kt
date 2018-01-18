@@ -24,6 +24,10 @@
 
 package no.mechatronics.sfi.fmi4j.proxy.me
 
+/**
+ *
+ * @author Lars Ivar Hatledal
+ */
 data class CompletedIntegratorStep(
         val enterEventMode: Boolean,
         val terminateSimulation: Boolean

@@ -26,6 +26,7 @@ package no.mechatronics.sfi.fmi4j;
 
 
 import no.mechatronics.sfi.fmi4j.fmu.AbstractFmu;
+import no.mechatronics.sfi.fmi4j.fmu.CoSimulationFmu;
 import no.mechatronics.sfi.fmi4j.fmu.FmuBuilder;
 import no.mechatronics.sfi.fmi4j.misc.RealReader;
 import no.mechatronics.sfi.fmi4j.proxy.enums.Fmi2Status;

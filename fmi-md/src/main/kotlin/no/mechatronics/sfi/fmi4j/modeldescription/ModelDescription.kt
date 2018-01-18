@@ -26,25 +26,29 @@ package no.mechatronics.sfi.fmi4j.modeldescription
 
 import no.mechatronics.sfi.fmi4j.modeldescription.cs.CoSimulationModelDescription
 import no.mechatronics.sfi.fmi4j.modeldescription.cs.CoSimulationModelDescriptionImpl
-import no.mechatronics.sfi.fmi4j.modeldescription.cs.CoSimulationXmlNode
-import no.mechatronics.sfi.fmi4j.modeldescription.cs.CoSimulationXmlNodeImpl
+import no.mechatronics.sfi.fmi4j.modeldescription.cs.CoSimulationDataImpl
 import no.mechatronics.sfi.fmi4j.modeldescription.log.Category
 import no.mechatronics.sfi.fmi4j.modeldescription.log.CategoryImpl
 import no.mechatronics.sfi.fmi4j.modeldescription.me.ModelExchangeModelDescription
 import no.mechatronics.sfi.fmi4j.modeldescription.me.ModelExchangeModelDescriptionImpl
-import no.mechatronics.sfi.fmi4j.modeldescription.me.ModelExchangeXmlNode
-import no.mechatronics.sfi.fmi4j.modeldescription.me.ModelExchangeXmlNodeImpl
+import no.mechatronics.sfi.fmi4j.modeldescription.me.ModelExchangeDataImpl
+import no.mechatronics.sfi.fmi4j.modeldescription.misc.DefaultExperiment
+import no.mechatronics.sfi.fmi4j.modeldescription.misc.DefaultExperimentImpl
+import no.mechatronics.sfi.fmi4j.modeldescription.misc.SourceFile
+import no.mechatronics.sfi.fmi4j.modeldescription.misc.VariableNamingConvention
 import no.mechatronics.sfi.fmi4j.modeldescription.structure.ModelStructure
 import no.mechatronics.sfi.fmi4j.modeldescription.structure.ModelStructureImpl
 import java.io.Serializable
 import javax.xml.bind.annotation.*
+
+
 
 /**
  * Static information related to an FMU
  *
  * @author Lars Ivar Hatledal
  */
-interface ModelDescription {
+interface SimpleModelDescription {
 
     /**
      * Version of “FMI for Model Exchange or Co-Simulation” that was used to
@@ -153,21 +157,24 @@ interface ModelDescription {
      * A global list of log categories that can be set to define the log
      * information that is supported from the FMU.
      */
-    val logCategories: List<Category>?
+    val logCategories: List<Category>
 
     val numberOfContinuousStates: Int
         get() = modelStructure.derivatives.size
 
-    fun asCS(): CoSimulationModelDescription
-
-    fun asME(): ModelExchangeModelDescription
-
 }
+
 
 /**
  * @author Lars Ivar Hatedal
  */
-interface ExtendedModelDescription: ModelDescription {
+interface ModelDescription : SimpleModelDescription {
+
+
+    /**
+     * The source files
+     */
+    val sourceFiles: List<SourceFile>
 
     /**
      * Short class name according to C syntax, for
@@ -242,7 +249,15 @@ interface ExtendedModelDescription: ModelDescription {
      */
     val providesDirectionalDerivative: Boolean
 
-    val sourceFiles: List<SourceFile>
+}
+
+
+interface ModelDescriptionProvider : SimpleModelDescription {
+
+    fun asCS(): CoSimulationModelDescription
+
+    fun asME(): ModelExchangeModelDescription
+
 }
 
 /**
@@ -250,7 +265,7 @@ interface ExtendedModelDescription: ModelDescription {
  */
 @XmlRootElement(name = "fmiModelDescription")
 @XmlAccessorType(XmlAccessType.FIELD)
-class ModelDescriptionImpl : ModelDescription, Serializable {
+class ModelDescriptionImpl : SimpleModelDescription, ModelDescriptionProvider, Serializable {
 
     /**
      * @inheritDoc
@@ -347,13 +362,16 @@ class ModelDescriptionImpl : ModelDescription, Serializable {
      */
     @XmlElementWrapper(name = "LogCategories")
     @XmlElement(name = "Category")
-    override val logCategories: List<CategoryImpl>? = null
+    var _logCategories: List<CategoryImpl>? = null
+
+    override val logCategories: List<Category>
+        get() = _logCategories ?: emptyList()
 
     @XmlElement(name = "CoSimulation")
-    private var cs: CoSimulationXmlNodeImpl? = null
+    private var cs: CoSimulationDataImpl? = null
 
     @XmlElement(name = "ModelExchange")
-    private var me: ModelExchangeXmlNodeImpl? = null
+    private var me: ModelExchangeDataImpl? = null
 
     override fun asCS(): CoSimulationModelDescription
             = CoSimulationModelDescriptionImpl(this, cs ?: throw IllegalStateException("modelDescription.xml does not contain a <CoSimulation> tag!"))

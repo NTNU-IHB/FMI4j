@@ -27,8 +27,13 @@ package no.mechatronics.sfi.fmi4j.proxy.enums
 import java.util.*
 import kotlin.streams.toList
 
-
-enum class Fmi2StatusKind private constructor(val code: Int) {
+/**
+ *
+ * @author Lars Ivar Hatledal
+ */
+enum class Fmi2StatusKind(
+        val code: Int
+) {
 
     /**
      * Can be called when the fmi2DoStep function returned fmi2Pending. The

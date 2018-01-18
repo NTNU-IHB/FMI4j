@@ -24,93 +24,79 @@
 
 package no.mechatronics.sfi.fmi4j.modeldescription
 
+import no.mechatronics.sfi.fmi4j.modeldescription.misc.VariableNamingConvention
 import org.apache.commons.io.IOUtils
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import java.nio.charset.Charset
 
-class ModelDescriptionTest {
+class ModelDescriptionTest_CS {
 
     private lateinit var modelDescription: ModelDescription
 
     @Before
     fun setUp() {
-
         val xml = IOUtils.toString(javaClass.classLoader
                 .getResource("v2/cs/ControlledTemperature/modelDescription.xml"), Charset.defaultCharset())
         modelDescription = ModelDescriptionParser.parse(xml).asCS()
-
     }
 
     @Test
-    fun getFmiVersion() {
-
+    fun testFmiVersion() {
         val fmiVersion = modelDescription.fmiVersion
-        Assert.assertEquals("2.0", fmiVersion)
         println("fmiVersion=$fmiVersion")
-
+        Assert.assertEquals("2.0", fmiVersion)
     }
 
     @Test
-    fun getModelName() {
-
-        val value = modelDescription.modelName
-        Assert.assertEquals("ControlledTemperature", value)
-        println("modelName=$value")
-
+    fun testModelName() {
+        val modelName = modelDescription.modelName
+        println("modelName=$modelName")
+        Assert.assertEquals("ControlledTemperature", modelName)
     }
 
     @Test
-    fun getGuid() {
-
-        val value = modelDescription.guid
-        Assert.assertEquals("{06c2700b-b39c-4895-9151-304ddde28443}", value)
-        println("guid=$value")
-
+    fun testModelIdentifer() {
+        val modelIdentifier = modelDescription.modelIdentifier
+        println("modelIdentifier=$modelIdentifier")
+        Assert.assertEquals("ControlledTemperature", modelIdentifier)
     }
 
     @Test
-    fun getLicense() {
+    fun testGuid() {
+        val guid = modelDescription.guid
+        println("guid=$guid")
+        Assert.assertEquals("{06c2700b-b39c-4895-9151-304ddde28443}", guid)
+    }
 
-        val value = modelDescription.license
-        Assert.assertEquals("-", value)
-        println("licence=$value")
-
+    @Test
+    fun testLicense() {
+        val license = modelDescription.license
+        println("licence=$license")
+        Assert.assertEquals("-", license)
     }
 
     @Test
     fun testDefaultExperiment() {
-
         val ex = modelDescription.defaultExperiment!!
-
         Assert.assertEquals(0.0, ex.startTime, 0.0)
         Assert.assertEquals(20.0, ex.stopTime, 0.0)
         Assert.assertEquals(1.0e-4, ex.stepSize, 0.0)
-
     }
 
     @Test
     fun testStartVariables() {
-
         val variable = modelDescription.modelVariables.getByName("HeatCapacity1.T0").asRealVariable()
         Assert.assertEquals(298.0, variable.start!!, 0.0)
-
     }
 
-}
-
-class VariableNamingConventionTest {
 
     @Test
-    fun getVariableNamingConvention()  {
-        val url = javaClass.classLoader.getResourceAsStream("v2/cs/ControlledTemperature/modelDescription.xml")
-        Assert.assertNotNull(url)
-        val xml = IOUtils.toString(url, Charset.forName("UTF-8"))
-        val md = ModelDescriptionParser.parse(xml)
-
-        Assert.assertTrue(md.fmiVersion == "2.0")
-        Assert.assertTrue(md.variableNamingConvention == VariableNamingConvention.STRUCTURED)
+    fun testVariableNamingConvention()  {
+        val variableNamingConvention = modelDescription.variableNamingConvention
+        println("variableNamingConvention=$variableNamingConvention")
+        Assert.assertTrue(modelDescription.variableNamingConvention == VariableNamingConvention.STRUCTURED)
     }
 
 }

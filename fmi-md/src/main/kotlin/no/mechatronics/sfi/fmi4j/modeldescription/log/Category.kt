@@ -30,10 +30,20 @@ import javax.xml.bind.annotation.XmlAccessorType
 import javax.xml.bind.annotation.XmlAttribute
 
 /**
+ *
  * @author Lars Ivar Hatledal
  */
 interface Category {
+
+    /**
+     * Name of the Category element.
+     * Must be uniqe
+     */
     val name: String
+
+    /**
+     * Description of the log category
+     */
     val description: String
 }
 
@@ -43,14 +53,20 @@ interface Category {
 @XmlAccessorType(XmlAccessType.FIELD)
 class CategoryImpl: Category, Serializable {
 
+    /**
+     * @inheritDoc
+     */
     @XmlAttribute
     override lateinit var name: String
 
+    /**
+     * @inheritDoc
+     */
     @XmlAttribute
     override lateinit var description: String
 
     override fun toString(): String {
-        return "Category(name=$name)"
+        return "Category(name=$name, description=$description)"
     }
 
 }

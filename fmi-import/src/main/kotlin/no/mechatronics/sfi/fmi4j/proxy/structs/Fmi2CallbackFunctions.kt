@@ -33,7 +33,10 @@ import org.slf4j.LoggerFactory
 import sun.security.krb5.Confounder.bytes
 import com.sun.jna.Memory
 
-
+/**
+ *
+ * @author Lars Ivar Hatledal
+ */
 open class Fmi2CallbackFunctions : Structure() {
 
     private companion object {

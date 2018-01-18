@@ -15,18 +15,17 @@ dependencies {
     compile group: 'commons-io', name: 'commons-io', version: '2.6'
     compile group: 'commons-cli', name: 'commons-cli', version: '1.4'
 
-    compile group: 'no.mechatronics.sfi.fmi4j', name: 'fmi-md', version: '0.4.1'
+    compile group: 'no.mechatronics.sfi.fmi4j', name: 'fmi-md', version: '0.4.2'
 
     if (debug) {
         dependencies {
-            testCompile group: 'no.mechatronics.sfi.fmu2jar', name: "ControlledTemperature", "version": "1.0-SNAPSHOT"
+            testCompile group: 'no.mechatronics.sfi.fmu2jar', name: "ControlledTemperature", "version": "1.0-SNAPSHOT", changing: true
         }
     }
 
     testCompile group: 'junit', name: 'junit', version: '4.12'
 
 }
-
 
 task fatJar(type: Jar) {
     manifest {

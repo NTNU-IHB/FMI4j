@@ -43,12 +43,16 @@ abstract class AbstractFmu<E: ModelDescription, T: Fmi2LibraryWrapper<*>> intern
         val LOG: Logger = LoggerFactory.getLogger(AbstractFmu::class.java)
     }
 
-    private val map: MutableMap<String, IntArray> = HashMap()
+    private val map: MutableMap<String, IntArray> by lazy {
+        HashMap<String, IntArray>()
+    }
 
-    var isInitialized = false
-        private set
 
-    val modelVariables: ModelVariables = modelDescription.modelVariables
+    /**
+     * @see ModelDescription.modelVariables
+     */
+    val modelVariables: ModelVariables
+        get() = modelDescription.modelVariables
 
     /**
      * @see Fmi2Library.fmi2GetTypesPlatform
@@ -62,8 +66,26 @@ abstract class AbstractFmu<E: ModelDescription, T: Fmi2LibraryWrapper<*>> intern
     val version
         get() = wrapper.version
 
+
+    /**
+     * Has the FMU been initialized yet?
+     * That is, has init() been called?
+     */
+    var isInitialized = false
+        private set
+
+    /**
+     * @see Fmi2LibraryWrapper.isTerminated
+     */
     val isTerminated
         get() = wrapper.isTerminated
+
+
+    /**
+     * @see Fmi2LibraryWrapper.lastStatus
+     */
+    val lastStatus: Fmi2Status
+        get() =  wrapper.lastStatus
 
     /**
      * @see Fmi2Library.fmi2SetDebugLogging
@@ -97,14 +119,14 @@ abstract class AbstractFmu<E: ModelDescription, T: Fmi2LibraryWrapper<*>> intern
             wrapper.setupExperiment(true, 1E-4, start, stopDefined, if (stopDefined) stop else Double.MAX_VALUE)
 
             wrapper.enterInitializationMode()
-            if (getLastStatus() !== Fmi2Status.OK) {
+            if (lastStatus != Fmi2Status.OK) {
                 return false
             }
             wrapper.exitInitializationMode()
 
             isInitialized = true
 
-            return getLastStatus() === Fmi2Status.OK
+            return lastStatus == Fmi2Status.OK
 
         }
 
@@ -112,7 +134,6 @@ abstract class AbstractFmu<E: ModelDescription, T: Fmi2LibraryWrapper<*>> intern
 
     }
 
-    fun getLastStatus(): Fmi2Status = wrapper.lastStatus
 
     /**
      * Terminates the FMU
@@ -147,18 +168,6 @@ abstract class AbstractFmu<E: ModelDescription, T: Fmi2LibraryWrapper<*>> intern
         }
         return false
     }
-
-//    fun checkGetScalar(vr: Int) : Boolean {
-//
-//        val variable = modelVariables.getByValueReference(vr)
-//        if (variable == null) {
-//            return false
-//        } else if (variable.causality == Causality.OUTPUT) {
-//            return true
-//        } else {
-//            return variable is RealVariable && variable.derivative != null
-//        }
-//    }
 
     fun readInteger(vr: Int) = wrapper.getInteger(vr)
     fun readInteger(vr: IntArray) = wrapper.getInteger(vr)

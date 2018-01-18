@@ -25,11 +25,13 @@
 package no.mechatronics.sfi.fmi4j.modeldescription.me
 
 import no.mechatronics.sfi.fmi4j.modeldescription.*
+import no.mechatronics.sfi.fmi4j.modeldescription.misc.SourceFile
+import java.io.Serializable
 
 /**
  * @author Lars Ivar Hatledal
  */
-interface ModelExchangeModelDescription : ExtendedModelDescription {
+interface ModelExchangeModelDescription : ModelDescription {
 
     /**
      * If true, function
@@ -48,28 +50,67 @@ interface ModelExchangeModelDescription : ExtendedModelDescription {
  * @author Lars Ivar Hatledal laht@ntnu.no.
  */
 class ModelExchangeModelDescriptionImpl(
-         private val modelDescription: ModelDescription,
-         private val me: ModelExchangeXmlNode
-) : ModelDescription by modelDescription, ModelExchangeModelDescription {
+        private val modelDescription: SimpleModelDescription,
+        private val me: ModelExchangeData
+) : SimpleModelDescription by modelDescription, ModelExchangeModelDescription, Serializable {
 
+    /**
+     * @inheritDoc
+     */
     override val numberOfEventIndicators: Int
         get() = modelDescription.numberOfEventIndicators
+
+    /**
+     * @inheritDoc
+     */
     override val modelIdentifier: String
         get() = me.modelIdentifier
+
+    /**
+     * @inheritDoc
+     */
     override val needsExecutionTool: Boolean
         get() = me.needsExecutionTool
+
+    /**
+     * @inheritDoc
+     */
     override val canBeInstantiatedOnlyOncePerProcess: Boolean
         get() = me.canBeInstantiatedOnlyOncePerProcess
+
+    /**
+     * @inheritDoc
+     */
     override val canNotUseMemoryManagementFunctions: Boolean
         get() = me.canNotUseMemoryManagementFunctions
+
+    /**
+     * @inheritDoc
+     */
     override val canGetAndSetFMUstate: Boolean
         get() = me.canGetAndSetFMUstate
+
+    /**
+     * @inheritDoc
+     */
     override val canSerializeFMUstate: Boolean
         get() = me.canSerializeFMUstate
+
+    /**
+     * @inheritDoc
+     */
     override val providesDirectionalDerivative: Boolean
         get() = me.providesDirectionalDerivative
+
+    /**
+     * @inheritDoc
+     */
     override val sourceFiles: List<SourceFile>
         get() = me.sourceFiles
+
+    /**
+     * @inheritDoc
+     */
     override val completedIntegratorStepNotNeeded: Boolean
         get() = me.completedIntegratorStepNotNeeded
 

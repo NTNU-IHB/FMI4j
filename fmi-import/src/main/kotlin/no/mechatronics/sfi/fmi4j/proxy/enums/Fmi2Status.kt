@@ -27,7 +27,13 @@ package no.mechatronics.sfi.fmi4j.proxy.enums
 import java.util.*
 import kotlin.streams.toList
 
-enum class Fmi2Status private constructor(val code: Int) {
+/**
+ *
+ * @author Lars Ivar Hatledal
+ */
+enum class Fmi2Status(
+        val code: Int
+) {
 
     NONE(-1),
     OK(0),
@@ -36,7 +42,6 @@ enum class Fmi2Status private constructor(val code: Int) {
     Error(3),
     Fatal(4),
     Pending(5);
-
 
     companion object {
 

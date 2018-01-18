@@ -11,7 +11,6 @@ object VariableAccessorsTemplate {
         }
     }
 
-
     private fun fmiTypeToKotlinType(variable: ScalarVariable) : String {
         when(variable) {
             is IntegerVariable -> return "Int"
@@ -61,25 +60,19 @@ object VariableAccessorsTemplate {
 
     }
 
-
     private fun generateGet(variable: ScalarVariable, sb: StringBuilder) {
-
         sb.append("""
         ${generateJavaDoc(variable)}
         fun get${capitalizeFirstLetterAndReplaceDotsWithSlash(variable)}Reader() = fmu.getReader(${variable.valueReference}).as${variable.typeName}Reader()
             """)
-
     }
 
     private fun generateSet(variable: ScalarVariable, sb :StringBuilder) {
-
         sb.append("""
         ${generateJavaDoc(variable)}
         fun get${capitalizeFirstLetterAndReplaceDotsWithSlash(variable)}Writer() = fmu.getWriter(${variable.valueReference}).as${variable.typeName}Writer()
             """)
-
     }
-
 
     fun generateInputsBody(modelVariables: ModelVariables) : String {
         val sb = StringBuilder()
