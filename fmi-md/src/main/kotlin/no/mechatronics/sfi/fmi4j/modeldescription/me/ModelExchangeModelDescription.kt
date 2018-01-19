@@ -34,6 +34,12 @@ import java.io.Serializable
 interface ModelExchangeModelDescription : ModelDescription {
 
     /**
+     * The (fixed) number of event indicators for an FMU based on FMI for
+     * Model Exchange.
+     */
+    val numberOfEventIndicators: Int
+
+    /**
      * If true, function
      * fmi2CompletedIntegratorStep need not to
      * be called (which gives a slightly more efficient
@@ -50,7 +56,7 @@ interface ModelExchangeModelDescription : ModelDescription {
  * @author Lars Ivar Hatledal laht@ntnu.no.
  */
 class ModelExchangeModelDescriptionImpl(
-        private val modelDescription: SimpleModelDescription,
+        private val modelDescription: ModelDescriptionImpl,
         private val me: ModelExchangeData
 ) : SimpleModelDescription by modelDescription, ModelExchangeModelDescription, Serializable {
 

@@ -146,12 +146,12 @@ interface SimpleModelDescription {
      */
     val modelStructure: ModelStructure
 
-    /**
-     * The (fixed) number of event indicators for an FMU based on FMI for
-     * Model Exchange.
-     * For Co-Simulation, this value is ignored.
-     */
-    val numberOfEventIndicators: Int
+//    /**
+//     * The (fixed) number of event indicators for an FMU based on FMI for
+//     * Model Exchange.
+//     * For Co-Simulation, this value is ignored.
+//     */
+//    val numberOfEventIndicators: Int
 
     /**
      * A global list of log categories that can be set to define the log
@@ -159,6 +159,10 @@ interface SimpleModelDescription {
      */
     val logCategories: List<Category>
 
+    /**
+     * The number of continous states
+     * @see ModelStructure.derivatives
+     */
     val numberOfContinuousStates: Int
         get() = modelStructure.derivatives.size
 
@@ -343,7 +347,7 @@ class ModelDescriptionImpl : SimpleModelDescription, ModelDescriptionProvider, S
      * @inheritDoc
      */
     @XmlAttribute
-    override val numberOfEventIndicators: Int = 0
+    val numberOfEventIndicators: Int = 0
 
     /**
      * @inheritDoc

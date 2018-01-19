@@ -1,5 +1,6 @@
 package no.mechatronics.sfi.fmi4j.modeldescription
 
+import no.mechatronics.sfi.fmi4j.modeldescription.me.ModelExchangeModelDescription
 import org.apache.commons.io.IOUtils
 import org.junit.Assert
 import org.junit.Before
@@ -8,7 +9,7 @@ import java.nio.charset.Charset
 
 class ModelDescriptionTest_ME {
 
-    private lateinit var modelDescription: ModelDescription
+    private lateinit var modelDescription: ModelExchangeModelDescription
 
     @Before
     fun setUp() {
@@ -22,6 +23,13 @@ class ModelDescriptionTest_ME {
         val fmiVersion = modelDescription.fmiVersion
         println("fmiVersion=$fmiVersion")
         Assert.assertEquals("2.0", fmiVersion)
+    }
+
+    @Test
+    fun testNumberOfEventIndicators() {
+        val numberOfEventIndicators = modelDescription.numberOfEventIndicators
+        println("numberOfEventIndicators=$numberOfEventIndicators")
+        Assert.assertEquals(0, numberOfEventIndicators)
     }
 
     @Test

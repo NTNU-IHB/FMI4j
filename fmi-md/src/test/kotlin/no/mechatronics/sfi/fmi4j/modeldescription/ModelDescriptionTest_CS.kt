@@ -24,6 +24,7 @@
 
 package no.mechatronics.sfi.fmi4j.modeldescription
 
+import no.mechatronics.sfi.fmi4j.modeldescription.cs.CoSimulationModelDescription
 import no.mechatronics.sfi.fmi4j.modeldescription.misc.VariableNamingConvention
 import org.apache.commons.io.IOUtils
 import org.junit.Assert
@@ -33,7 +34,7 @@ import java.nio.charset.Charset
 
 class ModelDescriptionTest_CS {
 
-    private lateinit var modelDescription: ModelDescription
+    private lateinit var modelDescription: CoSimulationModelDescription
 
     @Before
     fun setUp() {
