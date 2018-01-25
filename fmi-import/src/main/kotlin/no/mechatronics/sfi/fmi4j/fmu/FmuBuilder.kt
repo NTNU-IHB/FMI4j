@@ -28,6 +28,9 @@ import java.io.File
 import java.net.URL
 import com.sun.jna.Native
 import com.sun.jna.Pointer
+import no.mechatronics.sfi.fmi4j.fmu.cs.CoSimulationFmu
+import no.mechatronics.sfi.fmi4j.fmu.me.ModelExchangeFmu
+import no.mechatronics.sfi.fmi4j.fmu.me.ModelExchangeFmuWithIntegrator
 import no.mechatronics.sfi.fmi4j.misc.LibraryProvider
 import no.mechatronics.sfi.fmi4j.misc.convert
 import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescription

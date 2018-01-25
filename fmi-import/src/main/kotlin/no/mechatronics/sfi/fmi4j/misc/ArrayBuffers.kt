@@ -46,8 +46,6 @@ internal class ArrayBuffers {
         Array<String>(1, {""})
     }
 
-    val bv: ByteArray by lazy {
-        ByteArray(1)
-    }
+    val bv: IntArray  = iv
 
 }

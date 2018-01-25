@@ -27,11 +27,9 @@ package no.mechatronics.sfi.fmi4j.proxy
 
 import com.sun.jna.Library
 import com.sun.jna.Memory
-import com.sun.jna.Native
 import com.sun.jna.Pointer
 import com.sun.jna.ptr.*
 import no.mechatronics.sfi.fmi4j.proxy.enums.Fmi2Status
-import no.mechatronics.sfi.fmi4j.proxy.enums.Fmi2Type
 import no.mechatronics.sfi.fmi4j.proxy.structs.Fmi2CallbackFunctions
 import no.mechatronics.sfi.fmi4j.misc.*
 import org.slf4j.Logger
@@ -176,7 +174,7 @@ interface Fmi2Library : Library {
 
     fun fmi2GetString(c: Pointer, vr: IntArray, nvr: Int, value: Array<String>): Int
 
-    fun fmi2GetBoolean(c: Pointer,  vr: IntArray, nvr: Int, value: ByteArray): Int
+    fun fmi2GetBoolean(c: Pointer,  vr: IntArray, nvr: Int, value: IntArray): Int
 
     /**
      * Set parameters, inputs, start values and re-initialize caching of variables that depend on these
@@ -216,7 +214,7 @@ interface Fmi2Library : Library {
      * @param vr a vector of “nvr” value handles that define the variables that shall be set
      * @param value  a vector with the actual values of these variables
      */
-    fun fmi2SetBoolean(c: Pointer,  vr: IntArray, nvr: Int, value: ByteArray): Int
+    fun fmi2SetBoolean(c: Pointer,  vr: IntArray, nvr: Int, value: IntArray): Int
 
 
     fun fmi2GetDirectionalDerivative(c: Pointer, vUnknown_ref: IntArray, nUnknown: Int, vKnown_ref: IntArray, nKnown: Int, dvKnown: DoubleArray, dvUnknown: DoubleArray): Int
@@ -483,7 +481,7 @@ abstract class Fmi2LibraryWrapper<E: Fmi2Library> (
         with(buffers) {
             vr[0] = valueReference
             getBoolean(vr, bv)
-            return convert(bv[0])
+            return bv[0] != 0
         }
     }
 
@@ -500,11 +498,11 @@ abstract class Fmi2LibraryWrapper<E: Fmi2Library> (
      * @see Fmi2library.fmi2GetBoolean
      */
     fun getBoolean(vr: IntArray, value: BooleanArray) : BooleanArray {
-        val byteArray = value.map { convert(it) }.toByteArray()
+        val intArray = value.map { if (it == false) 0 else 1 }.toIntArray()
         updateStatus((
-                library.fmi2GetBoolean(c, vr, vr.size, byteArray)))
-        for ((i, byte) in byteArray.withIndex()) {
-            value[i] = convert(byte)
+                library.fmi2GetBoolean(c, vr, vr.size, intArray)))
+        for ((i, v) in intArray.withIndex()) {
+            value[i] = v != 0
         }
         return value
     }
@@ -512,7 +510,7 @@ abstract class Fmi2LibraryWrapper<E: Fmi2Library> (
     /**
      * @see Fmi2library.fmi2GetBoolean
      */
-    fun getBoolean(vr: IntArray, value: ByteArray) : ByteArray {
+    fun getBoolean(vr: IntArray, value: IntArray) : IntArray {
         updateStatus((
                 library.fmi2GetBoolean(c, vr, vr.size, value)))
         return value
@@ -578,7 +576,7 @@ abstract class Fmi2LibraryWrapper<E: Fmi2Library> (
     fun setBoolean(valueReference: Int, value: Boolean) : Fmi2Status {
         with(buffers) {
             vr[0] = valueReference
-            bv[0] = convert(value)
+            bv[0] = if (value) 1 else 0
             return setBoolean(vr, bv)
         }
     }
@@ -586,7 +584,7 @@ abstract class Fmi2LibraryWrapper<E: Fmi2Library> (
     /**
      * @see Fmi2library.fmi2SetBoolean
      */
-    fun setBoolean(vr: IntArray, value: ByteArray) : Fmi2Status {
+    fun setBoolean(vr: IntArray, value: IntArray) : Fmi2Status {
         return updateStatus((library.fmi2SetBoolean(c, vr, vr.size, value)))
     }
 
@@ -594,7 +592,7 @@ abstract class Fmi2LibraryWrapper<E: Fmi2Library> (
      * @see Fmi2library.fmi2SetBoolean
      */
     fun setBoolean(vr: IntArray, value: BooleanArray) : Fmi2Status {
-        return setBoolean(vr, value.map { convert(it) }.toByteArray())
+        return setBoolean(vr, value.map { if (it == false) 0 else 1 }.toIntArray())
     }
 
     fun getDirectionalDerivative(vUnknown_ref: IntArray, vKnown_ref: IntArray, dvKnown: DoubleArray, dvUnknown: DoubleArray) : Fmi2Status {

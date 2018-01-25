@@ -128,9 +128,10 @@ abstract class AbstractFmu<E: ModelDescription, T: Fmi2LibraryWrapper<*>> intern
 
             return lastStatus == Fmi2Status.OK
 
+        } else {
+            LOG.warn("Trying to call init, but FMU has already been initialized, and has not been reset!")
+            return false
         }
-
-        return false
 
     }
 

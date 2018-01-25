@@ -61,7 +61,7 @@ open class Fmi2CallbackFunctions : Structure() {
         this.allocateMemory = CallbackAllocateMemoryImpl()
         this.freeMemory = CallbackFreeMemoryImpl()
         this.stepFinished = StepFinishedImpl()
-        setAlignType(Structure.ALIGN_GNUC)
+        //setAlignType(Structure.ALIGN_GNUC)
     }
 
     override fun getFieldOrder(): List<String> {
@@ -96,12 +96,12 @@ open class Fmi2CallbackFunctions : Structure() {
 
         override fun invoke(nobj: Int, size: Int): Pointer {
 
-            val bytes = (if (nobj <= 0) 1 else nobj) * size;
+            val bytes = (if (nobj <= 0) 1 else nobj) * size + 4;
             val memory = Memory(bytes.toLong())
-           // memory.align(4)
+            val aligned = memory.align(4)
             memory.clear()
 
-            val pointer = memory.share(0)
+            val pointer: Pointer = aligned.share(0)
             POINTERS.put(pointer, memory)
 
             return memory
@@ -118,11 +118,12 @@ open class Fmi2CallbackFunctions : Structure() {
 
         override fun invoke(pointer: Pointer) {
 
-            LOG.debug("CallbackFreeMemoryImpl")
+           // LOG.debug("CallbackFreeMemoryImpl")
 
-            POINTERS.remove(pointer)
-            System.gc()
-            //Native.free(Pointer.nativeValue(pointer))
+           POINTERS.remove(pointer)?.apply {
+               System.gc()
+              // Native.free(Pointer.nativeValue(this))
+           }
 
         }
 
