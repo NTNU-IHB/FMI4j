@@ -154,7 +154,7 @@ private fun <E: Fmi2Library> loadLibrary(fmuFile: FmuFile, modelDescription: Mod
 private fun instantiate(fmuFile: FmuFile, modelDescription: ModelDescription, library: Fmi2Library, fmiType: Fmi2Type, visible: Boolean, loggingOn: Boolean) : Pointer {
     return library.fmi2Instantiate(modelDescription.modelIdentifier,
             fmiType.code, modelDescription.guid,
-            fmuFile.resourcesPath, Fmi2CallbackFunctions.ByValue(),
+            fmuFile.resourcesPath, Fmi2CallbackFunctions(),
             convert(visible), convert(loggingOn))
 }
 

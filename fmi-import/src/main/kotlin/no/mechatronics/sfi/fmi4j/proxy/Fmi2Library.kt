@@ -217,6 +217,11 @@ interface Fmi2Library : Library {
     fun fmi2SetBoolean(c: Pointer,  vr: IntArray, nvr: Int, value: IntArray): Int
 
 
+    /**
+     * This function computes the directional derivatives of an FMU. An FMU has different Modes and in
+     * every Mode an FMU might be described by different equations and different unknowns. The
+     * precise definitions are given in the mathematical descriptions of Model Exchange (section 3.1)
+     */
     fun fmi2GetDirectionalDerivative(c: Pointer, vUnknown_ref: IntArray, nUnknown: Int, vKnown_ref: IntArray, nKnown: Int, dvKnown: DoubleArray, dvUnknown: DoubleArray): Int
 
     /**
@@ -292,8 +297,6 @@ interface Fmi2Library : Library {
 
 }
 
-
-
 abstract class Fmi2LibraryWrapper<E: Fmi2Library> (
         protected val c: Pointer,
         private val libraryProvider: LibraryProvider<E>
@@ -303,7 +306,7 @@ abstract class Fmi2LibraryWrapper<E: Fmi2Library> (
         val LOG: Logger = LoggerFactory.getLogger(Fmi2LibraryWrapper::class.java)
     }
 
-    private val functions: Fmi2CallbackFunctions = Fmi2CallbackFunctions.ByValue()
+    private val functions: Fmi2CallbackFunctions = Fmi2CallbackFunctions()
     private val buffers: ArrayBuffers by lazy { ArrayBuffers() }
 
 
@@ -338,7 +341,8 @@ abstract class Fmi2LibraryWrapper<E: Fmi2Library> (
         get() = library.fmi2GetTypesPlatform()
 
     /**
-     * @see Fmi2library.fmi2GetVersion
+     *
+     * @see Fmi2library.fmi2GetVersion()
      */
     val version: String
         get() = library.fmi2GetVersion()
@@ -352,9 +356,8 @@ abstract class Fmi2LibraryWrapper<E: Fmi2Library> (
                 convert(loggingOn), nCategories, categories)))
     }
 
-
     /**
-     * @see Fmi2library.fmi2SetupExperiment
+     * @see Fmi2Library.fmi2SetupExperiment
      */
     fun setupExperiment(toleranceDefined: Boolean, tolerance: Double, startTime: Double, stopTimeDefined: Boolean, stopTime: Double) : Fmi2Status {
         return updateStatus((library.fmi2SetupExperiment(c,

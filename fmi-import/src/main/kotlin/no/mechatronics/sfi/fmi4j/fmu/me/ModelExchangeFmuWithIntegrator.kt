@@ -130,9 +130,9 @@ class ModelExchangeFmuWithIntegrator internal constructor(
 
             var tNext = Math.min(time + dt, stopTime);
 
-            val timeEvent = eventInfo.getNextEventTimeDefined() && (eventInfo.nextEventTime <= time)
+            val timeEvent = eventInfo.getNextEventTimeDefined() && (eventInfo.getNextEventTime() <= time)
             if (timeEvent) {
-                tNext = eventInfo.nextEventTime
+                tNext = eventInfo.getNextEventTime()
             }
 
             var stateEvent = false
@@ -198,15 +198,16 @@ class ModelExchangeFmuWithIntegrator internal constructor(
 
         fmu.getEventIndicators(eventIndicators)
 
-        var stateEvent = false
-        for (i in preEventIndicators.indices) {
-            stateEvent = preEventIndicators[i] * eventIndicators[i] < 0
-            if (stateEvent)  {
-                break
+        fun stateEvent() : Boolean {
+            for (i in preEventIndicators.indices) {
+                if (preEventIndicators[i] * eventIndicators[i] < 0) {
+                    return true
+                }
             }
+            return false
         }
 
-        return SolveResult(stateEvent, integratedTime)
+        return SolveResult(stateEvent(), integratedTime)
 
     }
 

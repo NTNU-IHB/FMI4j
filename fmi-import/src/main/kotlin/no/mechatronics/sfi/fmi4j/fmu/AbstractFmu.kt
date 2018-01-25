@@ -26,7 +26,6 @@ package no.mechatronics.sfi.fmi4j.fmu
 
 import no.mechatronics.sfi.fmi4j.misc.*
 import no.mechatronics.sfi.fmi4j.modeldescription.*
-import no.mechatronics.sfi.fmi4j.modeldescription.enums.Causality
 import no.mechatronics.sfi.fmi4j.proxy.Fmi2Library
 import no.mechatronics.sfi.fmi4j.proxy.Fmi2LibraryWrapper
 import no.mechatronics.sfi.fmi4j.proxy.enums.Fmi2Status
@@ -116,7 +115,7 @@ abstract class AbstractFmu<E: ModelDescription, T: Fmi2LibraryWrapper<*>> intern
             assignStartValues()
 
             val stopDefined = stop > start
-            wrapper.setupExperiment(true, 1E-4, start, stopDefined, if (stopDefined) stop else Double.MAX_VALUE)
+            wrapper.setupExperiment(false, 1E-4, start, stopDefined, if (stopDefined) stop else Double.MAX_VALUE)
 
             wrapper.enterInitializationMode()
             if (lastStatus != Fmi2Status.OK) {
@@ -135,7 +134,6 @@ abstract class AbstractFmu<E: ModelDescription, T: Fmi2LibraryWrapper<*>> intern
 
     }
 
-
     /**
      * Terminates the FMU
      * @see Fmi2Library.fmi2Terminate
@@ -148,6 +146,11 @@ abstract class AbstractFmu<E: ModelDescription, T: Fmi2LibraryWrapper<*>> intern
         return false
     }
 
+    /**
+     * Allows try with resources to be used.
+     * Simply callas terminate()
+     * @see terminate
+     */
     override fun close() {
         terminate()
     }
@@ -158,6 +161,11 @@ abstract class AbstractFmu<E: ModelDescription, T: Fmi2LibraryWrapper<*>> intern
     fun reset() = reset(true)
 
     /**
+     *
+     * @param requireReinit According to the FMI spec, init() must be called after a call to reset().
+     * Setting requireReinit to false allows you to ignore that.
+     * Only use if the tools you are using does not implement the standard correctly.
+     *
      * @see Fmi2Library.fmi2Reset
      */
     fun reset(requireReinit: Boolean) : Boolean {
@@ -170,109 +178,68 @@ abstract class AbstractFmu<E: ModelDescription, T: Fmi2LibraryWrapper<*>> intern
         return false
     }
 
-    fun readInteger(vr: Int) = wrapper.getInteger(vr)
-    fun readInteger(vr: IntArray) = wrapper.getInteger(vr)
-    fun getInteger(vr: IntArray, value: IntArray) = wrapper.getInteger(vr, value)
+    fun readInteger(vr: Int): Int = wrapper.getInteger(vr)
+    fun readInteger(vr: IntArray): IntArray = wrapper.getInteger(vr)
+    fun readInteger(vr: IntArray, value: IntArray): IntArray = wrapper.getInteger(vr, value)
 
-    fun readReal(vr: Int) = wrapper.getReal(vr)
-    fun readReal(vr: IntArray) = wrapper.getReal(vr)
-    fun readReal(vr: IntArray, value: DoubleArray) = wrapper.getReal(vr, value)
+    fun readReal(vr: Int): Double = wrapper.getReal(vr)
+    fun readReal(vr: IntArray): DoubleArray = wrapper.getReal(vr)
+    fun readReal(vr: IntArray, value: DoubleArray): DoubleArray = wrapper.getReal(vr, value)
 
-    fun readString(vr: Int) = wrapper.getString(vr)
-    fun readString(vr: IntArray)  = wrapper.getString(vr)
-    fun readString(vr: IntArray, value: Array<String>) = wrapper.getString(vr, value)
+    fun readString(vr: Int): String = wrapper.getString(vr)
+    fun readString(vr: IntArray): Array<String> = wrapper.getString(vr)
+    fun readString(vr: IntArray, value: Array<String>): Array<String> = wrapper.getString(vr, value)
 
-    fun readBoolean(vr: Int) : Boolean = wrapper.getBoolean(vr)
-    fun readBoolean(vr: IntArray) : BooleanArray  = wrapper.getBoolean(vr)
-    fun readBoolean(vr: IntArray, value: BooleanArray) = wrapper.getBoolean(vr, value)
+    fun readBoolean(vr: Int): Boolean = wrapper.getBoolean(vr)
+    fun readBoolean(vr: IntArray): BooleanArray  = wrapper.getBoolean(vr)
+    fun readBoolean(vr: IntArray, value: BooleanArray): BooleanArray = wrapper.getBoolean(vr, value)
 
-    fun writeInteger(vr: Int, value: Int) {
-        wrapper.setInteger(vr, value)
-    }
-
-    fun writeInteger(vr: IntArray, value: IntArray) {
-        wrapper.setInteger(vr, value)
-    }
-
-    fun writeIntegerArray(name: String, values: IntArray) {
-
-        if (name in map) {
-            writeInteger(map[name]!!, values)
-        } else {
-            val names: List<String> = List(values.size, {i -> "$name[$i]"})
+    fun writeInteger(vr: Int, value: Int): Fmi2Status = wrapper.setInteger(vr, value)
+    fun writeInteger(vr: IntArray, value: IntArray): Fmi2Status = wrapper.setInteger(vr, value)
+    fun writeInteger(name: String, values: IntArray) {
+        if (name !in map) {
+            val names = List(values.size, { i -> "$name[$i]" })
             modelDescription.modelVariables.getValueReferences(names).also {
                 map[name] = it
-                writeInteger(it, values)
             }
-
         }
-
+        writeInteger(map[name]!!, values)
     }
 
-    fun writeReal(vr: Int, value: Double) {
-        wrapper.setReal(vr, value)
-    }
-
-    fun writeReal(vr: IntArray, value: DoubleArray) {
-        wrapper.setReal(vr, value)
-    }
-
-    fun writeRealArray(name: String, values: DoubleArray) {
-
-        if (name in map) {
-            writeReal(map[name]!!, values)
-        } else {
-            val names: List<String> = List(values.size, {i -> "$name[$i]"})
+    fun writeReal(vr: Int, value: Double): Fmi2Status = wrapper.setReal(vr, value)
+    fun writeReal(vr: IntArray, value: DoubleArray): Fmi2Status = wrapper.setReal(vr, value)
+    fun writeReal(name: String, values: DoubleArray) {
+        if (name !in map) {
+            val names = List(values.size, { i -> "$name[$i]" })
             modelDescription.modelVariables.getValueReferences(names).also {
                 map[name] = it
-                writeReal(it, values)
             }
         }
-
+        writeReal(map[name]!!, values)
     }
 
-    fun writeString( valueReference: Int, value: String) {
-        wrapper.setString(valueReference, value)
-    }
-
-    fun writeString(vr: IntArray, value: Array<out String>) {
-        wrapper.setString(vr, value)
-    }
-
-    fun writeStringArray(name: String, values: Array<String>) {
-
-        if (name in map) {
-            writeString(map[name]!!, values)
-        } else {
-            val names: List<String> = List(values.size, {i -> "$name[$i]"})
+    fun writeString( valueReference: Int, value: String): Fmi2Status = wrapper.setString(valueReference, value)
+    fun writeString(vr: IntArray, value: Array<out String>): Fmi2Status = wrapper.setString(vr, value)
+    fun writeString(name: String, values: Array<String>) {
+        if (name !in map) {
+            val names = List(values.size, { i -> "$name[$i]" })
             modelDescription.modelVariables.getValueReferences(names).also {
                 map[name] = it
-                writeString(it, values)
             }
-
         }
-
+        writeString(map[name]!!, values)
     }
 
-    fun writeBoolean(valueReference: Int, value: Boolean) {
-        wrapper.setBoolean(valueReference, value)
-    }
-
-    fun writeBoolean(vr: IntArray, value: BooleanArray) {
-        wrapper.setBoolean(vr, value)
-    }
-
-    fun writeBooleanArray(name: String, values: BooleanArray) {
-
-        if (name in map) {
-            writeBoolean(map[name]!!, values)
-        } else {
-            val names: List<String> = List(values.size, {i -> "$name[$i]"})
-            val vr : IntArray = modelDescription.modelVariables.getValueReferences(names)
-            map[name] = vr
-            writeBoolean(vr, values)
+    fun writeBoolean(valueReference: Int, value: Boolean): Fmi2Status = wrapper.setBoolean(valueReference, value)
+    fun writeBoolean(vr: IntArray, value: BooleanArray): Fmi2Status = wrapper.setBoolean(vr, value)
+    fun writeBoolean(name: String, values: BooleanArray){
+        if (name !in map) {
+            val names = List(values.size, { i -> "$name[$i]" })
+            modelDescription.modelVariables.getValueReferences(names).also {
+                map[name] = it
+            }
         }
-
+        writeBoolean(map[name]!!, values)
     }
 
     fun getDirectionalDerivative(d: DirectionalDerivatives): Fmi2Status {
@@ -285,7 +252,7 @@ abstract class AbstractFmu<E: ModelDescription, T: Fmi2LibraryWrapper<*>> intern
     }
 
 
-    fun getFMUState() : FmuState? {
+    fun getFMUState(): FmuState? {
         if (!modelDescription.canGetAndSetFMUstate) {
             LOG.warn("Method call not allowed, FMU cannot get and set FMU state!")
             return null
@@ -295,31 +262,30 @@ abstract class AbstractFmu<E: ModelDescription, T: Fmi2LibraryWrapper<*>> intern
     }
 
     fun setFMUState(fmuState: FmuState): Fmi2Status {
-        if (!modelDescription.canGetAndSetFMUstate) {
+        return if (!modelDescription.canGetAndSetFMUstate) {
             LOG.warn("Method call not allowed, FMU cannot get and set FMU state!")
-            return Fmi2Status.Discard
+            Fmi2Status.Discard
         } else {
-            return wrapper.setFMUState(fmuState)
+            wrapper.setFMUState(fmuState)
         }
     }
 
-    fun freeFMUState(fmuState: FmuState) : Fmi2Status {
-        if (!modelDescription.canGetAndSetFMUstate) {
+    fun freeFMUState(fmuState: FmuState): Fmi2Status {
+        return if (!modelDescription.canGetAndSetFMUstate) {
             LOG.warn("Method call not allowed, FMU cannot get and set FMU state!")
-            return Fmi2Status.Discard
+            Fmi2Status.Discard
         } else {
-            return wrapper.freeFMUState(fmuState)
+            wrapper.freeFMUState(fmuState)
         }
     }
 
     fun serializedFMUStateSize(fmuState: FmuState): Int = wrapper.serializedFMUStateSize(fmuState)
 
-    fun serializeFMUState(fmuState: FmuState) = wrapper.serializeFMUState(fmuState)
+    fun serializeFMUState(fmuState: FmuState):ByteArray = wrapper.serializeFMUState(fmuState)
 
-    fun deSerializeFMUState(serializedState: ByteArray) = wrapper.deSerializeFMUState(serializedState)
+    fun deSerializeFMUState(serializedState: ByteArray):FmuState = wrapper.deSerializeFMUState(serializedState)
 
     private fun assignStartValues() {
-
         modelVariables.variables.forEach { variable ->
             variable.start?.apply {
                 when(variable) {
@@ -331,7 +297,5 @@ abstract class AbstractFmu<E: ModelDescription, T: Fmi2LibraryWrapper<*>> intern
             }
         }
     }
-
-
 
 }
