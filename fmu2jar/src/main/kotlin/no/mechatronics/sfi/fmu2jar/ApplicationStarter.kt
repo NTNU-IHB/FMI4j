@@ -15,6 +15,8 @@ class ApplicationStarter {
       private const val FMU_FILE = "fmu"
       private const val OUTPUT_FOLDER = "out"
       private const val MAVEN_LOCAL_OPT = "mavenLocal"
+      private const val CS = "cs"
+      private const val ME = "me"
 
 
       @JvmStatic
@@ -23,6 +25,8 @@ class ApplicationStarter {
           val options = Options().apply {
               addOption(HELP, false, "Prints this message")
               addOption(FMU_FILE, true, "Path to the FMU")
+              addOption(CS, false, "If the FMU supports both Co-Simulation and Model-Exchange, use CS")
+              addOption(ME, false, "If the FMU supports both Co-Simulation and Model-Exchange, use ME")
               addOption(MAVEN_LOCAL_OPT, false, "Should the .jar be published to maven local? (optional)")
               addOption(OUTPUT_FOLDER, true, "Specify where to copy the generated .jar. Not needed if '-$MAVEN_LOCAL_OPT true'")
           }
@@ -41,7 +45,7 @@ class ApplicationStarter {
               cmd.apply {
 
                   getOptionValue(FMU_FILE)?.let { path ->
-                      val file = File(path.replace("\\", "/"))
+                      val file = File(path.replace("\\", "/")).absoluteFile
                       if (file.exists() && file.name.endsWith(".fmu", true)) {
                           fmuFile = file
                       } else {
@@ -49,10 +53,14 @@ class ApplicationStarter {
                       }
                   }
 
+                  if (hasOption(CS) && hasOption(ME)) {
+                      error("Can't specify both CS and ME")
+                  }
+
                   mavenLocal = hasOption(MAVEN_LOCAL_OPT)
 
                   getOptionValue(OUTPUT_FOLDER)?.let {
-                      outputFolder = File(it.replace("\\", "/"))
+                      outputFolder = File(it.replace("\\", "/")).absoluteFile
                   }
 
               }
@@ -67,7 +75,6 @@ class ApplicationStarter {
               ex.printStackTrace(System.out)
               error("Application error..")
           }
-
 
       }
 

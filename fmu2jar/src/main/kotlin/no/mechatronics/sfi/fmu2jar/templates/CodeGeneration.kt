@@ -19,7 +19,7 @@ import java.net.URL
 import no.mechatronics.sfi.fmi4j.FmiSimulation
 import no.mechatronics.sfi.fmi4j.fmu.FmuFile
 import no.mechatronics.sfi.fmi4j.fmu.FmuBuilder
-import no.mechatronics.sfi.fmi4j.fmu.CoSimulationFmu
+import no.mechatronics.sfi.fmi4j.fmu.cs.CoSimulationFmu
 
 
 class $modelName private constructor(
@@ -28,12 +28,10 @@ class $modelName private constructor(
 
     companion object {
 
-        private val builder: FmuBuilder
-
-        init {
+        private val builder: FmuBuilder by lazy {
             val url: URL = $modelName::class.java.classLoader.getResource("${fileName}.fmu")!!
             val file = FmuFile(url)
-            this.builder = FmuBuilder(file)
+            FmuBuilder(file)
         }
 
         @JvmStatic

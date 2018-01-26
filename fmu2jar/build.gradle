@@ -1,21 +1,33 @@
 
+apply plugin: 'application'
+apply plugin: 'distribution'
+
+mainClassName = 'no.mechatronics.sfi.fmu2jar.ApplicationStarter'
+
+distributions {
+    main {
+        baseName = 'FMU2Jar'
+        applicationName = "fmu2jar"
+    }
+}
+
 def debug = false
 
-if (debug) {
-    repositories {
+repositories {
+    if (debug) {
         mavenLocal()
-//        maven {
-//            url "https://oss.sonatype.org/content/repositories/snapshots/" //fmi-import
-//        }
+    }
+    maven {
+        url "https://oss.sonatype.org/content/repositories/snapshots/" //fmi-import
     }
 }
 
 dependencies {
 
-    compile group: 'commons-io', name: 'commons-io', version: '2.6'
     compile group: 'commons-cli', name: 'commons-cli', version: '1.4'
+    compile group: 'no.mechatronics.sfi.fmi4j', name: 'fmi-md', version: '0.4.3-SNAPSHOT'
 
-    compile group: 'no.mechatronics.sfi.fmi4j', name: 'fmi-md', version: '0.4.2'
+    testCompile group: 'commons-io', name: 'commons-io', version: '2.6'
 
     if (debug) {
         dependencies {
@@ -23,22 +35,20 @@ dependencies {
         }
     }
 
-    testCompile group: 'junit', name: 'junit', version: '4.12'
-
 }
 
-task fatJar(type: Jar) {
-    manifest {
-        attributes 'Implementation-Title': 'FMU2Jar',
-                'Implementation-Version': "1.0",
-                'Main-Class': 'no.mechatronics.sfi.fmu2jar.ApplicationStarter'
-    }
-    baseName = 'FMU2Jar'
-    from {
-        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
-    }
-    with jar
-}
+//task fatJar(type: Jar) {
+//    manifest {
+//        attributes 'Implementation-Title': 'FMU2Jar',
+//                'Implementation-Version': "1.0",
+//                'Main-Class': 'no.mechatronics.sfi.fmu2jar.ApplicationStarter'
+//    }
+//    baseName = 'FMU2Jar'
+//    from {
+//        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+//    }
+//    with jar
+//}
 
 sourceSets {
     test {

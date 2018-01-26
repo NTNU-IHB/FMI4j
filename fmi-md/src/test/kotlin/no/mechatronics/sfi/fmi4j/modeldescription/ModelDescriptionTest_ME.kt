@@ -55,9 +55,9 @@ class ModelDescriptionTest_ME {
 
     @Test
     fun testLogCategories() {
-        val logCategories = modelDescription.logCategories.map { it.name }
+        val logCategories = modelDescription.logCategories?.map { it.name }
         println(logCategories)
-        Assert.assertTrue(logCategories.containsAll(
+        Assert.assertTrue(logCategories!!.containsAll(
                 listOf("logAll", "logError", "logFmiCall", "logEvent")
         ))
     }

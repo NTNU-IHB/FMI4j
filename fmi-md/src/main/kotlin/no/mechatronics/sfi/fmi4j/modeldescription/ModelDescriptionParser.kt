@@ -52,23 +52,16 @@ object ModelDescriptionParser {
 
     @JvmStatic
     fun exctractModelDescriptionXml(stream: InputStream): String {
-
         ZipInputStream(stream).use {
-
             var nextEntry: ZipEntry? = it.nextEntry
             while (nextEntry != null) {
-
                 if (nextEntry.name == MODEL_DESC_FILE) {
                     return IOUtils.toString(it, Charset.forName("UTF-8"))
                 }
-
                 nextEntry = it.nextEntry
             }
-
         }
-
         throw IllegalArgumentException("Input is not an valid FMU! No $MODEL_DESC_FILE present!")
-
     }
 
 }

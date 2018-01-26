@@ -143,7 +143,7 @@ interface Fmi2Library : Library {
      * logging is disabled. [The FMU enable/disables LogCategories which are useful for
      * debugging according to this argument. Which LogCategories the FMU sets is unspecified.]
      */
-    fun fmi2Instantiate(instanceName: String, type: Int, guid: String, resourceLocation: String, functions: Fmi2CallbackFunctions, visible: Byte, loggingOn: Byte): Pointer
+    fun fmi2Instantiate(instanceName: String, type: Int, guid: String, resourceLocation: String, functions: Fmi2CallbackFunctions, visible: Byte, loggingOn: Byte): Pointer?
 
     /**
      * Informs the FMU that the simulation run is terminated. After calling this function, the final

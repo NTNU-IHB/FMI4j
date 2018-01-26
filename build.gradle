@@ -15,7 +15,7 @@ apply plugin: 'base' // To add "clean" task to the root project.
 
 subprojects {
 
-    apply plugin: 'java'
+    apply plugin: 'java-library'
     apply plugin: 'kotlin'
 
     sourceCompatibility = 1.8
@@ -27,7 +27,7 @@ subprojects {
 
     dependencies {
 
-        compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"
+        api "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"
 
         implementation group: 'org.slf4j', name: 'slf4j-api', version: '1.7.25'
         runtimeOnly group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.7.25'

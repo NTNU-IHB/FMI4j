@@ -83,12 +83,10 @@ class CoSimulationFmuBuilder(
 
     @JvmOverloads
     fun newInstance(visible: Boolean = false, loggingOn: Boolean = false) : CoSimulationFmu {
-
         val lib = if (modelDescription.canBeInstantiatedOnlyOncePerProcess) loadLibrary() else libraryCache
         val c = instantiate(fmuFile, modelDescription, lib.get(), Fmi2Type.CoSimulation, visible, loggingOn)
         val wrapper = CoSimulationLibraryWrapper(c, lib)
         return CoSimulationFmu(fmuFile, modelDescription, wrapper)
-
     }
 
 }
@@ -136,12 +134,10 @@ open class ModelExchangeFmuWithIntegratorBuilder(
 
     @JvmOverloads
     fun newInstance(visible: Boolean = false, loggingOn: Boolean = false) : ModelExchangeFmuWithIntegrator {
-
         val lib = if (modelDescription.canBeInstantiatedOnlyOncePerProcess) loadLibrary() else libraryCache
         val c = instantiate(fmuFile, modelDescription, lib.get(), Fmi2Type.ModelExchange, visible, loggingOn)
         val wrapper = ModelExchangeLibraryWrapper(c, libraryCache)
         return ModelExchangeFmuWithIntegrator(ModelExchangeFmu(fmuFile, modelDescription, wrapper), integrator)
-
     }
 
 }
@@ -152,10 +148,11 @@ private fun <E: Fmi2Library> loadLibrary(fmuFile: FmuFile, modelDescription: Mod
 }
 
 private fun instantiate(fmuFile: FmuFile, modelDescription: ModelDescription, library: Fmi2Library, fmiType: Fmi2Type, visible: Boolean, loggingOn: Boolean) : Pointer {
-    return library.fmi2Instantiate(modelDescription.modelIdentifier,
+    val c = library.fmi2Instantiate(modelDescription.modelIdentifier,
             fmiType.code, modelDescription.guid,
             fmuFile.resourcesPath, Fmi2CallbackFunctions(),
             convert(visible), convert(loggingOn))
+    return c!!
 }
 
 
