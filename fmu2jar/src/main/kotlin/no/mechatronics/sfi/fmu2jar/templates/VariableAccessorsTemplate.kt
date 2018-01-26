@@ -11,27 +11,25 @@ object VariableAccessorsTemplate {
         }
     }
 
-    private fun fmiTypeToKotlinType(variable: ScalarVariable) : String {
-        when(variable) {
-            is IntegerVariable -> return "Int"
-            is RealVariable -> return "Double"
-            is StringVariable -> return "String"
-            is BooleanVariable -> return "Boolean"
-        }
-        throw IllegalArgumentException()
-    }
+//    private fun fmiTypeToKotlinType(variable: ScalarVariable) : String {
+//        when(variable) {
+//            is IntegerVariable -> return "Int"
+//            is RealVariable -> return "Double"
+//            is StringVariable -> return "String"
+//            is BooleanVariable -> return "Boolean"
+//        }
+//        throw IllegalArgumentException()
+//    }
 
-    fun generateJavaDoc(v: ScalarVariable) : String {
+    private fun generateJavaDoc(v: ScalarVariable) : String {
 
         val tab = "\t\t"
-
         return StringBuilder().apply {
 
             append("/**\n")
-
-            append("$tab * ").append(v.name).append('\n')
+            append("$tab * ").append("Name: ").append(v.name).append('\n')
             if (v.description.isNotEmpty()) {
-                append("$tab * ").append(v.description).append('\n')
+                append("$tab * ").append("Description: ").append(v.description).append('\n')
             }
 
             v.start?.also { append("$tab * Start=").append(it).append('\n') }

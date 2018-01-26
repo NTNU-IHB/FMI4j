@@ -160,6 +160,18 @@ interface SimpleModelDescription {
     val numberOfContinuousStates: Int
         get() = modelStructure.derivatives.size
 
+    /**
+     * Does this FMU implement Model Exchange.
+     * That is, does the modelDescription.xml contain the <ModelExchange></ModelExchange> xml node?
+     */
+    val supportsModelExchange: Boolean
+
+    /**
+     * Does this FMU implement Co-Simulation.
+     * That is, does the modelDescription.xml contain the <CoSimulation></CoSimulation> xml node?
+     */
+    val supportsCoSimulation: Boolean
+
 }
 
 
@@ -360,7 +372,7 @@ class ModelDescriptionImpl : SimpleModelDescription, ModelDescriptionProvider, S
      */
     @XmlElementWrapper(name = "LogCategories")
     @XmlElement(name = "Category")
-    var _logCategories: List<CategoryImpl>? = null
+    private var _logCategories: List<CategoryImpl>? = null
 
     override val logCategories: List<Category>
         get() = _logCategories ?: emptyList()
@@ -372,9 +384,20 @@ class ModelDescriptionImpl : SimpleModelDescription, ModelDescriptionProvider, S
     private var me: ModelExchangeDataImpl? = null
 
     override fun asCS(): CoSimulationModelDescription
-            = CoSimulationModelDescriptionImpl(this, cs ?: throw IllegalStateException("modelDescription.xml does not contain a <CoSimulation> tag!"))
+            = CoSimulationModelDescriptionImpl(this, cs ?: throw IllegalStateException("FMU does not support Co-Simulation: modelDescription.xml does not contain a <CoSimulation> tag!"))
 
     override fun asME(): ModelExchangeModelDescription
-            = ModelExchangeModelDescriptionImpl(this, me ?: throw IllegalStateException("modelDescription.xml does not contain a <ModelExchange> tag!"))
+            = ModelExchangeModelDescriptionImpl(this, me ?: throw IllegalStateException("FMU does not support Model Exchange: modelDescription.xml does not contain a <ModelExchange> tag!"))
 
+    /**
+     * @inheritDoc
+     */
+    override val supportsModelExchange: Boolean
+        get() = me != null
+
+    /**
+    * @inheritDoc
+    */
+    override val supportsCoSimulation: Boolean
+        get() = cs != null
 }

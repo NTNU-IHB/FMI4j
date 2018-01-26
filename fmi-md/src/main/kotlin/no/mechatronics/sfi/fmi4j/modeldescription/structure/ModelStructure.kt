@@ -72,7 +72,6 @@ class ModelStructureImpl: ModelStructure, Serializable {
     override val derivatives: List<Unknown>
         get() = _derivatives ?: emptyList()
 
-
     @XmlElementWrapper(name = "InitialUnknowns")
     @XmlElement(name = "Unknown")
     private val _initialUnknowns: List<UnknownImpl>? = null

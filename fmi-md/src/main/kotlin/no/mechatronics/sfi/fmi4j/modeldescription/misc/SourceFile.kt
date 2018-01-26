@@ -25,6 +25,7 @@
 package no.mechatronics.sfi.fmi4j.modeldescription.misc
 
 import java.io.Serializable
+import java.lang.IllegalStateException
 import javax.xml.bind.annotation.XmlAccessType
 import javax.xml.bind.annotation.XmlAccessorType
 import javax.xml.bind.annotation.XmlAttribute
@@ -50,8 +51,11 @@ class SourceFileImpl: SourceFile, Serializable {
     /**
      * @inheritDoc
      */
-    @XmlAttribute
-    override lateinit var name: String
+    @XmlAttribute(name="name")
+    private var _name: String? = null
+
+    override val name: String
+        get() = _name ?: throw IllegalStateException("Name was null!")
 
     override fun toString(): String {
         return "SourceFileImpl(name='$name')"

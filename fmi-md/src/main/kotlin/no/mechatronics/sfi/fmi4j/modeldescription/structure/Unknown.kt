@@ -16,10 +16,10 @@ interface Unknown {
 class UnknownImpl: Unknown, Serializable {
 
     @XmlAttribute(name = "index")
-    var _index: Int? = null
+    private var _index: Int? = null
 
     override val index: Int
-        get() = _index!!
+        get() = _index ?: throw IllegalStateException("Index was null!")
 
 
     override fun toString(): String {

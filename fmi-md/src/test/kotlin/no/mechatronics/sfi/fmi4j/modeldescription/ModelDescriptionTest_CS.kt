@@ -31,6 +31,7 @@ import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import java.nio.charset.Charset
+import java.util.*
 
 class ModelDescriptionTest_CS {
 
@@ -98,6 +99,26 @@ class ModelDescriptionTest_CS {
         val variableNamingConvention = modelDescription.variableNamingConvention
         println("variableNamingConvention=$variableNamingConvention")
         Assert.assertTrue(modelDescription.variableNamingConvention == VariableNamingConvention.STRUCTURED)
+    }
+    
+    @Test
+    fun testSourceFiles() {
+        
+        val sourceFiles = modelDescription.sourceFiles
+        println(sourceFiles)
+        Assert.assertTrue(sourceFiles.map { it.name }.containsAll(
+                Arrays.asList("EulerAngles.c",
+                        "fmi2Functions.c" ,
+                        "MotionProfiles.c",
+                        "xxfuncs.c",
+                        "xxinteg.c",
+                        "xxinverse.c",
+                        "xxmatrix.c",
+                        "xxmodel.c",
+                        "xxsubmod.c",
+                        "xxTable2D.c")
+            ))
+        
     }
 
 }
