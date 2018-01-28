@@ -1,13 +1,18 @@
 
+def snapshot = true
+
 group = 'no.mechatronics.sfi.fmi4j'
-version = '0.1.2-BETA-SNAPSHOT'
+version = '0.1.1-BETA'
+if (snapshot) {
+    version += '-SNAPSHOT'
+}
+
+def fmi_md_version = snapshot ? '0.4.3-SNAPSHOT' : '0.4.2'
 
 apply plugin: 'maven'
 apply plugin: 'signing'
 
-def SNAPSHOT = version.contains("SNAPSHOT")
-
-if (SNAPSHOT) {
+if (snapshot) {
     repositories {
         maven {
             url "https://oss.sonatype.org/content/repositories/snapshots"
@@ -23,11 +28,7 @@ dependencies {
     implementation group: 'net.java.dev.jna', name: 'jna', version: '4.5.1'
     implementation group: 'net.java.dev.jna', name: 'jna-platform', version: '4.5.1'
 
-    if (SNAPSHOT) {
-        api group: 'no.mechatronics.sfi.fmi4j', name: 'fmi-md', version: '0.4.3-SNAPSHOT', changing: true
-    } else {
-        api group: 'no.mechatronics.sfi.fmi4j', name: 'fmi-md', version: '0.4.2'
-    }
+    api group: 'no.mechatronics.sfi.fmi4j', name: 'fmi-md', version: fmi_md_version, changing: snapshot
 
 }
 

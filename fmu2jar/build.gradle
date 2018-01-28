@@ -12,20 +12,25 @@ distributions {
 }
 
 def debug = false
+def snapshot = true
+
+def fmi_md_version = snapshot ? '0.4.3-SNAPSHOT' : '0.4.2'
 
 repositories {
     if (debug) {
         mavenLocal()
     }
-    maven {
-        url "https://oss.sonatype.org/content/repositories/snapshots/" //fmi-import
+    if (snapshot) {
+        maven {
+            url "https://oss.sonatype.org/content/repositories/snapshots/" //fmi-import
+        }
     }
 }
 
 dependencies {
 
     compile group: 'commons-cli', name: 'commons-cli', version: '1.4'
-    compile group: 'no.mechatronics.sfi.fmi4j', name: 'fmi-md', version: '0.4.3-SNAPSHOT'
+    compile group: 'no.mechatronics.sfi.fmi4j', name: 'fmi-md', version: fmi_md_version
 
     testCompile group: 'commons-io', name: 'commons-io', version: '2.6'
 

@@ -6,6 +6,7 @@ import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescription
 import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescriptionParser
 import no.mechatronics.sfi.fmu2jar.templates.CodeGeneration
 import org.apache.commons.io.FileUtils
+import org.apache.commons.io.FilenameUtils
 import org.apache.commons.io.IOUtils
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -117,7 +118,7 @@ class Fmu2Jar(
                     File(parentDir, "build/libs/${modelDescription.modelName}-1.0-SNAPSHOT.jar").let { src ->
                         if (src.exists()) {
                             FileUtils.copyFileToDirectory(src.absoluteFile, outputFolder.absoluteFile)
-                            LOG.info("Wrote FMU to directory: {}", outputFolder.absolutePath)
+                            LOG.info("Generated .jar is located at: ${outputFolder.absolutePath}${File.separator}${src.name}")
                         }
                     }
                 }

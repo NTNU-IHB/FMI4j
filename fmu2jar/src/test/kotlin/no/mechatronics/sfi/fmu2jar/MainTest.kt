@@ -44,6 +44,10 @@ class MainTest {
 
         ApplicationStarter.main(args)
 
+        val generatedFile = out.listFiles()[0]
+        Assert.assertTrue(generatedFile.name.endsWith(".jar"))
+        Assert.assertTrue(generatedFile.length() > 0)
+
     }
 }
 

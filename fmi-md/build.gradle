@@ -1,6 +1,10 @@
+def snapshot = true
 
 group = 'no.mechatronics.sfi.fmi4j'
-version = '0.4.3-SNAPSHOT'
+version = '0.4.3'
+if (snapshot) {
+    version += '-SNAPSHOT'
+}
 
 apply plugin: 'maven'
 apply plugin: 'signing'
