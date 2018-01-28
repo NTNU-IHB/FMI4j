@@ -21,7 +21,6 @@ class UnknownImpl: Unknown, Serializable {
     override val index: Int
         get() = _index ?: throw IllegalStateException("Index was null!")
 
-
     override fun toString(): String {
         return "UnknownImpl(index=$index)"
     }

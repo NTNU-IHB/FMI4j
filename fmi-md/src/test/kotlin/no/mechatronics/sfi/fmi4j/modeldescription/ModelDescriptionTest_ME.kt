@@ -14,7 +14,7 @@ class ModelDescriptionTest_ME {
     @Before
     fun setUp() {
         val xml = IOUtils.toString(javaClass.classLoader
-                .getResource("v2/me/VanDerPol/modelDescription.xml"), Charset.defaultCharset())
+                .getResource("v2/me/VanDerPol/modelDescription.xml"), Charset.forName("UTF-8"))
         modelDescription = ModelDescriptionParser.parse(xml).asME()
     }
 
@@ -55,9 +55,9 @@ class ModelDescriptionTest_ME {
 
     @Test
     fun testLogCategories() {
-        val logCategories = modelDescription.logCategories?.map { it.name }
+        val logCategories = modelDescription.logCategories.map { it.name }
         println(logCategories)
-        Assert.assertTrue(logCategories!!.containsAll(
+        Assert.assertTrue(logCategories.containsAll(
                 listOf("logAll", "logError", "logFmiCall", "logEvent")
         ))
     }

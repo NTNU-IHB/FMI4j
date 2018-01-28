@@ -40,7 +40,7 @@ class ModelDescriptionTest_CS {
     @Before
     fun setUp() {
         val xml = IOUtils.toString(javaClass.classLoader
-                .getResource("v2/cs/ControlledTemperature/modelDescription.xml"), Charset.defaultCharset())
+                .getResource("v2/cs/ControlledTemperature/modelDescription.xml"), Charset.forName("UTF-8"))
         modelDescription = ModelDescriptionParser.parse(xml).asCS()
     }
 
@@ -88,9 +88,26 @@ class ModelDescriptionTest_CS {
     }
 
     @Test
+    fun testNumVariables() {
+        val variables =  modelDescription.modelVariables
+        Assert.assertEquals(120, variables.size)
+    }
+
+    @Test
     fun testStartVariables() {
-        val variable = modelDescription.modelVariables.getByName("HeatCapacity1.T0").asRealVariable()
+        val variables =  modelDescription.modelVariables
+        val variable = variables.getByName("HeatCapacity1.T0").asRealVariable()
+        println(variable)
         Assert.assertEquals(298.0, variable.start!!, 0.0)
+    }
+
+    @Test
+    fun testMinMax() {
+        val variables =  modelDescription.modelVariables
+        val variable = variables.getByName("Temperature_Room").asRealVariable()
+        println(variable)
+        Assert.assertEquals(2.0, variable.min)
+        Assert.assertEquals(4.0, variable.max)
     }
 
 

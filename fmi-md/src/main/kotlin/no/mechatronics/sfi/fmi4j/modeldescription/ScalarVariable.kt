@@ -202,21 +202,24 @@ class ScalarVariableImpl : ScalarVariable {
 
 }
 
-/**
- * @author Lars Ivar Hatedal
- */
-@XmlAccessorType(XmlAccessType.FIELD)
-internal class IntegerAttribute {
+
+interface TypedAttribute<E> {
+    /**
+     * @see ScalarVariable.start
+     */
+    var start: E?
+}
+
+interface BoundedTypedAttribute<E> : TypedAttribute<E> {
 
     /**
-     * Minimum value of variable (variable Value ≥ min). If not defined, the
-     * minimum is the largest negative number that can be represented on the
-     * machine. The min definition is an information from the FMU to the
-     * environment defining the region in which the FMU is designed to operate, see
-     * also comment after this table.
-     */
-    @XmlAttribute
-    val min: Int? = null
+    * Minimum value of variable (variable Value ≥ min). If not defined, the
+    * minimum is the largest negative number that can be represented on the
+    * machine. The min definition is an information from the FMU to the
+    * environment defining the region in which the FMU is designed to operate, see
+    * also comment after this table.
+    */
+    val min: E?
 
     /**
      * Maximum value of variable (variableValue ≤ max). If not defined, the
@@ -225,36 +228,58 @@ internal class IntegerAttribute {
      * environment defining the region in which the FMU is designed to operate, see
      * also comment after this table.
      */
-    @XmlAttribute
-    val max: Int? = null
+    val max: E?
+}
 
+
+/**
+ * @author Lars Ivar Hatledal
+ */
+@XmlAccessorType(XmlAccessType.FIELD)
+internal class IntegerAttribute: BoundedTypedAttribute<Int> {
+
+    /**
+     * @inheritDoc
+     */
     @XmlAttribute
-    var start: Int? = null
+    override val min: Int? = null
+
+    /**
+     * @inheritDoc
+     */
+    @XmlAttribute
+    override val max: Int? = null
+
+    /**
+     * @see ScalarVariable.start
+     */
+    @XmlAttribute
+    override var start: Int? = null
 
 }
 
 @XmlAccessorType(XmlAccessType.FIELD)
-internal class RealAttribute {
+internal class RealAttribute : BoundedTypedAttribute<Double> {
 
     /**
-     * Minimum value of variable (variable Value ≥ min). If not defined, the
-     * minimum is the largest negative number that can be represented on the
-     * machine. The min definition is an information from the FMU to the
-     * environment defining the region in which the FMU is designed to operate, see
-     * also comment after this table.
+     * @inheritDoc
      */
     @XmlAttribute
-    val min: Double? = null
+    override val min: Double? = null
 
     /**
-     * Maximum value of variable (variableValue ≤ max). If not defined, the
-     * maximum is the largest positive number that can be represented on the
-     * machine. The max definition is an information from the FMU to the
-     * environment defining the region in which the FMU is designed to operate, see
-     * also comment after this table.
+     * @inheritDoc
      */
     @XmlAttribute
-    val max: Double? = null
+    override val max: Double? = null
+
+
+    /**
+     * @see ScalarVariable.start
+     */
+    @XmlAttribute
+    override var start: Double? = null
+
 
     /**
      * Nominal value of variable. If not defined and no other information about the
@@ -267,12 +292,6 @@ internal class RealAttribute {
      */
     @XmlAttribute
     val nominal : Double?  = null
-
-    /**
-     * @see ScalarVariable.start
-     */
-    @XmlAttribute
-    var start: Double? = null
 
     /**
      * If present, this variable is the derivative of variable with ScalarVariable index "derivative",
@@ -341,13 +360,13 @@ internal class RealAttribute {
  * @author Lars Ivar Hatedal
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-internal class StringAttribute  {
+internal class StringAttribute: TypedAttribute<String>  {
 
     /**
      * @see ScalarVariable.start
      */
     @XmlAttribute
-     val start: String? = null
+     override var start: String? = null
 
 }
 
@@ -355,13 +374,13 @@ internal class StringAttribute  {
  * @author Lars Ivar Hatedal
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-internal class BooleanAttribute  {
+internal class BooleanAttribute: TypedAttribute<Boolean>  {
 
     /**
      * @see ScalarVariable.start
      */
     @XmlAttribute
-     val start: Boolean? = null
+     override var start: Boolean? = null
 
 }
 
@@ -528,18 +547,15 @@ class ScalarVariableAdapter : XmlAdapter<Any, TypedScalarVariable<*>>() {
 
         val unmarshal by lazy {
             val ctx = JAXBContext.newInstance(ScalarVariableImpl::class.java)
-            val unmarshaller = ctx.createUnmarshaller()
-            unmarshaller.unmarshal(node, ScalarVariableImpl::class.java).value
+            ctx.createUnmarshaller().unmarshal(node, ScalarVariableImpl::class.java).value
         }
 
-        when (child.nodeName) {
-
-            "Integer" -> return IntegerVariable(unmarshal)
-            "Real" -> return RealVariable(unmarshal)
-            "String" -> return StringVariable(unmarshal)
-            "Boolean" -> return BooleanVariable(unmarshal)
+        return when (child.nodeName) {
+            "Integer" -> IntegerVariable(unmarshal)
+            "Real" -> RealVariable(unmarshal)
+            "String" -> StringVariable(unmarshal)
+            "Boolean" -> BooleanVariable(unmarshal)
             else -> throw RuntimeException("Error parsing XML. Unable to understand of what type the ScalarVariable is..")
-
         }
 
     }
