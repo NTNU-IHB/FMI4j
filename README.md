@@ -74,7 +74,7 @@ E.g. an FMU with a variable named "Controller.speed" of type Real, will have the
 ### Usage
 
 ```
-usage: java -jar fmu2jar
+usage: fmu2jar
  -fmu <arg>    Path to the FMU
  -help         Prints this message
  -mavenLocal   Should the .jar be published to maven local? (optional)
@@ -87,14 +87,14 @@ usage: java -jar fmu2jar
 ```kotlin
     ControlledTemperature.newInstance().use{ fmu ->  
         val reader: RealReader = fmu.parameters.getTemperatureSource_TReader()
-        val temperature_Reference: Double = reader.read()        
+        val temperatureSource_T: Double = reader.read()        
     } //fmu has been automatically terminated
 ```
 ##### API example from java
 ```java
     try (ControlledTemperature fmu = ControlledTemperature.newInstance()) { 
         RealReader reader = fmu.getParameters().getTemperatureSource_TReader();
-        double temperature_Reference = reader.read();
+        double temperatureSource_T = reader.read();
     } //fmu has been automatically terminated
 ```
 
@@ -117,7 +117,6 @@ class ControlledTemperature private constructor(
         val calculatedParameters = CalculatedParameters()
     
         inner class Inputs {
-            
         }
     
         inner class Outputs {
@@ -139,7 +138,6 @@ class ControlledTemperature private constructor(
             fun getTemperature_RoomReader() = fmu.getReader(47).asRealReader()
                 
         }
-            
             
             ...
             
