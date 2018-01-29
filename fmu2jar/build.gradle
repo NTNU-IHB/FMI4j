@@ -12,7 +12,7 @@ distributions {
 }
 
 def debug = false
-def snapshot = true
+def snapshot = false
 
 def fmi_md_version = snapshot ? '0.4.4-SNAPSHOT' : '0.4.3'
 
@@ -42,6 +42,17 @@ dependencies {
 
 }
 
+sourceSets {
+    test {
+        java {
+            if (!debug) {
+                exclude '**/ControlledTemperatureTest.java'
+            }
+        }
+    }
+}
+
+
 //task fatJar(type: Jar) {
 //    manifest {
 //        attributes 'Implementation-Title': 'FMU2Jar',
@@ -55,13 +66,4 @@ dependencies {
 //    with jar
 //}
 
-sourceSets {
-    test {
-        java {
-            if (!debug) {
-                exclude '**/ControlledTemperatureTest.java'
-            }
-        }
-    }
-}
 

@@ -3,6 +3,7 @@ package no.mechatronics.sfi.fmi4j.misc
 import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescription
 import no.mechatronics.sfi.fmi4j.modeldescription.IntegerVariable
 import no.mechatronics.sfi.fmi4j.modeldescription.RealVariable
+import no.mechatronics.sfi.fmi4j.modeldescription.ScalarVariable
 import no.mechatronics.sfi.fmi4j.proxy.Fmi2LibraryWrapper
 
 /**
@@ -21,7 +22,7 @@ class VariableAccessor internal constructor(
         if (variable is IntegerVariable) {
             return IntWriterImpl(wrapper, valueReference)
         } else {
-            throw IllegalStateException("Variable '${variable.name}}' is not of type ${variable.typeName}")
+            throw IllegalStateException("Variable '${variable.name}}' is not of type ${ScalarVariable.getTypeName(variable)}")
         }
 
     }
@@ -31,7 +32,7 @@ class VariableAccessor internal constructor(
         if (variable is RealVariable) {
             return RealWriterImpl(wrapper, valueReference)
         } else {
-            throw IllegalStateException("Variable '${variable.name}}' is not of type ${variable.typeName}")
+            throw IllegalStateException("Variable '${variable.name}}' is not of type ${ScalarVariable.getTypeName(variable)}")
         }
 
     }
@@ -41,7 +42,7 @@ class VariableAccessor internal constructor(
         if (variable is IntegerVariable) {
             return StringWriterImpl(wrapper, valueReference)
         } else {
-            throw IllegalStateException("Variable '${variable.name}}' is not of type ${variable.typeName}")
+            throw IllegalStateException("Variable '${variable.name}}' is not of type ${ScalarVariable.getTypeName(variable)}")
         }
 
     }
@@ -51,7 +52,7 @@ class VariableAccessor internal constructor(
         if (variable is IntegerVariable) {
             return BooleanWriterImpl(wrapper, valueReference)
         } else {
-            throw IllegalStateException("Variable '${variable.name}}' is not of type ${variable.typeName}")
+            throw IllegalStateException("Variable '${variable.name}}' is not of type ${ScalarVariable.getTypeName(variable)}")
         }
 
     }
