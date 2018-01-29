@@ -1,12 +1,12 @@
 package no.mechatronics.sfi.fmu2jar.templates
 
-import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescription
 import no.mechatronics.sfi.fmi4j.modeldescription.ModelVariables
+import no.mechatronics.sfi.fmi4j.modeldescription.SimpleModelDescription
 
 object CodeGeneration {
 
 
-    fun generateBody(modelDescription: ModelDescription, fileName: String = modelDescription.modelName): String {
+     fun generateWrapper(modelDescription: SimpleModelDescription): String {
 
         val modelName: String = modelDescription.modelName
         val modelVariables: ModelVariables = modelDescription.modelVariables
@@ -19,7 +19,6 @@ import java.net.URL
 import no.mechatronics.sfi.fmi4j.FmiSimulation
 import no.mechatronics.sfi.fmi4j.fmu.FmuFile
 import no.mechatronics.sfi.fmi4j.fmu.FmuBuilder
-import no.mechatronics.sfi.fmi4j.fmu.CoSimulationFmu
 
 
 class $modelName private constructor(
@@ -28,19 +27,12 @@ class $modelName private constructor(
 
     companion object {
 
-        private val builder: FmuBuilder
-
-        init {
-            val url: URL = $modelName::class.java.classLoader.getResource("${fileName}.fmu")!!
+        private val builder: FmuBuilder by lazy {
+            val url: URL = $modelName::class.java.classLoader.getResource("${modelName}.fmu")!!
             val file = FmuFile(url)
-            this.builder = FmuBuilder(file)
+            FmuBuilder(file)
         }
-
-        @JvmStatic
-        fun newInstance() : $modelName {
-            return $modelName(builder.asCoSimulationFmu().newInstance())
-        }
-
+        ${generateNewInstanceMethod(modelDescription)}
     }
 
     val locals = Locals()
@@ -74,5 +66,36 @@ class $modelName private constructor(
             """
 
     }
+
+    private fun generateNewInstanceMethod(modelDescription: SimpleModelDescription):String {
+
+        val modelName = modelDescription.modelName
+        return StringBuilder().apply {
+
+            if (modelDescription.supportsCoSimulation) {
+                append(
+                        """
+        @JvmStatic
+        fun newInstance(): $modelName {
+            return $modelName(builder.asCoSimulationFmu().newInstance())
+        }
+            """
+                )
+            }
+            if (modelDescription.supportsModelExchange) {
+                append(
+                        """
+        @JvmStatic
+        fun newInstance(integrator: FirstOrderIntegrator): $modelName {
+            return $modelName(builder.asMeSimulationFmuWithIntegrator(integrator).newInstance())
+        }
+            """
+                )
+            }
+
+        }.toString()
+
+    }
+
 
 }

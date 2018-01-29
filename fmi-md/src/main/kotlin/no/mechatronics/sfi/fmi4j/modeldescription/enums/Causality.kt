@@ -24,6 +24,7 @@
 
 package no.mechatronics.sfi.fmi4j.modeldescription.enums
 
+import java.io.Serializable
 import javax.xml.bind.annotation.XmlEnum
 import javax.xml.bind.annotation.XmlEnumValue
 import javax.xml.bind.annotation.XmlType
@@ -31,11 +32,12 @@ import javax.xml.bind.annotation.adapters.XmlAdapter
 
 /**
  * Enumeration that defines the causality of the variable.
+ *
  * @author Lars Ivar Hatledal laht@ntnu.no.
  */
 @XmlType
 @XmlEnum(String::class)
-enum class Causality {
+enum class Causality: Serializable {
 
     /**
      * Independent parameter (a data value that is constant during the

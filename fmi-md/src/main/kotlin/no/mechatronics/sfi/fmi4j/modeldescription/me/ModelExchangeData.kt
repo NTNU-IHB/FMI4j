@@ -24,40 +24,64 @@
 
 package no.mechatronics.sfi.fmi4j.modeldescription.me
 
-import no.mechatronics.sfi.fmi4j.modeldescription.SourceFile
-import no.mechatronics.sfi.fmi4j.modeldescription.SourceFileImpl
+import no.mechatronics.sfi.fmi4j.modeldescription.misc.SourceFile
+import no.mechatronics.sfi.fmi4j.modeldescription.misc.SourceFileImpl
+import java.io.Serializable
 import javax.xml.bind.annotation.*
 
+/**
+ * @author Lars Ivar Hatledal
+ */
+interface ModelExchangeData {
+
+    val modelIdentifier: String
+    val needsExecutionTool: Boolean
+    val completedIntegratorStepNotNeeded: Boolean
+    val canBeInstantiatedOnlyOncePerProcess: Boolean
+    val canNotUseMemoryManagementFunctions: Boolean
+    val canGetAndSetFMUstate: Boolean
+    val canSerializeFMUstate: Boolean
+    val providesDirectionalDerivative: Boolean
+    val sourceFiles: List<SourceFile>
+
+}
+
+/**
+ * @author Lars Ivar Hatledal
+ */
 @XmlAccessorType(XmlAccessType.FIELD)
-internal class ModelExchangeInfo {
+internal class ModelExchangeDataImpl : ModelExchangeData, Serializable {
 
     @XmlAttribute
-    val modelIdentifier: String? = null
+    override lateinit var modelIdentifier: String
 
     @XmlAttribute
-    val needsExecutionTool: Boolean = false
+    override val needsExecutionTool: Boolean = false
 
     @XmlAttribute
-    val completedIntegratorStepNotNeeded: Boolean = false
+    override val completedIntegratorStepNotNeeded: Boolean = false
 
     @XmlAttribute
-    val canBeInstantiatedOnlyOncePerProcess: Boolean = false
+    override val canBeInstantiatedOnlyOncePerProcess: Boolean = false
 
     @XmlAttribute
-    val canNotUseMemoryManagementFunctions: Boolean = false
+    override val canNotUseMemoryManagementFunctions: Boolean = false
 
     @XmlAttribute
-    val canGetAndSetFMUstate: Boolean = false
+    override val canGetAndSetFMUstate: Boolean = false
 
     @XmlAttribute
-    val canSerializeFMUstate: Boolean = false
+    override val canSerializeFMUstate: Boolean = false
 
     @XmlAttribute
-    val providesDirectionalDerivative: Boolean = false
+    override val providesDirectionalDerivative: Boolean = false
 
     @XmlElementWrapper(name = "SourceFiles")
     @XmlElement(name = "File")
-    val sourceFiles: List<SourceFileImpl>? = null
+    private var _sourceFiles: List<SourceFileImpl>? = null
+
+    override val sourceFiles: List<SourceFile>
+        get() = _sourceFiles ?: emptyList()
 
     override fun toString(): String {
         return "ModelExchangeInfo{modelIdentifier=$modelIdentifier, needsExecutionTool=$needsExecutionTool, completedIntegratorStepNotNeeded=$completedIntegratorStepNotNeeded, canBeInstantiatedOnlyOncePerProcess=$canBeInstantiatedOnlyOncePerProcess, canNotUseMemoryManagementFunctions=$canNotUseMemoryManagementFunctions, canGetAndSetFMUstate=$canGetAndSetFMUstate, canSerializeFMUstate=$canSerializeFMUstate, providesDirectionalDerivative=$providesDirectionalDerivative}"

@@ -24,6 +24,10 @@
 
 package no.mechatronics.sfi.fmi4j.misc
 
+/**
+ *
+ * @author Lars Ivar Hatledal
+ */
 open class DirectionalDerivatives(
         size: Int
 ) {

@@ -26,10 +26,14 @@ package no.mechatronics.sfi.fmi4j.modeldescription
 
 import no.mechatronics.sfi.fmi4j.modeldescription.enums.*
 import org.w3c.dom.Node
+import java.io.Serializable
 import javax.xml.bind.JAXBContext
 import javax.xml.bind.annotation.*
 import javax.xml.bind.annotation.adapters.XmlAdapter
 
+/**
+ * @author Lars Ivar Hatledal
+ */
 interface ScalarVariable {
 
     /**
@@ -38,6 +42,7 @@ interface ScalarVariable {
      * ModelVariables list; the first list element has index=1).
      */
     val name: String
+
 
     /**
      * If present, name of type defined with TypeDefinitions / SimpleType. The value
@@ -54,8 +59,20 @@ interface ScalarVariable {
      * An optional description string describing the meaning of the variable
      */
     val description: String
+
+    /**
+     * @see Causality
+     */
     val causality: Causality?
+
+    /**
+     * @see Variability
+     */
     val variability: Variability?
+
+    /**
+     * @see Initial
+     */
     val initial: Initial?
 
     /**
@@ -68,8 +85,20 @@ interface ScalarVariable {
      */
     val valueReference: Int
 
-    val typeName: String
-
+    /**
+     * Initial or guess value of variable. This value is also stored in the C functions
+     * [Therefore, calling fmi2SetXXX to set start values is only necessary, if a different
+     * value as stored in the xml file is desired.] The interpretation of start is defined by
+     * ScalarVariable / initial. A different start value can be provided with an
+     * fmi2SetXXX function before fmi2ExitInitializationMode is called (but not
+     * for variables with variability = ″constant″).
+     * [The standard approach is to set the start value before
+     * fmi2EnterInitializationMode. However, if the initialization shall be modified
+     * in the calling environment (e.g. changing from initialization of states to steadystate
+     * initialization), it is also possible to use the start value as iteration variable of
+     * an algebraic loop: Via an additional condition in the environment, such as 𝑥̇ = 0,
+     * the actual start value is determined.]
+     */
     val start: Any?
 
     fun asIntegerVariable(): IntegerVariable
@@ -77,11 +106,27 @@ interface ScalarVariable {
     fun asStringVariable(): StringVariable
     fun asBooleanVariable(): BooleanVariable
 
+    companion object {
+
+        fun getTypeName(`var`: ScalarVariable): String {
+            return when(`var`) {
+                is IntegerVariable -> "Integer"
+                is RealVariable -> "Real"
+                is StringVariable -> "String"
+                is BooleanVariable -> "Boolean"
+                else -> throw IllegalArgumentException("Unknown type: ${`var`::class.java.simpleName}")
+            }
+        }
+    }
+
 }
 
+/**
+ * @author Lars Ivar Hatledal
+ */
 @XmlRootElement(name="ScalarVariable")
 @XmlAccessorType(XmlAccessType.FIELD)
-class ScalarVariableImpl : ScalarVariable {
+class ScalarVariableImpl internal constructor() : ScalarVariable {
 
     /**
      * @inheritDoc
@@ -122,17 +167,19 @@ class ScalarVariableImpl : ScalarVariable {
     @XmlAttribute(name="valueReference")
     private val _valueReference: Int? = null
 
-    override val typeName: String = ""
-
-    override val start: Any? = null
-
     /**
      * @inheritDoc
      */
     override val valueReference: Int
         get(){
-            return _valueReference!!
+            return _valueReference ?: throw IllegalStateException("ValueReference was null!")
         }
+
+
+    /**
+     * @inheritDoc
+     */
+    override val start: Any? = null
 
     @XmlElement(name="Integer")
     internal val integerAttribute: IntegerAttribute? = null
@@ -160,18 +207,24 @@ class ScalarVariableImpl : ScalarVariable {
 
 }
 
-@XmlAccessorType(XmlAccessType.FIELD)
-internal class IntegerAttribute {
+
+interface TypedAttribute<E> {
+    /**
+     * @see ScalarVariable.start
+     */
+    var start: E?
+}
+
+interface BoundedTypedAttribute<E> : TypedAttribute<E> {
 
     /**
-     * Minimum value of variable (variable Value ≥ min). If not defined, the
-     * minimum is the largest negative number that can be represented on the
-     * machine. The min definition is an information from the FMU to the
-     * environment defining the region in which the FMU is designed to operate, see
-     * also comment after this table.
-     */
-    @XmlAttribute
-    val min: Int? = null
+    * Minimum value of variable (variable Value ≥ min). If not defined, the
+    * minimum is the largest negative number that can be represented on the
+    * machine. The min definition is an information from the FMU to the
+    * environment defining the region in which the FMU is designed to operate, see
+    * also comment after this table.
+    */
+    val min: E?
 
     /**
      * Maximum value of variable (variableValue ≤ max). If not defined, the
@@ -180,39 +233,58 @@ internal class IntegerAttribute {
      * environment defining the region in which the FMU is designed to operate, see
      * also comment after this table.
      */
-    @XmlAttribute
-    val max: Int? = null
+    val max: E?
+}
+
+
+/**
+ * @author Lars Ivar Hatledal
+ */
+@XmlAccessorType(XmlAccessType.FIELD)
+internal class IntegerAttribute internal constructor(): BoundedTypedAttribute<Int> {
 
     /**
      * @inheritDoc
      */
     @XmlAttribute
-    var start: Int? = null
+    override val min: Int? = null
+
+    /**
+     * @inheritDoc
+     */
+    @XmlAttribute
+    override val max: Int? = null
+
+    /**
+     * @see ScalarVariable.start
+     */
+    @XmlAttribute
+    override var start: Int? = null
 
 }
 
 @XmlAccessorType(XmlAccessType.FIELD)
-internal class RealAttribute {
+internal class RealAttribute internal constructor() : BoundedTypedAttribute<Double> {
 
     /**
-     * Minimum value of variable (variable Value ≥ min). If not defined, the
-     * minimum is the largest negative number that can be represented on the
-     * machine. The min definition is an information from the FMU to the
-     * environment defining the region in which the FMU is designed to operate, see
-     * also comment after this table.
+     * @inheritDoc
      */
     @XmlAttribute
-    val min: Double? = null
+    override val min: Double? = null
 
     /**
-     * Maximum value of variable (variableValue ≤ max). If not defined, the
-     * maximum is the largest positive number that can be represented on the
-     * machine. The max definition is an information from the FMU to the
-     * environment defining the region in which the FMU is designed to operate, see
-     * also comment after this table.
+     * @inheritDoc
      */
     @XmlAttribute
-    val max: Double? = null
+    override val max: Double? = null
+
+
+    /**
+     * @see ScalarVariable.start
+     */
+    @XmlAttribute
+    override var start: Double? = null
+
 
     /**
      * Nominal value of variable. If not defined and no other information about the
@@ -225,12 +297,6 @@ internal class RealAttribute {
      */
     @XmlAttribute
     val nominal : Double?  = null
-
-    /**
-     * @inheritDoc
-     */
-    @XmlAttribute
-    var start: Double? = null
 
     /**
      * If present, this variable is the derivative of variable with ScalarVariable index "derivative",
@@ -254,10 +320,9 @@ internal class RealAttribute {
      * Only for Model exchange
      * <br>
      * If true, state can be reinitialized at an event by the FMU. If false, state will never be reinitialized at an event by the FMU
-     *
      */
     @XmlAttribute
-    val reint: Boolean = false
+    val reinit: Boolean = false
 
     /**
      * Physical quantity of the variable, for example “Angle”, or “Energy”. The
@@ -295,67 +360,66 @@ internal class RealAttribute {
 
 }
 
+/**
+ * @author Lars Ivar Hatledal
+ */
 @XmlAccessorType(XmlAccessType.FIELD)
-internal class StringAttribute  {
+internal class StringAttribute internal constructor(): TypedAttribute<String>  {
+
+    /**
+     * @see ScalarVariable.start
+     */
+    @XmlAttribute
+     override var start: String? = null
+
+}
+
+/**
+ * @author Lars Ivar Hateldal
+ */
+@XmlAccessorType(XmlAccessType.FIELD)
+internal class BooleanAttribute internal constructor(): TypedAttribute<Boolean>  {
+
+    /**
+     * @see ScalarVariable.start
+     */
+    @XmlAttribute
+     override var start: Boolean? = null
+
+}
+
+/**
+ * @author Lars Ivar Hatledal
+ */
+sealed class TypedScalarVariable<E> : ScalarVariable, Serializable {
 
     /**
      * @inheritDoc
      */
-    @XmlAttribute
-     val start: String? = null
+    abstract override var start: E?
 
 }
 
-@XmlAccessorType(XmlAccessType.FIELD)
-internal class BooleanAttribute  {
+/**
+ * @author Lars Ivar Hateldal
+ */
+class IntegerVariable internal constructor(v : ScalarVariableImpl) : ScalarVariable by v, TypedScalarVariable<Int>() {
 
-    /**
-     * @inheritDoc
-     */
-    @XmlAttribute
-     val start: Boolean? = null
-
-}
-
-
-sealed class TypedScalarVariable<E> : ScalarVariable {
-
-    /**
-     * Initial or guess value of variable. This value is also stored in the C functions
-     * [Therefore, calling fmi2SetXXX to set start values is only necessary, if a different
-     * value as stored in the xml file is desired.] The interpretation of start is defined by
-     * ScalarVariable / initial. A different start value can be provided with an
-     * fmi2SetXXX function before fmi2ExitInitializationMode is called (but not
-     * for variables with variability = ″constant″).
-     * [The standard approach is to set the start value before
-     * fmi2EnterInitializationMode. However, if the initialization shall be modified
-     * in the calling environment (e.g. changing from initialization of states to steadystate
-     * initialization), it is also possible to use the start value as iteration variable of
-     * an algebraic loop: Via an additional condition in the environment, such as 𝑥̇ = 0,
-     * the actual start value is determined.]
-     */
-    override abstract var start: E?
-
-}
-
-
-class IntegerVariable(v : ScalarVariableImpl) : ScalarVariable by v, TypedScalarVariable<Int>() {
-
+    private val attribute = v.integerAttribute ?: throw AssertionError()
+    
     /**
      * @see IntegerAttribute.min
      */
-    val min: Int? = v.integerAttribute!!.min
+    val min: Int? = attribute.min
     /**
      * @see IntegerAttribute.max
      */
-    val max: Int? = v.integerAttribute!!.max
+    val max: Int? = attribute.max
 
     /**
-     * @see IntegerAttribute.start
+     * @see ScalarVariable.start
      */
-    override var start = v.integerAttribute!!.start
-
-    override val typeName = "Integer"
+    override var start = attribute.start
 
     override fun toString(): String {
         return "IntegerVariable(min=$min, max=$max, start=$start)"
@@ -363,59 +427,63 @@ class IntegerVariable(v : ScalarVariableImpl) : ScalarVariable by v, TypedScalar
 
 }
 
-class RealVariable(v : ScalarVariableImpl) : ScalarVariable by v, TypedScalarVariable<Double>() {
+/**
+ * @author Lars Ivar Hatledal
+ */
+class RealVariable internal constructor(v : ScalarVariableImpl) : ScalarVariable by v, TypedScalarVariable<Double>() {
+
+    private val attribute: RealAttribute = v.realAttribute ?: throw AssertionError()
+
 
     /**
      * @see RealAttribute.min
      */
-    val min = v.realAttribute!!.min
+    val min = attribute.min
 
     /**
      * @see RealAttribute.max
      */
-    val max = v.realAttribute!!.max
+    val max = attribute.max
 
     /**
      * @see RealAttribute.nominal
      */
-    val nominal = v.realAttribute!!.nominal
+    val nominal = attribute.nominal
 
     /**
      * @see RealAttribute.unbounded
      */
-    val unbounded = v.realAttribute!!.unbounded
+    val unbounded = attribute.unbounded
 
     /**
      * @see RealAttribute.quantity
      */
-    val quantity = v.realAttribute!!.quantity
+    val quantity = attribute.quantity
 
     /**
      * @see RealAttribute.unit
      */
-    val unit = v.realAttribute!!.unit
+    val unit = attribute.unit
 
     /**
      * @see RealAttribute.displayUnit
      */
-    val displayUnit = v.realAttribute!!.displayUnit
+    val displayUnit = attribute.displayUnit
 
     /**
      * @see RealAttribute.relativeQuantity
      */
-    val relativeQuantity = v.realAttribute!!.relativeQuantity
+    val relativeQuantity = attribute.relativeQuantity
 
     /**
      * @see RealAttribute.derivative
      */
-    val derivative = v.realAttribute!!.derivative
+    val derivative = attribute.derivative
 
     /**
-     * @see RealAttribute.start
+     * @see ScalarVariable.start
      */
-    override var start = v.realAttribute!!.start
-
-    override val typeName = "Real"
+    override var start = attribute.start
 
     override fun toString(): String {
         return "RealVariable(min=$min, max=$max, nominal=$nominal, unbounded=$unbounded, quantity=$quantity, unit=$unit, displayUnit=$displayUnit, relativeQuantity=$relativeQuantity, derivative=$derivative, start=$start)"
@@ -423,14 +491,17 @@ class RealVariable(v : ScalarVariableImpl) : ScalarVariable by v, TypedScalarVar
 
 }
 
-class StringVariable(v : ScalarVariableImpl) : ScalarVariable by v, TypedScalarVariable<String>() {
+/**
+ * @author Lars Ivar Hatledal
+ */
+class StringVariable internal constructor(v : ScalarVariableImpl) : ScalarVariable by v, TypedScalarVariable<String>() {
 
+    private val attribute = v.stringAttribute ?: throw AssertionError()
+    
     /**
-     * @see StringAttribute.start
+     * @see ScalarVariable.start
      */
-    override var start = v.stringAttribute!!.start
-
-    override val typeName = "String"
+    override var start = attribute.start
 
     override fun toString(): String {
         return "StringVariable(start=$start)"
@@ -438,14 +509,17 @@ class StringVariable(v : ScalarVariableImpl) : ScalarVariable by v, TypedScalarV
 
 }
 
-class BooleanVariable(v : ScalarVariableImpl) : ScalarVariable by v, TypedScalarVariable<Boolean>() {
+/**
+ * @author Lars Ivar Hatledal
+ */
+class BooleanVariable internal constructor(v : ScalarVariableImpl) : ScalarVariable by v, TypedScalarVariable<Boolean>() {
 
+    private val attribute = v.booleanAttribute ?: throw AssertionError()
+    
     /**
-     * @see BooleanAttribute.start
+     * @see ScalarVariable.start
      */
-    override var start = v.booleanAttribute!!.start
-
-   override val typeName = "Boolean"
+    override var start = attribute.start
 
     override fun toString(): String {
         return "BooleanVariable(start=$start)"
@@ -453,7 +527,9 @@ class BooleanVariable(v : ScalarVariableImpl) : ScalarVariable by v, TypedScalar
 
 }
 
-
+/**
+ * @author Lars Ivar Hatledal
+ */
 class ScalarVariableAdapter : XmlAdapter<Any, TypedScalarVariable<*>>() {
 
     @Throws(Exception::class)
@@ -464,18 +540,15 @@ class ScalarVariableAdapter : XmlAdapter<Any, TypedScalarVariable<*>>() {
 
         val unmarshal by lazy {
             val ctx = JAXBContext.newInstance(ScalarVariableImpl::class.java)
-            val unmarshaller = ctx.createUnmarshaller()
-            unmarshaller.unmarshal(node, ScalarVariableImpl::class.java).value
+            ctx.createUnmarshaller().unmarshal(node, ScalarVariableImpl::class.java).value
         }
 
-        when (child.nodeName) {
-
-            "Integer" -> return IntegerVariable(unmarshal)
-            "Real" -> return RealVariable(unmarshal)
-            "String" -> return StringVariable(unmarshal)
-            "Boolean" -> return BooleanVariable(unmarshal)
+        return when (child.nodeName) {
+            "Integer" -> IntegerVariable(unmarshal)
+            "Real" -> RealVariable(unmarshal)
+            "String" -> StringVariable(unmarshal)
+            "Boolean" -> BooleanVariable(unmarshal)
             else -> throw RuntimeException("Error parsing XML. Unable to understand of what type the ScalarVariable is..")
-
         }
 
     }

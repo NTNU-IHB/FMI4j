@@ -34,7 +34,10 @@ import no.mechatronics.sfi.fmi4j.misc.*
 import no.mechatronics.sfi.fmi4j.proxy.Fmi2Library
 import no.mechatronics.sfi.fmi4j.proxy.Fmi2LibraryWrapper
 
-
+/**
+ *
+ * @author Lars Ivar Hatledal
+ */
 interface Fmi2CoSimulationLibrary : Fmi2Library {
 
     fun fmi2SetRealInputDerivatives(c: Pointer, vr: IntArray, nvr: Int, order: IntArray, value: DoubleArray): Int

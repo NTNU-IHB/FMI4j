@@ -24,7 +24,6 @@
 
 package no.mechatronics.sfi.fmi4j.misc
 
-
 internal fun convert(fmi2Boolean: Byte): Boolean {
     return fmi2Boolean.toInt() != 0
 }

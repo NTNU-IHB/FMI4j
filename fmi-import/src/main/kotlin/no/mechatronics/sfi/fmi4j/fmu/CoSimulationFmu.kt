@@ -25,7 +25,7 @@
 package no.mechatronics.sfi.fmi4j.fmu
 
 import no.mechatronics.sfi.fmi4j.FmiSimulation
-import no.mechatronics.sfi.fmi4j.modeldescription.cs.ICoSimulationModelDescription
+import no.mechatronics.sfi.fmi4j.modeldescription.cs.CoSimulationModelDescription
 import no.mechatronics.sfi.fmi4j.proxy.cs.CoSimulationLibraryWrapper
 import no.mechatronics.sfi.fmi4j.proxy.enums.Fmi2Status
 import no.mechatronics.sfi.fmi4j.proxy.enums.Fmi2StatusKind
@@ -34,14 +34,17 @@ import org.slf4j.LoggerFactory
 
 class CoSimulationFmu internal constructor(
         fmuFile: FmuFile,
-        modelDescription: ICoSimulationModelDescription,
+        modelDescription: CoSimulationModelDescription,
         wrapper: CoSimulationLibraryWrapper
-) : AbstractFmu<ICoSimulationModelDescription, CoSimulationLibraryWrapper>(fmuFile, modelDescription, wrapper), FmiSimulation {
+) : AbstractFmu<CoSimulationModelDescription, CoSimulationLibraryWrapper>(fmuFile, modelDescription, wrapper), FmiSimulation {
 
     private companion object {
         val LOG: Logger = LoggerFactory.getLogger(CoSimulationFmu::class.java)
     }
 
+    /**
+     * Current simulation time
+     */
     override var currentTime: Double = 0.0
         private set
 
@@ -52,6 +55,9 @@ class CoSimulationFmu internal constructor(
 
     }
 
+    /**
+     * @see CoSimulationLibraryWrapper.doStep
+     */
     override fun doStep(dt: Double) : Boolean {
 
         if (!isInitialized) {
@@ -66,18 +72,46 @@ class CoSimulationFmu internal constructor(
         return status == Fmi2Status.OK
     }
 
+    /**
+     * @see CoSimulationLibraryWrapper.cancelStep
+     */
     fun cancelStep() = wrapper.cancelStep()
 
+    /**
+     * @see CoSimulationLibraryWrapper.setRealInputDerivatives
+     */
     fun setRealInputDerivatives(vr: IntArray, order: IntArray, value: DoubleArray)
             = wrapper.setRealInputDerivatives(vr, order, value)
 
+    /**
+     * @see CoSimulationLibraryWrapper.getRealOutputDerivatives
+     */
     fun getRealOutputDerivatives(vr: IntArray, order: IntArray, value: DoubleArray)
             = wrapper.getRealOutputDerivatives(vr, order, value)
 
+    /**
+     * @see CoSimulationLibraryWrapper.getStatus
+     */
     fun getStatus(s: Fmi2StatusKind) = wrapper.getStatus(s)
+
+    /**
+     * @see CoSimulationLibraryWrapper.getRealStatus
+     */
     fun getRealStatus(s: Fmi2StatusKind) = wrapper.getRealStatus(s)
+
+    /**
+     * @see CoSimulationLibraryWrapper.getIntegerStatus
+     */
     fun getIntegerStatus(s: Fmi2StatusKind) = wrapper.getIntegerStatus(s)
+
+    /**
+     * @see CoSimulationLibraryWrapper.getBooleanStatus
+     */
     fun getBooleanStatus(s: Fmi2StatusKind) = wrapper.getBooleanStatus(s)
+
+    /**
+     * @see CoSimulationLibraryWrapper.getStringStatus
+     */
     fun getStringStatus(s: Fmi2StatusKind) = wrapper.getStringStatus(s)
 
 }

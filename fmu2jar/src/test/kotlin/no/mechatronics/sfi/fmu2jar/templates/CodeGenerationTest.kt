@@ -11,13 +11,13 @@ class CodeGenerationTest {
     @Test
     fun generateBody() {
 
-        val url = javaClass.classLoader.getResource("modelDescription.xml")
+        val url = CodeGenerationTest::class.java.classLoader.getResource("modelDescription.xml")
         Assert.assertNotNull(url)
         val xml = IOUtils.toString(url, Charset.forName("UTF-8"))
         val md = ModelDescriptionParser.parse(xml)
         Assert.assertNotNull(md)
 
-        println( CodeGeneration.generateBody(md) )
+        println( CodeGeneration.generateWrapper(md) )
 
 
     }

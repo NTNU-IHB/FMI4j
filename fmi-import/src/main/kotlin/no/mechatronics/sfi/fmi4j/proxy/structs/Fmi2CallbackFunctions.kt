@@ -28,38 +28,31 @@ package no.mechatronics.sfi.fmi4j.proxy.structs
 import com.sun.jna.*
 import no.mechatronics.sfi.fmi4j.proxy.enums.Fmi2Status
 import java.util.Arrays
-import java.util.HashSet
 import org.slf4j.LoggerFactory
-import sun.security.krb5.Confounder.bytes
 import com.sun.jna.Memory
+import org.slf4j.Logger
 
-
+/**
+ *
+ * @author Lars Ivar Hatledal
+ */
 open class Fmi2CallbackFunctions : Structure() {
 
     private companion object {
-        val LOG = LoggerFactory.getLogger(Fmi2CallbackFunctions::class.java)
+        val LOG: Logger = LoggerFactory.getLogger(Fmi2CallbackFunctions::class.java)
         val POINTERS : MutableMap<Pointer, Memory> = HashMap()
     }
 
+    //class ByValue : Fmi2CallbackFunctions(), Structure.ByValue
 
-    class ByValue : Fmi2CallbackFunctions(), Structure.ByValue
-
     @JvmField
-    var logger: CallbackLogger
+    internal var logger: CallbackLogger = FmiCallbackLoggerImpl()
     @JvmField
-    var allocateMemory: CallbackAllocateMemory
+    internal var allocateMemory: CallbackAllocateMemory = CallbackAllocateMemoryImpl()
     @JvmField
-    var freeMemory: CallbackFreeMemory
+    internal var freeMemory: CallbackFreeMemory = CallbackFreeMemoryImpl()
     @JvmField
-    var stepFinished: StepFinished
-
-    init {
-        this.logger = FmiCallbackLoggerImpl()
-        this.allocateMemory = CallbackAllocateMemoryImpl()
-        this.freeMemory = CallbackFreeMemoryImpl()
-        this.stepFinished = StepFinishedImpl()
-        setAlignType(Structure.ALIGN_GNUC)
-    }
+    internal var stepFinished: StepFinished = StepFinishedImpl()
 
     override fun getFieldOrder(): List<String> {
         return Arrays.asList(
@@ -93,12 +86,12 @@ open class Fmi2CallbackFunctions : Structure() {
 
         override fun invoke(nobj: Int, size: Int): Pointer {
 
-            val bytes = (if (nobj <= 0) 1 else nobj) * size;
+            val bytes = (if (nobj <= 0) 1 else nobj) * size + 4;
             val memory = Memory(bytes.toLong())
-           // memory.align(4)
+            val aligned = memory.align(4)
             memory.clear()
 
-            val pointer = memory.share(0)
+            val pointer: Pointer = aligned.share(0)
             POINTERS.put(pointer, memory)
 
             return memory
@@ -115,11 +108,12 @@ open class Fmi2CallbackFunctions : Structure() {
 
         override fun invoke(pointer: Pointer) {
 
-            LOG.debug("CallbackFreeMemoryImpl")
+           // LOG.debug("CallbackFreeMemoryImpl")
 
-            POINTERS.remove(pointer)
-            System.gc()
-            //Native.free(Pointer.nativeValue(pointer))
+           POINTERS.remove(pointer)?.apply {
+               System.gc()
+              // Native.free(Pointer.nativeValue(this))
+           }
 
         }
 

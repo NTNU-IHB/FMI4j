@@ -24,28 +24,14 @@
 
 package no.mechatronics.sfi.fmi4j.modeldescription.me
 
-import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescription
-import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescriptionParser
-import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescriptionXmlTemplate
-import java.io.File
-import java.io.FileInputStream
-import java.net.URL
-import javax.xml.bind.annotation.XmlAttribute
-import javax.xml.bind.annotation.XmlRootElement
+import no.mechatronics.sfi.fmi4j.modeldescription.*
+import no.mechatronics.sfi.fmi4j.modeldescription.misc.SourceFile
+import java.io.Serializable
 
-object ModelExchangeModelDescriptionParser {
-    @JvmStatic
-    fun parse(xml: String): IModelExchangeModelDescription = ModelDescriptionParser.parse(xml, ModelExchangeModelDescriptionXmlTemplate::class.java).generate()
-
-    @JvmStatic
-    fun parse(url: URL): IModelExchangeModelDescription = ModelDescriptionParser.parse(url.openStream(), ModelExchangeModelDescriptionXmlTemplate::class.java).generate()
-
-    @JvmStatic
-    fun parse(file: File): IModelExchangeModelDescription = ModelDescriptionParser.parse(FileInputStream(file), ModelExchangeModelDescriptionXmlTemplate::class.java).generate()
-}
-
-
-interface IModelExchangeModelDescription : ModelDescription {
+/**
+ * @author Lars Ivar Hatledal
+ */
+interface ModelExchangeModelDescription : ModelDescription {
 
     /**
      * The (fixed) number of event indicators for an FMU based on FMI for
@@ -53,30 +39,86 @@ interface IModelExchangeModelDescription : ModelDescription {
      */
     val numberOfEventIndicators: Int
 
+    /**
+     * If true, function
+     * fmi2CompletedIntegratorStep need not to
+     * be called (which gives a slightly more efficient
+     * integration). If it is called, it has no effect.
+     * If false (the default), the function must be called
+     * after every completed integrator step, see
+     * section 3.2.2.
+     */
     val completedIntegratorStepNotNeeded: Boolean
-
 }
 
 /**
  *
  * @author Lars Ivar Hatledal laht@ntnu.no.
  */
-@XmlRootElement(name = "fmiModelDescription")
-internal class ModelExchangeModelDescriptionXmlTemplate : ModelDescriptionXmlTemplate() {
+class ModelExchangeModelDescriptionImpl(
+        private val modelDescription: ModelDescriptionImpl,
+        private val me: ModelExchangeData
+) : SimpleModelDescription by modelDescription, ModelExchangeModelDescription, Serializable {
 
-    override fun generate() = ModelExchangenModelDescriptionImpl(super.generate())
+    /**
+     * @inheritDoc
+     */
+    override val numberOfEventIndicators: Int
+        get() = modelDescription.numberOfEventIndicators
 
-    inner class ModelExchangenModelDescriptionImpl(
-            val modelDescription: ModelDescription
-    ) : ModelDescription by modelDescription, IModelExchangeModelDescription {
+    /**
+     * @inheritDoc
+     */
+    override val modelIdentifier: String
+        get() = me.modelIdentifier
 
-        @XmlAttribute
-        override val numberOfEventIndicators: Int = 0
+    /**
+     * @inheritDoc
+     */
+    override val needsExecutionTool: Boolean
+        get() = me.needsExecutionTool
 
-        override val completedIntegratorStepNotNeeded: Boolean
-            get() = me!!.completedIntegratorStepNotNeeded
+    /**
+     * @inheritDoc
+     */
+    override val canBeInstantiatedOnlyOncePerProcess: Boolean
+        get() = me.canBeInstantiatedOnlyOncePerProcess
 
-    }
+    /**
+     * @inheritDoc
+     */
+    override val canNotUseMemoryManagementFunctions: Boolean
+        get() = me.canNotUseMemoryManagementFunctions
+
+    /**
+     * @inheritDoc
+     */
+    override val canGetAndSetFMUstate: Boolean
+        get() = me.canGetAndSetFMUstate
+
+    /**
+     * @inheritDoc
+     */
+    override val canSerializeFMUstate: Boolean
+        get() = me.canSerializeFMUstate
+
+    /**
+     * @inheritDoc
+     */
+    override val providesDirectionalDerivative: Boolean
+        get() = me.providesDirectionalDerivative
+
+    /**
+     * @inheritDoc
+     */
+    override val sourceFiles: List<SourceFile>
+        get() = me.sourceFiles
+
+    /**
+     * @inheritDoc
+     */
+    override val completedIntegratorStepNotNeeded: Boolean
+        get() = me.completedIntegratorStepNotNeeded
 
 }
 

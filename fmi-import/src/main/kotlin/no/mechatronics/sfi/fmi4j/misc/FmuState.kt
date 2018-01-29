@@ -27,6 +27,10 @@ package no.mechatronics.sfi.fmi4j.misc
 import com.sun.jna.Pointer
 import com.sun.jna.ptr.PointerByReference
 
+/**
+ *
+ * @author Lars Ivar Hatledal
+ */
 class FmuState {
 
     val pointer: Pointer = Pointer.NULL

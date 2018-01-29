@@ -27,6 +27,10 @@ package no.mechatronics.sfi.fmi4j.misc
 import no.mechatronics.sfi.fmi4j.proxy.Fmi2LibraryWrapper
 import no.mechatronics.sfi.fmi4j.proxy.enums.Fmi2Status
 
+/**
+ *
+ * @author Lars Ivar Hatledal
+ */
 interface VariableWriter {
 
     fun asIntWriter(): IntWriter

@@ -24,13 +24,47 @@
 
 package no.mechatronics.sfi.fmi4j.modeldescription.enums
 
+import java.io.Serializable
 import javax.xml.bind.annotation.XmlEnum
 import javax.xml.bind.annotation.XmlEnumValue
 import javax.xml.bind.annotation.XmlType
 
+/**
+ * Enumeration that defines the time dependency of the variable, in other words it defines
+ * the time instants when a variable can change its value. [The purpose of this attribute is
+ * to define when a result value needs to be inquired and to be stored. For example
+ * discrete variables change their values only at event instants (ModelExchange) or at a
+ * communication point (CoSimulation) and it is therefore only necessary to inquire them
+ * with fmi2GetXXX and store them at event times]. Allowed values of this enumeration:
+ * • "constant": The value of the variable never changes.
+ * • "fixed": The value of the variable is fixed after initialization, in other words after
+ * fmi2ExitInitializationMode was called the variable value does not change
+ * anymore.
+ * • "tunable": The value of the variable is constant between external events
+ * (ModelExchange) and between Communication Points (CoSimulation) due to
+ * changing variables with causality = "parameter" or "input" and
+ * variability = "tunable". Whenever a parameter or input signal with
+ * variability = "tunable" changes, then an event is triggered externally
+ * (ModelExchange) or the change is performed at the next Communication Point
+ * (CoSimulation) and the variables with variability = "tunable" and causality =
+ * "calculatedParameter" or "output" must be newly computed.
+ * • "discrete":
+ * ModelExchange: The value of the variable is constant between external and internal
+ * events (= time, state, step events defined implicitly in the FMU).
+ * CoSimulation: By convention, the variable is from a “real” sampled data system and
+ * its value is only changed at Communication Points (also inside the slave).
+ * • "continuous": Only a variable of type = “Real” can be “continuous”.
+ * ModelExchange: No restrictions on value changes.
+ * CoSimulation: By convention, the variable is from a differential
+ * The default is “continuous”.
+ * [Note, the information about continuous states is defined with element
+ * fmiModelDescription.ModelStructure.Derivatives]
+ *
+ * @author Lars Ivar Hatledal
+ */
 @XmlType
 @XmlEnum(String::class)
-enum class Variability {
+enum class Variability: Serializable {
 
     /**
      * The value of the variable never changes.

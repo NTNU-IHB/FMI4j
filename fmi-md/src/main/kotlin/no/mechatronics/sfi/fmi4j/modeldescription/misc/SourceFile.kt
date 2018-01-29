@@ -22,25 +22,43 @@
  * THE SOFTWARE.
  */
 
-package no.mechatronics.sfi.fmi4j.modeldescription
+package no.mechatronics.sfi.fmi4j.modeldescription.misc
 
+import java.io.Serializable
+import java.lang.IllegalStateException
 import javax.xml.bind.annotation.XmlAccessType
 import javax.xml.bind.annotation.XmlAccessorType
 import javax.xml.bind.annotation.XmlAttribute
 
+/**
+ * @author Lars Ivar Hatledal
+ */
 interface SourceFile {
+
+    /**
+     * Name of the file including the path to the sources
+     * directory, using forward slash as separator
+     */
     val name: String
 }
 
+/**
+ * @author Lars Ivar Hatledal
+ */
 @XmlAccessorType(XmlAccessType.FIELD)
-class SourceFileImpl: SourceFile {
+class SourceFileImpl: SourceFile, Serializable {
 
-    @XmlAttribute
-    override val name: String = ""
+    /**
+     * @inheritDoc
+     */
+    @XmlAttribute(name="name")
+    private var _name: String? = null
+
+    override val name: String
+        get() = _name ?: throw IllegalStateException("Name was null!")
 
     override fun toString(): String {
-        return "SourceFile(name='$name')"
+        return "SourceFileImpl(name='$name')"
     }
-
 
 }

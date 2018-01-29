@@ -28,6 +28,10 @@ import no.mechatronics.sfi.fmi4j.misc.VariableAccessProvider
 import no.mechatronics.sfi.fmi4j.modeldescription.*
 import no.mechatronics.sfi.fmi4j.proxy.enums.Fmi2Status
 
+/**
+ *
+ * @author Lars Ivar Hatledal
+ */
 interface FmiSimulation : VariableAccessProvider, AutoCloseable {
 
     val version: String
@@ -35,6 +39,7 @@ interface FmiSimulation : VariableAccessProvider, AutoCloseable {
     val modelDescription: ModelDescription
     val modelVariables: ModelVariables
     val currentTime: Double
+    val lastStatus: Fmi2Status
 
     val isInitialized : Boolean
     val isTerminated : Boolean
@@ -46,7 +51,6 @@ interface FmiSimulation : VariableAccessProvider, AutoCloseable {
 
     fun reset() : Boolean
     fun terminate() : Boolean
-    fun getLastStatus() : Fmi2Status
 
 }
 

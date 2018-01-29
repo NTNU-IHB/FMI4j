@@ -24,6 +24,7 @@
 
 package no.mechatronics.sfi.fmi4j.modeldescription.structure
 
+import java.io.Serializable
 import javax.xml.bind.annotation.XmlAccessType
 import javax.xml.bind.annotation.XmlAccessorType
 import javax.xml.bind.annotation.XmlElement
@@ -39,6 +40,8 @@ import javax.xml.bind.annotation.XmlElementWrapper
  * efficiently a sparse Jacobian for simulation or to utilize the
  * input/output dependency in order to detect that in some cases there
  * are actually no algebraic loops when connecting FMUs together].
+ *
+ * @author Lars Ivar Hatledal
  */
 interface ModelStructure {
     val outputs: List<Int>
@@ -48,36 +51,34 @@ interface ModelStructure {
 
 /**
  * @inheritDoc
+ *
+ * @author Lars Ivar Hatledal
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-class ModelStructureImpl: ModelStructure {
+class ModelStructureImpl: ModelStructure, Serializable {
 
     @XmlElementWrapper(name = "Outputs")
     @XmlElement(name = "Unknown")
     private val _outputs: List<Int>? = null
 
     override val outputs: List<Int>
-        get() {
-            return _outputs ?: emptyList()
-        }
+        get() = _outputs ?: emptyList()
+
 
     @XmlElementWrapper(name = "Derivatives")
     @XmlElement(name = "Unknown")
     private val _derivatives: List<UnknownImpl>? = null
 
     override val derivatives: List<Unknown>
-        get() {
-            return _derivatives ?: emptyList()
-        }
+        get() = _derivatives ?: emptyList()
 
     @XmlElementWrapper(name = "InitialUnknowns")
     @XmlElement(name = "Unknown")
     private val _initialUnknowns: List<UnknownImpl>? = null
 
     override val initialUnknowns: List<Unknown>
-        get() {
-            return _initialUnknowns ?: emptyList()
-        }
+        get() = _initialUnknowns ?: emptyList()
+
 
     override fun toString(): String {
         return "ModelStructure(outputs=$outputs, derivatives=$derivatives, initialUnknowns=$initialUnknowns)"

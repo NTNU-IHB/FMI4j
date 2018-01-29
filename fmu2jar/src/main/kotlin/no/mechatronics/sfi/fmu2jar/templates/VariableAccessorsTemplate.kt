@@ -11,28 +11,25 @@ object VariableAccessorsTemplate {
         }
     }
 
+//    private fun fmiTypeToKotlinType(variable: ScalarVariable) : String {
+//        when(variable) {
+//            is IntegerVariable -> return "Int"
+//            is RealVariable -> return "Double"
+//            is StringVariable -> return "String"
+//            is BooleanVariable -> return "Boolean"
+//        }
+//        throw IllegalArgumentException()
+//    }
 
-    private fun fmiTypeToKotlinType(variable: ScalarVariable) : String {
-        when(variable) {
-            is IntegerVariable -> return "Int"
-            is RealVariable -> return "Double"
-            is StringVariable -> return "String"
-            is BooleanVariable -> return "Boolean"
-        }
-        throw IllegalArgumentException()
-    }
-
-    fun generateJavaDoc(v: ScalarVariable) : String {
+    private fun generateJavaDoc(v: ScalarVariable) : String {
 
         val tab = "\t\t"
-
         return StringBuilder().apply {
 
             append("/**\n")
-
-            append("$tab * ").append(v.name).append('\n')
+            append("$tab * ").append("Name: ").append(v.name).append('\n')
             if (v.description.isNotEmpty()) {
-                append("$tab * ").append(v.description).append('\n')
+                append("$tab * ").append("Description: ").append(v.description).append('\n')
             }
 
             v.start?.also { append("$tab * Start=").append(it).append('\n') }
@@ -55,83 +52,75 @@ object VariableAccessorsTemplate {
 
             append("$tab */")
 
-        }.let {
-            it.toString()
-        }
+        }.toString()
 
     }
 
-
     private fun generateGet(variable: ScalarVariable, sb: StringBuilder) {
-
         sb.append("""
         ${generateJavaDoc(variable)}
-        fun get${capitalizeFirstLetterAndReplaceDotsWithSlash(variable)}Reader() = fmu.getReader(${variable.valueReference}).as${variable.typeName}Reader()
+        fun get${capitalizeFirstLetterAndReplaceDotsWithSlash(variable)}Reader() = fmu.getReader(${variable.valueReference}).as${ScalarVariable.getTypeName(variable)}Reader()
             """)
-
     }
 
     private fun generateSet(variable: ScalarVariable, sb :StringBuilder) {
-
         sb.append("""
         ${generateJavaDoc(variable)}
-        fun get${capitalizeFirstLetterAndReplaceDotsWithSlash(variable)}Writer() = fmu.getWriter(${variable.valueReference}).as${variable.typeName}Writer()
+        fun get${capitalizeFirstLetterAndReplaceDotsWithSlash(variable)}Writer() = fmu.getWriter(${variable.valueReference}).as${ScalarVariable.getTypeName(variable)}Writer()
             """)
-
     }
 
-
     fun generateInputsBody(modelVariables: ModelVariables) : String {
-        val sb = StringBuilder()
-        modelVariables.variables.filter {
-            it.causality == Causality.INPUT
-        }.forEach({
-            generateSet(it, sb)
-        })
-        return sb.toString()
+        return StringBuilder().apply {
+            modelVariables.variables.filter {
+                it.causality == Causality.INPUT
+            }.forEach({
+                generateSet(it, this)
+            })
+        }.toString()
     }
 
     fun generateOutputsBody(modelVariables: ModelVariables) : String {
-        val sb = StringBuilder()
-        modelVariables.variables.filter {
-            it.causality == Causality.OUTPUT
-        }.forEach({
-            generateGet(it, sb)
-        })
-        return sb.toString()
+        return StringBuilder().apply {
+            modelVariables.variables.filter {
+                it.causality == Causality.OUTPUT
+            }.forEach({
+                generateGet(it, this)
+            })
+        }.toString()
     }
 
     fun generateCalculatedParametersBody(modelVariables: ModelVariables) : String {
-        val sb = StringBuilder()
-        modelVariables.variables.filter {
-            it.causality == Causality.CALCULATED_PARAMETER
-        }.forEach({
-            generateGet(it, sb)
-        })
-        return sb.toString()
+        return StringBuilder().apply {
+            modelVariables.variables.filter {
+                it.causality == Causality.CALCULATED_PARAMETER
+            }.forEach({
+                generateGet(it, this)
+            })
+        }.toString()
     }
 
 
     fun generateParametersBody(modelVariables: ModelVariables) : String {
-        val sb = StringBuilder()
-        modelVariables.variables.filter {
-            it.causality == Causality.PARAMETER
-        }.forEach({
-            generateGet(it, sb)
-            generateSet(it, sb)
-        })
-        return sb.toString()
+        return StringBuilder().apply {
+            modelVariables.variables.filter {
+                it.causality == Causality.PARAMETER
+            }.forEach({
+                generateGet(it, this)
+                generateSet(it, this)
+            })
+        }.toString()
     }
 
     fun generateLocalsBody(modelVariables: ModelVariables) : String {
-        val sb = StringBuilder()
-        modelVariables.variables.filter {
-            it.causality == Causality.LOCAL
-        }.forEach({
-            generateGet(it, sb)
-            generateSet(it, sb)
-        })
-        return sb.toString()
+        return StringBuilder().apply {
+            modelVariables.variables.filter {
+                it.causality == Causality.LOCAL
+            }.forEach({
+                generateGet(it, this)
+                generateSet(it, this)
+            })
+        }.toString()
     }
 
 }

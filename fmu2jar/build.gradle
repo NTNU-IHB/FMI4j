@@ -1,9 +1,26 @@
 
-def debug = false
+apply plugin: 'application'
+apply plugin: 'distribution'
 
-if (debug) {
-    repositories {
+mainClassName = 'no.mechatronics.sfi.fmu2jar.ApplicationStarter'
+
+distributions {
+    main {
+        baseName = 'FMU2Jar'
+        applicationName = "fmu2jar"
+    }
+}
+
+def debug = false
+def snapshot = false
+
+def fmi_md_version = snapshot ? '0.4.4-SNAPSHOT' : '0.4.3'
+
+repositories {
+    if (debug) {
         mavenLocal()
+    }
+    if (snapshot) {
         maven {
             url "https://oss.sonatype.org/content/repositories/snapshots/" //fmi-import
         }
@@ -12,33 +29,17 @@ if (debug) {
 
 dependencies {
 
-    compile group: 'commons-io', name: 'commons-io', version: '2.6'
     compile group: 'commons-cli', name: 'commons-cli', version: '1.4'
+    compile group: 'no.mechatronics.sfi.fmi4j', name: 'fmi-md', version: fmi_md_version
 
-    compile group: 'no.mechatronics.sfi.fmi4j', name: 'fmi-md', version: '0.4.1'
+    testCompile group: 'commons-io', name: 'commons-io', version: '2.6'
 
     if (debug) {
         dependencies {
-            testCompile group: 'no.mechatronics.sfi.fmu2jar', name: "ControlledTemperature", "version": "1.0-SNAPSHOT"
+            testCompile group: 'no.mechatronics.sfi.fmu2jar', name: "ControlledTemperature", "version": "1.0-SNAPSHOT", changing: true
         }
     }
 
-    testCompile group: 'junit', name: 'junit', version: '4.12'
-
-}
-
-
-task fatJar(type: Jar) {
-    manifest {
-        attributes 'Implementation-Title': 'FMU2Jar',
-                'Implementation-Version': "1.0",
-                'Main-Class': 'no.mechatronics.sfi.fmu2jar.ApplicationStarter'
-    }
-    baseName = 'FMU2Jar'
-    from {
-        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
-    }
-    with jar
 }
 
 sourceSets {
@@ -50,4 +51,19 @@ sourceSets {
         }
     }
 }
+
+
+//task fatJar(type: Jar) {
+//    manifest {
+//        attributes 'Implementation-Title': 'FMU2Jar',
+//                'Implementation-Version': "1.0",
+//                'Main-Class': 'no.mechatronics.sfi.fmu2jar.ApplicationStarter'
+//    }
+//    baseName = 'FMU2Jar'
+//    from {
+//        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+//    }
+//    with jar
+//}
+
 

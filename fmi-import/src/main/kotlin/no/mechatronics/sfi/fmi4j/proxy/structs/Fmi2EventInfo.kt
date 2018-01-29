@@ -26,49 +26,57 @@ package no.mechatronics.sfi.fmi4j.proxy.structs
 
 
 import com.sun.jna.Structure
+import no.mechatronics.sfi.fmi4j.misc.Fmi2False
+import no.mechatronics.sfi.fmi4j.misc.Fmi2True
 import java.util.Arrays
 
+/**
+ *
+ * @author Lars Ivar Hatledal
+ */
 open class Fmi2EventInfo : Structure() {
 
     @JvmField
-    var newDiscreteStatesNeeded: Byte = 0
+    internal var newDiscreteStatesNeeded: Int = Fmi2False
     @JvmField
-    var terminateSimulation: Byte = 0
+    internal var terminateSimulation: Int = Fmi2False
     @JvmField
-    var nominalsOfContinuousStatesChanged: Byte = 0
+    internal var nominalsOfContinuousStatesChanged: Int = Fmi2False
     @JvmField
-    var valuesOfContinuousStatesChanged: Byte = 0
+    internal var valuesOfContinuousStatesChanged: Int = Fmi2False
     @JvmField
-    var nextEventTimeDefined: Byte = 0
+    internal var nextEventTimeDefined: Int = Fmi2False
     @JvmField
-    var nextEventTime: Double = 0.0
+    internal var nextEventTime: Double = 0.0
+
+    fun getNextEventTime(): Double = nextEventTime
 
     fun getNewDiscreteStatesNeeded(): Boolean {
-        return newDiscreteStatesNeeded.toInt() != 0
+        return newDiscreteStatesNeeded != Fmi2False
     }
 
     fun getTerminateSimulation(): Boolean {
-        return terminateSimulation.toInt() != 0
+        return terminateSimulation != Fmi2False
     }
 
     fun getNominalsOfContinuousStatesChanged(): Boolean {
-        return nominalsOfContinuousStatesChanged.toInt() != 0
+        return nominalsOfContinuousStatesChanged != Fmi2False
     }
 
     fun getValuesOfContinuousStatesChanged(): Boolean {
-        return valuesOfContinuousStatesChanged.toInt() != 0
+        return valuesOfContinuousStatesChanged != Fmi2False
     }
 
     fun getNextEventTimeDefined(): Boolean {
-        return nextEventTimeDefined.toInt() != 0
+        return nextEventTimeDefined != Fmi2False
     }
 
     fun setNewDiscreteStatesNeededTrue() {
-        this.newDiscreteStatesNeeded = 1
+        this.newDiscreteStatesNeeded = Fmi2True
     }
 
     fun setTerminateSimulationFalse() {
-        this.terminateSimulation = 0
+        this.terminateSimulation = Fmi2False
     }
 
     override fun getFieldOrder(): List<String> {
@@ -85,6 +93,10 @@ open class Fmi2EventInfo : Structure() {
         return "EventInfo{newDiscreteStatesNeeded=$newDiscreteStatesNeeded, terminateSimulation=$terminateSimulation, nominalsOfContinuousStatesChanged=$nominalsOfContinuousStatesChanged, valuesOfContinuousStatesChanged=$valuesOfContinuousStatesChanged, nextEventTimeDefined=$nextEventTimeDefined, nextEventTime=$nextEventTime}"
     }
 
-    class ByReference : Fmi2EventInfo(), Structure.ByReference
+
+
+
+
+
 
 }

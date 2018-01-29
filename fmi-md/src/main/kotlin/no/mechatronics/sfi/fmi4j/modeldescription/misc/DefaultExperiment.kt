@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2017-2018 Norwegian University of Technology
+ * Copyright 2017-2018 Norwegian University of Technology (NTNU)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,8 +22,9 @@
  * THE SOFTWARE.
  */
 
-package no.mechatronics.sfi.fmi4j.modeldescription
+package no.mechatronics.sfi.fmi4j.modeldescription.misc
 
+import java.io.Serializable
 import javax.xml.bind.annotation.XmlAccessType
 import javax.xml.bind.annotation.XmlAccessorType
 import javax.xml.bind.annotation.XmlAttribute
@@ -31,15 +32,16 @@ import javax.xml.bind.annotation.XmlAttribute
 
 /**
  * Providing default settings for the integrator, such as stop time and
- * relative tolerance
+ * relative tolerance.
  *
  * DefaultExperiment consists of the optional default start time, stop time, relative tolerance, and step size
  * for the first simulation run. A tool may ignore this information. However, it is convenient for a user that
  * startTime, stopTime, tolerance and stepSize have already a meaningful default value for the model at
  * hand. Furthermore, for CoSimulation the stepSize defines the preferred communicationStepSize.
+ *
+ * @author Lars Ivar Hatledal
  */
 interface DefaultExperiment {
-
     val startTime: Double
     val stopTime: Double
     val tolerance: Double
@@ -48,21 +50,23 @@ interface DefaultExperiment {
 
 /**
  * @inheritDoc
+ *
+ * @author Lars Ivar Hatledal
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-class DefaultExperimentImpl: DefaultExperiment {
+class DefaultExperimentImpl: DefaultExperiment, Serializable {
 
     @XmlAttribute
-    override val startTime: Double = 0.0
+    override var startTime: Double = 0.0
     @XmlAttribute
-    override val stopTime: Double = 0.0
+    override var stopTime: Double = 0.0
     @XmlAttribute
-    override val tolerance: Double = 1E-4
+    override var tolerance: Double = 1E-4
     @XmlAttribute
-    override val stepSize: Double = 1.0/100
+    override var stepSize: Double = 1.0/100
 
     override fun toString(): String {
-        return "DefaultExperiment(startTime=$startTime, stopTime=$stopTime, tolerance=$tolerance, stepSize=$stepSize)"
+        return "DefaultExperimentImpl(startTime=$startTime, stopTime=$stopTime, tolerance=$tolerance, stepSize=$stepSize)"
     }
 
 }

@@ -24,69 +24,31 @@
 
 package no.mechatronics.sfi.fmi4j.modeldescription
 
-import no.mechatronics.sfi.fmi4j.modeldescription.cs.CoSimulationInfo
+import no.mechatronics.sfi.fmi4j.modeldescription.cs.CoSimulationModelDescription
+import no.mechatronics.sfi.fmi4j.modeldescription.cs.CoSimulationModelDescriptionImpl
+import no.mechatronics.sfi.fmi4j.modeldescription.cs.CoSimulationDataImpl
 import no.mechatronics.sfi.fmi4j.modeldescription.log.Category
 import no.mechatronics.sfi.fmi4j.modeldescription.log.CategoryImpl
-import no.mechatronics.sfi.fmi4j.modeldescription.me.ModelExchangeInfo
+import no.mechatronics.sfi.fmi4j.modeldescription.me.ModelExchangeModelDescription
+import no.mechatronics.sfi.fmi4j.modeldescription.me.ModelExchangeModelDescriptionImpl
+import no.mechatronics.sfi.fmi4j.modeldescription.me.ModelExchangeDataImpl
+import no.mechatronics.sfi.fmi4j.modeldescription.misc.DefaultExperiment
+import no.mechatronics.sfi.fmi4j.modeldescription.misc.DefaultExperimentImpl
+import no.mechatronics.sfi.fmi4j.modeldescription.misc.SourceFile
+import no.mechatronics.sfi.fmi4j.modeldescription.misc.VariableNamingConvention
 import no.mechatronics.sfi.fmi4j.modeldescription.structure.ModelStructure
 import no.mechatronics.sfi.fmi4j.modeldescription.structure.ModelStructureImpl
-import org.apache.commons.io.IOUtils
-import java.io.File
-import java.io.FileInputStream
-import java.io.InputStream
-import java.io.StringReader
-import java.lang.IllegalArgumentException
-import java.net.URL
-import java.nio.charset.Charset
-import java.util.zip.ZipEntry
-import java.util.zip.ZipInputStream
-import javax.xml.bind.JAXB
+import java.io.Serializable
 import javax.xml.bind.annotation.*
 
-private const val MODEL_DESC_FILE = "modelDescription.xml"
 
 
-object ModelDescriptionParser {
-
-    @JvmStatic
-    fun parse(xml: String): ModelDescription = parse(xml, ModelDescriptionXmlTemplate::class.java).generate()
-    @JvmStatic
-    fun parse(url: URL): ModelDescription = parse(url.openStream(), ModelDescriptionXmlTemplate::class.java).generate()
-    @JvmStatic
-    fun parse(file: File): ModelDescription = parse(FileInputStream(file), ModelDescriptionXmlTemplate::class.java).generate()
-    @JvmStatic
-    fun parse(inputStream: InputStream): ModelDescription = parse(inputStream, ModelDescriptionXmlTemplate::class.java).generate()
-
-    internal fun <T: ModelDescriptionXmlTemplate> parse(xml: String, type: Class<T>): T = JAXB.unmarshal(StringReader(xml), type)
-    internal fun <T : ModelDescriptionXmlTemplate> parse(stream: InputStream, type: Class<T>): T = exctractModelDescriptionXml(stream).let { parse(it, type) }
-
-    @JvmStatic
-    fun exctractModelDescriptionXml(stream: InputStream): String {
-
-        ZipInputStream(stream).use {
-
-            var nextEntry: ZipEntry? = it.nextEntry
-            while (nextEntry != null) {
-
-                val name = nextEntry.name
-                if (name == MODEL_DESC_FILE) {
-                    return IOUtils.toString(it, Charset.forName("UTF-8"))
-                }
-
-                nextEntry = it.nextEntry
-            }
-
-        }
-
-        throw IllegalArgumentException("Input is not an valid FMU! No $MODEL_DESC_FILE present!")
-
-    }
-
-
-}
-
-
-interface ModelDescription {
+/**
+ * Static information related to an FMU
+ *
+ * @author Lars Ivar Hatledal
+ */
+interface SimpleModelDescription {
 
     /**
      * Version of “FMI for Model Exchange or Co-Simulation” that was used to
@@ -94,18 +56,21 @@ interface ModelDescription {
      * revisions are denoted as “2.0.1”, “2.0.2”, …
      */
     val fmiVersion: String
+
     /**
      * The name of the model as used in the modeling environment that
      * generated the XML file, such as
      * “Modelica.Mechanics.Rotational.Examples.CoupledClutches”.
      */
     val modelName: String
+
     /**
      * The “Globally Unique IDentifier” is a string that is used to check that the
      * XML file is compatible with the C functions of the FMU. Typically when generating the XML file, a fingerprint of the “relevant” information is
      * stored as guid and in the generated C-function.
      */
     val guid: String
+
     /**
      * Optional information on the intellectual property licensing for this FMU.
      * [Example: license = “BSD license <license text or link to license>”].
@@ -116,23 +81,27 @@ interface ModelDescription {
      * [Example: copyright = “© My Company 2011”].
      */
     val copyright: String?
+
     /**
      * Optional string with the name and organization of the model author.
      */
     val author: String?
+
     /**
      * Optional version of the model, for example “1.0”.
      */
-
     val version: String?
+
     /**
      * Optional string with a brief description of the model.
      */
     val description: String?
+
     /**
      * Optional name of the tool that generated the XML file.
      */
     val generationTool: String?
+
     /**
      * Defines whether the variable names in “ModelVariables /
      * ScalarVariable / name” and in “TypeDefinitions / Type /
@@ -143,6 +112,7 @@ interface ModelDescription {
      * and with array elements and derivative characterization.
      */
     val variableNamingConvention: VariableNamingConvention?
+
     /**
      * Optional date and time when the XML file was generated. The format is
      * a subset of “xs:dateTime” and should be: “YYYY-MM-DDThh:mm:ssZ"
@@ -152,6 +122,10 @@ interface ModelDescription {
      */
     val generationDateAndTime: String?
 
+    /**
+     * Provides default settings for the integrator, such as stop time and
+     * relative tolerance.
+     */
     val defaultExperiment: DefaultExperiment?
 
     /**
@@ -172,16 +146,45 @@ interface ModelDescription {
      */
     val modelStructure: ModelStructure
 
+
     /**
      * A global list of log categories that can be set to define the log
      * information that is supported from the FMU.
      */
-    val logCategories: List<Category>?
+    val logCategories: List<Category>
+
+    /**
+     * The number of continuous states
+     * @see ModelStructure.derivatives
+     */
+    val numberOfContinuousStates: Int
+        get() = modelStructure.derivatives.size
+
+    /**
+     * Does this FMU implement Model Exchange.
+     * That is, does the modelDescription.xml contain the <ModelExchange></ModelExchange> xml node?
+     */
+    val supportsModelExchange: Boolean
+
+    /**
+     * Does this FMU implement Co-Simulation.
+     * That is, does the modelDescription.xml contain the <CoSimulation></CoSimulation> xml node?
+     */
+    val supportsCoSimulation: Boolean
+
+}
 
 
-    val isCoSimulationFmu: Boolean
+/**
+ * @author Lars Ivar Hatledal
+ */
+interface ModelDescription : SimpleModelDescription {
 
-    val isMeSimulationFmu: Boolean
+
+    /**
+     * The source files
+     */
+    val sourceFiles: List<SourceFile>
 
     /**
      * Short class name according to C syntax, for
@@ -197,216 +200,204 @@ interface ModelDescription {
      */
     val modelIdentifier: String
 
+    /**
+     * If true, a tool is needed to execute the model and
+     * the FMU just contains the communication to this
+     * tool. [Typically, this information is only utilized for
+     * information purposes. For example when loading
+     * an FMU with needsExecutionTool = true,
+     * the environment can inform the user that a tool
+     * has to be available on the computer where the
+     * model is instantiated. The name of the tool can
+     * be taken from attribute generationTool of
+     * fmiModelDescription.]
+     */
     val needsExecutionTool: Boolean
 
+    /**
+     * This flag indicates cases (especially for
+     * embedded code), where only one instance per
+     * FMU is possible
+     * (multiple instantiation is default = false; if
+     * multiple instances are needed and this flag =
+     * true, the FMUs must be instantiated in different
+     * processes).
+     */
     val canBeInstantiatedOnlyOncePerProcess: Boolean
 
+    /**
+     * If true, the FMU uses its own functions for
+     * memory allocation and freeing only. The callback
+     * functions allocateMemory and freeMemory
+     * given in fmi2Instantiate are ignored.
+     */
     val canNotUseMemoryManagementFunctions: Boolean
 
+    /**
+     * If true, the environment can inquire the internal
+     * FMU state and can restore it. That is, functions
+     * fmi2GetFMUstate, fmi2SetFMUstate, and
+     * fmi2FreeFMUstate are supported by the FMU.
+     */
     val canGetAndSetFMUstate: Boolean
 
+    /**
+     * If true, the environment can serialize the internal
+     * FMU state, in other words functions
+     * fmi2SerializedFMUstateSize,
+     * fmi2SerializeFMUstate,
+     * fmi2DeSerializeFMUstate are supported by
+     * the FMU. If this is the case, then flag
+     * canGetAndSetFMUstate must be true as well
+     */
     val canSerializeFMUstate: Boolean
 
+    /**
+     * If true, the directional derivative of the equations
+     * can be computed with
+     * fmi2GetDirectionalDerivative(..)
+     */
     val providesDirectionalDerivative: Boolean
-
-    val sourceFiles: List<SourceFile>
-
-    val numberOfContinuousStates: Int
 
 }
 
+
+interface ModelDescriptionProvider : SimpleModelDescription {
+
+    fun asCS(): CoSimulationModelDescription
+
+    fun asME(): ModelExchangeModelDescription
+
+}
+
+/**
+ * @author Lars Ivar Hatedal
+ */
 @XmlRootElement(name = "fmiModelDescription")
 @XmlAccessorType(XmlAccessType.FIELD)
-internal open class ModelDescriptionXmlTemplate {
-
-    @XmlAttribute
-    lateinit var fmiVersion: String
-
-    @XmlAttribute
-    lateinit var modelName: String
-
-    @XmlAttribute
-    lateinit var guid: String
-
-    @XmlAttribute
-    val license: String? = null
-
-    @XmlAttribute
-    val copyright: String? = null
-
-    @XmlAttribute
-    val author: String? = null
-
-    @XmlAttribute
-    val version: String? = null
-
-    @XmlAttribute
-    val description: String? = null
-
-    @XmlAttribute
-    val generationTool: String? = null
-
-    @XmlAttribute
-    val variableNamingConvention: VariableNamingConvention? = null
-
-    @XmlAttribute
-    val generationDateAndTime: String? = null
-
-    @XmlElement(name = "DefaultExperiment")
-    val defaultExperiment: DefaultExperimentImpl? = null
+class ModelDescriptionImpl : SimpleModelDescription, ModelDescriptionProvider, Serializable {
 
     /**
-     * The central FMU data structure defining all variables of the FMU that
-     * are visible/accessible via the FMU functions.
+     * @inheritDoc
+     */
+    @XmlAttribute
+    override lateinit var fmiVersion: String
+
+    /**
+     * @inheritDoc
+     */
+    @XmlAttribute
+    override lateinit var modelName: String
+
+    /**
+     * @inheritDoc
+     */
+    @XmlAttribute
+    override lateinit var guid: String
+
+    /**
+     * @inheritDoc
+     */
+    @XmlAttribute
+    override val license: String? = null
+
+    /**
+     * @inheritDoc
+     */
+    @XmlAttribute
+    override val copyright: String? = null
+
+    /**
+     * @inheritDoc
+     */
+    @XmlAttribute
+    override val author: String? = null
+
+    /**
+     * @inheritDoc
+     */
+    @XmlAttribute
+    override val version: String? = null
+
+    /**
+     * @inheritDoc
+     */
+    @XmlAttribute
+    override val description: String? = null
+
+    /**
+     * @inheritDoc
+     */
+    @XmlAttribute
+    override val generationTool: String? = null
+
+    /**
+     * @inheritDoc
+     */
+    @XmlAttribute
+    override val variableNamingConvention: VariableNamingConvention? = null
+
+    /**
+     * @inheritDoc
+     */
+    @XmlAttribute
+    override val generationDateAndTime: String? = null
+
+    /**
+     * @inheritDoc
+     */
+    @XmlElement(name = "DefaultExperiment")
+    override val defaultExperiment: DefaultExperimentImpl? = null
+
+    /**
+     * @inheritDoc
+     */
+    @XmlAttribute
+    val numberOfEventIndicators: Int = 0
+
+    /**
+     * @inheritDoc
      */
     @XmlElement(name = "ModelVariables")
-    lateinit var modelVariables: ModelVariablesImpl
-
-    @XmlElement(name = "ModelStructure")
-    lateinit var modelStructure: ModelStructureImpl
+    override lateinit var modelVariables: ModelVariablesImpl
 
     /**
-     * A global list of log categories that can be set to define the log
-     * information that is supported from the FMU.
+     * @inheritDoc
+     */
+    @XmlElement(name = "ModelStructure")
+    override lateinit var modelStructure: ModelStructureImpl
+
+    /**
+     * @inheritDoc
      */
     @XmlElementWrapper(name = "LogCategories")
     @XmlElement(name = "Category")
-    val logCategories: List<CategoryImpl>? = null
+    private var _logCategories: List<CategoryImpl>? = null
+
+    override val logCategories: List<Category>
+        get() = _logCategories ?: emptyList()
 
     @XmlElement(name = "CoSimulation")
-    internal val cs: CoSimulationInfo? = null
+    private var cs: CoSimulationDataImpl? = null
 
     @XmlElement(name = "ModelExchange")
-    internal val me: ModelExchangeInfo? = null
+    private var me: ModelExchangeDataImpl? = null
 
-    open fun generate(): ModelDescription = ModelDescriptionImpl()
+    override fun asCS(): CoSimulationModelDescription
+            = CoSimulationModelDescriptionImpl(this, cs ?: throw IllegalStateException("FMU does not support Co-Simulation: modelDescription.xml does not contain a <CoSimulation> tag!"))
 
-    private val that = this
+    override fun asME(): ModelExchangeModelDescription
+            = ModelExchangeModelDescriptionImpl(this, me ?: throw IllegalStateException("FMU does not support Model Exchange: modelDescription.xml does not contain a <ModelExchange> tag!"))
 
-    inner class ModelDescriptionImpl : ModelDescription {
-        override val fmiVersion: String
-            get() = that.fmiVersion
-        override val modelName: String
-            get() = that.modelName
-        override val guid: String
-            get() = that.guid
-        override val license: String?
-            get() = that.license
-        override val copyright: String?
-            get() = that.copyright
-        override val author: String?
-            get() = that.author
-        override val version: String?
-            get() = that.version
-        override val description: String?
-            get() = that.description
-        override val generationTool: String?
-            get() = that.generationTool
-        override val variableNamingConvention: VariableNamingConvention?
-            get() = that.variableNamingConvention
-        override val generationDateAndTime: String?
-            get() = that.generationDateAndTime
-        override val defaultExperiment: DefaultExperiment?
-            get() = that.defaultExperiment
-        override val modelVariables: ModelVariables
-            get() = that.modelVariables
-        override val modelStructure: ModelStructure
-            get() = that.modelStructure
-        override val logCategories: List<Category>?
-            get() = that.logCategories
-        override val isCoSimulationFmu
-            get() = cs != null
-        override val isMeSimulationFmu: Boolean
-            get() =  me != null
-        override val modelIdentifier: String
-            get() {
-                if (cs != null) {
-                    return cs.modelIdentifier!!
-                } else if (me != null) {
-                    return me.modelIdentifier!!
-                }
-                throw IllegalStateException()
-            }
+    /**
+     * @inheritDoc
+     */
+    override val supportsModelExchange: Boolean
+        get() = me != null
 
-        override val needsExecutionTool: Boolean
-            get() {
-                if (cs != null) {
-                    return cs.needsExecutionTool
-                } else if (me != null) {
-                    return me.needsExecutionTool
-                }
-                throw IllegalStateException()
-            }
-
-        override val canBeInstantiatedOnlyOncePerProcess: Boolean
-            get() {
-                if (cs != null) {
-                    return cs.canBeInstantiatedOnlyOncePerProcess
-                } else if (me != null) {
-                    return me.canBeInstantiatedOnlyOncePerProcess
-                }
-                throw IllegalStateException()
-            }
-
-        override val canNotUseMemoryManagementFunctions: Boolean
-            get() {
-                if (cs != null) {
-                    return cs.canNotUseMemoryManagementFunctions
-                } else if (me != null) {
-                    return me.canNotUseMemoryManagementFunctions
-                }
-                throw IllegalStateException()
-            }
-
-        override val canGetAndSetFMUstate: Boolean
-            get() {
-                if (cs != null) {
-                    return cs.canGetAndSetFMUstate
-                } else if (me != null) {
-                    return me.canGetAndSetFMUstate
-                }
-                throw IllegalStateException()
-            }
-
-        override val canSerializeFMUstate: Boolean
-            get() {
-                if (cs != null) {
-                    return cs.canSerializeFMUstate
-                } else if (me != null) {
-                    return me.canSerializeFMUstate
-                }
-                throw IllegalStateException()
-            }
-
-        override val providesDirectionalDerivative: Boolean
-            get() {
-                if (cs != null) {
-                    return cs.providesDirectionalDerivative
-                } else if (me != null) {
-                    return me.providesDirectionalDerivative
-                }
-                throw IllegalStateException()
-            }
-
-        override val sourceFiles: List<SourceFileImpl>
-            get() {
-                if (cs != null) {
-                    return cs.sourceFiles ?: emptyList()
-                } else if (me != null) {
-                    return me.sourceFiles ?: emptyList()
-                }
-                throw IllegalStateException()
-            }
-
-        override val numberOfContinuousStates: Int
-            get() = modelStructure.derivatives.size
-
-        override fun toString(): String {
-            return "ModelDescriptionImpl{fmiVersion=$fmiVersion, modelName=$modelName, guid=$guid, license=$license, copyright=$copyright, author=$author, version=$version, description=$description, generationTool=$generationTool, variableNamingConvention=$variableNamingConvention, generationDateAndTime=$generationDateAndTime}"
-        }
-    }
-
-
-
-
+    /**
+    * @inheritDoc
+    */
+    override val supportsCoSimulation: Boolean
+        get() = cs != null
 }

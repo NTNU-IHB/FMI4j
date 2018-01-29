@@ -1,10 +1,22 @@
 
 package no.mechatronics.sfi.fmu2jar
 
+import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescriptionParser
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.Options
 import java.io.File
+
+class GenerateOptions(
+        val mavenLocal: Boolean,
+        var outputFolder: File?
+) {
+    init {
+        if (outputFolder == null && !mavenLocal) {
+            outputFolder = File("").absoluteFile
+        }
+    }
+}
 
 
 class ApplicationStarter {
@@ -15,7 +27,6 @@ class ApplicationStarter {
       private const val FMU_FILE = "fmu"
       private const val OUTPUT_FOLDER = "out"
       private const val MAVEN_LOCAL_OPT = "mavenLocal"
-
 
       @JvmStatic
       fun main(args: Array<String>) {
@@ -34,40 +45,33 @@ class ApplicationStarter {
 
           try {
 
-              var outputFolder: File? = null
-              var mavenLocal: Boolean = false
-              var fmuFile: File? = null
-
               cmd.apply {
 
-                  getOptionValue(FMU_FILE)?.let { path ->
-                      val file = File(path.replace("\\", "/"))
-                      if (file.exists() && file.name.endsWith(".fmu", true)) {
-                          fmuFile = file
-                      } else {
+                  getOptionValue(FMU_FILE)?.also { path ->
+                      val file = File(path.replace("\\", "/")).absoluteFile
+                      if (!(file.exists() && file.name.endsWith(".fmu", true))) {
                           error("Not a valid file: ${file.absolutePath}")
                       }
+
+                      var outputFolder: File? = null
+                      getOptionValue(OUTPUT_FOLDER)?.let {
+                          outputFolder = File(it.replace("\\", "/")).absoluteFile
+                      }
+
+                      Fmu2Jar(file).apply {
+                          generateJar(GenerateOptions(
+                                  mavenLocal = hasOption(MAVEN_LOCAL_OPT),
+                                  outputFolder = outputFolder))
+                      }
+
                   }
 
-                  mavenLocal = hasOption(MAVEN_LOCAL_OPT)
-
-                  getOptionValue(OUTPUT_FOLDER)?.let {
-                      outputFolder = File(it.replace("\\", "/"))
-                  }
-
-              }
-
-              fmuFile?.let {
-                  with (Fmu2Jar(it)) {
-                      generateJar(GenerateOptions(mavenLocal, outputFolder))
-                  }
               }
 
           } catch(ex: Exception) {
               ex.printStackTrace(System.out)
               error("Application error..")
           }
-
 
       }
 

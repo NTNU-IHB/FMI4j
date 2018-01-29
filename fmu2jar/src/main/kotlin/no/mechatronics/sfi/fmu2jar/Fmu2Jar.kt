@@ -11,22 +11,13 @@ import org.apache.commons.io.IOUtils
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.File
+import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.nio.charset.Charset
 import java.nio.file.Files
 import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
 
-class GenerateOptions(
-        val mavenLocal: Boolean,
-        var outputFolder: File?
-) {
-    init {
-        if (outputFolder == null && !mavenLocal) {
-            outputFolder = File("").absoluteFile
-        }
-    }
-}
 
 class Fmu2Jar(
         private val file: File
@@ -39,12 +30,10 @@ class Fmu2Jar(
     private val modelDescription: ModelDescription
 
     init {
-
         if (!file.name.endsWith(".fmu", true)) {
             throw IllegalArgumentException("File '${file.absolutePath}' is not and FMU!")
         }
-
-        modelDescription = ModelDescriptionParser.parse(file)
+        modelDescription = ModelDescriptionParser.parse(file).asCS()
     }
 
     private fun copyBuildFile(parentDir: File) {
@@ -58,20 +47,16 @@ class Fmu2Jar(
         ZipInputStream(zipStream).use { zis ->
             var nextEntry: ZipEntry? = zis.nextEntry
             while (nextEntry != null) {
-
                 if (!nextEntry.isDirectory) {
                     File(parentDir, nextEntry.name).also { file ->
-
                         if (!file.exists()) {
                             if (!file.parentFile.exists()) {
                                 Files.createDirectories(file.parentFile.toPath())
                             }
-
                             FileOutputStream(file).use { fis ->
                                 IOUtils.copy(zis, fis)
                             }
                         }
-
                     }
                 }
                 nextEntry = zis.nextEntry
@@ -80,15 +65,13 @@ class Fmu2Jar(
     }
 
     private fun copySourceFile(parentDir: File) {
-        val src = CodeGeneration.generateBody(modelDescription, FilenameUtils.getBaseName(file.name))
-
         File(parentDir, "src/main/kotlin/no/mechatronics/sfi/fmu2jar/${modelDescription.modelName}.kt").apply {
             if (!parentFile.exists()) {
                 Files.createDirectories(file.parentFile.toPath())
             }
+            val src = CodeGeneration.generateWrapper(modelDescription)
             FileUtils.writeStringToFile(this, src, Charset.forName("UTF-8"))
         }
-
     }
 
     private fun copyFmuFile(parentDir: File) {
@@ -96,12 +79,17 @@ class Fmu2Jar(
             if (!parentDir.exists()) {
                 Files.createDirectories(file.parentFile.toPath())
             }
-            FileUtils.copyFileToDirectory(file, this)
+            FileInputStream(file).use { fis ->
+                FileOutputStream(File(parentDir, "${modelDescription.modelName}.fmu")).use { fos ->
+                    IOUtils.copy(fis, fos)
+                }
+            }
         }
-
     }
 
     fun generateJar(options: GenerateOptions) {
+
+        LOG.info("Generating .jar..")
 
         val tempDirectory = Files.createTempDirectory("fmu2jar_").toFile()
         val parentDir = File(tempDirectory, modelDescription.modelName)
@@ -132,7 +120,7 @@ class Fmu2Jar(
                     File(parentDir, "build/libs/${modelDescription.modelName}-1.0-SNAPSHOT.jar").let { src ->
                         if (src.exists()) {
                             FileUtils.copyFileToDirectory(src.absoluteFile, outputFolder.absoluteFile)
-                            LOG.info("Wrote FMU to directory: {}", outputFolder.absolutePath)
+                            LOG.info("Generated .jar is located at: ${outputFolder.absolutePath}${File.separator}${src.name}")
                         }
                     }
                 }

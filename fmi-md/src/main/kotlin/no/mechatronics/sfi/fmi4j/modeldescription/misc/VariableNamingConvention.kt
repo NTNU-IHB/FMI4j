@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2017-2018 Norwegian University of Technology
+ * Copyright 2017-2018 Norwegian University of Technology (NTNU)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,28 +22,23 @@
  * THE SOFTWARE.
  */
 
-package no.mechatronics.sfi.fmi4j.misc
+package no.mechatronics.sfi.fmi4j.modeldescription.misc
 
-import no.mechatronics.sfi.fmi4j.proxy.Fmi2Library
-import java.util.function.Supplier
+import java.io.Serializable
+import javax.xml.bind.annotation.XmlEnum
+import javax.xml.bind.annotation.XmlEnumValue
+import javax.xml.bind.annotation.XmlType
 
 /**
- *
  * @author Lars Ivar Hatledal
  */
-class LibraryProvider<E: Fmi2Library> : Supplier<E> {
+@XmlType
+@XmlEnum(String::class)
+enum class VariableNamingConvention: Serializable {
 
-    private var library: E? = null
-
-    constructor(library: E) {
-        this.library = library
-    }
-
-    override fun get() : E = library!!
-
-    fun disposeLibrary() {
-        library = null
-        System.gc()
-    }
+    @XmlEnumValue("flat")
+    FLAT,
+    @XmlEnumValue("structured")
+    STRUCTURED
 
 }
