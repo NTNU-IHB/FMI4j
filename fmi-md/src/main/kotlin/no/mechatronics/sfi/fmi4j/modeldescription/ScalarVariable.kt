@@ -43,10 +43,6 @@ interface ScalarVariable {
      */
     val name: String
 
-    /**
-     * Integer, Real, String, Boolean or Enumeration
-     */
-    val typeName: String
 
     /**
      * If present, name of type defined with TypeDefinitions / SimpleType. The value
@@ -110,6 +106,19 @@ interface ScalarVariable {
     fun asStringVariable(): StringVariable
     fun asBooleanVariable(): BooleanVariable
 
+    companion object {
+
+        fun getTypeName(`var`: ScalarVariable): String {
+            return when(`var`) {
+                is IntegerVariable -> "Integer"
+                is RealVariable -> "Real"
+                is StringVariable -> "String"
+                is BooleanVariable -> "Boolean"
+                else -> throw IllegalArgumentException("Unknown type: ${`var`::class.java.simpleName}")
+            }
+        }
+    }
+
 }
 
 /**
@@ -117,7 +126,7 @@ interface ScalarVariable {
  */
 @XmlRootElement(name="ScalarVariable")
 @XmlAccessorType(XmlAccessType.FIELD)
-class ScalarVariableImpl : ScalarVariable {
+class ScalarVariableImpl internal constructor() : ScalarVariable {
 
     /**
      * @inheritDoc
@@ -166,10 +175,6 @@ class ScalarVariableImpl : ScalarVariable {
             return _valueReference ?: throw IllegalStateException("ValueReference was null!")
         }
 
-    /**
-     * @inheritDoc
-     */
-    override val typeName: String = ""
 
     /**
      * @inheritDoc
@@ -236,7 +241,7 @@ interface BoundedTypedAttribute<E> : TypedAttribute<E> {
  * @author Lars Ivar Hatledal
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-internal class IntegerAttribute: BoundedTypedAttribute<Int> {
+internal class IntegerAttribute internal constructor(): BoundedTypedAttribute<Int> {
 
     /**
      * @inheritDoc
@@ -259,7 +264,7 @@ internal class IntegerAttribute: BoundedTypedAttribute<Int> {
 }
 
 @XmlAccessorType(XmlAccessType.FIELD)
-internal class RealAttribute : BoundedTypedAttribute<Double> {
+internal class RealAttribute internal constructor() : BoundedTypedAttribute<Double> {
 
     /**
      * @inheritDoc
@@ -315,10 +320,9 @@ internal class RealAttribute : BoundedTypedAttribute<Double> {
      * Only for Model exchange
      * <br>
      * If true, state can be reinitialized at an event by the FMU. If false, state will never be reinitialized at an event by the FMU
-     *
      */
     @XmlAttribute
-    val reint: Boolean = false
+    val reinit: Boolean = false
 
     /**
      * Physical quantity of the variable, for example “Angle”, or “Energy”. The
@@ -357,10 +361,10 @@ internal class RealAttribute : BoundedTypedAttribute<Double> {
 }
 
 /**
- * @author Lars Ivar Hatedal
+ * @author Lars Ivar Hatledal
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-internal class StringAttribute: TypedAttribute<String>  {
+internal class StringAttribute internal constructor(): TypedAttribute<String>  {
 
     /**
      * @see ScalarVariable.start
@@ -371,10 +375,10 @@ internal class StringAttribute: TypedAttribute<String>  {
 }
 
 /**
- * @author Lars Ivar Hatedal
+ * @author Lars Ivar Hateldal
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-internal class BooleanAttribute: TypedAttribute<Boolean>  {
+internal class BooleanAttribute internal constructor(): TypedAttribute<Boolean>  {
 
     /**
      * @see ScalarVariable.start
@@ -385,7 +389,7 @@ internal class BooleanAttribute: TypedAttribute<Boolean>  {
 }
 
 /**
- * @author Lars Ivar Hatedal
+ * @author Lars Ivar Hatledal
  */
 sealed class TypedScalarVariable<E> : ScalarVariable, Serializable {
 
@@ -397,28 +401,25 @@ sealed class TypedScalarVariable<E> : ScalarVariable, Serializable {
 }
 
 /**
- * @author Lars Ivar Hatedal
+ * @author Lars Ivar Hateldal
  */
-class IntegerVariable(v : ScalarVariableImpl) : ScalarVariable by v, TypedScalarVariable<Int>() {
+class IntegerVariable internal constructor(v : ScalarVariableImpl) : ScalarVariable by v, TypedScalarVariable<Int>() {
 
+    private val attribute = v.integerAttribute ?: throw AssertionError()
+    
     /**
      * @see IntegerAttribute.min
      */
-    val min: Int? = v.integerAttribute!!.min
+    val min: Int? = attribute.min
     /**
      * @see IntegerAttribute.max
      */
-    val max: Int? = v.integerAttribute!!.max
+    val max: Int? = attribute.max
 
     /**
      * @see ScalarVariable.start
      */
-    override var start = v.integerAttribute!!.start
-
-    /**
-     * @inheritDoc
-     */
-    override val typeName = "Integer"
+    override var start = attribute.start
 
     override fun toString(): String {
         return "IntegerVariable(min=$min, max=$max, start=$start)"
@@ -427,64 +428,62 @@ class IntegerVariable(v : ScalarVariableImpl) : ScalarVariable by v, TypedScalar
 }
 
 /**
- * @author Lars Ivar Hatedal
+ * @author Lars Ivar Hatledal
  */
-class RealVariable(v : ScalarVariableImpl) : ScalarVariable by v, TypedScalarVariable<Double>() {
+class RealVariable internal constructor(v : ScalarVariableImpl) : ScalarVariable by v, TypedScalarVariable<Double>() {
+
+    private val attribute: RealAttribute = v.realAttribute ?: throw AssertionError()
+
 
     /**
      * @see RealAttribute.min
      */
-    val min = v.realAttribute!!.min
+    val min = attribute.min
 
     /**
      * @see RealAttribute.max
      */
-    val max = v.realAttribute!!.max
+    val max = attribute.max
 
     /**
      * @see RealAttribute.nominal
      */
-    val nominal = v.realAttribute!!.nominal
+    val nominal = attribute.nominal
 
     /**
      * @see RealAttribute.unbounded
      */
-    val unbounded = v.realAttribute!!.unbounded
+    val unbounded = attribute.unbounded
 
     /**
      * @see RealAttribute.quantity
      */
-    val quantity = v.realAttribute!!.quantity
+    val quantity = attribute.quantity
 
     /**
      * @see RealAttribute.unit
      */
-    val unit = v.realAttribute!!.unit
+    val unit = attribute.unit
 
     /**
      * @see RealAttribute.displayUnit
      */
-    val displayUnit = v.realAttribute!!.displayUnit
+    val displayUnit = attribute.displayUnit
 
     /**
      * @see RealAttribute.relativeQuantity
      */
-    val relativeQuantity = v.realAttribute!!.relativeQuantity
+    val relativeQuantity = attribute.relativeQuantity
 
     /**
      * @see RealAttribute.derivative
      */
-    val derivative = v.realAttribute!!.derivative
+    val derivative = attribute.derivative
 
     /**
      * @see ScalarVariable.start
      */
-    override var start = v.realAttribute!!.start
-
-    /**
-     * @see ScalarVariable.typeName
-     */
-    override val typeName = "Real"
+    override var start = attribute.start
 
     override fun toString(): String {
         return "RealVariable(min=$min, max=$max, nominal=$nominal, unbounded=$unbounded, quantity=$quantity, unit=$unit, displayUnit=$displayUnit, relativeQuantity=$relativeQuantity, derivative=$derivative, start=$start)"
@@ -493,19 +492,16 @@ class RealVariable(v : ScalarVariableImpl) : ScalarVariable by v, TypedScalarVar
 }
 
 /**
- * @author Lars Ivar Hatedal
+ * @author Lars Ivar Hatledal
  */
-class StringVariable(v : ScalarVariableImpl) : ScalarVariable by v, TypedScalarVariable<String>() {
+class StringVariable internal constructor(v : ScalarVariableImpl) : ScalarVariable by v, TypedScalarVariable<String>() {
 
+    private val attribute = v.stringAttribute ?: throw AssertionError()
+    
     /**
      * @see ScalarVariable.start
      */
-    override var start = v.stringAttribute!!.start
-
-    /**
-     * @see ScalarVariable.typeName
-     */
-    override val typeName = "String"
+    override var start = attribute.start
 
     override fun toString(): String {
         return "StringVariable(start=$start)"
@@ -514,19 +510,16 @@ class StringVariable(v : ScalarVariableImpl) : ScalarVariable by v, TypedScalarV
 }
 
 /**
- * @author Lars Ivar Hatedal
+ * @author Lars Ivar Hatledal
  */
-class BooleanVariable(v : ScalarVariableImpl) : ScalarVariable by v, TypedScalarVariable<Boolean>() {
+class BooleanVariable internal constructor(v : ScalarVariableImpl) : ScalarVariable by v, TypedScalarVariable<Boolean>() {
 
+    private val attribute = v.booleanAttribute ?: throw AssertionError()
+    
     /**
      * @see ScalarVariable.start
      */
-    override var start = v.booleanAttribute!!.start
-
-    /**
-     * @see ScalarVariable.typeName
-     */
-    override val typeName = "Boolean"
+    override var start = attribute.start
 
     override fun toString(): String {
         return "BooleanVariable(start=$start)"

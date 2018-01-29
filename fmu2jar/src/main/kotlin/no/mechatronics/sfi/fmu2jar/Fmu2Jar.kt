@@ -89,6 +89,8 @@ class Fmu2Jar(
 
     fun generateJar(options: GenerateOptions) {
 
+        LOG.info("Generating .jar..")
+
         val tempDirectory = Files.createTempDirectory("fmu2jar_").toFile()
         val parentDir = File(tempDirectory, modelDescription.modelName)
         parentDir.mkdir()

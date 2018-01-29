@@ -7,7 +7,7 @@ if (snapshot) {
     version += '-SNAPSHOT'
 }
 
-def fmi_md_version = snapshot ? '0.4.3-SNAPSHOT' : '0.4.2'
+def fmi_md_version = snapshot ? '0.4.4-SNAPSHOT' : '0.4.3'
 
 apply plugin: 'maven'
 apply plugin: 'signing'

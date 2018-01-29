@@ -25,6 +25,7 @@
 package no.mechatronics.sfi.fmi4j.modeldescription
 
 import no.mechatronics.sfi.fmi4j.modeldescription.cs.CoSimulationModelDescription
+import no.mechatronics.sfi.fmi4j.modeldescription.misc.DefaultExperiment
 import no.mechatronics.sfi.fmi4j.modeldescription.misc.VariableNamingConvention
 import org.apache.commons.io.IOUtils
 import org.junit.Assert
@@ -59,7 +60,7 @@ class ModelDescriptionTest_CS {
     }
 
     @Test
-    fun testModelIdentifer() {
+    fun testModelIdentifier() {
         val modelIdentifier = modelDescription.modelIdentifier
         println("modelIdentifier=$modelIdentifier")
         Assert.assertEquals("ControlledTemperature", modelIdentifier)
@@ -81,7 +82,7 @@ class ModelDescriptionTest_CS {
 
     @Test
     fun testDefaultExperiment() {
-        val ex = modelDescription.defaultExperiment!!
+        val ex: DefaultExperiment = modelDescription.defaultExperiment!!
         Assert.assertEquals(0.0, ex.startTime, 0.0)
         Assert.assertEquals(20.0, ex.stopTime, 0.0)
         Assert.assertEquals(1.0e-4, ex.stepSize, 0.0)
@@ -89,16 +90,24 @@ class ModelDescriptionTest_CS {
 
     @Test
     fun testNumVariables() {
-        val variables =  modelDescription.modelVariables
+        val variables: ModelVariables =  modelDescription.modelVariables
         Assert.assertEquals(120, variables.size)
     }
 
     @Test
     fun testStartVariables() {
-        val variables =  modelDescription.modelVariables
-        val variable = variables.getByName("HeatCapacity1.T0").asRealVariable()
+        val variables: ModelVariables =  modelDescription.modelVariables
+        val variable: RealVariable = variables.getByName("Temperature_Room").asRealVariable()
         println(variable)
         Assert.assertEquals(298.0, variable.start!!, 0.0)
+    }
+
+    @Test
+    fun testTypeName() {
+        val variables: ModelVariables =  modelDescription.modelVariables
+        val variable: RealVariable = variables.getByName("Temperature_Room").asRealVariable()
+        println(variable)
+        Assert.assertEquals("Real", ScalarVariable.getTypeName(variable))
     }
 
     @Test

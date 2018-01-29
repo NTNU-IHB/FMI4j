@@ -176,7 +176,7 @@ interface SimpleModelDescription {
 
 
 /**
- * @author Lars Ivar Hatedal
+ * @author Lars Ivar Hatledal
  */
 interface ModelDescription : SimpleModelDescription {
 

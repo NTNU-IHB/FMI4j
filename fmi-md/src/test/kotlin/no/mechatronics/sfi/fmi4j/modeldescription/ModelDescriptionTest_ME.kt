@@ -40,7 +40,7 @@ class ModelDescriptionTest_ME {
     }
 
     @Test
-    fun testModelIdentifer() {
+    fun testModelIdentifier() {
         val modelIdentifier = modelDescription.modelIdentifier
         println("modelIdentifier=$modelIdentifier")
         Assert.assertEquals("vanDerPol", modelIdentifier)
