@@ -97,7 +97,7 @@ class ModelDescriptionTest_CS {
     @Test
     fun testStartVariables() {
         val variables: ModelVariables =  modelDescription.modelVariables
-        val variable: RealVariable = variables.getByName("Temperature_Room").asRealVariable()
+        val variable: RealVariable = variables.getByName("HeatCapacity1.T0").asRealVariable()
         println(variable)
         Assert.assertEquals(298.0, variable.start!!, 0.0)
     }
