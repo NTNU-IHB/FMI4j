@@ -73,8 +73,7 @@ public class ModelExchangeTest {
         RealReader x0Reader = fmu.getReader(x0);
         //h.setStart(5.0);
 
-        boolean init = fmu.init();
-        Assert.assertTrue(init);
+        Assert.assertTrue(fmu.init());
 
         //Assert.assertTrue(fmu.getLastStatus() == Fmi2Status.OK);
 

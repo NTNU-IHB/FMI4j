@@ -16,47 +16,78 @@ For Model Exchange, solvers are also included
 
 #### Co-simulation example
 
+##### Java API
 ```java
+FMUBuilder builder = new FmuBuilder(new File("path/to/fmu.fmu"));
+try(FmiSimulation fmu = builder.asCoSimulationFmu().newInstance()) {
 
-FmiSimulation fmu = new FmuBuilder(new File("path/to/fmu.fmu"))
-                        .asCoSimulationFmu()
-                        .newInstance();
-
-//set start values
-
-fmu.init();
-
-double dt = 1d/100;
-while (fmu.getCurrentTime() < 10) {
-    fmu.doStep(dt);
+    //set start values
+    
+    if (fmu.init()) {
+        double dt = 1d/100;
+        while (fmu.getCurrentTime() < 10) {
+            fmu.doStep(dt);
+        }
+    }
 }
-
-fmu.terminate(); //can also use try with resources
-
 ```
 
+##### Kotlin API
 
-#### Model-exchange(with integrator) example
+```kotlin
+val builder = FmuBuilder(new File("path/to/fmu.fmu")
+builder.asCoSimulationFmu().newInstance().use { fmu -> 
 
+    //set start values
+    
+    if (fmu.init()) {
+        val dt = 1.0/100
+        while (fmu.currentTime) < 10) {
+            fmu.doStep(dt);
+        }
+    }
+    
+}
+```
+
+#### Model Exchange(with integrator) example
+
+##### Java API
 ```java
-
 FirstOrderIntegrator integrator = new ClassicalRungeKuttaIntegrator(1E-3);
-
-try (FmiSimulation fmu = new FmuBuilder(new File("path/to/fmu.fmu"))
-                        .asModelExchangeFmuWithIntegrator(integrator)
+FMUBuilder builder = new FmuBuilder(new File("path/to/fmu.fmu"));
+try (FmiSimulation fmu = builder.asModelExchangeFmuWithIntegrator(integrator)
                         .newInstance()) {
 
     //set start values
 
-    fmu.init();
-    
-    double dt = 1d/100;
-    while (fmu.getCurrentTime() < 5) {
-        fmu.step(dt);
+    if (fmu.init()) {
+       double dt = 1d/100;
+       while (fmu.getCurrentTime() < 5) {
+           fmu.step(dt);
+       } 
     }
-
+    
 }
+```
 
+##### Kotlin API
+```kotlin
+val integrator = ClassicalRungeKuttaIntegrator(1E-3)
+val builder = FmuBuilder(File("path/to/fmu.fmu"))
+builder.asModelExchangeFmuWithIntegrator(integrator)
+        .newInstance().use { fmu -> 
+        
+            //set start values
+        
+            if (fmu.init()) {
+                val dt = 1.0/100;
+                while (fmu.currentTime < 5) {
+                    fmu.step(dt)
+                }
+            }
+
+        }
 ```
 
 ## FMU2Jar
@@ -85,7 +116,7 @@ usage: fmu2jar
 
 ##### API example from kotlin
 ```kotlin
-    ControlledTemperature.newInstance().use{ fmu ->  
+    ControlledTemperature.newInstance().use { fmu ->  
         val reader: RealReader = fmu.parameters.getTemperatureSource_TReader()
         val temperatureSource_T: Double = reader.read()        
     } //fmu has been automatically terminated
@@ -111,40 +142,38 @@ class ControlledTemperature private constructor(
     }
 
     val locals = Locals()
-        val inputs = Inputs()
-        val outputs = Outputs()
-        val parameters = Parameters()
-        val calculatedParameters = CalculatedParameters()
-    
-        inner class Inputs {
-        }
-    
-        inner class Outputs {
+    val inputs = Inputs()
+    val outputs = Outputs()
+    val parameters = Parameters()
+    val calculatedParameters = CalculatedParameters()
+
+    inner class Inputs {
+        ...
+    }
+
+    inner class Outputs {
+        
+        /**
+         * Temperature_Reference
+         * Causality=OUTPUT
+         * Variability=CONTINUOUS
+         */
+        fun getTemperature_ReferenceReader() = fmu.getReader(46).asRealReader()
             
-            /**
-    		 * Temperature_Reference
-    		 * Causality=OUTPUT
-    		 * Variability=CONTINUOUS
-    		 */
-            fun getTemperature_ReferenceReader() = fmu.getReader(46).asRealReader()
-                
-            /**
-    		 * Temperature_Room
-    		 * Causality=OUTPUT
-    		 * Variability=CONTINUOUS
-    		 * min=2.0
-    		 * max=4.0
-    		 */
-            fun getTemperature_RoomReader() = fmu.getReader(47).asRealReader()
-                
-        }
-            
-            ...
+        /**
+         * Temperature_Room
+         * Causality=OUTPUT
+         * Variability=CONTINUOUS
+         * min=2.0
+         * max=4.0
+         */
+        fun getTemperature_RoomReader() = fmu.getReader(47).asRealReader()
             
     }
-    
+        
+    ...
+            
 }
-
 ```
 
 Notice how the javadoc is populated with info from the ```modelDescription.xml```, and variables are sorted by their causality.
