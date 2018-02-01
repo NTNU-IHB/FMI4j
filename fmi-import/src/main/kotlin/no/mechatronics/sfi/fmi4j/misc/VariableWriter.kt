@@ -41,19 +41,19 @@ interface VariableWriter {
 }
 
 interface IntWriter {
-    fun write(value: Int)
+    fun write(value: Int) : Fmi2Status
 }
 
 interface RealWriter {
-    fun write(value: Double)
+    fun write(value: Double) : Fmi2Status
 }
 
 interface StringWriter {
-    fun write(value: String)
+    fun write(value: String) : Fmi2Status
 }
 
 interface BooleanWriter {
-    fun write(value: Boolean)
+    fun write(value: Boolean) : Fmi2Status
 }
 
 class IntWriterImpl(
@@ -61,8 +61,8 @@ class IntWriterImpl(
         private val valueReference: Int
 ) : IntWriter {
 
-    override fun write(value: Int) {
-        wrapper.setInteger(valueReference, value)
+    override fun write(value: Int) : Fmi2Status {
+        return wrapper.setInteger(valueReference, value)
     }
 
 }
@@ -72,8 +72,8 @@ class RealWriterImpl(
         private val valueReference: Int
 ) : RealWriter {
 
-    override fun write(value: Double) {
-        wrapper.setReal(valueReference, value)
+    override fun write(value: Double) : Fmi2Status {
+        return wrapper.setReal(valueReference, value)
     }
 
 }
@@ -83,8 +83,8 @@ class StringWriterImpl(
         private val valueReference: Int
 ) : StringWriter {
 
-    override fun write(value: String) {
-        wrapper.setString(valueReference, value)
+    override fun write(value: String) : Fmi2Status {
+        return wrapper.setString(valueReference, value)
     }
 
 }
@@ -94,42 +94,29 @@ class BooleanWriterImpl(
         private val valueReference: Int
 ) : BooleanWriter {
 
-    override fun write(value: Boolean) {
-        wrapper.setBoolean(valueReference, value)
+    override fun write(value: Boolean) : Fmi2Status {
+        return wrapper.setBoolean(valueReference, value)
     }
 
 }
 
-//class VariableWriter internal constructor(
-//        private val wrapper: Fmi2LibraryWrapper<*>,
-//        private val valueReference: Int
-//): IVariableWriter {
-//
-//    fun asIntWriter(): IntWriter
-//
-////    override fun write(data: Int) = wrapper.setInteger(valueReference, data)
-////    override fun write(data: Double) = wrapper.setReal(valueReference, data)
-////    override fun write(data: String) = wrapper.setString(valueReference, data)
-////    override fun write(data: Boolean) = wrapper.setBoolean(valueReference, data)
-//
-//}
 
-interface IVariablesWriter {
+interface VariablesWriter {
     fun write(vararg  data: Int) : Fmi2Status
     fun write(vararg data: Double) : Fmi2Status
     fun write(vararg data: String) : Fmi2Status
     fun write(vararg data: Boolean) : Fmi2Status
 }
 
-class VariablesWriter internal constructor(
+class VariablesWriterImpl internal constructor(
         private val wrapper: Fmi2LibraryWrapper<*>,
         private val valueReference: IntArray
-) : IVariablesWriter {
+) : VariablesWriter {
 
-    override fun write(vararg data: Int) =  wrapper.setInteger(valueReference, data)
-    override fun write(vararg data: Double) = wrapper.setReal(valueReference, data)
-    override fun write(vararg data: String) = wrapper.setString(valueReference, data)
-    override fun write(vararg data: Boolean) = wrapper.setBoolean(valueReference, data)
+    override fun write(vararg data: Int) : Fmi2Status =  wrapper.setInteger(valueReference, data)
+    override fun write(vararg data: Double) : Fmi2Status = wrapper.setReal(valueReference, data)
+    override fun write(vararg data: String) : Fmi2Status = wrapper.setString(valueReference, data)
+    override fun write(vararg data: Boolean) : Fmi2Status = wrapper.setBoolean(valueReference, data)
 
 
 }
