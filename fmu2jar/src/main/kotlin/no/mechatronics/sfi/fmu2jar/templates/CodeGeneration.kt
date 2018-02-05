@@ -1,7 +1,7 @@
 package no.mechatronics.sfi.fmu2jar.templates
 
-import no.mechatronics.sfi.fmi4j.modeldescription.ModelVariables
 import no.mechatronics.sfi.fmi4j.modeldescription.SimpleModelDescription
+import no.mechatronics.sfi.fmi4j.modeldescription.variables.ModelVariables
 
 object CodeGeneration {
 
@@ -19,7 +19,7 @@ import java.net.URL
 import no.mechatronics.sfi.fmi4j.FmiSimulation
 import no.mechatronics.sfi.fmi4j.fmu.FmuFile
 import no.mechatronics.sfi.fmi4j.fmu.FmuBuilder
-
+import no.mechatronics.sfi.fmi4j.modeldescription.variables.Real
 
 class $modelName private constructor(
     val fmu: FmiSimulation

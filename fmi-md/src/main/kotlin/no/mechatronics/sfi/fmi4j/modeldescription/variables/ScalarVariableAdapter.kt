@@ -22,33 +22,41 @@
  * THE SOFTWARE.
  */
 
-package no.mechatronics.sfi.fmi4j.misc
+package no.mechatronics.sfi.fmi4j.modeldescription.variables
 
-import no.mechatronics.sfi.fmi4j.modeldescription.variables.RealArray
-import no.mechatronics.sfi.fmi4j.modeldescription.variables.StringArray
+import org.w3c.dom.Node
+import javax.xml.bind.JAXBContext
+import javax.xml.bind.annotation.adapters.XmlAdapter
+
 
 /**
- *
  * @author Lars Ivar Hatledal
  */
-internal class ArrayBuffers {
+class ScalarVariableAdapter : XmlAdapter<Any, AbstractTypedScalarVariable<*>>() {
 
-    val vr: IntArray by lazy {
-        IntArray(1)
+    @Throws(Exception::class)
+    override fun unmarshal(v: Any): AbstractTypedScalarVariable<*> {
+
+        val node = v as Node
+        val child = node.childNodes.item(0)
+
+        val unmarshal by lazy {
+            val ctx = JAXBContext.newInstance(ScalarVariableImpl::class.java)
+            ctx.createUnmarshaller().unmarshal(node, ScalarVariableImpl::class.java).value
+        }
+
+        return when (child.nodeName) {
+            "Integer" -> IntegerVariable(unmarshal)
+            "Real" -> RealVariable(unmarshal)
+            "String" -> StringVariable(unmarshal)
+            "Boolean" -> BooleanVariable(unmarshal)
+            else -> throw RuntimeException("Error parsing XML. Unable to understand of what type the ScalarVariable is..")
+        }
+
     }
 
-    val iv: IntArray by lazy {
-        IntArray(1)
+    override fun marshal(v: AbstractTypedScalarVariable<*>?): Any {
+        TODO("not implemented")
     }
-
-    val rv: RealArray by lazy {
-        DoubleArray(1)
-    }
-
-    val sv: StringArray by lazy {
-        Array<String>(1, {""})
-    }
-
-    val bv: IntArray  = iv
 
 }

@@ -1,7 +1,7 @@
 package no.mechatronics.sfi.fmu2jar.templates
 
-import no.mechatronics.sfi.fmi4j.modeldescription.*
 import no.mechatronics.sfi.fmi4j.modeldescription.enums.Causality
+import no.mechatronics.sfi.fmi4j.modeldescription.variables.*
 
 object VariableAccessorsTemplate {
 
@@ -11,17 +11,7 @@ object VariableAccessorsTemplate {
         }
     }
 
-//    private fun fmiTypeToKotlinType(variable: ScalarVariable) : String {
-//        when(variable) {
-//            is IntegerVariable -> return "Int"
-//            is RealVariable -> return "Double"
-//            is StringVariable -> return "String"
-//            is BooleanVariable -> return "Boolean"
-//        }
-//        throw IllegalArgumentException()
-//    }
-
-    private fun generateJavaDoc(v: ScalarVariable) : String {
+    private fun generateJavaDoc(v: TypedScalarVariable<*>) : String {
 
         val tab = "\t\t"
         return StringBuilder().apply {
@@ -56,17 +46,17 @@ object VariableAccessorsTemplate {
 
     }
 
-    private fun generateGet(variable: ScalarVariable, sb: StringBuilder) {
+    private fun generateGet(variable: TypedScalarVariable<*>, sb: StringBuilder) {
         sb.append("""
         ${generateJavaDoc(variable)}
-        fun get${capitalizeFirstLetterAndReplaceDotsWithSlash(variable)}Reader() = fmu.getReader(${variable.valueReference}).as${ScalarVariable.getTypeName(variable)}Reader()
+        fun get${capitalizeFirstLetterAndReplaceDotsWithSlash(variable)}() = fmu.variableAccessor.get${variable.typeName}(${variable.valueReference})
             """)
     }
 
-    private fun generateSet(variable: ScalarVariable, sb :StringBuilder) {
+    private fun generateSet(variable: TypedScalarVariable<*>, sb :StringBuilder) {
         sb.append("""
         ${generateJavaDoc(variable)}
-        fun get${capitalizeFirstLetterAndReplaceDotsWithSlash(variable)}Writer() = fmu.getWriter(${variable.valueReference}).as${ScalarVariable.getTypeName(variable)}Writer()
+        fun set${capitalizeFirstLetterAndReplaceDotsWithSlash(variable)}(value: ${variable.typeName}) = fmu.variableAccessor.set${variable.typeName}(${variable.valueReference}, value)
             """)
     }
 
@@ -99,7 +89,6 @@ object VariableAccessorsTemplate {
             })
         }.toString()
     }
-
 
     fun generateParametersBody(modelVariables: ModelVariables) : String {
         return StringBuilder().apply {

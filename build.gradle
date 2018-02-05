@@ -12,6 +12,9 @@ buildscript {
 
 apply plugin: 'base' // To add "clean" task to the root project.
 
+wrapper {
+    gradleVersion = '4.5'
+}
 
 subprojects {
 
@@ -27,7 +30,7 @@ subprojects {
 
     dependencies {
 
-        api "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"
+        implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 
         implementation group: 'org.slf4j', name: 'slf4j-api', version: '1.7.25'
         runtimeOnly group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.7.25'

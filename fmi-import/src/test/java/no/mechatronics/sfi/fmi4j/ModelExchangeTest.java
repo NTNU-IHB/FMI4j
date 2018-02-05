@@ -25,10 +25,10 @@
 package no.mechatronics.sfi.fmi4j;
 
 import no.mechatronics.sfi.fmi4j.fmu.FmuBuilder;
-import no.mechatronics.sfi.fmi4j.misc.RealReader;
-import no.mechatronics.sfi.fmi4j.modeldescription.RealVariable;
+import no.mechatronics.sfi.fmi4j.misc.SingleRead;
+import no.mechatronics.sfi.fmi4j.modeldescription.variables.*;
+import no.mechatronics.sfi.fmi4j.proxy.enums.Fmi2Status;
 import org.apache.commons.math3.ode.FirstOrderIntegrator;
-import org.apache.commons.math3.ode.nonstiff.ClassicalRungeKuttaIntegrator;
 import org.apache.commons.math3.ode.nonstiff.EulerIntegrator;
 import org.junit.After;
 import org.junit.Assert;
@@ -62,47 +62,29 @@ public class ModelExchangeTest {
     public void tearDown() {
         if (fmu != null) {
             fmu.terminate();
-            //Assert.assertTrue(fmu.getLastStatus() == Fmi2Status.OK);
+            Assert.assertTrue(fmu.getLastStatus() == Fmi2Status.OK);
         }
     }
 
     @org.junit.Test
     public void test() {
 
+        Assert.assertEquals("2.0", fmu.getVersion());
+
         RealVariable x0 = fmu.getModelVariables().getByName("x0").asRealVariable();
-        RealReader x0Reader = fmu.getReader(x0);
-        //h.setStart(5.0);
 
-        boolean init = fmu.init();
-        Assert.assertTrue(init);
+        Assert.assertTrue(fmu.init());
 
-        //Assert.assertTrue(fmu.getLastStatus() == Fmi2Status.OK);
-
-        double macroStep = 1.0/10;
+        double macroStep = 1.0 / 10;
 
         while (fmu.getCurrentTime() < 1) {
 
-            System.out.println("t=" + fmu.getCurrentTime() + ", x0=" + x0Reader.read());
-            fmu.doStep( macroStep);
-
-        }
-
-    }
-
-    void readme() {
-/*
-        FirstOrderIntegrator integrator = new ClassicalRungeKuttaIntegrator(1E-3);
-        ModelExchangeFmu fmu = new ModelExchangeFmu(new File("path/to/fmu.fmu"), integrator);
-        fmu.init();
-
-        double microStep = 1E-3;
-        double macroStep = 1E-2;
-        while (fmu.getCurrentTime() < 5) {
+            System.out.println("t=" + fmu.getCurrentTime() + ", x0=" + x0.getValue());
             fmu.doStep(macroStep);
-        }
 
-        fmu.terminate();
-*/
+        }
     }
 
 }
+
+

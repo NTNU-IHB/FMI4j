@@ -38,9 +38,10 @@ import no.mechatronics.sfi.fmi4j.modeldescription.misc.SourceFile
 import no.mechatronics.sfi.fmi4j.modeldescription.misc.VariableNamingConvention
 import no.mechatronics.sfi.fmi4j.modeldescription.structure.ModelStructure
 import no.mechatronics.sfi.fmi4j.modeldescription.structure.ModelStructureImpl
+import no.mechatronics.sfi.fmi4j.modeldescription.variables.ModelVariables
+import no.mechatronics.sfi.fmi4j.modeldescription.variables.ModelVariablesImpl
 import java.io.Serializable
 import javax.xml.bind.annotation.*
-
 
 
 /**

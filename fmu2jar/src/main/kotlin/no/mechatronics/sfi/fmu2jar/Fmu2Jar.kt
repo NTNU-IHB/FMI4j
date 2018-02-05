@@ -92,13 +92,18 @@ class Fmu2Jar(
         LOG.info("Generating .jar..")
 
         val tempDirectory = Files.createTempDirectory("fmu2jar_").toFile()
-        val parentDir = File(tempDirectory, modelDescription.modelName)
-        parentDir.mkdir()
+        val parentDir = File(tempDirectory, modelDescription.modelName).apply {
+            mkdir()
+        }
 
         copyFmuFile(parentDir)
         copyBuildFile(parentDir)
         copyGradleWrapper(parentDir)
         copySourceFile(parentDir)
+
+        File(parentDir, "settings.gradle").apply {
+            createNewFile()
+        }
 
         try {
 

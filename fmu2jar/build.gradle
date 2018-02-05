@@ -12,9 +12,9 @@ distributions {
 }
 
 def debug = false
-def snapshot = false
+def snapshot = true
 
-def fmi_md_version = snapshot ? '0.4.4-SNAPSHOT' : '0.4.3'
+def fmi_md_version = snapshot ? '0.5.1-SNAPSHOT' : '0.5'
 
 repositories {
     if (debug) {
@@ -30,7 +30,7 @@ repositories {
 dependencies {
 
     compile group: 'commons-cli', name: 'commons-cli', version: '1.4'
-    compile group: 'no.mechatronics.sfi.fmi4j', name: 'fmi-md', version: fmi_md_version
+    compile group: 'no.mechatronics.sfi.fmi4j', name: 'fmi-md', version: fmi_md_version, changing: snapshot
 
     testCompile group: 'commons-io', name: 'commons-io', version: '2.6'
 

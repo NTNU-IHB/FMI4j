@@ -27,6 +27,10 @@ package no.mechatronics.sfi.fmi4j.modeldescription
 import no.mechatronics.sfi.fmi4j.modeldescription.cs.CoSimulationModelDescription
 import no.mechatronics.sfi.fmi4j.modeldescription.misc.DefaultExperiment
 import no.mechatronics.sfi.fmi4j.modeldescription.misc.VariableNamingConvention
+import no.mechatronics.sfi.fmi4j.modeldescription.variables.ModelVariables
+import no.mechatronics.sfi.fmi4j.modeldescription.variables.Real
+import no.mechatronics.sfi.fmi4j.modeldescription.variables.RealVariable
+import no.mechatronics.sfi.fmi4j.modeldescription.variables.ScalarVariable
 import org.apache.commons.io.IOUtils
 import org.junit.Assert
 import org.junit.Before
@@ -97,7 +101,7 @@ class ModelDescriptionTest_CS {
     @Test
     fun testStartVariables() {
         val variables: ModelVariables =  modelDescription.modelVariables
-        val variable: RealVariable = variables.getByName("Temperature_Room").asRealVariable()
+        val variable: RealVariable = variables.getByName("HeatCapacity1.T0").asRealVariable()
         println(variable)
         Assert.assertEquals(298.0, variable.start!!, 0.0)
     }
@@ -105,7 +109,7 @@ class ModelDescriptionTest_CS {
     @Test
     fun testTypeName() {
         val variables: ModelVariables =  modelDescription.modelVariables
-        val variable: RealVariable = variables.getByName("Temperature_Room").asRealVariable()
+        val variable: RealVariable = variables.getByName("Temperature_Room") as RealVariable
         println(variable)
         Assert.assertEquals("Real", ScalarVariable.getTypeName(variable))
     }
@@ -113,7 +117,7 @@ class ModelDescriptionTest_CS {
     @Test
     fun testMinMax() {
         val variables =  modelDescription.modelVariables
-        val variable = variables.getByName("Temperature_Room").asRealVariable()
+        val variable = variables.getByName("Temperature_Room") as RealVariable
         println(variable)
         Assert.assertEquals(2.0, variable.min)
         Assert.assertEquals(4.0, variable.max)
