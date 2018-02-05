@@ -21,15 +21,22 @@ For Model Exchange, solvers are also included
 FMUBuilder builder = new FmuBuilder(new File("path/to/fmu.fmu"));
 try(FmiSimulation fmu = builder.asCoSimulationFmu().newInstance()) {
 
-    //set start values
-    
+    RealVariable myVar = fmu.modelVariables.getByName("myVar").asRealVariable()
+
+    //assign custom start values
+    myVar.setStart(2d);
+                
     if (fmu.init()) {
+        
+        double myValue = myVar.getValue(); //read
+        myVar.setValue(5d); //write
+        
         double dt = 1d/100;
         while (fmu.getCurrentTime() < 10) {
             fmu.doStep(dt);
         }
     }
-}
+} //fmu is terminated
 ```
 
 ##### Kotlin API
@@ -38,16 +45,23 @@ try(FmiSimulation fmu = builder.asCoSimulationFmu().newInstance()) {
 val builder = FmuBuilder(new File("path/to/fmu.fmu")
 builder.asCoSimulationFmu().newInstance().use { fmu -> 
 
+    val myVar =  fmu.modelVariables.getByName("myVar").asRealVariable()
+
     //set start values
+    myVar.start = 2.0
     
     if (fmu.init()) {
+    
+        val myVal = myVar.value //read
+        myVar.value = 5.0 //write
+    
         val dt = 1.0/100
         while (fmu.currentTime) < 10) {
             fmu.doStep(dt);
         }
     }
     
-}
+} //fmu is terminated
 ```
 
 #### Model Exchange(with integrator) example

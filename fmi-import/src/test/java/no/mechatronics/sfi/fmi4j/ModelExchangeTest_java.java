@@ -37,7 +37,7 @@ import org.junit.Before;
 import java.io.IOException;
 import java.net.URL;
 
-public class ModelExchangeTest {
+public class ModelExchangeTest_java {
 
     private FmiSimulation fmu;
 
