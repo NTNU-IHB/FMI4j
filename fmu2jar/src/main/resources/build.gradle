@@ -9,10 +9,10 @@ buildscript {
     }
 }
 
-def snapshot = false
-def fmi_import_version = snapshot ? '0.1.2-BETA-SNAPSHOT' : '0.1.1-BETA'
+def snapshot = true
+def fmi_import_version = snapshot ? '0.2.1-SNAPSHOT' : '0.2'
 
-apply plugin: 'java'
+apply plugin: 'java-library'
 apply plugin: 'kotlin'
 apply plugin: 'maven-publish'
 
@@ -32,7 +32,8 @@ repositories {
 }
 
 dependencies {
-    compile group: 'no.mechatronics.sfi.fmi4j', name: 'fmi-import', version: fmi_import_version, changing: snapshot
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+    api group: 'no.mechatronics.sfi.fmi4j', name: 'fmi-import', version: fmi_import_version, changing: snapshot
 }
 
 task sourcesJar(type: Jar, dependsOn: classes, description: 'Creates a jar from the source files.') {

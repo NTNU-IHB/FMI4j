@@ -20,6 +20,7 @@ class MainTest {
     @Before
     fun setUp() {
         out = Files.createTempDirectory("fmu2jar_").toFile()
+        LOG.info("Created out dir: ${out.absolutePath}")
     }
 
     @After

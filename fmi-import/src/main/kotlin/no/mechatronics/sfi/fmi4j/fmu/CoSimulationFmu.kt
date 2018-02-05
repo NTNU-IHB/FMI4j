@@ -25,6 +25,8 @@
 package no.mechatronics.sfi.fmi4j.fmu
 
 import no.mechatronics.sfi.fmi4j.FmiSimulation
+import no.mechatronics.sfi.fmi4j.misc.VariableReader
+import no.mechatronics.sfi.fmi4j.misc.VariableWriter
 import no.mechatronics.sfi.fmi4j.modeldescription.cs.CoSimulationModelDescription
 import no.mechatronics.sfi.fmi4j.proxy.cs.CoSimulationLibraryWrapper
 import no.mechatronics.sfi.fmi4j.proxy.enums.Fmi2Status

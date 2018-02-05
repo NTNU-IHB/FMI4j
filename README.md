@@ -98,8 +98,8 @@ The generated library also exposes all variables from the FMU through a type saf
 E.g. an FMU with a variable named "Controller.speed" of type Real, will have the methods
 
 ```java
-    public RealReader getController_speedReader()
-    public RealWriter getController_speedWriter()
+    public double getController_speed();
+    public void setController_speed(double speed);
 ``` 
 
 ### Usage
@@ -117,15 +117,13 @@ usage: fmu2jar
 ##### API example from kotlin
 ```kotlin
     ControlledTemperature.newInstance().use { fmu ->  
-        val reader: RealReader = fmu.parameters.getTemperatureSource_TReader()
-        val temperatureSource_T: Double = reader.read()        
+        val value: Double = fmu.parameters.getTemperatureSource_T()   
     } //fmu has been automatically terminated
 ```
 ##### API example from java
 ```java
     try (ControlledTemperature fmu = ControlledTemperature.newInstance()) { 
-        RealReader reader = fmu.getParameters().getTemperatureSource_TReader();
-        double temperatureSource_T = reader.read();
+        double value = fmu.getParameters().getTemperatureSource_T();
     } //fmu has been automatically terminated
 ```
 
@@ -158,7 +156,7 @@ class ControlledTemperature private constructor(
          * Causality=OUTPUT
          * Variability=CONTINUOUS
          */
-        fun getTemperature_ReferenceReader() = fmu.getReader(46).asRealReader()
+        fun getTemperature_Reference() = fmu.variableAccessor.getReal(46)
             
         /**
          * Temperature_Room
@@ -167,7 +165,7 @@ class ControlledTemperature private constructor(
          * min=2.0
          * max=4.0
          */
-        fun getTemperature_RoomReader() = fmu.getReader(47).asRealReader()
+        fun getTemperature_Room() = fmu.variableAccessor.getReal(47)
             
     }
         

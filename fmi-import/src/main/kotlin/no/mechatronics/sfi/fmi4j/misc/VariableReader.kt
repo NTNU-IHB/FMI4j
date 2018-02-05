@@ -1,131 +1,107 @@
-/*
- * The MIT License
- *
- * Copyright 2017-2018 Norwegian University of Technology
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING  FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
-
 package no.mechatronics.sfi.fmi4j.misc
 
-import no.mechatronics.sfi.fmi4j.proxy.Fmi2LibraryWrapper
-import no.mechatronics.sfi.fmi4j.proxy.enums.Fmi2Status
+import no.mechatronics.sfi.fmi4j.fmu.AbstractFmu
+import no.mechatronics.sfi.fmi4j.modeldescription.variables.*
 
-/**
- *
- * @author Lars Ivar Hatledal
- */
+interface SingleRead {
+
+    fun asInt(): Int
+    fun asReal(): Double
+    fun asString(): String
+    fun asBoolean(): Boolean
+
+}
+
+
+interface BulkRead {
+
+    fun asInt(): IntArray
+    fun asReal(): DoubleArray
+    fun asString(): Array<String>
+    fun asBoolean(): BooleanArray
+
+}
+
 interface VariableReader {
-    fun asIntReader(): IntReader
-    fun asRealReader(): RealReader
-    fun asStringReader(): StringReader
-    fun asBooleanReader(): BooleanReader
-}
 
-/**
- *
- * @author Lars Ivar Hatledal
- */
-interface Reader<E> {
-    fun read() : E
-}
+    fun read(valueReference: Int): SingleRead
+    fun read(variableName: String): SingleRead
 
-interface IntReader: Reader<Int>
-interface RealReader: Reader<Double>
-interface StringReader: Reader<String>
-interface BooleanReader: Reader<Boolean>
-
-/**
- *
- * @author Lars Ivar Hatledal
- */
-class IntReaderImpl internal constructor(
-        private val wrapper: Fmi2LibraryWrapper<*>,
-        private val valueReference: Int
-) : IntReader {
-
-    override fun read() = wrapper.getInteger(valueReference)
+    fun read(valueReferences: IntArray): BulkRead
+    fun read(valueReferences: Collection<Int>): BulkRead
+    fun read(variableNames: Array<String>): BulkRead
 
 }
 
-/**
- *
- * @author Lars Ivar Hatledal
- */
-class RealReaderImpl internal constructor(
-        private val wrapper: Fmi2LibraryWrapper<*>,
-        private val valueReference: Int
-) : RealReader {
+class VariableReaderImpl(
+        fmu: AbstractFmu<*, *>
+): VariableReader {
 
-    override fun read() = wrapper.getReal(valueReference)
+    private val wrapper = fmu.wrapper
+    private val modelVariables = fmu.modelVariables
+
+    override fun read(valueReference: Int) = SingleReadImpl(valueReference)
+    override fun read(variableName: String) = SingleReadImpl(variableName)
+
+    override fun read(valueReferences: IntArray) = BulkReadImpl(valueReferences)
+    override fun read(valueReferences: Collection<Int>) = BulkReadImpl(valueReferences)
+    override fun read(variableNames: Array<String>) = BulkReadImpl(variableNames)
+
+    inner class SingleReadImpl(
+            private val valueReference: Int
+    ): SingleRead{
+
+        constructor(variableName: String) : this(modelVariables.getValueReference(variableName))
+
+        override fun asInt(): Int {
+            val variable = modelVariables.getByValueReference(valueReference)
+            if (variable is IntegerVariable) {
+                return wrapper.getInteger(valueReference)
+            } else {
+                throw IllegalStateException("$variable is not of type Int!")
+            }
+        }
+        override fun asReal(): Double {
+            val variable = modelVariables.getByValueReference(valueReference)
+            if (variable is RealVariable) {
+                return wrapper.getReal(valueReference)
+            } else {
+                throw IllegalStateException("$variable is not of type Real!")
+            }
+        }
+        override fun asString() : String {
+            val variable = modelVariables.getByValueReference(valueReference)
+            if (variable is StringVariable) {
+                return wrapper.getString(valueReference)
+            } else {
+                throw IllegalStateException("$variable is not of type String!")
+            }
+        }
+
+        override fun asBoolean(): Boolean {
+            val variable = modelVariables.getByValueReference(valueReference)
+            if (variable is BooleanVariable) {
+                return wrapper.getBoolean(valueReference)
+            } else {
+                throw IllegalStateException("$variable is not of type Boolean!")
+            }
+        }
+
+    }
+
+    inner class BulkReadImpl(
+            private val valueReferences: IntArray
+    ): BulkRead {
+
+        constructor(valueReferences: Collection<Int>) : this (valueReferences.toIntArray())
+        constructor(variableName: Array<String>) : this(modelVariables.getValueReferences(variableName))
+
+        override fun asInt() = wrapper.getInteger(valueReferences)
+        override fun asReal() = wrapper.getReal(valueReferences)
+        override fun asString() = wrapper.getString(valueReferences)
+        override fun asBoolean() = wrapper.getBoolean(valueReferences)
+
+    }
 
 }
 
-/**
- *
- * @author Lars Ivar Hatledal
- */
-class StringReaderImpl internal constructor(
-        private val wrapper: Fmi2LibraryWrapper<*>,
-        private val valueReference: Int
-) : StringReader {
-
-    override fun read() = wrapper.getString(valueReference)
-
-}
-
-/**
- *
- * @author Lars Ivar Hatledal
- */
-class BooleanReaderImpl internal constructor(
-        private val wrapper: Fmi2LibraryWrapper<*>,
-        private val valueReference: Int
-) : BooleanReader {
-
-    override fun read() = wrapper.getBoolean(valueReference)
-
-}
-
-/**
- *
- * @author Lars Ivar Hatledal
- */
-interface VariablesReader {
-    fun readInteger() : IntArray
-    fun readReal() : DoubleArray
-    fun readString() : Array<String>
-    fun readBoolean() : BooleanArray
-}
-
-/**
- *
- * @author Lars Ivar Hatledal
- */
-class VariablesReaderImpl internal constructor(
-        private val wrapper: Fmi2LibraryWrapper<*>,
-        private val valueReference: IntArray
-): VariablesReader {
-
-    override fun readInteger() : IntArray = wrapper.getInteger(valueReference)
-    override fun readReal() : DoubleArray = wrapper.getReal(valueReference)
-    override fun readString() : Array<String> = wrapper.getString(valueReference)
-    override fun readBoolean() : BooleanArray = wrapper.getBoolean(valueReference)
-
-}
