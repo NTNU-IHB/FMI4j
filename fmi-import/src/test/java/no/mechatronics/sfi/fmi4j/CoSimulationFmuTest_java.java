@@ -27,7 +27,6 @@ package no.mechatronics.sfi.fmi4j;
 
 import no.mechatronics.sfi.fmi4j.fmu.AbstractFmu;
 import no.mechatronics.sfi.fmi4j.fmu.FmuBuilder;
-import no.mechatronics.sfi.fmi4j.misc.SingleRead;
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.RealVariable;
 import no.mechatronics.sfi.fmi4j.proxy.enums.Fmi2Status;
 import org.junit.After;
@@ -37,14 +36,14 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class CoSimulationFmuTest {
+public class CoSimulationFmuTest_java {
 
     private FmuBuilder builder;
     private FmiSimulation fmu;
 
     @Before
     public void setUp() throws IOException {
-        final URL url = CoSimulationFmuTest.class.getClassLoader()
+        final URL url = CoSimulationFmuTest_java.class.getClassLoader()
                 .getResource("v2/cs/ControlledTemperature/ControlledTemperature.fmu");
         Assert.assertNotNull(url);
 
@@ -66,7 +65,9 @@ public class CoSimulationFmuTest {
 
         Assert.assertEquals("2.0", fmu.getVersion());
 
-        final RealVariable startTemp = fmu.getModelVariables().getByName("HeatCapacity1.T0").asRealVariable();
+        final double startTemp = fmu.getModelVariables().getByName("HeatCapacity1.T0").asRealVariable().getStart();
+        Assert.assertNotNull(startTemp);
+        Assert.assertEquals(298.0, startTemp,0);
 
         Assert.assertTrue(fmu.init());
         Assert.assertTrue(fmu.getLastStatus() == Fmi2Status.OK);
@@ -98,7 +99,7 @@ public class CoSimulationFmuTest {
 
         AtomicBoolean first = new AtomicBoolean(true);
         while (fmu.getCurrentTime() < 5) {
-            fmu.doStep(1d / 100);
+            fmu.doStep(dt);
             Assert.assertTrue(fmu.getLastStatus() == Fmi2Status.OK);
             double value = temperature_room.getValue();
             Assert.assertTrue(fmu.getLastStatus() == Fmi2Status.OK);

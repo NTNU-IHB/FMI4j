@@ -111,7 +111,7 @@ class ModelDescriptionTest_CS {
         val variables: ModelVariables =  modelDescription.modelVariables
         val variable: RealVariable = variables.getByName("Temperature_Room") as RealVariable
         println(variable)
-        Assert.assertEquals("Real", ScalarVariable.getTypeName(variable))
+        Assert.assertEquals("Real", variable.typeName)
     }
 
     @Test
