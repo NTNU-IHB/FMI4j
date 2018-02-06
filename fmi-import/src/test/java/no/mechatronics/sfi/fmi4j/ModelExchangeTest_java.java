@@ -37,6 +37,9 @@ import org.junit.Before;
 import java.io.IOException;
 import java.net.URL;
 
+/**
+ * @author Lars Ivar Hatledal
+ */
 public class ModelExchangeTest_java {
 
     private FmiSimulation fmu;
@@ -53,8 +56,8 @@ public class ModelExchangeTest_java {
         integrator = new EulerIntegrator(1E-3);
 
         fmu = new FmuBuilder(url)
-                .asModelExchangeFmuWithIntegrator(integrator)
-                .newInstance();
+                .asModelExchangeFmu()
+                .newInstance(integrator);
 
     }
 
@@ -71,17 +74,15 @@ public class ModelExchangeTest_java {
 
         Assert.assertEquals("2.0", fmu.getVersion());
 
-        RealVariable x0 = fmu.getModelVariables().getByName("x0").asRealVariable();
+        RealVariable x0 = fmu.getModelVariables()
+                .getByName("x0").asRealVariable();
 
         Assert.assertTrue(fmu.init());
 
         double macroStep = 1.0 / 10;
-
         while (fmu.getCurrentTime() < 1) {
-
             System.out.println("t=" + fmu.getCurrentTime() + ", x0=" + x0.getValue());
             fmu.doStep(macroStep);
-
         }
     }
 

@@ -411,7 +411,7 @@ abstract class Fmi2LibraryWrapper<E: Fmi2Library> (
      */
     private fun freeInstance() {
         library.fmi2FreeInstance(c)
-        libraryProvider.disposeLibrary()
+        //libraryProvider.disposeLibrary()
     }
 
     /**

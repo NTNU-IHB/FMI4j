@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package no.mechatronics.sfi.fmi4j.wrapper
+package no.mechatronics.sfi.fmi4j
 
 import no.mechatronics.sfi.fmi4j.misc.FmiMethod
 import no.mechatronics.sfi.fmi4j.misc.FmiState

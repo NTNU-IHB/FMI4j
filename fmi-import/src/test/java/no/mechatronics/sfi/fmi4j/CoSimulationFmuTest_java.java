@@ -36,6 +36,9 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+/**
+ * @author Lars Ivar Hatledal
+ */
 public class CoSimulationFmuTest_java {
 
     private FmuBuilder builder;
@@ -72,11 +75,14 @@ public class CoSimulationFmuTest_java {
         Assert.assertTrue(fmu.init());
         Assert.assertTrue(fmu.getLastStatus() == Fmi2Status.OK);
 
-        final RealVariable heatCapacity1_C = fmu.getModelVariables().getByName("HeatCapacity1.C").asRealVariable();
+        final RealVariable heatCapacity1_C = fmu.getModelVariables()
+                .getByName("HeatCapacity1.C").asRealVariable();
         Assert.assertEquals(0.1, heatCapacity1_C.getStart(), 0);
         System.out.println(heatCapacity1_C.getValue());
 
-        final RealVariable temperature_room = fmu.getModelVariables().getByName("Temperature_Room").asRealVariable();
+        final RealVariable temperature_room = fmu.getModelVariables()
+                .getByName("Temperature_Room").asRealVariable();
+
 
         double first1 = Double.NaN;
 
@@ -90,6 +96,8 @@ public class CoSimulationFmuTest_java {
                 first1 = value;
             }
             System.out.println(value);
+
+            Assert.assertEquals(value, ((AbstractFmu) fmu).getVariableAccessor().getReal("Temperature_Room"), 0);
 
         }
 
@@ -110,9 +118,11 @@ public class CoSimulationFmuTest_java {
 
         }
 
+
         try (FmiSimulation fmu2 = builder.asCoSimulationFmu().newInstance()) {
-            fmu2.init();
-            System.out.println(fmu2.getVariableAccessor().getReal(temperature_room.getValueReference()));
+            if (fmu2.init()) {
+                System.out.println(fmu2.getVariableAccessor().getReal(temperature_room.getValueReference()));
+            }
         }
 
     }

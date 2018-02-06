@@ -1,7 +1,6 @@
-package no.mechatronics.sfi.fmi4j.wrapper
+package no.mechatronics.sfi.fmi4j
 
 
-import no.mechatronics.sfi.fmi4j.FmiSimulation
 import no.mechatronics.sfi.fmi4j.fmu.AbstractFmu
 import no.mechatronics.sfi.fmi4j.fmu.FmuBuilder
 import no.mechatronics.sfi.fmi4j.proxy.enums.Fmi2Status
@@ -11,7 +10,7 @@ import org.junit.Before
 import java.io.IOException
 import java.util.concurrent.atomic.AtomicBoolean
 
-class CoSimulationFmuTest_java {
+class CoSimulationFmuTest_kt {
 
     private var builder: FmuBuilder? = null
     private var fmu: FmiSimulation? = null
