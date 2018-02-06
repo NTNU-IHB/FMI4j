@@ -21,7 +21,7 @@ For Model Exchange, solvers are also included
 FMUBuilder builder = new FmuBuilder(new File("path/to/fmu.fmu"));
 try(FmiSimulation fmu = builder.asCoSimulationFmu().newInstance()) {
 
-    RealVariable myVar = fmu.modelVariables.getByName("myVar").asRealVariable()
+    RealVariable myVar = fmu.getVariableByName("myVar").asRealVariable()
 
     //assign custom start values
     myVar.setStart(2d);
@@ -42,12 +42,12 @@ try(FmiSimulation fmu = builder.asCoSimulationFmu().newInstance()) {
 ##### Kotlin API
 
 ```kotlin
-val builder = FmuBuilder(new File("path/to/fmu.fmu")
+val builder = FmuBuilder(File("path/to/fmu.fmu"))
 builder.asCoSimulationFmu().newInstance().use { fmu -> 
 
-    val myVar =  fmu.modelVariables.getByName("myVar").asRealVariable()
+    val myVar =  fmu.getVariableByName("myVar").asRealVariable()
 
-    //set start values
+    //assign custom start values
     myVar.start = 2.0
     
     if (fmu.init()) {
@@ -56,7 +56,7 @@ builder.asCoSimulationFmu().newInstance().use { fmu ->
         myVar.value = 5.0 //write
     
         val dt = 1.0/100
-        while (fmu.currentTime) < 10) {
+        while (fmu.currentTime < 10.0) {
             fmu.doStep(dt);
         }
     }
@@ -73,7 +73,8 @@ FMUBuilder builder = new FmuBuilder(new File("path/to/fmu.fmu"));
 try (FmiSimulation fmu = builder.asModelExchangeFmuWithIntegrator(integrator)
                         .newInstance()) {
 
-    //set start values
+    //assign custom start values
+    ...
 
     if (fmu.init()) {
        double dt = 1d/100;
@@ -82,17 +83,18 @@ try (FmiSimulation fmu = builder.asModelExchangeFmuWithIntegrator(integrator)
        } 
     }
     
-}
+} //fmu is terminated
 ```
 
 ##### Kotlin API
 ```kotlin
 val integrator = ClassicalRungeKuttaIntegrator(1E-3)
 val builder = FmuBuilder(File("path/to/fmu.fmu"))
-builder.asModelExchangeFmuWithIntegrator(integrator)
-        .newInstance().use { fmu -> 
+builder.asModelExchangeFmu()
+        .newInstance(integrator).use { fmu -> 
         
-            //set start values
+            //assign custom start values
+            ...
         
             if (fmu.init()) {
                 val dt = 1.0/100;
@@ -101,7 +103,7 @@ builder.asModelExchangeFmuWithIntegrator(integrator)
                 }
             }
 
-        }
+        } //fmu is terminated
 ```
 
 ## FMU2Jar
