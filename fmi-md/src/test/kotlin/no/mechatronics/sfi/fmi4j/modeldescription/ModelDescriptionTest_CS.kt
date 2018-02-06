@@ -31,10 +31,12 @@ import no.mechatronics.sfi.fmi4j.modeldescription.variables.ModelVariables
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.Real
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.RealVariable
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.ScalarVariable
+import org.apache.commons.io.FileUtils
 import org.apache.commons.io.IOUtils
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
+import java.io.File
 import java.nio.charset.Charset
 import java.util.*
 
@@ -44,8 +46,10 @@ class ModelDescriptionTest_CS {
 
     @Before
     fun setUp() {
-        val xml = IOUtils.toString(javaClass.classLoader
-                .getResource("v2/cs/ControlledTemperature/modelDescription.xml"), Charset.forName("UTF-8"))
+        val path = "../test/fmi2/cs/win64/20sim/4.6.4.8004/ControlledTemperature/modelDescription.xml"
+        val file = File(path)
+        Assert.assertTrue(file.exists())
+        val xml = FileUtils.readFileToString(file, Charset.forName("UTF-8"))
         modelDescription = ModelDescriptionParser.parse(xml).asCS()
     }
 
@@ -123,6 +127,15 @@ class ModelDescriptionTest_CS {
         Assert.assertEquals(4.0, variable.max)
     }
 
+    @Test
+    fun needsExecutionTool(){
+        Assert.assertTrue(!modelDescription.needsExecutionTool)
+    }
+
+    @Test
+    fun canNotUseMemoryManagementFunctions(){
+        Assert.assertTrue(modelDescription.canNotUseMemoryManagementFunctions)
+    }
 
     @Test
     fun testVariableNamingConvention()  {

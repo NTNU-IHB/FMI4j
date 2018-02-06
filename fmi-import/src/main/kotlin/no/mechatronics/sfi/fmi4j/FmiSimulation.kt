@@ -24,28 +24,25 @@
 
 package no.mechatronics.sfi.fmi4j
 
-import no.mechatronics.sfi.fmi4j.misc.VariableReader
-import no.mechatronics.sfi.fmi4j.misc.VariableWriter
 import no.mechatronics.sfi.fmi4j.modeldescription.*
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.FmuVariableAccessor
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.ModelVariables
 import no.mechatronics.sfi.fmi4j.proxy.enums.Fmi2Status
+import java.io.Closeable
 
 /**
  *
  * @author Lars Ivar Hatledal
  */
-interface FmiSimulation : AutoCloseable {
+interface FmiSimulation : Closeable {
 
-    val version: String
-
-    val modelDescription: ModelDescription
-    val modelVariables: ModelVariables
     val currentTime: Double
-    val lastStatus: Fmi2Status
 
+    val modelVariables: ModelVariables
+    val modelDescription: ModelDescription
     val variableAccessor: FmuVariableAccessor
 
+    val lastStatus: Fmi2Status
     val isInitialized : Boolean
     val isTerminated : Boolean
 
@@ -56,6 +53,20 @@ interface FmiSimulation : AutoCloseable {
 
     fun reset() : Boolean
     fun terminate() : Boolean
+
+    /**
+     * Allows try with resources to be used.
+     * Same as calling terminate()
+     * @see terminate
+     */
+    override fun close() {
+        terminate()
+    }
+
+    /**
+     * @see ModelVariables.getByName
+     */
+    fun getVariableByName(name: String) = modelVariables.getByName(name)
 
 
 }

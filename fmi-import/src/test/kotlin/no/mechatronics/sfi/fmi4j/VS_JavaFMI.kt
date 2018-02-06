@@ -10,7 +10,8 @@ class VS_JavaFMI {
     @Test
     fun test1() {
 
-        val file = File(javaClass.classLoader.getResource("v2/cs/ControlledTemperature/ControlledTemperature.fmu").file)
+        val path = "../test/fmi2/cs/win64/20Sim/4.6.4.8004/ControlledTemperature/ControlledTemperature.fmu"
+        val file = File(path)
         val fmu1 = FmuBuilder(file).asCoSimulationFmu().newInstance().also {
             it.init(0.0)
         }

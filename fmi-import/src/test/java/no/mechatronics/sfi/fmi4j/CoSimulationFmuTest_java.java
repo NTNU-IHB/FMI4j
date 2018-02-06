@@ -32,6 +32,8 @@ import no.mechatronics.sfi.fmi4j.proxy.enums.Fmi2Status;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -46,11 +48,12 @@ public class CoSimulationFmuTest_java {
 
     @Before
     public void setUp() throws IOException {
-        final URL url = CoSimulationFmuTest_java.class.getClassLoader()
-                .getResource("v2/cs/ControlledTemperature/ControlledTemperature.fmu");
-        Assert.assertNotNull(url);
 
-        builder =  new FmuBuilder(url);
+        String path = "../test/fmi2/cs/win64/20Sim/4.6.4.8004/ControlledTemperature/ControlledTemperature.fmu";
+        final File file = new File(path);
+        Assert.assertNotNull(file);
+
+        builder =  new FmuBuilder(file);
         fmu = builder.asCoSimulationFmu().newInstance();
 
     }
@@ -68,7 +71,8 @@ public class CoSimulationFmuTest_java {
 
         Assert.assertEquals("2.0", fmu.getVersion());
 
-        final double startTemp = fmu.getModelVariables().getByName("HeatCapacity1.T0").asRealVariable().getStart();
+        final double startTemp = fmu.getModelVariables()
+                .getByName("HeatCapacity1.T0").asRealVariable().getStart();
         Assert.assertNotNull(startTemp);
         Assert.assertEquals(298.0, startTemp,0);
 

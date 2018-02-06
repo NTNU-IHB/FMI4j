@@ -97,10 +97,6 @@ abstract class AbstractFmu<E: ModelDescription, T: Fmi2LibraryWrapper<*>> intern
     fun setDebugLogging(loggingOn: Boolean, nCategories: Int, categories: Array<String>)
             =  wrapper.setDebugLogging(loggingOn, nCategories, categories)
 
-    /**
-     * @see ModelVariables.getByName
-     */
-    fun getVariableByName(name: String) = modelVariables.getByName(name)
 
     fun init() = init(0.0)
     fun init(start :Double) = init(start, -1.0)
@@ -140,15 +136,6 @@ abstract class AbstractFmu<E: ModelDescription, T: Fmi2LibraryWrapper<*>> intern
             return true
         }
         return false
-    }
-
-    /**
-     * Allows try with resources to be used.
-     * Simply callas terminate()
-     * @see terminate
-     */
-    override fun close() {
-        terminate()
     }
 
     /**
