@@ -26,6 +26,7 @@ package no.mechatronics.sfi.fmi4j.fmu
 
 import com.sun.jna.Platform
 import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescription
+import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescriptionImpl
 import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescriptionParser
 import java.io.File
 import java.io.IOException
@@ -69,11 +70,19 @@ class FmuFile {
         this.fmuFile = extractToTempFolder(url)
     }
 
+    /**
+     * Get the content of the modelDescription.xml file as a String
+     */
+    val modelDescriptionXml: String by lazy {
+        FileUtils.readFileToString(modelDescriptionFile, Charset.forName("UTF-8"))
+    }
+
+    val modelDescription by lazy {
+        ModelDescriptionParser.parse(modelDescriptionXml)
+    }
+
     private val platformBitness: String
         get() = if (Platform.is64Bit()) "64" else "32"
-
-    val fmuPath: String
-        get() = "file:///${fmuFile.absolutePath.replace("\\", "/")}"
 
     /**
      * Get the file handle for the modelDescription.xml file
@@ -82,14 +91,8 @@ class FmuFile {
         get() = File(fmuFile, MODEL_DESC)
 
 
-    /**
-     * Get the content of the modelDescription.xml file as a String
-     */
-    val modelDescriptionXml: String by lazy {
-         FileUtils.readFileToString(modelDescriptionFile, Charset.forName("UTF-8"))
-    }
 
-    val libraryFolderName: String
+    private val libraryFolderName: String
         get() =  when {
             Platform.isWindows() -> WINDOWS_FOLDER
             Platform.isLinux() -> LINUX_FOLDER
@@ -97,7 +100,7 @@ class FmuFile {
             else -> throw UnsupportedOperationException("OS '${Platform.ARCH}' is unsupported!")
     }
 
-    val libraryExtension: String
+    private val libraryExtension: String
         get() =  when {
             Platform.isWindows() -> WINDOWS_LIBRARY_EXTENSION
             Platform.isLinux() -> LINUX_LIBRARY_EXTENSION

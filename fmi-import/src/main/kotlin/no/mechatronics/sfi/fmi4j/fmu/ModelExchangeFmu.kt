@@ -29,6 +29,7 @@ import no.mechatronics.sfi.fmi4j.fmu.AbstractFmu
 import no.mechatronics.sfi.fmi4j.fmu.FmuFile
 import no.mechatronics.sfi.fmi4j.misc.*
 import no.mechatronics.sfi.fmi4j.modeldescription.me.ModelExchangeModelDescription
+import no.mechatronics.sfi.fmi4j.modeldescription.me.ModelExchangeModelDescriptionImpl
 import no.mechatronics.sfi.fmi4j.proxy.me.ModelExchangeLibraryWrapper
 import no.mechatronics.sfi.fmi4j.proxy.structs.Fmi2EventInfo
 import org.apache.commons.math3.ode.FirstOrderDifferentialEquations
@@ -40,9 +41,11 @@ import org.apache.commons.math3.ode.FirstOrderIntegrator
  */
 open class ModelExchangeFmu internal constructor(
         fmuFile: FmuFile,
-        modelDescription: ModelExchangeModelDescription,
         wrapper: ModelExchangeLibraryWrapper
-): AbstractFmu<ModelExchangeModelDescription, ModelExchangeLibraryWrapper>(fmuFile, modelDescription, wrapper) {
+): AbstractFmu<ModelExchangeModelDescription, ModelExchangeLibraryWrapper>(fmuFile, wrapper) {
+
+    override val modelDescription: ModelExchangeModelDescription
+        get() = fmuFile.modelDescription.asModelExchange()
 
     /**
      * @see ModelExchangeLibraryWrapper.setTime

@@ -1,0 +1,39 @@
+[INFO][FMUCHK] FMI compliance checker 2.0.3b2 [FMILibrary: 2.0.2b3] build date: Apr 28 2016
+[INFO][FMUCHK] Called with following options:
+[INFO][FMUCHK] C:\temp\FMIcc\FMI_2.0\CoSimulation\win64\SimulationX\3.7\CoupledClutches\fmuCheck.win64.exe -e C:\temp\FMIcc\FMI_2.0\CoSimulation\win64\SimulationX\3.7\CoupledClutches\CoupledClutches_cc.log -o C:\temp\FMIcc\FMI_2.0\CoSimulation\win64\SimulationX\3.7\CoupledClutches\CoupledClutches_cc.csv -i C:\temp\FMIcc\FMI_2.0\CoSimulation\win64\SimulationX\3.7\CoupledClutches\CoupledClutches_in.csv -l 4 -h 1e-4 -s 1.5 C:\temp\FMIcc\FMI_2.0\CoSimulation\win64\SimulationX\3.7\CoupledClutches\CoupledClutches.fmu
+[INFO][FMUCHK] Will process FMU C:\temp\FMIcc\FMI_2.0\CoSimulation\win64\SimulationX\3.7\CoupledClutches\CoupledClutches.fmu
+[INFO][FMILIB] XML specifies FMI standard version 2.0
+[INFO][FMUCHK] Model name: CoupledClutches
+[INFO][FMUCHK] Model GUID: {ADE2DA92-1EDE-43DB-B352-7D6522908B52}
+[INFO][FMUCHK] Model version: 
+[INFO][FMUCHK] FMU kind: CoSimulation
+[INFO][FMUCHK] The FMU contains:
+0 constants
+6 parameters
+0 discrete variables
+21 continuous variables
+1 inputs
+4 outputs
+16 local variables
+0 independent variables
+0 calculated parameters
+25 real variables
+2 integer variables
+0 enumeration variables
+0 boolean variables
+0 string variables
+
+[INFO][FMUCHK] Printing output file header
+[INFO][FMUCHK] Opening input file C:\temp\FMIcc\FMI_2.0\CoSimulation\win64\SimulationX\3.7\CoupledClutches\CoupledClutches_in.csv
+[INFO][FMUCHK] Detected separator character in input file: ,
+[INFO][FMUCHK] Model identifier for CoSimulation: CoupledClutches
+[INFO][FMILIB] Loading 'win64' binary with 'default' platform types
+[INFO][FMUCHK] Version returned from CS FMU:   2.0
+[INFO][FMUCHK] Initialized FMU for simulation starting at time 0
+[INFO][FMUCHK] Simulation finished successfully at time 1.5
+FMU check summary:
+FMU reported:
+	0 warning(s) and error(s)
+Checker reported:
+	0 Warning(s)
+	0 Error(s)

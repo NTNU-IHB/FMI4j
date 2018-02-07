@@ -27,9 +27,6 @@ class ModelExchangeFmuWithIntegrator internal constructor(
 
     private val eventInfo: Fmi2EventInfo = Fmi2EventInfo()
 
-    override val version
-        get() = fmu.version
-
     override var currentTime: Double = 0.0
         private set
 

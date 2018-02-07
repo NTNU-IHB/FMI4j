@@ -77,7 +77,7 @@ interface CoSimulationModelDescription : ModelDescription {
  * @author Lars Ivar Hatledal
  */
 class CoSimulationModelDescriptionImpl(
-        modelDescription: SimpleModelDescription,
+        modelDescription: ModelDescriptionImpl,
         private var cs: CoSimulationData
 ) : SimpleModelDescription by modelDescription, CoSimulationModelDescription, Serializable {
 

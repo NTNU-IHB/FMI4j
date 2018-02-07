@@ -1,10 +1,12 @@
 package no.mechatronics.sfi.fmi4j.modeldescription
 
 import no.mechatronics.sfi.fmi4j.modeldescription.me.ModelExchangeModelDescription
+import org.apache.commons.io.FileUtils
 import org.apache.commons.io.IOUtils
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
+import java.io.File
 import java.nio.charset.Charset
 
 class ModelDescriptionTest_ME {
@@ -13,9 +15,11 @@ class ModelDescriptionTest_ME {
 
     @Before
     fun setUp() {
-        val xml = IOUtils.toString(javaClass.classLoader
-                .getResource("v2/me/VanDerPol/modelDescription.xml"), Charset.forName("UTF-8"))
-        modelDescription = ModelDescriptionParser.parse(xml).asME()
+        val path = "../test/fmi2/me/win64/FMUSDK/2.0.4/vanDerPol/modelDescription.xml"
+        val file = File(path)
+        Assert.assertTrue(file.exists())
+        val xml = FileUtils.readFileToString(file, Charset.forName("UTF-8"))
+        modelDescription = ModelDescriptionParser.parse(xml).asModelExchange()
     }
 
     @Test

@@ -32,22 +32,18 @@ import no.mechatronics.sfi.fmi4j.proxy.Fmi2LibraryWrapper
 import no.mechatronics.sfi.fmi4j.proxy.enums.Fmi2Status
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import java.io.Closeable
 
 abstract class AbstractFmu<E: ModelDescription, T: Fmi2LibraryWrapper<*>> internal constructor(
         val fmuFile: FmuFile,
-        val modelDescription: E,
         val wrapper: T
-) : AutoCloseable {
+) : Closeable {
 
     private companion object {
         val LOG: Logger = LoggerFactory.getLogger(AbstractFmu::class.java)
     }
 
-    private val map: MutableMap<String, IntArray> by lazy {
-        HashMap<String, IntArray>()
-    }
-
-    val variableAccessor = FmuVariableAccessorImpl(wrapper)
+    val variableAccessor = FmuVariableAccessorImpl(modelVariables, wrapper)
 
     init {
         modelVariables.forEach{
@@ -56,6 +52,8 @@ abstract class AbstractFmu<E: ModelDescription, T: Fmi2LibraryWrapper<*>> intern
             }
         }
     }
+
+    abstract val modelDescription: E
 
     /**
      * @see ModelDescription.modelVariables
@@ -101,6 +99,7 @@ abstract class AbstractFmu<E: ModelDescription, T: Fmi2LibraryWrapper<*>> intern
     fun setDebugLogging(loggingOn: Boolean, nCategories: Int, categories: Array<String>)
             =  wrapper.setDebugLogging(loggingOn, nCategories, categories)
 
+
     fun init() = init(0.0)
     fun init(start :Double) = init(start, -1.0)
     open fun init(start: Double, stop: Double): Boolean {
@@ -142,9 +141,7 @@ abstract class AbstractFmu<E: ModelDescription, T: Fmi2LibraryWrapper<*>> intern
     }
 
     /**
-     * Allows try with resources to be used.
-     * Simply callas terminate()
-     * @see terminate
+     * Same as calling terminate(), needed in order to implement Closable
      */
     override fun close() {
         terminate()
@@ -227,62 +224,4 @@ abstract class AbstractFmu<E: ModelDescription, T: Fmi2LibraryWrapper<*>> intern
         }
     }
 
-}
-
-class FmuVariableAccessorImpl(
-    private val wrapper: Fmi2LibraryWrapper<*>
-): FmuVariableAccessor {
-
-    override fun getBoolean(valueReference: Int) = wrapper.getBoolean(valueReference)
-    override fun getBoolean(vr: IntArray) = wrapper.getBoolean(vr)
-    override fun getBoolean(vr: IntArray, value: BooleanArray) = wrapper.getBoolean(vr, value)
-    override fun getBoolean(vr: IntArray, value: IntArray) = wrapper.getBoolean(vr, value)
-
-    override fun getInteger(valueReference: Int) = wrapper.getInteger(valueReference)
-    override fun getInteger(vr: IntArray) = wrapper.getInteger(vr)
-    override fun getInteger(vr: IntArray, value: IntArray) = wrapper.getInteger(vr, value)
-
-    override fun getReal(valueReference: Int) = wrapper.getReal(valueReference)
-    override fun getReal(vr: IntArray) = wrapper.getReal(vr)
-    override fun getReal(vr: IntArray, value: RealArray) = wrapper.getReal(vr, value)
-
-    override fun getString(valueReference: Int) = wrapper.getString(valueReference)
-    override fun getString(vr: IntArray) = wrapper.getString(vr)
-    override fun getString(vr: IntArray, value: StringArray) = wrapper.getString(vr, value)
-
-    override fun setBoolean(valueReference: Int, value: Boolean) {
-        wrapper.setBoolean(valueReference, value)
-    }
-
-    override fun setBoolean(vr: IntArray, value: BooleanArray) {
-        wrapper.setBoolean(vr, value)
-    }
-
-    override fun setBoolean(vr: IntArray, value: IntArray) {
-        wrapper.setBoolean(vr, value)
-    }
-
-    override fun setInteger(valueReference: Int, value: Int) {
-        wrapper.setInteger(valueReference, value)
-    }
-
-    override fun setInteger(vr: IntArray, value: IntArray) {
-        wrapper.setInteger(vr, value)
-    }
-
-    override fun setReal(valueReference: Int, value: Real) {
-        wrapper.setReal(valueReference, value)
-    }
-
-    override fun setReal(vr: IntArray, value: DoubleArray) {
-        wrapper.setReal(vr, value)
-    }
-
-    override fun setString(valueReference: Int, value: String) {
-        wrapper.setString(valueReference, value)
-    }
-
-    override fun setString(vr: IntArray, value: StringArray) {
-        wrapper.setString(vr, value)
-    }
 }

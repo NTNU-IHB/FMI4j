@@ -57,20 +57,34 @@ class FmuBuilder(
     constructor(url: URL) : this(FmuFile(url))
     constructor(file: File) : this(FmuFile(file))
 
-    fun asCoSimulationFmu() = CoSimulationFmuBuilder(fmuFile)
-    fun asModelExchangeFmu() = ModelExchangeFmuBuilder(fmuFile)
-    fun asModelExchangeFmuWithIntegrator(integrator: FirstOrderIntegrator) = ModelExchangeFmuWithIntegratorBuilder(fmuFile, integrator)
+    private val coSimulationBuilder: CoSimulationFmuBuilder? by lazy {
+        if (supportsCoSimulation) CoSimulationFmuBuilder(fmuFile) else null
+    }
+
+    private val modelExchangeBuilder: ModelExchangeFmuBuilder? by lazy {
+        if (supportsModelExchange) ModelExchangeFmuBuilder(fmuFile) else null
+    }
+
+    val supportsCoSimulation: Boolean
+        get() = fmuFile.modelDescription.supportsCoSimulation
+
+    val supportsModelExchange: Boolean
+        get() = fmuFile.modelDescription.supportsModelExchange
+
+    @Throws(IllegalStateException::class)
+    fun asCoSimulationFmu() = coSimulationBuilder ?: throw IllegalStateException("FMU does not support Co-Simulation!")
+    @Throws(IllegalStateException::class)
+    fun asModelExchangeFmu() = modelExchangeBuilder ?: throw IllegalStateException("FMU does not support Model Exchange!")
+
 }
 
 
-class CoSimulationFmuBuilder(
+class CoSimulationFmuBuilder internal constructor(
         private val fmuFile: FmuFile
 ) {
 
-    private val modelDescription: CoSimulationModelDescription by lazy {
-        ModelDescriptionParser
-                .parse(fmuFile.modelDescriptionXml).asCS()
-    }
+    private val modelDescription
+        get() = fmuFile.modelDescription.asCoSimulation()
 
     private val libraryCache: LibraryProvider<Fmi2CoSimulationLibrary> by lazy {
         loadLibrary()
@@ -83,19 +97,17 @@ class CoSimulationFmuBuilder(
         val lib = if (modelDescription.canBeInstantiatedOnlyOncePerProcess) loadLibrary() else libraryCache
         val c = instantiate(fmuFile, modelDescription, lib.get(), Fmi2Type.CoSimulation, visible, loggingOn)
         val wrapper = CoSimulationLibraryWrapper(c, lib)
-        return CoSimulationFmu(fmuFile, modelDescription, wrapper)
+        return CoSimulationFmu(fmuFile, wrapper)
     }
 
 }
 
-open class ModelExchangeFmuBuilder(
+class ModelExchangeFmuBuilder(
         private val fmuFile: FmuFile
 ) {
 
-    private val modelDescription: ModelExchangeModelDescription by lazy {
-        ModelDescriptionParser
-                .parse(fmuFile.modelDescriptionXml).asME()
-    }
+    private val modelDescription
+        get() = fmuFile.modelDescription.asModelExchange()
 
     private val libraryCache: LibraryProvider<Fmi2ModelExchangeLibrary> by lazy {
         loadLibrary()
@@ -108,36 +120,19 @@ open class ModelExchangeFmuBuilder(
         val lib = if (modelDescription.canBeInstantiatedOnlyOncePerProcess) loadLibrary() else libraryCache
         val c = instantiate(fmuFile, modelDescription, lib.get(), Fmi2Type.ModelExchange, visible, loggingOn)
         val wrapper = ModelExchangeLibraryWrapper(c, lib)
-        return ModelExchangeFmu(fmuFile, modelDescription, wrapper)
+        return ModelExchangeFmu(fmuFile, wrapper)
     }
-
-}
-
-open class ModelExchangeFmuWithIntegratorBuilder(
-        private val fmuFile: FmuFile,
-        private val integrator: FirstOrderIntegrator
-)  {
-
-    private val modelDescription: ModelExchangeModelDescription by lazy {
-        ModelDescriptionParser
-                .parse(fmuFile.modelDescriptionXml).asME()
-    }
-
-    private val libraryCache: LibraryProvider<Fmi2ModelExchangeLibrary> by lazy {
-        loadLibrary()
-    }
-
-    private fun loadLibrary() = loadLibrary(fmuFile, modelDescription, Fmi2ModelExchangeLibrary::class.java)
 
     @JvmOverloads
-    fun newInstance(visible: Boolean = false, loggingOn: Boolean = false) : ModelExchangeFmuWithIntegrator {
+    fun newInstance(integrator: FirstOrderIntegrator, visible: Boolean = false, loggingOn: Boolean = false) : ModelExchangeFmuWithIntegrator {
         val lib = if (modelDescription.canBeInstantiatedOnlyOncePerProcess) loadLibrary() else libraryCache
         val c = instantiate(fmuFile, modelDescription, lib.get(), Fmi2Type.ModelExchange, visible, loggingOn)
-        val wrapper = ModelExchangeLibraryWrapper(c, libraryCache)
-        return ModelExchangeFmuWithIntegrator(ModelExchangeFmu(fmuFile, modelDescription, wrapper), integrator)
+        val wrapper = ModelExchangeLibraryWrapper(c, lib)
+        return ModelExchangeFmuWithIntegrator(ModelExchangeFmu(fmuFile, wrapper), integrator)
     }
 
 }
+
 
 private fun <E: Fmi2Library> loadLibrary(fmuFile: FmuFile, modelDescription: ModelDescription, type: Class<E>): LibraryProvider<E> {
     System.setProperty(LIBRARY_PATH, fmuFile.libraryFolderPath)
@@ -145,11 +140,10 @@ private fun <E: Fmi2Library> loadLibrary(fmuFile: FmuFile, modelDescription: Mod
 }
 
 private fun instantiate(fmuFile: FmuFile, modelDescription: ModelDescription, library: Fmi2Library, fmiType: Fmi2Type, visible: Boolean, loggingOn: Boolean) : Pointer {
-    val c = library.fmi2Instantiate(modelDescription.modelIdentifier,
+    return library.fmi2Instantiate(modelDescription.modelIdentifier,
             fmiType.code, modelDescription.guid,
             fmuFile.resourcesPath, Fmi2CallbackFunctions(),
-            convert(visible), convert(loggingOn))
-    return c!!
+            convert(visible), convert(loggingOn)) ?: throw AssertionError("Unable to instantiate FMU. Returned pointer is null!")
 }
 
 
