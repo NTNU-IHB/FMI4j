@@ -6,7 +6,6 @@
 
 
 FMI4j is a software library for dealing with Functional Mock-up Units in Kotlin/Java.
-Currently it consists of two parts:
 
 ## FMI Import
 
@@ -105,89 +104,3 @@ builder.asModelExchangeFmu()
 
         } //fmu is terminated
 ```
-
-## FMU2Jar
-
-Command line tool for packaging an FMU into a Java library. This allows you to use the FMU as any other Java library. 
-The generated library also exposes all variables from the FMU through a type safe API.
-
-E.g. an FMU with a variable named "Controller.speed" of type Real, will have the methods
-
-```java
-    public double getController_speed();
-    public void setController_speed(double speed);
-``` 
-
-### Usage
-
-```
-usage: fmu2jar
- -fmu <arg>    Path to the FMU
- -help         Prints this message
- -mavenLocal   Should the .jar be published to maven local? (optional)
- -out <arg>    Specify where to copy the generated .jar. Not needed if
-               "-mavenLocal true". 
-
-```
-
-##### API example from kotlin
-```kotlin
-    ControlledTemperature.newInstance().use { fmu ->  
-        val value: Double = fmu.parameters.getTemperatureSource_T()   
-    } //fmu has been automatically terminated
-```
-##### API example from java
-```java
-    try (ControlledTemperature fmu = ControlledTemperature.newInstance()) { 
-        double value = fmu.getParameters().getTemperatureSource_T();
-    } //fmu has been automatically terminated
-```
-
-Here is an example of how the  generated code looks like:
-
-```kotlin
-
-class ControlledTemperature private constructor(
-    val fmu: FmiSimulation
-) : FmiSimulation by fmu {
-
-    companion object {
-        // fmu unpacking code
-    }
-
-    val locals = Locals()
-    val inputs = Inputs()
-    val outputs = Outputs()
-    val parameters = Parameters()
-    val calculatedParameters = CalculatedParameters()
-
-    inner class Inputs {
-        ...
-    }
-
-    inner class Outputs {
-        
-        /**
-         * Temperature_Reference
-         * Causality=OUTPUT
-         * Variability=CONTINUOUS
-         */
-        fun getTemperature_Reference() = fmu.variableAccessor.getReal(46)
-            
-        /**
-         * Temperature_Room
-         * Causality=OUTPUT
-         * Variability=CONTINUOUS
-         * min=2.0
-         * max=4.0
-         */
-        fun getTemperature_Room() = fmu.variableAccessor.getReal(47)
-            
-    }
-        
-    ...
-            
-}
-```
-
-Notice how the javadoc is populated with info from the ```modelDescription.xml```, and variables are sorted by their causality.
