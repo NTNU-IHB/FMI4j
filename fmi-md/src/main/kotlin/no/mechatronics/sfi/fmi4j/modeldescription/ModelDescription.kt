@@ -40,8 +40,43 @@ import no.mechatronics.sfi.fmi4j.modeldescription.structure.ModelStructure
 import no.mechatronics.sfi.fmi4j.modeldescription.structure.ModelStructureImpl
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.ModelVariables
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.ModelVariablesImpl
-import java.io.Serializable
+import org.apache.commons.io.IOUtils
+import java.io.*
+import java.lang.IllegalArgumentException
+import java.net.URL
+import java.nio.charset.Charset
+import java.util.zip.ZipEntry
+import java.util.zip.ZipInputStream
+import javax.xml.bind.JAXB
 import javax.xml.bind.annotation.*
+
+private const val MODEL_DESC_FILE = "modelDescription.xml"
+
+object ModelDescriptionParser {
+
+    @JvmStatic
+    fun parse(url: URL): ModelDescriptionImpl = parse(url.openStream())
+    @JvmStatic
+    fun parse(file: File): ModelDescriptionImpl = parse(FileInputStream(file))
+    @JvmStatic
+    fun parse(xml: String): ModelDescriptionImpl = JAXB.unmarshal(StringReader(xml), ModelDescriptionImpl::class.java)
+    @JvmStatic
+    private fun parse(stream: InputStream): ModelDescriptionImpl = exctractModelDescriptionXml(stream).let (::parse)
+    @JvmStatic
+    fun exctractModelDescriptionXml(stream: InputStream): String {
+        ZipInputStream(stream).use {
+            var nextEntry: ZipEntry? = it.nextEntry
+            while (nextEntry != null) {
+                if (nextEntry.name == MODEL_DESC_FILE) {
+                    return IOUtils.toString(it, Charset.forName("UTF-8"))
+                }
+                nextEntry = it.nextEntry
+            }
+        }
+        throw IllegalArgumentException("Input is not an valid FMU! No $MODEL_DESC_FILE present!")
+    }
+
+}
 
 
 /**
@@ -77,6 +112,7 @@ interface SimpleModelDescription {
      * [Example: license = “BSD license <license text or link to license>”].
      */
     val license: String?
+
     /**
      * Optional information on the intellectual property copyright for this FMU.
      * [Example: copyright = “© My Company 2011”].
@@ -181,7 +217,6 @@ interface SimpleModelDescription {
  */
 interface ModelDescription : SimpleModelDescription {
 
-
     /**
      * The source files
      */
@@ -262,21 +297,12 @@ interface ModelDescription : SimpleModelDescription {
 
 }
 
-
-interface ModelDescriptionProvider : SimpleModelDescription {
-
-    fun asCS(): CoSimulationModelDescription
-
-    fun asME(): ModelExchangeModelDescription
-
-}
-
 /**
  * @author Lars Ivar Hatedal
  */
 @XmlRootElement(name = "fmiModelDescription")
 @XmlAccessorType(XmlAccessType.FIELD)
-class ModelDescriptionImpl : SimpleModelDescription, ModelDescriptionProvider, Serializable {
+class ModelDescriptionImpl : SimpleModelDescription, Serializable {
 
     /**
      * @inheritDoc
@@ -384,11 +410,21 @@ class ModelDescriptionImpl : SimpleModelDescription, ModelDescriptionProvider, S
     @XmlElement(name = "ModelExchange")
     private var me: ModelExchangeDataImpl? = null
 
-    override fun asCS(): CoSimulationModelDescription
-            = CoSimulationModelDescriptionImpl(this, cs ?: throw IllegalStateException("FMU does not support Co-Simulation: modelDescription.xml does not contain a <CoSimulation> tag!"))
+    @delegate:Transient
+    private val coSimulationModelDescription: CoSimulationModelDescription? by lazy {
+        if (supportsCoSimulation) CoSimulationModelDescriptionImpl(this, cs!!) else null
+    }
 
-    override fun asME(): ModelExchangeModelDescription
-            = ModelExchangeModelDescriptionImpl(this, me ?: throw IllegalStateException("FMU does not support Model Exchange: modelDescription.xml does not contain a <ModelExchange> tag!"))
+    @delegate:Transient
+    private val modelExchangeModelDescription: ModelExchangeModelDescription? by lazy {
+        if (supportsModelExchange) ModelExchangeModelDescriptionImpl(this, me!!) else null
+    }
+
+    fun asCoSimulation(): CoSimulationModelDescription
+            = coSimulationModelDescription ?: throw IllegalStateException("FMU does not support Co-Simulation: modelDescription.xml does not contain a <CoSimulation> tag!")
+
+    fun asModelExchange(): ModelExchangeModelDescription
+            = modelExchangeModelDescription ?: throw IllegalStateException("FMU does not support Model Exchange: modelDescription.xml does not contain a <ModelExchange> tag!")
 
     /**
      * @inheritDoc

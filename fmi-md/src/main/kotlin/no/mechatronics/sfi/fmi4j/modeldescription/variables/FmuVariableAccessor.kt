@@ -31,32 +31,40 @@ package no.mechatronics.sfi.fmi4j.modeldescription.variables
  */
 interface FmuVariableAccessor {
 
+    fun getInteger(name: String): Int
     fun getInteger(valueReference: Int) : Int
     fun getInteger(vr: IntArray) : IntArray
     fun getInteger(vr: IntArray, value: IntArray) : IntArray
 
+    fun getReal(name: String): Real
     fun getReal(valueReference: Int) : Real
     fun getReal(vr: IntArray) : RealArray
     fun getReal(vr: IntArray, value: RealArray) : RealArray
 
+    fun getString(name: String): String
     fun getString(valueReference: Int) : String
     fun getString(vr: IntArray) : StringArray
     fun getString(vr: IntArray, value: StringArray) : StringArray
 
+    fun getBoolean(name: String): Boolean
     fun getBoolean(valueReference: Int): Boolean
     fun getBoolean(vr: IntArray): BooleanArray
     fun getBoolean(vr: IntArray, value: BooleanArray): BooleanArray
     fun getBoolean(vr: IntArray, value: IntArray): IntArray
 
-    fun setInteger( valueReference: Int, value: Int)
+    fun setInteger(name: String, value: Int)
+    fun setInteger(valueReference: Int, value: Int)
     fun setInteger(vr: IntArray, value: IntArray)
 
+    fun setReal(name: String, value: Real)
     fun setReal(valueReference: Int, value: Real)
     fun setReal(vr: IntArray, value: RealArray)
 
+    fun setString(name: String, value: String)
     fun setString(valueReference: Int, value: String)
     fun setString(vr: IntArray, value: StringArray)
 
+    fun setBoolean(name: String, value: Boolean)
     fun setBoolean(valueReference: Int, value: Boolean)
     fun setBoolean(vr: IntArray, value: IntArray)
     fun setBoolean(vr: IntArray, value: BooleanArray)

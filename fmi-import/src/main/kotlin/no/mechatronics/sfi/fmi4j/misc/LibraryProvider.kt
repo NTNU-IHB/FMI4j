@@ -25,25 +25,35 @@
 package no.mechatronics.sfi.fmi4j.misc
 
 import no.mechatronics.sfi.fmi4j.proxy.Fmi2Library
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import java.util.function.Supplier
 
 /**
  *
  * @author Lars Ivar Hatledal
  */
-class LibraryProvider<E: Fmi2Library> : Supplier<E> {
+class LibraryProvider<E: Fmi2Library>(
+        private var library: E?
+) : Supplier<E> {
 
-    private var library: E? = null
-
-    constructor(library: E) {
-        this.library = library
+    init {
+        Runtime.getRuntime().addShutdownHook(Thread{
+            disposeLibrary()
+        })
+        LOG.debug("Library loaded")
     }
 
     override fun get() : E = library!!
 
-    fun disposeLibrary() {
+    private fun disposeLibrary() {
         library = null
         System.gc()
+        LOG.debug("Library disposed")
+    }
+
+    private companion object {
+        val LOG: Logger = LoggerFactory.getLogger(LibraryProvider::class.java)
     }
 
 }

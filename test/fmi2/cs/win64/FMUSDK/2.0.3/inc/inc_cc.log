@@ -1,0 +1,172 @@
+[VERBOSE][FMUCHK] Setting log level to [DEBUG]
+[VERBOSE][FMUCHK] This binary is build without debug log messages.
+ Reconfigure with FMUCHK_ENABLE_LOG_LEVEL_DEBUG=ON and rebuild to enable debug level logging
+[INFO][FMUCHK] Will process FMU inc.fmu
+[VERBOSE][FMILIB] Allocating FMIL context
+[VERBOSE][FMILIB] Detecting FMI standard version
+[VERBOSE][FMIZIP] Unpacking FMU into C:\Users\adrian\AppData\Local\Temp\fmucktmpa04940
+[VERBOSE][FMIXML] Parsing XML to detect FMI standard version
+[VERBOSE][FMIXML] XML specifies FMI 2.0
+[INFO][FMILIB] XML specifies FMI standard version 2.0
+[VERBOSE][FMILIB] Parsing model description XML
+[VERBOSE][FMI2XML] Parsing XML element fmiModelDescription
+[VERBOSE][FMI2XML] Parsing XML element CoSimulation
+[VERBOSE][FMI2XML] Parsing XML element LogCategories
+[VERBOSE][FMI2XML] Parsing XML element ModelVariables
+[VERBOSE][FMI2XML] Parsing XML element ModelStructure
+[VERBOSE][FMI2XML] Parsing XML element Outputs
+[VERBOSE][FMILIB] Parsing finished successfully
+[INFO][FMUCHK] Model name: inc
+[INFO][FMUCHK] Model GUID: {8c4e810f-3df3-4a00-8276-176fa3c9f008}
+[INFO][FMUCHK] Model version: 
+[INFO][FMUCHK] FMU kind: CoSimulation
+[INFO][FMUCHK] The FMU contains:
+0 constants
+0 parameters
+1 discrete variables
+0 continuous variables
+0 inputs
+1 outputs
+0 local variables
+0 independent variables
+0 parameters
+0 calculated parameters
+1 real variables
+0 integer variables
+0 enumeration variables
+0 boolean variables
+11512432 string variables
+
+[INFO][FMUCHK] Printing output file header
+[INFO][FMUCHK] Model identifier for CoSimulation: inc
+[INFO][FMILIB] Loading 'win64' binary with 'default' platform types
+[VERBOSE][FMICAPI] Loaded FMU binary from C:\Users\adrian\AppData\Local\Temp\fmucktmpa04940\binaries\win64\inc.dll
+[VERBOSE][FMICAPI] Loading functions for the co-simulation interface
+[VERBOSE][FMILIB] Successfully loaded all the interface functions
+[INFO][FMUCHK] Version returned from CS FMU:   2.0
+[VERBOSE][FMICAPI] Calling fmi2GetModelTypesPlatform
+[VERBOSE][FMUCHK] allocateMemory( 1, 160) called. Returning pointer: 0x276fe90
+[VERBOSE][FMUCHK] allocateMemory( 0, 8) called. Returning pointer: 0x27620d0
+[VERBOSE][FMUCHK] allocateMemory( 1, 4) called. Returning pointer: 0x27620f0
+[VERBOSE][FMUCHK] allocateMemory( 0, 4) called. Returning pointer: 0x276a8f0
+[VERBOSE][FMUCHK] allocateMemory( 0, 8) called. Returning pointer: 0x276a910
+[VERBOSE][FMUCHK] allocateMemory( 0, 4) called. Returning pointer: 0x276a930
+[VERBOSE][FMUCHK] allocateMemory( 16, 1) called. Returning pointer: 0x2767b40
+[VERBOSE][FMUCHK] allocateMemory( 39, 1) called. Returning pointer: 0x2617790
+	[FMU][logFmiCall][FMU status:OK] fmi2Instantiate: GUID={8c4e810f-3df3-4a00-8276-176fa3c9f008}
+[VERBOSE][FMICAPI] Calling fmi2SetupExperiment
+	[FMU][logFmiCall][FMU status:OK] fmi2SetupExperiment: toleranceDefined=0 tolerance=0.0001
+[VERBOSE][FMICAPI] Calling fmi2EnterInitializationMode
+	[FMU][logFmiCall][FMU status:OK] fmi2EnterInitializationMode
+[VERBOSE][FMICAPI] Calling fmi2ExitInitializationMode
+	[FMU][logFmiCall][FMU status:OK] fmi2ExitInitializationMode
+[INFO][FMUCHK] Initialized FMU for simulation starting at time 0
+[VERBOSE][FMUCHK] Writing simulation output for start time
+	[FMU][logFmiCall][FMU status:OK] fmi2GetInteger: counter = 1
+[VERBOSE][FMUCHK] Simulation step from time: 0 until: 0.5
+	[FMU][logFmiCall][FMU status:OK] fmi2DoStep: currentCommunicationPoint = 0, communicationStepSize = 0.5, noSetFMUStatePriorToCurrentPoint = fmi2True
+	[FMU][logFmiCall][FMU status:OK] fmi2GetInteger: counter = 1
+[VERBOSE][FMUCHK] Simulation step from time: 0.5 until: 1
+	[FMU][logFmiCall][FMU status:OK] fmi2DoStep: currentCommunicationPoint = 0.5, communicationStepSize = 0.5, noSetFMUStatePriorToCurrentPoint = fmi2True
+	[FMU][logEvent][FMU status:OK] fmi2DoStep: time event detected at 1
+	[FMU][logFmiCall][FMU status:OK] fmi2GetInteger: counter = 2
+[VERBOSE][FMUCHK] Simulation step from time: 1 until: 1.5
+	[FMU][logFmiCall][FMU status:OK] fmi2DoStep: currentCommunicationPoint = 1, communicationStepSize = 0.5, noSetFMUStatePriorToCurrentPoint = fmi2True
+	[FMU][logFmiCall][FMU status:OK] fmi2GetInteger: counter = 2
+[VERBOSE][FMUCHK] Simulation step from time: 1.5 until: 2
+	[FMU][logFmiCall][FMU status:OK] fmi2DoStep: currentCommunicationPoint = 1.5, communicationStepSize = 0.5, noSetFMUStatePriorToCurrentPoint = fmi2True
+	[FMU][logEvent][FMU status:OK] fmi2DoStep: time event detected at 2
+	[FMU][logFmiCall][FMU status:OK] fmi2GetInteger: counter = 3
+[VERBOSE][FMUCHK] Simulation step from time: 2 until: 2.5
+	[FMU][logFmiCall][FMU status:OK] fmi2DoStep: currentCommunicationPoint = 2, communicationStepSize = 0.5, noSetFMUStatePriorToCurrentPoint = fmi2True
+	[FMU][logFmiCall][FMU status:OK] fmi2GetInteger: counter = 3
+[VERBOSE][FMUCHK] Simulation step from time: 2.5 until: 3
+	[FMU][logFmiCall][FMU status:OK] fmi2DoStep: currentCommunicationPoint = 2.5, communicationStepSize = 0.5, noSetFMUStatePriorToCurrentPoint = fmi2True
+	[FMU][logEvent][FMU status:OK] fmi2DoStep: time event detected at 3
+	[FMU][logFmiCall][FMU status:OK] fmi2GetInteger: counter = 4
+[VERBOSE][FMUCHK] Simulation step from time: 3 until: 3.5
+	[FMU][logFmiCall][FMU status:OK] fmi2DoStep: currentCommunicationPoint = 3, communicationStepSize = 0.5, noSetFMUStatePriorToCurrentPoint = fmi2True
+	[FMU][logFmiCall][FMU status:OK] fmi2GetInteger: counter = 4
+[VERBOSE][FMUCHK] Simulation step from time: 3.5 until: 4
+	[FMU][logFmiCall][FMU status:OK] fmi2DoStep: currentCommunicationPoint = 3.5, communicationStepSize = 0.5, noSetFMUStatePriorToCurrentPoint = fmi2True
+	[FMU][logEvent][FMU status:OK] fmi2DoStep: time event detected at 4
+	[FMU][logFmiCall][FMU status:OK] fmi2GetInteger: counter = 5
+[VERBOSE][FMUCHK] Simulation step from time: 4 until: 4.5
+	[FMU][logFmiCall][FMU status:OK] fmi2DoStep: currentCommunicationPoint = 4, communicationStepSize = 0.5, noSetFMUStatePriorToCurrentPoint = fmi2True
+	[FMU][logFmiCall][FMU status:OK] fmi2GetInteger: counter = 5
+[VERBOSE][FMUCHK] Simulation step from time: 4.5 until: 5
+	[FMU][logFmiCall][FMU status:OK] fmi2DoStep: currentCommunicationPoint = 4.5, communicationStepSize = 0.5, noSetFMUStatePriorToCurrentPoint = fmi2True
+	[FMU][logEvent][FMU status:OK] fmi2DoStep: time event detected at 5
+	[FMU][logFmiCall][FMU status:OK] fmi2GetInteger: counter = 6
+[VERBOSE][FMUCHK] Simulation step from time: 5 until: 5.5
+	[FMU][logFmiCall][FMU status:OK] fmi2DoStep: currentCommunicationPoint = 5, communicationStepSize = 0.5, noSetFMUStatePriorToCurrentPoint = fmi2True
+	[FMU][logFmiCall][FMU status:OK] fmi2GetInteger: counter = 6
+[VERBOSE][FMUCHK] Simulation step from time: 5.5 until: 6
+	[FMU][logFmiCall][FMU status:OK] fmi2DoStep: currentCommunicationPoint = 5.5, communicationStepSize = 0.5, noSetFMUStatePriorToCurrentPoint = fmi2True
+	[FMU][logEvent][FMU status:OK] fmi2DoStep: time event detected at 6
+	[FMU][logFmiCall][FMU status:OK] fmi2GetInteger: counter = 7
+[VERBOSE][FMUCHK] Simulation step from time: 6 until: 6.5
+	[FMU][logFmiCall][FMU status:OK] fmi2DoStep: currentCommunicationPoint = 6, communicationStepSize = 0.5, noSetFMUStatePriorToCurrentPoint = fmi2True
+	[FMU][logFmiCall][FMU status:OK] fmi2GetInteger: counter = 7
+[VERBOSE][FMUCHK] Simulation step from time: 6.5 until: 7
+	[FMU][logFmiCall][FMU status:OK] fmi2DoStep: currentCommunicationPoint = 6.5, communicationStepSize = 0.5, noSetFMUStatePriorToCurrentPoint = fmi2True
+	[FMU][logEvent][FMU status:OK] fmi2DoStep: time event detected at 7
+	[FMU][logFmiCall][FMU status:OK] fmi2GetInteger: counter = 8
+[VERBOSE][FMUCHK] Simulation step from time: 7 until: 7.5
+	[FMU][logFmiCall][FMU status:OK] fmi2DoStep: currentCommunicationPoint = 7, communicationStepSize = 0.5, noSetFMUStatePriorToCurrentPoint = fmi2True
+	[FMU][logFmiCall][FMU status:OK] fmi2GetInteger: counter = 8
+[VERBOSE][FMUCHK] Simulation step from time: 7.5 until: 8
+	[FMU][logFmiCall][FMU status:OK] fmi2DoStep: currentCommunicationPoint = 7.5, communicationStepSize = 0.5, noSetFMUStatePriorToCurrentPoint = fmi2True
+	[FMU][logEvent][FMU status:OK] fmi2DoStep: time event detected at 8
+	[FMU][logFmiCall][FMU status:OK] fmi2GetInteger: counter = 9
+[VERBOSE][FMUCHK] Simulation step from time: 8 until: 8.5
+	[FMU][logFmiCall][FMU status:OK] fmi2DoStep: currentCommunicationPoint = 8, communicationStepSize = 0.5, noSetFMUStatePriorToCurrentPoint = fmi2True
+	[FMU][logFmiCall][FMU status:OK] fmi2GetInteger: counter = 9
+[VERBOSE][FMUCHK] Simulation step from time: 8.5 until: 9
+	[FMU][logFmiCall][FMU status:OK] fmi2DoStep: currentCommunicationPoint = 8.5, communicationStepSize = 0.5, noSetFMUStatePriorToCurrentPoint = fmi2True
+	[FMU][logEvent][FMU status:OK] fmi2DoStep: time event detected at 9
+	[FMU][logFmiCall][FMU status:OK] fmi2GetInteger: counter = 10
+[VERBOSE][FMUCHK] Simulation step from time: 9 until: 9.5
+	[FMU][logFmiCall][FMU status:OK] fmi2DoStep: currentCommunicationPoint = 9, communicationStepSize = 0.5, noSetFMUStatePriorToCurrentPoint = fmi2True
+	[FMU][logFmiCall][FMU status:OK] fmi2GetInteger: counter = 10
+[VERBOSE][FMUCHK] Simulation step from time: 9.5 until: 10
+	[FMU][logFmiCall][FMU status:OK] fmi2DoStep: currentCommunicationPoint = 9.5, communicationStepSize = 0.5, noSetFMUStatePriorToCurrentPoint = fmi2True
+	[FMU][logEvent][FMU status:OK] fmi2DoStep: time event detected at 10
+	[FMU][logFmiCall][FMU status:OK] fmi2GetInteger: counter = 11
+[VERBOSE][FMUCHK] Simulation step from time: 10 until: 10.5
+	[FMU][logFmiCall][FMU status:OK] fmi2DoStep: currentCommunicationPoint = 10, communicationStepSize = 0.5, noSetFMUStatePriorToCurrentPoint = fmi2True
+	[FMU][logFmiCall][FMU status:OK] fmi2GetInteger: counter = 11
+[VERBOSE][FMUCHK] Simulation step from time: 10.5 until: 11
+	[FMU][logFmiCall][FMU status:OK] fmi2DoStep: currentCommunicationPoint = 10.5, communicationStepSize = 0.5, noSetFMUStatePriorToCurrentPoint = fmi2True
+	[FMU][logEvent][FMU status:OK] fmi2DoStep: time event detected at 11
+	[FMU][logFmiCall][FMU status:OK] fmi2GetInteger: counter = 12
+[VERBOSE][FMUCHK] Simulation step from time: 11 until: 11.5
+	[FMU][logFmiCall][FMU status:OK] fmi2DoStep: currentCommunicationPoint = 11, communicationStepSize = 0.5, noSetFMUStatePriorToCurrentPoint = fmi2True
+	[FMU][logFmiCall][FMU status:OK] fmi2GetInteger: counter = 12
+[VERBOSE][FMUCHK] Simulation step from time: 11.5 until: 12
+	[FMU][logFmiCall][FMU status:OK] fmi2DoStep: currentCommunicationPoint = 11.5, communicationStepSize = 0.5, noSetFMUStatePriorToCurrentPoint = fmi2True
+	[FMU][logEvent][FMU status:OK] fmi2DoStep: time event detected at 12
+	[FMU][logAll][FMU status:Discard] fmi2DoStep: model requested termination at t=12
+	[FMU][logFmiCall][FMU status:OK] fmi2GetInteger: counter = 13
+[INFO][FMUCHK] FMU requests to terminate simulation at time 12
+[INFO][FMUCHK] Simulation finished successfully at time 12
+	[FMU][logFmiCall][FMU status:OK] fmi2Terminate
+	[FMU][logFmiCall][FMU status:OK] fmi2FreeInstance
+[VERBOSE][FMUCHK] freeMemory(0x27620d0) called
+[VERBOSE][FMUCHK] freeMemory(0x27620f0) called
+[VERBOSE][FMUCHK] freeMemory(0x276a8f0) called
+[VERBOSE][FMUCHK] freeMemory(0x276a910) called
+[VERBOSE][FMUCHK] freeMemory(0x276a930) called
+[VERBOSE][FMUCHK] freeMemory(0x2767b40) called
+[VERBOSE][FMUCHK] freeMemory(0x2617790) called
+[VERBOSE][FMUCHK] freeMemory(0x276fe90) called
+[VERBOSE][FMILIB] Releasing allocated library resources
+[VERBOSE][FMILIB] Releasing FMU CAPI interface
+[VERBOSE][FMICAPI] Successfully unloaded FMU binary
+[VERBOSE][JMPRT] Removing C:\Users\adrian\AppData\Local\Temp\fmucktmpa04940
+FMU check summary:
+FMU reported:
+	1 warning(s) and error(s)
+Checker reported:
+	0 Warning(s)
+	0 Error(s)

@@ -1,1 +1,0 @@
-#define FMI_GUID "{06c2700b-b39c-4895-9151-304ddde28443}"
