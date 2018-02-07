@@ -36,9 +36,8 @@ import org.slf4j.LoggerFactory
 
 class CoSimulationFmu internal constructor(
         fmuFile: FmuFile,
-        modelDescription: CoSimulationModelDescription,
         wrapper: CoSimulationLibraryWrapper
-) : AbstractFmu<CoSimulationModelDescription, CoSimulationLibraryWrapper>(fmuFile, modelDescription, wrapper), FmiSimulation {
+) : AbstractFmu<CoSimulationModelDescription, CoSimulationLibraryWrapper>(fmuFile, wrapper), FmiSimulation {
 
     private companion object {
         val LOG: Logger = LoggerFactory.getLogger(CoSimulationFmu::class.java)
@@ -49,6 +48,10 @@ class CoSimulationFmu internal constructor(
      */
     override var currentTime: Double = 0.0
         private set
+
+
+    override val modelDescription: CoSimulationModelDescription
+        get() = fmuFile.modelDescription.asCoSimulation()
 
     override fun init(start: Double, stop: Double): Boolean {
         return super.init(start, stop).also {

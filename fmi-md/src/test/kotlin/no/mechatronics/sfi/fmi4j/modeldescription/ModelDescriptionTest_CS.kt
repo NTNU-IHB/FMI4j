@@ -50,7 +50,7 @@ class ModelDescriptionTest_CS {
         val file = File(path)
         Assert.assertTrue(file.exists())
         val xml = FileUtils.readFileToString(file, Charset.forName("UTF-8"))
-        modelDescription = ModelDescriptionParser.parse(xml).asCS()
+        modelDescription = ModelDescriptionParser.parse(xml).asCoSimulation()
     }
 
     @Test

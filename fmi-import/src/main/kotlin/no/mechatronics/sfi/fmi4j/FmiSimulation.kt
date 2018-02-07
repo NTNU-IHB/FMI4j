@@ -55,15 +55,6 @@ interface FmiSimulation : Closeable {
     fun terminate() : Boolean
 
     /**
-     * Allows try with resources to be used.
-     * Same as calling terminate()
-     * @see terminate
-     */
-    override fun close() {
-        terminate()
-    }
-
-    /**
      * @see ModelVariables.getByName
      */
     fun getVariableByName(name: String) = modelVariables.getByName(name)

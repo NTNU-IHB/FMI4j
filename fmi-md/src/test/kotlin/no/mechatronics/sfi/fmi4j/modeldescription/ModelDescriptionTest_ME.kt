@@ -19,7 +19,7 @@ class ModelDescriptionTest_ME {
         val file = File(path)
         Assert.assertTrue(file.exists())
         val xml = FileUtils.readFileToString(file, Charset.forName("UTF-8"))
-        modelDescription = ModelDescriptionParser.parse(xml).asME()
+        modelDescription = ModelDescriptionParser.parse(xml).asModelExchange()
     }
 
     @Test

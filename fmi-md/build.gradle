@@ -1,7 +1,8 @@
+
 def snapshot = true
 
 group = 'no.mechatronics.sfi.fmi4j'
-version = '0.5.1'
+version = '0.5.3'
 if (snapshot) {
     version += '-SNAPSHOT'
 }
