@@ -63,14 +63,14 @@ builder.asCoSimulationFmu().newInstance().use { fmu ->
 } //fmu is terminated
 ```
 
-#### Model Exchange(with integrator) example
+#### Model Exchange (with integrator) example
 
 ##### Java API
 ```java
 FirstOrderIntegrator integrator = new ClassicalRungeKuttaIntegrator(1E-3);
 FMUBuilder builder = new FmuBuilder(new File("path/to/fmu.fmu"));
-try (FmiSimulation fmu = builder.asModelExchangeFmuWithIntegrator(integrator)
-                        .newInstance()) {
+try (FmiSimulation fmu = builder.asModelExchangeFmu()
+                        .newInstance(integrator)) {
 
     //assign custom start values
     ...
