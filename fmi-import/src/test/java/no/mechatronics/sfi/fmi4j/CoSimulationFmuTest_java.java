@@ -52,7 +52,7 @@ public class CoSimulationFmuTest_java {
         final File file = new File(path);
         Assert.assertNotNull(file);
 
-        builder =  new FmuBuilder(file);
+        builder = new FmuBuilder(file);
 
     }
 
