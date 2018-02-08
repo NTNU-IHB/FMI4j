@@ -61,24 +61,28 @@ class ModelStructureImpl: ModelStructure, Serializable {
     @XmlElement(name = "Unknown")
     private val _outputs: List<Int>? = null
 
-    override val outputs: List<Int>
-        get() = _outputs ?: emptyList()
-
+    @delegate:Transient
+    override val outputs: List<Int> by lazy {
+        _outputs ?: emptyList()
+    }
 
     @XmlElementWrapper(name = "Derivatives")
     @XmlElement(name = "Unknown")
     private val _derivatives: List<UnknownImpl>? = null
 
-    override val derivatives: List<Unknown>
-        get() = _derivatives ?: emptyList()
+    @delegate:Transient
+    override val derivatives: List<Unknown> by lazy {
+        _derivatives ?: emptyList()
+    }
 
     @XmlElementWrapper(name = "InitialUnknowns")
     @XmlElement(name = "Unknown")
     private val _initialUnknowns: List<UnknownImpl>? = null
 
-    override val initialUnknowns: List<Unknown>
-        get() = _initialUnknowns ?: emptyList()
-
+    @delegate:Transient
+    override val initialUnknowns: List<Unknown> by lazy {
+        _initialUnknowns ?: emptyList()
+    }
 
     override fun toString(): String {
         return "ModelStructure(outputs=$outputs, derivatives=$derivatives, initialUnknowns=$initialUnknowns)"

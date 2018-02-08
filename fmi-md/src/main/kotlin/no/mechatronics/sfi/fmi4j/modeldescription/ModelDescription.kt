@@ -29,6 +29,8 @@ import no.mechatronics.sfi.fmi4j.modeldescription.cs.CoSimulationModelDescriptio
 import no.mechatronics.sfi.fmi4j.modeldescription.cs.CoSimulationDataImpl
 import no.mechatronics.sfi.fmi4j.modeldescription.log.Category
 import no.mechatronics.sfi.fmi4j.modeldescription.log.CategoryImpl
+import no.mechatronics.sfi.fmi4j.modeldescription.log.LogCategories
+import no.mechatronics.sfi.fmi4j.modeldescription.log.LogCategoriesImpl
 import no.mechatronics.sfi.fmi4j.modeldescription.me.ModelExchangeModelDescription
 import no.mechatronics.sfi.fmi4j.modeldescription.me.ModelExchangeModelDescriptionImpl
 import no.mechatronics.sfi.fmi4j.modeldescription.me.ModelExchangeDataImpl
@@ -55,15 +57,15 @@ private const val MODEL_DESC_FILE = "modelDescription.xml"
 object ModelDescriptionParser {
 
     @JvmStatic
-    fun parse(url: URL): ModelDescriptionImpl = parse(url.openStream())
+    fun parse(url: URL): ModelDescriptionProvider = parse(url.openStream())
     @JvmStatic
-    fun parse(file: File): ModelDescriptionImpl = parse(FileInputStream(file))
+    fun parse(file: File): ModelDescriptionProvider = parse(FileInputStream(file))
     @JvmStatic
-    fun parse(xml: String): ModelDescriptionImpl = JAXB.unmarshal(StringReader(xml), ModelDescriptionImpl::class.java)
+    fun parse(xml: String): ModelDescriptionProvider = JAXB.unmarshal(StringReader(xml), ModelDescriptionImpl::class.java)
     @JvmStatic
-    private fun parse(stream: InputStream): ModelDescriptionImpl = exctractModelDescriptionXml(stream).let (::parse)
+    private fun parse(stream: InputStream): ModelDescriptionProvider = extractModelDescriptionXml(stream).let (::parse)
     @JvmStatic
-    fun exctractModelDescriptionXml(stream: InputStream): String {
+    fun extractModelDescriptionXml(stream: InputStream): String {
         ZipInputStream(stream).use {
             var nextEntry: ZipEntry? = it.nextEntry
             while (nextEntry != null) {
@@ -166,7 +168,7 @@ interface SimpleModelDescription {
     val defaultExperiment: DefaultExperiment?
 
     /**
-     * The central FMU data structure defining all variables of the FMU that
+     * The central FMU data structure defining all categories of the FMU that
      * are visible/accessible via the FMU functions.
      */
     val modelVariables: ModelVariables
@@ -188,7 +190,7 @@ interface SimpleModelDescription {
      * A global list of log categories that can be set to define the log
      * information that is supported from the FMU.
      */
-    val logCategories: List<Category>
+    val logCategories: LogCategories
 
     /**
      * The number of continuous states
@@ -297,12 +299,20 @@ interface ModelDescription : SimpleModelDescription {
 
 }
 
+interface ModelDescriptionProvider: SimpleModelDescription {
+
+    fun asCoSimulationModelDescription(): CoSimulationModelDescription
+
+    fun asModelExchangeModelDescription() : ModelExchangeModelDescription
+
+}
+
 /**
- * @author Lars Ivar Hatedal
+ * @author Lars Ivar Hatledal
  */
 @XmlRootElement(name = "fmiModelDescription")
 @XmlAccessorType(XmlAccessType.FIELD)
-class ModelDescriptionImpl : SimpleModelDescription, Serializable {
+class ModelDescriptionImpl : SimpleModelDescription, ModelDescriptionProvider, Serializable {
 
     /**
      * @inheritDoc
@@ -397,34 +407,29 @@ class ModelDescriptionImpl : SimpleModelDescription, Serializable {
     /**
      * @inheritDoc
      */
-    @XmlElementWrapper(name = "LogCategories")
-    @XmlElement(name = "Category")
-    private var _logCategories: List<CategoryImpl>? = null
+    @XmlElement(name = "LogCategories")
+    private val _logCategories: LogCategoriesImpl? = null
 
-    override val logCategories: List<Category>
-        get() = _logCategories ?: emptyList()
+    @delegate:Transient
+    override val logCategories: LogCategories by lazy {
+        _logCategories ?: LogCategoriesImpl()
+    }
 
     @XmlElement(name = "CoSimulation")
-    private var cs: CoSimulationDataImpl? = null
+    private val cs: CoSimulationDataImpl? = null
 
     @XmlElement(name = "ModelExchange")
-    private var me: ModelExchangeDataImpl? = null
+    private val me: ModelExchangeDataImpl? = null
 
     @delegate:Transient
     private val coSimulationModelDescription: CoSimulationModelDescription? by lazy {
-        if (supportsCoSimulation) CoSimulationModelDescriptionImpl(this, cs!!) else null
+        cs?.let { CoSimulationModelDescriptionImpl(this, it) }
     }
 
     @delegate:Transient
     private val modelExchangeModelDescription: ModelExchangeModelDescription? by lazy {
-        if (supportsModelExchange) ModelExchangeModelDescriptionImpl(this, me!!) else null
+        me?.let { ModelExchangeModelDescriptionImpl(this, it) }
     }
-
-    fun asCoSimulation(): CoSimulationModelDescription
-            = coSimulationModelDescription ?: throw IllegalStateException("FMU does not support Co-Simulation: modelDescription.xml does not contain a <CoSimulation> tag!")
-
-    fun asModelExchange(): ModelExchangeModelDescription
-            = modelExchangeModelDescription ?: throw IllegalStateException("FMU does not support Model Exchange: modelDescription.xml does not contain a <ModelExchange> tag!")
 
     /**
      * @inheritDoc
@@ -433,8 +438,21 @@ class ModelDescriptionImpl : SimpleModelDescription, Serializable {
         get() = me != null
 
     /**
-    * @inheritDoc
-    */
+     * @inheritDoc
+     */
     override val supportsCoSimulation: Boolean
         get() = cs != null
+
+    /**
+     * @throws IllegalStateException if FMU does not support Co-Simulation
+     */
+    override fun asCoSimulationModelDescription(): CoSimulationModelDescription
+            = coSimulationModelDescription ?: throw IllegalStateException("FMU does not support Co-Simulation: modelDescription.xml does not contain a <CoSimulation> tag!")
+
+    /**
+     * @throws IllegalStateException if FMU does not support Model Exchange
+     */
+    override fun asModelExchangeModelDescription(): ModelExchangeModelDescription
+            = modelExchangeModelDescription ?: throw IllegalStateException("FMU does not support Model Exchange: modelDescription.xml does not contain a <ModelExchange> tag!")
+
 }

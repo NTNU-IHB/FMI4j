@@ -37,14 +37,15 @@ interface Category {
 
     /**
      * Name of the Category element.
-     * Must be uniqe
+     * Must be unique
      */
     val name: String
 
     /**
-     * Description of the log category
+     * Optional description of the log category
      */
-    val description: String
+    val description: String?
+
 }
 
 /**
@@ -63,7 +64,7 @@ class CategoryImpl: Category, Serializable {
      * @inheritDoc
      */
     @XmlAttribute
-    override lateinit var description: String
+    override val description: String? = null
 
     override fun toString(): String {
         return "Category(name=$name, description=$description)"

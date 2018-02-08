@@ -80,8 +80,10 @@ internal class ModelExchangeDataImpl : ModelExchangeData, Serializable {
     @XmlElement(name = "File")
     private var _sourceFiles: List<SourceFileImpl>? = null
 
-    override val sourceFiles: List<SourceFile>
-        get() = _sourceFiles ?: emptyList()
+    @delegate:Transient
+    override val sourceFiles: List<SourceFile> by lazy {
+        _sourceFiles ?: emptyList()
+    }
 
     override fun toString(): String {
         return "ModelExchangeInfo{modelIdentifier=$modelIdentifier, needsExecutionTool=$needsExecutionTool, completedIntegratorStepNotNeeded=$completedIntegratorStepNotNeeded, canBeInstantiatedOnlyOncePerProcess=$canBeInstantiatedOnlyOncePerProcess, canNotUseMemoryManagementFunctions=$canNotUseMemoryManagementFunctions, canGetAndSetFMUstate=$canGetAndSetFMUstate, canSerializeFMUstate=$canSerializeFMUstate, providesDirectionalDerivative=$providesDirectionalDerivative}"
