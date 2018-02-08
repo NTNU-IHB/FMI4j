@@ -45,7 +45,7 @@ open class ModelExchangeFmu internal constructor(
 ): AbstractFmu<ModelExchangeModelDescription, ModelExchangeLibraryWrapper>(fmuFile, wrapper) {
 
     override val modelDescription: ModelExchangeModelDescription
-        get() = fmuFile.modelDescription.asModelExchange()
+        get() = fmuFile.modelDescription.asModelExchangeModelDescription()
 
     /**
      * @see ModelExchangeLibraryWrapper.setTime

@@ -34,7 +34,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter
 interface ModelVariables: Iterable<TypedScalarVariable<*>> {
 
     /**
-     * Get the number of model variables held by this structure
+     * Get the number of model categories held by this structure
      */
     val size: Int
         get() = variables.size
@@ -85,11 +85,13 @@ class ModelVariablesImpl : ModelVariables, Serializable {
     @XmlJavaTypeAdapter(ScalarVariableAdapter::class)
     private val _variables: List<AbstractTypedScalarVariable<*>>? = null
 
-    override val variables: List<TypedScalarVariable<*>>
-        get() = _variables ?: emptyList()
+    @delegate:Transient
+    override val variables: List<TypedScalarVariable<*>> by lazy {
+        _variables ?: emptyList()
+    }
 
     override fun toString(): String {
-        return "ModelVariables(variables=$variables)"
+        return "ModelVariables(categories=$variables)"
     }
 
 }

@@ -85,8 +85,8 @@ interface ScalarVariable {
      * This handle is a secret of the tool that generated the C functions. It is not required to be
      * unique. The only guarantee is that valueReference is sufficient to identify the respective variable value in the call of the C functions. This implies that it is unique for a
      * particular base data type (Real, Integer/Enumeration, Boolean, String) with
-     * exception of variables that have identical values (such variables are also called “alias”
-     * variables). This attribute is “required”.
+     * exception of categories that have identical values (such categories are also called “alias”
+     * categories). This attribute is “required”.
      */
     val valueReference: Int
 
@@ -171,7 +171,7 @@ interface TypedScalarVariable<E>: ScalarVariable {
      * value as stored in the xml file is desired.] The interpretation of start is defined by
      * ScalarVariable / initial. A different start value can be provided with an
      * fmi2SetXXX function before fmi2ExitInitializationMode is called (but not
-     * for variables with variability = ″constant″).
+     * for categories with variability = ″constant″).
      * [The standard approach is to set the start value before
      * fmi2EnterInitializationMode. However, if the initialization shall be modified
      * in the calling environment (e.g. changing from initialization of states to steadystate
@@ -183,12 +183,19 @@ interface TypedScalarVariable<E>: ScalarVariable {
 
     var value: E
 
+    /**
+     * Integer, Real, String or Boolean
+     */
     val typeName: String
 
-    fun asIntegerVariable(): IntegerVariable = if (this is IntegerVariable) this else throw IllegalAccessException("Variable is not an ${IntegerVariable::class.java.simpleName}, but an ${this::class.java.simpleName}")
-    fun asRealVariable(): RealVariable = if (this is RealVariable) this else throw throw IllegalAccessException("Variable is not an ${RealVariable::class.java.simpleName}, but an ${this::class.java.simpleName}")
-    fun asStringVariable(): StringVariable = if (this is StringVariable) this else throw IllegalAccessException("Variable is not an ${StringVariable::class.java.simpleName}, but an ${this::class.java.simpleName}")
-    fun asBooleanVariable(): BooleanVariable = if (this is BooleanVariable) this else throw IllegalAccessException("Variable is not an ${BooleanVariable::class.java.simpleName}, but an ${this::class.java.simpleName}")
+    fun asIntegerVariable(): IntegerVariable
+            = if (this is IntegerVariable) this else throw IllegalAccessException("Variable is not an ${IntegerVariable::class.java.simpleName}, but an ${this::class.java.simpleName}")
+    fun asRealVariable(): RealVariable
+            = if (this is RealVariable) this else throw throw IllegalAccessException("Variable is not an ${RealVariable::class.java.simpleName}, but an ${this::class.java.simpleName}")
+    fun asStringVariable(): StringVariable
+            = if (this is StringVariable) this else throw IllegalAccessException("Variable is not an ${StringVariable::class.java.simpleName}, but an ${this::class.java.simpleName}")
+    fun asBooleanVariable(): BooleanVariable
+            = if (this is BooleanVariable) this else throw IllegalAccessException("Variable is not an ${BooleanVariable::class.java.simpleName}, but an ${this::class.java.simpleName}")
 
 
 }

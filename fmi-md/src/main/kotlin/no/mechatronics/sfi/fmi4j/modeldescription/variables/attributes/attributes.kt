@@ -15,7 +15,7 @@ interface TypedAttribute<E>: Serializable {
      * value as stored in the xml file is desired.] The interpretation of start is defined by
      * ScalarVariable / initial. A different start value can be provided with an
      * fmi2SetXXX function before fmi2ExitInitializationMode is called (but not
-     * for variables with variability = ″constant″).
+     * for categories with variability = ″constant″).
      * [The standard approach is to set the start value before
      * fmi2EnterInitializationMode. However, if the initialization shall be modified
      * in the calling environment (e.g. changing from initialization of states to steadystate

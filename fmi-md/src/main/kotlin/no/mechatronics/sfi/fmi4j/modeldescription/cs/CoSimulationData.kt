@@ -39,7 +39,7 @@ interface CoSimulationData {
     val canHandleVariableCommunicationStepSize: Boolean
     val canInterpolateInputs: Boolean
     val maxOutputDerivativeOrder: Int
-    val canRunAsynchronuously: Boolean
+    val canRunAsynchronuosly: Boolean
     val canBeInstantiatedOnlyOncePerProcess: Boolean
     val canNotUseMemoryManagementFunctions: Boolean
     val canGetAndSetFMUstate: Boolean
@@ -72,7 +72,7 @@ internal class CoSimulationDataImpl : CoSimulationData, Serializable {
     override val maxOutputDerivativeOrder: Int = 0
 
     @XmlAttribute
-    override val canRunAsynchronuously: Boolean = false
+    override val canRunAsynchronuosly: Boolean = false
 
     @XmlAttribute
     override val canBeInstantiatedOnlyOncePerProcess: Boolean = false
@@ -95,12 +95,14 @@ internal class CoSimulationDataImpl : CoSimulationData, Serializable {
     @XmlElementWrapper(name = "SourceFiles")
     @XmlElement(name = "File")
     private var _sourceFiles: List<SourceFileImpl>? = null
-    
-    override val sourceFiles: List<SourceFile>
-        get() = _sourceFiles ?: emptyList()
+
+    @delegate:Transient
+    override val sourceFiles: List<SourceFile> by lazy {
+        _sourceFiles ?: emptyList()
+    }
 
     override fun toString(): String {
-        return "CoSimulationXmlNode{modelIdentifier=$modelIdentifier, needsExecutionTool=$needsExecutionTool, canHandleVariableCommunicationStepSize=$canHandleVariableCommunicationStepSize, canInterpolateInputs=$canInterpolateInputs, maxOutputDerivativeOrder=$maxOutputDerivativeOrder, canRunAsynchronuosly=$canRunAsynchronuously, canBeInstantiatedOnlyOncePerProcess=$canBeInstantiatedOnlyOncePerProcess, canNotUseMemoryManagementFunctions=$canNotUseMemoryManagementFunctions, canGetAndSetFMUstate=$canGetAndSetFMUstate, canSerializeFMUstate=$canSerializeFMUstate, providesDirectionalDerivative=$providesDirectionalDerivative}"
+        return "CoSimulationXmlNode{modelIdentifier=$modelIdentifier, needsExecutionTool=$needsExecutionTool, canHandleVariableCommunicationStepSize=$canHandleVariableCommunicationStepSize, canInterpolateInputs=$canInterpolateInputs, maxOutputDerivativeOrder=$maxOutputDerivativeOrder, canRunAsynchronuosly=$canRunAsynchronuosly, canBeInstantiatedOnlyOncePerProcess=$canBeInstantiatedOnlyOncePerProcess, canNotUseMemoryManagementFunctions=$canNotUseMemoryManagementFunctions, canGetAndSetFMUstate=$canGetAndSetFMUstate, canSerializeFMUstate=$canSerializeFMUstate, providesDirectionalDerivative=$providesDirectionalDerivative}"
     }
 
 }

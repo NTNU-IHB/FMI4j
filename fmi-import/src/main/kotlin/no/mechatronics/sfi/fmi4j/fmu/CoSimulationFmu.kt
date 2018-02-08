@@ -51,7 +51,7 @@ class CoSimulationFmu internal constructor(
 
 
     override val modelDescription: CoSimulationModelDescription
-        get() = fmuFile.modelDescription.asCoSimulation()
+        get() = fmuFile.modelDescription.asCoSimulationModelDescription()
 
     override fun init(start: Double, stop: Double): Boolean {
         return super.init(start, stop).also {

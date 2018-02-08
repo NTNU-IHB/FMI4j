@@ -69,14 +69,14 @@ enum class Causality: Serializable {
     @XmlEnumValue("output") OUTPUT,
 
     /**
-     * Local variable that is calculated from other variables or is a
+     * Local variable that is calculated from other categories or is a
      * continuoustime state (see section 2.2.8). It is not allowed to use the
      * variable value in another model or slave.
      */
     @XmlEnumValue("local") LOCAL,
 
     /**
-     * The independent variable (usually “time”). All variables are a function
+     * The independent variable (usually “time”). All categories are a function
      * of this independent variable. variability must be "continuous". At most
      * one ScalarVariable of an FMU can be defined as "independent". If no
      * variable is defined as "independent", it is implicitely present with name

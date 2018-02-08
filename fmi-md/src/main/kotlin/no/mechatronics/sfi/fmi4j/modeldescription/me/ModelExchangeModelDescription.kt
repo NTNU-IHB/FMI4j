@@ -58,67 +58,13 @@ interface ModelExchangeModelDescription : ModelDescription {
 class ModelExchangeModelDescriptionImpl(
         private val modelDescription: ModelDescriptionImpl,
         private val me: ModelExchangeData
-) : SimpleModelDescription by modelDescription, ModelExchangeModelDescription, Serializable {
+) : SimpleModelDescription by modelDescription, ModelExchangeModelDescription, ModelExchangeData by me {
 
     /**
      * @inheritDoc
      */
     override val numberOfEventIndicators: Int
         get() = modelDescription.numberOfEventIndicators
-
-    /**
-     * @inheritDoc
-     */
-    override val modelIdentifier: String
-        get() = me.modelIdentifier
-
-    /**
-     * @inheritDoc
-     */
-    override val needsExecutionTool: Boolean
-        get() = me.needsExecutionTool
-
-    /**
-     * @inheritDoc
-     */
-    override val canBeInstantiatedOnlyOncePerProcess: Boolean
-        get() = me.canBeInstantiatedOnlyOncePerProcess
-
-    /**
-     * @inheritDoc
-     */
-    override val canNotUseMemoryManagementFunctions: Boolean
-        get() = me.canNotUseMemoryManagementFunctions
-
-    /**
-     * @inheritDoc
-     */
-    override val canGetAndSetFMUstate: Boolean
-        get() = me.canGetAndSetFMUstate
-
-    /**
-     * @inheritDoc
-     */
-    override val canSerializeFMUstate: Boolean
-        get() = me.canSerializeFMUstate
-
-    /**
-     * @inheritDoc
-     */
-    override val providesDirectionalDerivative: Boolean
-        get() = me.providesDirectionalDerivative
-
-    /**
-     * @inheritDoc
-     */
-    override val sourceFiles: List<SourceFile>
-        get() = me.sourceFiles
-
-    /**
-     * @inheritDoc
-     */
-    override val completedIntegratorStepNotNeeded: Boolean
-        get() = me.completedIntegratorStepNotNeeded
 
 }
 

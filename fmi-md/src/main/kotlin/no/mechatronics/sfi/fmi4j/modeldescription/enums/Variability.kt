@@ -33,7 +33,7 @@ import javax.xml.bind.annotation.XmlType
  * Enumeration that defines the time dependency of the variable, in other words it defines
  * the time instants when a variable can change its value. [The purpose of this attribute is
  * to define when a result value needs to be inquired and to be stored. For example
- * discrete variables change their values only at event instants (ModelExchange) or at a
+ * discrete categories change their values only at event instants (ModelExchange) or at a
  * communication point (CoSimulation) and it is therefore only necessary to inquire them
  * with fmi2GetXXX and store them at event times]. Allowed values of this enumeration:
  * • "constant": The value of the variable never changes.
@@ -42,11 +42,11 @@ import javax.xml.bind.annotation.XmlType
  * anymore.
  * • "tunable": The value of the variable is constant between external events
  * (ModelExchange) and between Communication Points (CoSimulation) due to
- * changing variables with causality = "parameter" or "input" and
+ * changing categories with causality = "parameter" or "input" and
  * variability = "tunable". Whenever a parameter or input signal with
  * variability = "tunable" changes, then an event is triggered externally
  * (ModelExchange) or the change is performed at the next Communication Point
- * (CoSimulation) and the variables with variability = "tunable" and causality =
+ * (CoSimulation) and the categories with variability = "tunable" and causality =
  * "calculatedParameter" or "output" must be newly computed.
  * • "discrete":
  * ModelExchange: The value of the variable is constant between external and internal
@@ -81,11 +81,11 @@ enum class Variability: Serializable {
     /**
      * The value of the variable is constant between external events
      * (ModelExchange) and between Communication Points (CoSimulation) due to
-     * changing variables with causality = "parameter" or "input" and
+     * changing categories with causality = "parameter" or "input" and
      * variability = "tunable". Whenever a parameter or input signal with
      * variability = "tunable" changes, then an event is triggered externally
      * (ModelExchange) or the change is performed at the next Communication
-     * Point (CoSimulation) and the variables with variability = "tunable" and
+     * Point (CoSimulation) and the categories with variability = "tunable" and
      * causality = "calculatedParameter" or "output" must be newly computed.
      */
     @XmlEnumValue("tunable") TUNABLE,

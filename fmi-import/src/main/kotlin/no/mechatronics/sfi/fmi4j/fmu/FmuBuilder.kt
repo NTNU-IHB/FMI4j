@@ -72,9 +72,12 @@ class FmuBuilder(
         get() = fmuFile.modelDescription.supportsModelExchange
 
     @Throws(IllegalStateException::class)
-    fun asCoSimulationFmu() = coSimulationBuilder ?: throw IllegalStateException("FMU does not support Co-Simulation!")
+    fun asCoSimulationFmu(): CoSimulationFmuBuilder
+            = coSimulationBuilder ?: throw IllegalStateException("FMU does not support Co-Simulation!")
+
     @Throws(IllegalStateException::class)
-    fun asModelExchangeFmu() = modelExchangeBuilder ?: throw IllegalStateException("FMU does not support Model Exchange!")
+    fun asModelExchangeFmu(): ModelExchangeFmuBuilder
+            = modelExchangeBuilder ?: throw IllegalStateException("FMU does not support Model Exchange!")
 
 }
 
@@ -84,7 +87,7 @@ class CoSimulationFmuBuilder internal constructor(
 ) {
 
     private val modelDescription
-        get() = fmuFile.modelDescription.asCoSimulation()
+        get() = fmuFile.modelDescription.asCoSimulationModelDescription()
 
     private val libraryCache: LibraryProvider<Fmi2CoSimulationLibrary> by lazy {
         loadLibrary()
@@ -107,7 +110,7 @@ class ModelExchangeFmuBuilder(
 ) {
 
     private val modelDescription
-        get() = fmuFile.modelDescription.asModelExchange()
+        get() = fmuFile.modelDescription.asModelExchangeModelDescription()
 
     private val libraryCache: LibraryProvider<Fmi2ModelExchangeLibrary> by lazy {
         loadLibrary()

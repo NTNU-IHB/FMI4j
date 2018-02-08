@@ -37,7 +37,7 @@ import javax.xml.bind.annotation.adapters.XmlAdapter
  * Integer, Boolean, String or Enumeration).
  * • = "approx": The variable is an iteration variable of an algebraic loop and the
  * iteration at initialization starts with the start value.
- * • = "calculated": The variable is calculated from other variables during initialization.
+ * • = "calculated": The variable is calculated from other categories during initialization.
  * It is not allowed to provide a “start” value.
  * If initial is not present, it is defined by the table below based on causality and
  * variability. If initial = exact or approx, or causality = ″input″ a start
@@ -69,7 +69,7 @@ enum class Initial: Serializable {
     @XmlEnumValue("approx") APPROX,
 
     /**
-     * The variable is calculated from other variables during initialization. It
+     * The variable is calculated from other categories during initialization. It
      * is not allowed to provide a “start” value.
      */
     @XmlEnumValue("calculated") CALCULATED;
