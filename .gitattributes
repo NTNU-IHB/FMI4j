@@ -1,1 +1,2 @@
 *.csv linguist-generated=true
+*.txt linguist-documentation
