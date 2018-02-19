@@ -23,6 +23,12 @@ class TestBouncingBall_ME_win64 {
 
         FmuDriver.main(args)
 
+        File("bouncingBall_out.csv").apply {
+            if (exists()) {
+                delete()
+            }
+        }
+
     }
 
 }

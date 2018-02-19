@@ -24,7 +24,7 @@ class VS_JavaFMI {
 
         val dt = 1.0/ 1000
         val stop1 = 10.0
-        val stop2 = stop1 + 1000.0
+        val stop2 = stop1 + 100.0
         while (fmu1.currentTime < stop1) {
             fmu1.doStep(dt)
         }

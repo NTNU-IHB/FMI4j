@@ -20,7 +20,6 @@ gradle-app.setting
 
 bin/
 tmp/
-.recommendes
 
 .metadata
 .gradle
@@ -32,9 +31,9 @@ local.properties
 .settings/
 .loadpath
 
+gradle.properties
 
 .nb-gradle/
-
 
 .idea/
 out/
