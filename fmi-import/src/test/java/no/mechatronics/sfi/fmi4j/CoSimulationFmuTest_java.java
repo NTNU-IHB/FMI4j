@@ -25,7 +25,7 @@
 package no.mechatronics.sfi.fmi4j;
 
 
-import no.mechatronics.sfi.fmi4j.common.Fmi2Status;
+import no.mechatronics.sfi.fmi4j.common.FmiStatus;
 import no.mechatronics.sfi.fmi4j.fmu.AbstractFmu;
 import no.mechatronics.sfi.fmi4j.fmu.FmuBuilder;
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.RealVariable;
@@ -67,7 +67,7 @@ public class CoSimulationFmuTest_java {
             Assert.assertEquals(298.0, startTemp,0);
 
             Assert.assertTrue(fmu.init());
-            Assert.assertTrue(fmu.getLastStatus() == Fmi2Status.OK);
+            Assert.assertTrue(fmu.getLastStatus() == FmiStatus.OK);
 
             final RealVariable heatCapacity1_C = fmu.getVariableByName("HeatCapacity1.C").asRealVariable();
             Assert.assertEquals(0.1, heatCapacity1_C.getStart(), 0);
@@ -81,9 +81,9 @@ public class CoSimulationFmuTest_java {
             double dt = 1d/100;
             for (int i = 0; i < 5; i++) {
                 fmu.doStep(dt);
-                Assert.assertTrue(fmu.getLastStatus() == Fmi2Status.OK);
+                Assert.assertTrue(fmu.getLastStatus() == FmiStatus.OK);
                 double value = temperature_room.read().getValue();
-                Assert.assertTrue(fmu.getLastStatus() == Fmi2Status.OK);
+                Assert.assertTrue(fmu.getLastStatus() == FmiStatus.OK);
                 if (Double.isNaN(first1)) {
                     first1 = value;
                 }
@@ -95,14 +95,14 @@ public class CoSimulationFmuTest_java {
 
             ((AbstractFmu) fmu).reset(false);
 
-            Assert.assertTrue(fmu.getLastStatus() == Fmi2Status.OK);
+            Assert.assertTrue(fmu.getLastStatus() == FmiStatus.OK);
 
             AtomicBoolean first = new AtomicBoolean(true);
             while (fmu.getCurrentTime() < 5) {
                 fmu.doStep(dt);
-                Assert.assertTrue(fmu.getLastStatus() == Fmi2Status.OK);
+                Assert.assertTrue(fmu.getLastStatus() == FmiStatus.OK);
                 double value = temperature_room.read().getValue();
-                Assert.assertTrue(fmu.getLastStatus() == Fmi2Status.OK);
+                Assert.assertTrue(fmu.getLastStatus() == FmiStatus.OK);
                 if (first.getAndSet(false)) {
                     Assert.assertEquals(first1, value, 0);
                 }

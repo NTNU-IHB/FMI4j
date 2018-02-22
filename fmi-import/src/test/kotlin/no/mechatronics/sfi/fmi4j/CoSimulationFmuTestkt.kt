@@ -1,7 +1,7 @@
 package no.mechatronics.sfi.fmi4j
 
 
-import no.mechatronics.sfi.fmi4j.common.Fmi2Status
+import no.mechatronics.sfi.fmi4j.common.FmiStatus
 import no.mechatronics.sfi.fmi4j.fmu.AbstractFmu
 import no.mechatronics.sfi.fmi4j.fmu.FmuBuilder
 import org.junit.Assert
@@ -38,7 +38,7 @@ class CoSimulationFmuTest_kt {
             Assert.assertEquals(298.0, startTemp!!, 0.0)
 
             Assert.assertTrue(fmu.init())
-            Assert.assertTrue(fmu.lastStatus === Fmi2Status.OK)
+            Assert.assertTrue(fmu.lastStatus === FmiStatus.OK)
 
             val heatCapacity1_C = fmu.getVariableByName("HeatCapacity1.C").asRealVariable()
             Assert.assertEquals(0.1, heatCapacity1_C.start!!, 0.0)
@@ -51,10 +51,10 @@ class CoSimulationFmuTest_kt {
             val dt = 1.0 / 100
             for (i in 0..4) {
                 fmu.doStep(dt)
-                Assert.assertTrue(fmu.lastStatus === Fmi2Status.OK)
+                Assert.assertTrue(fmu.lastStatus === FmiStatus.OK)
 
                 val read = temperature_room.read()
-                Assert.assertTrue(read.status == Fmi2Status.OK)
+                Assert.assertTrue(read.status == FmiStatus.OK)
                 val value = read.value
 
                 if (java.lang.Double.isNaN(first1)) {
@@ -66,15 +66,15 @@ class CoSimulationFmuTest_kt {
 
             (fmu as AbstractFmu<*, *>).reset(false)
 
-            Assert.assertTrue(fmu.lastStatus === Fmi2Status.OK)
+            Assert.assertTrue(fmu.lastStatus === FmiStatus.OK)
 
             val first = AtomicBoolean(true)
             while (fmu.currentTime < 5) {
                 fmu.doStep(dt)
-                Assert.assertTrue(fmu.lastStatus === Fmi2Status.OK)
+                Assert.assertTrue(fmu.lastStatus === FmiStatus.OK)
 
                 val read = temperature_room.read()
-                Assert.assertTrue(read.status == Fmi2Status.OK)
+                Assert.assertTrue(read.status == FmiStatus.OK)
                 val value = read.value
 
                 if (first.getAndSet(false)) {

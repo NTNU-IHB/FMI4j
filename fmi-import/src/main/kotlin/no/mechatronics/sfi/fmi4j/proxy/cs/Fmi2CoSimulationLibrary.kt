@@ -27,7 +27,7 @@ package no.mechatronics.sfi.fmi4j.proxy.cs
 import com.sun.jna.Pointer
 import com.sun.jna.ptr.DoubleByReference
 import com.sun.jna.ptr.IntByReference
-import no.mechatronics.sfi.fmi4j.common.Fmi2Status
+import no.mechatronics.sfi.fmi4j.common.FmiStatus
 import no.mechatronics.sfi.fmi4j.proxy.enums.Fmi2StatusKind
 import no.mechatronics.sfi.fmi4j.misc.*
 import no.mechatronics.sfi.fmi4j.proxy.Fmi2Library
@@ -93,38 +93,38 @@ class CoSimulationLibraryWrapper(
     /**
      * @see Fmi2CoSimulationlibrary.fmi2SetRealInputDerivatives
      */
-    fun setRealInputDerivatives(vr: IntArray, order: IntArray, value: DoubleArray) : Fmi2Status {
+    fun setRealInputDerivatives(vr: IntArray, order: IntArray, value: DoubleArray) : FmiStatus {
         return updateStatus((library.fmi2SetRealInputDerivatives(c, vr, vr.size, order, value)))
     }
 
     /**
      * @see Fmi2CoSimulationlibrary.fmi2GetRealOutputDerivatives
      */
-    fun getRealOutputDerivatives(vr: IntArray, order: IntArray, value: DoubleArray) : Fmi2Status {
+    fun getRealOutputDerivatives(vr: IntArray, order: IntArray, value: DoubleArray) : FmiStatus {
         return updateStatus((library.fmi2GetRealOutputDerivatives(c, vr, vr.size, order, value)))
     }
 
     /**
      * @see Fmi2CoSimulationlibrary.fmi2DoStep
      */
-    fun doStep(t: Double, dt: Double, noSetFMUStatePriorToCurrent: Boolean) : Fmi2Status {
+    fun doStep(t: Double, dt: Double, noSetFMUStatePriorToCurrent: Boolean) : FmiStatus {
         return updateStatus((library.fmi2DoStep(c, t, dt, Fmi2Boolean.convert(noSetFMUStatePriorToCurrent))))
     }
 
     /**
      * @see Fmi2CoSimulationlibrary.fmi2CancelStep
      */
-    fun cancelStep() : Fmi2Status {
+    fun cancelStep() : FmiStatus {
         return (updateStatus((library.fmi2CancelStep(c))))
     }
 
     /**
      * @see Fmi2CoSimulationlibrary.fmi2GetStatus
      */
-    fun getStatus(s: Fmi2StatusKind): Fmi2Status {
+    fun getStatus(s: Fmi2StatusKind): FmiStatus {
         return intByReference.let {
             updateStatus((library.fmi2GetIntegerStatus(c, s.code, it)))
-            Fmi2Status.valueOf(it.value)
+            FmiStatus.valueOf(it.value)
         }
     }
 

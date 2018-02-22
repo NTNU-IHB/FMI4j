@@ -25,7 +25,7 @@
 package no.mechatronics.sfi.fmi4j.fmu
 
 import no.mechatronics.sfi.fmi4j.FmiSimulation
-import no.mechatronics.sfi.fmi4j.common.Fmi2Status
+import no.mechatronics.sfi.fmi4j.common.FmiStatus
 import no.mechatronics.sfi.fmi4j.modeldescription.cs.CoSimulationModelDescription
 import no.mechatronics.sfi.fmi4j.proxy.cs.CoSimulationLibraryWrapper
 import no.mechatronics.sfi.fmi4j.proxy.enums.Fmi2StatusKind
@@ -71,7 +71,7 @@ class CoSimulationFmu internal constructor(
         val status = wrapper.doStep(currentTime, dt, true)
         currentTime += dt
 
-        return status == Fmi2Status.OK
+        return status == FmiStatus.OK
     }
 
     /**

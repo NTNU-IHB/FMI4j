@@ -24,7 +24,7 @@
 
 package no.mechatronics.sfi.fmi4j.modeldescription.variables
 
-import no.mechatronics.sfi.fmi4j.common.Fmi2Status
+import no.mechatronics.sfi.fmi4j.common.FmiStatus
 import no.mechatronics.sfi.fmi4j.common.FmuRead
 
 
@@ -55,21 +55,21 @@ interface VariableAccessor {
     fun readBoolean(vr: IntArray, value: BooleanArray): FmuRead<BooleanArray>
     fun readBoolean(vr: IntArray, value: IntArray): FmuRead<IntArray>
 
-    fun writeInteger(name: String, value: Int): Fmi2Status
-    fun writeInteger(valueReference: Int, value: Int): Fmi2Status
-    fun writeInteger(vr: IntArray, value: IntArray): Fmi2Status
+    fun writeInteger(name: String, value: Int): FmiStatus
+    fun writeInteger(valueReference: Int, value: Int): FmiStatus
+    fun writeInteger(vr: IntArray, value: IntArray): FmiStatus
 
-    fun writeReal(name: String, value: Real): Fmi2Status
-    fun writeReal(valueReference: Int, value: Real): Fmi2Status
-    fun writeReal(vr: IntArray, value: RealArray): Fmi2Status
+    fun writeReal(name: String, value: Real): FmiStatus
+    fun writeReal(valueReference: Int, value: Real): FmiStatus
+    fun writeReal(vr: IntArray, value: RealArray): FmiStatus
 
-    fun writeString(name: String, value: String): Fmi2Status
-    fun writeString(valueReference: Int, value: String): Fmi2Status
-    fun writeString(vr: IntArray, value: StringArray): Fmi2Status
+    fun writeString(name: String, value: String): FmiStatus
+    fun writeString(valueReference: Int, value: String): FmiStatus
+    fun writeString(vr: IntArray, value: StringArray): FmiStatus
 
-    fun writeBoolean(name: String, value: Boolean): Fmi2Status
-    fun writeBoolean(valueReference: Int, value: Boolean): Fmi2Status
-    fun writeBoolean(vr: IntArray, value: IntArray): Fmi2Status
-    fun writeBoolean(vr: IntArray, value: BooleanArray): Fmi2Status
+    fun writeBoolean(name: String, value: Boolean): FmiStatus
+    fun writeBoolean(valueReference: Int, value: Boolean): FmiStatus
+    fun writeBoolean(vr: IntArray, value: IntArray): FmiStatus
+    fun writeBoolean(vr: IntArray, value: BooleanArray): FmiStatus
 
 }

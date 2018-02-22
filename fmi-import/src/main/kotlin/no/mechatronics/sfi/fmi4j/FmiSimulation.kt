@@ -24,7 +24,7 @@
 
 package no.mechatronics.sfi.fmi4j
 
-import no.mechatronics.sfi.fmi4j.common.Fmi2Status
+import no.mechatronics.sfi.fmi4j.common.FmiStatus
 import no.mechatronics.sfi.fmi4j.modeldescription.*
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.ModelVariables
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.TypedScalarVariable
@@ -43,7 +43,7 @@ interface FmiSimulation : Closeable {
     val modelDescription: ModelDescription
     val variableAccessor: VariableAccessor
 
-    val lastStatus: Fmi2Status
+    val lastStatus: FmiStatus
     val isInitialized: Boolean
     val isTerminated: Boolean
 

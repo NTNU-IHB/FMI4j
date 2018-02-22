@@ -24,7 +24,7 @@
 
 package no.mechatronics.sfi.fmi4j;
 
-import no.mechatronics.sfi.fmi4j.common.Fmi2Status;
+import no.mechatronics.sfi.fmi4j.common.FmiStatus;
 import no.mechatronics.sfi.fmi4j.common.FmuRead;
 import no.mechatronics.sfi.fmi4j.fmu.FmuBuilder;
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.*;
@@ -73,7 +73,7 @@ public class ModelExchangeTest_java {
     public void tearDown() {
         if (fmu != null) {
             fmu.terminate();
-            Assert.assertTrue(fmu.getLastStatus() == Fmi2Status.OK);
+            Assert.assertTrue(fmu.getLastStatus() == FmiStatus.OK);
         }
     }
 
@@ -90,7 +90,7 @@ public class ModelExchangeTest_java {
         double macroStep = 1.0 / 10;
         while (fmu.getCurrentTime() < 1) {
             FmuRead<Double> read = x0.read();
-            Assert.assertTrue(read.getStatus() == Fmi2Status.OK);
+            Assert.assertTrue(read.getStatus() == FmiStatus.OK);
             System.out.println("t=" + fmu.getCurrentTime() + ", x0=" + read.getValue());
             fmu.doStep(macroStep);
         }

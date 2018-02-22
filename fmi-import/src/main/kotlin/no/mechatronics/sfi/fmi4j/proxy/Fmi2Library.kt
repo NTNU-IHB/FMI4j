@@ -29,7 +29,7 @@ import com.sun.jna.Library
 import com.sun.jna.Memory
 import com.sun.jna.Pointer
 import com.sun.jna.ptr.*
-import no.mechatronics.sfi.fmi4j.common.Fmi2Status
+import no.mechatronics.sfi.fmi4j.common.FmiStatus
 import no.mechatronics.sfi.fmi4j.common.FmuRead
 import no.mechatronics.sfi.fmi4j.common.FmuReadImpl
 import no.mechatronics.sfi.fmi4j.proxy.structs.Fmi2CallbackFunctions
@@ -320,7 +320,7 @@ abstract class Fmi2LibraryWrapper<E: Fmi2Library> (
     /**
      * The status returned from the last call to a FMU function
      */
-    var lastStatus: Fmi2Status = Fmi2Status.NONE
+    var lastStatus: FmiStatus = FmiStatus.NONE
         private set
 
     /**
@@ -334,10 +334,10 @@ abstract class Fmi2LibraryWrapper<E: Fmi2Library> (
         return libraryProvider.get()
     }
 
-    protected fun updateStatus(status: Int): Fmi2Status
-            = updateStatus(Fmi2Status.valueOf(status))
+    protected fun updateStatus(status: Int): FmiStatus
+            = updateStatus(FmiStatus.valueOf(status))
 
-    protected fun updateStatus(status: Fmi2Status) : Fmi2Status{
+    protected fun updateStatus(status: FmiStatus) : FmiStatus {
         lastStatus = status
         return status
     }
@@ -357,7 +357,7 @@ abstract class Fmi2LibraryWrapper<E: Fmi2Library> (
     /**
      * @see Fmi2library.fmi2SetDebugLogging
      */
-    fun setDebugLogging(loggingOn: Boolean, nCategories: Int, categories: StringArray) : Fmi2Status {
+    fun setDebugLogging(loggingOn: Boolean, nCategories: Int, categories: StringArray) : FmiStatus {
         return updateStatus(library.fmi2SetDebugLogging(c,
                 Fmi2Boolean.convert(loggingOn), nCategories, categories))
     }
@@ -365,7 +365,7 @@ abstract class Fmi2LibraryWrapper<E: Fmi2Library> (
     /**
      * @see Fmi2Library.fmi2SetupExperiment
      */
-    fun setupExperiment(toleranceDefined: Boolean, tolerance: Double, startTime: Double, stopTimeDefined: Boolean, stopTime: Double) : Fmi2Status {
+    fun setupExperiment(toleranceDefined: Boolean, tolerance: Double, startTime: Double, stopTimeDefined: Boolean, stopTime: Double) : FmiStatus {
         return updateStatus(library.fmi2SetupExperiment(c,
                 Fmi2Boolean.convert(toleranceDefined), tolerance,
                 startTime, Fmi2Boolean.convert(stopTimeDefined), stopTime))
@@ -374,14 +374,14 @@ abstract class Fmi2LibraryWrapper<E: Fmi2Library> (
     /**
      * @see Fmi2library.fmi2EnterInitializationMode
      */
-    fun enterInitializationMode() : Fmi2Status {
+    fun enterInitializationMode() : FmiStatus {
         return updateStatus(library.fmi2EnterInitializationMode(c))
     }
 
     /**
      * @see Fmi2library.fmi2ExitInitializationMode
      */
-    fun exitInitializationMode() : Fmi2Status {
+    fun exitInitializationMode() : FmiStatus {
         return updateStatus(library.fmi2ExitInitializationMode(c))
     }
 
@@ -405,7 +405,7 @@ abstract class Fmi2LibraryWrapper<E: Fmi2Library> (
     /**
      * @see Fmi2library.fmi2Reset
      */
-    fun reset() : Fmi2Status {
+    fun reset() : FmiStatus {
         return updateStatus(library.fmi2Reset(c))
     }
 
@@ -509,7 +509,7 @@ abstract class Fmi2LibraryWrapper<E: Fmi2Library> (
     /**
      * @see Fmi2library.fmi2SetInteger
      */
-    fun setInteger( valueReference: Int, value: Int) : Fmi2Status {
+    fun setInteger( valueReference: Int, value: Int) : FmiStatus {
         return with(buffers) {
             vr[0] = valueReference
             iv[0] = value
@@ -520,14 +520,14 @@ abstract class Fmi2LibraryWrapper<E: Fmi2Library> (
     /**
      * @see Fmi2library.fmi2SetInteger
      */
-    fun setInteger(vr: IntArray, value: IntArray) : Fmi2Status {
+    fun setInteger(vr: IntArray, value: IntArray) : FmiStatus {
         return updateStatus((library.fmi2SetInteger(c, vr, vr.size, value)))
     }
 
     /**
      * @see Fmi2library.fmi2SetReal
      */
-    fun setReal(valueReference: Int, value: Double) : Fmi2Status {
+    fun setReal(valueReference: Int, value: Double) : FmiStatus {
         return with(buffers) {
             vr[0] = valueReference
             rv[0] = value
@@ -538,14 +538,14 @@ abstract class Fmi2LibraryWrapper<E: Fmi2Library> (
     /**
      * @see Fmi2library.fmi2SetReal
      */
-    fun setReal(vr: IntArray, value: DoubleArray) : Fmi2Status {
+    fun setReal(vr: IntArray, value: DoubleArray) : FmiStatus {
         return updateStatus((library.fmi2SetReal(c, vr, vr.size, value)))
     }
 
     /**
      * @see Fmi2library.fmi2SetString
      */
-    fun setString(valueReference: Int, value: String) : Fmi2Status {
+    fun setString(valueReference: Int, value: String) : FmiStatus {
         return with(buffers) {
             vr[0] = valueReference
             sv[0] = value
@@ -556,14 +556,14 @@ abstract class Fmi2LibraryWrapper<E: Fmi2Library> (
     /**
      * @see Fmi2library.fmi2SetString
      */
-    fun setString(vr: IntArray, value: StringArray) : Fmi2Status {
+    fun setString(vr: IntArray, value: StringArray) : FmiStatus {
         return updateStatus((library.fmi2SetString(c, vr, vr.size, value)))
     }
 
     /**
      * @see Fmi2library.fmi2SetBoolean
      */
-    fun setBoolean(valueReference: Int, value: Boolean) : Fmi2Status {
+    fun setBoolean(valueReference: Int, value: Boolean) : FmiStatus {
         return with(buffers) {
             vr[0] = valueReference
             bv[0] = if (value) 1 else 0
@@ -574,18 +574,18 @@ abstract class Fmi2LibraryWrapper<E: Fmi2Library> (
     /**
      * @see Fmi2library.fmi2SetBoolean
      */
-    fun setBoolean(vr: IntArray, value: IntArray) : Fmi2Status {
+    fun setBoolean(vr: IntArray, value: IntArray) : FmiStatus {
         return updateStatus((library.fmi2SetBoolean(c, vr, vr.size, value)))
     }
 
     /**
      * @see Fmi2library.fmi2SetBoolean
      */
-    fun setBoolean(vr: IntArray, value: BooleanArray) : Fmi2Status {
+    fun setBoolean(vr: IntArray, value: BooleanArray) : FmiStatus {
         return setBoolean(vr, value.map { if (it) 1 else 0 }.toIntArray())
     }
 
-    fun getDirectionalDerivative(vUnknown_ref: IntArray, vKnown_ref: IntArray, dvKnown: DoubleArray, dvUnknown: DoubleArray) : Fmi2Status {
+    fun getDirectionalDerivative(vUnknown_ref: IntArray, vKnown_ref: IntArray, dvKnown: DoubleArray, dvUnknown: DoubleArray) : FmiStatus {
         return updateStatus((library.fmi2GetDirectionalDerivative(c,
                 vUnknown_ref, vUnknown_ref.size, vKnown_ref, vKnown_ref.size, dvKnown, dvUnknown)))
     }
@@ -596,11 +596,11 @@ abstract class Fmi2LibraryWrapper<E: Fmi2Library> (
         return fmuState
     }
 
-    fun setFMUState(fmuState: FmuState) : Fmi2Status {
+    fun setFMUState(fmuState: FmuState) : FmiStatus {
         return updateStatus(library.fmi2SetFMUstate(c, fmuState.pointer))
     }
 
-    fun freeFMUState(fmuState: FmuState) : Fmi2Status {
+    fun freeFMUState(fmuState: FmuState) : FmiStatus {
         return updateStatus(library.fmi2FreeFMUstate(c, fmuState.pointerByReference))
     }
 

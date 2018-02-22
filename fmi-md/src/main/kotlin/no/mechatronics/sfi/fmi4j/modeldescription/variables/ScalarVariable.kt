@@ -24,7 +24,7 @@
 
 package no.mechatronics.sfi.fmi4j.modeldescription.variables
 
-import no.mechatronics.sfi.fmi4j.common.Fmi2Status
+import no.mechatronics.sfi.fmi4j.common.FmiStatus
 import no.mechatronics.sfi.fmi4j.common.FmuRead
 import no.mechatronics.sfi.fmi4j.modeldescription.enums.*
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.attributes.*
@@ -182,7 +182,7 @@ interface TypedScalarVariable<E>: ScalarVariable {
 
     fun read(): FmuRead<E>
 
-    fun write(value: E): Fmi2Status
+    fun write(value: E): FmiStatus
 
     /**
      * Integer, Real, String or Boolean
@@ -265,7 +265,7 @@ class IntegerVariable internal constructor(private val v : ScalarVariableImpl) :
         return accessor?.readInteger(valueReference) ?: throw IllegalStateException("No accessor assigned!")
     }
 
-    override fun write(value: Int): Fmi2Status {
+    override fun write(value: Int): FmiStatus {
         return accessor?.writeInteger(valueReference, value) ?: throw IllegalStateException("No accessor assigned!")
     }
 
@@ -338,7 +338,7 @@ class RealVariable internal constructor(private val v : ScalarVariableImpl) : Sc
         return accessor?.readReal(valueReference) ?: throw IllegalStateException("No accessor assigned!")
     }
 
-    override fun write(value: Real): Fmi2Status {
+    override fun write(value: Real): FmiStatus {
         return accessor?.writeReal(valueReference, value) ?: throw IllegalStateException("No accessor assigned!")
     }
 
@@ -366,7 +366,7 @@ class StringVariable internal constructor(private val v : ScalarVariableImpl) : 
         return accessor?.readString(valueReference) ?: throw IllegalStateException("No accessor assigned!")
     }
 
-    override fun write(value: String): Fmi2Status {
+    override fun write(value: String): FmiStatus {
         return accessor?.writeString(valueReference, value) ?: throw IllegalStateException("No accessor assigned!")
     }
 
@@ -394,7 +394,7 @@ class BooleanVariable internal constructor(private val v : ScalarVariableImpl) :
         return accessor?.readBoolean(valueReference) ?: throw IllegalStateException("No accessor assigned!")
     }
 
-    override fun write(value: Boolean): Fmi2Status {
+    override fun write(value: Boolean): FmiStatus {
         return accessor?.writeBoolean(valueReference, value) ?: throw IllegalStateException("No accessor assigned!")
     }
 

@@ -35,7 +35,7 @@ import java.util.Arrays
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-import no.mechatronics.sfi.fmi4j.common.Fmi2Status
+import no.mechatronics.sfi.fmi4j.common.FmiStatus
 
 /**
  *
@@ -77,7 +77,7 @@ open class Fmi2CallbackFunctions : Structure() {
 
         override fun invoke(c: Pointer?, instanceName: String, status: Int, category: String, message: String, args: Pointer?) {
 
-            LOG.info("InstanceName: {}, status: {}, category: {}, message: {}", instanceName, Fmi2Status.valueOf(status), category, message)
+            LOG.info("InstanceName: {}, status: {}, category: {}, message: {}", instanceName, FmiStatus.valueOf(status), category, message)
         }
 
     }
