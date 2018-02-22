@@ -91,7 +91,7 @@ object FmuDriver {
 
                 val dt = options.stepSize
                 while (fmu.currentTime < options.stopTime) {
-                    printer.printRecord(fmu.currentTime, *outputVariables.map { it.value }.toTypedArray())
+                    printer.printRecord(fmu.currentTime, *outputVariables.map { it.read().value }.toTypedArray())
                     fmu.doStep(dt)
                 }
 

@@ -4,7 +4,7 @@ apply plugin: 'application'
 mainClassName = 'no.mechatronics.sfi.fmi4j.crosscheck.FmuDriver'
 
 def snapshot = false
-def fmi_import_version = snapshot ? '0.2.4-SNAPSHOT' : '0.2.3'
+def fmi_import_version = snapshot ? '0.2.5-SNAPSHOT' : '0.2.4'
 
 repositories {
     if (snapshot) {
