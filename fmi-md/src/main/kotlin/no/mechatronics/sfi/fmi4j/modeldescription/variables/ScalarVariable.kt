@@ -24,13 +24,12 @@
 
 package no.mechatronics.sfi.fmi4j.modeldescription.variables
 
+import no.mechatronics.sfi.fmi4j.common.FmiStatus
+import no.mechatronics.sfi.fmi4j.common.FmuRead
 import no.mechatronics.sfi.fmi4j.modeldescription.enums.*
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.attributes.*
-import org.w3c.dom.Node
 import java.io.Serializable
-import javax.xml.bind.JAXBContext
 import javax.xml.bind.annotation.*
-import javax.xml.bind.annotation.adapters.XmlAdapter
 
 typealias Real = Double
 typealias RealArray = DoubleArray
@@ -181,7 +180,9 @@ interface TypedScalarVariable<E>: ScalarVariable {
      */
     var start: E?
 
-    var value: E
+    fun read(): FmuRead<E>
+
+    fun write(value: E): FmiStatus
 
     /**
      * Integer, Real, String or Boolean
@@ -190,10 +191,13 @@ interface TypedScalarVariable<E>: ScalarVariable {
 
     fun asIntegerVariable(): IntegerVariable
             = if (this is IntegerVariable) this else throw IllegalAccessException("Variable is not an ${IntegerVariable::class.java.simpleName}, but an ${this::class.java.simpleName}")
+
     fun asRealVariable(): RealVariable
             = if (this is RealVariable) this else throw throw IllegalAccessException("Variable is not an ${RealVariable::class.java.simpleName}, but an ${this::class.java.simpleName}")
+
     fun asStringVariable(): StringVariable
             = if (this is StringVariable) this else throw IllegalAccessException("Variable is not an ${StringVariable::class.java.simpleName}, but an ${this::class.java.simpleName}")
+
     fun asBooleanVariable(): BooleanVariable
             = if (this is BooleanVariable) this else throw IllegalAccessException("Variable is not an ${BooleanVariable::class.java.simpleName}, but an ${this::class.java.simpleName}")
 
@@ -227,11 +231,11 @@ sealed class AbstractTypedScalarVariable<E>: TypedScalarVariable<E>, Serializabl
 
     @JvmField
     @Transient
-    var accessor: FmuVariableAccessor? = null
+    internal var accessor: VariableAccessor? = null
 
 }
 
-abstract class AbstractBoundedScalarVariable<E>: BoundedScalarVariable<E>, AbstractTypedScalarVariable<E>()
+sealed class AbstractBoundedScalarVariable<E>: BoundedScalarVariable<E>, AbstractTypedScalarVariable<E>()
 
 /**
  * @author Lars Ivar HatLedal
@@ -257,10 +261,13 @@ class IntegerVariable internal constructor(private val v : ScalarVariableImpl) :
      */
     override var start = attribute.start
 
-    override var value: Int
-        get() { return accessor?.getInteger(valueReference) ?: throw IllegalStateException("No accessor assigned!") }
-        set(value) {accessor?.setInteger(valueReference, value) ?: throw IllegalStateException("No accessor assigned!")}
+    override fun read(): FmuRead<Int> {
+        return accessor?.readInteger(valueReference) ?: throw IllegalStateException("No accessor assigned!")
+    }
 
+    override fun write(value: Int): FmiStatus {
+        return accessor?.writeInteger(valueReference, value) ?: throw IllegalStateException("No accessor assigned!")
+    }
 
     override fun toString(): String {
         return "IntegerVariable(min=$min, max=$max, start=$start)"
@@ -327,9 +334,13 @@ class RealVariable internal constructor(private val v : ScalarVariableImpl) : Sc
      */
     override var start = attribute.start
 
-    override var value: Real
-        get() { return accessor?.getReal(valueReference) ?: throw IllegalStateException("No accessor assigned!") }
-        set(value) {accessor?.setReal(valueReference, value) ?: throw IllegalStateException("No accessor assigned!")}
+    override fun read(): FmuRead<Real> {
+        return accessor?.readReal(valueReference) ?: throw IllegalStateException("No accessor assigned!")
+    }
+
+    override fun write(value: Real): FmiStatus {
+        return accessor?.writeReal(valueReference, value) ?: throw IllegalStateException("No accessor assigned!")
+    }
 
     override fun toString(): String {
         return "RealVariable(min=$min, max=$max, nominal=$nominal, unbounded=$unbounded, quantity=$quantity, unit=$unit, displayUnit=$displayUnit, relativeQuantity=$relativeQuantity, derivative=$derivative, start=$start)"
@@ -351,9 +362,13 @@ class StringVariable internal constructor(private val v : ScalarVariableImpl) : 
      */
     override var start = attribute.start
 
-    override var value: String
-        get() { return accessor?.getString(valueReference) ?: throw IllegalStateException("No accessor assigned!") }
-        set(value) {accessor?.setString(valueReference, value) ?: throw IllegalStateException("No accessor assigned!")}
+    override fun read(): FmuRead<String> {
+        return accessor?.readString(valueReference) ?: throw IllegalStateException("No accessor assigned!")
+    }
+
+    override fun write(value: String): FmiStatus {
+        return accessor?.writeString(valueReference, value) ?: throw IllegalStateException("No accessor assigned!")
+    }
 
     override fun toString(): String {
         return "StringVariable(start=$start)"
@@ -375,9 +390,13 @@ class BooleanVariable internal constructor(private val v : ScalarVariableImpl) :
      */
     override var start = attribute.start
 
-    override var value: Boolean
-        get() { return accessor?.getBoolean(valueReference) ?: throw IllegalStateException("No accessor assigned!") }
-        set(value) {accessor?.setBoolean(valueReference, value) ?: throw IllegalStateException("No accessor assigned!")}
+    override fun read(): FmuRead<Boolean> {
+        return accessor?.readBoolean(valueReference) ?: throw IllegalStateException("No accessor assigned!")
+    }
+
+    override fun write(value: Boolean): FmiStatus {
+        return accessor?.writeBoolean(valueReference, value) ?: throw IllegalStateException("No accessor assigned!")
+    }
 
     override fun toString(): String {
         return "BooleanVariable(start=$start)"

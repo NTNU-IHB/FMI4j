@@ -22,15 +22,20 @@
  * THE SOFTWARE.
  */
 
-package no.mechatronics.sfi.fmi4j.proxy.structs
+package no.mechatronics.sfi.fmi4j.proxy.v2.structs
 
 
-import com.sun.jna.*
-import no.mechatronics.sfi.fmi4j.proxy.enums.Fmi2Status
-import java.util.Arrays
-import org.slf4j.LoggerFactory
+import com.sun.jna.Callback
 import com.sun.jna.Memory
+import com.sun.jna.Pointer
+import com.sun.jna.Structure
+
+import java.util.Arrays
+
 import org.slf4j.Logger
+import org.slf4j.LoggerFactory
+
+import no.mechatronics.sfi.fmi4j.common.FmiStatus
 
 /**
  *
@@ -72,7 +77,7 @@ open class Fmi2CallbackFunctions : Structure() {
 
         override fun invoke(c: Pointer?, instanceName: String, status: Int, category: String, message: String, args: Pointer?) {
 
-            LOG.info("InstanceName: {}, status: {}, category: {}, message: {}", instanceName, Fmi2Status.valueOf(status), category, message)
+            LOG.info("InstanceName: {}, status: {}, category: {}, message: {}", instanceName, FmiStatus.valueOf(status), category, message)
         }
 
     }

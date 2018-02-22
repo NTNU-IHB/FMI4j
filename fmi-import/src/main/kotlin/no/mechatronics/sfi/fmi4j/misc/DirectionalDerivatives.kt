@@ -32,8 +32,8 @@ open class DirectionalDerivatives(
         size: Int
 ) {
 
-    val vUnknown_ref = IntArray(size)
-    val vKnown_ref = IntArray(size)
+    val vUnknownRef = IntArray(size)
+    val vKnownRef = IntArray(size)
     val dvKnown = DoubleArray(size)
     val dvUnknown = DoubleArray(size)
 

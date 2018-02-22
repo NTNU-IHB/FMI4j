@@ -22,15 +22,17 @@
  * THE SOFTWARE.
  */
 
-package no.mechatronics.sfi.fmi4j.proxy
+package no.mechatronics.sfi.fmi4j.proxy.v2
 
 
 import com.sun.jna.Library
 import com.sun.jna.Memory
 import com.sun.jna.Pointer
 import com.sun.jna.ptr.*
-import no.mechatronics.sfi.fmi4j.proxy.enums.Fmi2Status
-import no.mechatronics.sfi.fmi4j.proxy.structs.Fmi2CallbackFunctions
+import no.mechatronics.sfi.fmi4j.common.FmiStatus
+import no.mechatronics.sfi.fmi4j.common.FmuRead
+import no.mechatronics.sfi.fmi4j.common.FmuReadImpl
+import no.mechatronics.sfi.fmi4j.proxy.v2.structs.Fmi2CallbackFunctions
 import no.mechatronics.sfi.fmi4j.misc.*
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.RealArray
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.StringArray
@@ -78,7 +80,7 @@ interface Fmi2Library : Library {
      * fmi2Instantiate and before fmi2EnterInitializationMode is called. Arguments
      * toleranceDefined and tolerance depend on the FMU type:
      */
-    fun fmi2SetupExperiment(c: Pointer, toleranceDefined: Byte, tolerance: Double, startTime: Double, stopTimeDefined: Byte, stopTime: Double): Int
+    fun fmi2SetupExperiment(c: Pointer, toleranceDefined: Int, tolerance: Double, startTime: Double, stopTimeDefined: Int, stopTime: Double): Int
 
     /**
      * Informs the FMU to enter Initialization Mode. Before calling this function, all variables with
@@ -145,7 +147,7 @@ interface Fmi2Library : Library {
      * logging is disabled. [The FMU enable/disables LogCategories which are useful for
      * debugging according to this argument. Which LogCategories the FMU sets is unspecified.]
      */
-    fun fmi2Instantiate(instanceName: String, type: Int, guid: String, resourceLocation: String, functions: Fmi2CallbackFunctions, visible: Byte, loggingOn: Byte): Pointer?
+    fun fmi2Instantiate(instanceName: String, type: Int, guid: String, resourceLocation: String, functions: Fmi2CallbackFunctions, visible: Int, loggingOn: Int): Pointer?
 
     /**
      * Informs the FMU that the simulation run is terminated. After calling this function, the final
@@ -318,7 +320,7 @@ abstract class Fmi2LibraryWrapper<E: Fmi2Library> (
     /**
      * The status returned from the last call to a FMU function
      */
-    var lastStatus: Fmi2Status = Fmi2Status.NONE
+    var lastStatus: FmiStatus = FmiStatus.NONE
         private set
 
     /**
@@ -332,9 +334,10 @@ abstract class Fmi2LibraryWrapper<E: Fmi2Library> (
         return libraryProvider.get()
     }
 
-    protected fun updateStatus(status: Int) = updateStatus(Fmi2Status.valueOf(status))
+    protected fun updateStatus(status: Int): FmiStatus
+            = updateStatus(FmiStatus.valueOf(status))
 
-    protected fun updateStatus(status: Fmi2Status) : Fmi2Status {
+    protected fun updateStatus(status: FmiStatus) : FmiStatus {
         lastStatus = status
         return status
     }
@@ -354,32 +357,32 @@ abstract class Fmi2LibraryWrapper<E: Fmi2Library> (
     /**
      * @see Fmi2library.fmi2SetDebugLogging
      */
-    fun setDebugLogging(loggingOn: Boolean, nCategories: Int, categories: StringArray) : Fmi2Status {
-        return updateStatus((library.fmi2SetDebugLogging(c,
-                if (loggingOn) 1 else 0, nCategories, categories)))
+    fun setDebugLogging(loggingOn: Boolean, nCategories: Int, categories: StringArray) : FmiStatus {
+        return updateStatus(library.fmi2SetDebugLogging(c,
+                FmiBoolean.convert(loggingOn), nCategories, categories))
     }
 
     /**
      * @see Fmi2Library.fmi2SetupExperiment
      */
-    fun setupExperiment(toleranceDefined: Boolean, tolerance: Double, startTime: Double, stopTimeDefined: Boolean, stopTime: Double) : Fmi2Status {
-        return updateStatus((library.fmi2SetupExperiment(c,
-                convert(toleranceDefined),
-                tolerance, startTime, convert(stopTimeDefined), stopTime)))
+    fun setupExperiment(toleranceDefined: Boolean, tolerance: Double, startTime: Double, stopTimeDefined: Boolean, stopTime: Double) : FmiStatus {
+        return updateStatus(library.fmi2SetupExperiment(c,
+                FmiBoolean.convert(toleranceDefined), tolerance,
+                startTime, FmiBoolean.convert(stopTimeDefined), stopTime))
     }
 
     /**
      * @see Fmi2library.fmi2EnterInitializationMode
      */
-    fun enterInitializationMode() : Fmi2Status {
-        return updateStatus((library.fmi2EnterInitializationMode(c)))
+    fun enterInitializationMode() : FmiStatus {
+        return updateStatus(library.fmi2EnterInitializationMode(c))
     }
 
     /**
      * @see Fmi2library.fmi2ExitInitializationMode
      */
-    fun exitInitializationMode() : Fmi2Status {
-        return updateStatus((library.fmi2ExitInitializationMode(c)))
+    fun exitInitializationMode() : FmiStatus {
+        return updateStatus(library.fmi2ExitInitializationMode(c))
     }
 
     /**
@@ -388,7 +391,7 @@ abstract class Fmi2LibraryWrapper<E: Fmi2Library> (
     fun terminate(): Boolean {
 
         if (!isTerminated) {
-            updateStatus((library.fmi2Terminate(c)));
+            updateStatus(library.fmi2Terminate(c))
             freeInstance()
             isTerminated = true
 
@@ -402,8 +405,8 @@ abstract class Fmi2LibraryWrapper<E: Fmi2Library> (
     /**
      * @see Fmi2library.fmi2Reset
      */
-    fun reset() : Fmi2Status {
-        return updateStatus((library.fmi2Reset(c)))
+    fun reset() : FmiStatus {
+        return updateStatus(library.fmi2Reset(c))
     }
 
     /**
@@ -417,201 +420,193 @@ abstract class Fmi2LibraryWrapper<E: Fmi2Library> (
     /**
      * @see Fmi2library.fmi2GetInteger
      */
-    fun getInteger(valueReference: Int) : Int {
-        with(buffers) {
+    fun getInteger(valueReference: Int) : FmuRead<Int> {
+        return with(buffers) {
             vr[0] = valueReference
-            getInteger(vr, iv)
-            return iv[0]
+            library.fmi2GetInteger(c, vr, vr.size, iv).let {
+                FmuReadImpl(iv[0], updateStatus(it))
+            }
         }
     }
 
     /**
      * @see Fmi2library.fmi2GetInteger
      */
-    fun getInteger(vr: IntArray) : IntArray {
-        val value = IntArray(vr.size)
-        getInteger(vr, value)
-        return value
+    @JvmOverloads
+    fun getInteger(vr: IntArray, value: IntArray = IntArray(vr.size)) : FmuRead<IntArray> {
+        return library.fmi2GetInteger(c, vr, vr.size, value).let {
+            FmuReadImpl(value, updateStatus(it))
+        }
     }
 
-    /**
-     * @see Fmi2library.fmi2GetInteger
-     */
-    fun getInteger(vr: IntArray, value: IntArray) : IntArray {
-        return updateStatus((library.fmi2GetInteger(c, vr, vr.size, value))).let { value }
-    }
-
-    fun getReal(valueReference: Int) : Double {
-        with(buffers) {
+    fun getReal(valueReference: Int) : FmuRead<Double> {
+        return with(buffers) {
             vr[0] = valueReference
-            getReal(vr, rv)
-            return rv[0]
+            library.fmi2GetReal(c, vr, vr.size, rv).let {
+                FmuReadImpl(rv[0], updateStatus(it))
+            }
         }
     }
 
-    fun getReal(vr: IntArray) : DoubleArray {
-        return DoubleArray(vr.size).also { getReal(vr, it) }
+    @JvmOverloads
+    fun getReal(vr: IntArray, value: DoubleArray = DoubleArray(vr.size)) : FmuRead<DoubleArray> {
+        return library.fmi2GetReal(c, vr, vr.size, value).let {
+            FmuReadImpl(value, updateStatus(it))
+        }
     }
 
-    fun getReal(vr: IntArray, value: DoubleArray) : DoubleArray {
-        return updateStatus((library.fmi2GetReal(c, vr, vr.size, value))).let { value }
-    }
-
-    fun getString(valueReference: Int) : String {
-        with(buffers) {
+    fun getString(valueReference: Int) : FmuRead<String> {
+        return with(buffers) {
             vr[0] = valueReference
-            getString(vr, sv)
-            return sv[0]
+            library.fmi2GetString(c, vr, vr.size, sv).let {
+                FmuReadImpl(sv[0], updateStatus(it))
+            }
         }
     }
 
-    fun getString(vr: IntArray) : StringArray {
-        val value = StringArray(vr.size, {""})
-        getString(vr, value)
-        return value
-    }
-
-    fun getString(vr: IntArray, value: StringArray) : Array<String> {
-        return updateStatus((library.fmi2GetString(c, vr, vr.size, value))).let { value }
+    @JvmOverloads
+    fun getString(vr: IntArray, value: StringArray = StringArray(vr.size, {""})) : FmuRead<Array<String>> {
+        return (library.fmi2GetString(c, vr, vr.size, value)).let {
+            FmuReadImpl(value, updateStatus(it))
+        }
     }
 
     /**
      * @see Fmi2library.fmi2GetBoolean
      */
-    fun getBoolean(valueReference: Int) : Boolean {
-        with(buffers) {
+    fun getBoolean(valueReference: Int) : FmuRead<Boolean> {
+        return with(buffers) {
             vr[0] = valueReference
-            getBoolean(vr, bv)
-            return bv[0] != 0
+            library.fmi2GetBoolean(c, vr, vr.size, bv).let {
+                FmuReadImpl(FmiBoolean.convert(bv[0]), updateStatus(it))
+            }
         }
     }
 
     /**
      * @see Fmi2library.fmi2GetBoolean
      */
-    fun getBoolean(vr: IntArray) : BooleanArray {
-        return BooleanArray(vr.size).also { getBoolean(vr, it) }
-    }
-
-    /**
-     * @see Fmi2library.fmi2GetBoolean
-     */
-    fun getBoolean(vr: IntArray, value: BooleanArray) : BooleanArray {
-        val intArray = value.map { if (!it) 0 else 1 }.toIntArray()
-        getBoolean(vr, intArray)
-        for ((i, v) in intArray.withIndex()) {
-            value[i] = v != 0
+    @JvmOverloads
+    fun getBoolean(vr: IntArray, value: BooleanArray = BooleanArray(vr.size)) : FmuRead<BooleanArray> {
+        val intArray = value.map { FmiBoolean.convert(it) }.toIntArray()
+        return library.fmi2GetBoolean(c, vr, vr.size, intArray).let {
+            for ((i,v) in intArray.withIndex()) {
+                value[i] = FmiBoolean.convert(v)
+            }
+            FmuReadImpl(value, updateStatus(it))
         }
-        return value
     }
 
     /**
      * @see Fmi2library.fmi2GetBoolean
      */
-    fun getBoolean(vr: IntArray, value: IntArray) : IntArray {
-        return updateStatus(library.fmi2GetBoolean(c, vr, vr.size, value)).let { value }
+    fun getBoolean(vr: IntArray, value: IntArray) : FmuRead<IntArray> {
+        return library.fmi2GetBoolean(c, vr, vr.size, value).let {
+            FmuReadImpl(value, updateStatus(it))
+        }
     }
 
     /**
      * @see Fmi2library.fmi2SetInteger
      */
-    fun setInteger( valueReference: Int, value: Int) : Fmi2Status {
-        with(buffers) {
+    fun setInteger( valueReference: Int, value: Int) : FmiStatus {
+        return with(buffers) {
             vr[0] = valueReference
             iv[0] = value
-            return setInteger(vr, iv)
+            setInteger(vr, iv)
         }
     }
 
     /**
      * @see Fmi2library.fmi2SetInteger
      */
-    fun setInteger(vr: IntArray, value: IntArray) : Fmi2Status {
+    fun setInteger(vr: IntArray, value: IntArray) : FmiStatus {
         return updateStatus((library.fmi2SetInteger(c, vr, vr.size, value)))
     }
 
     /**
      * @see Fmi2library.fmi2SetReal
      */
-    fun setReal(valueReference: Int, value: Double) : Fmi2Status {
-        with(buffers) {
+    fun setReal(valueReference: Int, value: Double) : FmiStatus {
+        return with(buffers) {
             vr[0] = valueReference
             rv[0] = value
-            return setReal(vr, rv)
+            setReal(vr, rv)
         }
     }
 
     /**
      * @see Fmi2library.fmi2SetReal
      */
-    fun setReal(vr: IntArray, value: DoubleArray) : Fmi2Status {
+    fun setReal(vr: IntArray, value: DoubleArray) : FmiStatus {
         return updateStatus((library.fmi2SetReal(c, vr, vr.size, value)))
     }
 
     /**
      * @see Fmi2library.fmi2SetString
      */
-    fun setString(valueReference: Int, value: String) : Fmi2Status {
-        with(buffers) {
+    fun setString(valueReference: Int, value: String) : FmiStatus {
+        return with(buffers) {
             vr[0] = valueReference
             sv[0] = value
-            return setString(vr, sv)
+            setString(vr, sv)
         }
     }
 
     /**
      * @see Fmi2library.fmi2SetString
      */
-    fun setString(vr: IntArray, value: StringArray) : Fmi2Status {
+    fun setString(vr: IntArray, value: StringArray) : FmiStatus {
         return updateStatus((library.fmi2SetString(c, vr, vr.size, value)))
     }
 
     /**
      * @see Fmi2library.fmi2SetBoolean
      */
-    fun setBoolean(valueReference: Int, value: Boolean) : Fmi2Status {
-        with(buffers) {
+    fun setBoolean(valueReference: Int, value: Boolean) : FmiStatus {
+        return with(buffers) {
             vr[0] = valueReference
             bv[0] = if (value) 1 else 0
-            return setBoolean(vr, bv)
+            setBoolean(vr, bv)
         }
     }
 
     /**
      * @see Fmi2library.fmi2SetBoolean
      */
-    fun setBoolean(vr: IntArray, value: IntArray) : Fmi2Status {
+    fun setBoolean(vr: IntArray, value: IntArray) : FmiStatus {
         return updateStatus((library.fmi2SetBoolean(c, vr, vr.size, value)))
     }
 
     /**
      * @see Fmi2library.fmi2SetBoolean
      */
-    fun setBoolean(vr: IntArray, value: BooleanArray) : Fmi2Status {
+    fun setBoolean(vr: IntArray, value: BooleanArray) : FmiStatus {
         return setBoolean(vr, value.map { if (it) 1 else 0 }.toIntArray())
     }
 
-    fun getDirectionalDerivative(vUnknown_ref: IntArray, vKnown_ref: IntArray, dvKnown: DoubleArray, dvUnknown: DoubleArray) : Fmi2Status {
+    fun getDirectionalDerivative(vUnknown_ref: IntArray, vKnown_ref: IntArray, dvKnown: DoubleArray, dvUnknown: DoubleArray) : FmiStatus {
         return updateStatus((library.fmi2GetDirectionalDerivative(c,
                 vUnknown_ref, vUnknown_ref.size, vKnown_ref, vKnown_ref.size, dvKnown, dvUnknown)))
     }
 
     @JvmOverloads
     fun getFMUState(fmuState: FmuState = FmuState()): FmuState {
-        return updateStatus((library.fmi2GetFMUstate(c, fmuState.pointerByReference))).let { fmuState }
+        updateStatus(library.fmi2GetFMUstate(c, fmuState.pointerByReference))
+        return fmuState
     }
 
-    fun setFMUState(fmuState: FmuState) : Fmi2Status {
-        return updateStatus((library.fmi2SetFMUstate(c, fmuState.pointer)))
+    fun setFMUState(fmuState: FmuState) : FmiStatus {
+        return updateStatus(library.fmi2SetFMUstate(c, fmuState.pointer))
     }
 
-    fun freeFMUState(fmuState: FmuState) : Fmi2Status {
-        return updateStatus((library.fmi2FreeFMUstate(c, fmuState.pointerByReference)))
+    fun freeFMUState(fmuState: FmuState) : FmiStatus {
+        return updateStatus(library.fmi2FreeFMUstate(c, fmuState.pointerByReference))
     }
 
     fun serializedFMUStateSize(fmuState: FmuState): Int {
         val memory = Memory(Pointer.SIZE.toLong())
-        updateStatus((library.fmi2SerializedFMUstateSize(c, fmuState.pointer, memory)))
+        updateStatus(library.fmi2SerializedFMUstateSize(c, fmuState.pointer, memory))
         return memory.getInt(0)
     }
 

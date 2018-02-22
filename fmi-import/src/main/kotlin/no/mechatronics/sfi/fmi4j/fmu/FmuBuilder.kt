@@ -28,19 +28,16 @@ import java.io.File
 import java.net.URL
 import com.sun.jna.Native
 import com.sun.jna.Pointer
+import no.mechatronics.sfi.fmi4j.misc.FmiBoolean
 import no.mechatronics.sfi.fmi4j.misc.LibraryProvider
-import no.mechatronics.sfi.fmi4j.misc.convert
 import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescription
-import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescriptionParser
-import no.mechatronics.sfi.fmi4j.modeldescription.cs.CoSimulationModelDescription
-import no.mechatronics.sfi.fmi4j.modeldescription.me.ModelExchangeModelDescription
-import no.mechatronics.sfi.fmi4j.proxy.*
-import no.mechatronics.sfi.fmi4j.proxy.cs.CoSimulationLibraryWrapper
-import no.mechatronics.sfi.fmi4j.proxy.cs.Fmi2CoSimulationLibrary
-import no.mechatronics.sfi.fmi4j.proxy.enums.Fmi2Type
-import no.mechatronics.sfi.fmi4j.proxy.me.Fmi2ModelExchangeLibrary
-import no.mechatronics.sfi.fmi4j.proxy.me.ModelExchangeLibraryWrapper
-import no.mechatronics.sfi.fmi4j.proxy.structs.Fmi2CallbackFunctions
+import no.mechatronics.sfi.fmi4j.proxy.v2.Fmi2Library
+import no.mechatronics.sfi.fmi4j.proxy.v2.cs.CoSimulationLibraryWrapper
+import no.mechatronics.sfi.fmi4j.proxy.v2.cs.Fmi2CoSimulationLibrary
+import no.mechatronics.sfi.fmi4j.proxy.v2.enums.Fmi2Type
+import no.mechatronics.sfi.fmi4j.proxy.v2.me.Fmi2ModelExchangeLibrary
+import no.mechatronics.sfi.fmi4j.proxy.v2.me.ModelExchangeLibraryWrapper
+import no.mechatronics.sfi.fmi4j.proxy.v2.structs.Fmi2CallbackFunctions
 import org.apache.commons.math3.ode.FirstOrderIntegrator
 
 
@@ -146,7 +143,8 @@ private fun instantiate(fmuFile: FmuFile, modelDescription: ModelDescription, li
     return library.fmi2Instantiate(modelDescription.modelIdentifier,
             fmiType.code, modelDescription.guid,
             fmuFile.resourcesPath, Fmi2CallbackFunctions(),
-            convert(visible), convert(loggingOn)) ?: throw AssertionError("Unable to instantiate FMU. Returned pointer is null!")
+            FmiBoolean.convert(visible), FmiBoolean.convert(loggingOn) )
+            ?: throw AssertionError("Unable to instantiate FMU. Returned pointer is null!")
 }
 
 

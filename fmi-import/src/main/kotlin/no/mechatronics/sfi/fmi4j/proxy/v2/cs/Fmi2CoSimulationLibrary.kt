@@ -22,17 +22,16 @@
  * THE SOFTWARE.
  */
 
-package no.mechatronics.sfi.fmi4j.proxy.cs
+package no.mechatronics.sfi.fmi4j.proxy.v2.cs
 
 import com.sun.jna.Pointer
-import com.sun.jna.ptr.ByteByReference
 import com.sun.jna.ptr.DoubleByReference
 import com.sun.jna.ptr.IntByReference
-import no.mechatronics.sfi.fmi4j.proxy.enums.Fmi2Status
-import no.mechatronics.sfi.fmi4j.proxy.enums.Fmi2StatusKind
+import no.mechatronics.sfi.fmi4j.common.FmiStatus
+import no.mechatronics.sfi.fmi4j.proxy.v2.enums.Fmi2StatusKind
 import no.mechatronics.sfi.fmi4j.misc.*
-import no.mechatronics.sfi.fmi4j.proxy.Fmi2Library
-import no.mechatronics.sfi.fmi4j.proxy.Fmi2LibraryWrapper
+import no.mechatronics.sfi.fmi4j.proxy.v2.Fmi2Library
+import no.mechatronics.sfi.fmi4j.proxy.v2.Fmi2LibraryWrapper
 
 /**
  *
@@ -44,7 +43,7 @@ interface Fmi2CoSimulationLibrary : Fmi2Library {
 
     fun fmi2GetRealOutputDerivatives(c: Pointer, vr: IntArray, nvr: Int, order: IntArray, value: DoubleArray): Int
 
-    fun fmi2DoStep(c: Pointer, currentCommunicationPoint: Double, communicationStepSize: Double, noSetFMUStatePriorToCurrent: Byte): Int
+    fun fmi2DoStep(c: Pointer, currentCommunicationPoint: Double, communicationStepSize: Double, noSetFMUStatePriorToCurrent: Int): Int
 
     fun fmi2CancelStep(c: Pointer): Int
 
@@ -54,7 +53,7 @@ interface Fmi2CoSimulationLibrary : Fmi2Library {
 
     fun fmi2GetIntegerStatus(c: Pointer, s: Int, value: IntByReference): Int
 
-    fun fmi2GetBooleanStatus(c: Pointer, s: Int, value: ByteByReference): Int
+    fun fmi2GetBooleanStatus(c: Pointer, s: Int, value: IntByReference): Int
 
     fun fmi2GetStringStatus(c: Pointer, s: Int, value: StringByReference): Int
 
@@ -84,10 +83,6 @@ class CoSimulationLibraryWrapper(
         StringByReference()
     }
 
-    private val booleanByReference: ByteByReference by lazy {
-        ByteByReference()
-    }
-
     fun getMaxStepsize() : Double {
         return realByReference.let {
             updateStatus(library.fmi2GetMaxStepsize(c, it))
@@ -98,38 +93,38 @@ class CoSimulationLibraryWrapper(
     /**
      * @see Fmi2CoSimulationlibrary.fmi2SetRealInputDerivatives
      */
-    fun setRealInputDerivatives(vr: IntArray, order: IntArray, value: DoubleArray) : Fmi2Status {
+    fun setRealInputDerivatives(vr: IntArray, order: IntArray, value: DoubleArray) : FmiStatus {
         return updateStatus((library.fmi2SetRealInputDerivatives(c, vr, vr.size, order, value)))
     }
 
     /**
      * @see Fmi2CoSimulationlibrary.fmi2GetRealOutputDerivatives
      */
-    fun getRealOutputDerivatives(vr: IntArray, order: IntArray, value: DoubleArray) : Fmi2Status {
+    fun getRealOutputDerivatives(vr: IntArray, order: IntArray, value: DoubleArray) : FmiStatus {
         return updateStatus((library.fmi2GetRealOutputDerivatives(c, vr, vr.size, order, value)))
     }
 
     /**
      * @see Fmi2CoSimulationlibrary.fmi2DoStep
      */
-    fun doStep(t: Double, dt: Double, noSetFMUStatePriorToCurrent: Boolean) : Fmi2Status {
-        return updateStatus((library.fmi2DoStep(c, t, dt, convert(noSetFMUStatePriorToCurrent))))
+    fun doStep(t: Double, dt: Double, noSetFMUStatePriorToCurrent: Boolean) : FmiStatus {
+        return updateStatus((library.fmi2DoStep(c, t, dt, FmiBoolean.convert(noSetFMUStatePriorToCurrent))))
     }
 
     /**
      * @see Fmi2CoSimulationlibrary.fmi2CancelStep
      */
-    fun cancelStep() : Fmi2Status {
+    fun cancelStep() : FmiStatus {
         return (updateStatus((library.fmi2CancelStep(c))))
     }
 
     /**
      * @see Fmi2CoSimulationlibrary.fmi2GetStatus
      */
-    fun getStatus(s: Fmi2StatusKind): Fmi2Status {
+    fun getStatus(s: Fmi2StatusKind): FmiStatus {
         return intByReference.let {
             updateStatus((library.fmi2GetIntegerStatus(c, s.code, it)))
-            Fmi2Status.valueOf(it.value)
+            FmiStatus.valueOf(it.value)
         }
     }
 
@@ -159,9 +154,9 @@ class CoSimulationLibraryWrapper(
      * @see Fmi2CoSimulationlibrary.fmi2GetBooleanStatus
      */
     fun getBooleanStatus(s: Fmi2StatusKind): Boolean {
-        return booleanByReference.let {
+        return intByReference.let {
             updateStatus((library.fmi2GetBooleanStatus(c, s.code, it)))
-            convert(it.value)
+            FmiBoolean.convert(it.value)
         }
     }
 

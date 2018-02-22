@@ -22,12 +22,38 @@
  * THE SOFTWARE.
  */
 
-package no.mechatronics.sfi.fmi4j.misc
+package no.mechatronics.sfi.fmi4j.common
 
-internal fun convert(fmi2Boolean: Byte): Boolean {
-    return fmi2Boolean.toInt() != 0
-}
+import java.util.*
+import kotlin.streams.toList
 
-internal fun convert(b: Boolean): Byte {
-    return (if (b) 1 else 0).toByte()
+/**
+ *
+ * @author Lars Ivar Hatledal
+ */
+enum class FmiStatus(
+        val code: Int
+) {
+
+    NONE(-1),
+    OK(0),
+    Warning(1),
+    Discard(2),
+    Error(3),
+    Fatal(4),
+    Pending(5);
+
+    companion object {
+
+        @JvmStatic
+        fun valueOf(i: Int): FmiStatus {
+            for (status in values()) {
+                if (i == status.code) {
+                    return status
+                }
+            }
+            throw IllegalArgumentException("$i not in range of ${Arrays.stream(values()).map { it.code }.toList()}")
+        }
+    }
+
 }

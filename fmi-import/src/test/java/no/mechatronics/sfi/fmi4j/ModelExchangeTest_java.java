@@ -24,10 +24,10 @@
 
 package no.mechatronics.sfi.fmi4j;
 
+import no.mechatronics.sfi.fmi4j.common.FmiStatus;
+import no.mechatronics.sfi.fmi4j.common.FmuRead;
 import no.mechatronics.sfi.fmi4j.fmu.FmuBuilder;
-import no.mechatronics.sfi.fmi4j.misc.SingleRead;
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.*;
-import no.mechatronics.sfi.fmi4j.proxy.enums.Fmi2Status;
 import org.apache.commons.math3.ode.FirstOrderIntegrator;
 import org.apache.commons.math3.ode.nonstiff.AdamsBashforthIntegrator;
 import org.apache.commons.math3.ode.nonstiff.ClassicalRungeKuttaIntegrator;
@@ -36,10 +36,10 @@ import org.apache.commons.math3.ode.nonstiff.EulerIntegrator;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 
 /**
  * @author Lars Ivar Hatledal
@@ -73,11 +73,11 @@ public class ModelExchangeTest_java {
     public void tearDown() {
         if (fmu != null) {
             fmu.terminate();
-            Assert.assertTrue(fmu.getLastStatus() == Fmi2Status.OK);
+            Assert.assertTrue(fmu.getLastStatus() == FmiStatus.OK);
         }
     }
 
-    @org.junit.Test
+    @Test
     public void test() {
 
         Assert.assertEquals("2.0", fmu.getModelDescription().getFmiVersion());
@@ -89,7 +89,9 @@ public class ModelExchangeTest_java {
 
         double macroStep = 1.0 / 10;
         while (fmu.getCurrentTime() < 1) {
-            System.out.println("t=" + fmu.getCurrentTime() + ", x0=" + x0.getValue());
+            FmuRead<Double> read = x0.read();
+            Assert.assertTrue(read.getStatus() == FmiStatus.OK);
+            System.out.println("t=" + fmu.getCurrentTime() + ", x0=" + read.getValue());
             fmu.doStep(macroStep);
         }
     }

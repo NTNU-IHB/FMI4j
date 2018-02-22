@@ -24,10 +24,11 @@
 
 package no.mechatronics.sfi.fmi4j
 
+import no.mechatronics.sfi.fmi4j.common.FmiStatus
 import no.mechatronics.sfi.fmi4j.modeldescription.*
-import no.mechatronics.sfi.fmi4j.modeldescription.variables.FmuVariableAccessor
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.ModelVariables
-import no.mechatronics.sfi.fmi4j.proxy.enums.Fmi2Status
+import no.mechatronics.sfi.fmi4j.modeldescription.variables.TypedScalarVariable
+import no.mechatronics.sfi.fmi4j.modeldescription.variables.VariableAccessor
 import java.io.Closeable
 
 /**
@@ -40,24 +41,25 @@ interface FmiSimulation : Closeable {
 
     val modelVariables: ModelVariables
     val modelDescription: ModelDescription
-    val variableAccessor: FmuVariableAccessor
+    val variableAccessor: VariableAccessor
 
-    val lastStatus: Fmi2Status
-    val isInitialized : Boolean
-    val isTerminated : Boolean
+    val lastStatus: FmiStatus
+    val isInitialized: Boolean
+    val isTerminated: Boolean
 
     fun init() : Boolean
-    fun init(start: Double) : Boolean
+    fun init(start: Double): Boolean
     fun init(start: Double, stop: Double): Boolean
-    fun doStep(dt: Double) : Boolean
+    fun doStep(dt: Double): Boolean
 
-    fun reset() : Boolean
-    fun terminate() : Boolean
+    fun reset(): Boolean
+    fun terminate(): Boolean
 
     /**
      * @see ModelVariables.getByName
      */
-    fun getVariableByName(name: String) = modelVariables.getByName(name)
+    fun getVariableByName(name: String): TypedScalarVariable<*>
+            = modelVariables.getByName(name)
 
 
 }

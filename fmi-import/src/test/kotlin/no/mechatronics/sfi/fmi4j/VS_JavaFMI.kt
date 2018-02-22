@@ -7,7 +7,7 @@ import java.io.File
 
 class VS_JavaFMI {
 
-    @Test
+
     fun test1() {
 
         val path = "../test/fmi2/cs/win64/20Sim/4.6.4.8004/ControlledTemperature/ControlledTemperature.fmu"
@@ -24,7 +24,7 @@ class VS_JavaFMI {
 
         val dt = 1.0/ 1000
         val stop1 = 10.0
-        val stop2 = stop1 + 1000.0
+        val stop2 = stop1 + 100.0
         while (fmu1.currentTime < stop1) {
             fmu1.doStep(dt)
         }
@@ -36,7 +36,7 @@ class VS_JavaFMI {
         var t1_end: Long
         while (fmu1.currentTime < stop2) {
             fmu1.doStep(dt)
-            val value = var1.value
+            val value = var1.read().value
         }
         t1_end = System.currentTimeMillis() - t0
 

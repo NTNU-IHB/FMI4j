@@ -22,6 +22,12 @@ class TestControlledTemperature_CS_win64 {
 
         FmuDriver.main(args)
 
+        File("ControlledTemperature_out.csv").apply {
+            if (exists()) {
+                delete()
+            }
+        }
+
     }
 
 }

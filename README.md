@@ -27,8 +27,8 @@ try(FmiSimulation fmu = builder.asCoSimulationFmu().newInstance()) {
                 
     if (fmu.init()) {
         
-        double myValue = myVar.getValue(); //read
-        myVar.setValue(5d); //write
+        double myValue = myVar.read().getValue(); //read
+        FmiStatus status = myVar.write(5d); //write
         
         double dt = 1d/100;
         while (fmu.getCurrentTime() < 10) {
@@ -51,8 +51,8 @@ builder.asCoSimulationFmu().newInstance().use { fmu ->
     
     if (fmu.init()) {
     
-        val myVal = myVar.value //read
-        myVar.value = 5.0 //write
+        val myVal = myVar.read().value //read
+        val status = myVar.write(5.0) //write
     
         val dt = 1.0/100
         while (fmu.currentTime < 10.0) {

@@ -22,16 +22,17 @@
  * THE SOFTWARE.
  */
 
-package no.mechatronics.sfi.fmi4j.proxy.me
+package no.mechatronics.sfi.fmi4j.proxy.v2.me
 
 import com.sun.jna.Pointer
-import com.sun.jna.ptr.ByteByReference
-import no.mechatronics.sfi.fmi4j.proxy.enums.Fmi2Status
-import no.mechatronics.sfi.fmi4j.proxy.structs.Fmi2EventInfo
+import com.sun.jna.ptr.IntByReference
+import no.mechatronics.sfi.fmi4j.common.FmiStatus
+import no.mechatronics.sfi.fmi4j.misc.FmiBoolean
+import no.mechatronics.sfi.fmi4j.misc.FmiTrue
+import no.mechatronics.sfi.fmi4j.proxy.v2.structs.Fmi2EventInfo
 import no.mechatronics.sfi.fmi4j.misc.LibraryProvider
-import no.mechatronics.sfi.fmi4j.misc.convert
-import no.mechatronics.sfi.fmi4j.proxy.Fmi2Library
-import no.mechatronics.sfi.fmi4j.proxy.Fmi2LibraryWrapper
+import no.mechatronics.sfi.fmi4j.proxy.v2.Fmi2Library
+import no.mechatronics.sfi.fmi4j.proxy.v2.Fmi2LibraryWrapper
 
 /**
  *
@@ -139,9 +140,9 @@ interface Fmi2ModelExchangeLibrary : Fmi2Library {
      * fmi2EnterEventMode call.
      */
     fun fmi2CompletedIntegratorStep(c: Pointer,
-                                    noSetFMUStatePriorToCurrentPoint: Byte,
-                                    enterEventMode: ByteByReference,
-                                    terminateSimulation: ByteByReference): Int
+                                    noSetFMUStatePriorToCurrentPoint: Int,
+                                    enterEventMode: IntByReference,
+                                    terminateSimulation: IntByReference): Int
 
     /**
      * Compute state derivatives and event indicators at the current time instant and for the current
@@ -209,8 +210,8 @@ class ModelExchangeLibraryWrapper(
 ) : Fmi2LibraryWrapper<Fmi2ModelExchangeLibrary>(c, library) {
 
 
-    private val enterEventMode: ByteByReference = ByteByReference()
-    private val terminateSimulation: ByteByReference = ByteByReference()
+    private val enterEventMode = IntByReference()
+    private val terminateSimulation = IntByReference()
 
 
     /**
@@ -218,8 +219,8 @@ class ModelExchangeLibraryWrapper(
      *
      * @param time
      */
-    fun setTime(time: Double) : Fmi2Status {
-        return updateStatus(Fmi2Status.valueOf(library.fmi2SetTime(c, time)))
+    fun setTime(time: Double) : FmiStatus {
+        return updateStatus(FmiStatus.valueOf(library.fmi2SetTime(c, time)))
     }
 
     /**
@@ -227,33 +228,34 @@ class ModelExchangeLibraryWrapper(
      *
      * @param x state
      */
-    fun setContinuousStates(x: DoubleArray) : Fmi2Status {
-        return updateStatus(Fmi2Status.valueOf(library.fmi2SetContinuousStates(c, x, x.size)))
+    fun setContinuousStates(x: DoubleArray) : FmiStatus {
+        return updateStatus(FmiStatus.valueOf(library.fmi2SetContinuousStates(c, x, x.size)))
     }
 
     /**
      * @inheritDoc
      */
-    fun enterEventMode() : Fmi2Status {
-        return (updateStatus(Fmi2Status.valueOf(library.fmi2EnterEventMode(c))))
+    fun enterEventMode() : FmiStatus {
+        return (updateStatus(FmiStatus.valueOf(library.fmi2EnterEventMode(c))))
     }
 
     /**
      * @inheritDoc
      */
-    fun enterContinuousTimeMode() : Fmi2Status {
-        return (updateStatus(Fmi2Status.valueOf(library.fmi2EnterContinuousTimeMode(c))))
+    fun enterContinuousTimeMode() : FmiStatus {
+        return (updateStatus(FmiStatus.valueOf(library.fmi2EnterContinuousTimeMode(c))))
     }
 
-    fun newDiscreteStates(eventInfo: Fmi2EventInfo) : Fmi2Status {
-        return updateStatus(Fmi2Status.valueOf(library.fmi2NewDiscreteStates(c, eventInfo)))
+    fun newDiscreteStates(eventInfo: Fmi2EventInfo) : FmiStatus {
+        return updateStatus(FmiStatus.valueOf(library.fmi2NewDiscreteStates(c, eventInfo)))
     }
 
     fun completedIntegratorStep() : CompletedIntegratorStep {
-        updateStatus(Fmi2Status.valueOf(
-                library.fmi2CompletedIntegratorStep(c, convert(true),
-                        enterEventMode, terminateSimulation)))
-        return CompletedIntegratorStep(convert(enterEventMode.value), convert(terminateSimulation.value))
+        updateStatus(FmiStatus.valueOf(library.fmi2CompletedIntegratorStep(c,
+                FmiTrue, enterEventMode, terminateSimulation)))
+        return CompletedIntegratorStep(
+                FmiBoolean.convert(enterEventMode.value),
+                FmiBoolean.convert(terminateSimulation.value))
     }
 
     /**
@@ -261,8 +263,8 @@ class ModelExchangeLibraryWrapper(
      *
      * @param derivatives
      */
-    fun getDerivatives(derivatives: DoubleArray) : Fmi2Status {
-        return updateStatus(Fmi2Status.valueOf(library.fmi2GetDerivatives(c, derivatives, derivatives.size)))
+    fun getDerivatives(derivatives: DoubleArray) : FmiStatus {
+        return updateStatus(FmiStatus.valueOf(library.fmi2GetDerivatives(c, derivatives, derivatives.size)))
     }
 
     /**
@@ -270,8 +272,8 @@ class ModelExchangeLibraryWrapper(
      *
      * @param eventIndicators
      */
-    fun getEventIndicators(eventIndicators: DoubleArray) : Fmi2Status {
-        return updateStatus(Fmi2Status.valueOf(library.fmi2GetEventIndicators(c, eventIndicators, eventIndicators.size)))
+    fun getEventIndicators(eventIndicators: DoubleArray) : FmiStatus {
+        return updateStatus(FmiStatus.valueOf(library.fmi2GetEventIndicators(c, eventIndicators, eventIndicators.size)))
     }
 
     /**
@@ -279,8 +281,8 @@ class ModelExchangeLibraryWrapper(
      *
      * @param x
      */
-    fun getContinuousStates(x: DoubleArray) : Fmi2Status {
-        return updateStatus(Fmi2Status.valueOf(library.fmi2GetContinuousStates(c, x, x.size)))
+    fun getContinuousStates(x: DoubleArray) : FmiStatus {
+        return updateStatus(FmiStatus.valueOf(library.fmi2GetContinuousStates(c, x, x.size)))
     }
 
     /**
@@ -288,8 +290,8 @@ class ModelExchangeLibraryWrapper(
      *
      * @param x_nominal
      */
-    fun getNominalsOfContinuousStates(x_nominal: DoubleArray) : Fmi2Status {
-        return updateStatus(Fmi2Status.valueOf(library.fmi2GetNominalsOfContinuousStates(c, x_nominal, x_nominal.size)))
+    fun getNominalsOfContinuousStates(x_nominal: DoubleArray) : FmiStatus {
+        return updateStatus(FmiStatus.valueOf(library.fmi2GetNominalsOfContinuousStates(c, x_nominal, x_nominal.size)))
     }
 
 }
