@@ -262,11 +262,11 @@ class IntegerVariable internal constructor(private val v : ScalarVariableImpl) :
     override var start = attribute.start
 
     override fun read(): FmuRead<Int> {
-        return accessor?.getInteger(valueReference) ?: throw IllegalStateException("No accessor assigned!")
+        return accessor?.readInteger(valueReference) ?: throw IllegalStateException("No accessor assigned!")
     }
 
     override fun write(value: Int): Fmi2Status {
-        return accessor?.setInteger(valueReference, value) ?: throw IllegalStateException("No accessor assigned!")
+        return accessor?.writeInteger(valueReference, value) ?: throw IllegalStateException("No accessor assigned!")
     }
 
     override fun toString(): String {
@@ -335,11 +335,11 @@ class RealVariable internal constructor(private val v : ScalarVariableImpl) : Sc
     override var start = attribute.start
 
     override fun read(): FmuRead<Real> {
-        return accessor?.getReal(valueReference) ?: throw IllegalStateException("No accessor assigned!")
+        return accessor?.readReal(valueReference) ?: throw IllegalStateException("No accessor assigned!")
     }
 
     override fun write(value: Real): Fmi2Status {
-        return accessor?.setReal(valueReference, value) ?: throw IllegalStateException("No accessor assigned!")
+        return accessor?.writeReal(valueReference, value) ?: throw IllegalStateException("No accessor assigned!")
     }
 
     override fun toString(): String {
@@ -363,11 +363,11 @@ class StringVariable internal constructor(private val v : ScalarVariableImpl) : 
     override var start = attribute.start
 
     override fun read(): FmuRead<String> {
-        return accessor?.getString(valueReference) ?: throw IllegalStateException("No accessor assigned!")
+        return accessor?.readString(valueReference) ?: throw IllegalStateException("No accessor assigned!")
     }
 
     override fun write(value: String): Fmi2Status {
-        return accessor?.setString(valueReference, value) ?: throw IllegalStateException("No accessor assigned!")
+        return accessor?.writeString(valueReference, value) ?: throw IllegalStateException("No accessor assigned!")
     }
 
     override fun toString(): String {
@@ -391,11 +391,11 @@ class BooleanVariable internal constructor(private val v : ScalarVariableImpl) :
     override var start = attribute.start
 
     override fun read(): FmuRead<Boolean> {
-        return accessor?.getBoolean(valueReference) ?: throw IllegalStateException("No accessor assigned!")
+        return accessor?.readBoolean(valueReference) ?: throw IllegalStateException("No accessor assigned!")
     }
 
     override fun write(value: Boolean): Fmi2Status {
-        return accessor?.setBoolean(valueReference, value) ?: throw IllegalStateException("No accessor assigned!")
+        return accessor?.writeBoolean(valueReference, value) ?: throw IllegalStateException("No accessor assigned!")
     }
 
     override fun toString(): String {

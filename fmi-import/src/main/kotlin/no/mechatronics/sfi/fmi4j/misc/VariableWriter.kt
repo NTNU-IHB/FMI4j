@@ -57,7 +57,7 @@
 //        override fun with(value: Int): Fmi2Status {
 //            val variable = modelVariables.getByValueReference(valueReference)
 //            if (variable is IntegerVariable) {
-//                return wrapper.setInteger(valueReference, value)
+//                return wrapper.writeInteger(valueReference, value)
 //            } else {
 //                throw IllegalStateException("$variable is not of type Int!")
 //            }
@@ -66,7 +66,7 @@
 //        override fun with(value: Double): Fmi2Status {
 //            val variable = modelVariables.getByValueReference(valueReference)
 //            if (variable is RealVariable) {
-//                return wrapper.setReal(valueReference, value)
+//                return wrapper.writeReal(valueReference, value)
 //            } else {
 //                throw IllegalStateException("$variable is not of type Real!")
 //            }
@@ -75,7 +75,7 @@
 //        override fun with(value: String): Fmi2Status {
 //            val variable = modelVariables.getByValueReference(valueReference)
 //            if (variable is StringVariable) {
-//                return wrapper.setString(valueReference, value)
+//                return wrapper.writeString(valueReference, value)
 //            } else {
 //                throw IllegalStateException("$variable is not of type String!")
 //            }
@@ -83,7 +83,7 @@
 //        override fun with(value: Boolean): Fmi2Status {
 //            val variable = modelVariables.getByValueReference(valueReference)
 //            if (variable is BooleanVariable) {
-//                return wrapper.setBoolean(valueReference, value)
+//                return wrapper.writeBoolean(valueReference, value)
 //            } else {
 //                throw IllegalStateException("$variable is not of type Boolean!")
 //            }
@@ -98,10 +98,10 @@
 //        constructor(valueReferences: Collection<Int>) : this (valueReferences.toIntArray())
 //        constructor(variableName: Array<String>) : this(modelVariables.getValueReferences(variableName))
 //
-//        override fun with(values: IntArray) = wrapper.setInteger(valueReferences, values)
-//        override fun with(values: DoubleArray) =  wrapper.setReal(valueReferences, values)
-//        override fun with(values: Array<String>) = wrapper.setString(valueReferences, values)
-//        override fun with(values: BooleanArray) = wrapper.setBoolean(valueReferences, values)
+//        override fun with(values: IntArray) = wrapper.writeInteger(valueReferences, values)
+//        override fun with(values: DoubleArray) =  wrapper.writeReal(valueReferences, values)
+//        override fun with(values: Array<String>) = wrapper.writeString(valueReferences, values)
+//        override fun with(values: BooleanArray) = wrapper.writeBoolean(valueReferences, values)
 //
 //    }
 //

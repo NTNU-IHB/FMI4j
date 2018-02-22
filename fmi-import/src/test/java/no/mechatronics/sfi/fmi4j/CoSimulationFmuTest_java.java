@@ -89,7 +89,7 @@ public class CoSimulationFmuTest_java {
                 }
                 System.out.println(value);
 
-                Assert.assertEquals(value, fmu.getVariableAccessor().getReal("Temperature_Room").getValue(), 0);
+                Assert.assertEquals(value, fmu.getVariableAccessor().readReal("Temperature_Room").getValue(), 0);
 
             }
 
@@ -112,7 +112,7 @@ public class CoSimulationFmuTest_java {
 
             try (FmiSimulation fmu2 = builder.asCoSimulationFmu().newInstance()) {
                 if (fmu2.init()) {
-                    System.out.println(fmu2.getVariableAccessor().getReal(temperature_room.getValueReference()));
+                    System.out.println(fmu2.getVariableAccessor().readReal(temperature_room.getValueReference()));
                 }
             }
 

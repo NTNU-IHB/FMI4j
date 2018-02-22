@@ -86,7 +86,7 @@ class CoSimulationFmuTest_kt {
 
             builder.asCoSimulationFmu().newInstance().use { fmu2 ->
                 fmu2.init()
-                println(fmu2.variableAccessor.getReal(temperature_room.valueReference))
+                println(fmu2.variableAccessor.readReal(temperature_room.valueReference))
             }
 
         }

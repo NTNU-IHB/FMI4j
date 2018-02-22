@@ -56,7 +56,7 @@
 //        override fun asInt(): Int {
 //            val variable = modelVariables.getByValueReference(valueReference)
 //            if (variable is IntegerVariable) {
-//                return wrapper.getInteger(valueReference)
+//                return wrapper.readInteger(valueReference)
 //            } else {
 //                throw IllegalStateException("$variable is not of type Int!")
 //            }
@@ -64,7 +64,7 @@
 //        override fun asReal(): Double {
 //            val variable = modelVariables.getByValueReference(valueReference)
 //            if (variable is RealVariable) {
-//                return wrapper.getReal(valueReference)
+//                return wrapper.readReal(valueReference)
 //            } else {
 //                throw IllegalStateException("$variable is not of type Real!")
 //            }
@@ -72,7 +72,7 @@
 //        override fun asString() : String {
 //            val variable = modelVariables.getByValueReference(valueReference)
 //            if (variable is StringVariable) {
-//                return wrapper.getString(valueReference)
+//                return wrapper.readString(valueReference)
 //            } else {
 //                throw IllegalStateException("$variable is not of type String!")
 //            }
@@ -81,7 +81,7 @@
 //        override fun asBoolean(): Boolean {
 //            val variable = modelVariables.getByValueReference(valueReference)
 //            if (variable is BooleanVariable) {
-//                return wrapper.getBoolean(valueReference)
+//                return wrapper.readBoolean(valueReference)
 //            } else {
 //                throw IllegalStateException("$variable is not of type Boolean!")
 //            }
@@ -96,10 +96,10 @@
 //        constructor(valueReferences: Collection<Int>) : this (valueReferences.toIntArray())
 //        constructor(variableName: Array<String>) : this(modelVariables.getValueReferences(variableName))
 //
-//        override fun asInt() = wrapper.getInteger(valueReferences)
-//        override fun asReal() = wrapper.getReal(valueReferences)
-//        override fun asString() = wrapper.getString(valueReferences)
-//        override fun asBoolean() = wrapper.getBoolean(valueReferences)
+//        override fun asInt() = wrapper.readInteger(valueReferences)
+//        override fun asReal() = wrapper.readReal(valueReferences)
+//        override fun asString() = wrapper.readString(valueReferences)
+//        override fun asBoolean() = wrapper.readBoolean(valueReferences)
 //
 //    }
 //
