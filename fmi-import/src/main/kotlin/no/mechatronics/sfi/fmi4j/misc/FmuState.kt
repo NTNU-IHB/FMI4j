@@ -34,6 +34,7 @@ import com.sun.jna.ptr.PointerByReference
 class FmuState {
 
     val pointer: Pointer = Pointer.NULL
+
     val pointerByReference: PointerByReference by lazy {
         PointerByReference(pointer)
     }

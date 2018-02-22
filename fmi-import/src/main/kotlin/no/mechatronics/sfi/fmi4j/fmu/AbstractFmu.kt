@@ -24,17 +24,17 @@
 
 package no.mechatronics.sfi.fmi4j.fmu
 
+import no.mechatronics.sfi.fmi4j.common.Fmi2Status
 import no.mechatronics.sfi.fmi4j.misc.*
 import no.mechatronics.sfi.fmi4j.modeldescription.*
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.*
 import no.mechatronics.sfi.fmi4j.proxy.Fmi2Library
 import no.mechatronics.sfi.fmi4j.proxy.Fmi2LibraryWrapper
-import no.mechatronics.sfi.fmi4j.proxy.enums.Fmi2Status
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.Closeable
 
-abstract class AbstractFmu<E: ModelDescription, T: Fmi2LibraryWrapper<*>> internal constructor(
+abstract class AbstractFmu<out E: ModelDescription, out T: Fmi2LibraryWrapper<*>> internal constructor(
         val fmuFile: FmuFile,
         val wrapper: T
 ) : Closeable {
@@ -43,12 +43,16 @@ abstract class AbstractFmu<E: ModelDescription, T: Fmi2LibraryWrapper<*>> intern
         val LOG: Logger = LoggerFactory.getLogger(AbstractFmu::class.java)
     }
 
-    val variableAccessor = FmuVariableAccessorImpl(modelVariables, wrapper)
+    val variableAccessor: VariableAccessor
+            = VariableAccessorImpl(modelVariables, wrapper)
 
     init {
         modelVariables.forEach{
             if (it is AbstractTypedScalarVariable) {
-                it.accessor = variableAccessor
+                AbstractTypedScalarVariable::class.java.getField("accessor").apply {
+                    isAccessible = true
+                    set(it, variableAccessor)
+                }
             }
         }
     }
@@ -175,7 +179,7 @@ abstract class AbstractFmu<E: ModelDescription, T: Fmi2LibraryWrapper<*>> intern
             LOG.warn("Method call not allowed, FMU does not provide directional derivatives!")
             return Fmi2Status.Discard
         } else {
-            return wrapper.getDirectionalDerivative(d.vUnknown_ref, d.vKnown_ref, d.dvKnown, d.dvUnknown)
+            return wrapper.getDirectionalDerivative(d.vUnknownRef, d.vKnownRef, d.dvKnown, d.dvUnknown)
         }
     }
 
@@ -216,10 +220,10 @@ abstract class AbstractFmu<E: ModelDescription, T: Fmi2LibraryWrapper<*>> intern
     private fun assignStartValues() {
         modelVariables.forEach { variable ->
             when(variable) {
-                is IntegerVariable -> variable.start?.also { variable.value = it }
-                is RealVariable -> variable.start?.also {  variable.value = it }
-                is StringVariable -> variable.start?.also {  variable.value = it }
-                is BooleanVariable -> variable.start?.also {  variable.value = it }
+                is IntegerVariable -> variable.start?.also { variable.write(it) }
+                is RealVariable -> variable.start?.also {  variable.write(it) }
+                is StringVariable -> variable.start?.also {  variable.write(it) }
+                is BooleanVariable -> variable.start?.also {  variable.write(it) }
             }
         }
     }

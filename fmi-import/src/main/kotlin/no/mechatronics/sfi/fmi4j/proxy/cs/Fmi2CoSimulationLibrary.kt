@@ -25,10 +25,9 @@
 package no.mechatronics.sfi.fmi4j.proxy.cs
 
 import com.sun.jna.Pointer
-import com.sun.jna.ptr.ByteByReference
 import com.sun.jna.ptr.DoubleByReference
 import com.sun.jna.ptr.IntByReference
-import no.mechatronics.sfi.fmi4j.proxy.enums.Fmi2Status
+import no.mechatronics.sfi.fmi4j.common.Fmi2Status
 import no.mechatronics.sfi.fmi4j.proxy.enums.Fmi2StatusKind
 import no.mechatronics.sfi.fmi4j.misc.*
 import no.mechatronics.sfi.fmi4j.proxy.Fmi2Library
@@ -44,7 +43,7 @@ interface Fmi2CoSimulationLibrary : Fmi2Library {
 
     fun fmi2GetRealOutputDerivatives(c: Pointer, vr: IntArray, nvr: Int, order: IntArray, value: DoubleArray): Int
 
-    fun fmi2DoStep(c: Pointer, currentCommunicationPoint: Double, communicationStepSize: Double, noSetFMUStatePriorToCurrent: Byte): Int
+    fun fmi2DoStep(c: Pointer, currentCommunicationPoint: Double, communicationStepSize: Double, noSetFMUStatePriorToCurrent: Int): Int
 
     fun fmi2CancelStep(c: Pointer): Int
 
@@ -54,7 +53,7 @@ interface Fmi2CoSimulationLibrary : Fmi2Library {
 
     fun fmi2GetIntegerStatus(c: Pointer, s: Int, value: IntByReference): Int
 
-    fun fmi2GetBooleanStatus(c: Pointer, s: Int, value: ByteByReference): Int
+    fun fmi2GetBooleanStatus(c: Pointer, s: Int, value: IntByReference): Int
 
     fun fmi2GetStringStatus(c: Pointer, s: Int, value: StringByReference): Int
 
@@ -84,10 +83,6 @@ class CoSimulationLibraryWrapper(
         StringByReference()
     }
 
-    private val booleanByReference: ByteByReference by lazy {
-        ByteByReference()
-    }
-
     fun getMaxStepsize() : Double {
         return realByReference.let {
             updateStatus(library.fmi2GetMaxStepsize(c, it))
@@ -113,7 +108,7 @@ class CoSimulationLibraryWrapper(
      * @see Fmi2CoSimulationlibrary.fmi2DoStep
      */
     fun doStep(t: Double, dt: Double, noSetFMUStatePriorToCurrent: Boolean) : Fmi2Status {
-        return updateStatus((library.fmi2DoStep(c, t, dt, convert(noSetFMUStatePriorToCurrent))))
+        return updateStatus((library.fmi2DoStep(c, t, dt, Fmi2Boolean.convert(noSetFMUStatePriorToCurrent))))
     }
 
     /**
@@ -159,9 +154,9 @@ class CoSimulationLibraryWrapper(
      * @see Fmi2CoSimulationlibrary.fmi2GetBooleanStatus
      */
     fun getBooleanStatus(s: Fmi2StatusKind): Boolean {
-        return booleanByReference.let {
+        return intByReference.let {
             updateStatus((library.fmi2GetBooleanStatus(c, s.code, it)))
-            convert(it.value)
+            Fmi2Boolean.convert(it.value)
         }
     }
 

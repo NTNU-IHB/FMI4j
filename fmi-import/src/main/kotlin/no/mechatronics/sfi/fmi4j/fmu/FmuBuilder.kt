@@ -28,12 +28,11 @@ import java.io.File
 import java.net.URL
 import com.sun.jna.Native
 import com.sun.jna.Pointer
+import no.mechatronics.sfi.fmi4j.misc.Fmi2Boolean
+import no.mechatronics.sfi.fmi4j.misc.Fmi2False
+import no.mechatronics.sfi.fmi4j.misc.Fmi2True
 import no.mechatronics.sfi.fmi4j.misc.LibraryProvider
-import no.mechatronics.sfi.fmi4j.misc.convert
 import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescription
-import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescriptionParser
-import no.mechatronics.sfi.fmi4j.modeldescription.cs.CoSimulationModelDescription
-import no.mechatronics.sfi.fmi4j.modeldescription.me.ModelExchangeModelDescription
 import no.mechatronics.sfi.fmi4j.proxy.*
 import no.mechatronics.sfi.fmi4j.proxy.cs.CoSimulationLibraryWrapper
 import no.mechatronics.sfi.fmi4j.proxy.cs.Fmi2CoSimulationLibrary
@@ -146,7 +145,8 @@ private fun instantiate(fmuFile: FmuFile, modelDescription: ModelDescription, li
     return library.fmi2Instantiate(modelDescription.modelIdentifier,
             fmiType.code, modelDescription.guid,
             fmuFile.resourcesPath, Fmi2CallbackFunctions(),
-            convert(visible), convert(loggingOn)) ?: throw AssertionError("Unable to instantiate FMU. Returned pointer is null!")
+            Fmi2Boolean.convert(visible),Fmi2Boolean.convert(loggingOn) )
+            ?: throw AssertionError("Unable to instantiate FMU. Returned pointer is null!")
 }
 
 

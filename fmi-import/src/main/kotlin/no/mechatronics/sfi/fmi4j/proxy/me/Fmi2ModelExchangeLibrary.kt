@@ -25,11 +25,12 @@
 package no.mechatronics.sfi.fmi4j.proxy.me
 
 import com.sun.jna.Pointer
-import com.sun.jna.ptr.ByteByReference
-import no.mechatronics.sfi.fmi4j.proxy.enums.Fmi2Status
+import com.sun.jna.ptr.IntByReference
+import no.mechatronics.sfi.fmi4j.common.Fmi2Status
+import no.mechatronics.sfi.fmi4j.misc.Fmi2Boolean
+import no.mechatronics.sfi.fmi4j.misc.Fmi2True
 import no.mechatronics.sfi.fmi4j.proxy.structs.Fmi2EventInfo
 import no.mechatronics.sfi.fmi4j.misc.LibraryProvider
-import no.mechatronics.sfi.fmi4j.misc.convert
 import no.mechatronics.sfi.fmi4j.proxy.Fmi2Library
 import no.mechatronics.sfi.fmi4j.proxy.Fmi2LibraryWrapper
 
@@ -139,9 +140,9 @@ interface Fmi2ModelExchangeLibrary : Fmi2Library {
      * fmi2EnterEventMode call.
      */
     fun fmi2CompletedIntegratorStep(c: Pointer,
-                                    noSetFMUStatePriorToCurrentPoint: Byte,
-                                    enterEventMode: ByteByReference,
-                                    terminateSimulation: ByteByReference): Int
+                                    noSetFMUStatePriorToCurrentPoint: Int,
+                                    enterEventMode: IntByReference,
+                                    terminateSimulation: IntByReference): Int
 
     /**
      * Compute state derivatives and event indicators at the current time instant and for the current
@@ -209,8 +210,8 @@ class ModelExchangeLibraryWrapper(
 ) : Fmi2LibraryWrapper<Fmi2ModelExchangeLibrary>(c, library) {
 
 
-    private val enterEventMode: ByteByReference = ByteByReference()
-    private val terminateSimulation: ByteByReference = ByteByReference()
+    private val enterEventMode = IntByReference()
+    private val terminateSimulation = IntByReference()
 
 
     /**
@@ -250,10 +251,11 @@ class ModelExchangeLibraryWrapper(
     }
 
     fun completedIntegratorStep() : CompletedIntegratorStep {
-        updateStatus(Fmi2Status.valueOf(
-                library.fmi2CompletedIntegratorStep(c, convert(true),
-                        enterEventMode, terminateSimulation)))
-        return CompletedIntegratorStep(convert(enterEventMode.value), convert(terminateSimulation.value))
+        updateStatus(Fmi2Status.valueOf(library.fmi2CompletedIntegratorStep(c,
+                Fmi2True, enterEventMode, terminateSimulation)))
+        return CompletedIntegratorStep(
+                Fmi2Boolean.convert(enterEventMode.value),
+                Fmi2Boolean.convert(terminateSimulation.value))
     }
 
     /**

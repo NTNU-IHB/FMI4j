@@ -25,12 +25,17 @@
 package no.mechatronics.sfi.fmi4j.proxy.structs
 
 
-import com.sun.jna.*
-import no.mechatronics.sfi.fmi4j.proxy.enums.Fmi2Status
-import java.util.Arrays
-import org.slf4j.LoggerFactory
+import com.sun.jna.Callback
 import com.sun.jna.Memory
+import com.sun.jna.Pointer
+import com.sun.jna.Structure
+
+import java.util.Arrays
+
 import org.slf4j.Logger
+import org.slf4j.LoggerFactory
+
+import no.mechatronics.sfi.fmi4j.common.Fmi2Status
 
 /**
  *

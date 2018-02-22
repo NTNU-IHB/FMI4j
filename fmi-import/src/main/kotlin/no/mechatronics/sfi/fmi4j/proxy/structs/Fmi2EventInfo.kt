@@ -26,6 +26,7 @@ package no.mechatronics.sfi.fmi4j.proxy.structs
 
 
 import com.sun.jna.Structure
+import no.mechatronics.sfi.fmi4j.misc.Fmi2Boolean
 import no.mechatronics.sfi.fmi4j.misc.Fmi2False
 import no.mechatronics.sfi.fmi4j.misc.Fmi2True
 import java.util.Arrays
@@ -52,23 +53,23 @@ open class Fmi2EventInfo : Structure() {
     fun getNextEventTime(): Double = nextEventTime
 
     fun getNewDiscreteStatesNeeded(): Boolean {
-        return newDiscreteStatesNeeded != Fmi2False
+        return Fmi2Boolean.convert(newDiscreteStatesNeeded)
     }
 
     fun getTerminateSimulation(): Boolean {
-        return terminateSimulation != Fmi2False
+        return Fmi2Boolean.convert(terminateSimulation)
     }
 
     fun getNominalsOfContinuousStatesChanged(): Boolean {
-        return nominalsOfContinuousStatesChanged != Fmi2False
+        return Fmi2Boolean.convert(nominalsOfContinuousStatesChanged)
     }
 
     fun getValuesOfContinuousStatesChanged(): Boolean {
-        return valuesOfContinuousStatesChanged != Fmi2False
+        return Fmi2Boolean.convert(valuesOfContinuousStatesChanged)
     }
 
     fun getNextEventTimeDefined(): Boolean {
-        return nextEventTimeDefined != Fmi2False
+        return Fmi2Boolean.convert(nextEventTimeDefined)
     }
 
     fun setNewDiscreteStatesNeededTrue() {

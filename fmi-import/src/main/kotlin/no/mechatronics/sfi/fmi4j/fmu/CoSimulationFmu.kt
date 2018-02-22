@@ -25,11 +25,9 @@
 package no.mechatronics.sfi.fmi4j.fmu
 
 import no.mechatronics.sfi.fmi4j.FmiSimulation
-import no.mechatronics.sfi.fmi4j.misc.VariableReader
-import no.mechatronics.sfi.fmi4j.misc.VariableWriter
+import no.mechatronics.sfi.fmi4j.common.Fmi2Status
 import no.mechatronics.sfi.fmi4j.modeldescription.cs.CoSimulationModelDescription
 import no.mechatronics.sfi.fmi4j.proxy.cs.CoSimulationLibraryWrapper
-import no.mechatronics.sfi.fmi4j.proxy.enums.Fmi2Status
 import no.mechatronics.sfi.fmi4j.proxy.enums.Fmi2StatusKind
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -57,7 +55,6 @@ class CoSimulationFmu internal constructor(
         return super.init(start, stop).also {
             currentTime = start
         }
-
     }
 
     /**

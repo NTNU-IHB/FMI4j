@@ -28,8 +28,11 @@ dependencies {
     implementation group: 'net.java.dev.jna', name: 'jna', version: '4.5.1'
     implementation group: 'net.java.dev.jna', name: 'jna-platform', version: '4.5.1'
 
-    api group: 'no.mechatronics.sfi.fmi4j', name: 'fmi-md', version: fmi_md_version, changing: snapshot
-
+    if (true) {
+        api group: 'no.mechatronics.sfi.fmi4j', name: 'fmi-md', version: fmi_md_version, changing: snapshot
+    } else {
+        compile project(':fmi-md')
+    }
     testImplementation group: 'org.siani.javafmi', name: 'fmu-wrapper', version: '2.24.1'
 
 }

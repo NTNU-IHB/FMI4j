@@ -31,10 +31,10 @@ import no.mechatronics.sfi.fmi4j.proxy.Fmi2LibraryWrapper
 /**
  * @author Lars Ivar Hatledal
  */
-class FmuVariableAccessorImpl(
+class VariableAccessorImpl(
         private val modelVariables: ModelVariables,
         private val wrapper: Fmi2LibraryWrapper<*>
-): FmuVariableAccessor {
+): VariableAccessor {
 
     private val map by lazy {
         mutableMapOf<String, Int>()
@@ -46,12 +46,6 @@ class FmuVariableAccessorImpl(
         }
         return map[name]!!
     }
-
-    override fun getBoolean(name: String): Boolean  = getBoolean(process(name))
-    override fun getBoolean(valueReference: Int) = wrapper.getBoolean(valueReference)
-    override fun getBoolean(vr: IntArray) = wrapper.getBoolean(vr)
-    override fun getBoolean(vr: IntArray, value: BooleanArray) = wrapper.getBoolean(vr, value)
-    override fun getBoolean(vr: IntArray, value: IntArray) = wrapper.getBoolean(vr, value)
 
     override fun getInteger(name: String) = getInteger(process(name))
     override fun getInteger(valueReference: Int) = wrapper.getInteger(valueReference)
@@ -68,57 +62,28 @@ class FmuVariableAccessorImpl(
     override fun getString(vr: IntArray) = wrapper.getString(vr)
     override fun getString(vr: IntArray, value: StringArray) = wrapper.getString(vr, value)
 
+    override fun getBoolean(name: String) = getBoolean(process(name))
+    override fun getBoolean(valueReference: Int) = wrapper.getBoolean(valueReference)
+    override fun getBoolean(vr: IntArray) = wrapper.getBoolean(vr)
+    override fun getBoolean(vr: IntArray, value: BooleanArray) = wrapper.getBoolean(vr, value)
+    override fun getBoolean(vr: IntArray, value: IntArray) = wrapper.getBoolean(vr, value)
 
-    override fun setBoolean(name: String, value: Boolean) {
-        wrapper.setBoolean(process(name), value)
-    }
 
-    override fun setBoolean(valueReference: Int, value: Boolean) {
-        wrapper.setBoolean(valueReference, value)
-    }
+    override fun setInteger(name: String, value: Int) = wrapper.setInteger(process(name), value)
+    override fun setInteger(valueReference: Int, value: Int) = wrapper.setInteger(valueReference, value)
+    override fun setInteger(vr: IntArray, value: IntArray) = wrapper.setInteger(vr, value)
 
-    override fun setBoolean(vr: IntArray, value: BooleanArray) {
-        wrapper.setBoolean(vr, value)
-    }
+    override fun setReal(valueReference: Int, value: Real) =  wrapper.setReal(valueReference, value)
+    override fun setReal(name: String, value: Real) = wrapper.setReal(process(name), value)
+    override fun setReal(vr: IntArray, value: DoubleArray) = wrapper.setReal(vr, value)
 
-    override fun setBoolean(vr: IntArray, value: IntArray) {
-        wrapper.setBoolean(vr, value)
-    }
+    override fun setString(name: String, value: String) =  wrapper.setString(process(name), value)
+    override fun setString(valueReference: Int, value: String) = wrapper.setString(valueReference, value)
+    override fun setString(vr: IntArray, value: StringArray) = wrapper.setString(vr, value)
 
-    override fun setInteger(name: String, value: Int) {
-        wrapper.setInteger(process(name), value)
-    }
-
-    override fun setInteger(valueReference: Int, value: Int) {
-        wrapper.setInteger(valueReference, value)
-    }
-
-    override fun setInteger(vr: IntArray, value: IntArray) {
-        wrapper.setInteger(vr, value)
-    }
-
-    override fun setReal(valueReference: Int, value: Real) {
-        wrapper.setReal(valueReference, value)
-    }
-
-    override fun setReal(name: String, value: Real) {
-        wrapper.setReal(process(name), value)
-    }
-
-    override fun setReal(vr: IntArray, value: DoubleArray) {
-        wrapper.setReal(vr, value)
-    }
-
-    override fun setString(name: String, value: String) {
-        wrapper.setString(process(name), value)
-    }
-
-    override fun setString(valueReference: Int, value: String) {
-        wrapper.setString(valueReference, value)
-    }
-
-    override fun setString(vr: IntArray, value: StringArray) {
-        wrapper.setString(vr, value)
-    }
+    override fun setBoolean(name: String, value: Boolean) = wrapper.setBoolean(process(name), value)
+    override fun setBoolean(valueReference: Int, value: Boolean) = wrapper.setBoolean(valueReference, value)
+    override fun setBoolean(vr: IntArray, value: BooleanArray) =wrapper.setBoolean(vr, value)
+    override fun setBoolean(vr: IntArray, value: IntArray) = wrapper.setBoolean(vr, value)
 
 }

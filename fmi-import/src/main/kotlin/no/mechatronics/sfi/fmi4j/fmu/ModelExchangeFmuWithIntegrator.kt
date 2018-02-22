@@ -1,9 +1,6 @@
 package no.mechatronics.sfi.fmi4j.fmu
 
 import no.mechatronics.sfi.fmi4j.FmiSimulation
-import no.mechatronics.sfi.fmi4j.misc.VariableReader
-import no.mechatronics.sfi.fmi4j.misc.VariableWriter
-import no.mechatronics.sfi.fmi4j.modeldescription.variables.FmuVariableAccessor
 import no.mechatronics.sfi.fmi4j.proxy.structs.Fmi2EventInfo
 import org.apache.commons.math3.ode.FirstOrderDifferentialEquations
 import org.apache.commons.math3.ode.FirstOrderIntegrator
