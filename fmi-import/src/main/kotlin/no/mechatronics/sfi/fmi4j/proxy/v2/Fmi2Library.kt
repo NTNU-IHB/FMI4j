@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package no.mechatronics.sfi.fmi4j.proxy
+package no.mechatronics.sfi.fmi4j.proxy.v2
 
 
 import com.sun.jna.Library
@@ -32,7 +32,7 @@ import com.sun.jna.ptr.*
 import no.mechatronics.sfi.fmi4j.common.FmiStatus
 import no.mechatronics.sfi.fmi4j.common.FmuRead
 import no.mechatronics.sfi.fmi4j.common.FmuReadImpl
-import no.mechatronics.sfi.fmi4j.proxy.structs.Fmi2CallbackFunctions
+import no.mechatronics.sfi.fmi4j.proxy.v2.structs.Fmi2CallbackFunctions
 import no.mechatronics.sfi.fmi4j.misc.*
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.RealArray
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.StringArray
@@ -359,7 +359,7 @@ abstract class Fmi2LibraryWrapper<E: Fmi2Library> (
      */
     fun setDebugLogging(loggingOn: Boolean, nCategories: Int, categories: StringArray) : FmiStatus {
         return updateStatus(library.fmi2SetDebugLogging(c,
-                Fmi2Boolean.convert(loggingOn), nCategories, categories))
+                FmiBoolean.convert(loggingOn), nCategories, categories))
     }
 
     /**
@@ -367,8 +367,8 @@ abstract class Fmi2LibraryWrapper<E: Fmi2Library> (
      */
     fun setupExperiment(toleranceDefined: Boolean, tolerance: Double, startTime: Double, stopTimeDefined: Boolean, stopTime: Double) : FmiStatus {
         return updateStatus(library.fmi2SetupExperiment(c,
-                Fmi2Boolean.convert(toleranceDefined), tolerance,
-                startTime, Fmi2Boolean.convert(stopTimeDefined), stopTime))
+                FmiBoolean.convert(toleranceDefined), tolerance,
+                startTime, FmiBoolean.convert(stopTimeDefined), stopTime))
     }
 
     /**
@@ -478,7 +478,7 @@ abstract class Fmi2LibraryWrapper<E: Fmi2Library> (
         return with(buffers) {
             vr[0] = valueReference
             library.fmi2GetBoolean(c, vr, vr.size, bv).let {
-                FmuReadImpl(Fmi2Boolean.convert(bv[0]), updateStatus(it))
+                FmuReadImpl(FmiBoolean.convert(bv[0]), updateStatus(it))
             }
         }
     }
@@ -488,10 +488,10 @@ abstract class Fmi2LibraryWrapper<E: Fmi2Library> (
      */
     @JvmOverloads
     fun getBoolean(vr: IntArray, value: BooleanArray = BooleanArray(vr.size)) : FmuRead<BooleanArray> {
-        val intArray = value.map { Fmi2Boolean.convert(it) }.toIntArray()
+        val intArray = value.map { FmiBoolean.convert(it) }.toIntArray()
         return library.fmi2GetBoolean(c, vr, vr.size, intArray).let {
             for ((i,v) in intArray.withIndex()) {
-                value[i] = Fmi2Boolean.convert(v)
+                value[i] = FmiBoolean.convert(v)
             }
             FmuReadImpl(value, updateStatus(it))
         }

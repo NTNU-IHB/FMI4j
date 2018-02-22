@@ -22,13 +22,13 @@
  * THE SOFTWARE.
  */
 
-package no.mechatronics.sfi.fmi4j.proxy.structs
+package no.mechatronics.sfi.fmi4j.proxy.v2.structs
 
 
 import com.sun.jna.Structure
-import no.mechatronics.sfi.fmi4j.misc.Fmi2Boolean
-import no.mechatronics.sfi.fmi4j.misc.Fmi2False
-import no.mechatronics.sfi.fmi4j.misc.Fmi2True
+import no.mechatronics.sfi.fmi4j.misc.FmiBoolean
+import no.mechatronics.sfi.fmi4j.misc.FmiFalse
+import no.mechatronics.sfi.fmi4j.misc.FmiTrue
 import java.util.Arrays
 
 /**
@@ -38,46 +38,46 @@ import java.util.Arrays
 open class Fmi2EventInfo : Structure() {
 
     @JvmField
-    internal var newDiscreteStatesNeeded: Int = Fmi2False
+    internal var newDiscreteStatesNeeded: Int = FmiFalse
     @JvmField
-    internal var terminateSimulation: Int = Fmi2False
+    internal var terminateSimulation: Int = FmiFalse
     @JvmField
-    internal var nominalsOfContinuousStatesChanged: Int = Fmi2False
+    internal var nominalsOfContinuousStatesChanged: Int = FmiFalse
     @JvmField
-    internal var valuesOfContinuousStatesChanged: Int = Fmi2False
+    internal var valuesOfContinuousStatesChanged: Int = FmiFalse
     @JvmField
-    internal var nextEventTimeDefined: Int = Fmi2False
+    internal var nextEventTimeDefined: Int = FmiFalse
     @JvmField
     internal var nextEventTime: Double = 0.0
 
     fun getNextEventTime(): Double = nextEventTime
 
     fun getNewDiscreteStatesNeeded(): Boolean {
-        return Fmi2Boolean.convert(newDiscreteStatesNeeded)
+        return FmiBoolean.convert(newDiscreteStatesNeeded)
     }
 
     fun getTerminateSimulation(): Boolean {
-        return Fmi2Boolean.convert(terminateSimulation)
+        return FmiBoolean.convert(terminateSimulation)
     }
 
     fun getNominalsOfContinuousStatesChanged(): Boolean {
-        return Fmi2Boolean.convert(nominalsOfContinuousStatesChanged)
+        return FmiBoolean.convert(nominalsOfContinuousStatesChanged)
     }
 
     fun getValuesOfContinuousStatesChanged(): Boolean {
-        return Fmi2Boolean.convert(valuesOfContinuousStatesChanged)
+        return FmiBoolean.convert(valuesOfContinuousStatesChanged)
     }
 
     fun getNextEventTimeDefined(): Boolean {
-        return Fmi2Boolean.convert(nextEventTimeDefined)
+        return FmiBoolean.convert(nextEventTimeDefined)
     }
 
     fun setNewDiscreteStatesNeededTrue() {
-        this.newDiscreteStatesNeeded = Fmi2True
+        this.newDiscreteStatesNeeded = FmiTrue
     }
 
     fun setTerminateSimulationFalse() {
-        this.terminateSimulation = Fmi2False
+        this.terminateSimulation = FmiFalse
     }
 
     override fun getFieldOrder(): List<String> {

@@ -44,7 +44,7 @@ class CoSimulationFmuTest_kt {
             Assert.assertEquals(0.1, heatCapacity1_C.start!!, 0.0)
             println(heatCapacity1_C.read().value)
 
-            val temperature_room = fmu.getVariableByName("Temperature_Room").asRealVariable()
+            val temperatureRoom = fmu.getVariableByName("Temperature_Room").asRealVariable()
 
             var first1 = java.lang.Double.NaN
 
@@ -53,7 +53,7 @@ class CoSimulationFmuTest_kt {
                 fmu.doStep(dt)
                 Assert.assertTrue(fmu.lastStatus === FmiStatus.OK)
 
-                val read = temperature_room.read()
+                val read = temperatureRoom.read()
                 Assert.assertTrue(read.status == FmiStatus.OK)
                 val value = read.value
 
@@ -73,7 +73,7 @@ class CoSimulationFmuTest_kt {
                 fmu.doStep(dt)
                 Assert.assertTrue(fmu.lastStatus === FmiStatus.OK)
 
-                val read = temperature_room.read()
+                val read = temperatureRoom.read()
                 Assert.assertTrue(read.status == FmiStatus.OK)
                 val value = read.value
 
@@ -86,7 +86,7 @@ class CoSimulationFmuTest_kt {
 
             builder.asCoSimulationFmu().newInstance().use { fmu2 ->
                 fmu2.init()
-                println(fmu2.variableAccessor.readReal(temperature_room.valueReference))
+                println(fmu2.variableAccessor.readReal(temperatureRoom.valueReference))
             }
 
         }

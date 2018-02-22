@@ -22,13 +22,18 @@
  * THE SOFTWARE.
  */
 
-package no.mechatronics.sfi.fmi4j.proxy.me
+package no.mechatronics.sfi.fmi4j.proxy.v2.enums
 
 /**
  *
  * @author Lars Ivar Hatledal
  */
-data class CompletedIntegratorStep(
-        val enterEventMode: Boolean,
-        val terminateSimulation: Boolean
-)
+enum class Fmi2Type (
+        val code: Int
+) {
+
+    ModelExchange(0),
+    CoSimulation(1)
+
+}
+

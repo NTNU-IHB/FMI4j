@@ -22,17 +22,17 @@
  * THE SOFTWARE.
  */
 
-package no.mechatronics.sfi.fmi4j.proxy.me
+package no.mechatronics.sfi.fmi4j.proxy.v2.me
 
 import com.sun.jna.Pointer
 import com.sun.jna.ptr.IntByReference
 import no.mechatronics.sfi.fmi4j.common.FmiStatus
-import no.mechatronics.sfi.fmi4j.misc.Fmi2Boolean
-import no.mechatronics.sfi.fmi4j.misc.Fmi2True
-import no.mechatronics.sfi.fmi4j.proxy.structs.Fmi2EventInfo
+import no.mechatronics.sfi.fmi4j.misc.FmiBoolean
+import no.mechatronics.sfi.fmi4j.misc.FmiTrue
+import no.mechatronics.sfi.fmi4j.proxy.v2.structs.Fmi2EventInfo
 import no.mechatronics.sfi.fmi4j.misc.LibraryProvider
-import no.mechatronics.sfi.fmi4j.proxy.Fmi2Library
-import no.mechatronics.sfi.fmi4j.proxy.Fmi2LibraryWrapper
+import no.mechatronics.sfi.fmi4j.proxy.v2.Fmi2Library
+import no.mechatronics.sfi.fmi4j.proxy.v2.Fmi2LibraryWrapper
 
 /**
  *
@@ -252,10 +252,10 @@ class ModelExchangeLibraryWrapper(
 
     fun completedIntegratorStep() : CompletedIntegratorStep {
         updateStatus(FmiStatus.valueOf(library.fmi2CompletedIntegratorStep(c,
-                Fmi2True, enterEventMode, terminateSimulation)))
+                FmiTrue, enterEventMode, terminateSimulation)))
         return CompletedIntegratorStep(
-                Fmi2Boolean.convert(enterEventMode.value),
-                Fmi2Boolean.convert(terminateSimulation.value))
+                FmiBoolean.convert(enterEventMode.value),
+                FmiBoolean.convert(terminateSimulation.value))
     }
 
     /**

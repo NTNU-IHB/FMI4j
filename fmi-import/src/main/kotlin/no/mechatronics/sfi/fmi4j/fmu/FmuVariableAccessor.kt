@@ -26,12 +26,12 @@
 package no.mechatronics.sfi.fmi4j.fmu
 
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.*
-import no.mechatronics.sfi.fmi4j.proxy.Fmi2LibraryWrapper
+import no.mechatronics.sfi.fmi4j.proxy.v2.Fmi2LibraryWrapper
 
 /**
  * @author Lars Ivar Hatledal
  */
-class VariableAccessorImpl(
+class FmuVariableAccessor(
         private val modelVariables: ModelVariables,
         private val wrapper: Fmi2LibraryWrapper<*>
 ): VariableAccessor {

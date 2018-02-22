@@ -28,8 +28,8 @@ import no.mechatronics.sfi.fmi4j.common.FmiStatus
 import no.mechatronics.sfi.fmi4j.misc.*
 import no.mechatronics.sfi.fmi4j.modeldescription.*
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.*
-import no.mechatronics.sfi.fmi4j.proxy.Fmi2Library
-import no.mechatronics.sfi.fmi4j.proxy.Fmi2LibraryWrapper
+import no.mechatronics.sfi.fmi4j.proxy.v2.Fmi2Library
+import no.mechatronics.sfi.fmi4j.proxy.v2.Fmi2LibraryWrapper
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.Closeable
@@ -44,7 +44,7 @@ abstract class AbstractFmu<out E: ModelDescription, out T: Fmi2LibraryWrapper<*>
     }
 
     val variableAccessor: VariableAccessor
-            = VariableAccessorImpl(modelVariables, wrapper)
+            = FmuVariableAccessor(modelVariables, wrapper)
 
     init {
         modelVariables.forEach{
@@ -138,7 +138,7 @@ abstract class AbstractFmu<out E: ModelDescription, out T: Fmi2LibraryWrapper<*>
      */
     fun terminate() : Boolean {
         if (wrapper.terminate()) {
-            LOG.debug("FMU {} terminated!", modelDescription.modelName)
+            LOG.debug("FMU named '${modelDescription.modelName}' terminated! #${hashCode()}")
             return true
         }
         return false

@@ -22,16 +22,16 @@
  * THE SOFTWARE.
  */
 
-package no.mechatronics.sfi.fmi4j.proxy.cs
+package no.mechatronics.sfi.fmi4j.proxy.v2.cs
 
 import com.sun.jna.Pointer
 import com.sun.jna.ptr.DoubleByReference
 import com.sun.jna.ptr.IntByReference
 import no.mechatronics.sfi.fmi4j.common.FmiStatus
-import no.mechatronics.sfi.fmi4j.proxy.enums.Fmi2StatusKind
+import no.mechatronics.sfi.fmi4j.proxy.v2.enums.Fmi2StatusKind
 import no.mechatronics.sfi.fmi4j.misc.*
-import no.mechatronics.sfi.fmi4j.proxy.Fmi2Library
-import no.mechatronics.sfi.fmi4j.proxy.Fmi2LibraryWrapper
+import no.mechatronics.sfi.fmi4j.proxy.v2.Fmi2Library
+import no.mechatronics.sfi.fmi4j.proxy.v2.Fmi2LibraryWrapper
 
 /**
  *
@@ -108,7 +108,7 @@ class CoSimulationLibraryWrapper(
      * @see Fmi2CoSimulationlibrary.fmi2DoStep
      */
     fun doStep(t: Double, dt: Double, noSetFMUStatePriorToCurrent: Boolean) : FmiStatus {
-        return updateStatus((library.fmi2DoStep(c, t, dt, Fmi2Boolean.convert(noSetFMUStatePriorToCurrent))))
+        return updateStatus((library.fmi2DoStep(c, t, dt, FmiBoolean.convert(noSetFMUStatePriorToCurrent))))
     }
 
     /**
@@ -156,7 +156,7 @@ class CoSimulationLibraryWrapper(
     fun getBooleanStatus(s: Fmi2StatusKind): Boolean {
         return intByReference.let {
             updateStatus((library.fmi2GetBooleanStatus(c, s.code, it)))
-            Fmi2Boolean.convert(it.value)
+            FmiBoolean.convert(it.value)
         }
     }
 
