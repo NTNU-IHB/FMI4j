@@ -41,6 +41,9 @@ interface ModelVariables: Iterable<TypedScalarVariable<*>> {
 
     val variables: List<TypedScalarVariable<*>>
 
+    operator fun get(index: Int): TypedScalarVariable<*>
+            = variables[index]
+
     override fun iterator() = variables.iterator()
 
     /**

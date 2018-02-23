@@ -110,7 +110,7 @@ const val LOG_STATUS_FATAL = "logStatusFatal"
 /**
  * Log messages when returning fmi2Pending status from any function.
  */
-const val LOG_STTAUS_PENDING = "logStatusPending"
+const val LOG_STATUS_PENDING = "logStatusPending"
 
 /**
  * Log all messages

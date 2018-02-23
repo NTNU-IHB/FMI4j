@@ -10,6 +10,11 @@ import javax.xml.bind.annotation.XmlAttribute
 interface TypedAttribute<E>: Serializable {
 
     /**
+     * If present, name of the type defined with TypeDefinitions / SimpleType providing defaults
+     */
+    val declaredType: String?
+
+    /**
      * Initial or guess value of variable. This value is also stored in the C functions
      * [Therefore, calling fmi2SetXXX to set start values is only necessary, if a different
      * value as stored in the xml file is desired.] The interpretation of start is defined by
@@ -23,7 +28,7 @@ interface TypedAttribute<E>: Serializable {
      * an algebraic loop: Via an additional condition in the environment, such as 𝑥̇ = 0,
      * the actual start value is determined.]
      */
-    var start: E?
+    val start: E?
 
 }
 
@@ -61,11 +66,11 @@ internal class IntegerAttribute internal constructor(): BoundedTypedAttribute<In
     @XmlAttribute
     override val max: Int? = null
 
-    /**
-     * @see ScalarVariable.start
-     */
     @XmlAttribute
-    override var start: Int? = null
+    override val start: Int? = null
+
+    @XmlAttribute
+    override val declaredType: String? = null
 
 }
 
@@ -78,13 +83,11 @@ internal class RealAttribute internal constructor() : BoundedTypedAttribute<Doub
     @XmlAttribute
     override val max: Double? = null
 
-
-    /**
-     * @see ScalarVariable.start
-     */
     @XmlAttribute
-    override var start: Double? = null
+    override val start: Double? = null
 
+    @XmlAttribute
+    override val declaredType: String? = null
 
     /**
      * Nominal value of variable. If not defined and no other information about the
@@ -172,18 +175,44 @@ internal class StringAttribute internal constructor(): TypedAttribute<String> {
     @XmlAttribute
     override var start: String? = null
 
+    @XmlAttribute
+    override val declaredType: String? = null
+
 }
 
 /**
- * @author Lars Ivar Hateldal
+ * @author Lars Ivar Hatledal
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 internal class BooleanAttribute internal constructor(): TypedAttribute<Boolean> {
 
-    /**
-     * @see ScalarVariable.start
-     */
     @XmlAttribute
     override var start: Boolean? = null
+
+    @XmlAttribute
+    override val declaredType: String? = null
+
+}
+
+/**
+ * @author Lars Ivar Hatledal
+ */
+@XmlAccessorType(XmlAccessType.FIELD)
+internal class EnumerationAttribute internal constructor(): BoundedTypedAttribute<Int> {
+
+    @XmlAttribute
+    override val min: Int? = null
+
+    @XmlAttribute
+    override val max: Int? = null
+
+    @XmlAttribute
+    val quantity: String? = null
+
+    @XmlAttribute
+    override var start: Int? = null
+
+    @XmlAttribute
+    override val declaredType: String? = null
 
 }

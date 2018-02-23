@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package no.mechatronics.sfi.fmi4j.modeldescription.enums
+package no.mechatronics.sfi.fmi4j.modeldescription.variables
 
 import java.io.Serializable
 import javax.xml.bind.annotation.XmlEnum

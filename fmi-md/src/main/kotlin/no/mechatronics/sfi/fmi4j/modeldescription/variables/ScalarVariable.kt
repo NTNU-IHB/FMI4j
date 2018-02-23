@@ -26,7 +26,6 @@ package no.mechatronics.sfi.fmi4j.modeldescription.variables
 
 import no.mechatronics.sfi.fmi4j.common.FmiStatus
 import no.mechatronics.sfi.fmi4j.common.FmuRead
-import no.mechatronics.sfi.fmi4j.modeldescription.enums.*
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.attributes.*
 import java.io.Serializable
 import javax.xml.bind.annotation.*
@@ -135,6 +134,9 @@ class ScalarVariableImpl internal constructor() : ScalarVariable {
 
     @XmlElement(name="Boolean")
     internal val booleanAttribute: BooleanAttribute? = null
+
+    @XmlElement(name="Enumeration")
+    internal val enumerationAttribute: EnumerationAttribute? = null
 
     override fun toString(): String {
         return "ScalarVariableImpl(name='$name', declaredType='$declaredType', description='$description', causality=$causality, variability=$variability, initial=$initial)"
@@ -415,6 +417,47 @@ class BooleanVariable internal constructor(
         }.joinToString (", ")
 
         return "BooleanVariable($entries)"
+
+    }
+
+}
+
+class EnumerationVariable internal constructor(
+        private val v: ScalarVariableImpl
+): ScalarVariable by v, AbstractBoundedScalarVariable<Int>() {
+
+    private val attribute = v.enumerationAttribute ?: throw AssertionError()
+
+    override val typeName = "Enumeration"
+
+    override val min: Int? = attribute.min
+    override val max: Int? = attribute.max
+    override var start = attribute.start
+
+    val quantity = attribute.quantity
+
+    override fun read(): FmuRead<Int> {
+        return accessor?.readInteger(valueReference) ?: throw IllegalStateException("No accessor assigned!")
+    }
+
+    override fun write(value: Int): FmiStatus {
+        return accessor?.writeInteger(valueReference, value) ?: throw IllegalStateException("No accessor assigned!")
+    }
+
+    override fun toString(): String {
+
+        val entries = mutableListOf<String>().apply {
+            add("name=$name")
+            add("valueReference=$valueReference")
+            causality?.also { add("causality=$causality") }
+            start?.also { add("start=$start") }
+            accessor?.also { add("value=${read()}") }
+            min?.also { add("min=$min") }
+            max?.also { add("min=$min") }
+            quantity?.also { add("quantity=$quantity") }
+        }.joinToString (", ")
+
+        return "EnumerationVariable($entries)"
 
     }
 

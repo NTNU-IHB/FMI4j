@@ -324,6 +324,11 @@ class ModelDescriptionImpl : SimpleModelDescription, ModelDescriptionProvider, S
     @XmlElement(name = "DefaultExperiment")
     override val defaultExperiment: DefaultExperimentImpl? = null
 
+    /**
+     * The (fixed) number of event indicators for an FMU based on FMI for
+     * Model Exchange.
+     * For Co-Simulation, this value is ignored
+     */
     @XmlAttribute
     val numberOfEventIndicators: Int = 0
 

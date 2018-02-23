@@ -30,12 +30,32 @@ import javax.xml.bind.annotation.XmlAccessorType
 import javax.xml.bind.annotation.XmlAttribute
 
 /**
+ *
+ * Dependency of scalar Unknown from Knowns in continous-time and event mode (Model Exchange),
+ * and at communications points (Co-simulation)
+ *
  * @author Lars Ivar Hatledal
  */
 interface Unknown {
+
+    /**
+     * Scalarvariable index of Unknown
+     */
     val index: Int
+
+    val dependencies: IntArray?
+
+    /**
+     * If present, it must be assumed that the Unknown depends on the Knowns
+     * without a particular structure.
+     */
+    val dependenciesKind: DependenciesKind?
+
 }
 
+/**
+ * @author Lars Ivar Hatledal
+ */
 @XmlAccessorType(XmlAccessType.FIELD)
 class UnknownImpl: Unknown, Serializable {
 
@@ -44,6 +64,19 @@ class UnknownImpl: Unknown, Serializable {
 
     override val index: Int
         get() = _index ?: throw IllegalStateException("Index was null!")
+
+    @XmlAttribute(name="dependencies")
+    private var _dependencies: String? = null
+
+    @delegate:Transient
+    override val dependencies: IntArray? by lazy {
+        _dependencies?.let {
+            if (it.isEmpty()) null else it.split(" ").map { it.toInt() }.toIntArray()
+        }
+    }
+
+    @XmlAttribute
+    override val dependenciesKind: DependenciesKind? = null
 
     override fun toString(): String {
         return "UnknownImpl(index=$index)"

@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package no.mechatronics.sfi.fmi4j.modeldescription.enums
+package no.mechatronics.sfi.fmi4j.modeldescription.variables
 
 import java.io.Serializable
 import javax.xml.bind.annotation.XmlEnum
@@ -45,7 +45,8 @@ enum class Causality: Serializable {
      * connections). variability must be "fixed" or "tunable". initial must be
      * exact or not present (meaning exact).
      */
-    @XmlEnumValue("parameter") PARAMETER,
+    @XmlEnumValue("parameter")
+    PARAMETER,
 
     /**
      * A data value that is constant during the simulation and is computed
@@ -53,27 +54,31 @@ enum class Causality: Serializable {
      * be "fixed" or "tunable". initial must be "approx", "calculated" or not
      * present (meaning calculated).
      */
-    @XmlEnumValue("calculatedParameter") CALCULATED_PARAMETER,
+    @XmlEnumValue("calculatedParameter")
+    CALCULATED_PARAMETER,
 
     /**
      * The variable value can be provided from another model or slave. It is not
      * allowed to define initial.
      */
-    @XmlEnumValue("input") INPUT,
+    @XmlEnumValue("input")
+    INPUT,
 
     /**
      * The variable value can be used by another model or slave. The algebraic
      * relationship to the inputs is defined via the dependencies attribute of
      * <fmiModelDescription><ModelStructure><Outputs><Unknown>.
      */
-    @XmlEnumValue("output") OUTPUT,
+    @XmlEnumValue("output")
+    OUTPUT,
 
     /**
      * Local variable that is calculated from other categories or is a
      * continuoustime state (see section 2.2.8). It is not allowed to use the
      * variable value in another model or slave.
      */
-    @XmlEnumValue("local") LOCAL,
+    @XmlEnumValue("local")
+    LOCAL,
 
     /**
      * The independent variable (usually “time”). All categories are a function
@@ -88,7 +93,8 @@ enum class Causality: Serializable {
      * currentCommunicationPoint and communicationStepSize of fmi2DoStep for
      * CoSimulation. [The actual value can be inquired with fmi2GetReal.]
      */
-    @XmlEnumValue("independent") INDEPENDENT;
+    @XmlEnumValue("independent")
+    INDEPENDENT;
 
 }
 
