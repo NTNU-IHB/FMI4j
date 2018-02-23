@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package no.mechatronics.sfi.fmi4j.proxy.v2.enums
+package no.mechatronics.sfi.fmi4j.proxy.v2
 
 /**
  *

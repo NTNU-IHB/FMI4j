@@ -34,7 +34,7 @@ import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescription
 import no.mechatronics.sfi.fmi4j.proxy.v2.Fmi2Library
 import no.mechatronics.sfi.fmi4j.proxy.v2.cs.CoSimulationLibraryWrapper
 import no.mechatronics.sfi.fmi4j.proxy.v2.cs.Fmi2CoSimulationLibrary
-import no.mechatronics.sfi.fmi4j.proxy.v2.enums.Fmi2Type
+import no.mechatronics.sfi.fmi4j.proxy.v2.Fmi2Type
 import no.mechatronics.sfi.fmi4j.proxy.v2.me.Fmi2ModelExchangeLibrary
 import no.mechatronics.sfi.fmi4j.proxy.v2.me.ModelExchangeLibraryWrapper
 import no.mechatronics.sfi.fmi4j.proxy.v2.structs.Fmi2CallbackFunctions
