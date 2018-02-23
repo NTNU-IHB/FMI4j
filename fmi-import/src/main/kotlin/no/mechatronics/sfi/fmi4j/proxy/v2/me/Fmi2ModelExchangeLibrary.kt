@@ -215,7 +215,6 @@ class ModelExchangeLibraryWrapper(
 
 
     /**
-     * @inheritDoc
      *
      * @param time
      */
@@ -224,7 +223,6 @@ class ModelExchangeLibraryWrapper(
     }
 
     /**
-     * @inheritDoc
      *
      * @param x state
      */
@@ -233,14 +231,14 @@ class ModelExchangeLibraryWrapper(
     }
 
     /**
-     * @inheritDoc
+     *
      */
     fun enterEventMode() : FmiStatus {
         return (updateStatus(FmiStatus.valueOf(library.fmi2EnterEventMode(c))))
     }
 
     /**
-     * @inheritDoc
+     *
      */
     fun enterContinuousTimeMode() : FmiStatus {
         return (updateStatus(FmiStatus.valueOf(library.fmi2EnterContinuousTimeMode(c))))
@@ -259,7 +257,7 @@ class ModelExchangeLibraryWrapper(
     }
 
     /**
-     * @inheritDoc
+     *
      *
      * @param derivatives
      */
@@ -268,7 +266,7 @@ class ModelExchangeLibraryWrapper(
     }
 
     /**
-     * @inheritDoc
+     *
      *
      * @param eventIndicators
      */
@@ -277,7 +275,7 @@ class ModelExchangeLibraryWrapper(
     }
 
     /**
-     * @inheritDoc
+     *
      *
      * @param x
      */
@@ -286,7 +284,7 @@ class ModelExchangeLibraryWrapper(
     }
 
     /**
-     * @inheritDoc
+     *
      *
      * @param x_nominal
      */

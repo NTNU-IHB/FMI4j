@@ -54,15 +54,9 @@ interface Category {
 @XmlAccessorType(XmlAccessType.FIELD)
 class CategoryImpl: Category, Serializable {
 
-    /**
-     * @inheritDoc
-     */
     @XmlAttribute
     override lateinit var name: String
 
-    /**
-     * @inheritDoc
-     */
     @XmlAttribute
     override val description: String? = null
 

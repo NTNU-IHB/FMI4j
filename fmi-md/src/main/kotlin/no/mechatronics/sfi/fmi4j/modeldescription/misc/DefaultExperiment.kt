@@ -49,7 +49,6 @@ interface DefaultExperiment {
 }
 
 /**
- * @inheritDoc
  *
  * @author Lars Ivar Hatledal
  */

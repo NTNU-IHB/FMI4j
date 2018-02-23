@@ -60,9 +60,6 @@ class ModelExchangeModelDescriptionImpl(
         private val me: ModelExchangeData
 ) : SimpleModelDescription by modelDescription, ModelExchangeModelDescription, ModelExchangeData by me {
 
-    /**
-     * @inheritDoc
-     */
     override val numberOfEventIndicators: Int
         get() = modelDescription.numberOfEventIndicators
 

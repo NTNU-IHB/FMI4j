@@ -55,15 +55,9 @@ interface BoundedTypedAttribute<E> : TypedAttribute<E> {
 @XmlAccessorType(XmlAccessType.FIELD)
 internal class IntegerAttribute internal constructor(): BoundedTypedAttribute<Int> {
 
-    /**
-     * @inheritDoc
-     */
     @XmlAttribute
     override val min: Int? = null
 
-    /**
-     * @inheritDoc
-     */
     @XmlAttribute
     override val max: Int? = null
 
@@ -78,15 +72,9 @@ internal class IntegerAttribute internal constructor(): BoundedTypedAttribute<In
 @XmlAccessorType(XmlAccessType.FIELD)
 internal class RealAttribute internal constructor() : BoundedTypedAttribute<Double> {
 
-    /**
-     * @inheritDoc
-     */
     @XmlAttribute
     override val min: Double? = null
 
-    /**
-     * @inheritDoc
-     */
     @XmlAttribute
     override val max: Double? = null
 

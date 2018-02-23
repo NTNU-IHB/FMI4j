@@ -50,7 +50,6 @@ interface ModelStructure {
 }
 
 /**
- * @inheritDoc
  *
  * @author Lars Ivar Hatledal
  */
