@@ -1,0 +1,37 @@
+[INFO][FMUCHK] FMI compliance checker 2.0.2b1 [FMILibrary: rev7051] build date: Dec 22 2014
+[INFO][FMUCHK] Called with following options:
+[INFO][FMUCHK] ./fmuCheck.linux64 -e PID_Controller_cc.log -o PID_Controller_cc.csv -s 4.000000 -h 0.010000 -f -c , PID_Controller.fmu
+[INFO][FMUCHK] Will process FMU PID_Controller.fmu
+[INFO][FMILIB] XML specifies FMI standard version 2.0
+[INFO][FMUCHK] Model name: PID_Controller
+[INFO][FMUCHK] Model GUID: c7c28fabee3f64e0c0f852a1a5f752d7
+[INFO][FMUCHK] Model version: 
+[INFO][FMUCHK] FMU kind: CoSimulation
+[INFO][FMUCHK] The FMU contains:
+4 constants
+65 parameters
+0 discrete variables
+74 continuous variables
+0 inputs
+0 outputs
+78 local variables
+0 independent variables
+40 calculated parameters
+150 real variables
+7 integer variables
+7 enumeration variables
+19 boolean variables
+0 string variables
+
+[INFO][FMUCHK] Printing output file header
+[INFO][FMUCHK] Model identifier for CoSimulation: PID_Controller
+[INFO][FMILIB] Loading 'linux64' binary with 'default' platform types
+[INFO][FMUCHK] Version returned from CS FMU:   2.0
+[INFO][FMUCHK] Initialized FMU for simulation starting at time 0
+[INFO][FMUCHK] Simulation finished successfully at time 4
+FMU check summary:
+FMU reported:
+	0 warning(s) and error(s)
+Checker reported:
+	0 Warning(s)
+	0 Error(s)

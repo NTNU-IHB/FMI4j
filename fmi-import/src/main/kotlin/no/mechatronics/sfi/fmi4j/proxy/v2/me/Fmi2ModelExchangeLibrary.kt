@@ -258,7 +258,6 @@ class ModelExchangeLibraryWrapper(
 
     /**
      *
-     *
      * @param derivatives
      */
     fun getDerivatives(derivatives: DoubleArray) : FmiStatus {
@@ -266,7 +265,6 @@ class ModelExchangeLibraryWrapper(
     }
 
     /**
-     *
      *
      * @param eventIndicators
      */
@@ -276,7 +274,6 @@ class ModelExchangeLibraryWrapper(
 
     /**
      *
-     *
      * @param x
      */
     fun getContinuousStates(x: DoubleArray) : FmiStatus {
@@ -284,7 +281,6 @@ class ModelExchangeLibraryWrapper(
     }
 
     /**
-     *
      *
      * @param x_nominal
      */

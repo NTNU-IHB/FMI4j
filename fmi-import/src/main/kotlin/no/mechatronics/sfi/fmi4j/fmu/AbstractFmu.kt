@@ -25,6 +25,7 @@
 package no.mechatronics.sfi.fmi4j.fmu
 
 import no.mechatronics.sfi.fmi4j.common.FmiStatus
+import no.mechatronics.sfi.fmi4j.common.FmuRead
 import no.mechatronics.sfi.fmi4j.misc.*
 import no.mechatronics.sfi.fmi4j.modeldescription.*
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.*
@@ -100,7 +101,7 @@ abstract class AbstractFmu<out E: ModelDescription, out T: Fmi2LibraryWrapper<*>
     /**
      * @see Fmi2Library.fmi2SetDebugLogging
      */
-    fun setDebugLogging(loggingOn: Boolean, nCategories: Int, categories: Array<String>)
+    fun setDebugLogging(loggingOn: Boolean, nCategories: Int, categories: Array<String>): FmiStatus
             =  wrapper.setDebugLogging(loggingOn, nCategories, categories)
 
 
@@ -175,11 +176,11 @@ abstract class AbstractFmu<out E: ModelDescription, out T: Fmi2LibraryWrapper<*>
     }
 
     fun getDirectionalDerivative(d: DirectionalDerivatives): FmiStatus {
-        if (!modelDescription.providesDirectionalDerivative) {
+        return if (!modelDescription.providesDirectionalDerivative) {
             LOG.warn("Method call not allowed, FMU does not provide directional derivatives!")
-            return FmiStatus.Discard
+            FmiStatus.Discard
         } else {
-            return wrapper.getDirectionalDerivative(d.vUnknownRef, d.vKnownRef, d.dvKnown, d.dvUnknown)
+            wrapper.getDirectionalDerivative(d.vUnknownRef, d.vKnownRef, d.dvKnown, d.dvUnknown)
         }
     }
 
@@ -228,4 +229,49 @@ abstract class AbstractFmu<out E: ModelDescription, out T: Fmi2LibraryWrapper<*>
         }
     }
 
+    fun getIntVector(name: String): IntegerVariableVector {
+        val variables = modelVariables.filter {
+            (it is IntegerVariable) && it.name.startsWith(name) && it.name.contains("[") && it.name.contains("]")
+        }.map { it.asIntegerVariable() }
+        if (variables.isEmpty()) {
+            throw IllegalArgumentException("$name does not match a vector")
+        }
+        return IntegerVariableVector(variableAccessor, variables)
+    }
+
+    fun getRealVector(name: String): RealVariableVector {
+        val variables = modelVariables.filter {
+            (it is RealVariable) && it.name.startsWith(name) && it.name.contains("[") && it.name.contains("]")
+        }.map { it.asRealVariable() }
+        if (variables.isEmpty()) {
+            throw IllegalArgumentException("$name does not match a vector")
+        }
+        return RealVariableVector(variableAccessor, variables)
+    }
+
+    fun getStringVector(name: String): StringVariableVector {
+        val variables = modelVariables.filter {
+            (it is StringVariable) && it.name.startsWith(name) && it.name.contains("[") && it.name.contains("]")
+        }.map { it.asStringVariable() }
+        if (variables.isEmpty()) {
+            throw IllegalArgumentException("$name does not match a vector")
+        }
+        return StringVariableVector(variableAccessor, variables)
+    }
+
+    fun getBooleanVector(name: String): BooleanVariableVector {
+        val variables = modelVariables.filter {
+            (it is BooleanVariable) && it.name.startsWith(name) && it.name.contains("[") && it.name.contains("]")
+        }.map { it.asBooleanVariable() }
+        if (variables.isEmpty()) {
+            throw IllegalArgumentException("$name does not match a vector")
+        }
+        return BooleanVariableVector(variableAccessor, variables)
+    }
+
 }
+
+
+
+
+

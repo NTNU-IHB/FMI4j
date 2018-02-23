@@ -73,6 +73,7 @@ enum class Fmi2StatusKind(
                 }
             }
             throw IllegalArgumentException("$i not in range of ${Arrays.stream(values()).map { it.code }.toList()}")
+
         }
     }
 }

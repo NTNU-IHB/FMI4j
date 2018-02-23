@@ -1,0 +1,39 @@
+[INFO][FMUCHK] FMI compliance checker 2.0.2b1 [FMILibrary: rev7051] build date: Dec 22 2014
+[INFO][FMUCHK] Called with following options:
+[INFO][FMUCHK] ./fmuCheck.linux64 -e CoupledClutches_cc.log -o CoupledClutches_cc.csv -s 1.500000 -h 0.010000 -i /home/enzo/vmshare/export/scripts/../models/CoupledClutches_in.csv -f -c , CoupledClutches.fmu
+[INFO][FMUCHK] Will process FMU CoupledClutches.fmu
+[INFO][FMILIB] XML specifies FMI standard version 2.0
+[INFO][FMUCHK] Model name: CoupledClutches
+[INFO][FMUCHK] Model GUID: 7211ccd539322707c5523f3eece14e58
+[INFO][FMUCHK] Model version: 
+[INFO][FMUCHK] FMU kind: CoSimulation
+[INFO][FMUCHK] The FMU contains:
+24 constants
+74 parameters
+15 discrete variables
+105 continuous variables
+1 inputs
+0 outputs
+143 local variables
+0 independent variables
+12 calculated parameters
+174 real variables
+24 integer variables
+7 enumeration variables
+25 boolean variables
+0 string variables
+
+[INFO][FMUCHK] Printing output file header
+[INFO][FMUCHK] Opening input file /home/enzo/vmshare/export/scripts/../models/CoupledClutches_in.csv
+[INFO][FMUCHK] Detected separator character in input file: ,
+[INFO][FMUCHK] Model identifier for CoSimulation: CoupledClutches
+[INFO][FMILIB] Loading 'linux64' binary with 'default' platform types
+[INFO][FMUCHK] Version returned from CS FMU:   2.0
+[INFO][FMUCHK] Initialized FMU for simulation starting at time 0
+[INFO][FMUCHK] Simulation finished successfully at time 1.5
+FMU check summary:
+FMU reported:
+	0 warning(s) and error(s)
+Checker reported:
+	0 Warning(s)
+	0 Error(s)

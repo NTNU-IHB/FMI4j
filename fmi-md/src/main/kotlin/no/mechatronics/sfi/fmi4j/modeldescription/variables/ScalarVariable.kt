@@ -230,7 +230,9 @@ sealed class AbstractBoundedScalarVariable<E>: BoundedScalarVariable<E>, Abstrac
 /**
  * @author Lars Ivar HatLedal
  */
-class IntegerVariable internal constructor(private val v : ScalarVariableImpl) : ScalarVariable by v, AbstractBoundedScalarVariable<Int>() {
+class IntegerVariable internal constructor(
+        private val v : ScalarVariableImpl
+) : ScalarVariable by v, AbstractBoundedScalarVariable<Int>() {
 
     private val attribute = v.integerAttribute ?: throw AssertionError()
 
@@ -266,7 +268,9 @@ class IntegerVariable internal constructor(private val v : ScalarVariableImpl) :
 /**
  * @author Lars Ivar Hatledal
  */
-class RealVariable internal constructor(private val v : ScalarVariableImpl) : ScalarVariable by v, AbstractBoundedScalarVariable<Real>() {
+class RealVariable internal constructor
+(private val v : ScalarVariableImpl
+) : ScalarVariable by v, AbstractBoundedScalarVariable<Real>() {
 
     private val attribute: RealAttribute = v.realAttribute ?: throw AssertionError()
 
@@ -342,13 +346,14 @@ class RealVariable internal constructor(private val v : ScalarVariableImpl) : Sc
 
     }
 
-
 }
 
 /**
  * @author Lars Ivar Hatledal
  */
-class StringVariable internal constructor(private val v : ScalarVariableImpl) : ScalarVariable by v, AbstractTypedScalarVariable<String>() {
+class StringVariable internal constructor(
+        private val v : ScalarVariableImpl
+) : ScalarVariable by v, AbstractTypedScalarVariable<String>() {
 
     private val attribute = v.stringAttribute ?: throw AssertionError()
 
@@ -382,7 +387,9 @@ class StringVariable internal constructor(private val v : ScalarVariableImpl) : 
 /**
  * @author Lars Ivar Hatledal
  */
-class BooleanVariable internal constructor(private val v : ScalarVariableImpl) : ScalarVariable by v, AbstractTypedScalarVariable<Boolean>() {
+class BooleanVariable internal constructor(
+        private val v : ScalarVariableImpl
+) : ScalarVariable by v, AbstractTypedScalarVariable<Boolean>() {
 
     private val attribute = v.booleanAttribute ?: throw AssertionError()
 
