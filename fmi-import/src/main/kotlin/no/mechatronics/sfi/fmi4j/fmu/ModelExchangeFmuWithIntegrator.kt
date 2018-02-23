@@ -69,8 +69,8 @@ class ModelExchangeFmuWithIntegrator internal constructor(
 
             override fun getDimension(): Int = modelDescription.numberOfContinuousStates
             override fun computeDerivatives(time: Double, y: DoubleArray, yDot: DoubleArray) {
-                for ((i, d) in derivatives.withIndex()) {
-                    yDot[i] = d
+                for ((index, value) in derivatives.withIndex()) {
+                    yDot[index] = value
                 }
             }
         }

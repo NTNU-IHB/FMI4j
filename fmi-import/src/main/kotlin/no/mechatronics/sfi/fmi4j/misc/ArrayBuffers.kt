@@ -49,6 +49,4 @@ internal class ArrayBuffers {
         Array<String>(1, {""})
     }
 
-    val bv: IntArray = iv
-
 }

@@ -39,10 +39,14 @@ import javax.xml.bind.annotation.XmlAttribute
 interface Unknown {
 
     /**
-     * Scalarvariable index of Unknown
+     * ScalarVariable index of Unknown
      */
     val index: Int
 
+    /**
+     * Defines the dependency of the Unknown (directly or inderectly via auxiliary variables)
+     * on the Knowns in Continous-Time and Event Mode (ModelExchange) and at Communication Points (CoSimulation)
+     */
     val dependencies: IntArray?
 
     /**
