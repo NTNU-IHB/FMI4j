@@ -100,6 +100,7 @@ class ModelDescriptionTest_CS {
     fun testNumVariables() {
         val variables: ModelVariables =  modelDescription.modelVariables
         Assert.assertEquals(120, variables.size)
+        println(variables.joinToString("\n"))
     }
 
     @Test

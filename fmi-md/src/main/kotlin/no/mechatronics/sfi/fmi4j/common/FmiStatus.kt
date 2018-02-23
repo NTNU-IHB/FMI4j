@@ -43,7 +43,7 @@ enum class FmiStatus(
     Fatal(4),
     Pending(5);
 
-    companion object {
+    private companion object {
 
         @JvmStatic
         fun valueOf(i: Int): FmiStatus {

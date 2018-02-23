@@ -100,5 +100,21 @@ uploadArchives {
     }
 }
 
+//include if users want to generate a fatJar from source
+task fatJar(type: Jar) {
+    manifest {
+        attributes 'Implementation-Title': project.name,
+                'Implementation-Version': "1.0",
+                'Main-Class': ''
+    }
+    baseName = project.name
+    from {
+        configurations.compile.collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
+    }
+    with jar
+}
+
 
 

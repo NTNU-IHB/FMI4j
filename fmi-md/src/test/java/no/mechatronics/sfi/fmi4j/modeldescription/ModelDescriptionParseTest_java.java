@@ -1,5 +1,7 @@
 package no.mechatronics.sfi.fmi4j.modeldescription;
 
+import no.mechatronics.sfi.fmi4j.common.FmiStatus;
+import no.mechatronics.sfi.fmi4j.common.FmuReadImpl;
 import org.apache.commons.io.FileUtils;
 import org.junit.Assert;
 import org.junit.Test;
@@ -20,6 +22,7 @@ public class ModelDescriptionParseTest_java {
         Assert.assertTrue(file2.exists());
         String xml = FileUtils.readFileToString(file2, Charset.forName("UTF-8"));
         ModelDescriptionParser.parse(xml).asCoSimulationModelDescription();
+
     }
 
 }
