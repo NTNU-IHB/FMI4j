@@ -49,7 +49,7 @@ public class ModelExchangeTest_java {
     private FmiSimulation fmu;
 
     @Before
-    public void setUp() throws IOException {
+    public void setUp() {
         String path = "../test/fmi2/me/win64/FMUSDK/2.0.4/vanDerPol/vanDerPol.fmu";
         final File file = new File(path);
         Assert.assertNotNull(file);

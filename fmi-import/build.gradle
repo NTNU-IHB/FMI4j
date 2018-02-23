@@ -2,12 +2,12 @@
 def snapshot = true
 
 group = 'no.mechatronics.sfi.fmi4j'
-version = '0.2.6'
+version = '0.2.7'
 if (snapshot) {
     version += '-SNAPSHOT'
 }
 
-def fmi_md_version = snapshot ? '0.5.6-SNAPSHOT' : '0.5.5'
+def fmi_md_version = snapshot ? '0.5.7-SNAPSHOT' : '0.5.6'
 
 apply plugin: 'maven'
 apply plugin: 'signing'
@@ -98,6 +98,22 @@ uploadArchives {
             }
         }
     }
+}
+
+//include if users want to generate a fatJar from source
+task fatJar(type: Jar) {
+    manifest {
+        attributes 'Implementation-Title': project.name,
+                'Implementation-Version': "1.0",
+                'Main-Class': ''
+    }
+    baseName = project.name
+    from {
+        configurations.compile.collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
+    }
+    with jar
 }
 
 

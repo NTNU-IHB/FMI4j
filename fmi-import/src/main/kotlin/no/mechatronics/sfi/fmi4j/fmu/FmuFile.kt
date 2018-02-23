@@ -211,7 +211,6 @@ class FmuFile {
                 map[guid] = it
             }
 
-
         }
 
         @Throws(IOException::class)

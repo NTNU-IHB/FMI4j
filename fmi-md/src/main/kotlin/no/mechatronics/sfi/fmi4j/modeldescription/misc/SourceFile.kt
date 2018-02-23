@@ -48,9 +48,6 @@ interface SourceFile {
 @XmlAccessorType(XmlAccessType.FIELD)
 class SourceFileImpl: SourceFile, Serializable {
 
-    /**
-     * @inheritDoc
-     */
     @XmlAttribute(name="name")
     private var _name: String? = null
 

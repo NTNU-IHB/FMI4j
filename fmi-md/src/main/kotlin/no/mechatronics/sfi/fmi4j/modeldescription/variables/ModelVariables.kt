@@ -41,6 +41,9 @@ interface ModelVariables: Iterable<TypedScalarVariable<*>> {
 
     val variables: List<TypedScalarVariable<*>>
 
+    operator fun get(index: Int): TypedScalarVariable<*>
+            = variables[index]
+
     override fun iterator() = variables.iterator()
 
     /**
@@ -51,26 +54,29 @@ interface ModelVariables: Iterable<TypedScalarVariable<*>> {
     fun getValueReference(name: String) : Int
             = variables.firstOrNull({it.name == name})?.valueReference ?: throw IllegalArgumentException("No variable with name '$name'")
 
-    fun getValueReferences(names: Iterable<String>): IntArray
-            = names.map { getValueReference(it) }.toIntArray()
-
     fun getValueReferences(names: StringArray): IntArray
             = names.map { getValueReference(it) }.toIntArray()
 
     /**
-    * Get variable by valueReference
-     * @vr valueReference
-     * @throws IllegalArgumentException if there is no variable with the provided value reference
+    * Get all variables with the given valueReference
+    * @vr valueReference
+    * @throws IllegalArgumentException if there is no variable with the provided value reference
     */
-    fun getByValueReference(vr: Int)
-            = variables.firstOrNull({it.valueReference == vr}) ?: throw IllegalArgumentException("No variable with value reference '$vr'")
+    fun getByValueReference(vr: Int): List<TypedScalarVariable<*>> {
+        val filter = variables.filter { it.valueReference == vr }
+        if (filter.isEmpty()) {
+            throw IllegalArgumentException("No variable with value reference '$vr'")
+        }
+        return filter
+    }
 
     /**
      * Get variable by name
      * @name the variable name
+     * @throws IllegalArgumentException if there is no variable with the provided name
      */
     fun getByName(name: String) : TypedScalarVariable<*> {
-        return getByValueReference(getValueReference(name))
+        return variables.firstOrNull({it.name == name}) ?: throw IllegalArgumentException("No variable with name '$name'")
     }
 
 }

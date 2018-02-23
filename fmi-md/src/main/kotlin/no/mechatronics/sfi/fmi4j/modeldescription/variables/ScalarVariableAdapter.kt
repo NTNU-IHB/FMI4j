@@ -50,7 +50,8 @@ class ScalarVariableAdapter : XmlAdapter<Any, AbstractTypedScalarVariable<*>>() 
             "Real" -> RealVariable(unmarshal)
             "String" -> StringVariable(unmarshal)
             "Boolean" -> BooleanVariable(unmarshal)
-            else -> throw RuntimeException("Error parsing XML. Unable to understand of what type the ScalarVariable is..")
+            "Enumeration" -> EnumerationVariable(unmarshal)
+            else -> throw RuntimeException("Error parsing XML. Don't know what to do with '${child.nodeName}'")
         }
 
     }

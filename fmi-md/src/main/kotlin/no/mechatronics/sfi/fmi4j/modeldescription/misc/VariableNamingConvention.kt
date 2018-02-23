@@ -38,6 +38,7 @@ enum class VariableNamingConvention: Serializable {
 
     @XmlEnumValue("flat")
     FLAT,
+
     @XmlEnumValue("structured")
     STRUCTURED
 

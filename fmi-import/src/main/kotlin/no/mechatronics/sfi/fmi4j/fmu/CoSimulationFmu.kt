@@ -28,7 +28,7 @@ import no.mechatronics.sfi.fmi4j.FmiSimulation
 import no.mechatronics.sfi.fmi4j.common.FmiStatus
 import no.mechatronics.sfi.fmi4j.modeldescription.cs.CoSimulationModelDescription
 import no.mechatronics.sfi.fmi4j.proxy.v2.cs.CoSimulationLibraryWrapper
-import no.mechatronics.sfi.fmi4j.proxy.v2.enums.Fmi2StatusKind
+import no.mechatronics.sfi.fmi4j.proxy.v2.cs.Fmi2StatusKind
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 

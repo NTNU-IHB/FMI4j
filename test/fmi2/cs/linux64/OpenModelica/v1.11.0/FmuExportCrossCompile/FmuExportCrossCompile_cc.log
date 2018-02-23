@@ -1,0 +1,38 @@
+[INFO][FMUCHK] FMI compliance checker 2.0.1 [FMILibrary: 2.0.1] build date: Oct 24 2014
+[INFO][FMUCHK] Called with following options:
+[INFO][FMUCHK] fmuCheck.linux64 -c , -f -n 2000 -d -k cs -e ./Test_FMUs/FMI_2.0/CoSimulation/linux64/OpenModelica/v1.12.0/FmuExportCrossCompile/FmuExportCrossCompile_cc.log -o ./Test_FMUs/FMI_2.0/CoSimulation/linux64/OpenModelica/v1.12.0/FmuExportCrossCompile/FmuExportCrossCompile_cc.csv ./Test_FMUs/FMI_2.0/CoSimulation/linux64/OpenModelica/v1.12.0/FmuExportCrossCompile/FmuExportCrossCompile.fmu
+[INFO][FMUCHK] Will process FMU ./Test_FMUs/FMI_2.0/CoSimulation/linux64/OpenModelica/v1.12.0/FmuExportCrossCompile/FmuExportCrossCompile.fmu
+[INFO][FMILIB] XML specifies FMI standard version 2.0
+[INFO][FMI2XML] Found model identifiers for ModelExchange and CoSimulation
+[INFO][FMUCHK] Model name: FmuExportCrossCompile
+[INFO][FMUCHK] Model GUID: {5a4fa8dc-cd97-434c-ab30-e352e643f853}
+[INFO][FMUCHK] Model version: 
+[INFO][FMUCHK] FMU kind: ModelExchange and CoSimulation
+[INFO][FMUCHK] The FMU contains:
+0 constants
+2 parameters
+2 discrete variables
+4 continuous variables
+0 inputs
+0 outputs
+6 local variables
+0 independent variables
+0 calculated parameters
+7 real variables
+0 integer variables
+0 enumeration variables
+1 boolean variables
+0 string variables
+
+[INFO][FMUCHK] Printing output file header
+[INFO][FMUCHK] Model identifier for CoSimulation: FmuExportCrossCompile
+[INFO][FMILIB] Loading 'linux64' binary with 'default' platform types
+[INFO][FMUCHK] Version returned from CS FMU:   2.0
+[INFO][FMUCHK] Initialized FMU for simulation starting at time 0
+[INFO][FMUCHK] Simulation finished successfully at time 0.45
+FMU check summary:
+FMU reported:
+	0 warning(s) and error(s)
+Checker reported:
+	0 Warning(s)
+	0 Error(s)

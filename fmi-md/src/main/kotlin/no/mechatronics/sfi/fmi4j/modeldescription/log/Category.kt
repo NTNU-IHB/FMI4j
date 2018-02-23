@@ -54,15 +54,9 @@ interface Category {
 @XmlAccessorType(XmlAccessType.FIELD)
 class CategoryImpl: Category, Serializable {
 
-    /**
-     * @inheritDoc
-     */
     @XmlAttribute
     override lateinit var name: String
 
-    /**
-     * @inheritDoc
-     */
     @XmlAttribute
     override val description: String? = null
 
@@ -116,7 +110,7 @@ const val LOG_STATUS_FATAL = "logStatusFatal"
 /**
  * Log messages when returning fmi2Pending status from any function.
  */
-const val LOG_STTAUS_PENDING = "logStatusPending"
+const val LOG_STATUS_PENDING = "logStatusPending"
 
 /**
  * Log all messages

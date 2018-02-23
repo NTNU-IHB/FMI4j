@@ -288,99 +288,56 @@ interface ModelDescriptionProvider: SimpleModelDescription {
 @XmlAccessorType(XmlAccessType.FIELD)
 class ModelDescriptionImpl : SimpleModelDescription, ModelDescriptionProvider, Serializable {
 
-    /**
-     * @inheritDoc
-     */
     @XmlAttribute
     override lateinit var fmiVersion: String
 
-    /**
-     * @inheritDoc
-     */
     @XmlAttribute
     override lateinit var modelName: String
 
-    /**
-     * @inheritDoc
-     */
     @XmlAttribute
     override lateinit var guid: String
 
-    /**
-     * @inheritDoc
-     */
     @XmlAttribute
     override val license: String? = null
 
-    /**
-     * @inheritDoc
-     */
     @XmlAttribute
     override val copyright: String? = null
 
-    /**
-     * @inheritDoc
-     */
     @XmlAttribute
     override val author: String? = null
 
-    /**
-     * @inheritDoc
-     */
     @XmlAttribute
     override val version: String? = null
 
-    /**
-     * @inheritDoc
-     */
     @XmlAttribute
     override val description: String? = null
 
-    /**
-     * @inheritDoc
-     */
     @XmlAttribute
     override val generationTool: String? = null
 
-    /**
-     * @inheritDoc
-     */
     @XmlAttribute
     override val variableNamingConvention: VariableNamingConvention? = null
 
-    /**
-     * @inheritDoc
-     */
     @XmlAttribute
     override val generationDateAndTime: String? = null
 
-    /**
-     * @inheritDoc
-     */
     @XmlElement(name = "DefaultExperiment")
     override val defaultExperiment: DefaultExperimentImpl? = null
 
     /**
-     * @inheritDoc
+     * The (fixed) number of event indicators for an FMU based on FMI for
+     * Model Exchange.
+     * For Co-Simulation, this value is ignored
      */
     @XmlAttribute
     val numberOfEventIndicators: Int = 0
 
-    /**
-     * @inheritDoc
-     */
     @XmlElement(name = "ModelVariables")
     override lateinit var modelVariables: ModelVariablesImpl
 
-    /**
-     * @inheritDoc
-     */
     @XmlElement(name = "ModelStructure")
     override lateinit var modelStructure: ModelStructureImpl
 
-    /**
-     * @inheritDoc
-     */
     @XmlElement(name = "LogCategories")
     private val _logCategories: LogCategoriesImpl? = null
 
@@ -405,15 +362,9 @@ class ModelDescriptionImpl : SimpleModelDescription, ModelDescriptionProvider, S
         me?.let { ModelExchangeModelDescriptionImpl(this, it) }
     }
 
-    /**
-     * @inheritDoc
-     */
     override val supportsModelExchange: Boolean
         get() = me != null
 
-    /**
-     * @inheritDoc
-     */
     override val supportsCoSimulation: Boolean
         get() = cs != null
 

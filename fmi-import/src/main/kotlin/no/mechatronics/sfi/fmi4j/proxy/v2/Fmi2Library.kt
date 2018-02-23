@@ -477,8 +477,8 @@ abstract class Fmi2LibraryWrapper<E: Fmi2Library> (
     fun getBoolean(valueReference: Int) : FmuRead<Boolean> {
         return with(buffers) {
             vr[0] = valueReference
-            library.fmi2GetBoolean(c, vr, vr.size, bv).let {
-                FmuReadImpl(FmiBoolean.convert(bv[0]), updateStatus(it))
+            library.fmi2GetBoolean(c, vr, vr.size, iv).let {
+                FmuReadImpl(FmiBoolean.convert(iv[0]), updateStatus(it))
             }
         }
     }
@@ -566,8 +566,8 @@ abstract class Fmi2LibraryWrapper<E: Fmi2Library> (
     fun setBoolean(valueReference: Int, value: Boolean) : FmiStatus {
         return with(buffers) {
             vr[0] = valueReference
-            bv[0] = if (value) 1 else 0
-            setBoolean(vr, bv)
+            iv[0] = FmiBoolean.convert(value)
+            setBoolean(vr, iv)
         }
     }
 
@@ -575,7 +575,7 @@ abstract class Fmi2LibraryWrapper<E: Fmi2Library> (
      * @see Fmi2library.fmi2SetBoolean
      */
     fun setBoolean(vr: IntArray, value: IntArray) : FmiStatus {
-        return updateStatus((library.fmi2SetBoolean(c, vr, vr.size, value)))
+        return updateStatus(library.fmi2SetBoolean(c, vr, vr.size, value))
     }
 
     /**
@@ -586,8 +586,8 @@ abstract class Fmi2LibraryWrapper<E: Fmi2Library> (
     }
 
     fun getDirectionalDerivative(vUnknown_ref: IntArray, vKnown_ref: IntArray, dvKnown: DoubleArray, dvUnknown: DoubleArray) : FmiStatus {
-        return updateStatus((library.fmi2GetDirectionalDerivative(c,
-                vUnknown_ref, vUnknown_ref.size, vKnown_ref, vKnown_ref.size, dvKnown, dvUnknown)))
+        return updateStatus(library.fmi2GetDirectionalDerivative(c,
+                vUnknown_ref, vUnknown_ref.size, vKnown_ref, vKnown_ref.size, dvKnown, dvUnknown))
     }
 
     @JvmOverloads
@@ -613,13 +613,13 @@ abstract class Fmi2LibraryWrapper<E: Fmi2Library> (
     fun serializeFMUState(fmuState: FmuState): ByteArray {
         val size = serializedFMUStateSize(fmuState)
         return ByteArray(size).also {
-            updateStatus((library.fmi2SerializeFMUstate(c, fmuState.pointer, it, size)))
+            updateStatus(library.fmi2SerializeFMUstate(c, fmuState.pointer, it, size))
         }
     }
 
     fun deSerializeFMUState(serializedState: ByteArray): FmuState {
         return FmuState().also {
-            updateStatus((library.fmi2DeSerializeFMUstate(c, serializedState, serializedState.size, it.pointerByReference)))
+            updateStatus(library.fmi2DeSerializeFMUstate(c, serializedState, serializedState.size, it.pointerByReference))
         }
     }
 

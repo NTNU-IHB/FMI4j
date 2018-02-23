@@ -26,7 +26,6 @@ package no.mechatronics.sfi.fmi4j.modeldescription.variables
 
 import no.mechatronics.sfi.fmi4j.common.FmiStatus
 import no.mechatronics.sfi.fmi4j.common.FmuRead
-import no.mechatronics.sfi.fmi4j.modeldescription.enums.*
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.attributes.*
 import java.io.Serializable
 import javax.xml.bind.annotation.*
@@ -47,6 +46,15 @@ interface ScalarVariable {
      */
     val name: String
 
+    /**
+     * A handle of the variable to efficiently identify the variable value in the model interface.
+     * This handle is a secret of the tool that generated the C functions. It is not required to be
+     * unique. The only guarantee is that valueReference is sufficient to identify the respective variable value in the call of the C functions. This implies that it is unique for a
+     * particular base data type (Real, Integer/Enumeration, Boolean, String) with
+     * exception of categories that have identical values (such categories are also called “alias”
+     * categories). This attribute is “required”.
+     */
+    val valueReference: Int
 
     /**
      * If present, name of type defined with TypeDefinitions / SimpleType. The value
@@ -79,15 +87,6 @@ interface ScalarVariable {
      */
     val initial: Initial?
 
-    /**
-     * A handle of the variable to efficiently identify the variable value in the model interface.
-     * This handle is a secret of the tool that generated the C functions. It is not required to be
-     * unique. The only guarantee is that valueReference is sufficient to identify the respective variable value in the call of the C functions. This implies that it is unique for a
-     * particular base data type (Real, Integer/Enumeration, Boolean, String) with
-     * exception of categories that have identical values (such categories are also called “alias”
-     * categories). This attribute is “required”.
-     */
-    val valueReference: Int
 
 }
 
@@ -98,48 +97,27 @@ interface ScalarVariable {
 @XmlAccessorType(XmlAccessType.FIELD)
 class ScalarVariableImpl internal constructor() : ScalarVariable {
 
-    /**
-     * @inheritDoc
-     */
     @XmlAttribute
     override val name: String = ""
 
-    /**
-     * @inheritDoc
-     */
     @XmlAttribute
     override val declaredType: String = ""
 
-    /**
-     * @inheritDoc
-     */
     @XmlAttribute
     override val description: String = ""
 
-    /**
-     * @inheritDoc
-     */
     @XmlAttribute
     override val causality: Causality? = null
 
-    /**
-     * @inheritDoc
-     */
     @XmlAttribute
     override val variability: Variability? = null
 
-    /**
-     * @inheritDoc
-     */
     @XmlAttribute
     override var initial: Initial? = null
 
     @XmlAttribute(name="valueReference")
     private val _valueReference: Int? = null
 
-    /**
-     * @inheritDoc
-     */
     override val valueReference: Int
         get(){
             return _valueReference ?: throw IllegalStateException("ValueReference was null!")
@@ -156,6 +134,9 @@ class ScalarVariableImpl internal constructor() : ScalarVariable {
 
     @XmlElement(name="Boolean")
     internal val booleanAttribute: BooleanAttribute? = null
+
+    @XmlElement(name="Enumeration")
+    internal val enumerationAttribute: EnumerationAttribute? = null
 
     override fun toString(): String {
         return "ScalarVariableImpl(name='$name', declaredType='$declaredType', description='$description', causality=$causality, variability=$variability, initial=$initial)"
@@ -180,8 +161,18 @@ interface TypedScalarVariable<E>: ScalarVariable {
      */
     var start: E?
 
+    /**
+     * Accesses the FMU and returns the current value of the variable
+     * represented by this valueReference, as well as the status
+     */
     fun read(): FmuRead<E>
 
+    /**
+     * Accesses the FMU and writes the provided value to the FMU
+     * variable represented by this valueReference
+     *
+     * @value value to set
+     */
     fun write(value: E): FmiStatus
 
     /**
@@ -205,6 +196,7 @@ interface TypedScalarVariable<E>: ScalarVariable {
 }
 
 interface BoundedScalarVariable<E>: TypedScalarVariable<E> {
+
     /**
      * Minimum value of variable (variable Value ≥ min). If not defined, the
      * minimum is the largest negative number that can be represented on the
@@ -240,25 +232,15 @@ sealed class AbstractBoundedScalarVariable<E>: BoundedScalarVariable<E>, Abstrac
 /**
  * @author Lars Ivar HatLedal
  */
-class IntegerVariable internal constructor(private val v : ScalarVariableImpl) : ScalarVariable by v, AbstractBoundedScalarVariable<Int>() {
+class IntegerVariable internal constructor(
+        private val v : ScalarVariableImpl
+) : ScalarVariable by v, AbstractBoundedScalarVariable<Int>() {
 
     private val attribute = v.integerAttribute ?: throw AssertionError()
 
     override val typeName = "Integer"
-
-    /**
-     * @inheritDoc
-     */
     override val min: Int? = attribute.min
-
-    /**
-     * @inheritDoc
-     */
     override val max: Int? = attribute.max
-
-    /**
-     * @inheritDoc
-     */
     override var start = attribute.start
 
     override fun read(): FmuRead<Int> {
@@ -270,7 +252,17 @@ class IntegerVariable internal constructor(private val v : ScalarVariableImpl) :
     }
 
     override fun toString(): String {
-        return "IntegerVariable(min=$min, max=$max, start=$start)"
+        val entries = mutableListOf<String>().apply {
+            add("name=$name")
+            add("valueReference=$valueReference")
+            causality?.also { add("causality=$causality") }
+            start?.also { add("start=$start") }
+            accessor?.also { add("value=${read()}") }
+            min?.also { add("min=$min") }
+            max?.also { add("min=$min") }
+        }.joinToString { ", " }
+
+        return "IntegerVariable($entries)"
     }
 
 }
@@ -278,21 +270,15 @@ class IntegerVariable internal constructor(private val v : ScalarVariableImpl) :
 /**
  * @author Lars Ivar Hatledal
  */
-class RealVariable internal constructor(private val v : ScalarVariableImpl) : ScalarVariable by v, AbstractTypedScalarVariable<Double>() {
+class RealVariable internal constructor
+(private val v : ScalarVariableImpl
+) : ScalarVariable by v, AbstractBoundedScalarVariable<Real>() {
 
     private val attribute: RealAttribute = v.realAttribute ?: throw AssertionError()
 
     override val typeName = "Real"
-
-    /**
-     * @inheritDoc
-     */
-    val min = attribute.min
-
-    /**
-     * @inheritDoc
-     */
-    val max = attribute.max
+    override val min = attribute.min
+    override val max = attribute.max
 
     /**
      * @see RealAttribute.nominal
@@ -329,9 +315,6 @@ class RealVariable internal constructor(private val v : ScalarVariableImpl) : Sc
      */
     val derivative = attribute.derivative
 
-    /**
-     * @inheritDoc
-     */
     override var start = attribute.start
 
     override fun read(): FmuRead<Real> {
@@ -343,7 +326,26 @@ class RealVariable internal constructor(private val v : ScalarVariableImpl) : Sc
     }
 
     override fun toString(): String {
-        return "RealVariable(min=$min, max=$max, nominal=$nominal, unbounded=$unbounded, quantity=$quantity, unit=$unit, displayUnit=$displayUnit, relativeQuantity=$relativeQuantity, derivative=$derivative, start=$start)"
+
+        val entries = mutableListOf<String>().apply {
+            add("name=$name")
+            add("valueReference=$valueReference")
+            causality?.also { add("causality=$causality") }
+            start?.also { add("start=$start") }
+            accessor?.also { add("value=${read()}") }
+            min?.also { add("min=$min") }
+            max?.also { add("min=$min") }
+            nominal?.also { add("nominal=$nominal") }
+            unbounded?.also { add("unbounded=$unbounded") }
+            quantity?.also { add("quantity=$quantity") }
+            unit?.also { add("unit=$unit") }
+            displayUnit?.also { add("displayUnit=$displayUnit") }
+            relativeQuantity?.also { add("relativeQuantity=$relativeQuantity") }
+            derivative?.also { add("derivative=$derivative") }
+        }.joinToString (", ")
+
+        return "RealVariable($entries)"
+
     }
 
 }
@@ -351,15 +353,13 @@ class RealVariable internal constructor(private val v : ScalarVariableImpl) : Sc
 /**
  * @author Lars Ivar Hatledal
  */
-class StringVariable internal constructor(private val v : ScalarVariableImpl) : ScalarVariable by v, AbstractTypedScalarVariable<String>() {
+class StringVariable internal constructor(
+        private val v : ScalarVariableImpl
+) : ScalarVariable by v, AbstractTypedScalarVariable<String>() {
 
     private val attribute = v.stringAttribute ?: throw AssertionError()
 
     override val typeName = "String"
-
-    /**
-     * @inheritDoc
-     */
     override var start = attribute.start
 
     override fun read(): FmuRead<String> {
@@ -371,7 +371,17 @@ class StringVariable internal constructor(private val v : ScalarVariableImpl) : 
     }
 
     override fun toString(): String {
-        return "StringVariable(start=$start)"
+
+        val entries = mutableListOf<String>().apply {
+            add("name=$name")
+            add("valueReference=$valueReference")
+            causality?.also { add("causality=$causality") }
+            start?.also { add("start=$start") }
+            accessor?.also { add("value=${read()}") }
+        }.joinToString (", ")
+
+        return "StringVariable($entries)"
+
     }
 
 }
@@ -379,15 +389,13 @@ class StringVariable internal constructor(private val v : ScalarVariableImpl) : 
 /**
  * @author Lars Ivar Hatledal
  */
-class BooleanVariable internal constructor(private val v : ScalarVariableImpl) : ScalarVariable by v, AbstractTypedScalarVariable<Boolean>() {
+class BooleanVariable internal constructor(
+        private val v : ScalarVariableImpl
+) : ScalarVariable by v, AbstractTypedScalarVariable<Boolean>() {
 
     private val attribute = v.booleanAttribute ?: throw AssertionError()
 
     override val typeName = "Boolean"
-
-    /**
-     * @inheritDoc
-     */
     override var start = attribute.start
 
     override fun read(): FmuRead<Boolean> {
@@ -399,7 +407,58 @@ class BooleanVariable internal constructor(private val v : ScalarVariableImpl) :
     }
 
     override fun toString(): String {
-        return "BooleanVariable(start=$start)"
+
+        val entries = mutableListOf<String>().apply {
+            add("name=$name")
+            add("valueReference=$valueReference")
+            causality?.also { add("causality=$causality") }
+            start?.also { add("start=$start") }
+            accessor?.also { add("value=${read()}") }
+        }.joinToString (", ")
+
+        return "BooleanVariable($entries)"
+
+    }
+
+}
+
+class EnumerationVariable internal constructor(
+        private val v: ScalarVariableImpl
+): ScalarVariable by v, AbstractBoundedScalarVariable<Int>() {
+
+    private val attribute = v.enumerationAttribute ?: throw AssertionError()
+
+    override val typeName = "Enumeration"
+
+    override val min: Int? = attribute.min
+    override val max: Int? = attribute.max
+    override var start = attribute.start
+
+    val quantity = attribute.quantity
+
+    override fun read(): FmuRead<Int> {
+        return accessor?.readInteger(valueReference) ?: throw IllegalStateException("No accessor assigned!")
+    }
+
+    override fun write(value: Int): FmiStatus {
+        return accessor?.writeInteger(valueReference, value) ?: throw IllegalStateException("No accessor assigned!")
+    }
+
+    override fun toString(): String {
+
+        val entries = mutableListOf<String>().apply {
+            add("name=$name")
+            add("valueReference=$valueReference")
+            causality?.also { add("causality=$causality") }
+            start?.also { add("start=$start") }
+            accessor?.also { add("value=${read()}") }
+            min?.also { add("min=$min") }
+            max?.also { add("min=$min") }
+            quantity?.also { add("quantity=$quantity") }
+        }.joinToString (", ")
+
+        return "EnumerationVariable($entries)"
+
     }
 
 }

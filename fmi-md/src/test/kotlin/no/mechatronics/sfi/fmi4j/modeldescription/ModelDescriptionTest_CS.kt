@@ -68,6 +68,18 @@ class ModelDescriptionTest_CS {
     }
 
     @Test
+    fun testGetByValueReference() {
+        val result = modelDescription.modelVariables.getByValueReference(19)
+        Assert.assertEquals(5, result.size)
+    }
+
+    @Test
+    fun testGetByName() {
+        val result = modelDescription.modelVariables.getByName("Thermistor.p_el_low.i")
+        Assert.assertEquals(40, result.valueReference)
+    }
+
+    @Test
     fun testModelIdentifier() {
         val modelIdentifier = modelDescription.modelIdentifier
         println("modelIdentifier=$modelIdentifier")
@@ -100,6 +112,7 @@ class ModelDescriptionTest_CS {
     fun testNumVariables() {
         val variables: ModelVariables =  modelDescription.modelVariables
         Assert.assertEquals(120, variables.size)
+        println(variables.joinToString("\n"))
     }
 
     @Test
