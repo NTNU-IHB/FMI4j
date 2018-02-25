@@ -24,13 +24,15 @@
 
 package no.mechatronics.sfi.fmi4j.proxy.v2
 
+import java.io.Serializable
+
 /**
  *
  * @author Lars Ivar Hatledal
  */
 enum class Fmi2Type (
         val code: Int
-) {
+): Serializable {
 
     ModelExchange(0),
     CoSimulation(1)

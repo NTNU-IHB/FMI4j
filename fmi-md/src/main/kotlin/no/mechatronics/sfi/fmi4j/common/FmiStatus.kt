@@ -24,6 +24,7 @@
 
 package no.mechatronics.sfi.fmi4j.common
 
+import java.io.Serializable
 import java.util.*
 import kotlin.streams.toList
 
@@ -35,7 +36,7 @@ import kotlin.streams.toList
  */
 enum class FmiStatus(
         val code: Int
-) {
+): Serializable {
 
     NONE(-1),
 

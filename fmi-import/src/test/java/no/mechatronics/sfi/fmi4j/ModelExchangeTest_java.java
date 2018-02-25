@@ -72,8 +72,7 @@ public class ModelExchangeTest_java {
     @After
     public void tearDown() {
         if (fmu != null) {
-            fmu.terminate();
-            Assert.assertTrue(fmu.getLastStatus() == FmiStatus.OK);
+            Assert.assertTrue(fmu.terminate());
         }
     }
 

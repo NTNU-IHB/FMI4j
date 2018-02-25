@@ -24,32 +24,95 @@
 
 package no.mechatronics.sfi.fmi4j.common
 
+import no.mechatronics.sfi.fmi4j.modeldescription.variables.Real
+import no.mechatronics.sfi.fmi4j.modeldescription.variables.RealArray
+import no.mechatronics.sfi.fmi4j.modeldescription.variables.StringArray
+import java.io.Serializable
+
 /***
  *
  * Represents the result of reading a variable from an FMU
  *
  * @author Lars Ivar Hatledal
  */
-interface FmuRead<E> {
+sealed class FmuRead<E>(
 
-    /**
-     * The value returned by the FMU during the call to getXXX
-     */
-    val value: E
+        /**
+         * The value returned by the FMU during the call to getXXX
+         */
+        val value: E,
 
-    /**
-     * The status returned by the FMU during the call to getXXX
-     */
-    val status: FmiStatus
+        /**
+         * The status returned by the FMU during the call to getXXX
+         */
+        val status: FmiStatus
 
-}
+): Serializable
 
 /**
  * @author Lars Ivar Hatledal
  */
-data class FmuReadImpl<E>(
+class FmuIntegerRead(
+        value: Int,
+        status: FmiStatus
+): FmuRead<Int>(value, status)
 
-        override val value: E,
-        override val status: FmiStatus
+/**
+ * @author Lars Ivar Hatledal
+ */
+class FmuIntegerArrayRead(
+        value: IntArray,
+        status: FmiStatus
+): FmuRead<IntArray>(value, status)
 
-): FmuRead<E>
+/**
+ * @author Lars Ivar Hatledal
+ */
+class FmuRealRead(
+        value: Real,
+        status: FmiStatus
+): FmuRead<Real>(value, status)
+
+/**
+ * @author Lars Ivar Hatledal
+ */
+class FmuRealArrayRead(
+        value: RealArray,
+        status: FmiStatus
+): FmuRead<RealArray>(value, status)
+
+/**
+ * @author Lars Ivar Hatledal
+ */
+class FmuStringRead(
+        value: String,
+        status: FmiStatus
+): FmuRead<String>(value, status)
+
+/**
+ * @author Lars Ivar Hatledal
+ */
+class FmuStringArrayRead(
+        value: StringArray,
+        status: FmiStatus
+): FmuRead<StringArray>(value, status)
+
+/**
+ * @author Lars Ivar Hatledal
+ */
+class FmuBooleanRead(
+        value: Boolean,
+        status: FmiStatus
+): FmuRead<Boolean>(value, status)
+
+/**
+ * @author Lars Ivar Hatledal
+ */
+class FmuBooleanArrayRead(
+        value: BooleanArray,
+        status: FmiStatus
+): FmuRead<BooleanArray>(value, status)
+
+
+typealias FmuEnumerationRead = FmuIntegerRead
+typealias FmuEnumerationArrayRead = FmuIntegerArrayRead
