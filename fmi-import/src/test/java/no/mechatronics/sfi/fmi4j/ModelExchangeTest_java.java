@@ -26,7 +26,7 @@ package no.mechatronics.sfi.fmi4j;
 
 import no.mechatronics.sfi.fmi4j.common.FmiStatus;
 import no.mechatronics.sfi.fmi4j.common.FmuRead;
-import no.mechatronics.sfi.fmi4j.fmu.FmuBuilder;
+import no.mechatronics.sfi.fmi4j.fmu.FmuFile;
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.*;
 import org.apache.commons.math3.ode.FirstOrderIntegrator;
 import org.apache.commons.math3.ode.nonstiff.AdamsBashforthIntegrator;
@@ -49,7 +49,7 @@ public class ModelExchangeTest_java {
     private FmiSimulation fmu;
 
     @Before
-    public void setUp() {
+    public void setUp() throws IOException {
         String path = "../test/fmi2/me/win64/FMUSDK/2.0.4/vanDerPol/vanDerPol.fmu";
         final File file = new File(path);
         Assert.assertNotNull(file);
@@ -63,18 +63,12 @@ public class ModelExchangeTest_java {
             case 3: integrator = new ClassicalRungeKuttaIntegrator(1E-3); break;
         }
 
-        fmu = new FmuBuilder(file)
+        fmu = new FmuFile(file)
                 .asModelExchangeFmu()
                 .newInstance(integrator);
 
     }
 
-    @After
-    public void tearDown() {
-        if (fmu != null) {
-            Assert.assertTrue(fmu.terminate());
-        }
-    }
 
     @Test
     public void test() {

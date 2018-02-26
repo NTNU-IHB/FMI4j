@@ -35,7 +35,7 @@ import no.mechatronics.sfi.fmi4j.proxy.v2.structs.Fmi2EventInfo
 open class ModelExchangeFmu internal constructor(
         fmuFile: FmuFile,
         wrapper: ModelExchangeLibraryWrapper
-): AbstractFmu<ModelExchangeModelDescription, ModelExchangeLibraryWrapper>(fmuFile, wrapper) {
+): AbstractFmuInstance<ModelExchangeModelDescription, ModelExchangeLibraryWrapper>(fmuFile, wrapper) {
 
     override val modelDescription: ModelExchangeModelDescription
         get() = fmuFile.modelDescription.asModelExchangeModelDescription()

@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory
 class CoSimulationFmu internal constructor(
         fmuFile: FmuFile,
         wrapper: CoSimulationLibraryWrapper
-) : AbstractFmu<CoSimulationModelDescription, CoSimulationLibraryWrapper>(fmuFile, wrapper), FmiSimulation {
+) : AbstractFmuInstance<CoSimulationModelDescription, CoSimulationLibraryWrapper>(fmuFile, wrapper), FmiSimulation {
 
     private companion object {
         val LOG: Logger = LoggerFactory.getLogger(CoSimulationFmu::class.java)

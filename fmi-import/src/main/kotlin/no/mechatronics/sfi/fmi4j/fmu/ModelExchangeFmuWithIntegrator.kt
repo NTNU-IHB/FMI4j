@@ -35,7 +35,7 @@ import org.apache.commons.math3.ode.FirstOrderIntegrator
  * @author Lars Ivar Hatledal
  */
 class ModelExchangeFmuWithIntegrator internal constructor(
-        private val fmu: ModelExchangeFmu,
+        internal val fmu: ModelExchangeFmu,
         private val integrator: FirstOrderIntegrator
 ) : FmiSimulation {
 
@@ -52,19 +52,19 @@ class ModelExchangeFmuWithIntegrator internal constructor(
         private set
 
     /**
-     * @see AbstractFmu.isTerminated
+     * @see AbstractFmuInstance.isTerminated
      */
     override val isInitialized
         get() = fmu.isInitialized
 
     /**
-     * @see AbstractFmu.isTerminated
+     * @see AbstractFmuInstance.isTerminated
      */
     override val isTerminated
         get() = fmu.isTerminated
 
     /**
-     * @see AbstractFmu.lastStatus
+     * @see AbstractFmuInstance.lastStatus
      */
     override val lastStatus
         get() = fmu.lastStatus

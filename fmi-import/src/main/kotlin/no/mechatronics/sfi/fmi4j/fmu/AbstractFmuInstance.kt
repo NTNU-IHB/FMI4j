@@ -25,7 +25,6 @@
 package no.mechatronics.sfi.fmi4j.fmu
 
 import no.mechatronics.sfi.fmi4j.common.FmiStatus
-import no.mechatronics.sfi.fmi4j.common.FmuRead
 import no.mechatronics.sfi.fmi4j.misc.*
 import no.mechatronics.sfi.fmi4j.modeldescription.*
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.*
@@ -35,13 +34,13 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.Closeable
 
-abstract class AbstractFmu<out E: ModelDescription, out T: Fmi2LibraryWrapper<*>> internal constructor(
+abstract class AbstractFmuInstance<out E: ModelDescription, out T: Fmi2LibraryWrapper<*>> internal constructor(
         val fmuFile: FmuFile,
         val wrapper: T
 ) : Closeable {
 
     private companion object {
-        val LOG: Logger = LoggerFactory.getLogger(AbstractFmu::class.java)
+        val LOG: Logger = LoggerFactory.getLogger(AbstractFmuInstance::class.java)
     }
 
     val variableAccessor: VariableAccessor
@@ -139,7 +138,7 @@ abstract class AbstractFmu<out E: ModelDescription, out T: Fmi2LibraryWrapper<*>
      */
     fun terminate() : Boolean {
         if (wrapper.terminate()) {
-            LOG.debug("FMU named '${modelDescription.modelName}' terminated! #${hashCode()}")
+            LOG.debug("FMU '${modelDescription.modelName}' terminated! #${hashCode()}")
             return true
         }
         return false

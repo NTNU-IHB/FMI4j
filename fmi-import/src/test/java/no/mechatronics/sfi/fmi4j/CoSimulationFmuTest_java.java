@@ -26,8 +26,8 @@ package no.mechatronics.sfi.fmi4j;
 
 
 import no.mechatronics.sfi.fmi4j.common.FmiStatus;
-import no.mechatronics.sfi.fmi4j.fmu.AbstractFmu;
-import no.mechatronics.sfi.fmi4j.fmu.FmuBuilder;
+import no.mechatronics.sfi.fmi4j.fmu.AbstractFmuInstance;
+import no.mechatronics.sfi.fmi4j.fmu.FmuFile;
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.RealVariable;
 import org.junit.Assert;
 import org.junit.Before;
@@ -42,7 +42,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class CoSimulationFmuTest_java {
 
-    private FmuBuilder builder;
+    private FmuFile fmuFile;
 
     @Before
     public void setUp() throws IOException {
@@ -50,15 +50,14 @@ public class CoSimulationFmuTest_java {
         String path = "../test/fmi2/cs/win64/20Sim/4.6.4.8004/ControlledTemperature/ControlledTemperature.fmu";
         final File file = new File(path);
         Assert.assertNotNull(file);
-
-        builder = new FmuBuilder(file);
+        fmuFile = new FmuFile(file);
 
     }
 
     @Test
     public void test() throws Exception {
 
-        try(FmiSimulation fmu = builder.asCoSimulationFmu().newInstance()) {
+        try(FmiSimulation fmu = fmuFile.asCoSimulationFmu().newInstance()) {
 
             Assert.assertEquals("2.0", fmu.getModelDescription().getFmiVersion());
 
@@ -93,7 +92,7 @@ public class CoSimulationFmuTest_java {
 
             }
 
-            ((AbstractFmu) fmu).reset(false);
+            ((AbstractFmuInstance) fmu).reset(false);
 
             Assert.assertTrue(fmu.getLastStatus() == FmiStatus.OK);
 
@@ -110,7 +109,7 @@ public class CoSimulationFmuTest_java {
 
             }
 
-            try (FmiSimulation fmu2 = builder.asCoSimulationFmu().newInstance()) {
+            try (FmiSimulation fmu2 = fmuFile.asCoSimulationFmu().newInstance()) {
                 if (fmu2.init()) {
                     System.out.println(fmu2.getVariableAccessor().readReal(temperature_room.getValueReference()));
                 }

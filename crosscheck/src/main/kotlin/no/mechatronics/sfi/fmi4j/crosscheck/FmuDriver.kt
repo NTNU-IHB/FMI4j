@@ -1,7 +1,7 @@
 package no.mechatronics.sfi.fmi4j.crosscheck
 
 import no.mechatronics.sfi.fmi4j.FmiSimulation
-import no.mechatronics.sfi.fmi4j.fmu.FmuBuilder
+import no.mechatronics.sfi.fmi4j.fmu.FmuFile
 import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.Options
@@ -29,7 +29,7 @@ class SimulationOptions(
 ) {
 
     val me: Boolean = cmd.hasOption(ME)
-    val fmu: FmiSimulation = FmuBuilder(File(cmd.getOptionValue(FMU))).let {
+    val fmu: FmiSimulation = FmuFile(File(cmd.getOptionValue(FMU))).let {
         if (cmd.hasOption(ME)) {
             it.asModelExchangeFmu().newInstance(EulerIntegrator(1E-3))
         } else {

@@ -1,6 +1,6 @@
 package no.mechatronics.sfi.fmi4j
 
-import no.mechatronics.sfi.fmi4j.fmu.FmuBuilder
+import no.mechatronics.sfi.fmi4j.fmu.FmuFile
 import org.javafmi.wrapper.Simulation
 import org.junit.Test
 import java.io.File
@@ -12,7 +12,7 @@ class VS_JavaFMI {
 
         val path = "../test/fmi2/cs/win64/20Sim/4.6.4.8004/ControlledTemperature/ControlledTemperature.fmu"
         val file = File(path)
-        val fmu1 = FmuBuilder(file).asCoSimulationFmu().newInstance().also {
+        val fmu1 = FmuFile(file).asCoSimulationFmu().newInstance().also {
             it.init(0.0)
         }
         val var1 = fmu1.modelVariables.getByName("HeatCapacity1.T0").asRealVariable()

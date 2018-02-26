@@ -38,15 +38,12 @@ class LibraryProvider<E: Fmi2Library>(
 ) : Supplier<E> {
 
     init {
-        Runtime.getRuntime().addShutdownHook(Thread{
-            disposeLibrary()
-        })
         LOG.debug("Library loaded")
     }
 
     override fun get() : E = library!!
 
-    private fun disposeLibrary() {
+    internal fun disposeLibrary() {
         library = null
         System.gc()
         LOG.debug("Library disposed")

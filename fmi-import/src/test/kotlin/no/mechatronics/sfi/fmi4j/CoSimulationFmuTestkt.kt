@@ -2,8 +2,8 @@ package no.mechatronics.sfi.fmi4j
 
 
 import no.mechatronics.sfi.fmi4j.common.FmiStatus
-import no.mechatronics.sfi.fmi4j.fmu.AbstractFmu
-import no.mechatronics.sfi.fmi4j.fmu.FmuBuilder
+import no.mechatronics.sfi.fmi4j.fmu.AbstractFmuInstance
+import no.mechatronics.sfi.fmi4j.fmu.FmuFile
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
@@ -12,7 +12,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 
 class CoSimulationFmuTest_kt {
 
-    private lateinit var builder: FmuBuilder
+    private lateinit var fmuFile: FmuFile
 
     @Before
     fun setUp() {
@@ -20,8 +20,7 @@ class CoSimulationFmuTest_kt {
         val path = "../test/fmi2/cs/win64/20Sim/4.6.4.8004/ControlledTemperature/ControlledTemperature.fmu"
         val file = File(path)
         Assert.assertNotNull(file)
-
-        builder = FmuBuilder(file)
+        fmuFile = FmuFile(file)
 
     }
 
@@ -29,7 +28,7 @@ class CoSimulationFmuTest_kt {
     @Throws(Exception::class)
     fun test() {
 
-        builder.asCoSimulationFmu().newInstance().use {fmu ->
+        fmuFile.asCoSimulationFmu().newInstance().use {fmu ->
 
             Assert.assertEquals("2.0", fmu.modelDescription.fmiVersion)
 
@@ -64,7 +63,7 @@ class CoSimulationFmuTest_kt {
 
             }
 
-            (fmu as AbstractFmu<*, *>).reset(false)
+            (fmu as AbstractFmuInstance<*, *>).reset(false)
 
             Assert.assertTrue(fmu.lastStatus === FmiStatus.OK)
 
@@ -84,7 +83,7 @@ class CoSimulationFmuTest_kt {
 
             }
 
-            builder.asCoSimulationFmu().newInstance().use { fmu2 ->
+            fmuFile.asCoSimulationFmu().newInstance().use { fmu2 ->
                 fmu2.init()
                 println(fmu2.variableAccessor.readReal(temperatureRoom.valueReference))
             }
