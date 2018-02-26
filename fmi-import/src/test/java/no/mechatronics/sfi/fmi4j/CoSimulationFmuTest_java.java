@@ -74,7 +74,6 @@ public class CoSimulationFmuTest_java {
 
             final RealVariable temperature_room = fmu.getVariableByName("Temperature_Room").asRealVariable();
 
-
             double first1 = Double.NaN;
 
             double dt = 1d/100;

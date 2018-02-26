@@ -2,12 +2,12 @@
 def snapshot = true
 
 group = 'no.mechatronics.sfi.fmi4j'
-version = '0.2.7'
+version = '0.2.8'
 if (snapshot) {
     version += '-SNAPSHOT'
 }
 
-def fmi_md_version = snapshot ? '0.5.7-SNAPSHOT' : '0.5.6'
+def fmi_md_version = snapshot ? '0.5.8-SNAPSHOT' : '0.5.7'
 
 apply plugin: 'maven'
 apply plugin: 'signing'
@@ -33,7 +33,7 @@ dependencies {
     } else {
         compile project(':fmi-md')
     }
-    testImplementation group: 'org.siani.javafmi', name: 'fmu-wrapper', version: '2.24.1'
+   // testImplementation group: 'org.siani.javafmi', name: 'fmu-wrapper', version: '2.24.1'
 
 }
 
