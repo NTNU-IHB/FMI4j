@@ -45,8 +45,6 @@ subprojects {
         kotlinOptions.jvmTarget = "1.8"
     }
 
-
-
 }
 
 
