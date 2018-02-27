@@ -58,7 +58,7 @@ interface BoundedTypedAttribute<E> : TypedAttribute<E> {
  * @author Lars Ivar Hatledal
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-internal class IntegerAttribute internal constructor(): BoundedTypedAttribute<Int> {
+class IntegerAttribute internal constructor(): BoundedTypedAttribute<Int> {
 
     @XmlAttribute
     override val min: Int? = null
@@ -75,7 +75,7 @@ internal class IntegerAttribute internal constructor(): BoundedTypedAttribute<In
 }
 
 @XmlAccessorType(XmlAccessType.FIELD)
-internal class RealAttribute internal constructor() : BoundedTypedAttribute<Double> {
+class RealAttribute internal constructor() : BoundedTypedAttribute<Double> {
 
     @XmlAttribute
     override val min: Double? = null
@@ -167,7 +167,7 @@ internal class RealAttribute internal constructor() : BoundedTypedAttribute<Doub
  * @author Lars Ivar Hatledal
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-internal class StringAttribute internal constructor(): TypedAttribute<String> {
+class StringAttribute internal constructor(): TypedAttribute<String> {
 
     /**
      * @see ScalarVariable.start
@@ -184,7 +184,7 @@ internal class StringAttribute internal constructor(): TypedAttribute<String> {
  * @author Lars Ivar Hatledal
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-internal class BooleanAttribute internal constructor(): TypedAttribute<Boolean> {
+class BooleanAttribute internal constructor(): TypedAttribute<Boolean> {
 
     @XmlAttribute
     override var start: Boolean? = null
@@ -198,7 +198,7 @@ internal class BooleanAttribute internal constructor(): TypedAttribute<Boolean> 
  * @author Lars Ivar Hatledal
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-internal class EnumerationAttribute internal constructor(): BoundedTypedAttribute<Int> {
+class EnumerationAttribute internal constructor(): BoundedTypedAttribute<Int> {
 
     @XmlAttribute
     override val min: Int? = null

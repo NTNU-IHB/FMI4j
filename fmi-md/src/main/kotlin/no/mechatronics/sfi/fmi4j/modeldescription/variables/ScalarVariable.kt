@@ -87,7 +87,6 @@ interface ScalarVariable {
      */
     val initial: Initial?
 
-
 }
 
 /**
@@ -223,7 +222,7 @@ sealed class AbstractTypedScalarVariable<E>: TypedScalarVariable<E>, Serializabl
 
     @JvmField
     @Transient
-    internal var accessor: VariableAccessor? = null
+    var accessor: VariableAccessor? = null
 
 }
 
@@ -236,7 +235,7 @@ class IntegerVariable internal constructor(
         private val v : ScalarVariableImpl
 ) : ScalarVariable by v, AbstractBoundedScalarVariable<Int>() {
 
-    private val attribute: IntegerAttribute
+    val attribute: IntegerAttribute
             = v.integerAttribute ?: throw AssertionError("Variable is not of type Integer!")
 
     override val typeName = "Integer"
@@ -275,7 +274,7 @@ class RealVariable internal constructor(
         private val v : ScalarVariableImpl
 ) : ScalarVariable by v, AbstractBoundedScalarVariable<Real>() {
 
-    private val attribute: RealAttribute
+    val attribute: RealAttribute
             = v.realAttribute ?: throw AssertionError("Variable is not of type Real!")
 
     override val typeName = "Real"
@@ -388,7 +387,7 @@ class StringVariable internal constructor(
         private val v : ScalarVariableImpl
 ) : ScalarVariable by v, AbstractTypedScalarVariable<String>() {
 
-    private val attribute: StringAttribute
+    val attribute: StringAttribute
             = v.stringAttribute ?: throw AssertionError("Variable is not of type String!")
 
     override val typeName = "String"
@@ -425,7 +424,7 @@ class BooleanVariable internal constructor(
         private val v : ScalarVariableImpl
 ) : ScalarVariable by v, AbstractTypedScalarVariable<Boolean>() {
 
-    private val attribute: BooleanAttribute
+    val attribute: BooleanAttribute
             = v.booleanAttribute ?: throw AssertionError("Variable is not of type Boolean!")
 
     override val typeName = "Boolean"
@@ -459,7 +458,7 @@ class EnumerationVariable internal constructor(
         private val v: ScalarVariableImpl
 ): ScalarVariable by v, AbstractBoundedScalarVariable<Int>() {
 
-    private val attribute: EnumerationAttribute
+    val attribute: EnumerationAttribute
             = v.enumerationAttribute ?: throw AssertionError("Variable is not of type Enumeration!")
 
     override val typeName = "Enumeration"
