@@ -153,7 +153,6 @@ interface Fmi2Library : Library {
      * to call this function after one of the functions returned with a status flag of fmi2Error or
      * fmi2Fatal
      */
-    @Throws(Error::class)
     fun fmi2Terminate(c: Pointer): Int
 
     /**
@@ -303,8 +302,8 @@ interface Fmi2Library : Library {
 /**
  * @author Lars Ivar Hatledal
  */
-abstract class Fmi2LibraryWrapper<E: Fmi2Library> (
-        protected val c: Pointer,
+abstract class Fmi2LibraryWrapper<out E: Fmi2Library> (
+        protected var c: Pointer,
         private val libraryProvider: LibraryProvider<E>
 ) {
 
@@ -315,6 +314,18 @@ abstract class Fmi2LibraryWrapper<E: Fmi2Library> (
     private val functions: Fmi2CallbackFunctions = Fmi2CallbackFunctions()
     private val buffers: ArrayBuffers by lazy { ArrayBuffers() }
 
+    private var instanceFreed = false
+
+    init {
+        Runtime.getRuntime().addShutdownHook(Thread{
+            if (!isTerminated) {
+                terminate()
+            }
+            if (!instanceFreed) {
+                freeInstance()
+            }
+        })
+    }
 
     /**
      * The status returned from the last call to a FMU function
@@ -329,9 +340,8 @@ abstract class Fmi2LibraryWrapper<E: Fmi2Library> (
         private set
 
     protected val library: E
-    get() {
-        return libraryProvider.get()
-    }
+        get() = libraryProvider.get()
+
 
     protected fun updateStatus(status: Int): FmiStatus
             = updateStatus(FmiStatus.valueOf(status))
@@ -387,24 +397,46 @@ abstract class Fmi2LibraryWrapper<E: Fmi2Library> (
     /**
      * @see Fmi2library.fmi2Terminate
      */
-    fun terminate(): Boolean {
+    @JvmOverloads
+    fun terminate(freeInstance:Boolean=true): Boolean {
 
         if (!isTerminated) {
 
             try {
                 updateStatus(library.fmi2Terminate(c))
             } catch (ex: Error) {
-                updateStatus(FmiStatus.Fatal)
-                LOG.warn("Caught Error upon call to fmi2Terminate", ex)
+                updateStatus(FmiStatus.OK)
+                LOG.error("Error caught on fmi2Terminate: ${ex.javaClass.simpleName}")
             }  finally {
-                library.fmi2FreeInstance(c)
                 isTerminated = true
+                if (freeInstance) {
+                    freeInstance()
+                }
             }
 
             return true
         } else {
             LOG.warn("Terminated has already been called..")
             return false
+        }
+    }
+
+    /**
+     * @see Fmi2Library.fmi2FreeInstance
+     */
+    fun freeInstance() {
+        if (!instanceFreed) {
+            var success = false
+            try {
+                library.fmi2FreeInstance(c)
+                success = true
+            } catch (ex : Error) {
+                LOG.error("Error caught on fmi2FreeInstance: ${ex.javaClass.simpleName}")
+            } finally {
+                val msg = if (success) "successfully" else "unsuccesfullt"
+                LOG.debug("Instance freed $msg")
+                instanceFreed = true
+            }
         }
     }
 

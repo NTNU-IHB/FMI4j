@@ -31,6 +31,7 @@ import no.mechatronics.sfi.fmi4j.misc.FmiBoolean
 import no.mechatronics.sfi.fmi4j.misc.LibraryProvider
 import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescription
 import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescriptionParser
+import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescriptionProvider
 import no.mechatronics.sfi.fmi4j.proxy.v2.Fmi2Library
 import no.mechatronics.sfi.fmi4j.proxy.v2.Fmi2Type
 import no.mechatronics.sfi.fmi4j.proxy.v2.cs.CoSimulationLibraryWrapper
@@ -91,14 +92,14 @@ class FmuFile {
         Runtime.getRuntime().addShutdownHook(Thread {
             instances.forEach {
                 if (!it.isTerminated) {
-                    it.terminate()
+                    it.terminate(true)
                 }
             }
             libraries.forEach {
                 it.disposeLibrary()
             }
             for (file in map.values) {
-                if (file.deleteRecursively()) {
+                if (file.isDirectory && file.deleteRecursively()) {
                     LOG.debug("Deleted fmu folder: $file")
                 } else {
                     LOG.debug("Failed to delete fmu folder: $file")
@@ -108,7 +109,6 @@ class FmuFile {
 
     }
 
-
     /**
      * Get the content of the modelDescription.xml file as a String
      */
@@ -116,7 +116,7 @@ class FmuFile {
         FileUtils.readFileToString(modelDescriptionFile, Charset.forName("UTF-8"))
     }
 
-    val modelDescription by lazy {
+    val modelDescription: ModelDescriptionProvider by lazy {
         ModelDescriptionParser.parse(modelDescriptionXml)
     }
 

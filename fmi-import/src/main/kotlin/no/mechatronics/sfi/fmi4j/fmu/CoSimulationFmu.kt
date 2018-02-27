@@ -74,6 +74,11 @@ class CoSimulationFmu internal constructor(
         return status == FmiStatus.OK
     }
 
+    override fun terminate(): Boolean {
+        return super.terminate(true)
+    }
+
+
     /**
      * @see CoSimulationLibraryWrapper.cancelStep
      */

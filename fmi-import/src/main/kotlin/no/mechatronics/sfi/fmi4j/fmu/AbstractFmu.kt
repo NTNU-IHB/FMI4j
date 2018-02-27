@@ -135,8 +135,10 @@ abstract class AbstractFmu<out E: ModelDescription, out T: Fmi2LibraryWrapper<*>
     /**
      * Terminates the FMU
      * @see Fmi2Library.fmi2Terminate
+     * @param freeInstance true if you are completely finished with the fmu
      */
-    fun terminate() : Boolean {
+    @JvmOverloads
+    open fun terminate(freeInstance:Boolean=true) : Boolean {
         if (wrapper.terminate()) {
             LOG.debug("FMU '${modelDescription.modelName}' terminated! #${hashCode()}")
             return true
@@ -154,7 +156,8 @@ abstract class AbstractFmu<out E: ModelDescription, out T: Fmi2LibraryWrapper<*>
     /**
      * @see Fmi2Library.fmi2Reset
      */
-    fun reset() = reset(true)
+    fun reset(): Boolean
+            = reset(true)
 
     /**
      *
