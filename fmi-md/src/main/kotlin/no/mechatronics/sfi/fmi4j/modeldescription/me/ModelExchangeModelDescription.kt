@@ -58,10 +58,14 @@ interface ModelExchangeModelDescription : ModelDescription {
 class ModelExchangeModelDescriptionImpl(
         private val modelDescription: ModelDescriptionImpl,
         private val me: ModelExchangeData
-) : SimpleModelDescription by modelDescription, ModelExchangeModelDescription, ModelExchangeData by me {
+) : SimpleModelDescription by modelDescription, ModelExchangeModelDescription, ModelExchangeData by me, Serializable {
 
     override val numberOfEventIndicators: Int
         get() = modelDescription.numberOfEventIndicators
+
+    override fun toString(): String {
+        return "ModelExchangeModelDescriptionImpl(\n${modelDescription.toStringContent}\nnumberOfEventIndicators=$numberOfEventIndicators\n)"
+    }
 
 }
 

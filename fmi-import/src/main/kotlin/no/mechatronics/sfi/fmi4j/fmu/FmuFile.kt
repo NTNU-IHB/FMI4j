@@ -73,7 +73,7 @@ private const val MODEL_DESC = "modelDescription.xml"
 class FmuFile {
 
     private val fmuFile: File
-    private val instances = mutableListOf<AbstractFmuInstance<*, *>>()
+    private val instances = mutableListOf<AbstractFmu<*, *>>()
     private val libraries = mutableListOf<LibraryProvider<*>>()
 
     @Throws(IOException::class)

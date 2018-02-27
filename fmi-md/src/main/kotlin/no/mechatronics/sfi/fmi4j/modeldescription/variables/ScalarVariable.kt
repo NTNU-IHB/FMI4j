@@ -95,7 +95,7 @@ interface ScalarVariable {
  */
 @XmlRootElement(name="ScalarVariable")
 @XmlAccessorType(XmlAccessType.FIELD)
-class ScalarVariableImpl internal constructor() : ScalarVariable {
+class ScalarVariableImpl internal constructor() : ScalarVariable, Serializable {
 
     @XmlAttribute
     override val name: String = ""
@@ -227,7 +227,7 @@ sealed class AbstractTypedScalarVariable<E>: TypedScalarVariable<E>, Serializabl
 
 }
 
-sealed class AbstractBoundedScalarVariable<E>: BoundedScalarVariable<E>, AbstractTypedScalarVariable<E>()
+sealed class AbstractBoundedScalarVariable<E>: BoundedScalarVariable<E>, AbstractTypedScalarVariable<E>(), Serializable
 
 /**
  * @author Lars Ivar HatLedal
@@ -236,7 +236,8 @@ class IntegerVariable internal constructor(
         private val v : ScalarVariableImpl
 ) : ScalarVariable by v, AbstractBoundedScalarVariable<Int>() {
 
-    private val attribute = v.integerAttribute ?: throw AssertionError()
+    private val attribute: IntegerAttribute
+            = v.integerAttribute ?: throw AssertionError("Variable is not of type Integer!")
 
     override val typeName = "Integer"
     override val min: Int? = attribute.min
@@ -270,48 +271,78 @@ class IntegerVariable internal constructor(
 /**
  * @author Lars Ivar Hatledal
  */
-class RealVariable internal constructor
-(private val v : ScalarVariableImpl
+class RealVariable internal constructor(
+        private val v : ScalarVariableImpl
 ) : ScalarVariable by v, AbstractBoundedScalarVariable<Real>() {
 
-    private val attribute: RealAttribute = v.realAttribute ?: throw AssertionError()
+    private val attribute: RealAttribute
+            = v.realAttribute ?: throw AssertionError("Variable is not of type Real!")
 
     override val typeName = "Real"
     override val min = attribute.min
     override val max = attribute.max
 
     /**
-     * @see RealAttribute.nominal
+     * Nominal value of variable. If not defined and no other information about the
+     * nominal value is available, then nominal = 1 is assumed.
+     * [The nominal value of a variable can be, for example used to determine the
+     * absolute tolerance for this variable as needed by numerical algorithms:
+     * absoluteTolerance = nominal*tolerance*0.01
+     * where tolerance is, e.g., the relative tolerance defined in
+     * <DefaultExperiment>, see section 2.2.5.]
      */
     val nominal = attribute.nominal
 
     /**
-     * @see RealAttribute.unbounded
+     * If true, indicates that the variable gets during time integration much larger
+     * than its nominal value nominal. [Typical examples are the monotonically
+     * increasing rotation angles of crank shafts and the longitudinal position of a
+     * vehicle along the track in long distance simulations. This information can, for
+     * example, be used to increase numerical stability and accuracy by setting the
+     * corresponding bound for the relative error to zero (relative tolerance = 0.0), if
+     * the corresponding variable or an alias of it is a continuous state variable.]
      */
     val unbounded = attribute.unbounded
 
     /**
-     * @see RealAttribute.quantity
+     * Physical quantity of the variable, for example “Angle”, or “Energy”. The
+     * quantity names are not standardized.
      */
     val quantity = attribute.quantity
 
     /**
-     * @see RealAttribute.unit
+     * Unit of the variable defined with UnitDefinitions.Unit.name that is used
+     * for the model equations [, for example “N.m”: in this case a Unit.name =
+     * "N.m" must be present under UnitDefinitions].
      */
     val unit = attribute.unit
 
     /**
-     * @see RealAttribute.displayUnit
+     * Default display unit. The conversion to the “unit” is defined with the element
+     * “<fmiModelDescription><UnitDefinitions>”. If the corresponding
+     * “displayUnit” is not defined under <UnitDefinitions> <Unit>
+     * <DisplayUnit>, then displayUnit is ignored. It is an error if
+     * displayUnit is defined in element Real, but unit is not, or unit is not
+     * defined under <UnitDefinitions><Unit>.
      */
     val displayUnit = attribute.displayUnit
 
     /**
-     * @see RealAttribute.relativeQuantity
+     * If this attribute is true, then the “offset” of “displayUnit” must be ignored
+     * (for example 10 degree Celsius = 10 Kelvin if “relativeQuantity = true”
+     * and not 283,15 Kelvin).
      */
     val relativeQuantity = attribute.relativeQuantity
 
     /**
-     * @see RealAttribute.derivative
+     * Only for Model exchange
+     * <br>
+     * If true, state can be reinitialized at an event by the FMU. If false, state will never be reinitialized at an event by the FMU
+     */
+    val reinit = attribute.reinit
+
+    /**
+     * If present, this variable is the derivative of variable with ScalarVariable index "derivative",
      */
     val derivative = attribute.derivative
 
@@ -357,7 +388,8 @@ class StringVariable internal constructor(
         private val v : ScalarVariableImpl
 ) : ScalarVariable by v, AbstractTypedScalarVariable<String>() {
 
-    private val attribute = v.stringAttribute ?: throw AssertionError()
+    private val attribute: StringAttribute
+            = v.stringAttribute ?: throw AssertionError("Variable is not of type String!")
 
     override val typeName = "String"
     override var start = attribute.start
@@ -393,7 +425,8 @@ class BooleanVariable internal constructor(
         private val v : ScalarVariableImpl
 ) : ScalarVariable by v, AbstractTypedScalarVariable<Boolean>() {
 
-    private val attribute = v.booleanAttribute ?: throw AssertionError()
+    private val attribute: BooleanAttribute
+            = v.booleanAttribute ?: throw AssertionError("Variable is not of type Boolean!")
 
     override val typeName = "Boolean"
     override var start = attribute.start
@@ -426,7 +459,8 @@ class EnumerationVariable internal constructor(
         private val v: ScalarVariableImpl
 ): ScalarVariable by v, AbstractBoundedScalarVariable<Int>() {
 
-    private val attribute = v.enumerationAttribute ?: throw AssertionError()
+    private val attribute: EnumerationAttribute
+            = v.enumerationAttribute ?: throw AssertionError("Variable is not of type Enumeration!")
 
     override val typeName = "Enumeration"
 

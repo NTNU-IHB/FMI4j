@@ -162,7 +162,7 @@ class ModelDescriptionTest_CS {
         
         val sourceFiles = modelDescription.sourceFiles
         println(sourceFiles)
-        Assert.assertTrue(sourceFiles.map { it.name }.containsAll(
+        Assert.assertTrue(sourceFiles!!.map { it.name }.containsAll(
                 Arrays.asList("EulerAngles.c",
                         "fmi2Functions.c" ,
                         "MotionProfiles.c",

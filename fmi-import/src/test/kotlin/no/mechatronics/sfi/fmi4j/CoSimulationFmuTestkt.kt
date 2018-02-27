@@ -2,7 +2,7 @@ package no.mechatronics.sfi.fmi4j
 
 
 import no.mechatronics.sfi.fmi4j.common.FmiStatus
-import no.mechatronics.sfi.fmi4j.fmu.AbstractFmuInstance
+import no.mechatronics.sfi.fmi4j.fmu.AbstractFmu
 import no.mechatronics.sfi.fmi4j.fmu.FmuFile
 import org.junit.Assert
 import org.junit.Before
@@ -63,7 +63,7 @@ class CoSimulationFmuTest_kt {
 
             }
 
-            (fmu as AbstractFmuInstance<*, *>).reset(false)
+            (fmu as AbstractFmu<*, *>).reset(false)
 
             Assert.assertTrue(fmu.lastStatus === FmiStatus.OK)
 

@@ -47,7 +47,7 @@ interface Unknown {
      * Defines the dependency of the Unknown (directly or inderectly via auxiliary variables)
      * on the Knowns in Continous-Time and Event Mode (ModelExchange) and at Communication Points (CoSimulation)
      */
-    val dependencies: IntArray?
+    val dependencies: List<Int>
 
     /**
      * If present, it must be assumed that the Unknown depends on the Knowns
@@ -67,23 +67,22 @@ class UnknownImpl: Unknown, Serializable {
     private var _index: Int? = null
 
     override val index: Int
-        get() = _index ?: throw IllegalStateException("Index was null!")
+        get() = _index ?: throw AssertionError("Index was null!")
 
     @XmlAttribute(name="dependencies")
     private var _dependencies: String? = null
 
-    @delegate:Transient
-    override val dependencies: IntArray? by lazy {
-        _dependencies?.let {
-            if (it.isEmpty()) null else it.split(" ").map { it.toInt() }.toIntArray()
-        }
-    }
+    override val dependencies: List<Int>
+        get() = _dependencies?.let {
+            it.split(" ").mapNotNull { it.toIntOrNull() }
+        } ?: emptyList()
+
 
     @XmlAttribute
     override val dependenciesKind: DependenciesKind? = null
 
     override fun toString(): String {
-        return "UnknownImpl(index=$index)"
+        return "UnknownImpl(index=$index, dependencies=$dependencies, dependenciesKind=$dependenciesKind)"
     }
 
 }

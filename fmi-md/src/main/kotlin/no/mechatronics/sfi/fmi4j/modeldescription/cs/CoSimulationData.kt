@@ -94,12 +94,10 @@ internal class CoSimulationDataImpl : CoSimulationData, Serializable {
 
     @XmlElementWrapper(name = "SourceFiles")
     @XmlElement(name = "File")
-    private var _sourceFiles: List<SourceFileImpl>? = null
+    private val _sourceFiles: List<SourceFileImpl>? = null
 
-    @delegate:Transient
-    override val sourceFiles: List<SourceFile> by lazy {
-        _sourceFiles ?: emptyList()
-    }
+    override val sourceFiles
+        get() = _sourceFiles ?: emptyList()
 
     override fun toString(): String {
         return "CoSimulationXmlNode{modelIdentifier=$modelIdentifier, needsExecutionTool=$needsExecutionTool, canHandleVariableCommunicationStepSize=$canHandleVariableCommunicationStepSize, canInterpolateInputs=$canInterpolateInputs, maxOutputDerivativeOrder=$maxOutputDerivativeOrder, canRunAsynchronuosly=$canRunAsynchronuosly, canBeInstantiatedOnlyOncePerProcess=$canBeInstantiatedOnlyOncePerProcess, canNotUseMemoryManagementFunctions=$canNotUseMemoryManagementFunctions, canGetAndSetFMUstate=$canGetAndSetFMUstate, canSerializeFMUstate=$canSerializeFMUstate, providesDirectionalDerivative=$providesDirectionalDerivative}"

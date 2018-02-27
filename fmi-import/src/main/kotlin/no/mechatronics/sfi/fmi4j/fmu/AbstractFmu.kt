@@ -34,13 +34,13 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.Closeable
 
-abstract class AbstractFmuInstance<out E: ModelDescription, out T: Fmi2LibraryWrapper<*>> internal constructor(
+abstract class AbstractFmu<out E: ModelDescription, out T: Fmi2LibraryWrapper<*>> internal constructor(
         val fmuFile: FmuFile,
         val wrapper: T
 ) : Closeable {
 
     private companion object {
-        val LOG: Logger = LoggerFactory.getLogger(AbstractFmuInstance::class.java)
+        val LOG: Logger = LoggerFactory.getLogger(AbstractFmu::class.java)
     }
 
     val variableAccessor: VariableAccessor

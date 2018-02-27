@@ -26,7 +26,7 @@ package no.mechatronics.sfi.fmi4j;
 
 
 import no.mechatronics.sfi.fmi4j.common.FmiStatus;
-import no.mechatronics.sfi.fmi4j.fmu.AbstractFmuInstance;
+import no.mechatronics.sfi.fmi4j.fmu.AbstractFmu;
 import no.mechatronics.sfi.fmi4j.fmu.FmuFile;
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.RealVariable;
 import org.junit.Assert;
@@ -91,7 +91,7 @@ public class CoSimulationFmuTest_java {
 
             }
 
-            ((AbstractFmuInstance) fmu).reset(false);
+            ((AbstractFmu) fmu).reset(false);
 
             Assert.assertTrue(fmu.getLastStatus() == FmiStatus.OK);
 

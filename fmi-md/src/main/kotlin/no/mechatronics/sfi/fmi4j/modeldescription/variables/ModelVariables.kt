@@ -44,7 +44,8 @@ interface ModelVariables: Iterable<TypedScalarVariable<*>> {
     operator fun get(index: Int): TypedScalarVariable<*>
             = variables[index]
 
-    override fun iterator() = variables.iterator()
+    override fun iterator(): Iterator<TypedScalarVariable<*>>
+            = variables.iterator()
 
     /**
      * Get the valueReference of the variable named <name>
@@ -91,13 +92,11 @@ class ModelVariablesImpl : ModelVariables, Serializable {
     @XmlJavaTypeAdapter(ScalarVariableAdapter::class)
     private val _variables: List<AbstractTypedScalarVariable<*>>? = null
 
-    @delegate:Transient
-    override val variables: List<TypedScalarVariable<*>> by lazy {
-        _variables ?: emptyList()
-    }
+    override val variables: List<TypedScalarVariable<*>>
+        get() = _variables ?: emptyList()
 
     override fun toString(): String {
-        return "ModelVariables(categories=$variables)"
+        return "ModelVariables(variables=$variables)"
     }
 
 }

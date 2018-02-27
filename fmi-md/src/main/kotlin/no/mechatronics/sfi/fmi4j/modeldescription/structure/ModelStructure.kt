@@ -78,6 +78,7 @@ interface ModelStructure {
      * just a special solver is used.
      */
     val derivatives: List<Unknown>
+
     val initialUnknowns: List<Unknown>
 }
 
@@ -92,28 +93,23 @@ class ModelStructureImpl: ModelStructure, Serializable {
     @XmlElement(name = "Unknown")
     private val _outputs: List<Int>? = null
 
-    @delegate:Transient
-    override val outputs: List<Int> by lazy {
-        _outputs ?: emptyList()
-    }
+    override val outputs: List<Int>
+        get() = _outputs ?: emptyList()
 
     @XmlElementWrapper(name = "Derivatives")
     @XmlElement(name = "Unknown")
     private val _derivatives: List<UnknownImpl>? = null
 
-    @delegate:Transient
-    override val derivatives: List<Unknown> by lazy {
-        _derivatives ?: emptyList()
-    }
+    override val derivatives: List<Unknown>
+        get() = _derivatives ?: emptyList()
+
 
     @XmlElementWrapper(name = "InitialUnknowns")
     @XmlElement(name = "Unknown")
     private val _initialUnknowns: List<UnknownImpl>? = null
 
-    @delegate:Transient
-    override val initialUnknowns: List<Unknown> by lazy {
-        _initialUnknowns ?: emptyList()
-    }
+    override val initialUnknowns: List<Unknown>
+        get() = _initialUnknowns ?: emptyList()
 
     override fun toString(): String {
         return "ModelStructure(outputs=$outputs, derivatives=$derivatives, initialUnknowns=$initialUnknowns)"

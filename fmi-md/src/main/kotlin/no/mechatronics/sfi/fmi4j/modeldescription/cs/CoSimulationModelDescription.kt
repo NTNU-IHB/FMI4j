@@ -77,6 +77,12 @@ interface CoSimulationModelDescription : ModelDescription {
  * @author Lars Ivar Hatledal
  */
 class CoSimulationModelDescriptionImpl(
-        modelDescription: ModelDescriptionImpl,
+        private val modelDescription: ModelDescriptionImpl,
         private val cs: CoSimulationData
-) : SimpleModelDescription by modelDescription, CoSimulationModelDescription, CoSimulationData by cs
+) : SimpleModelDescription by modelDescription, CoSimulationModelDescription, CoSimulationData by cs, Serializable {
+
+    override fun toString(): String {
+        return "CoSimulationModelDescriptionImpl(\n${modelDescription.toStringContent}\n)"
+    }
+
+}

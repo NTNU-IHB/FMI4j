@@ -52,19 +52,19 @@ class ModelExchangeFmuWithIntegrator internal constructor(
         private set
 
     /**
-     * @see AbstractFmuInstance.isTerminated
+     * @see AbstractFmu.isTerminated
      */
     override val isInitialized
         get() = fmu.isInitialized
 
     /**
-     * @see AbstractFmuInstance.isTerminated
+     * @see AbstractFmu.isTerminated
      */
     override val isTerminated
         get() = fmu.isTerminated
 
     /**
-     * @see AbstractFmuInstance.lastStatus
+     * @see AbstractFmu.lastStatus
      */
     override val lastStatus
         get() = fmu.lastStatus

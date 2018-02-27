@@ -40,6 +40,7 @@ interface SourceFile {
      * directory, using forward slash as separator
      */
     val name: String
+
 }
 
 /**
@@ -49,10 +50,7 @@ interface SourceFile {
 class SourceFileImpl: SourceFile, Serializable {
 
     @XmlAttribute(name="name")
-    private var _name: String? = null
-
-    override val name: String
-        get() = _name ?: throw IllegalStateException("Name was null!")
+    override lateinit var name: String
 
     override fun toString(): String {
         return "SourceFileImpl(name='$name')"

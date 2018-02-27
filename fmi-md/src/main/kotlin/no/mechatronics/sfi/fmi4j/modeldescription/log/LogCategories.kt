@@ -46,15 +46,14 @@ class LogCategoriesImpl : LogCategories, Serializable {
     override val size
         get() = categories.size
 
-    override fun iterator() = categories.iterator()
+    override fun iterator(): Iterator<Category>
+            = categories.iterator()
 
     @XmlElement(name = "Category")
     private val _categories: List<CategoryImpl>? = null
 
-    @delegate:Transient
-    private val categories: List<Category> by lazy {
-        _categories ?: emptyList()
-    }
+    private val categories: List<Category>
+        get() = _categories ?: emptyList()
 
     override fun contains(category: Category)
             = categories.contains(category)

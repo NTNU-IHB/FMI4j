@@ -53,8 +53,6 @@ import javax.xml.bind.JAXB
 import javax.xml.bind.annotation.*
 
 
-
-
 /**
  * Static information related to an FMU
  *
@@ -164,7 +162,7 @@ interface SimpleModelDescription {
      * A global list of log categories that can be set to define the log
      * information that is supported from the FMU.
      */
-    val logCategories: LogCategories
+    val logCategories: LogCategories?
 
     /**
      * The number of continuous states
@@ -192,11 +190,6 @@ interface SimpleModelDescription {
  * @author Lars Ivar Hatledal
  */
 interface ModelDescription : SimpleModelDescription {
-
-    /**
-     * The source files
-     */
-    val sourceFiles: List<SourceFile>
 
     /**
      * Short class name according to C syntax, for
@@ -271,6 +264,12 @@ interface ModelDescription : SimpleModelDescription {
      */
     val providesDirectionalDerivative: Boolean
 
+
+    /**
+     * The source files
+     */
+    val sourceFiles: List<SourceFile>
+
 }
 
 interface ModelDescriptionProvider: SimpleModelDescription {
@@ -341,10 +340,8 @@ class ModelDescriptionImpl : SimpleModelDescription, ModelDescriptionProvider, S
     @XmlElement(name = "LogCategories")
     private val _logCategories: LogCategoriesImpl? = null
 
-    @delegate:Transient
-    override val logCategories: LogCategories by lazy {
-        _logCategories ?: LogCategoriesImpl()
-    }
+    override val logCategories: LogCategories?
+        get() = _logCategories
 
     @XmlElement(name = "CoSimulation")
     private val cs: CoSimulationDataImpl? = null
@@ -379,5 +376,27 @@ class ModelDescriptionImpl : SimpleModelDescription, ModelDescriptionProvider, S
      */
     override fun asModelExchangeModelDescription(): ModelExchangeModelDescription
             = modelExchangeModelDescription ?: throw IllegalStateException("FMU does not support Model Exchange: modelDescription.xml does not contain a <ModelExchange> tag!")
+
+    internal val toStringContent: String
+        get() = listOfNotNull(
+                "fmiVersion=$fmiVersion",
+                "modelName=$modelName",
+                "guid=$guid",
+                license?.let {"license=$license" },
+                copyright?.let { "copyright=$copyright" },
+                author?.let { "author=$author" },
+                version?.let { "version=$version" },
+                description?.let { "description=$description" },
+                generationTool?.let { "generationTool=$generationTool" },
+                variableNamingConvention?.let { "variableNamingConvention=$variableNamingConvention" },
+                generationDateAndTime?.let { "generationDateAndTime=$generationDateAndTime" },
+                defaultExperiment?.let { "defaultExperiment=$defaultExperiment" },
+                numberOfEventIndicators?.let { "numberOfEventIndicators=$numberOfEventIndicators" }
+        ).joinToString ("\n")
+
+
+    override fun toString(): String {
+        return "ModelDescriptionImpl(\n$toStringContent\n)"
+    }
 
 }

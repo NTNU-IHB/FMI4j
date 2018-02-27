@@ -40,13 +40,6 @@ class FmuVariableAccessor(
         mutableMapOf<String, Int>()
     }
 
-    private fun process(name: String): Int {
-        if (name !in map) {
-            map[name]= modelVariables.getValueReference(name)
-        }
-        return map[name]!!
-    }
-
     override fun readInteger(name: String) = readInteger(process(name))
     override fun readInteger(valueReference: Int) = wrapper.getInteger(valueReference)
     override fun readInteger(vr: IntArray) = wrapper.getInteger(vr)
@@ -85,5 +78,14 @@ class FmuVariableAccessor(
     override fun writeBoolean(valueReference: Int, value: Boolean) = wrapper.setBoolean(valueReference, value)
     override fun writeBoolean(vr: IntArray, value: BooleanArray) =wrapper.setBoolean(vr, value)
     override fun writeBoolean(vr: IntArray, value: IntArray) = wrapper.setBoolean(vr, value)
+
+
+    private fun process(name: String): Int {
+        if (name !in map) {
+            map[name]= modelVariables.getValueReference(name)
+        }
+        return map[name]!!
+    }
+
 
 }
