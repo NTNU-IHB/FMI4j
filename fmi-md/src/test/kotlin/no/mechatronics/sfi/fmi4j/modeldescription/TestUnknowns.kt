@@ -30,12 +30,12 @@ class TestUnknowns {
 
         val d1 = der[0]
         Assert.assertEquals(d1.index, 3)
-        Assert.assertEquals(d1.dependencies!!.size, 1)
+        Assert.assertEquals(d1.dependencies.size, 1)
         Assert.assertEquals(DependenciesKind.DEPENDENT, d1.dependenciesKind)
 
         val d2 = der[1]
         Assert.assertEquals(d2.index, 4)
-        Assert.assertNull(d2.dependencies)
+        Assert.assertTrue(d2.dependencies.isEmpty())
         Assert.assertNull(d2.dependenciesKind)
     }
 

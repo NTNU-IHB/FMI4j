@@ -222,7 +222,7 @@ sealed class AbstractTypedScalarVariable<E>: TypedScalarVariable<E>, Serializabl
 
     @JvmField
     @Transient
-    var accessor: VariableAccessor? = null
+    internal var accessor: VariableAccessor? = null
 
 }
 
@@ -235,7 +235,7 @@ class IntegerVariable internal constructor(
         private val v : ScalarVariableImpl
 ) : ScalarVariable by v, AbstractBoundedScalarVariable<Int>() {
 
-    val attribute: IntegerAttribute
+    private val attribute: IntegerAttribute
             = v.integerAttribute ?: throw AssertionError("Variable is not of type Integer!")
 
     override val typeName = "Integer"
@@ -274,7 +274,7 @@ class RealVariable internal constructor(
         private val v : ScalarVariableImpl
 ) : ScalarVariable by v, AbstractBoundedScalarVariable<Real>() {
 
-    val attribute: RealAttribute
+    private val attribute: RealAttribute
             = v.realAttribute ?: throw AssertionError("Variable is not of type Real!")
 
     override val typeName = "Real"
@@ -387,7 +387,7 @@ class StringVariable internal constructor(
         private val v : ScalarVariableImpl
 ) : ScalarVariable by v, AbstractTypedScalarVariable<String>() {
 
-    val attribute: StringAttribute
+    private val attribute: StringAttribute
             = v.stringAttribute ?: throw AssertionError("Variable is not of type String!")
 
     override val typeName = "String"
@@ -424,7 +424,7 @@ class BooleanVariable internal constructor(
         private val v : ScalarVariableImpl
 ) : ScalarVariable by v, AbstractTypedScalarVariable<Boolean>() {
 
-    val attribute: BooleanAttribute
+    private val attribute: BooleanAttribute
             = v.booleanAttribute ?: throw AssertionError("Variable is not of type Boolean!")
 
     override val typeName = "Boolean"
@@ -458,7 +458,7 @@ class EnumerationVariable internal constructor(
         private val v: ScalarVariableImpl
 ): ScalarVariable by v, AbstractBoundedScalarVariable<Int>() {
 
-    val attribute: EnumerationAttribute
+    private val attribute: EnumerationAttribute
             = v.enumerationAttribute ?: throw AssertionError("Variable is not of type Enumeration!")
 
     override val typeName = "Enumeration"
