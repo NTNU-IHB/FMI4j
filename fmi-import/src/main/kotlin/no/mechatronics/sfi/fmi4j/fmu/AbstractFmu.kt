@@ -147,10 +147,10 @@ abstract class AbstractFmu<out E: ModelDescription, out T: Fmi2LibraryWrapper<*>
     }
 
     /**
-     * Same as calling terminate(), needed in order to implement Closable
+     * Same as calling terminate(true), needed in order to implement Closable
      */
     override fun close() {
-        terminate()
+        terminate(true)
     }
 
     /**
@@ -186,7 +186,6 @@ abstract class AbstractFmu<out E: ModelDescription, out T: Fmi2LibraryWrapper<*>
         }
     }
 
-
     fun getFMUState(): FmuState? {
         if (!modelDescription.canGetAndSetFMUstate) {
             LOG.warn("Method call not allowed, FMU cannot get and set FMU state!")
@@ -215,9 +214,7 @@ abstract class AbstractFmu<out E: ModelDescription, out T: Fmi2LibraryWrapper<*>
     }
 
     fun serializedFMUStateSize(fmuState: FmuState): Int = wrapper.serializedFMUStateSize(fmuState)
-
     fun serializeFMUState(fmuState: FmuState):ByteArray = wrapper.serializeFMUState(fmuState)
-
     fun deSerializeFMUState(serializedState: ByteArray):FmuState = wrapper.deSerializeFMUState(serializedState)
 
     private fun assignStartValues() {

@@ -98,12 +98,16 @@ class FmuFile {
             libraries.forEach {
                 it.disposeLibrary()
             }
-            for (file in map.values) {
-                if (file.isDirectory && file.deleteRecursively()) {
-                    LOG.debug("Deleted fmu folder: $file")
-                } else {
-                    LOG.debug("Failed to delete fmu folder: $file")
+            try {
+                for (file in map.values) {
+                    if (file.isDirectory && file.deleteRecursively()) {
+                        LOG.debug("Deleted fmu folder: $file")
+                    } else {
+                        LOG.debug("Failed to delete fmu folder: $file")
+                    }
                 }
+            } catch (ex: AssertionError) {
+                //suppress strange error sometimes saying file is not a directory..
             }
         })
 
