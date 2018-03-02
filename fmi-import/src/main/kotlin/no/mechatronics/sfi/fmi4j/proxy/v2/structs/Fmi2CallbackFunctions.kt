@@ -89,6 +89,19 @@ open class Fmi2CallbackFunctions : Structure() {
 
     inner class CallbackAllocateMemoryImpl : CallbackAllocateMemory {
 
+        /**
+         * Pointer to a function that is called in the FMU if memory needs to be allocated. If attribute
+         * “canNotUseMemoryManagementFunctions = true” in
+         * <fmiModelDescription><ModelExchange / CoSimulation>, then function
+         * allocateMemory is not used in the FMU and a void pointer can be provided. If this attribute
+         * has a value of “false” (which is the default), the FMU must not use malloc, calloc or
+         * other memory allocation functions. One reason is that these functions might not be available
+         * for embedded systems on the target machine. Another reason is that the environment may
+         * have optimized or specialized memory allocation functions. allocateMemory returns a
+         * pointer to space for a vector of nobj objects, each of size “size” or NULL, if the request
+         * cannot be satisfied. The space is initialized to zero bytes [(a simple implementation is to use
+         * calloc from the C standard library)]
+         */
         override fun invoke(nobj: Int, size: Int): Pointer {
 
             val bytes = (if (nobj <= 0) 1 else nobj) * size + 4;
@@ -97,7 +110,7 @@ open class Fmi2CallbackFunctions : Structure() {
             memory.clear()
 
             val pointer: Pointer = aligned.share(0)
-            POINTERS.put(pointer, memory)
+            POINTERS[pointer] = memory
 
             return memory
         }
@@ -106,10 +119,20 @@ open class Fmi2CallbackFunctions : Structure() {
 
     interface CallbackFreeMemory : Callback {
 
-        operator fun invoke(pointer: Pointer)
+        /**
+         * Pointer to a function that must be called in the FMU if memory is freed that has been
+         * allocated with allocateMemory. If a null pointer is provided as input argument obj, the
+         * function shall perform no action [(a simple implementation is to use free from the C
+         * standard library; in ANSI C89 and C99, the null pointer handling is identical as defined
+         * here)]. If attribute “canNotUseMemoryManagementFunctions = true” in
+         * <fmiModelDescription><ModelExchange / CoSimulation>, then function
+         * freeMemory is not used in the FMU and a null pointer can be provided.
+         */
+        fun invoke(pointer: Pointer)
     }
 
     inner class CallbackFreeMemoryImpl : CallbackFreeMemory {
+
 
         override fun invoke(pointer: Pointer) {
 
@@ -124,9 +147,16 @@ open class Fmi2CallbackFunctions : Structure() {
 
     }
 
+
     interface StepFinished : Callback {
 
-        operator fun invoke(c: Pointer, status: Int)
+        /**
+         * Optional call back function to signal if the computation of a communication step of a cosimulation
+         * slave is finished. A null pointer can be provided. In this case the master must
+         * use fmiGetStatus(..) to query the status of fmi2DoStep. If a pointer to a function
+         * is provided, it must be called by the FMU after a completed communication step.
+         */
+        fun invoke(c: Pointer, status: Int)
     }
 
     inner class StepFinishedImpl : StepFinished {

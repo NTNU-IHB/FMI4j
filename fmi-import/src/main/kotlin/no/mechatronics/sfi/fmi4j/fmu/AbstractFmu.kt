@@ -59,6 +59,9 @@ abstract class AbstractFmu<out E: ModelDescription, out T: Fmi2LibraryWrapper<*>
 
     abstract val modelDescription: E
 
+    val modelName: String
+        get() = modelDescription.modelName
+
     /**
      * @see ModelDescription.modelVariables
      */

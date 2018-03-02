@@ -69,6 +69,9 @@ class ModelExchangeFmuWithIntegrator internal constructor(
     override val lastStatus
         get() = fmu.lastStatus
 
+    override val modelName: String
+        get() = fmu.modelDescription.modelName
+
     override val modelDescription = fmu.modelDescription
     override val modelVariables = fmu.modelVariables
 

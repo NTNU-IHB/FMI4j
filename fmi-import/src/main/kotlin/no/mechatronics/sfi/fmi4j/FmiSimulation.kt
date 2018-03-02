@@ -39,6 +39,7 @@ interface FmiSimulation : Closeable {
 
     val currentTime: Double
 
+    val modelName: String
     val modelVariables: ModelVariables
     val modelDescription: ModelDescription
     val variableAccessor: VariableAccessor

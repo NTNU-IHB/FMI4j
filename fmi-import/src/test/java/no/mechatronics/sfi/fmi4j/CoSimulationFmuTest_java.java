@@ -27,6 +27,7 @@ package no.mechatronics.sfi.fmi4j;
 
 import no.mechatronics.sfi.fmi4j.common.FmiStatus;
 import no.mechatronics.sfi.fmi4j.fmu.AbstractFmu;
+import no.mechatronics.sfi.fmi4j.fmu.CoSimulationFmu;
 import no.mechatronics.sfi.fmi4j.fmu.FmuFile;
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.RealVariable;
 import org.junit.Assert;
