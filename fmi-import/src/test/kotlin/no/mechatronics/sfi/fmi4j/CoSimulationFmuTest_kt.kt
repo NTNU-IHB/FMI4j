@@ -28,7 +28,7 @@ class CoSimulationFmuTest_kt {
     @Throws(Exception::class)
     fun test() {
 
-        fmuFile.asCoSimulationFmu().newInstance().use {fmu ->
+        fmuFile.asCoSimulationFmu().newInstance(loggingOn = true).use {fmu ->
 
             Assert.assertEquals("2.0", fmu.modelDescription.fmiVersion)
 

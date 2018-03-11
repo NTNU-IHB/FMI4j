@@ -369,10 +369,10 @@ abstract class Fmi2LibraryWrapper<out E: Fmi2Library> (
                 vUnknown_ref, vUnknown_ref.size, vKnown_ref, vKnown_ref.size, dvKnown, dvUnknown))
     }
 
-    @JvmOverloads
-    fun getFMUState(fmuState: FmuState = FmuState()): FmuState {
-        updateStatus(library.fmi2GetFMUstate(c, fmuState.pointerByReference))
-        return fmuState
+    fun getFMUState(fmuState: FmuState): FmuState {
+        return fmuState.also {
+            updateStatus(library.fmi2GetFMUstate(c, fmuState))
+        }
     }
 
     fun setFMUState(fmuState: FmuState) : FmiStatus {
@@ -380,7 +380,7 @@ abstract class Fmi2LibraryWrapper<out E: Fmi2Library> (
     }
 
     fun freeFMUState(fmuState: FmuState) : FmiStatus {
-        return updateStatus(library.fmi2FreeFMUstate(c, fmuState.pointerByReference))
+        return updateStatus(library.fmi2FreeFMUstate(c, fmuState))
     }
 
     fun serializedFMUStateSize(fmuState: FmuState): Int {
@@ -397,8 +397,8 @@ abstract class Fmi2LibraryWrapper<out E: Fmi2Library> (
     }
 
     fun deSerializeFMUState(serializedState: ByteArray): FmuState {
-        return FmuState().also {
-            updateStatus(library.fmi2DeSerializeFMUstate(c, serializedState, serializedState.size, it.pointerByReference))
+        return FmuState().also { state ->
+            updateStatus(library.fmi2DeSerializeFMUstate(c, serializedState, serializedState.size, state))
         }
     }
 

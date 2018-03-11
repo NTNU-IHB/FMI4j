@@ -31,12 +31,4 @@ import com.sun.jna.ptr.PointerByReference
  *
  * @author Lars Ivar Hatledal
  */
-class FmuState {
-
-    val pointer: Pointer = Pointer.NULL
-
-    val pointerByReference: PointerByReference by lazy {
-        PointerByReference(pointer)
-    }
-
-}
+class FmuState: PointerByReference()

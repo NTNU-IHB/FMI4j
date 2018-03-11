@@ -29,6 +29,7 @@ import no.mechatronics.sfi.fmi4j.proxy.v2.structs.Fmi2EventInfo
 import org.apache.commons.math3.ode.FirstOrderDifferentialEquations
 import org.apache.commons.math3.ode.FirstOrderIntegrator
 
+private const val h = 1E-13
 
 /**
  *
@@ -158,7 +159,7 @@ class ModelExchangeFmuWithIntegrator internal constructor(
             }
 
             var stateEvent = false
-            if (tNext - time > 1E-13) {
+            if (tNext - time > h) {
                 solve(time, tNext).also { result ->
                     stateEvent = result.stateEvent
                     time = result.time
@@ -169,13 +170,15 @@ class ModelExchangeFmuWithIntegrator internal constructor(
 
             fmu.setTime(time)
 
-            val completedIntegratorStep = fmu.completedIntegratorStep()
-            if (completedIntegratorStep.terminateSimulation) {
-                terminate()
-                return false
+            var stepEvent = false
+            if (!modelDescription.completedIntegratorStepNotNeeded) {
+                val completedIntegratorStep = fmu.completedIntegratorStep()
+                if (completedIntegratorStep.terminateSimulation) {
+                    terminate()
+                    return false
+                }
+                stepEvent = completedIntegratorStep.enterEventMode
             }
-
-            val stepEvent = completedIntegratorStep.enterEventMode
 
             if (timeEvent || stateEvent || stepEvent) {
                 fmu.enterEventMode()

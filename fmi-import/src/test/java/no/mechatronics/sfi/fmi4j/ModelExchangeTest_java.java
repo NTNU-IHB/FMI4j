@@ -58,7 +58,7 @@ public class ModelExchangeTest_java {
         FirstOrderIntegrator integrator = null;
         switch (i) {
             case 0: integrator = new EulerIntegrator(1E-3); break;
-            case 1: integrator= new DormandPrince853Integrator(1E-8, 1.0, 1E-10, 1E-10); break;
+            case 1: integrator = new DormandPrince853Integrator(1E-8, 1.0, 1E-10, 1E-10); break;
             case 2: integrator = new AdamsBashforthIntegrator(100, 1E-10, 1.0, 1E-10, 1E-10); break;
             case 3: integrator = new ClassicalRungeKuttaIntegrator(1E-3); break;
         }
@@ -87,6 +87,8 @@ public class ModelExchangeTest_java {
             System.out.println("t=" + fmu.getCurrentTime() + ", x0=" + read.getValue());
             fmu.doStep(macroStep);
         }
+
+        fmu.terminate();
     }
 
 }

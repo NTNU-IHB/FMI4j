@@ -252,20 +252,6 @@ class FmuFile {
         val LOG: Logger = LoggerFactory.getLogger(FmuFile::class.java)
         val map = mutableMapOf<String, File>()
 
-//        init {
-//
-//            Runtime.getRuntime().addShutdownHook(Thread {
-//                for (file in map.values) {
-//                    if (file.deleteRecursively()) {
-//                        LOG.debug("Deleted fmu folder: $file")
-//                    } else {
-//                        LOG.warn("Failed to delete fmu folder: $file")
-//                    }
-//                }
-//            })
-//        }
-
-
         @Throws(IOException::class)
         private fun extractToTempFolder(url: URL): File {
 
@@ -335,21 +321,25 @@ class FmuFile {
             LOG.debug("Extracted fmu into location $dir")
         }
 
+        private fun <E: Fmi2Library> loadLibrary(fmuFile: FmuFile, modelDescription: ModelDescription, type: Class<E>): LibraryProvider<E> {
+            System.setProperty(LIBRARY_PATH, fmuFile.libraryFolderPath)
+            return LibraryProvider(Native.loadLibrary(fmuFile.getLibraryName(modelDescription), type))
+        }
+
+        private fun instantiate(fmuFile: FmuFile, modelDescription: ModelDescription, library: Fmi2Library, fmiType: Fmi2Type, visible: Boolean, loggingOn: Boolean) : Pointer {
+            LOG.debug("Calling instantiate: visible=$visible, loggingOn=$loggingOn")
+            return library.fmi2Instantiate(modelDescription.modelIdentifier,
+                    fmiType.code, modelDescription.guid,
+                    fmuFile.resourcesPath, Fmi2CallbackFunctions.ByValue(),
+                    FmiBoolean.convert(visible), FmiBoolean.convert(loggingOn) )
+                    ?: throw IllegalStateException("Unable to instantiate FMU. Returned pointer is null!")
+        }
+
+
     }
 
 }
 
 
-private fun <E: Fmi2Library> loadLibrary(fmuFile: FmuFile, modelDescription: ModelDescription, type: Class<E>): LibraryProvider<E> {
-    System.setProperty(LIBRARY_PATH, fmuFile.libraryFolderPath)
-    return LibraryProvider(Native.loadLibrary(fmuFile.getLibraryName(modelDescription), type))
-}
 
-private fun instantiate(fmuFile: FmuFile, modelDescription: ModelDescription, library: Fmi2Library, fmiType: Fmi2Type, visible: Boolean, loggingOn: Boolean) : Pointer {
-    return library.fmi2Instantiate(modelDescription.modelIdentifier,
-            fmiType.code, modelDescription.guid,
-            fmuFile.resourcesPath, Fmi2CallbackFunctions(),
-            FmiBoolean.convert(visible), FmiBoolean.convert(loggingOn) )
-            ?: throw AssertionError("Unable to instantiate FMU. Returned pointer is null!")
-}
 

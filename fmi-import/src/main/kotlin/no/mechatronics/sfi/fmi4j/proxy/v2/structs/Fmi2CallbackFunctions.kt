@@ -48,7 +48,7 @@ open class Fmi2CallbackFunctions : Structure() {
         val POINTERS : MutableMap<Pointer, Memory> = HashMap()
     }
 
-    //class ByValue : Fmi2CallbackFunctions(), Structure.ByValue
+    class ByValue : Fmi2CallbackFunctions(), Structure.ByValue
 
     @JvmField
     internal var logger: CallbackLogger = FmiCallbackLoggerImpl()
@@ -77,7 +77,7 @@ open class Fmi2CallbackFunctions : Structure() {
 
         override fun invoke(c: Pointer?, instanceName: String, status: Int, category: String, message: String, args: Pointer?) {
 
-            LOG.info("InstanceName: {}, status: {}, category: {}, message: {}", instanceName, FmiStatus.valueOf(status), category, message)
+            LOG.info("InstanceName: $instanceName, status: ${FmiStatus.valueOf(status)}, category: $category, message: $message")
         }
 
     }
