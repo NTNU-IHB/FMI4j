@@ -46,13 +46,25 @@ import java.io.IOException;
  */
 public class ModelExchangeTest_java {
 
-    private FmiSimulation fmu;
+    private FmuFile fmuFile;
 
     @Before
     public void setUp() throws IOException {
         String path = "../test/fmi2/me/win64/FMUSDK/2.0.4/vanDerPol/vanDerPol.fmu";
         final File file = new File(path);
         Assert.assertNotNull(file);
+
+        fmuFile = new FmuFile(file);
+
+    }
+
+    @After
+    public void tearDown() {
+        fmuFile.close();
+    }
+
+    @Test
+    public void test() {
 
         int i = 0;
         FirstOrderIntegrator integrator = null;
@@ -63,15 +75,8 @@ public class ModelExchangeTest_java {
             case 3: integrator = new ClassicalRungeKuttaIntegrator(1E-3); break;
         }
 
-        fmu = new FmuFile(file)
-                .asModelExchangeFmu()
-                .newInstance(integrator);
 
-    }
-
-
-    @Test
-    public void test() {
+        FmiSimulation fmu = fmuFile.asModelExchangeFmu().newInstance(integrator);
 
         Assert.assertEquals("2.0", fmu.getModelDescription().getFmiVersion());
 

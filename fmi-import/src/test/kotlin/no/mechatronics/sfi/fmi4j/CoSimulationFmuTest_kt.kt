@@ -4,23 +4,32 @@ package no.mechatronics.sfi.fmi4j
 import no.mechatronics.sfi.fmi4j.common.FmiStatus
 import no.mechatronics.sfi.fmi4j.fmu.AbstractFmu
 import no.mechatronics.sfi.fmi4j.fmu.FmuFile
-import org.junit.Assert
-import org.junit.Before
-import org.junit.Test
+import org.junit.*
 import java.io.File
 import java.util.concurrent.atomic.AtomicBoolean
 
 class CoSimulationFmuTest_kt {
 
-    private lateinit var fmuFile: FmuFile
+    companion object {
 
-    @Before
-    fun setUp() {
+        private var fmuFile: FmuFile? = null
 
-        val path = "../test/fmi2/cs/win64/20Sim/4.6.4.8004/ControlledTemperature/ControlledTemperature.fmu"
-        val file = File(path)
-        Assert.assertNotNull(file)
-        fmuFile = FmuFile(file)
+        @JvmStatic
+        @BeforeClass
+        fun setUp() {
+
+            val path = "../test/fmi2/cs/win64/20Sim/4.6.4.8004/ControlledTemperature/ControlledTemperature.fmu"
+            val file = File(path)
+            Assert.assertNotNull(file)
+            fmuFile = FmuFile(file)
+
+        }
+
+        @JvmStatic
+        @AfterClass
+        fun tearDown() {
+            fmuFile?.close()
+        }
 
     }
 
@@ -28,7 +37,7 @@ class CoSimulationFmuTest_kt {
     @Throws(Exception::class)
     fun test() {
 
-        fmuFile.asCoSimulationFmu().newInstance(loggingOn = true).use {fmu ->
+        fmuFile!!.asCoSimulationFmu().newInstance(loggingOn = true).use {fmu ->
 
             Assert.assertEquals("2.0", fmu.modelDescription.fmiVersion)
 
@@ -83,7 +92,7 @@ class CoSimulationFmuTest_kt {
 
             }
 
-            fmuFile.asCoSimulationFmu().newInstance().use { fmu2 ->
+            fmuFile!!.asCoSimulationFmu().newInstance().use { fmu2 ->
                 fmu2.init()
                 println(fmu2.variableAccessor.readReal(temperatureRoom.valueReference))
             }

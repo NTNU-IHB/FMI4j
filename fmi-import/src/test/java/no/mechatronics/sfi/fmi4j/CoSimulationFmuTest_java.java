@@ -30,9 +30,7 @@ import no.mechatronics.sfi.fmi4j.fmu.AbstractFmu;
 import no.mechatronics.sfi.fmi4j.fmu.CoSimulationFmu;
 import no.mechatronics.sfi.fmi4j.fmu.FmuFile;
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.RealVariable;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -43,16 +41,21 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class CoSimulationFmuTest_java {
 
-    private FmuFile fmuFile;
+    private static FmuFile fmuFile;
 
-    @Before
-    public void setUp() throws IOException {
+    @BeforeClass
+    public static void setUp() throws IOException {
 
         String path = "../test/fmi2/cs/win64/20Sim/4.6.4.8004/ControlledTemperature/ControlledTemperature.fmu";
         final File file = new File(path);
         Assert.assertNotNull(file);
         fmuFile = new FmuFile(file);
 
+    }
+
+    @AfterClass
+    public static void tearDown() throws IOException {
+        fmuFile.close();
     }
 
     @Test

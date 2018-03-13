@@ -48,6 +48,7 @@ import org.apache.commons.io.IOUtils
 import org.apache.commons.math3.ode.FirstOrderIntegrator
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import java.io.Closeable
 import java.nio.charset.Charset
 import java.nio.file.Files
 import java.util.zip.ZipEntry
@@ -71,11 +72,13 @@ private const val MODEL_DESC = "modelDescription.xml"
  *
  * @author Lars Ivar Hatledal
  */
-class FmuFile {
+class FmuFile: Closeable {
 
     private val fmuFile: File
     private val instances = mutableListOf<AbstractFmu<*, *>>()
     private val libraries = mutableListOf<LibraryProvider<*>>()
+
+    private var isClosed = false
 
     @Throws(IOException::class)
     constructor(file: File) {
@@ -87,9 +90,8 @@ class FmuFile {
         this.fmuFile = extractToTempFolder(url)
     }
 
-    init {
-
-        Runtime.getRuntime().addShutdownHook(Thread {
+    override fun close() {
+        if (!isClosed) {
             instances.forEach {
                 if (!it.isTerminated) {
                     it.terminate(true)
@@ -109,8 +111,11 @@ class FmuFile {
             } catch (ex: AssertionError) {
                 //suppress strange error sometimes saying file is not a directory..
             }
-        })
+        }
+    }
 
+    init {
+        Runtime.getRuntime().addShutdownHook(Thread { close() })
     }
 
     /**
