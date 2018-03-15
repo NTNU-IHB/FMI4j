@@ -29,7 +29,7 @@ class SimulationOptions(
 ) {
 
     val me: Boolean = cmd.hasOption(ME)
-    val fmu: FmiSimulation = FmuFile(File(cmd.getOptionValue(FMU))).let {
+    val fmu: FmiSimulation = FmuFile.from(File(cmd.getOptionValue(FMU))).let {
         if (cmd.hasOption(ME)) {
             it.asModelExchangeFmu().newInstance(EulerIntegrator(1E-3))
         } else {

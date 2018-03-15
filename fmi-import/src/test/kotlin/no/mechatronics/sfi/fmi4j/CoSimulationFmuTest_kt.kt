@@ -12,7 +12,7 @@ class CoSimulationFmuTest_kt {
 
     companion object {
 
-        private var fmuFile: FmuFile? = null
+        private lateinit var fmuFile: FmuFile
 
         @JvmStatic
         @BeforeClass
@@ -21,14 +21,14 @@ class CoSimulationFmuTest_kt {
             val path = "../test/fmi2/cs/win64/20Sim/4.6.4.8004/ControlledTemperature/ControlledTemperature.fmu"
             val file = File(path)
             Assert.assertNotNull(file)
-            fmuFile = FmuFile(file)
+            fmuFile = FmuFile.from(file)
 
         }
 
         @JvmStatic
         @AfterClass
         fun tearDown() {
-            fmuFile?.close()
+            fmuFile.close()
         }
 
     }
@@ -37,7 +37,7 @@ class CoSimulationFmuTest_kt {
     @Throws(Exception::class)
     fun test() {
 
-        fmuFile!!.asCoSimulationFmu().newInstance(loggingOn = true).use {fmu ->
+        fmuFile.asCoSimulationFmu().newInstance(loggingOn = true).use {fmu ->
 
             Assert.assertEquals("2.0", fmu.modelDescription.fmiVersion)
 
@@ -92,7 +92,7 @@ class CoSimulationFmuTest_kt {
 
             }
 
-            fmuFile!!.asCoSimulationFmu().newInstance().use { fmu2 ->
+            fmuFile.asCoSimulationFmu().newInstance().use { fmu2 ->
                 fmu2.init()
                 println(fmu2.variableAccessor.readReal(temperatureRoom.valueReference))
             }

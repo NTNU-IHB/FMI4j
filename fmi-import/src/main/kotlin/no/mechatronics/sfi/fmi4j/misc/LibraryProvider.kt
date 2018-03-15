@@ -34,14 +34,18 @@ import java.util.function.Supplier
  * @author Lars Ivar Hatledal
  */
 class LibraryProvider<E: Fmi2Library>(
-        private var library: E?
+       private val librarySupplier: () -> E
 ) : Supplier<E> {
 
-    init {
-        LOG.debug("Library loaded")
-    }
+    private var library: E? = null
 
-    override fun get() : E = library!!
+    override fun get() : E {
+        if (library == null) {
+            library = librarySupplier.invoke()
+            LOG.debug("Library loaded")
+        }
+        return library!!
+    }
 
     internal fun disposeLibrary() {
         library = null

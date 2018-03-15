@@ -54,7 +54,7 @@ public class ModelExchangeTest_java {
         final File file = new File(path);
         Assert.assertNotNull(file);
 
-        fmuFile = new FmuFile(file);
+        fmuFile = FmuFile.from(file);
 
     }
 

@@ -49,7 +49,7 @@ public class CoSimulationFmuTest_java {
         String path = "../test/fmi2/cs/win64/20Sim/4.6.4.8004/ControlledTemperature/ControlledTemperature.fmu";
         final File file = new File(path);
         Assert.assertNotNull(file);
-        fmuFile = new FmuFile(file);
+        fmuFile = FmuFile.from(file);
 
     }
 
