@@ -20,6 +20,10 @@ if (snapshot) {
     }
 }
 
+configurations.all {
+    resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+}
+
 dependencies {
 
     api group: 'org.apache.commons', name: 'commons-math3', version: '3.6.1'

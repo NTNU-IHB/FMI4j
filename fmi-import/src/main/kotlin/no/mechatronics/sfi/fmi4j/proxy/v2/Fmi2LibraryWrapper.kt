@@ -145,7 +145,7 @@ abstract class Fmi2LibraryWrapper<out E: Fmi2Library> (
                 updateStatus(library.fmi2Terminate(c))
             } catch (ex: Error) {
                 LOG.error("Error caught on fmi2Terminate: ${ex.javaClass.simpleName}")
-                updateStatus(FmiStatus.Fatal)
+                updateStatus(FmiStatus.OK)
             }  finally {
                 isTerminated = true
                 if (freeInstance) {
