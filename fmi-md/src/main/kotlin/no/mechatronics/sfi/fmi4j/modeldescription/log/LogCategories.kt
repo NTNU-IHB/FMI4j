@@ -61,4 +61,8 @@ class LogCategoriesImpl : LogCategories, Serializable {
     override fun contains(category: String)
             = categories.map { it.name }.contains(category)
 
+    override fun toString(): String {
+        return "LogCategoriesImpl(size=$size, categories=$categories)"
+    }
+
 }

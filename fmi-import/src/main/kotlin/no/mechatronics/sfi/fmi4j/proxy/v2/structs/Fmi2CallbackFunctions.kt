@@ -29,13 +29,12 @@ import com.sun.jna.Callback
 import com.sun.jna.Memory
 import com.sun.jna.Pointer
 import com.sun.jna.Structure
-
-import java.util.Arrays
-
+import no.mechatronics.sfi.fmi4j.common.FmiStatus
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-
-import no.mechatronics.sfi.fmi4j.common.FmiStatus
+import java.util.Arrays
+import kotlin.collections.HashMap
+import kotlin.collections.set
 
 /**
  *
@@ -104,15 +103,15 @@ open class Fmi2CallbackFunctions : Structure() {
          */
         override fun invoke(nobj: Int, size: Int): Pointer {
 
-            val bytes = (if (nobj <= 0) 1 else nobj) * size + 4;
-            val memory = Memory(bytes.toLong())
-            val aligned = memory.align(4)
-            memory.clear()
+            val bytes = (if (nobj <= 0) 1 else nobj) * size + 4
+            return Memory(bytes.toLong()).also { memory ->
+                val aligned = memory.align(4)
+                memory.clear()
 
-            val pointer: Pointer = aligned.share(0)
-            POINTERS[pointer] = memory
-
-            return memory
+                aligned.share(0).also { pointer ->
+                    POINTERS[pointer] = memory
+                }
+            }
         }
 
     }
@@ -135,14 +134,8 @@ open class Fmi2CallbackFunctions : Structure() {
 
 
         override fun invoke(pointer: Pointer) {
-
-           // LOG.debug("CallbackFreeMemoryImpl")
-
-           POINTERS.remove(pointer)?.apply {
-               System.gc()
-              // Native.free(Pointer.nativeValue(this))
-           }
-
+            LOG.trace("CallbackFreeMemory")
+            POINTERS.remove(pointer)
         }
 
     }
@@ -151,17 +144,17 @@ open class Fmi2CallbackFunctions : Structure() {
     interface StepFinished : Callback {
 
         /**
-         * Optional call back function to signal if the computation of a communication step of a cosimulation
+         * Optional call back function to signal if the computation of a communication step of a co-simulation
          * slave is finished. A null pointer can be provided. In this case the master must
          * use fmiGetStatus(..) to query the status of fmi2DoStep. If a pointer to a function
          * is provided, it must be called by the FMU after a completed communication step.
          */
-        fun invoke(c: Pointer, status: Int)
+        fun invoke(c: Pointer?, status: Int)
     }
 
     inner class StepFinishedImpl : StepFinished {
 
-        override fun invoke(c: Pointer, status: Int) {
+        override fun invoke(c: Pointer?, status: Int) {
             LOG.debug("StepFinished")
         }
 

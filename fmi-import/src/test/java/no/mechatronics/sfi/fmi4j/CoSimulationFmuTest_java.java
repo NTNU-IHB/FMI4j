@@ -27,10 +27,14 @@ package no.mechatronics.sfi.fmi4j;
 
 import no.mechatronics.sfi.fmi4j.common.FmiStatus;
 import no.mechatronics.sfi.fmi4j.fmu.AbstractFmu;
-import no.mechatronics.sfi.fmi4j.fmu.CoSimulationFmu;
 import no.mechatronics.sfi.fmi4j.fmu.FmuFile;
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.RealVariable;
-import org.junit.*;
+import org.junit.AfterClass;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -40,6 +44,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @author Lars Ivar Hatledal
  */
 public class CoSimulationFmuTest_java {
+
+    private final static Logger LOG = LoggerFactory.getLogger(CoSimulationFmuTest_java.class);
 
     private static FmuFile fmuFile;
 
@@ -54,7 +60,7 @@ public class CoSimulationFmuTest_java {
     }
 
     @AfterClass
-    public static void tearDown() throws IOException {
+    public static void tearDown() {
         fmuFile.close();
     }
 
@@ -65,18 +71,20 @@ public class CoSimulationFmuTest_java {
 
             Assert.assertEquals("2.0", fmu.getModelDescription().getFmiVersion());
 
-            final double startTemp = fmu.getVariableByName("HeatCapacity1.T0").asRealVariable().getStart();
-            Assert.assertNotNull(startTemp);
+            final double startTemp = fmu.getVariableByName("HeatCapacity1.T0")
+                    .asRealVariable().getStart();
             Assert.assertEquals(298.0, startTemp,0);
 
-            Assert.assertTrue(fmu.init());
+            Assert.assertTrue(fmu.init() == FmiStatus.OK);
             Assert.assertTrue(fmu.getLastStatus() == FmiStatus.OK);
 
-            final RealVariable heatCapacity1_C = fmu.getVariableByName("HeatCapacity1.C").asRealVariable();
+            final RealVariable heatCapacity1_C
+                    = fmu.getVariableByName("HeatCapacity1.C").asRealVariable();
             Assert.assertEquals(0.1, heatCapacity1_C.getStart(), 0);
-            System.out.println(heatCapacity1_C.read().getValue());
+            LOG.info("heatCapacity1_C={}", heatCapacity1_C.read().getValue());
 
-            final RealVariable temperature_room = fmu.getVariableByName("Temperature_Room").asRealVariable();
+            final RealVariable temperature_room
+                    = fmu.getVariableByName("Temperature_Room").asRealVariable();
 
             double first1 = Double.NaN;
 
@@ -89,7 +97,7 @@ public class CoSimulationFmuTest_java {
                 if (Double.isNaN(first1)) {
                     first1 = value;
                 }
-                System.out.println(value);
+                LOG.info("temperature_room={}", value);
 
                 Assert.assertEquals(value, fmu.getVariableAccessor().readReal("Temperature_Room").getValue(), 0);
 
@@ -108,13 +116,15 @@ public class CoSimulationFmuTest_java {
                 if (first.getAndSet(false)) {
                     Assert.assertEquals(first1, value, 0);
                 }
-                System.out.println(value);
+                LOG.info("temperature_room={}", value);
 
             }
 
             try (FmiSimulation fmu2 = fmuFile.asCoSimulationFmu().newInstance()) {
-                if (fmu2.init()) {
-                    System.out.println(fmu2.getVariableAccessor().readReal(temperature_room.getValueReference()));
+                if (fmu2.init() == FmiStatus.OK) {
+                    double value = fmu2.getVariableAccessor()
+                            .readReal(temperature_room.getValueReference()).getValue();
+                    LOG.info("temperature_room={}", value);
                 }
             }
 

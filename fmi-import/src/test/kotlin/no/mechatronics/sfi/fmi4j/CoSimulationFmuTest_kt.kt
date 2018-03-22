@@ -4,13 +4,20 @@ package no.mechatronics.sfi.fmi4j
 import no.mechatronics.sfi.fmi4j.common.FmiStatus
 import no.mechatronics.sfi.fmi4j.fmu.AbstractFmu
 import no.mechatronics.sfi.fmi4j.fmu.FmuFile
-import org.junit.*
+import org.junit.AfterClass
+import org.junit.Assert
+import org.junit.BeforeClass
+import org.junit.Test
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import java.io.File
 import java.util.concurrent.atomic.AtomicBoolean
 
 class CoSimulationFmuTest_kt {
 
     companion object {
+
+        val LOG: Logger = LoggerFactory.getLogger(CoSimulationFmuTest_kt::class.java)
 
         private lateinit var fmuFile: FmuFile
 
@@ -45,7 +52,7 @@ class CoSimulationFmuTest_kt {
             Assert.assertNotNull(startTemp)
             Assert.assertEquals(298.0, startTemp!!, 0.0)
 
-            Assert.assertTrue(fmu.init())
+            Assert.assertTrue(fmu.init() == FmiStatus.OK)
             Assert.assertTrue(fmu.lastStatus === FmiStatus.OK)
 
             val heatCapacity1_C = fmu.getVariableByName("HeatCapacity1.C").asRealVariable()
@@ -68,7 +75,7 @@ class CoSimulationFmuTest_kt {
                 if (java.lang.Double.isNaN(first1)) {
                     first1 = value
                 }
-                println(value)
+                LOG.info("Temperature_Room=$value")
 
             }
 
@@ -88,13 +95,13 @@ class CoSimulationFmuTest_kt {
                 if (first.getAndSet(false)) {
                     Assert.assertEquals(first1, value, 0.0)
                 }
-                println(value)
+                LOG.info("Temperature_Room=$value")
 
             }
 
             fmuFile.asCoSimulationFmu().newInstance().use { fmu2 ->
-                fmu2.init()
-                println(fmu2.variableAccessor.readReal(temperatureRoom.valueReference))
+                Assert.assertTrue(fmu2.init() == FmiStatus.OK)
+                LOG.info("Temperature_Room=${fmu2.variableAccessor.readReal(temperatureRoom.valueReference)}")
             }
 
         }

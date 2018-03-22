@@ -27,15 +27,15 @@ package no.mechatronics.sfi.fmi4j;
 import no.mechatronics.sfi.fmi4j.common.FmiStatus;
 import no.mechatronics.sfi.fmi4j.common.FmuRead;
 import no.mechatronics.sfi.fmi4j.fmu.FmuFile;
-import no.mechatronics.sfi.fmi4j.modeldescription.variables.*;
+import no.mechatronics.sfi.fmi4j.modeldescription.variables.RealVariable;
 import org.apache.commons.math3.ode.FirstOrderIntegrator;
 import org.apache.commons.math3.ode.nonstiff.AdamsBashforthIntegrator;
 import org.apache.commons.math3.ode.nonstiff.ClassicalRungeKuttaIntegrator;
 import org.apache.commons.math3.ode.nonstiff.DormandPrince853Integrator;
 import org.apache.commons.math3.ode.nonstiff.EulerIntegrator;
-import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.File;
@@ -46,10 +46,10 @@ import java.io.IOException;
  */
 public class ModelExchangeTest_java {
 
-    private FmuFile fmuFile;
+    private static FmuFile fmuFile;
 
-    @Before
-    public void setUp() throws IOException {
+    @BeforeClass
+    public static void setUp() throws IOException {
         String path = "../test/fmi2/me/win64/FMUSDK/2.0.4/vanDerPol/vanDerPol.fmu";
         final File file = new File(path);
         Assert.assertNotNull(file);
@@ -58,9 +58,14 @@ public class ModelExchangeTest_java {
 
     }
 
-    @After
-    public void tearDown() {
+    @AfterClass
+    public static void tearDown() {
         fmuFile.close();
+    }
+
+    @Test
+    public void testVersion() {
+        Assert.assertEquals("2.0", fmuFile.getModelDescription().getFmiVersion());
     }
 
     @Test
@@ -76,14 +81,13 @@ public class ModelExchangeTest_java {
         }
 
 
-        FmiSimulation fmu = fmuFile.asModelExchangeFmu().newInstance(integrator);
-
-        Assert.assertEquals("2.0", fmu.getModelDescription().getFmiVersion());
+        FmiSimulation fmu = fmuFile.asModelExchangeFmu()
+                .newInstance(integrator);
 
         RealVariable x0 = fmu.getModelVariables()
                 .getByName("x0").asRealVariable();
 
-        Assert.assertTrue(fmu.init());
+        Assert.assertTrue(fmu.init() == FmiStatus.OK);
 
         double macroStep = 1.0 / 10;
         while (fmu.getCurrentTime() < 1) {

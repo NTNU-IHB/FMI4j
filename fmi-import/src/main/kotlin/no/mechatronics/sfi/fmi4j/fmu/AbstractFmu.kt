@@ -25,8 +25,9 @@
 package no.mechatronics.sfi.fmi4j.fmu
 
 import no.mechatronics.sfi.fmi4j.common.FmiStatus
-import no.mechatronics.sfi.fmi4j.misc.*
-import no.mechatronics.sfi.fmi4j.modeldescription.*
+import no.mechatronics.sfi.fmi4j.misc.DirectionalDerivatives
+import no.mechatronics.sfi.fmi4j.misc.FmuState
+import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescription
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.*
 import no.mechatronics.sfi.fmi4j.proxy.v2.Fmi2Library
 import no.mechatronics.sfi.fmi4j.proxy.v2.Fmi2LibraryWrapper
@@ -110,48 +111,72 @@ abstract class AbstractFmu<out E: ModelDescription, out T: Fmi2LibraryWrapper<*>
 
     fun init() = init(0.0)
     fun init(start :Double) = init(start, -1.0)
-    open fun init(start: Double, stop: Double): Boolean {
+    open fun init(start: Double, stop: Double): FmiStatus {
 
         if (!isInitialized) {
 
-            assignStartValues()
+            if (start < 0) {
+                throw IllegalArgumentException("Start must be a positive value")
+            }
+
+            assignStartValues {
+                it.variability != Variability.CONSTANT &&
+                        it.initial == Initial.EXACT || it.initial == Initial.APPROX
+            }
 
             val stopDefined = stop > start
-            wrapper.setupExperiment(false, 1E-4, start, stopDefined, if (stopDefined) stop else Double.MAX_VALUE)
-
-            wrapper.enterInitializationMode()
-            if (lastStatus != FmiStatus.OK) {
-                return false
+            val stop = if (stopDefined) stop else Double.MAX_VALUE
+            var status = wrapper.setupExperiment(false, 1E-4,
+                    start, stopDefined, stop)
+            if (status != FmiStatus.OK) {
+                return lastStatus
             }
-            wrapper.exitInitializationMode()
+            status = wrapper.enterInitializationMode()
+            LOG.debug("Called enterInitializationMode with status $status")
+            if (status != FmiStatus.OK) {
+                return lastStatus
+            }
+
+            assignStartValues {
+                it.variability != Variability.CONSTANT &&
+                        (it.initial != Initial.EXACT || it.causality == Causality.INPUT)
+            }
+
+            status = wrapper.exitInitializationMode()
+            LOG.debug("Called exitInitializationMode with status $status")
+            if (status != FmiStatus.OK) {
+                return lastStatus
+            }
 
             isInitialized = true
 
-            return lastStatus == FmiStatus.OK
+            return FmiStatus.OK
 
         } else {
             LOG.warn("Trying to call init, but FMU has already been initialized, and has not been reset!")
-            return false
+            return FmiStatus.Discard
         }
 
     }
 
     /**
      * Terminates the FMU
-     * @see Fmi2Library.fmi2Terminate
+     *
      * @param freeInstance true if you are completely finished with the fmu
+     *
+     * @see Fmi2Library.fmi2Terminate
+     * @see Fmi2Library.fmi2FreeInstance
      */
     @JvmOverloads
-    open fun terminate(freeInstance:Boolean=true) : Boolean {
-        if (wrapper.terminate()) {
-            LOG.debug("FMU '${modelDescription.modelName}' terminated! #${hashCode()}")
-            return true
+    open fun terminate(freeInstance: Boolean = true): FmiStatus {
+        return wrapper.terminate().also { status ->
+            LOG.debug("FMU '${modelDescription.modelName}' terminated with status $status! #${hashCode()}")
         }
-        return false
     }
 
     /**
      * Same as calling terminate(true), needed in order to implement Closable
+     * @see Closeable
      */
     override fun close() {
         terminate(true)
@@ -160,8 +185,9 @@ abstract class AbstractFmu<out E: ModelDescription, out T: Fmi2LibraryWrapper<*>
     /**
      * @see Fmi2Library.fmi2Reset
      */
-    fun reset(): Boolean
-            = reset(true)
+    fun reset(): FmiStatus {
+        return reset(true)
+    }
 
     /**
      *
@@ -171,16 +197,17 @@ abstract class AbstractFmu<out E: ModelDescription, out T: Fmi2LibraryWrapper<*>
      *
      * @see Fmi2Library.fmi2Reset
      */
-    fun reset(requireReinit: Boolean) : Boolean {
-        if (wrapper.reset() == FmiStatus.OK) {
+    fun reset(requireReinit: Boolean): FmiStatus {
+        return wrapper.reset().also { status ->
             if (requireReinit) {
                 isInitialized = false
             }
-            return true
         }
-        return false
     }
 
+    /**
+     * @see Fmi2Library.fmi2GetDirectionalDerivative
+     */
     fun getDirectionalDerivative(d: DirectionalDerivatives): FmiStatus {
         return if (!modelDescription.providesDirectionalDerivative) {
             LOG.warn("Method call not allowed, FMU does not provide directional derivatives!")
@@ -190,6 +217,9 @@ abstract class AbstractFmu<out E: ModelDescription, out T: Fmi2LibraryWrapper<*>
         }
     }
 
+    /**
+     * @see Fmi2Library.fmi2GetFMUstate
+     */
     @JvmOverloads
     fun getFMUState(state: FmuState = FmuState()): FmuState {
         if (!modelDescription.canGetAndSetFMUstate) {
@@ -198,6 +228,9 @@ abstract class AbstractFmu<out E: ModelDescription, out T: Fmi2LibraryWrapper<*>
         return wrapper.getFMUState(state)
     }
 
+    /**
+     * @see Fmi2Library.fmi2SetFMUstate
+     */
     fun setFMUState(fmuState: FmuState): FmiStatus {
         if (!modelDescription.canGetAndSetFMUstate) {
             throw UnsupportedOperationException("Method call not allowed, FMU cannot get and set FMU state!")
@@ -205,6 +238,9 @@ abstract class AbstractFmu<out E: ModelDescription, out T: Fmi2LibraryWrapper<*>
         return wrapper.setFMUState(fmuState)
     }
 
+    /**
+     * @see Fmi2Library.fmi2FreeFMUstate
+     */
     fun freeFMUState(fmuState: FmuState): FmiStatus {
         if (!modelDescription.canGetAndSetFMUstate) {
             throw UnsupportedOperationException("Method call not allowed, FMU cannot get and set FMU state!")
@@ -212,6 +248,9 @@ abstract class AbstractFmu<out E: ModelDescription, out T: Fmi2LibraryWrapper<*>
         return wrapper.freeFMUState(fmuState)
     }
 
+    /**
+     * @see Fmi2Library.fmi2SerializedFMUstateSize
+     */
     fun serializedFMUStateSize(fmuState: FmuState): Int {
         if (!modelDescription.canSerializeFMUstate) {
             throw UnsupportedOperationException("Method call not allowed, FMU cannot serialize FMU state!")
@@ -219,6 +258,9 @@ abstract class AbstractFmu<out E: ModelDescription, out T: Fmi2LibraryWrapper<*>
         return wrapper.serializedFMUStateSize(fmuState)
     }
 
+    /**
+     * @see Fmi2Library.fmi2SerializeFMUstate
+     */
     fun serializeFMUState(fmuState: FmuState):ByteArray {
         if (!modelDescription.canSerializeFMUstate) {
             throw UnsupportedOperationException("Method call not allowed, FMU cannot serialize FMU state!")
@@ -226,22 +268,14 @@ abstract class AbstractFmu<out E: ModelDescription, out T: Fmi2LibraryWrapper<*>
         return wrapper.serializeFMUState(fmuState)
     }
 
+    /**
+     * @see Fmi2Library.fmi2DeSerializeFMUstate
+     */
     fun deSerializeFMUState(serializedState: ByteArray): FmuState {
         if (!modelDescription.canSerializeFMUstate) {
             throw UnsupportedOperationException("Method call not allowed, FMU cannot serialize FMU state!")
         }
         return wrapper.deSerializeFMUState(serializedState)
-    }
-
-    private fun assignStartValues() {
-        modelVariables.forEach { variable ->
-            when(variable) {
-                is IntegerVariable -> variable.start?.also { variable.write(it) }
-                is RealVariable -> variable.start?.also {  variable.write(it) }
-                is StringVariable -> variable.start?.also {  variable.write(it) }
-                is BooleanVariable -> variable.start?.also {  variable.write(it) }
-            }
-        }
     }
 
     fun getIntVector(name: String): IntegerVariableVector {
@@ -282,6 +316,21 @@ abstract class AbstractFmu<out E: ModelDescription, out T: Fmi2LibraryWrapper<*>
             throw IllegalArgumentException("$name does not match a vector")
         }
         return BooleanVariableVector(variableAccessor, variables)
+    }
+
+    private fun assignStartValues(predicate: (TypedScalarVariable<*>) -> Boolean) {
+        modelVariables.filter {
+            it.start != null && predicate.invoke(it)
+        }.forEach { variable ->
+
+            when (variable) {
+                is IntegerVariable -> variable.write(variable.start!!)
+                is RealVariable -> variable.write(variable.start!!)
+                is StringVariable -> variable.write(variable.start!!)
+                is BooleanVariable -> variable.write(variable.start!!)
+            }
+
+        }
     }
 
 }

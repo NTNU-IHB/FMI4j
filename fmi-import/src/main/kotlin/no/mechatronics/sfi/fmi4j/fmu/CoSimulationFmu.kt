@@ -51,7 +51,7 @@ class CoSimulationFmu internal constructor(
     override val modelDescription: CoSimulationModelDescription
         get() = fmuFile.modelDescription.asCoSimulationModelDescription()
 
-    override fun init(start: Double, stop: Double): Boolean {
+    override fun init(start: Double, stop: Double): FmiStatus {
         return super.init(start, stop).also {
             currentTime = start
         }
@@ -60,24 +60,23 @@ class CoSimulationFmu internal constructor(
     /**
      * @see CoSimulationLibraryWrapper.doStep
      */
-    override fun doStep(dt: Double) : Boolean {
+    override fun doStep(stepSize: Double): FmiStatus {
 
         if (!isInitialized) {
             LOG.warn("Calling doStep without having called init(), " +
                     "remember that you have to call init() again after a call to reset()!")
-            return false
+            return FmiStatus.Discard
         }
 
-        val status = wrapper.doStep(currentTime, dt, true)
-        currentTime += dt
+        return wrapper.doStep(currentTime, stepSize, true).also {
+            currentTime += stepSize
+        }
 
-        return status == FmiStatus.OK
     }
 
-    override fun terminate(): Boolean {
+    override fun terminate(): FmiStatus {
         return super.terminate(true)
     }
-
 
     /**
      * @see CoSimulationLibraryWrapper.cancelStep

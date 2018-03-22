@@ -24,32 +24,22 @@
 
 package no.mechatronics.sfi.fmi4j.modeldescription
 
+import no.mechatronics.sfi.fmi4j.modeldescription.cs.CoSimulationDataImpl
 import no.mechatronics.sfi.fmi4j.modeldescription.cs.CoSimulationModelDescription
 import no.mechatronics.sfi.fmi4j.modeldescription.cs.CoSimulationModelDescriptionImpl
-import no.mechatronics.sfi.fmi4j.modeldescription.cs.CoSimulationDataImpl
-import no.mechatronics.sfi.fmi4j.modeldescription.log.Category
-import no.mechatronics.sfi.fmi4j.modeldescription.log.CategoryImpl
 import no.mechatronics.sfi.fmi4j.modeldescription.log.LogCategories
 import no.mechatronics.sfi.fmi4j.modeldescription.log.LogCategoriesImpl
+import no.mechatronics.sfi.fmi4j.modeldescription.me.ModelExchangeDataImpl
 import no.mechatronics.sfi.fmi4j.modeldescription.me.ModelExchangeModelDescription
 import no.mechatronics.sfi.fmi4j.modeldescription.me.ModelExchangeModelDescriptionImpl
-import no.mechatronics.sfi.fmi4j.modeldescription.me.ModelExchangeDataImpl
 import no.mechatronics.sfi.fmi4j.modeldescription.misc.DefaultExperiment
-import no.mechatronics.sfi.fmi4j.modeldescription.misc.DefaultExperimentImpl
 import no.mechatronics.sfi.fmi4j.modeldescription.misc.SourceFile
 import no.mechatronics.sfi.fmi4j.modeldescription.misc.VariableNamingConvention
 import no.mechatronics.sfi.fmi4j.modeldescription.structure.ModelStructure
 import no.mechatronics.sfi.fmi4j.modeldescription.structure.ModelStructureImpl
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.ModelVariables
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.ModelVariablesImpl
-import org.apache.commons.io.IOUtils
-import java.io.*
-import java.lang.IllegalArgumentException
-import java.net.URL
-import java.nio.charset.Charset
-import java.util.zip.ZipEntry
-import java.util.zip.ZipInputStream
-import javax.xml.bind.JAXB
+import java.io.Serializable
 import javax.xml.bind.annotation.*
 
 
@@ -321,7 +311,7 @@ class ModelDescriptionImpl : SimpleModelDescription, ModelDescriptionProvider, S
     override val generationDateAndTime: String? = null
 
     @XmlElement(name = "DefaultExperiment")
-    override val defaultExperiment: DefaultExperimentImpl? = null
+    override val defaultExperiment: DefaultExperiment? = null
 
     /**
      * The (fixed) number of event indicators for an FMU based on FMI for
@@ -391,7 +381,7 @@ class ModelDescriptionImpl : SimpleModelDescription, ModelDescriptionProvider, S
                 variableNamingConvention?.let { "variableNamingConvention=$variableNamingConvention" },
                 generationDateAndTime?.let { "generationDateAndTime=$generationDateAndTime" },
                 defaultExperiment?.let { "defaultExperiment=$defaultExperiment" },
-                numberOfEventIndicators?.let { "numberOfEventIndicators=$numberOfEventIndicators" }
+                numberOfEventIndicators.let { "numberOfEventIndicators=$numberOfEventIndicators" }
         ).joinToString ("\n")
 
 

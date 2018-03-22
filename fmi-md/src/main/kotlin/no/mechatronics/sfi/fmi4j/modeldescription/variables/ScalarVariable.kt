@@ -65,12 +65,12 @@ interface ScalarVariable {
      * Enumeration it is required, because the Enumeration items are defined in
      * TypeDefinitions / SimpleType.
      */
-    val declaredType: String
+    val declaredType: String?
 
     /**
      * An optional description string describing the meaning of the variable
      */
-    val description: String
+    val description: String?
 
     /**
      * @see Causality
@@ -97,13 +97,13 @@ interface ScalarVariable {
 class ScalarVariableImpl internal constructor() : ScalarVariable, Serializable {
 
     @XmlAttribute
-    override val name: String = ""
+    override lateinit var name: String
 
     @XmlAttribute
-    override val declaredType: String = ""
+    override val declaredType: String? = null
 
     @XmlAttribute
-    override val description: String = ""
+    override val description: String? = null
 
     @XmlAttribute
     override val causality: Causality? = null

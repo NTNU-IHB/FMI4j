@@ -56,7 +56,7 @@ abstract class Fmi2LibraryWrapper<out E: Fmi2Library> (
     private var instanceFreed = false
 
     init {
-        Runtime.getRuntime().addShutdownHook(Thread{
+        Runtime.getRuntime().addShutdownHook(Thread {
             if (!isTerminated) {
                 terminate()
             }
@@ -82,28 +82,28 @@ abstract class Fmi2LibraryWrapper<out E: Fmi2Library> (
         get() = libraryProvider.get()
 
 
-    protected fun updateStatus(status: Int): FmiStatus
-            = updateStatus(FmiStatus.valueOf(status))
+    protected fun updateStatus(status: Int): FmiStatus {
+        return updateStatus(FmiStatus.valueOf(status))
+    }
 
     protected fun updateStatus(status: FmiStatus) : FmiStatus {
-        lastStatus = status
-        return status
+        return status.also { lastStatus = it }
     }
 
     /**
-     * @see Fmi2library.fmi2GetTypesPlatform
+     * @see Fmi2Library.fmi2GetTypesPlatform
      */
     val typesPlatform: String = library.fmi2GetTypesPlatform()
 
     /**
      *
-     * @see Fmi2library.fmi2GetVersion()
+     * @see Fmi2Library.fmi2GetVersion()
      */
     val version: String = library.fmi2GetVersion()
 
 
     /**
-     * @see Fmi2library.fmi2SetDebugLogging
+     * @see Fmi2Library.fmi2SetDebugLogging
      */
     fun setDebugLogging(loggingOn: Boolean, nCategories: Int, categories: StringArray) : FmiStatus {
         return updateStatus(library.fmi2SetDebugLogging(c,
@@ -120,32 +120,32 @@ abstract class Fmi2LibraryWrapper<out E: Fmi2Library> (
     }
 
     /**
-     * @see Fmi2library.fmi2EnterInitializationMode
+     * @see Fmi2Library.fmi2EnterInitializationMode
      */
     fun enterInitializationMode() : FmiStatus {
         return updateStatus(library.fmi2EnterInitializationMode(c))
     }
 
     /**
-     * @see Fmi2library.fmi2ExitInitializationMode
+     * @see Fmi2Library.fmi2ExitInitializationMode
      */
     fun exitInitializationMode() : FmiStatus {
         return updateStatus(library.fmi2ExitInitializationMode(c))
     }
 
     /**
-     * @see Fmi2library.fmi2Terminate
+     * @see Fmi2Library.fmi2Terminate
      */
     @JvmOverloads
-    fun terminate(freeInstance:Boolean=true): Boolean {
+    fun terminate(freeInstance: Boolean = true): FmiStatus {
 
         if (!isTerminated) {
 
-            try {
+            return try {
                 updateStatus(library.fmi2Terminate(c))
             } catch (ex: Error) {
-                updateStatus(FmiStatus.OK)
                 LOG.error("Error caught on fmi2Terminate: ${ex.javaClass.simpleName}")
+                updateStatus(FmiStatus.Fatal)
             }  finally {
                 isTerminated = true
                 if (freeInstance) {
@@ -153,10 +153,9 @@ abstract class Fmi2LibraryWrapper<out E: Fmi2Library> (
                 }
             }
 
-            return true
         } else {
             LOG.warn("Terminated has already been called..")
-            return false
+            return FmiStatus.Discard
         }
     }
 
@@ -180,12 +179,12 @@ abstract class Fmi2LibraryWrapper<out E: Fmi2Library> (
     }
 
     /**
-     * @see Fmi2library.fmi2Reset
+     * @see Fmi2Library.fmi2Reset
      */
     fun reset(): FmiStatus = updateStatus(library.fmi2Reset(c))
 
     /**
-     * @see Fmi2library.fmi2GetInteger
+     * @see Fmi2Library.fmi2GetInteger
      */
     fun getInteger(valueReference: Int): FmuIntegerRead {
         return with(buffers) {
@@ -197,7 +196,7 @@ abstract class Fmi2LibraryWrapper<out E: Fmi2Library> (
     }
 
     /**
-     * @see Fmi2library.fmi2GetInteger
+     * @see Fmi2Library.fmi2GetInteger
      */
     @JvmOverloads
     fun getInteger(vr: IntArray, value: IntArray = IntArray(vr.size)): FmuIntegerArrayRead {
@@ -207,7 +206,7 @@ abstract class Fmi2LibraryWrapper<out E: Fmi2Library> (
     }
 
     /**
-     * @see Fmi2library.fmi2GetReal
+     * @see Fmi2Library.fmi2GetReal
      */
     fun getReal(valueReference: Int) : FmuRealRead {
         return with(buffers) {
@@ -219,7 +218,7 @@ abstract class Fmi2LibraryWrapper<out E: Fmi2Library> (
     }
 
     /**
-     * @see Fmi2library.fmi2GetReal
+     * @see Fmi2Library.fmi2GetReal
      */
     @JvmOverloads
     fun getReal(vr: IntArray, value: DoubleArray = DoubleArray(vr.size)): FmuRealArrayRead {
@@ -229,7 +228,7 @@ abstract class Fmi2LibraryWrapper<out E: Fmi2Library> (
     }
 
     /**
-     * @see Fmi2library.fmi2GetString
+     * @see Fmi2Library.fmi2GetString
      */
     fun getString(valueReference: Int): FmuStringRead {
         return with(buffers) {
@@ -241,7 +240,7 @@ abstract class Fmi2LibraryWrapper<out E: Fmi2Library> (
     }
 
     /**
-     * @see Fmi2library.fmi2GetString
+     * @see Fmi2Library.fmi2GetString
      */
     @JvmOverloads
     fun getString(vr: IntArray, value: StringArray = StringArray(vr.size, {""})): FmuStringArrayRead {
@@ -251,7 +250,7 @@ abstract class Fmi2LibraryWrapper<out E: Fmi2Library> (
     }
 
     /**
-     * @see Fmi2library.fmi2GetBoolean
+     * @see Fmi2Library.fmi2GetBoolean
      */
     fun getBoolean(valueReference: Int) : FmuBooleanRead {
         return with(buffers) {
@@ -263,7 +262,7 @@ abstract class Fmi2LibraryWrapper<out E: Fmi2Library> (
     }
 
     /**
-     * @see Fmi2library.fmi2GetBoolean
+     * @see Fmi2Library.fmi2GetBoolean
      */
     @JvmOverloads
     fun getBoolean(vr: IntArray, value: BooleanArray = BooleanArray(vr.size)): FmuBooleanArrayRead {
@@ -277,7 +276,7 @@ abstract class Fmi2LibraryWrapper<out E: Fmi2Library> (
     }
 
     /**
-     * @see Fmi2library.fmi2GetBoolean
+     * @see Fmi2Library.fmi2GetBoolean
      */
     fun getBoolean(vr: IntArray, value: IntArray) : FmuIntegerArrayRead {
         return library.fmi2GetBoolean(c, vr, vr.size, value).let {
@@ -286,7 +285,7 @@ abstract class Fmi2LibraryWrapper<out E: Fmi2Library> (
     }
 
     /**
-     * @see Fmi2library.fmi2SetInteger
+     * @see Fmi2Library.fmi2SetInteger
      */
     fun setInteger( valueReference: Int, value: Int): FmiStatus {
         return with(buffers) {
@@ -297,14 +296,14 @@ abstract class Fmi2LibraryWrapper<out E: Fmi2Library> (
     }
 
     /**
-     * @see Fmi2library.fmi2SetInteger
+     * @see Fmi2Library.fmi2SetInteger
      */
     fun setInteger(vr: IntArray, value: IntArray) : FmiStatus {
         return updateStatus((library.fmi2SetInteger(c, vr, vr.size, value)))
     }
 
     /**
-     * @see Fmi2library.fmi2SetReal
+     * @see Fmi2Library.fmi2SetReal
      */
     fun setReal(valueReference: Int, value: Double) : FmiStatus {
         return with(buffers) {
@@ -315,14 +314,14 @@ abstract class Fmi2LibraryWrapper<out E: Fmi2Library> (
     }
 
     /**
-     * @see Fmi2library.fmi2SetReal
+     * @see Fmi2Library.fmi2SetReal
      */
     fun setReal(vr: IntArray, value: DoubleArray) : FmiStatus {
         return updateStatus((library.fmi2SetReal(c, vr, vr.size, value)))
     }
 
     /**
-     * @see Fmi2library.fmi2SetString
+     * @see Fmi2Library.fmi2SetString
      */
     fun setString(valueReference: Int, value: String) : FmiStatus {
         return with(buffers) {
@@ -333,14 +332,14 @@ abstract class Fmi2LibraryWrapper<out E: Fmi2Library> (
     }
 
     /**
-     * @see Fmi2library.fmi2SetString
+     * @see Fmi2Library.fmi2SetString
      */
     fun setString(vr: IntArray, value: StringArray) : FmiStatus {
         return updateStatus((library.fmi2SetString(c, vr, vr.size, value)))
     }
 
     /**
-     * @see Fmi2library.fmi2SetBoolean
+     * @see Fmi2Library.fmi2SetBoolean
      */
     fun setBoolean(valueReference: Int, value: Boolean) : FmiStatus {
         return with(buffers) {
@@ -351,14 +350,14 @@ abstract class Fmi2LibraryWrapper<out E: Fmi2Library> (
     }
 
     /**
-     * @see Fmi2library.fmi2SetBoolean
+     * @see Fmi2Library.fmi2SetBoolean
      */
     fun setBoolean(vr: IntArray, value: IntArray) : FmiStatus {
         return updateStatus(library.fmi2SetBoolean(c, vr, vr.size, value))
     }
 
     /**
-     * @see Fmi2library.fmi2SetBoolean
+     * @see Fmi2Library.fmi2SetBoolean
      */
     fun setBoolean(vr: IntArray, value: BooleanArray) : FmiStatus {
         return setBoolean(vr, value.map { if (it) 1 else 0 }.toIntArray())

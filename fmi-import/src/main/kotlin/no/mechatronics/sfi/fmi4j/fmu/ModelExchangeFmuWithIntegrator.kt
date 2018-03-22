@@ -25,6 +25,7 @@
 package no.mechatronics.sfi.fmi4j.fmu
 
 import no.mechatronics.sfi.fmi4j.FmiSimulation
+import no.mechatronics.sfi.fmi4j.common.FmiStatus
 import no.mechatronics.sfi.fmi4j.proxy.v2.structs.Fmi2EventInfo
 import org.apache.commons.math3.ode.FirstOrderDifferentialEquations
 import org.apache.commons.math3.ode.FirstOrderIntegrator
@@ -114,9 +115,9 @@ class ModelExchangeFmuWithIntegrator internal constructor(
     override fun init() = init(0.0)
     override fun init(start: Double) = init(start, -1.0)
 
-    override fun init(start: Double, stop: Double): Boolean {
+    override fun init(start: Double, stop: Double): FmiStatus {
 
-        if (fmu.init(start, stop)) {
+        if (fmu.init(start, stop) == FmiStatus.OK) {
             currentTime = start
 
             eventInfo.setNewDiscreteStatesNeededTrue()
@@ -126,32 +127,32 @@ class ModelExchangeFmuWithIntegrator internal constructor(
                 fmu.newDiscreteStates(eventInfo)
                 if (eventInfo.getTerminateSimulation()) {
                     terminate()
-                    return false
+                    return FmiStatus.Error
                 }
             }
             fmu.enterContinuousTimeMode()
             fmu.getContinuousStates(states)
             fmu.getNominalsOfContinuousStates(nominalStates)
 
-            return true
+            return FmiStatus.OK
         }
 
-        return false
+        return lastStatus
 
     }
 
-    override fun doStep(dt: Double): Boolean {
+    override fun doStep(stepSize: Double): FmiStatus {
 
-        if (dt <= 0) {
-            throw IllegalArgumentException("dt must be positive and greater than 0! Was: $dt")
+        if (stepSize <= 0) {
+            throw IllegalArgumentException("stepSize must be positive and greater than 0! Was: $stepSize")
         }
 
         var time = currentTime
-        val stopTime = time + dt
+        val stopTime = time + stepSize
 
         while (time < stopTime) {
 
-            var tNext = Math.min(time + dt, stopTime);
+            var tNext = Math.min(time + stepSize, stopTime)
 
             val timeEvent = eventInfo.getNextEventTimeDefined() && (eventInfo.getNextEventTime() <= time)
             if (timeEvent) {
@@ -175,7 +176,7 @@ class ModelExchangeFmuWithIntegrator internal constructor(
                 val completedIntegratorStep = fmu.completedIntegratorStep()
                 if (completedIntegratorStep.terminateSimulation) {
                     terminate()
-                    return false
+                    return FmiStatus.Error
                 }
                 stepEvent = completedIntegratorStep.enterEventMode
             }
@@ -190,7 +191,7 @@ class ModelExchangeFmuWithIntegrator internal constructor(
                     fmu.newDiscreteStates(eventInfo)
                     if (eventInfo.getTerminateSimulation()) {
                         terminate()
-                        return false
+                        return FmiStatus.Error
                     }
                 }
                 fmu.enterContinuousTimeMode()
@@ -199,7 +200,7 @@ class ModelExchangeFmuWithIntegrator internal constructor(
 
         }
         currentTime = time
-        return true
+        return FmiStatus.OK
     }
 
     private data class SolveResult(

@@ -1,32 +1,36 @@
 package no.mechatronics.sfi.fmi4j.modeldescription
 
-import com.google.gson.*
 import com.sun.xml.internal.messaging.saaj.util.ByteOutputStream
-import no.mechatronics.sfi.fmi4j.modeldescription.variables.*
-import no.mechatronics.sfi.fmi4j.modeldescription.variables.attributes.BooleanAttribute
-import no.mechatronics.sfi.fmi4j.modeldescription.variables.attributes.IntegerAttribute
 import org.apache.commons.io.FileUtils
 import org.junit.Assert
-import org.junit.Before
+import org.junit.BeforeClass
 import org.junit.Test
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import java.io.ByteArrayInputStream
 import java.io.File
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
-import java.lang.reflect.Type
 import java.nio.charset.Charset
 
 class SerializeTest {
 
-    private lateinit var  modelDescription: SimpleModelDescription
+    companion object {
 
-    @Before
-    fun setup() {
-        val path = "../test/fmi2/cs/win64/OpenModelica/v1.11.0/FmuExportCrossCompile/modelDescription.xml"
-        val file = File(path)
-        Assert.assertTrue(file.exists())
-        val xml = FileUtils.readFileToString(file, Charset.forName("UTF-8"))
-        modelDescription = ModelDescriptionParser.parse(xml)
+        private val LOG: Logger = LoggerFactory.getLogger(SerializeTest::class.java)
+
+        private lateinit var modelDescription: SimpleModelDescription
+
+        @JvmStatic
+        @BeforeClass
+        fun setup() {
+            val path = "../test/fmi2/cs/win64/OpenModelica/v1.11.0/FmuExportCrossCompile/modelDescription.xml"
+            val file = File(path)
+            Assert.assertTrue(file.exists())
+            val xml = FileUtils.readFileToString(file, Charset.forName("UTF-8"))
+            modelDescription = ModelDescriptionParser.parse(xml)
+        }
+
     }
 
     @Test
@@ -34,18 +38,14 @@ class SerializeTest {
 
         val bos = ByteOutputStream()
         ObjectOutputStream(bos).use {
-
             it.writeObject(modelDescription)
             it.flush()
-
         }
 
         ObjectInputStream(ByteArrayInputStream(bos.bytes)).use {
             val md: SimpleModelDescription = it.readObject() as SimpleModelDescription
-
-            md.modelVariables.variables.forEach { println(it) }
-            println(md.modelStructure)
-
+            md.modelVariables.variables.forEach { LOG.info("$it") }
+            LOG.info("${md.modelStructure}")
         }
 
 
