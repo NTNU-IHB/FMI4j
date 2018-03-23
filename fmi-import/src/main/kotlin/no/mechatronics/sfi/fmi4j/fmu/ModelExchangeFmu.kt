@@ -24,9 +24,9 @@
 
 package no.mechatronics.sfi.fmi4j.fmu
 
+import no.mechatronics.sfi.fmi4j.fmu.proxy.v2.me.ModelExchangeLibraryWrapper
+import no.mechatronics.sfi.fmi4j.fmu.proxy.v2.structs.Fmi2EventInfo
 import no.mechatronics.sfi.fmi4j.modeldescription.me.ModelExchangeModelDescription
-import no.mechatronics.sfi.fmi4j.proxy.v2.me.ModelExchangeLibraryWrapper
-import no.mechatronics.sfi.fmi4j.proxy.v2.structs.Fmi2EventInfo
 
 /**
  *
@@ -35,7 +35,7 @@ import no.mechatronics.sfi.fmi4j.proxy.v2.structs.Fmi2EventInfo
 open class ModelExchangeFmu internal constructor(
         fmuFile: FmuFile,
         wrapper: ModelExchangeLibraryWrapper
-): AbstractFmuInstance<ModelExchangeModelDescription, ModelExchangeLibraryWrapper>(fmuFile, wrapper) {
+): AbstractFmu<ModelExchangeModelDescription, ModelExchangeLibraryWrapper>(fmuFile, wrapper) {
 
     override val modelDescription: ModelExchangeModelDescription
         get() = fmuFile.modelDescription.asModelExchangeModelDescription()

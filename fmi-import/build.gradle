@@ -7,8 +7,6 @@ if (snapshot) {
     version += '-SNAPSHOT'
 }
 
-def fmi_md_version = snapshot ? '0.5.8-SNAPSHOT' : '0.5.7'
-
 apply plugin: 'maven'
 apply plugin: 'signing'
 
@@ -20,6 +18,10 @@ if (snapshot) {
     }
 }
 
+configurations.all {
+    resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+}
+
 dependencies {
 
     api group: 'org.apache.commons', name: 'commons-math3', version: '3.6.1'
@@ -27,13 +29,6 @@ dependencies {
 
     implementation group: 'net.java.dev.jna', name: 'jna', version: '4.5.1'
     implementation group: 'net.java.dev.jna', name: 'jna-platform', version: '4.5.1'
-
-    if (true) {
-        api group: 'no.mechatronics.sfi.fmi4j', name: 'fmi-md', version: fmi_md_version, changing: snapshot
-    } else {
-        compile project(':fmi-md')
-    }
-   // testImplementation group: 'org.siani.javafmi', name: 'fmu-wrapper', version: '2.24.1'
 
 }
 
@@ -72,7 +67,7 @@ uploadArchives {
                 name archivesBaseName
                 packaging 'jar'
                 // optionally artifactId can be defined here
-                description 'A Java/Kotlin library for dealing with Functional Mock-up Units (FMUs) on the JVM platform'
+                description 'A software library for dealing with Functional Mock-up Units (FMUs) on the JVM platform'
                 url 'https://github.com/SFI-Mechatronics/fmi4j'
 
                 scm {

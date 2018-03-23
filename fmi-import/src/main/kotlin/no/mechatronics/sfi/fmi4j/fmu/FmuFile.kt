@@ -27,26 +27,29 @@ package no.mechatronics.sfi.fmi4j.fmu
 import com.sun.jna.Native
 import com.sun.jna.Platform
 import com.sun.jna.Pointer
-import no.mechatronics.sfi.fmi4j.misc.FmiBoolean
-import no.mechatronics.sfi.fmi4j.misc.LibraryProvider
+import no.mechatronics.sfi.fmi4j.fmu.misc.FmiBoolean
+import no.mechatronics.sfi.fmi4j.fmu.misc.LibraryProvider
+import no.mechatronics.sfi.fmi4j.fmu.proxy.v2.Fmi2Library
+import no.mechatronics.sfi.fmi4j.fmu.proxy.v2.Fmi2Type
+import no.mechatronics.sfi.fmi4j.fmu.proxy.v2.cs.CoSimulationLibraryWrapper
+import no.mechatronics.sfi.fmi4j.fmu.proxy.v2.cs.Fmi2CoSimulationLibrary
+import no.mechatronics.sfi.fmi4j.fmu.proxy.v2.me.Fmi2ModelExchangeLibrary
+import no.mechatronics.sfi.fmi4j.fmu.proxy.v2.me.ModelExchangeLibraryWrapper
+import no.mechatronics.sfi.fmi4j.fmu.proxy.v2.structs.Fmi2CallbackFunctions
 import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescription
 import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescriptionParser
-import no.mechatronics.sfi.fmi4j.proxy.v2.Fmi2Library
-import no.mechatronics.sfi.fmi4j.proxy.v2.Fmi2Type
-import no.mechatronics.sfi.fmi4j.proxy.v2.cs.CoSimulationLibraryWrapper
-import no.mechatronics.sfi.fmi4j.proxy.v2.cs.Fmi2CoSimulationLibrary
-import no.mechatronics.sfi.fmi4j.proxy.v2.me.Fmi2ModelExchangeLibrary
-import no.mechatronics.sfi.fmi4j.proxy.v2.me.ModelExchangeLibraryWrapper
-import no.mechatronics.sfi.fmi4j.proxy.v2.structs.Fmi2CallbackFunctions
-import java.io.File
-import java.io.IOException
-import java.net.URL
+import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescriptionProvider
 import org.apache.commons.io.FileUtils
 import org.apache.commons.io.FilenameUtils
 import org.apache.commons.io.IOUtils
 import org.apache.commons.math3.ode.FirstOrderIntegrator
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import java.io.Closeable
+import java.io.File
+import java.io.FileNotFoundException
+import java.io.IOException
+import java.net.URL
 import java.nio.charset.Charset
 import java.nio.file.Files
 import java.util.zip.ZipEntry
@@ -70,44 +73,51 @@ private const val MODEL_DESC = "modelDescription.xml"
  *
  * @author Lars Ivar Hatledal
  */
-class FmuFile {
+class FmuFile private constructor(
+        private val fmuFile: File
+): Closeable {
 
-    private val fmuFile: File
-    private val instances = mutableListOf<AbstractFmuInstance<*, *>>()
+
+    var isClosed = false
+        private set
+
+    private val instances = mutableListOf<AbstractFmu<*, *>>()
     private val libraries = mutableListOf<LibraryProvider<*>>()
 
-    @Throws(IOException::class)
-    constructor(file: File) {
-        this.fmuFile = extractToTempFolder(file)
-    }
-
-    @Throws(IOException::class)
-    constructor(url: URL) {
-        this.fmuFile = extractToTempFolder(url)
-    }
 
     init {
-
         Runtime.getRuntime().addShutdownHook(Thread {
+            close()
+        })
+    }
+
+    override fun close() {
+        if (!isClosed) {
+
             instances.forEach {
                 if (!it.isTerminated) {
                     it.terminate()
                 }
+                if (!it.wrapper.instanceFreed) {
+                    it.wrapper.freeInstance()
+                }
             }
+            instances.clear()
+
             libraries.forEach {
                 it.disposeLibrary()
             }
-            for (file in map.values) {
-                if (file.deleteRecursively()) {
-                    LOG.debug("Deleted fmu folder: $file")
-                } else {
-                    LOG.debug("Failed to delete fmu folder: $file")
-                }
+            libraries.clear()
+
+            if (fmuFile.deleteRecursively()) {
+                LOG.debug("Deleted fmu folder: $fmuFile")
+            } else {
+                LOG.debug("Failed to delete fmu folder: $fmuFile")
             }
-        })
 
+            isClosed = true
+        }
     }
-
 
     /**
      * Get the content of the modelDescription.xml file as a String
@@ -116,7 +126,7 @@ class FmuFile {
         FileUtils.readFileToString(modelDescriptionFile, Charset.forName("UTF-8"))
     }
 
-    val modelDescription by lazy {
+    val modelDescription: ModelDescriptionProvider by lazy {
         ModelDescriptionParser.parse(modelDescriptionXml)
     }
 
@@ -212,7 +222,7 @@ class FmuFile {
 
     }
 
-    inner class ModelExchangeFmuBuilder() {
+    inner class ModelExchangeFmuBuilder {
 
         private val modelDescription
             get() = that.modelDescription.asModelExchangeModelDescription()
@@ -243,109 +253,115 @@ class FmuFile {
     }
 
 
-    private companion object {
+    companion object {
 
-        val LOG: Logger = LoggerFactory.getLogger(FmuFile::class.java)
-        val map = mutableMapOf<String, File>()
+        private val LOG: Logger = LoggerFactory.getLogger(FmuFile::class.java)
 
-//        init {
-//
-//            Runtime.getRuntime().addShutdownHook(Thread {
-//                for (file in map.values) {
-//                    if (file.deleteRecursively()) {
-//                        LOG.debug("Deleted fmu folder: $file")
-//                    } else {
-//                        LOG.warn("Failed to delete fmu folder: $file")
-//                    }
-//                }
-//            })
-//        }
+        @JvmStatic
+        @Throws(IOException::class, FileNotFoundException::class)
+        fun from (file: File): FmuFile {
 
+            val ext = file.extension.toLowerCase()
+            if (ext != "fmu") {
+                throw IllegalArgumentException("File is not an FMU! Found extension: .$ext")
+            }
+
+            if (!file.exists()) {
+                throw FileNotFoundException("No such file: $file!")
+            }
+
+            return FmuFile(extractFmuToTempFolder(file))
+
+        }
+
+        @JvmStatic
+        @Throws(IOException::class)
+        fun from(url: URL): FmuFile {
+            val ext = FilenameUtils.getExtension(url.toString()).toLowerCase()
+            if (ext != "fmu") {
+                throw IllegalArgumentException("File is not an FMU! Found extension: .$ext")
+            }
+            return FmuFile(extractFmuToTempFolder(url))
+        }
 
         @Throws(IOException::class)
-        private fun extractToTempFolder(url: URL): File {
+        private fun extractFmuToTempFolder(zippedFmuFile: URL): File {
 
-            val modelDescription = ModelDescriptionParser.parse(url)
-            val guid = modelDescription.guid
-
-            if (guid in map) {
-                LOG.debug("Re-using previously extracted FMU with name {}", modelDescription.modelName)
-                return map[guid]!!
-            }
-            val baseName = FilenameUtils.getBaseName(url.toString())
+            val baseName = FilenameUtils.getBaseName(zippedFmuFile.toString())
             val tmp = Files.createTempFile(FMI4J_FILE_PREFIX + baseName, ".fmu").toFile()
-            val data = IOUtils.toByteArray(url)
-            FileUtils.writeByteArrayToFile(tmp, data)
+            IOUtils.toByteArray(zippedFmuFile).also { data ->
+                FileUtils.writeByteArrayToFile(tmp, data)
+            }
 
-            LOG.debug("Copied fmu from url into {}", tmp)
-            val extractToTempFolder = extractToTempFolder(tmp)
+            LOG.debug("Copied fmu from url into $tmp")
+            val extractToTempFolder = extractFmuToTempFolder(tmp)
 
             Files.deleteIfExists(tmp.toPath())
-            LOG.debug("Deleted temp fmu file retrieved from url {}", tmp)
+            LOG.debug("Deleted temp fmu file retrieved from url $tmp")
 
-            return extractToTempFolder.also {
-                map[guid] = it
+            return extractToTempFolder
+
+        }
+
+        @Throws(IOException::class)
+        private fun extractFmuToTempFolder(zippedFmuFile: File): File {
+
+            val baseName = FilenameUtils.getBaseName(zippedFmuFile.name)
+            return Files.createTempDirectory(FMI4J_FILE_PREFIX + baseName).toFile().apply {
+                extractFmuToDirectory(zippedFmuFile, this)
             }
 
         }
 
         @Throws(IOException::class)
-        private fun extractToTempFolder(fmuFile: File): File {
-
-            val modelDescription = ModelDescriptionParser.parse(fmuFile)
-            val guid = modelDescription.guid
-            if (guid in map) {
-                LOG.debug("Re-using previously extracted FMU with name ${modelDescription.modelName}")
-                return map[guid]!!
-            }
-
-            val baseName = FilenameUtils.getBaseName(fmuFile.name).replace(FMI4J_FILE_PREFIX, "")
-            return Files.createTempDirectory(FMI4J_FILE_PREFIX + baseName).toFile().also {
-                extractTo(fmuFile, it)
-                map[guid] = it
-            }
-
-        }
-
-        @Throws(IOException::class)
-        private fun extractTo(fmuFile: File, dir: File) {
+        private fun extractFmuToDirectory(fmuFile: File, directory: File) {
             ZipFile(fmuFile).use { zipFile ->
                 val enu = zipFile.entries()
-
                 while (enu.hasMoreElements()) {
                     val zipEntry = enu.nextElement() as ZipEntry
                     if (!zipEntry.isDirectory) {
-                        val child = File(dir, zipEntry.name)
-                        val data = IOUtils.toByteArray(zipFile.getInputStream(zipEntry))
-                        FileUtils.writeByteArrayToFile(child, data)
+                        val child = File(directory, zipEntry.name)
+                        IOUtils.toByteArray(zipFile.getInputStream(zipEntry)).also { data ->
+                            FileUtils.writeByteArrayToFile(child, data)
+                        }
                     }
                 }
             }
 
-            File(dir, "resources").apply {
+            File(directory, "resources").apply {
                 if (!exists()) {
                     mkdir()
                 }
             }
 
-            LOG.debug("Extracted fmu into location $dir")
+            LOG.debug("Extracted fmu can be found in: $directory")
         }
+
+        private fun <E: Fmi2Library> loadLibrary(fmuFile: FmuFile, modelDescription: ModelDescription, type: Class<E>): LibraryProvider<E> {
+
+            System.getProperty(LIBRARY_PATH)?.also {
+                if (fmuFile.libraryFolderPath !in it.split(";")) {
+                    System.setProperty(LIBRARY_PATH, "$it;${fmuFile.libraryFolderPath}")
+                }
+            } ?:  System.setProperty(LIBRARY_PATH, fmuFile.libraryFolderPath)
+
+            return LibraryProvider({Native.loadLibrary(fmuFile.getLibraryName(modelDescription), type)})
+        }
+
+        private fun instantiate(fmuFile: FmuFile, modelDescription: ModelDescription, library: Fmi2Library, fmiType: Fmi2Type, visible: Boolean, loggingOn: Boolean) : Pointer {
+            LOG.trace("Calling instantiate: visible=$visible, loggingOn=$loggingOn")
+            return library.fmi2Instantiate(modelDescription.modelIdentifier,
+                    fmiType.code, modelDescription.guid,
+                    fmuFile.resourcesPath, Fmi2CallbackFunctions.ByValue(),
+                    FmiBoolean.convert(visible), FmiBoolean.convert(loggingOn) )
+                    ?: throw IllegalStateException("Unable to instantiate FMU. Returned pointer is null!")
+        }
+
 
     }
 
 }
 
 
-private fun <E: Fmi2Library> loadLibrary(fmuFile: FmuFile, modelDescription: ModelDescription, type: Class<E>): LibraryProvider<E> {
-    System.setProperty(LIBRARY_PATH, fmuFile.libraryFolderPath)
-    return LibraryProvider(Native.loadLibrary(fmuFile.getLibraryName(modelDescription), type))
-}
 
-private fun instantiate(fmuFile: FmuFile, modelDescription: ModelDescription, library: Fmi2Library, fmiType: Fmi2Type, visible: Boolean, loggingOn: Boolean) : Pointer {
-    return library.fmi2Instantiate(modelDescription.modelIdentifier,
-            fmiType.code, modelDescription.guid,
-            fmuFile.resourcesPath, Fmi2CallbackFunctions(),
-            FmiBoolean.convert(visible), FmiBoolean.convert(loggingOn) )
-            ?: throw AssertionError("Unable to instantiate FMU. Returned pointer is null!")
-}
 

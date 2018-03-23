@@ -24,12 +24,12 @@
 
 package no.mechatronics.sfi.fmi4j.fmu
 
-import no.mechatronics.sfi.fmi4j.common.FmiStatus
-import no.mechatronics.sfi.fmi4j.common.FmuIntegerArrayRead
-import no.mechatronics.sfi.fmi4j.common.FmuIntegerRead
-import no.mechatronics.sfi.fmi4j.common.FmuRead
+import no.mechatronics.sfi.fmi4j.common.*
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.*
 
+/**
+ * @author Lars Ivar Hatledal
+ */
 sealed class ScalarVariableVector<out E: TypedScalarVariable<*>> constructor(
         protected val accessor: VariableAccessor,
         protected val variables: List<E>
@@ -43,17 +43,18 @@ sealed class ScalarVariableVector<out E: TypedScalarVariable<*>> constructor(
         variables.map { it.valueReference }.toIntArray()
     }
 
-    override fun iterator() = variables.iterator()
-
+    override fun iterator(): Iterator<E>
+            = variables.iterator()
 
 }
 
+/**
+ * @author Lars Ivar Hatledal
+ */
 class IntegerVariableVector internal constructor(
         accessor: VariableAccessor,
         variables: List<IntegerVariable>
 ): ScalarVariableVector<IntegerVariable>(accessor, variables) {
-
-    constructor(accessor: VariableAccessor, vararg variables: IntegerVariable) : this(accessor, variables.asList())
 
     fun write(value: IntArray): FmiStatus {
         if (value.size != vr.size) {
@@ -62,16 +63,18 @@ class IntegerVariableVector internal constructor(
         return accessor.writeInteger(vr, value)
     }
 
-    fun read() = accessor.readInteger(vr)
+    fun read(): FmuIntegerArrayRead
+            = accessor.readInteger(vr)
 
 }
 
+/**
+ * @author Lars Ivar Hatledal
+ */
 class RealVariableVector internal constructor(
         accessor: VariableAccessor,
         variables: List<RealVariable>
 ): ScalarVariableVector<RealVariable>(accessor, variables) {
-
-    constructor(accessor: VariableAccessor, vararg variables: RealVariable) : this(accessor, variables.asList())
 
     fun write(value: RealArray): FmiStatus {
         if (value.size != vr.size) {
@@ -80,16 +83,18 @@ class RealVariableVector internal constructor(
         return accessor.writeReal(vr, value)
     }
 
-    fun read() = accessor.readReal(vr)
+    fun read(): FmuRealArrayRead
+            = accessor.readReal(vr)
 
 }
 
+/**
+ * @author Lars Ivar Hatledal
+ */
 class StringVariableVector internal constructor(
         accessor: VariableAccessor,
         variables: List<StringVariable>
 ): ScalarVariableVector<StringVariable>(accessor, variables) {
-
-    constructor(accessor: VariableAccessor, vararg variables: StringVariable) : this(accessor, variables.asList())
 
     fun write(value: StringArray): FmiStatus {
         if (value.size != vr.size) {
@@ -98,16 +103,18 @@ class StringVariableVector internal constructor(
         return accessor.writeString(vr, value)
     }
 
-    fun read() = accessor.readString(vr)
+    fun read(): FmuStringArrayRead
+            = accessor.readString(vr)
 
 }
 
+/**
+ * @author Lars Ivar Hatledal
+ */
 class BooleanVariableVector internal constructor(
         accessor: VariableAccessor,
         variables: List<BooleanVariable>
 ): ScalarVariableVector<BooleanVariable>(accessor, variables) {
-
-    constructor(accessor: VariableAccessor, vararg variables: BooleanVariable) : this(accessor, variables.asList())
 
     fun write(value: BooleanArray): FmiStatus {
         if (value.size != vr.size) {
@@ -116,6 +123,7 @@ class BooleanVariableVector internal constructor(
         return accessor.writeBoolean(vr, value)
     }
 
-    fun read() = accessor.readBoolean(vr)
+    fun read(): FmuBooleanArrayRead
+            = accessor.readBoolean(vr)
 
 }

@@ -3,9 +3,6 @@ apply plugin: 'application'
 
 mainClassName = 'no.mechatronics.sfi.fmi4j.crosscheck.FmuDriver'
 
-def snapshot = false
-//def fmi_import_version = snapshot ? '0.2.5-SNAPSHOT' : '0.2.4'
-
 repositories {
     maven {
         url "https://oss.sonatype.org/content/repositories/snapshots"
@@ -15,6 +12,7 @@ repositories {
 dependencies {
     implementation group: 'commons-cli', name: 'commons-cli', version: '1.4'
     implementation group: 'org.apache.commons', name: 'commons-csv', version: '1.5'
+    implementation group: 'commons-io', name: 'commons-io', version: '2.6'
+
     compile project(':fmi-import')
-    //implementation group: 'no.mechatronics.sfi.fmi4j', name: 'fmi-import', version: fmi_import_version, changing: snapshot
 }

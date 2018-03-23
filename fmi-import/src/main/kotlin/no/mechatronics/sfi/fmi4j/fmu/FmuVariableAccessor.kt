@@ -25,8 +25,8 @@
 
 package no.mechatronics.sfi.fmi4j.fmu
 
+import no.mechatronics.sfi.fmi4j.fmu.proxy.v2.Fmi2LibraryWrapper
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.*
-import no.mechatronics.sfi.fmi4j.proxy.v2.Fmi2LibraryWrapper
 
 /**
  * @author Lars Ivar Hatledal
@@ -38,13 +38,6 @@ class FmuVariableAccessor(
 
     private val map by lazy {
         mutableMapOf<String, Int>()
-    }
-
-    private fun process(name: String): Int {
-        if (name !in map) {
-            map[name]= modelVariables.getValueReference(name)
-        }
-        return map[name]!!
     }
 
     override fun readInteger(name: String) = readInteger(process(name))
@@ -85,5 +78,14 @@ class FmuVariableAccessor(
     override fun writeBoolean(valueReference: Int, value: Boolean) = wrapper.setBoolean(valueReference, value)
     override fun writeBoolean(vr: IntArray, value: BooleanArray) =wrapper.setBoolean(vr, value)
     override fun writeBoolean(vr: IntArray, value: IntArray) = wrapper.setBoolean(vr, value)
+
+
+    private fun process(name: String): Int {
+        if (name !in map) {
+            map[name]= modelVariables.getValueReference(name)
+        }
+        return map[name]!!
+    }
+
 
 }
