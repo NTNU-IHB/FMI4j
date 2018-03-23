@@ -25,8 +25,8 @@
 
 package no.mechatronics.sfi.fmi4j.fmu
 
+import no.mechatronics.sfi.fmi4j.fmu.proxy.v2.Fmi2LibraryWrapper
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.*
-import no.mechatronics.sfi.fmi4j.proxy.v2.Fmi2LibraryWrapper
 
 /**
  * @author Lars Ivar Hatledal

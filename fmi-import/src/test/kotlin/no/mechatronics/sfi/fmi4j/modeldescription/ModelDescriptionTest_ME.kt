@@ -3,42 +3,51 @@ package no.mechatronics.sfi.fmi4j.modeldescription
 import no.mechatronics.sfi.fmi4j.modeldescription.me.ModelExchangeModelDescription
 import org.apache.commons.io.FileUtils
 import org.junit.Assert
-import org.junit.Before
+import org.junit.BeforeClass
 import org.junit.Test
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import java.io.File
 import java.nio.charset.Charset
 
 class ModelDescriptionTest_ME {
 
-    private lateinit var modelDescription: ModelExchangeModelDescription
+    companion object {
 
-    @Before
-    fun setUp() {
-        val path = "../test/fmi2/me/win64/FMUSDK/2.0.4/vanDerPol/modelDescription.xml"
-        val file = File(path)
-        Assert.assertTrue(file.exists())
-        val xml = FileUtils.readFileToString(file, Charset.forName("UTF-8"))
-        modelDescription = ModelDescriptionParser.parse(xml).asModelExchangeModelDescription()
+        private val LOG: Logger = LoggerFactory.getLogger(ModelDescriptionTest_ME::class.java)
+
+        private lateinit var modelDescription: ModelExchangeModelDescription
+
+        @JvmStatic
+        @BeforeClass
+        fun setUp() {
+            val path = "../test/fmi2/me/win64/FMUSDK/2.0.4/vanDerPol/modelDescription.xml"
+            val file = File(path)
+            Assert.assertTrue(file.exists())
+            val xml = FileUtils.readFileToString(file, Charset.forName("UTF-8"))
+            modelDescription = ModelDescriptionParser.parse(xml).asModelExchangeModelDescription()
+        }
+
     }
 
     @Test
     fun testFmiVersion() {
         val fmiVersion = modelDescription.fmiVersion
-        println("fmiVersion=$fmiVersion")
+        LOG.info("fmiVersion=$fmiVersion")
         Assert.assertEquals("2.0", fmiVersion)
     }
 
     @Test
     fun testNumberOfEventIndicators() {
         val numberOfEventIndicators = modelDescription.numberOfEventIndicators
-        println("numberOfEventIndicators=$numberOfEventIndicators")
+        LOG.info("numberOfEventIndicators=$numberOfEventIndicators")
         Assert.assertEquals(0, numberOfEventIndicators)
     }
 
     @Test
     fun testModelName() {
         val modelName = modelDescription.modelName
-        println("modelName=$modelName")
+        LOG.info("modelName=$modelName")
         Assert.assertEquals("van der Pol oscillator", modelName)
     }
 
@@ -52,7 +61,7 @@ class ModelDescriptionTest_ME {
     @Test
     fun testGuid() {
         val guid = modelDescription.guid
-        println("guid=$guid")
+        LOG.info("guid=$guid")
         Assert.assertEquals("{8c4e810f-3da3-4a00-8276-176fa3c9f000}", guid)
     }
 

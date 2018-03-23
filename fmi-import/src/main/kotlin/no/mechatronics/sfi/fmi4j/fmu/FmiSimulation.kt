@@ -22,13 +22,47 @@
  * THE SOFTWARE.
  */
 
-package no.mechatronics.sfi.fmi4j.misc
+package no.mechatronics.sfi.fmi4j.fmu
 
-import com.sun.jna.Pointer
-import com.sun.jna.ptr.PointerByReference
+import no.mechatronics.sfi.fmi4j.common.FmiStatus
+import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescription
+import no.mechatronics.sfi.fmi4j.modeldescription.variables.ModelVariables
+import no.mechatronics.sfi.fmi4j.modeldescription.variables.TypedScalarVariable
+import no.mechatronics.sfi.fmi4j.modeldescription.variables.VariableAccessor
+import java.io.Closeable
 
 /**
  *
  * @author Lars Ivar Hatledal
  */
-class FmuState: PointerByReference()
+interface FmiSimulation : Closeable {
+
+
+    val modelName: String
+    val modelVariables: ModelVariables
+    val modelDescription: ModelDescription
+    val variableAccessor: VariableAccessor
+
+    val lastStatus: FmiStatus
+    val isInitialized: Boolean
+    val isTerminated: Boolean
+
+    val currentTime: Double
+
+    fun init(): FmiStatus
+    fun init(start: Double): FmiStatus
+    fun init(start: Double, stop: Double): FmiStatus
+    fun doStep(stepSize: Double): FmiStatus
+
+    fun reset(): FmiStatus
+    fun terminate(): FmiStatus
+
+    /**
+     * @see ModelVariables.getByName
+     */
+    fun getVariableByName(name: String): TypedScalarVariable<*>
+            = modelVariables.getByName(name)
+
+
+}
+

@@ -1,7 +1,7 @@
 package no.mechatronics.sfi.fmi4j.crosscheck
 
-import no.mechatronics.sfi.fmi4j.FmiSimulation
 import no.mechatronics.sfi.fmi4j.common.FmiStatus
+import no.mechatronics.sfi.fmi4j.fmu.FmiSimulation
 import no.mechatronics.sfi.fmi4j.fmu.FmuFile
 import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.DefaultParser

@@ -25,12 +25,12 @@
 package no.mechatronics.sfi.fmi4j.fmu
 
 import no.mechatronics.sfi.fmi4j.common.FmiStatus
-import no.mechatronics.sfi.fmi4j.misc.DirectionalDerivatives
-import no.mechatronics.sfi.fmi4j.misc.FmuState
+import no.mechatronics.sfi.fmi4j.fmu.misc.DirectionalDerivatives
+import no.mechatronics.sfi.fmi4j.fmu.misc.FmuState
+import no.mechatronics.sfi.fmi4j.fmu.proxy.v2.Fmi2Library
+import no.mechatronics.sfi.fmi4j.fmu.proxy.v2.Fmi2LibraryWrapper
 import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescription
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.*
-import no.mechatronics.sfi.fmi4j.proxy.v2.Fmi2Library
-import no.mechatronics.sfi.fmi4j.proxy.v2.Fmi2LibraryWrapper
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.Closeable

@@ -31,36 +31,44 @@ import no.mechatronics.sfi.fmi4j.modeldescription.variables.ModelVariables
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.RealVariable
 import org.apache.commons.io.FileUtils
 import org.junit.Assert
-import org.junit.Before
+import org.junit.BeforeClass
 import org.junit.Test
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import java.io.File
 import java.nio.charset.Charset
 import java.util.*
 
 class ModelDescriptionTest_CS {
 
-    private lateinit var modelDescription: CoSimulationModelDescription
+    companion object {
 
-    @Before
-    fun setUp() {
-        val path = "../test/fmi2/cs/win64/20sim/4.6.4.8004/ControlledTemperature/modelDescription.xml"
-        val file = File(path)
-        Assert.assertTrue(file.exists())
-        val xml = FileUtils.readFileToString(file, Charset.forName("UTF-8"))
-        modelDescription = ModelDescriptionParser.parse(xml).asCoSimulationModelDescription()
+        private val LOG: Logger = LoggerFactory.getLogger(ModelDescriptionTest_CS::class.java)
+
+        private lateinit var modelDescription: CoSimulationModelDescription
+
+        @JvmStatic
+        @BeforeClass
+        fun setUp() {
+            val path = "../test/fmi2/cs/win64/20sim/4.6.4.8004/ControlledTemperature/modelDescription.xml"
+            val file = File(path)
+            Assert.assertTrue(file.exists())
+            val xml = FileUtils.readFileToString(file, Charset.forName("UTF-8"))
+            modelDescription = ModelDescriptionParser.parse(xml).asCoSimulationModelDescription()
+        }
     }
 
     @Test
     fun testFmiVersion() {
         val fmiVersion = modelDescription.fmiVersion
-        println("fmiVersion=$fmiVersion")
+        LOG.info("fmiVersion=$fmiVersion")
         Assert.assertEquals("2.0", fmiVersion)
     }
 
     @Test
     fun testModelName() {
         val modelName = modelDescription.modelName
-        println("modelName=$modelName")
+        LOG.info("modelName=$modelName")
         Assert.assertEquals("ControlledTemperature", modelName)
     }
 
@@ -79,21 +87,21 @@ class ModelDescriptionTest_CS {
     @Test
     fun testModelIdentifier() {
         val modelIdentifier = modelDescription.modelIdentifier
-        println("modelIdentifier=$modelIdentifier")
+        LOG.info("modelIdentifier=$modelIdentifier")
         Assert.assertEquals("ControlledTemperature", modelIdentifier)
     }
 
     @Test
     fun testGuid() {
         val guid = modelDescription.guid
-        println("guid=$guid")
+        LOG.info("guid=$guid")
         Assert.assertEquals("{06c2700b-b39c-4895-9151-304ddde28443}", guid)
     }
 
     @Test
     fun testLicense() {
         val license = modelDescription.license
-        println("licence=$license")
+        LOG.info("licence=$license")
         Assert.assertEquals("-", license)
     }
 
@@ -109,14 +117,14 @@ class ModelDescriptionTest_CS {
     fun testNumVariables() {
         val variables: ModelVariables =  modelDescription.modelVariables
         Assert.assertEquals(120, variables.size)
-        println(variables.joinToString("\n"))
+        LOG.info(variables.joinToString("\n"))
     }
 
     @Test
     fun testStartVariables() {
         val variables: ModelVariables =  modelDescription.modelVariables
         val variable: RealVariable = variables.getByName("HeatCapacity1.T0").asRealVariable()
-        println(variable)
+        LOG.info("HeatCapacity1.T0=$variable")
         Assert.assertEquals(298.0, variable.start!!, 0.0)
     }
 
@@ -124,7 +132,7 @@ class ModelDescriptionTest_CS {
     fun testTypeName() {
         val variables: ModelVariables =  modelDescription.modelVariables
         val variable: RealVariable = variables.getByName("Temperature_Room") as RealVariable
-        println(variable)
+        LOG.info("Temperature_Room=$variable")
         Assert.assertEquals("Real", variable.typeName)
     }
 
@@ -132,7 +140,7 @@ class ModelDescriptionTest_CS {
     fun testMinMax() {
         val variables =  modelDescription.modelVariables
         val variable = variables.getByName("Temperature_Room") as RealVariable
-        println(variable)
+        LOG.info("Temperature_Room=$variable")
         Assert.assertEquals(2.0, variable.min)
         Assert.assertEquals(4.0, variable.max)
     }
@@ -150,7 +158,7 @@ class ModelDescriptionTest_CS {
     @Test
     fun testVariableNamingConvention()  {
         val variableNamingConvention = modelDescription.variableNamingConvention
-        println("variableNamingConvention=$variableNamingConvention")
+        LOG.info("variableNamingConvention=$variableNamingConvention")
         Assert.assertTrue(modelDescription.variableNamingConvention == VariableNamingConvention.STRUCTURED)
     }
     
@@ -158,7 +166,7 @@ class ModelDescriptionTest_CS {
     fun testSourceFiles() {
         
         val sourceFiles = modelDescription.sourceFiles
-        println(sourceFiles)
+        LOG.info("$sourceFiles")
         Assert.assertTrue(sourceFiles.map { it.name }.containsAll(
                 Arrays.asList("EulerAngles.c",
                         "fmi2Functions.c" ,

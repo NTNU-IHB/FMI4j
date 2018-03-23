@@ -4,22 +4,27 @@ package no.mechatronics.sfi.fmi4j.modeldescription
 import no.mechatronics.sfi.fmi4j.modeldescription.structure.DependenciesKind
 import org.apache.commons.io.FileUtils
 import org.junit.Assert
-import org.junit.Before
+import org.junit.BeforeClass
 import org.junit.Test
 import java.io.File
 import java.nio.charset.Charset
 
 class TestUnknowns {
 
-    private lateinit var modelDescription: ModelDescriptionProvider
+    companion object {
 
-    @Before
-    fun setUp() {
-        val path = "../test/fmi2/cs/win64/OpenModelica/v1.11.0/FmuExportCrossCompile/modelDescription.xml"
-        val file = File(path)
-        Assert.assertTrue(file.exists())
-        val xml = FileUtils.readFileToString(file, Charset.forName("UTF-8"))
-        modelDescription = ModelDescriptionParser.parse(xml)
+        private lateinit var modelDescription: ModelDescriptionProvider
+
+        @JvmStatic
+        @BeforeClass
+        fun setUp() {
+            val path = "../test/fmi2/cs/win64/OpenModelica/v1.11.0/FmuExportCrossCompile/modelDescription.xml"
+            val file = File(path)
+            Assert.assertTrue(file.exists())
+            val xml = FileUtils.readFileToString(file, Charset.forName("UTF-8"))
+            modelDescription = ModelDescriptionParser.parse(xml)
+        }
+
     }
 
     @Test
