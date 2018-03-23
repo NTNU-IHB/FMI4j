@@ -51,16 +51,16 @@ abstract class AbstractFmu<out E: ModelDescription, out T: Fmi2LibraryWrapper<*>
     init {
         modelVariables.forEach{
             if (it is AbstractTypedScalarVariable) {
-                AbstractTypedScalarVariable::class.java.getField("accessor").apply {
-                    isAccessible = true
-                    set(it, variableAccessor)
-                }
+                it.accessor = variableAccessor
             }
         }
     }
 
     abstract val modelDescription: E
 
+    /**
+     * @see ModelDescription.modelName
+     */
     val modelName: String
         get() = modelDescription.modelName
 
@@ -169,7 +169,7 @@ abstract class AbstractFmu<out E: ModelDescription, out T: Fmi2LibraryWrapper<*>
      */
     @JvmOverloads
     open fun terminate(freeInstance: Boolean = true): FmiStatus {
-        return wrapper.terminate().also { status ->
+        return wrapper.terminate(freeInstance).also { status ->
             LOG.debug("FMU '${modelDescription.modelName}' terminated with status $status! #${hashCode()}")
         }
     }
@@ -280,7 +280,8 @@ abstract class AbstractFmu<out E: ModelDescription, out T: Fmi2LibraryWrapper<*>
 
     fun getIntVector(name: String): IntegerVariableVector {
         val variables = modelVariables.filter {
-            (it is IntegerVariable) && it.name.startsWith(name) && it.name.contains("[") && it.name.contains("]")
+            it is IntegerVariable && it.name.startsWith(name)
+                    && it.name.contains("[") && it.name.contains("]")
         }.map { it.asIntegerVariable() }
         if (variables.isEmpty()) {
             throw IllegalArgumentException("$name does not match a vector")
@@ -328,6 +329,7 @@ abstract class AbstractFmu<out E: ModelDescription, out T: Fmi2LibraryWrapper<*>
                 is RealVariable -> variable.write(variable.start!!)
                 is StringVariable -> variable.write(variable.start!!)
                 is BooleanVariable -> variable.write(variable.start!!)
+                is EnumerationVariable -> variable.write(variable.start!!)
             }
 
         }

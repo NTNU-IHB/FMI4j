@@ -56,11 +56,6 @@ class IntegerVariableVector internal constructor(
         variables: List<IntegerVariable>
 ): ScalarVariableVector<IntegerVariable>(accessor, variables) {
 
-    constructor(
-            accessor: VariableAccessor,
-            vararg variables: IntegerVariable
-    ) : this(accessor, variables.asList())
-
     fun write(value: IntArray): FmiStatus {
         if (value.size != vr.size) {
             throw IllegalArgumentException("value.size != vector.size")
@@ -80,11 +75,6 @@ class RealVariableVector internal constructor(
         accessor: VariableAccessor,
         variables: List<RealVariable>
 ): ScalarVariableVector<RealVariable>(accessor, variables) {
-
-    constructor(
-            accessor: VariableAccessor,
-            vararg variables: RealVariable
-    ) : this(accessor, variables.asList())
 
     fun write(value: RealArray): FmiStatus {
         if (value.size != vr.size) {
@@ -106,11 +96,6 @@ class StringVariableVector internal constructor(
         variables: List<StringVariable>
 ): ScalarVariableVector<StringVariable>(accessor, variables) {
 
-    constructor(
-            accessor: VariableAccessor,
-            vararg variables: StringVariable
-    ) : this(accessor, variables.asList())
-
     fun write(value: StringArray): FmiStatus {
         if (value.size != vr.size) {
             throw IllegalArgumentException("value.size != vector.size")
@@ -130,11 +115,6 @@ class BooleanVariableVector internal constructor(
         accessor: VariableAccessor,
         variables: List<BooleanVariable>
 ): ScalarVariableVector<BooleanVariable>(accessor, variables) {
-
-    constructor(
-            accessor: VariableAccessor,
-            vararg variables: BooleanVariable
-    ) : this(accessor, variables.asList())
 
     fun write(value: BooleanArray): FmiStatus {
         if (value.size != vr.size) {

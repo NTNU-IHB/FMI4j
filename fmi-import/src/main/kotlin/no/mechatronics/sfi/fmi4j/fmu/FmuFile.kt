@@ -39,9 +39,6 @@ import no.mechatronics.sfi.fmi4j.proxy.v2.cs.Fmi2CoSimulationLibrary
 import no.mechatronics.sfi.fmi4j.proxy.v2.me.Fmi2ModelExchangeLibrary
 import no.mechatronics.sfi.fmi4j.proxy.v2.me.ModelExchangeLibraryWrapper
 import no.mechatronics.sfi.fmi4j.proxy.v2.structs.Fmi2CallbackFunctions
-import java.io.File
-import java.io.IOException
-import java.net.URL
 import org.apache.commons.io.FileUtils
 import org.apache.commons.io.FilenameUtils
 import org.apache.commons.io.IOUtils
@@ -49,7 +46,10 @@ import org.apache.commons.math3.ode.FirstOrderIntegrator
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.Closeable
+import java.io.File
 import java.io.FileNotFoundException
+import java.io.IOException
+import java.net.URL
 import java.nio.charset.Charset
 import java.nio.file.Files
 import java.util.zip.ZipEntry
@@ -96,7 +96,10 @@ class FmuFile private constructor(
 
             instances.forEach {
                 if (!it.isTerminated) {
-                    it.terminate(true)
+                    it.terminate()
+                }
+                if (!it.wrapper.instanceFreed) {
+                    it.wrapper.freeInstance()
                 }
             }
             instances.clear()
@@ -219,7 +222,7 @@ class FmuFile private constructor(
 
     }
 
-    inner class ModelExchangeFmuBuilder() {
+    inner class ModelExchangeFmuBuilder {
 
         private val modelDescription
             get() = that.modelDescription.asModelExchangeModelDescription()
@@ -258,7 +261,7 @@ class FmuFile private constructor(
         @Throws(IOException::class, FileNotFoundException::class)
         fun from (file: File): FmuFile {
 
-            val ext = file.extension?.toLowerCase()
+            val ext = file.extension.toLowerCase()
             if (ext != "fmu") {
                 throw IllegalArgumentException("File is not an FMU! Found extension: .$ext")
             }

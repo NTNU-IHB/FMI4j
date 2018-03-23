@@ -1,6 +1,7 @@
 package no.mechatronics.sfi.fmi4j.crosscheck
 
 import no.mechatronics.sfi.fmi4j.FmiSimulation
+import no.mechatronics.sfi.fmi4j.common.FmiStatus
 import no.mechatronics.sfi.fmi4j.fmu.FmuFile
 import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.DefaultParser
@@ -80,7 +81,7 @@ object FmuDriver {
 
         val sb = StringBuilder()
         options.fmu.use { fmu ->
-            if (fmu.init(options.startTime, options.stopTime)) {
+            if (fmu.init(options.startTime, options.stopTime) == FmiStatus.OK) {
 
                 val format = CSVFormat.DEFAULT.withHeader("Time", *options.outputVariables.toTypedArray())
                 val printer = CSVPrinter(sb, format)

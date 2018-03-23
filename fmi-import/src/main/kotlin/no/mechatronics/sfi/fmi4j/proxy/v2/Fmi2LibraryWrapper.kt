@@ -51,20 +51,10 @@ abstract class Fmi2LibraryWrapper<out E: Fmi2Library> (
     }
 
     private val functions: Fmi2CallbackFunctions = Fmi2CallbackFunctions()
-    private val buffers: ArrayBuffers by lazy { ArrayBuffers() }
+    private val buffers: ArrayBuffers = ArrayBuffers()
 
-    private var instanceFreed = false
-
-    init {
-        Runtime.getRuntime().addShutdownHook(Thread {
-            if (!isTerminated) {
-                terminate()
-            }
-            if (!instanceFreed) {
-                freeInstance()
-            }
-        })
-    }
+    var instanceFreed = false
+    private set
 
     /**
      * The status returned from the last call to a FMU function
@@ -162,7 +152,7 @@ abstract class Fmi2LibraryWrapper<out E: Fmi2Library> (
     /**
      * @see Fmi2Library.fmi2FreeInstance
      */
-    private fun freeInstance() {
+    internal fun freeInstance() {
         if (!instanceFreed) {
             var success = false
             try {
@@ -171,7 +161,7 @@ abstract class Fmi2LibraryWrapper<out E: Fmi2Library> (
             } catch (ex : Error) {
                 LOG.error("Error caught on fmi2FreeInstance: ${ex.javaClass.simpleName}")
             } finally {
-                val msg = if (success) "successfully" else "unsuccesfullt"
+                val msg = if (success) "successfully" else "unsuccessfully"
                 LOG.debug("Instance freed $msg")
                 instanceFreed = true
             }
