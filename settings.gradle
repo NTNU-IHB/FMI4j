@@ -1,6 +1,5 @@
 rootProject.name = 'fmi4j'
 
 include 'fmi-import'
-include 'fmi-md'
 include 'crosscheck'
 
