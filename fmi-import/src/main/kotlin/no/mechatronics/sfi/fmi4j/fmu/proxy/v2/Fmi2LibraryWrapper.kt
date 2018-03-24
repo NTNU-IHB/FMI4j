@@ -53,7 +53,7 @@ abstract class Fmi2LibraryWrapper<out E : Fmi2Library>(
     private val functions: Fmi2CallbackFunctions = Fmi2CallbackFunctions()
     private val buffers: ArrayBuffers = ArrayBuffers()
 
-    var instanceFreed = false
+    var isInstanceFreed = false
         private set
 
     /**
@@ -153,7 +153,7 @@ abstract class Fmi2LibraryWrapper<out E : Fmi2Library>(
      * @see Fmi2Library.fmi2FreeInstance
      */
     internal fun freeInstance() {
-        if (!instanceFreed) {
+        if (!isInstanceFreed) {
             var success = false
             try {
                 library.fmi2FreeInstance(c)
@@ -163,7 +163,7 @@ abstract class Fmi2LibraryWrapper<out E : Fmi2Library>(
             } finally {
                 val msg = if (success) "successfully" else "unsuccessfully"
                 LOG.debug("Instance freed $msg")
-                instanceFreed = true
+                isInstanceFreed = true
             }
         }
     }
@@ -171,7 +171,13 @@ abstract class Fmi2LibraryWrapper<out E : Fmi2Library>(
     /**
      * @see Fmi2Library.fmi2Reset
      */
-    fun reset(): FmiStatus = updateStatus(library.fmi2Reset(c))
+    fun reset(): FmiStatus {
+        return updateStatus(library.fmi2Reset(c)).also { status ->
+            if (status == FmiStatus.OK) {
+                isTerminated = false
+            }
+        }
+    }
 
     /**
      * @see Fmi2Library.fmi2GetInteger
@@ -353,31 +359,49 @@ abstract class Fmi2LibraryWrapper<out E : Fmi2Library>(
         return setBoolean(vr, value.map { if (it) 1 else 0 }.toIntArray())
     }
 
+    /**
+     * @see Fmi2Library.fmi2GetDirectionalDerivative
+     */
     fun getDirectionalDerivative(vUnknown_ref: IntArray, vKnown_ref: IntArray, dvKnown: DoubleArray, dvUnknown: DoubleArray): FmiStatus {
         return updateStatus(library.fmi2GetDirectionalDerivative(c,
                 vUnknown_ref, vUnknown_ref.size, vKnown_ref, vKnown_ref.size, dvKnown, dvUnknown))
     }
 
+    /**
+     * @see Fmi2Library.fmi2GetFMUstate
+     */
     fun getFMUState(fmuState: FmuState): FmuState {
         return fmuState.also {
             updateStatus(library.fmi2GetFMUstate(c, fmuState))
         }
     }
 
+    /**
+     * @see Fmi2Library.fmi2GetFMUstate
+     */
     fun setFMUState(fmuState: FmuState): FmiStatus {
         return updateStatus(library.fmi2SetFMUstate(c, fmuState.pointer))
     }
 
+    /**
+     * @see Fmi2Library.fmi2FreeFMUstate
+     */
     fun freeFMUState(fmuState: FmuState): FmiStatus {
         return updateStatus(library.fmi2FreeFMUstate(c, fmuState))
     }
 
+    /**
+     * @see Fmi2Library.fmi2SerializedFMUstateSize
+     */
     fun serializedFMUStateSize(fmuState: FmuState): Int {
         val memory = Memory(Pointer.SIZE.toLong())
         updateStatus(library.fmi2SerializedFMUstateSize(c, fmuState.pointer, memory))
         return memory.getInt(0)
     }
 
+    /**
+     * @see Fmi2Library.fmi2SerializeFMUstate
+     */
     fun serializeFMUState(fmuState: FmuState): ByteArray {
         val size = serializedFMUStateSize(fmuState)
         return ByteArray(size).also {
@@ -385,6 +409,9 @@ abstract class Fmi2LibraryWrapper<out E : Fmi2Library>(
         }
     }
 
+    /**
+     * @see Fmi2Library.fmi2DeSerializeFMUstate
+     */
     fun deSerializeFMUState(serializedState: ByteArray): FmuState {
         return FmuState().also { state ->
             updateStatus(library.fmi2DeSerializeFMUstate(c, serializedState, serializedState.size, state))

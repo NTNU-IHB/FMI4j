@@ -77,13 +77,11 @@ class FmuFile private constructor(
         private val fmuFile: File
 ): Closeable {
 
-
     var isClosed = false
         private set
 
     private val instances = mutableListOf<AbstractFmu<*, *>>()
     private val libraries = mutableListOf<LibraryProvider<*>>()
-
 
     init {
         Runtime.getRuntime().addShutdownHook(Thread {
@@ -98,7 +96,7 @@ class FmuFile private constructor(
                 if (!it.isTerminated) {
                     it.terminate()
                 }
-                if (!it.wrapper.instanceFreed) {
+                if (!it.wrapper.isInstanceFreed) {
                     it.wrapper.freeInstance()
                 }
             }
