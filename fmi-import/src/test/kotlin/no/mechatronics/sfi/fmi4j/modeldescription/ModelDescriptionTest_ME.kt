@@ -45,6 +45,13 @@ class ModelDescriptionTest_ME {
     }
 
     @Test
+    fun testNumberOfReals() {
+        val numberOfReals = modelDescription.modelVariables.reals.size
+        LOG.info("numberOfReals=$numberOfReals")
+        Assert.assertEquals(5, numberOfReals)
+    }
+
+    @Test
     fun testModelName() {
         val modelName = modelDescription.modelName
         LOG.info("modelName=$modelName")

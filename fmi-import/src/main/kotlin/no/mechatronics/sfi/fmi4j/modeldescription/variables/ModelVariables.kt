@@ -43,6 +43,21 @@ interface ModelVariables: Iterable<TypedScalarVariable<*>> {
 
     val variables: List<TypedScalarVariable<*>>
 
+    val integers: List<IntegerVariable>
+        get() = variables.mapNotNull { if (it is IntegerVariable) it.asIntegerVariable() else null }
+
+    val reals: List<RealVariable>
+        get() = variables.mapNotNull { if (it is RealVariable) it.asRealVariable() else null }
+
+    val strings: List<StringVariable>
+        get() = variables.mapNotNull { if (it is StringVariable) it.asStringVariable() else null }
+
+    val booleans: List<BooleanVariable>
+        get() = variables.mapNotNull { if (it is BooleanVariable) it.asBooleanVariable() else null }
+
+    val enumerations: List<EnumerationVariable>
+        get() = variables.mapNotNull { if (it is EnumerationVariable) it.asEnumerationVariable() else null }
+
     operator fun get(index: Int): TypedScalarVariable<*>
             = variables[index]
 

@@ -139,6 +139,7 @@ abstract class AbstractFmu<out E: ModelDescription, out T: Fmi2LibraryWrapper<*>
             }
 
             val stopDefined = stop > start
+            @Suppress("NAME_SHADOWING")
             val stop = if (stopDefined) stop else Double.MAX_VALUE
             var status = wrapper.setupExperiment(false, 1E-4,
                     start, stopDefined, stop)
@@ -146,7 +147,7 @@ abstract class AbstractFmu<out E: ModelDescription, out T: Fmi2LibraryWrapper<*>
                 return lastStatus
             }
             status = wrapper.enterInitializationMode()
-            LOG.debug("Called enterInitializationMode with status $status")
+            LOG.trace("Called enterInitializationMode with status $status")
             if (status != FmiStatus.OK) {
                 return lastStatus
             }
@@ -157,7 +158,7 @@ abstract class AbstractFmu<out E: ModelDescription, out T: Fmi2LibraryWrapper<*>
             }
 
             status = wrapper.exitInitializationMode()
-            LOG.debug("Called exitInitializationMode with status $status")
+            LOG.trace("Called exitInitializationMode with status $status")
             if (status != FmiStatus.OK) {
                 return lastStatus
             }
@@ -212,7 +213,7 @@ abstract class AbstractFmu<out E: ModelDescription, out T: Fmi2LibraryWrapper<*>
      * @see Fmi2Library.fmi2Reset
      */
     fun reset(requireReinit: Boolean): FmiStatus {
-        return wrapper.reset().also { status ->
+        return wrapper.reset().also {
             if (requireReinit) {
                 isInitialized = false
             }
@@ -334,9 +335,11 @@ abstract class AbstractFmu<out E: ModelDescription, out T: Fmi2LibraryWrapper<*>
     }
 
     private fun assignStartValues(predicate: (TypedScalarVariable<*>) -> Boolean) {
-        modelVariables.filter {
+        val variables = modelVariables.filter {
             it.start != null && predicate.invoke(it)
-        }.forEach { variable ->
+        }
+        LOG.debug("Setting start values for ${variables.size} variables")
+        variables.forEach { variable ->
 
             when (variable) {
                 is IntegerVariable -> variable.write(variable.start!!)

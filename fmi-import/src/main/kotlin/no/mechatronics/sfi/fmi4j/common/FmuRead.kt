@@ -27,7 +27,6 @@ package no.mechatronics.sfi.fmi4j.common
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.Real
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.RealArray
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.StringArray
-import org.jetbrains.annotations.NotNull
 import java.io.Serializable
 
 /***
@@ -41,13 +40,11 @@ sealed class FmuRead<E>(
         /**
          * The value returned by the FMU during the call to getXXX
          */
-        @NotNull
         val value: E,
 
         /**
          * The status returned by the FMU during the call to getXXX
          */
-        @NotNull
         val status: FmiStatus
 
 ): Serializable {

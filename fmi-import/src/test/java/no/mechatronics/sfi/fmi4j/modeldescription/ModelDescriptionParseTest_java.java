@@ -13,6 +13,7 @@ public class ModelDescriptionParseTest_java {
 
     @Test
     public void test() throws IOException {
+
         File file1 = new File("../test/fmi2/cs/win64/20sim/4.6.4.8004/ControlledTemperature/ControlledTemperature.fmu");
         Assert.assertTrue(file1.exists());
         ModelDescriptionParser.parse(file1).asCoSimulationModelDescription();

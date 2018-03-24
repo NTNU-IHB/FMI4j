@@ -44,5 +44,4 @@ class TestUnknowns {
         Assert.assertNull(d2.dependenciesKind)
     }
 
-
 }

@@ -34,6 +34,12 @@ typealias Real = Double
 typealias RealArray = DoubleArray
 typealias StringArray = Array<String>
 
+private const val INTEGER_TYPE = "Integer"
+private const val REAL_TYPE = "Real"
+private const val STRING_TYPE = "String"
+private const val BOOLEAN_TYPE = "Boolean"
+private const val ENUMERATION_TYPE = "Enumeration"
+
 /**
  * @author Lars Ivar Hatledal
  */
@@ -118,23 +124,21 @@ class ScalarVariableImpl internal constructor() : ScalarVariable, Serializable {
     private val _valueReference: Int? = null
 
     override val valueReference: Int
-        get(){
-            return _valueReference ?: throw IllegalStateException("ValueReference was null!")
-        }
+        get() = _valueReference ?: throw IllegalStateException("ValueReference was null!")
 
-    @XmlElement(name="Integer")
+    @XmlElement(name = INTEGER_TYPE)
     internal val integerAttribute: IntegerAttribute? = null
 
-    @XmlElement(name="Real")
+    @XmlElement(name = REAL_TYPE)
     internal val realAttribute: RealAttribute? = null
 
-    @XmlElement(name="String")
+    @XmlElement(name = STRING_TYPE)
     internal val stringAttribute: StringAttribute? = null
 
-    @XmlElement(name="Boolean")
+    @XmlElement(name = BOOLEAN_TYPE)
     internal val booleanAttribute: BooleanAttribute? = null
 
-    @XmlElement(name="Enumeration")
+    @XmlElement(name = ENUMERATION_TYPE)
     internal val enumerationAttribute: EnumerationAttribute? = null
 
     override fun toString(): String {
@@ -144,6 +148,7 @@ class ScalarVariableImpl internal constructor() : ScalarVariable, Serializable {
 }
 
 interface TypedScalarVariable<E>: ScalarVariable {
+
     /**
      * Initial or guess value of variable. This value is also stored in the C functions
      * [Therefore, calling fmi2SetXXX to set start values is only necessary, if a different
@@ -191,6 +196,7 @@ interface TypedScalarVariable<E>: ScalarVariable {
     fun asBooleanVariable(): BooleanVariable
             = if (this is BooleanVariable) this else throw IllegalAccessException("Variable is not an ${BooleanVariable::class.java.simpleName}, but an ${this::class.java.simpleName}")
 
+    fun asEnumerationVariable(): EnumerationVariable = if (this is EnumerationVariable) this else throw IllegalAccessException("Variable is not an ${BooleanVariable::class.java.simpleName}, but an ${this::class.java.simpleName}")
 
 }
 
@@ -236,7 +242,7 @@ class IntegerVariable internal constructor(
     private val attribute: IntegerAttribute
             = v.integerAttribute ?: throw AssertionError("Variable is not of type Integer!")
 
-    override val typeName = "Integer"
+    override val typeName = INTEGER_TYPE
     override val min: Int? = attribute.min
     override val max: Int? = attribute.max
     override var start = attribute.start
@@ -258,6 +264,7 @@ class IntegerVariable internal constructor(
             accessor?.also { add("value=${read()}") }
             min?.also { add("min=$min") }
             max?.also { add("min=$min") }
+            description?.also { add("description=$description") }
         }.joinToString { ", " }
 
         return "IntegerVariable($entries)"
@@ -275,7 +282,7 @@ class RealVariable internal constructor(
     private val attribute: RealAttribute
             = v.realAttribute ?: throw AssertionError("Variable is not of type Real!")
 
-    override val typeName = "Real"
+    override val typeName = REAL_TYPE
     override val min = attribute.min
     override val max = attribute.max
 
@@ -370,6 +377,7 @@ class RealVariable internal constructor(
             displayUnit?.also { add("displayUnit=$displayUnit") }
             relativeQuantity?.also { add("relativeQuantity=$relativeQuantity") }
             derivative?.also { add("derivative=$derivative") }
+            description?.also { add("description=$description") }
         }.joinToString (", ")
 
         return "RealVariable($entries)"
@@ -388,7 +396,7 @@ class StringVariable internal constructor(
     private val attribute: StringAttribute
             = v.stringAttribute ?: throw AssertionError("Variable is not of type String!")
 
-    override val typeName = "String"
+    override val typeName = STRING_TYPE
     override var start = attribute.start
 
     override fun read(): FmuRead<String> {
@@ -407,6 +415,7 @@ class StringVariable internal constructor(
             causality?.also { add("causality=$causality") }
             start?.also { add("start=$start") }
             accessor?.also { add("value=${read()}") }
+            description?.also { add("description=$description") }
         }.joinToString (", ")
 
         return "StringVariable($entries)"
@@ -425,7 +434,7 @@ class BooleanVariable internal constructor(
     private val attribute: BooleanAttribute
             = v.booleanAttribute ?: throw AssertionError("Variable is not of type Boolean!")
 
-    override val typeName = "Boolean"
+    override val typeName = BOOLEAN_TYPE
     override var start = attribute.start
 
     override fun read(): FmuRead<Boolean> {
@@ -444,6 +453,7 @@ class BooleanVariable internal constructor(
             causality?.also { add("causality=$causality") }
             start?.also { add("start=$start") }
             accessor?.also { add("value=${read()}") }
+            description?.also { add("description=$description") }
         }.joinToString (", ")
 
         return "BooleanVariable($entries)"
@@ -459,13 +469,13 @@ class EnumerationVariable internal constructor(
     private val attribute: EnumerationAttribute
             = v.enumerationAttribute ?: throw AssertionError("Variable is not of type Enumeration!")
 
-    override val typeName = "Enumeration"
+    override val typeName = ENUMERATION_TYPE
 
     override val min: Int? = attribute.min
     override val max: Int? = attribute.max
-    override var start = attribute.start
+    override var start: Int? = attribute.start
 
-    val quantity = attribute.quantity
+    val quantity: String? = attribute.quantity
 
     override fun read(): FmuRead<Int> {
         return accessor?.readInteger(valueReference) ?: throw IllegalStateException("No accessor assigned!")
@@ -486,6 +496,7 @@ class EnumerationVariable internal constructor(
             min?.also { add("min=$min") }
             max?.also { add("min=$min") }
             quantity?.also { add("quantity=$quantity") }
+            description?.also { add("description=$description") }
         }.joinToString (", ")
 
         return "EnumerationVariable($entries)"

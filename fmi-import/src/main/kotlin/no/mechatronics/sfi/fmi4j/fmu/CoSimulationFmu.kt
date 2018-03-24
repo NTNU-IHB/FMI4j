@@ -73,6 +73,12 @@ class CoSimulationFmu internal constructor(
 
     }
 
+    /**
+     * Terminates and frees the FMU instance
+     *
+     * @see no.mechatronics.sfi.fmi4j.fmu.proxy.v2.Fmi2Library.fmi2Terminate
+     * @see no.mechatronics.sfi.fmi4j.fmu.proxy.v2.Fmi2Library.fmi2FreeInstance
+     */
     override fun terminate(): FmiStatus {
         return super.terminate(true)
     }

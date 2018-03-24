@@ -50,7 +50,6 @@ import java.io.File
 import java.io.FileNotFoundException
 import java.io.IOException
 import java.net.URL
-import java.nio.charset.Charset
 import java.nio.file.Files
 import java.util.zip.ZipEntry
 import java.util.zip.ZipFile
@@ -92,28 +91,40 @@ class FmuFile private constructor(
     override fun close() {
         if (!isClosed) {
 
-            instances.forEach {
-                if (!it.isTerminated) {
-                    it.terminate()
-                }
-                if (!it.wrapper.isInstanceFreed) {
-                    it.wrapper.freeInstance()
-                }
-            }
-            instances.clear()
-
-            libraries.forEach {
-                it.disposeLibrary()
-            }
-            libraries.clear()
-
-            if (fmuFile.deleteRecursively()) {
-                LOG.debug("Deleted fmu folder: $fmuFile")
-            } else {
-                LOG.debug("Failed to delete fmu folder: $fmuFile")
-            }
+            terminateInstances()
+            disposeNativeLibraries()
+            deleteExtractedFmuFolder()
 
             isClosed = true
+        }
+    }
+
+    private fun disposeNativeLibraries() {
+        libraries.forEach {
+            it.disposeLibrary()
+        }
+        libraries.clear()
+    }
+
+    private fun terminateInstances() {
+        instances.forEach {
+            if (!it.isTerminated) {
+                it.terminate()
+            }
+            if (!it.wrapper.isInstanceFreed) {
+                it.wrapper.freeInstance()
+            }
+        }
+        instances.clear()
+    }
+
+    fun deleteExtractedFmuFolder(): Boolean {
+        if (fmuFile.deleteRecursively()) {
+            LOG.debug("Deleted fmu folder: $fmuFile")
+            return true
+        } else {
+            LOG.debug("Failed to delete fmu folder: $fmuFile")
+            return false
         }
     }
 
@@ -121,7 +132,7 @@ class FmuFile private constructor(
      * Get the content of the modelDescription.xml file as a String
      */
     val modelDescriptionXml: String by lazy {
-        FileUtils.readFileToString(modelDescriptionFile, Charset.forName("UTF-8"))
+        FileUtils.readFileToString(modelDescriptionFile, Charsets.UTF_8)
     }
 
     val modelDescription: ModelDescriptionProvider by lazy {
@@ -192,30 +203,27 @@ class FmuFile private constructor(
     fun asModelExchangeFmu(): ModelExchangeFmuBuilder
             = modelExchangeBuilder ?: throw IllegalStateException("FMU does not support Model Exchange!")
 
-
     override fun toString(): String {
         return "FmuFile(fmuFile=${fmuFile.absolutePath})"
     }
 
-    private val that = this
-
     inner class CoSimulationFmuBuilder internal constructor() {
+
         private val modelDescription
-            get() = that.modelDescription.asCoSimulationModelDescription()
+            get() = this@FmuFile.modelDescription.asCoSimulationModelDescription()
 
         private val libraryCache: LibraryProvider<Fmi2CoSimulationLibrary> by lazy {
             loadLibrary()
         }
 
-        private fun loadLibrary(): LibraryProvider<Fmi2CoSimulationLibrary>
-                = loadLibrary(that, modelDescription, Fmi2CoSimulationLibrary::class.java).also { libraries.add(it) }
+        private fun loadLibrary(): LibraryProvider<Fmi2CoSimulationLibrary> = loadLibrary(this@FmuFile, modelDescription, Fmi2CoSimulationLibrary::class.java).also { libraries.add(it) }
 
         @JvmOverloads
         fun newInstance(visible: Boolean = false, loggingOn: Boolean = false) : CoSimulationFmu {
             val lib = if (modelDescription.canBeInstantiatedOnlyOncePerProcess) loadLibrary() else libraryCache
-            val c = instantiate(that, modelDescription, lib.get(), Fmi2Type.CoSimulation, visible, loggingOn)
+            val c = instantiate(this@FmuFile, modelDescription, lib.get(), Fmi2Type.CoSimulation, visible, loggingOn)
             val wrapper = CoSimulationLibraryWrapper(c, lib)
-            return CoSimulationFmu(that, wrapper).also { instances.add(it) }
+            return CoSimulationFmu(this@FmuFile, wrapper).also { instances.add(it) }
         }
 
     }
@@ -223,29 +231,28 @@ class FmuFile private constructor(
     inner class ModelExchangeFmuBuilder {
 
         private val modelDescription
-            get() = that.modelDescription.asModelExchangeModelDescription()
+            get() = this@FmuFile.modelDescription.asModelExchangeModelDescription()
 
         private val libraryCache: LibraryProvider<Fmi2ModelExchangeLibrary> by lazy {
             loadLibrary()
         }
 
-        private fun loadLibrary(): LibraryProvider<Fmi2ModelExchangeLibrary>
-                = loadLibrary(that, modelDescription, Fmi2ModelExchangeLibrary::class.java).also { libraries.add(it) }
+        private fun loadLibrary(): LibraryProvider<Fmi2ModelExchangeLibrary> = loadLibrary(this@FmuFile, modelDescription, Fmi2ModelExchangeLibrary::class.java).also { libraries.add(it) }
 
         @JvmOverloads
         fun newInstance(visible: Boolean = false, loggingOn: Boolean = false) : ModelExchangeFmu {
             val lib = if (modelDescription.canBeInstantiatedOnlyOncePerProcess) loadLibrary() else libraryCache
-            val c = instantiate(that, modelDescription, lib.get(), Fmi2Type.ModelExchange, visible, loggingOn)
+            val c = instantiate(this@FmuFile, modelDescription, lib.get(), Fmi2Type.ModelExchange, visible, loggingOn)
             val wrapper = ModelExchangeLibraryWrapper(c, lib)
-            return ModelExchangeFmu(that, wrapper).also { instances.add(it) }
+            return ModelExchangeFmu(this@FmuFile, wrapper).also { instances.add(it) }
         }
 
         @JvmOverloads
         fun newInstance(integrator: FirstOrderIntegrator, visible: Boolean = false, loggingOn: Boolean = false) : ModelExchangeFmuWithIntegrator {
             val lib = if (modelDescription.canBeInstantiatedOnlyOncePerProcess) loadLibrary() else libraryCache
-            val c = instantiate(that, modelDescription, lib.get(), Fmi2Type.ModelExchange, visible, loggingOn)
+            val c = instantiate(this@FmuFile, modelDescription, lib.get(), Fmi2Type.ModelExchange, visible, loggingOn)
             val wrapper = ModelExchangeLibraryWrapper(c, lib)
-            return ModelExchangeFmuWithIntegrator(ModelExchangeFmu(that, wrapper), integrator).also { instances.add(it.fmu) }
+            return ModelExchangeFmuWithIntegrator(ModelExchangeFmu(this@FmuFile, wrapper), integrator).also { instances.add(it.fmu) }
         }
 
     }
@@ -354,7 +361,6 @@ class FmuFile private constructor(
                     FmiBoolean.convert(visible), FmiBoolean.convert(loggingOn) )
                     ?: throw IllegalStateException("Unable to instantiate FMU. Returned pointer is null!")
         }
-
 
     }
 
