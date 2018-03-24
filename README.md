@@ -7,11 +7,11 @@
 
 
 
-FMI4j is a software suite for dealing with Functional Mock-up Units on the Java Virtual Machine (JVM), written in Kotlin. 
+FMI4j is a software library for dealing with Functional Mock-up Units (FMUs) on the Java Virtual Machine (JVM), written in [Kotlin](https://kotlinlang.org/). 
 
 
 
-Fmi4j allows FMUs for Model Exchange and Co-simulation (version 2.0 only) to be imported into applications written for the JVM.
+FMI4j supports [FMI](http://fmi-standard.org/) 2.0 for **Model Exchange** and **Co-simulation**.
 For Model Exchange, solvers are also included.
 
 To get started head over to the [Wiki](https://github.com/SFI-Mechatronics/FMI4j/wiki)!

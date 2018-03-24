@@ -109,8 +109,22 @@ abstract class AbstractFmu<out E: ModelDescription, out T: Fmi2LibraryWrapper<*>
             =  wrapper.setDebugLogging(loggingOn, nCategories, categories)
 
 
+    /**
+     * Call init with 0.0 as start.
+     */
     fun init() = init(0.0)
+
+    /**
+     * Call init with provided start
+     * @param start the start time
+     */
     fun init(start :Double) = init(start, -1.0)
+
+    /**
+     * Call init with provided start and stop
+     * @param start the start time
+     * @param stop the stop time
+     */
     open fun init(start: Double, stop: Double): FmiStatus {
 
         if (!isInitialized) {
