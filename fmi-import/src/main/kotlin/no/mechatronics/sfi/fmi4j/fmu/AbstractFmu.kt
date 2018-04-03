@@ -25,6 +25,7 @@
 package no.mechatronics.sfi.fmi4j.fmu
 
 import no.mechatronics.sfi.fmi4j.common.FmiStatus
+import no.mechatronics.sfi.fmi4j.common.VariableAccessor
 import no.mechatronics.sfi.fmi4j.fmu.misc.*
 import no.mechatronics.sfi.fmi4j.fmu.proxy.v2.Fmi2Library
 import no.mechatronics.sfi.fmi4j.fmu.proxy.v2.Fmi2LibraryWrapper
@@ -45,7 +46,7 @@ abstract class AbstractFmu<out E: ModelDescription, out T: Fmi2LibraryWrapper<*>
     }
 
     val variableAccessor: VariableAccessor
-            = FmuVariableAccessor(modelVariables, wrapper)
+            = FmuVariableAccessor(this)
 
     init {
         modelVariables.forEach{

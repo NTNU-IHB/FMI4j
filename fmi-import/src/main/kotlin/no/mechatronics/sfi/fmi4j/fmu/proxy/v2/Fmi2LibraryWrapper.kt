@@ -240,7 +240,7 @@ abstract class Fmi2LibraryWrapper<out E : Fmi2Library>(
      */
     @JvmOverloads
     fun getString(vr: IntArray, value: StringArray = StringArray(vr.size, { "" })): FmuStringArrayRead {
-        return (library.fmi2GetString(c, vr, vr.size, value)).let {
+        return library.fmi2GetString(c, vr, vr.size, value).let {
             FmuStringArrayRead(value, updateStatus(it))
         }
     }

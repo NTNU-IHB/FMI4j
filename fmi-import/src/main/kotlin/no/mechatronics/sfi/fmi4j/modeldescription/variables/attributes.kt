@@ -1,6 +1,5 @@
-package no.mechatronics.sfi.fmi4j.modeldescription.variables.attributes
+package no.mechatronics.sfi.fmi4j.modeldescription.variables
 
-import no.mechatronics.sfi.fmi4j.modeldescription.variables.ScalarVariable
 import java.io.Serializable
 import javax.xml.bind.annotation.XmlAccessType
 import javax.xml.bind.annotation.XmlAccessorType

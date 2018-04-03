@@ -204,10 +204,11 @@ class ModelExchangeFmuWithIntegrator internal constructor(
                 fmu.enterContinuousTimeMode()
             }
 
-
         }
+
         currentTime = time
         return true
+
     }
 
     private data class SolveResult(

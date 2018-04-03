@@ -216,7 +216,8 @@ class FmuFile private constructor(
             loadLibrary()
         }
 
-        private fun loadLibrary(): LibraryProvider<Fmi2CoSimulationLibrary> = loadLibrary(this@FmuFile, modelDescription, Fmi2CoSimulationLibrary::class.java).also { libraries.add(it) }
+        private fun loadLibrary(): LibraryProvider<Fmi2CoSimulationLibrary>
+                = loadLibrary(this@FmuFile, modelDescription, Fmi2CoSimulationLibrary::class.java).also { libraries.add(it) }
 
         @JvmOverloads
         fun newInstance(visible: Boolean = false, loggingOn: Boolean = false) : CoSimulationFmu {
@@ -237,7 +238,8 @@ class FmuFile private constructor(
             loadLibrary()
         }
 
-        private fun loadLibrary(): LibraryProvider<Fmi2ModelExchangeLibrary> = loadLibrary(this@FmuFile, modelDescription, Fmi2ModelExchangeLibrary::class.java).also { libraries.add(it) }
+        private fun loadLibrary(): LibraryProvider<Fmi2ModelExchangeLibrary>
+                = loadLibrary(this@FmuFile, modelDescription, Fmi2ModelExchangeLibrary::class.java).also { libraries.add(it) }
 
         @JvmOverloads
         fun newInstance(visible: Boolean = false, loggingOn: Boolean = false) : ModelExchangeFmu {

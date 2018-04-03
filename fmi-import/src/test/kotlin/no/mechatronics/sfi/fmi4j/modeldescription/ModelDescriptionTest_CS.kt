@@ -128,13 +128,13 @@ class ModelDescriptionTest_CS {
         Assert.assertEquals(298.0, variable.start!!, 0.0)
     }
 
-    @Test
-    fun testTypeName() {
-        val variables: ModelVariables =  modelDescription.modelVariables
-        val variable: RealVariable = variables.getByName("Temperature_Room") as RealVariable
-        LOG.info("Temperature_Room=$variable")
-        Assert.assertEquals("Real", variable.typeName)
-    }
+//    @Test
+//    fun testTypeName() {
+//        val variables: ModelVariables =  modelDescription.modelVariables
+//        val variable: RealVariable = variables.getByName("Temperature_Room") as RealVariable
+//        LOG.info("Temperature_Room=$variable")
+//        Assert.assertEquals("Real", variable.typeName)
+//    }
 
     @Test
     fun testMinMax() {

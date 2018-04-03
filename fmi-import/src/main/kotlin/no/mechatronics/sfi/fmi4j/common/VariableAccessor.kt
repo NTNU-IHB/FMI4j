@@ -22,9 +22,11 @@
  * THE SOFTWARE.
  */
 
-package no.mechatronics.sfi.fmi4j.modeldescription.variables
+package no.mechatronics.sfi.fmi4j.common
 
-import no.mechatronics.sfi.fmi4j.common.*
+import no.mechatronics.sfi.fmi4j.modeldescription.variables.Real
+import no.mechatronics.sfi.fmi4j.modeldescription.variables.RealArray
+import no.mechatronics.sfi.fmi4j.modeldescription.variables.StringArray
 
 
 /**

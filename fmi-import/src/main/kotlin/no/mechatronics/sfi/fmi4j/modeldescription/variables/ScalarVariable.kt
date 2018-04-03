@@ -26,7 +26,7 @@ package no.mechatronics.sfi.fmi4j.modeldescription.variables
 
 import no.mechatronics.sfi.fmi4j.common.FmiStatus
 import no.mechatronics.sfi.fmi4j.common.FmuRead
-import no.mechatronics.sfi.fmi4j.modeldescription.variables.attributes.*
+import no.mechatronics.sfi.fmi4j.common.VariableAccessor
 import java.io.Serializable
 import javax.xml.bind.annotation.*
 
@@ -34,11 +34,11 @@ typealias Real = Double
 typealias RealArray = DoubleArray
 typealias StringArray = Array<String>
 
-private const val INTEGER_TYPE = "Integer"
-private const val REAL_TYPE = "Real"
-private const val STRING_TYPE = "String"
-private const val BOOLEAN_TYPE = "Boolean"
-private const val ENUMERATION_TYPE = "Enumeration"
+const val INTEGER_TYPE = "Integer"
+const val REAL_TYPE = "Real"
+const val STRING_TYPE = "String"
+const val BOOLEAN_TYPE = "Boolean"
+const val ENUMERATION_TYPE = "Enumeration"
 
 /**
  * @author Lars Ivar Hatledal
@@ -179,11 +179,6 @@ interface TypedScalarVariable<E>: ScalarVariable {
      */
     fun write(value: E): FmiStatus
 
-    /**
-     * Integer, Real, String or Boolean
-     */
-    val typeName: String
-
     fun asIntegerVariable(): IntegerVariable
             = if (this is IntegerVariable) this else throw IllegalAccessException("Variable is not an ${IntegerVariable::class.java.simpleName}, but an ${this::class.java.simpleName}")
 
@@ -242,7 +237,6 @@ class IntegerVariable internal constructor(
     private val attribute: IntegerAttribute
             = v.integerAttribute ?: throw AssertionError("Variable is not of type Integer!")
 
-    override val typeName = INTEGER_TYPE
     override val min: Int? = attribute.min
     override val max: Int? = attribute.max
     override var start = attribute.start
@@ -282,7 +276,6 @@ class RealVariable internal constructor(
     private val attribute: RealAttribute
             = v.realAttribute ?: throw AssertionError("Variable is not of type Real!")
 
-    override val typeName = REAL_TYPE
     override val min = attribute.min
     override val max = attribute.max
 
@@ -396,7 +389,6 @@ class StringVariable internal constructor(
     private val attribute: StringAttribute
             = v.stringAttribute ?: throw AssertionError("Variable is not of type String!")
 
-    override val typeName = STRING_TYPE
     override var start = attribute.start
 
     override fun read(): FmuRead<String> {
@@ -434,7 +426,6 @@ class BooleanVariable internal constructor(
     private val attribute: BooleanAttribute
             = v.booleanAttribute ?: throw AssertionError("Variable is not of type Boolean!")
 
-    override val typeName = BOOLEAN_TYPE
     override var start = attribute.start
 
     override fun read(): FmuRead<Boolean> {
@@ -468,8 +459,6 @@ class EnumerationVariable internal constructor(
 
     private val attribute: EnumerationAttribute
             = v.enumerationAttribute ?: throw AssertionError("Variable is not of type Enumeration!")
-
-    override val typeName = ENUMERATION_TYPE
 
     override val min: Int? = attribute.min
     override val max: Int? = attribute.max
