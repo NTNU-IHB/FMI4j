@@ -48,6 +48,8 @@ class FmuVariableAccessorTest {
 
             fmu.modelVariables.forEach { variable ->
 
+//                println(variable)
+
                 when(variable) {
                     is IntegerVariable -> Assert.assertEquals(variable.read(), fmu.variableAccessor.readInteger(variable.valueReference))
                     is RealVariable ->  Assert.assertEquals(variable.read(), fmu.variableAccessor.readReal(variable.valueReference))

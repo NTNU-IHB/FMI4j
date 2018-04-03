@@ -118,7 +118,7 @@ class ScalarVariableImpl internal constructor() : ScalarVariable, Serializable {
     override val variability: Variability? = null
 
     @XmlAttribute
-    override var initial: Initial? = null
+    override val initial: Initial? = null
 
     @XmlAttribute(name="valueReference")
     private val _valueReference: Int? = null
@@ -140,10 +140,6 @@ class ScalarVariableImpl internal constructor() : ScalarVariable, Serializable {
 
     @XmlElement(name = ENUMERATION_TYPE)
     internal val enumerationAttribute: EnumerationAttribute? = null
-
-    override fun toString(): String {
-        return "ScalarVariableImpl(name='$name', declaredType='$declaredType', description='$description', causality=$causality, variability=$variability, initial=$initial)"
-    }
 
 }
 
@@ -191,7 +187,7 @@ interface TypedScalarVariable<E>: ScalarVariable {
     fun asBooleanVariable(): BooleanVariable
             = if (this is BooleanVariable) this else throw IllegalAccessException("Variable is not an ${BooleanVariable::class.java.simpleName}, but an ${this::class.java.simpleName}")
 
-    fun asEnumerationVariable(): EnumerationVariable = if (this is EnumerationVariable) this else throw IllegalAccessException("Variable is not an ${BooleanVariable::class.java.simpleName}, but an ${this::class.java.simpleName}")
+    fun asEnumerationVariable(): EnumerationVariable = if (this is EnumerationVariable) this else throw IllegalAccessException("Variable is not an ${EnumerationVariable::class.java.simpleName}, but an ${this::class.java.simpleName}")
 
 }
 
@@ -225,7 +221,7 @@ sealed class AbstractTypedScalarVariable<E>: TypedScalarVariable<E>, Serializabl
 
 }
 
-sealed class AbstractBoundedScalarVariable<E>: BoundedScalarVariable<E>, AbstractTypedScalarVariable<E>(), Serializable
+sealed class AbstractBoundedScalarVariable<E>: BoundedScalarVariable<E>, AbstractTypedScalarVariable<E>()
 
 /**
  * @author Lars Ivar HatLedal
@@ -253,15 +249,18 @@ class IntegerVariable internal constructor(
         val entries = mutableListOf<String>().apply {
             add("name=$name")
             add("valueReference=$valueReference")
-            causality?.also { add("causality=$causality") }
             start?.also { add("start=$start") }
-            accessor?.also { add("value=${read()}") }
+            accessor?.also { add("value=${read().value}") }
             min?.also { add("min=$min") }
             max?.also { add("min=$min") }
+            causality?.also { add("causality=$causality") }
+            variability?.also { add("variability=$variability") }
+            initial?.also { add("initial=$initial") }
             description?.also { add("description=$description") }
-        }.joinToString { ", " }
+            declaredType?.also { add("declaredType=$declaredType") }
+        }.joinToString (", ")
 
-        return "IntegerVariable($entries)"
+        return "${IntegerVariable::class.java.simpleName}($entries)"
     }
 
 }
@@ -278,6 +277,8 @@ class RealVariable internal constructor(
 
     override val min = attribute.min
     override val max = attribute.max
+    override var start = attribute.start
+
 
     /**
      * Nominal value of variable. If not defined and no other information about the
@@ -343,8 +344,6 @@ class RealVariable internal constructor(
      */
     val derivative = attribute.derivative
 
-    override var start = attribute.start
-
     override fun read(): FmuRead<Real> {
         return accessor?.readReal(valueReference) ?: throw IllegalStateException("No accessor assigned!")
     }
@@ -358,11 +357,13 @@ class RealVariable internal constructor(
         val entries = mutableListOf<String>().apply {
             add("name=$name")
             add("valueReference=$valueReference")
-            causality?.also { add("causality=$causality") }
             start?.also { add("start=$start") }
-            accessor?.also { add("value=${read()}") }
+            accessor?.also { add("value=${read().value}") }
             min?.also { add("min=$min") }
             max?.also { add("min=$min") }
+            causality?.also { add("causality=$causality") }
+            variability?.also { add("variability=$variability") }
+            initial?.also { add("initial=$initial") }
             nominal?.also { add("nominal=$nominal") }
             unbounded?.also { add("unbounded=$unbounded") }
             quantity?.also { add("quantity=$quantity") }
@@ -371,9 +372,10 @@ class RealVariable internal constructor(
             relativeQuantity?.also { add("relativeQuantity=$relativeQuantity") }
             derivative?.also { add("derivative=$derivative") }
             description?.also { add("description=$description") }
+            declaredType?.also { add("declaredType=$declaredType") }
         }.joinToString (", ")
 
-        return "RealVariable($entries)"
+        return "${RealVariable::class.java.simpleName}($entries)"
 
     }
 
@@ -404,13 +406,16 @@ class StringVariable internal constructor(
         val entries = mutableListOf<String>().apply {
             add("name=$name")
             add("valueReference=$valueReference")
-            causality?.also { add("causality=$causality") }
             start?.also { add("start=$start") }
-            accessor?.also { add("value=${read()}") }
+            accessor?.also { add("value=${read().value}") }
+            causality?.also { add("causality=$causality") }
+            variability?.also { add("variability=$variability") }
+            initial?.also { add("initial=$initial") }
             description?.also { add("description=$description") }
+            declaredType?.also { add("declaredType=$declaredType") }
         }.joinToString (", ")
 
-        return "StringVariable($entries)"
+        return "${StringVariable::class.java.simpleName}($entries)"
 
     }
 
@@ -441,13 +446,16 @@ class BooleanVariable internal constructor(
         val entries = mutableListOf<String>().apply {
             add("name=$name")
             add("valueReference=$valueReference")
-            causality?.also { add("causality=$causality") }
             start?.also { add("start=$start") }
-            accessor?.also { add("value=${read()}") }
+            accessor?.also { add("value=${read().value}") }
+            causality?.also { add("causality=$causality") }
+            variability?.also { add("variability=$variability") }
+            initial?.also { add("initial=$initial") }
             description?.also { add("description=$description") }
+            declaredType?.also { add("declaredType=$declaredType") }
         }.joinToString (", ")
 
-        return "BooleanVariable($entries)"
+        return "${BooleanVariable::class.java.simpleName}($entries)"
 
     }
 
@@ -479,16 +487,19 @@ class EnumerationVariable internal constructor(
         val entries = mutableListOf<String>().apply {
             add("name=$name")
             add("valueReference=$valueReference")
-            causality?.also { add("causality=$causality") }
             start?.also { add("start=$start") }
-            accessor?.also { add("value=${read()}") }
+            accessor?.also { add("value=${read().value}") }
             min?.also { add("min=$min") }
             max?.also { add("min=$min") }
             quantity?.also { add("quantity=$quantity") }
+            causality?.also { add("causality=$causality") }
+            variability?.also { add("variability=$variability") }
+            initial?.also { add("initial=$initial") }
             description?.also { add("description=$description") }
+            declaredType?.also { add("declaredType=$declaredType") }
         }.joinToString (", ")
 
-        return "EnumerationVariable($entries)"
+        return "${EnumerationVariable::class.java.simpleName}($entries)"
 
     }
 

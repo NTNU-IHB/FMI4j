@@ -135,7 +135,9 @@ abstract class AbstractFmu<out E: ModelDescription, out T: Fmi2LibraryWrapper<*>
 
             assignStartValues {
                 it.variability != Variability.CONSTANT &&
-                        it.initial == Initial.EXACT || it.initial == Initial.APPROX
+                        (it.initial == Initial.EXACT || it.initial == Initial.APPROX)
+            }.also {
+                LOG.debug("Applied start values to $it variables with variability != CONSTANT and initial == EXACT or APPROX ")
             }
 
             val stopDefined = stop > start
@@ -155,6 +157,8 @@ abstract class AbstractFmu<out E: ModelDescription, out T: Fmi2LibraryWrapper<*>
             assignStartValues {
                 it.variability != Variability.CONSTANT &&
                         (it.initial != Initial.EXACT || it.causality == Causality.INPUT)
+            }.also {
+                LOG.debug("Applied start values to $it variables with variability != CONSTANT and initial == EXACT or causality == INPUT ")
             }
 
             status = wrapper.exitInitializationMode()
@@ -337,13 +341,12 @@ abstract class AbstractFmu<out E: ModelDescription, out T: Fmi2LibraryWrapper<*>
         return BooleanVariableVector(variableAccessor, variables)
     }
 
-    private fun assignStartValues(predicate: (TypedScalarVariable<*>) -> Boolean) {
+    private fun assignStartValues(predicate: (TypedScalarVariable<*>) -> Boolean): Int {
         val variables = modelVariables.filter {
             it.start != null && predicate.invoke(it)
         }
-        LOG.debug("Setting start values for ${variables.size} variables")
-        variables.forEach { variable ->
 
+        variables.forEach { variable ->
             when (variable) {
                 is IntegerVariable -> variable.write(variable.start!!)
                 is RealVariable -> variable.write(variable.start!!)
@@ -351,8 +354,8 @@ abstract class AbstractFmu<out E: ModelDescription, out T: Fmi2LibraryWrapper<*>
                 is BooleanVariable -> variable.write(variable.start!!)
                 is EnumerationVariable -> variable.write(variable.start!!)
             }
-
         }
+        return variables.size
     }
 
 }
