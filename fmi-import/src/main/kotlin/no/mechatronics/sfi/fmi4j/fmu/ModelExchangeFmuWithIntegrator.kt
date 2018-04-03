@@ -24,10 +24,11 @@
 
 package no.mechatronics.sfi.fmi4j.fmu
 
-import no.mechatronics.sfi.fmi4j.common.FmiStatus
 import no.mechatronics.sfi.fmi4j.fmu.proxy.v2.structs.Fmi2EventInfo
 import org.apache.commons.math3.ode.FirstOrderDifferentialEquations
 import org.apache.commons.math3.ode.FirstOrderIntegrator
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 private const val h = 1E-13
 
@@ -47,7 +48,7 @@ class ModelExchangeFmuWithIntegrator internal constructor(
     private val preEventIndicators: DoubleArray
     private val eventIndicators: DoubleArray
 
-    private val eventInfo: Fmi2EventInfo = Fmi2EventInfo()
+    private val eventInfo: Fmi2EventInfo
 
     override var currentTime: Double = 0.0
         private set
@@ -90,6 +91,8 @@ class ModelExchangeFmuWithIntegrator internal constructor(
         this.preEventIndicators = DoubleArray(numberOfEventIndicators)
         this.eventIndicators = DoubleArray(numberOfEventIndicators)
 
+        this.eventInfo = Fmi2EventInfo()
+
     }
 
     private val ode: FirstOrderDifferentialEquations by lazy {
@@ -114,9 +117,10 @@ class ModelExchangeFmuWithIntegrator internal constructor(
     override fun init() = init(0.0)
     override fun init(start: Double) = init(start, -1.0)
 
-    override fun init(start: Double, stop: Double): FmiStatus {
+    override fun init(start: Double, stop: Double): Boolean {
 
-        if (fmu.init(start, stop) == FmiStatus.OK) {
+        if (fmu.init(start, stop)) {
+
             currentTime = start
 
             eventInfo.setNewDiscreteStatesNeededTrue()
@@ -125,22 +129,24 @@ class ModelExchangeFmuWithIntegrator internal constructor(
             while (eventInfo.getNewDiscreteStatesNeeded()) {
                 fmu.newDiscreteStates(eventInfo)
                 if (eventInfo.getTerminateSimulation()) {
+                    LOG.debug("eventInfo.getTerminateSimulation() returned true. Terminating FMU...")
                     terminate()
-                    return FmiStatus.Error
+                    return false
                 }
             }
+
             fmu.enterContinuousTimeMode()
             fmu.getContinuousStates(states)
             fmu.getNominalsOfContinuousStates(nominalStates)
 
-            return FmiStatus.OK
+            return true
         }
 
-        return lastStatus
+        return true
 
     }
 
-    override fun doStep(stepSize: Double): FmiStatus {
+    override fun doStep(stepSize: Double): Boolean {
 
         if (stepSize <= 0) {
             throw IllegalArgumentException("stepSize must be positive and greater than 0! Was: $stepSize")
@@ -174,8 +180,9 @@ class ModelExchangeFmuWithIntegrator internal constructor(
             if (!modelDescription.completedIntegratorStepNotNeeded) {
                 val completedIntegratorStep = fmu.completedIntegratorStep()
                 if (completedIntegratorStep.terminateSimulation) {
+                    LOG.debug("completedIntegratorStep.terminateSimulation returned true. Terminating FMU...")
                     terminate()
-                    return FmiStatus.Error
+                    return false
                 }
                 stepEvent = completedIntegratorStep.enterEventMode
             }
@@ -189,8 +196,9 @@ class ModelExchangeFmuWithIntegrator internal constructor(
                 while (eventInfo.getNewDiscreteStatesNeeded()) {
                     fmu.newDiscreteStates(eventInfo)
                     if (eventInfo.getTerminateSimulation()) {
+                        LOG.debug("eventInfo.getTerminateSimulation() returned true. Terminating FMU...")
                         terminate()
-                        return FmiStatus.Error
+                        return false
                     }
                 }
                 fmu.enterContinuousTimeMode()
@@ -199,7 +207,7 @@ class ModelExchangeFmuWithIntegrator internal constructor(
 
         }
         currentTime = time
-        return FmiStatus.OK
+        return true
     }
 
     private data class SolveResult(
@@ -212,7 +220,7 @@ class ModelExchangeFmuWithIntegrator internal constructor(
         fmu.getContinuousStates(states)
         fmu.getDerivatives(derivatives)
 
-        val dt = tNext - t
+        val dt = (tNext - t)
         val integratedTime = integrator.integrate(ode, t, states, currentTime + dt, states)
 
         fmu.setContinuousStates(states)
@@ -234,6 +242,10 @@ class ModelExchangeFmuWithIntegrator internal constructor(
 
         return SolveResult(stateEvent(), integratedTime)
 
+    }
+
+    private companion object {
+        val LOG: Logger = LoggerFactory.getLogger(ModelExchangeFmuWithIntegrator::class.java)
     }
 
 }

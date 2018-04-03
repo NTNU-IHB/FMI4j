@@ -73,7 +73,7 @@ public class CoSimulationFmuTest_java {
                     .asRealVariable().getStart();
             Assert.assertEquals(298.0, startTemp,0);
 
-            Assert.assertTrue(fmu.init() == FmiStatus.OK);
+            Assert.assertTrue(fmu.init());
             Assert.assertTrue(fmu.getLastStatus() == FmiStatus.OK);
 
             final RealVariable heatCapacity1_C
@@ -119,7 +119,7 @@ public class CoSimulationFmuTest_java {
             }
 
             try (FmiSimulation fmu2 = fmuFile.asCoSimulationFmu().newInstance()) {
-                if (fmu2.init() == FmiStatus.OK) {
+                if (fmu2.init()) {
                     double value = fmu2.getVariableAccessor()
                             .readReal(temperature_room.getValueReference()).getValue();
                     LOG.info("temperature_room={}", value);

@@ -1,6 +1,5 @@
 package no.mechatronics.sfi.fmi4j.fmu
 
-import no.mechatronics.sfi.fmi4j.common.FmiStatus
 import org.javafmi.proxy.Status
 import org.javafmi.wrapper.Simulation
 import org.junit.AfterClass
@@ -71,7 +70,7 @@ class CompareWithJavaFmi {
                 modelVariables.forEach {
                     it.read()
                 }
-                Assert.assertTrue(status == FmiStatus.OK)
+                Assert.assertTrue(status)
             }
             terminate(true)
             val end = Instant.now()

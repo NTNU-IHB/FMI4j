@@ -25,8 +25,7 @@
 package no.mechatronics.sfi.fmi4j.fmu
 
 import no.mechatronics.sfi.fmi4j.common.FmiStatus
-import no.mechatronics.sfi.fmi4j.fmu.misc.DirectionalDerivatives
-import no.mechatronics.sfi.fmi4j.fmu.misc.FmuState
+import no.mechatronics.sfi.fmi4j.fmu.misc.*
 import no.mechatronics.sfi.fmi4j.fmu.proxy.v2.Fmi2Library
 import no.mechatronics.sfi.fmi4j.fmu.proxy.v2.Fmi2LibraryWrapper
 import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescription
@@ -125,7 +124,7 @@ abstract class AbstractFmu<out E: ModelDescription, out T: Fmi2LibraryWrapper<*>
      * @param start the start time
      * @param stop the stop time
      */
-    open fun init(start: Double, stop: Double): FmiStatus {
+    open fun init(start: Double, stop: Double): Boolean {
 
         if (!isInitialized) {
 
@@ -144,12 +143,12 @@ abstract class AbstractFmu<out E: ModelDescription, out T: Fmi2LibraryWrapper<*>
             var status = wrapper.setupExperiment(false, 1E-4,
                     start, stopDefined, stop)
             if (status != FmiStatus.OK) {
-                return lastStatus
+                return false
             }
             status = wrapper.enterInitializationMode()
             LOG.trace("Called enterInitializationMode with status $status")
             if (status != FmiStatus.OK) {
-                return lastStatus
+                return false
             }
 
             assignStartValues {
@@ -160,16 +159,16 @@ abstract class AbstractFmu<out E: ModelDescription, out T: Fmi2LibraryWrapper<*>
             status = wrapper.exitInitializationMode()
             LOG.trace("Called exitInitializationMode with status $status")
             if (status != FmiStatus.OK) {
-                return lastStatus
+                return false
             }
 
             isInitialized = true
 
-            return FmiStatus.OK
+            return true
 
         } else {
             LOG.warn("Trying to call init, but FMU has already been initialized, and has not been reset!")
-            return FmiStatus.Discard
+            return false
         }
 
     }
@@ -183,9 +182,10 @@ abstract class AbstractFmu<out E: ModelDescription, out T: Fmi2LibraryWrapper<*>
      * @see Fmi2Library.fmi2FreeInstance
      */
     @JvmOverloads
-    open fun terminate(freeInstance: Boolean = true): FmiStatus {
-        return wrapper.terminate(freeInstance).also { status ->
+    open fun terminate(freeInstance: Boolean = true): Boolean {
+        return wrapper.terminate(freeInstance).let { status ->
             LOG.debug("FMU '${modelDescription.modelName}' terminated with status $status! #${hashCode()}")
+            status == FmiStatus.OK
         }
     }
 
@@ -200,8 +200,10 @@ abstract class AbstractFmu<out E: ModelDescription, out T: Fmi2LibraryWrapper<*>
     /**
      * @see Fmi2Library.fmi2Reset
      */
-    fun reset(): FmiStatus {
-        return reset(true)
+    fun reset(): Boolean {
+        return reset(true).let { status ->
+            status == FmiStatus.OK
+        }
     }
 
     /**
