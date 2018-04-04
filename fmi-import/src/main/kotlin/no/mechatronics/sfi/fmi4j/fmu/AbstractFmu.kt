@@ -98,6 +98,12 @@ abstract class AbstractFmu<out E: ModelDescription, out T: Fmi2LibraryWrapper<*>
         get() = wrapper.isTerminated
 
 
+    protected var stopDefined = false
+    private set
+
+    protected var stopTime: Double = Double.MAX_VALUE
+    private set
+
     /**
      * @see Fmi2LibraryWrapper.lastStatus
      */
@@ -142,10 +148,10 @@ abstract class AbstractFmu<out E: ModelDescription, out T: Fmi2LibraryWrapper<*>
                 LOG.debug("Applied start values to $it variables with variability != CONSTANT and initial == EXACT or APPROX ")
             }
 
-            val stopDefined = stop > start
-            @Suppress("NAME_SHADOWING")
-            val stop = if (stopDefined) stop else Double.MAX_VALUE
-            var status = wrapper.setupExperiment(false, 1E-4,
+            stopDefined = (stop > start)
+            if (stopDefined) stopTime = stop
+            LOG.debug("setupExperiment params: start=$start, stopDefined=$stopDefined, stop=$stop")
+            var status = wrapper.setupExperiment(false, 0.0,
                     start, stopDefined, stop)
             if (status != FmiStatus.OK) {
                 return false
@@ -158,7 +164,7 @@ abstract class AbstractFmu<out E: ModelDescription, out T: Fmi2LibraryWrapper<*>
 
             assignStartValues {
                 it.variability != Variability.CONSTANT &&
-                        (it.initial != Initial.EXACT || it.causality == Causality.INPUT)
+                        (it.initial == Initial.EXACT || it.causality == Causality.INPUT)
             }.also {
                 LOG.debug("Applied start values to $it variables with variability != CONSTANT and initial == EXACT or causality == INPUT ")
             }

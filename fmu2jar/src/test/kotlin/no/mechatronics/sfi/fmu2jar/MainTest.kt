@@ -24,7 +24,7 @@ class MainTest {
         @JvmStatic
         @BeforeClass
         fun setUp() {
-            out = Files.createTempDirectory("fmu2jar_").toFile()
+            out = Files.createTempDirectory("fmu2jar_test_").toFile()
             LOG.info("Created out dir: ${out.absolutePath}")
         }
 
@@ -54,7 +54,7 @@ class MainTest {
 
         LOG.info(args.joinToString(" "))
 
-        ApplicationStarter.main(args)
+        Main.main(args)
 
         val myJar = out.listFiles()[0]
         Assert.assertTrue(myJar.name.endsWith(".jar"))

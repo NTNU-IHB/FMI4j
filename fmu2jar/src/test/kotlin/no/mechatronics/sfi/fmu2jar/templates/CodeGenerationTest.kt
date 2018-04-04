@@ -16,8 +16,8 @@ class CodeGenerationTest {
     @Test
     fun generateBody() {
 
-        val path = "fmus/cs/win64/20sim/4.6.4.8004/ControlledTemperature/modelDescription.xml"
-        val file = File(javaClass.classLoader.getResource(path).file)
+        val path = "../test/fmi2/cs/win64/20sim/4.6.4.8004/ControlledTemperature/modelDescription.xml"
+        val file = File(path)
         Assert.assertTrue(file.exists())
         val xml = file.readText(Charsets.UTF_8)
         val md = ModelDescriptionParser.parse(xml)

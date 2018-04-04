@@ -82,7 +82,7 @@ class CompareWithJavaFmi {
     @Test
     fun test() {
 
-        val stop = 100.0
+        val stop = 10.0
         val stepSize = 1.0 / 100
 
         var duration1 = 0L

@@ -31,12 +31,10 @@ import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.Options
 import org.apache.commons.csv.CSVFormat
 import org.apache.commons.csv.CSVPrinter
-import org.apache.commons.io.FileUtils
 import org.apache.commons.math3.ode.nonstiff.EulerIntegrator
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.File
-import java.nio.charset.Charset
 
 const val STEP_SIZE = "stepSize"
 const val START_TIME = "startTime"
@@ -66,7 +64,6 @@ class SimulationOptions(
     val outputVariables: List<String> = cmd.getOptionValue(OUTPUT_VARIABLES)?.split(" ") ?: emptyList()
     val outputDirectory: String? = cmd.getOptionValue(OUT_DIR)
 
-
 }
 
 object FmuDriver {
@@ -90,15 +87,15 @@ object FmuDriver {
             val simOptions = DefaultParser().parse(it, args).let (::SimulationOptions)
             val result = simulate(simOptions)
             simOptions.outputDirectory?.also { parent ->
-                val file = File(parent,"${simOptions.fmu.modelDescription.modelName}_out.csv")
-                FileUtils.write(file, result, Charset.forName("UTF-8"))
-                LOG.info("Wrote results to file ${file.absolutePath}")
+                File(parent,"${simOptions.fmu.modelDescription.modelName}_out.csv").apply {
+                    bufferedWriter().write(result)
+                    LOG.info("Wrote results to file ${absolutePath}")
+                }
             }
 
         }
 
     }
-
 
     private fun simulate(options: SimulationOptions): String {
 
@@ -114,9 +111,11 @@ object FmuDriver {
                 }
 
                 val dt = options.stepSize
-                while (fmu.currentTime < options.stopTime) {
+                while (fmu.currentTime <= options.stopTime) {
                     printer.printRecord(fmu.currentTime, *outputVariables.map { it.read().value }.toTypedArray())
-                    fmu.doStep(dt)
+                    if (!fmu.doStep(dt)) {
+                        break
+                    }
                 }
 
             }

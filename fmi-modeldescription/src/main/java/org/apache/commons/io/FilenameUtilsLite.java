@@ -30,8 +30,8 @@ import java.util.Collection;
  * This class aims to help avoid those problems.
  * <p>
  * <b>NOTE</b>: You may be able to avoid using this class entirely simply by
- * using JDK {@link java.io.File File} objects and the two argument constructor
- * {@link java.io.File#File(java.io.File, java.lang.String) File(File,String)}.
+ * using JDK {@link File File} objects and the two argument constructor
+ * {@link File#File(File, String) File(File,String)}.
  * <p>
  * Most methods on this class are designed to work the same on both Unix and Windows.
  * Those that don't include 'System', 'Unix' or 'Windows' in their name.
@@ -1086,7 +1086,7 @@ public class FilenameUtilsLite {
      * @param fileName  the fileName to query, null returns false
      * @param extension  the extension to check for, null or empty checks for no extension
      * @return true if the fileName has the specified extension
-     * @throws java.lang.IllegalArgumentException if the supplied fileName contains null bytes
+     * @throws IllegalArgumentException if the supplied fileName contains null bytes
      */
     public static boolean isExtension(final String fileName, final String extension) {
         if (fileName == null) {
@@ -1111,7 +1111,7 @@ public class FilenameUtilsLite {
      * @param fileName  the fileName to query, null returns false
      * @param extensions  the extensions to check for, null checks for no extension
      * @return true if the fileName is one of the extensions
-     * @throws java.lang.IllegalArgumentException if the supplied fileName contains null bytes
+     * @throws IllegalArgumentException if the supplied fileName contains null bytes
      */
     public static boolean isExtension(final String fileName, final String[] extensions) {
         if (fileName == null) {
@@ -1141,7 +1141,7 @@ public class FilenameUtilsLite {
      * @param fileName  the fileName to query, null returns false
      * @param extensions  the extensions to check for, null checks for no extension
      * @return true if the fileName is one of the extensions
-     * @throws java.lang.IllegalArgumentException if the supplied fileName contains null bytes
+     * @throws IllegalArgumentException if the supplied fileName contains null bytes
      */
     public static boolean isExtension(final String fileName, final Collection<String> extensions) {
         if (fileName == null) {

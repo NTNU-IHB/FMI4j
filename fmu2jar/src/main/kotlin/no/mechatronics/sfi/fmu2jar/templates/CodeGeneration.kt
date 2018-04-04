@@ -26,13 +26,11 @@ package no.mechatronics.sfi.fmu2jar.templates
 
 import no.mechatronics.sfi.fmi4j.modeldescription.SimpleModelDescription
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.ModelVariables
-import org.apache.commons.io.IOUtils
-import java.nio.charset.Charset
 
 object CodeGeneration {
 
     private val licenseHeader: String by lazy {
-        IOUtils.toString(CodeGeneration::class.java.classLoader.getResource("license_header.txt"), Charset.forName("UTF-8"))
+        CodeGeneration::class.java.classLoader.getResource("license_header.txt").readText(Charsets.UTF_8)
     }
 
      fun generateWrapper(modelDescription: SimpleModelDescription): String {
@@ -49,7 +47,9 @@ import java.net.URL
 import no.mechatronics.sfi.fmi4j.fmu.FmiSimulation
 import no.mechatronics.sfi.fmi4j.fmu.FmuFile
 import no.mechatronics.sfi.fmi4j.common.Real
-${getIntegratorImport(modelDescription)}
+import no.mechatronics.sfi.fmi4j.common.FmiStatus
+import no.mechatronics.sfi.fmi4j.common.FmuRead
+${modelDescription.supportsModelExchange.let { if (it) "import org.apache.commons.math3.ode.FirstOrderIntegrator" else ""}}
 
 /**
  * @author Lars Ivar Hatledal
@@ -73,23 +73,23 @@ class $modelName private constructor(
     val parameters = Parameters()
     val calculatedParameters = CalculatedParameters()
 
-    inner class Inputs {
+    inner class Inputs internal constructor() {
         ${VariableAccessorsTemplate.generateInputsBody(modelVariables)}
     }
 
-    inner class Outputs {
+    inner class Outputs internal constructor() {
         ${VariableAccessorsTemplate.generateOutputsBody(modelVariables)}
     }
 
-    inner class Parameters {
+    inner class Parameters internal constructor() {
         ${VariableAccessorsTemplate.generateParametersBody(modelVariables)}
     }
 
-    inner class CalculatedParameters {
+    inner class CalculatedParameters internal constructor() {
         ${VariableAccessorsTemplate.generateCalculatedParametersBody(modelVariables)}
     }
 
-    inner class Locals {
+    inner class Locals internal constructor() {
         ${VariableAccessorsTemplate.generateLocalsBody(modelVariables)}
     }
 
@@ -97,12 +97,6 @@ class $modelName private constructor(
 
             """
 
-    }
-
-    private fun getIntegratorImport(modelDescription: SimpleModelDescription): String {
-        return modelDescription.supportsModelExchange.let {
-            if (it) "import org.apache.commons.math3.ode.FirstOrderIntegrator" else ""
-        }
     }
 
     private fun generateNewInstanceMethod(modelDescription: SimpleModelDescription): String {

@@ -3,5 +3,5 @@ repositories {
 }
 
 dependencies {
-    compile project(':fmi-common')
+
 }

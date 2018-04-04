@@ -1,9 +1,16 @@
 
-def debug = false
+def group = "no.mechatronics.sfi.fmu2jar"
+def version = "1.0-SNAPSHOT"
+def fmuName = "ControlledTemperature"
+def jar = new File(System.getProperty("user.home") + "/.m2/repository/${group.replace(".", "/")}/${fmuName.toLowerCase()}/$version/${fmuName}-${version}.jar")
+
+def debug = jar.exists()
+
+//println ("${archivesBaseName} debug mode=$debug")
 
 apply plugin: 'application'
 
-mainClassName = 'no.mechatronics.sfi.fmu2jar.ApplicationStarter'
+mainClassName = '$group.Main'
 
 repositories {
 
@@ -11,20 +18,29 @@ repositories {
         mavenLocal()
     }
 
+    maven {
+        url "https://oss.sonatype.org/content/repositories/snapshots"
+    }
+
+}
+
+configurations.all {
+    resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
 }
 
 dependencies {
 
     compile group: 'commons-cli', name: 'commons-cli', version: '1.4'
-    implementation group: 'commons-io', name: 'commons-io', version: '2.6'
 
     compile project(':fmi-modeldescription')
 
     if (debug) {
-        testImplementation group: 'no.mechatronics.sfi.fmu2jar', name: 'ControlledTemperature', version: '1.0-SNAPSHOT'
+        testCompile group: "${group}", name: "${fmuName}", version: "${version}", changing: true
+    } else {
+        testCompile project(':fmi-import')
     }
 
-    testCompile project(':fmi-import')
+
 
 }
 
@@ -33,6 +49,11 @@ sourceSets {
         java {
             if (!debug) {
                 exclude '**/ControlledTemperatureTest.java'
+            }
+        }
+        kotlin {
+            if (!debug) {
+                exclude '**/ControlledTemperatureTest_kt.kt'
             }
         }
     }

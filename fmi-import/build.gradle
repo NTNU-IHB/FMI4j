@@ -13,7 +13,7 @@ dependencies {
     implementation group: 'net.java.dev.jna', name: 'jna', version: '4.5.1'
     implementation group: 'net.java.dev.jna', name: 'jna-platform', version: '4.5.1'
 
-    compile project(':fmi-common')
+    //compile project(':fmi-common')
     compile project(':fmi-modeldescription')
 
     testImplementation group: 'org.siani.javafmi', name: 'fmu-wrapper', version: '2.24.2'

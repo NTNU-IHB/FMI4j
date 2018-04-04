@@ -35,13 +35,13 @@ class GenerateOptions(
 ) {
     init {
         if (outputFolder == null && !mavenLocal) {
-            outputFolder = File("").absoluteFile
+            outputFolder = File(".").absoluteFile
         }
     }
 }
 
 
-class ApplicationStarter {
+class Main {
 
   companion object {
 
@@ -75,9 +75,8 @@ class ApplicationStarter {
                           error("Not a valid file: ${file.absolutePath}")
                       }
 
-                      var outputFolder: File? = null
-                      getOptionValue(OUTPUT_FOLDER)?.let {
-                          outputFolder = File(it.replace("\\", "/")).absoluteFile
+                      var outputFolder: File? = getOptionValue(OUTPUT_FOLDER)?.let {
+                          File(it.replace("\\", "/")).absoluteFile
                       }
 
                       Fmu2Jar(file).apply {

@@ -67,9 +67,16 @@ class CoSimulationFmu internal constructor(
                     "remember that you have to call init() again after a call to reset()!")
         }
 
-        return wrapper.doStep(currentTime, stepSize, true).let { status ->
+        val tNext = currentTime + stepSize
+
+        if (stopDefined && tNext > stopTime) {
+            LOG.warn("Cannot perform step! tNext=$tNext > stopTime=$stopTime")
+            return false
+        }
+
+        return wrapper.doStep(currentTime, stepSize, noSetFMUStatePriorToCurrent = true).let { status ->
             if (status == FmiStatus.OK) {
-                currentTime += stepSize
+                currentTime = tNext
                 true
             } else {
                 false

@@ -1,15 +1,23 @@
 package no.mechatronics.sfi.fmu2jar;
 
-import no.mechatronics.sfi.fmi4j.common.FmiStatus;
 import no.mechatronics.sfi.fmu2jar.controlledtemperature.ControlledTemperature;
+import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ControlledTemperatureTest {
 
-    public static void main(String[] args) {
+    private Logger LOG = LoggerFactory.getLogger(ControlledTemperatureTest.class);
+
+    @Test
+    public void test() {
 
        try( ControlledTemperature ct = ControlledTemperature.newInstance()) {
-           if (ct.init() == FmiStatus.OK) {
-               System.out.println(ct.getOutputs().getTemperature_Reference());
+           if (ct.init()) {
+
+               double temp = ct.getOutputs().getTemperature_Reference().getValue();
+               LOG.info("Temperature_reference={}", temp);
+
            }
 
        }

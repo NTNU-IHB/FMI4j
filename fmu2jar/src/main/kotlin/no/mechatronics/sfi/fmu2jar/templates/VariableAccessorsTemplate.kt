@@ -37,6 +37,17 @@ private val TypedScalarVariable<*>.typeName: String
         else -> throw IllegalStateException("$this is not a valid variable type..")
     }
 
+private val TypedScalarVariable<*>.kotlinTypename: String
+    get() = when (this) {
+        is IntegerVariable -> "Int"
+        is RealVariable -> "Real"
+        is StringVariable -> "String"
+        is BooleanVariable -> "Boolean"
+        is EnumerationVariable -> "Int"
+        else -> throw IllegalStateException("$this is not a valid variable type..")
+    }
+
+
 
 object VariableAccessorsTemplate {
 
@@ -50,51 +61,55 @@ object VariableAccessorsTemplate {
 
         val tab = "\t\t"
         val tabStar = "$tab *"
+        val newLine = "\n$tabStar\n"
         return StringBuilder().apply {
 
             append("/**\n")
-            append("$tabStar ").append("Name: ").append(v.name).append('\n')
+            append("$tabStar ").append("Name:").append(v.name)
 
-            v.description?.also {append("$tabStar ").append("Description: ").append(it).append('\n') }
-            v.start?.also { append("$tabStar Start=").append(it).append('\n') }
-            v.causality?.also {  append("$tabStar Causality=").append(it).append('\n') }
-            v.variability?.also { append("$tabStar Variability=").append(it).append('\n') }
-            v.initial?.also { append("$tabStar Initial=").append(it).append('\n') }
+            v.start?.also { append(newLine).append("$tabStar Start=$it") }
+            v.causality?.also { append(newLine).append("$tabStar Causality=$it") }
+            v.variability?.also { append(newLine).append("$tabStar Variability=$it") }
+            v.initial?.also { append(newLine).append("$tabStar Initial=$it") }
 
             when (v) {
                 is IntegerVariable -> {
-                    v.min?.also { append("$tabStar min=").append(it).append('\n') }
-                    v.max?.also { append("$tabStar max=").append(it).append('\n') }
+                    v.min?.also { append(newLine).append("$tabStar min=$it") }
+                    v.max?.also { append(newLine).append("$tabStar max=$it") }
                 }
                 is RealVariable -> {
-                    v.min?.also { append("$tabStar min=").append(it).append('\n') }
-                    v.max?.also { append("$tabStar max=").append(it).append('\n') }
-                    v.nominal?.also {  append("$tabStar nominal=").append(it).append('\n') }
-                    v.unbounded?.also { append("$tabStar unbounded=").append(it).append('\n') }
+                    v.min?.also { append(newLine).append("$tabStar min=$it") }
+                    v.max?.also { append(newLine).append("$tabStar max=$it") }
+                    v.nominal?.also { append(newLine).append("$tabStar nominal=$it") }
+                    v.unbounded?.also { append(newLine).append("$tabStar unbounded=$it") }
                 }
                 is EnumerationVariable -> {
-                    v.min?.also { append("$tabStar min=").append(it).append('\n') }
-                    v.max?.also { append("$tabStar max=").append(it).append('\n') }
+                    v.min?.also { append("$tabStar min=") }
+                    v.max?.also { append("$tabStar max=") }
+                    v.quantity?.also { append("$tabStar quantity=") }
                 }
             }
 
-            append("$tab */")
+            v.description?.also { append(newLine).append("$tabStar ").append("Description: $it") }
+
+            append("\n$tab */")
 
         }.toString()
 
     }
 
+
     private fun generateGet(variable: TypedScalarVariable<*>, sb: StringBuilder) {
         sb.append("""
         ${generateJavaDoc(variable)}
-        fun get${capitalizeFirstLetterAndReplaceDotsWithSlash(variable)}() = fmu.variableAccessor.read${variable.typeName}(${variable.valueReference})
+        fun get${capitalizeFirstLetterAndReplaceDotsWithSlash(variable)}(): FmuRead<${variable.kotlinTypename}> = fmu.variableAccessor.read${variable.typeName}(${variable.valueReference})
             """)
     }
 
     private fun generateSet(variable: TypedScalarVariable<*>, sb :StringBuilder) {
         sb.append("""
         ${generateJavaDoc(variable)}
-        fun set${capitalizeFirstLetterAndReplaceDotsWithSlash(variable)}(value: ${variable.typeName}) = fmu.variableAccessor.write${variable.typeName}(${variable.valueReference}, value)
+        fun set${capitalizeFirstLetterAndReplaceDotsWithSlash(variable)}(value: ${variable.typeName}): FmiStatus = fmu.variableAccessor.write${variable.typeName}(${variable.valueReference}, value)
             """)
     }
 

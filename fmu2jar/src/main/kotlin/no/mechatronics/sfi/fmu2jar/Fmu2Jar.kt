@@ -27,15 +27,12 @@ package no.mechatronics.sfi.fmu2jar
 import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescriptionParser
 import no.mechatronics.sfi.fmi4j.modeldescription.SimpleModelDescription
 import no.mechatronics.sfi.fmu2jar.templates.CodeGeneration
-import org.apache.commons.io.FileUtils
-import org.apache.commons.io.IOUtils
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.io.InputStream
-import java.nio.charset.Charset
 import java.nio.file.Files
 import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
@@ -62,7 +59,7 @@ class Fmu2Jar(
 
     private fun copyBuildFile(parentDir: File) {
         FileOutputStream(File(parentDir, "build.gradle")).use {
-            IOUtils.copy(javaClass.classLoader.getResourceAsStream("build.gradle"), it)
+            javaClass.classLoader.getResourceAsStream("build.gradle").copyTo(it)
         }
         LOG.debug("Build file copied")
     }
@@ -79,7 +76,7 @@ class Fmu2Jar(
                                 Files.createDirectories(file.parentFile.toPath())
                             }
                             FileOutputStream(file).use { fis ->
-                                IOUtils.copy(zis, fis)
+                                zis.copyTo(fis)
                             }
                         }
                     }
@@ -93,10 +90,10 @@ class Fmu2Jar(
     private fun copySourceFile(parentDir: File) {
         File(parentDir, "src/main/kotlin/no/mechatronics/sfi/fmu2jar/${modelDescription.modelName}.kt").apply {
             if (!parentFile.exists()) {
-                Files.createDirectories(file.parentFile.toPath())
+                parentFile.mkdirs()
             }
-            val src = CodeGeneration.generateWrapper(modelDescription)
-            FileUtils.writeStringToFile(this, src, Charset.forName("UTF-8"))
+            createNewFile()
+            writeText(CodeGeneration.generateWrapper(modelDescription))
         }
         LOG.debug("Source file copied")
     }
@@ -108,7 +105,7 @@ class Fmu2Jar(
             }
             FileInputStream(file).use { fis ->
                 FileOutputStream(File(this, "${modelDescription.modelName}.fmu")).use { fos ->
-                    IOUtils.copy(fis, fos)
+                    fis.copyTo(fos)
                 }
             }
         }
@@ -149,11 +146,15 @@ class Fmu2Jar(
                     .waitFor()
 
             if (status == 0) {
-                options.outputFolder?.let { outputFolder ->
-                    File(parentDir, "build/libs/${modelDescription.modelName}-1.0-SNAPSHOT.jar").let { src ->
+                options.outputFolder?.also { outputFolder ->
+                    val fileName = "${modelDescription.modelName}-1.0-SNAPSHOT.jar"
+                    File(parentDir, "build/libs/$fileName").let { src ->
                         if (src.exists()) {
-                            FileUtils.copyFileToDirectory(src.absoluteFile, outputFolder.absoluteFile)
-                            LOG.info("Generated .jar is located at: ${outputFolder.absolutePath}${File.separator}${src.name}")
+                            File(outputFolder, fileName).apply {
+                                src.absoluteFile.copyTo(this)
+                                LOG.info("Generated .jar is located here: $this")
+                            }
+
                         }
                     }
                 }
@@ -163,7 +164,7 @@ class Fmu2Jar(
 
         } finally {
             if(tempDirectory.exists() && tempDirectory.deleteRecursively()) {
-                LOG.debug("Deleted temp folder: {}", tempDirectory.absolutePath)
+                LOG.debug("Deleted temp folder: ${tempDirectory.absolutePath}")
             }
         }
 
