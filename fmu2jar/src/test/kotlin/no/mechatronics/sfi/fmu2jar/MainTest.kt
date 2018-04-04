@@ -16,6 +16,7 @@ import java.nio.file.Files
 class MainTest {
 
     companion object {
+
         val LOG: Logger = LoggerFactory.getLogger(MainTest::class.java)
 
         lateinit var out: File
@@ -42,8 +43,8 @@ class MainTest {
 
         val fmuName = "ControlledTemperature"
 
-        val path = "fmus/cs/win64/20sim/4.6.4.8004/ControlledTemperature/$fmuName.fmu"
-        val file = File(javaClass.classLoader.getResource(path).file)
+        val path = "../test/fmi2/cs/win64/20sim/4.6.4.8004/ControlledTemperature/$fmuName.fmu"
+        val file = File(path)
         Assert.assertTrue(file.exists())
         val args = arrayOf<String>(
                 "-fmu", file.absolutePath,
@@ -51,7 +52,7 @@ class MainTest {
                 "-mavenLocal"
         )
 
-        println(args.joinToString(" "))
+        LOG.info(args.joinToString(" "))
 
         ApplicationStarter.main(args)
 
