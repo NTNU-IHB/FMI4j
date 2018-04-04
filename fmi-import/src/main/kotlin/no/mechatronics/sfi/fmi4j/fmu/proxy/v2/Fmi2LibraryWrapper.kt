@@ -33,7 +33,6 @@ import no.mechatronics.sfi.fmi4j.fmu.misc.FmiBoolean
 import no.mechatronics.sfi.fmi4j.fmu.misc.FmuState
 import no.mechatronics.sfi.fmi4j.fmu.misc.LibraryProvider
 import no.mechatronics.sfi.fmi4j.fmu.proxy.v2.structs.Fmi2CallbackFunctions
-import no.mechatronics.sfi.fmi4j.modeldescription.variables.StringArray
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 

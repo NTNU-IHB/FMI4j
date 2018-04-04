@@ -43,6 +43,85 @@ subprojects {
         kotlinOptions.jvmTarget = "1.8"
     }
 
+    if(archivesBaseName.startsWith("fmi")) {
+
+        def snapshot = true
+
+        group = 'no.mechatronics.sfi.fmi4j'
+        version = '0.6'
+        if (snapshot) {
+            version += '-SNAPSHOT'
+        }
+
+        apply plugin: 'maven'
+        apply plugin: 'signing'
+
+
+        task sourcesJar(type: Jar, dependsOn: classes, description: 'Creates a jar from the source files.') {
+            classifier = 'sources'
+            from sourceSets.main.allSource
+        }
+
+        task javadocJar (type: Jar, dependsOn: javadoc) {
+            classifier = 'javadoc'
+            from javadoc.destinationDir
+        }
+
+        artifacts {
+            archives javadocJar, sourcesJar
+        }
+
+        signing {
+            sign configurations.archives
+        }
+
+        uploadArchives {
+            repositories {
+                mavenDeployer {
+                    beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+                    repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2") {
+                        authentication(userName: ossrhUsername, password: ossrhPassword)
+                    }
+
+                    snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots") {
+                        authentication(userName: ossrhUsername, password: ossrhPassword)
+                    }
+
+                    pom.project {
+                        name archivesBaseName
+                        packaging 'jar'
+                        // optionally artifactId can be defined here
+                        description 'A software library for dealing with Functional Mock-up Units (FMUs) on the JVM platform'
+                        url 'https://github.com/SFI-Mechatronics/fmi4j'
+
+                        scm {
+                            connection 'scm:git:git://github.com/SFI-Mechatronics/fmi4j.git'
+                            developerConnection 'scm:git:ssh://github.com/SFI-Mechatronics/fmi4j.git'
+                            url 'https://github.com/SFI-Mechatronics/fmi4j/tree/master'
+                        }
+
+                        licenses {
+                            license {
+                                name 'The MIT License'
+                                url 'https://opensource.org/licenses/mit-license.php'
+                            }
+                        }
+
+                        developers {
+                            developer {
+                                id 'laht'
+                                name 'Lars Ivar Hatledal'
+                                email 'laht@ntnu.no'
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+    }
+
 }
 
 

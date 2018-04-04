@@ -68,13 +68,12 @@ class CoSimulationFmu internal constructor(
         }
 
         return wrapper.doStep(currentTime, stepSize, true).let { status ->
-            return if (status == FmiStatus.OK) {
+            if (status == FmiStatus.OK) {
                 currentTime += stepSize
                 true
             } else {
                 false
             }
-
         }
 
     }

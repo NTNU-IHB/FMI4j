@@ -25,10 +25,10 @@
 
 package no.mechatronics.sfi.fmi4j.fmu
 
+import no.mechatronics.sfi.fmi4j.common.Real
+import no.mechatronics.sfi.fmi4j.common.RealArray
+import no.mechatronics.sfi.fmi4j.common.StringArray
 import no.mechatronics.sfi.fmi4j.common.VariableAccessor
-import no.mechatronics.sfi.fmi4j.modeldescription.variables.Real
-import no.mechatronics.sfi.fmi4j.modeldescription.variables.RealArray
-import no.mechatronics.sfi.fmi4j.modeldescription.variables.StringArray
 import java.util.concurrent.ConcurrentHashMap
 
 /**

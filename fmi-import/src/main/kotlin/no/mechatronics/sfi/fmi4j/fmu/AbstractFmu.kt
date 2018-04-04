@@ -49,9 +49,11 @@ abstract class AbstractFmu<out E: ModelDescription, out T: Fmi2LibraryWrapper<*>
             = FmuVariableAccessor(this)
 
     init {
-        modelVariables.forEach{
-            if (it is AbstractTypedScalarVariable) {
-                it.accessor = variableAccessor
+        modelVariables.forEach{ variable ->
+            if (variable is AbstractTypedScalarVariable) {
+                variable::class.java.getField("accessor").also { field ->
+                    field.set(variable, variableAccessor)
+                }
             }
         }
     }

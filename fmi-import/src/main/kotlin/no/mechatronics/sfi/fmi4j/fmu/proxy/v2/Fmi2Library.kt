@@ -28,9 +28,9 @@ package no.mechatronics.sfi.fmi4j.fmu.proxy.v2
 import com.sun.jna.Library
 import com.sun.jna.Pointer
 import com.sun.jna.ptr.PointerByReference
+import no.mechatronics.sfi.fmi4j.common.RealArray
+import no.mechatronics.sfi.fmi4j.common.StringArray
 import no.mechatronics.sfi.fmi4j.fmu.proxy.v2.structs.Fmi2CallbackFunctions
-import no.mechatronics.sfi.fmi4j.modeldescription.variables.RealArray
-import no.mechatronics.sfi.fmi4j.modeldescription.variables.StringArray
 
 /**
  *

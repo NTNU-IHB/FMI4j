@@ -55,38 +55,38 @@ class CoSimulationLibraryWrapper(
     /**
      * @see Fmi2CoSimulationLibrary.fmi2SetRealInputDerivatives
      */
-    fun setRealInputDerivatives(vr: IntArray, order: IntArray, value: DoubleArray): FmiStatus {
+    fun setRealInputDerivatives(vr: IntArray, order: IntArray, value: DoubleArray): no.mechatronics.sfi.fmi4j.common.FmiStatus {
         return updateStatus(library.fmi2SetRealInputDerivatives(c, vr, vr.size, order, value))
     }
 
     /**
      * @see Fmi2CoSimulationLibrary.fmi2GetRealOutputDerivatives
      */
-    fun getRealOutputDerivatives(vr: IntArray, order: IntArray, value: DoubleArray): FmiStatus {
+    fun getRealOutputDerivatives(vr: IntArray, order: IntArray, value: DoubleArray): no.mechatronics.sfi.fmi4j.common.FmiStatus {
         return updateStatus(library.fmi2GetRealOutputDerivatives(c, vr, vr.size, order, value))
     }
 
     /**
      * @see Fmi2CoSimulationLibrary.fmi2DoStep
      */
-    fun doStep(t: Double, dt: Double, noSetFMUStatePriorToCurrent: Boolean): FmiStatus {
+    fun doStep(t: Double, dt: Double, noSetFMUStatePriorToCurrent: Boolean): no.mechatronics.sfi.fmi4j.common.FmiStatus {
         return updateStatus(library.fmi2DoStep(c, t, dt, FmiBoolean.convert(noSetFMUStatePriorToCurrent)))
     }
 
     /**
      * @see Fmi2CoSimulationLibrary.fmi2CancelStep
      */
-    fun cancelStep(): FmiStatus {
+    fun cancelStep(): no.mechatronics.sfi.fmi4j.common.FmiStatus {
         return (updateStatus(library.fmi2CancelStep(c)))
     }
 
     /**
      * @see Fmi2CoSimulationLibrary.fmi2GetStatus
      */
-    fun getStatus(s: Fmi2StatusKind): FmiStatus {
+    fun getStatus(s: Fmi2StatusKind): no.mechatronics.sfi.fmi4j.common.FmiStatus {
         return IntByReference().let {
             updateStatus(library.fmi2GetIntegerStatus(c, s.code, it))
-            FmiStatus.valueOf(it.value)
+            no.mechatronics.sfi.fmi4j.common.FmiStatus.valueOf(it.value)
         }
     }
 

@@ -76,7 +76,7 @@ open class Fmi2CallbackFunctions : Structure() {
 
         override fun invoke(c: Pointer?, instanceName: String, status: Int, category: String, message: String, args: Pointer?) {
 
-            LOG.info("InstanceName: $instanceName, status: ${FmiStatus.valueOf(status)}, category: $category, message: $message")
+            LOG.info("InstanceName: $instanceName, status: ${no.mechatronics.sfi.fmi4j.common.FmiStatus.valueOf(status)}, category: $category, message: $message")
         }
 
     }

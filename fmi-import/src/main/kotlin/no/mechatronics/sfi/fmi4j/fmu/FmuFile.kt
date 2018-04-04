@@ -39,9 +39,7 @@ import no.mechatronics.sfi.fmi4j.fmu.proxy.v2.structs.Fmi2CallbackFunctions
 import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescription
 import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescriptionParser
 import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescriptionProvider
-import org.apache.commons.io.FileUtils
-import org.apache.commons.io.FilenameUtils
-import org.apache.commons.io.IOUtils
+import org.apache.commons.io.FilenameUtilsLite
 import org.apache.commons.math3.ode.FirstOrderIntegrator
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -132,7 +130,7 @@ class FmuFile private constructor(
      * Get the content of the modelDescription.xml file as a String
      */
     val modelDescriptionXml: String by lazy {
-        FileUtils.readFileToString(modelDescriptionFile, Charsets.UTF_8)
+        modelDescriptionFile.readText(Charsets.UTF_8)
     }
 
     val modelDescription: ModelDescriptionProvider by lazy {
@@ -284,20 +282,22 @@ class FmuFile private constructor(
         @JvmStatic
         @Throws(IOException::class)
         fun from(url: URL): FmuFile {
-            val ext = FilenameUtils.getExtension(url.toString()).toLowerCase()
+
+            val ext = FilenameUtilsLite.getExtension(url.toString()).toLowerCase()
             if (ext != "fmu") {
                 throw IllegalArgumentException("File is not an FMU! Found extension: .$ext")
             }
             return FmuFile(extractFmuToTempFolder(url))
+
         }
 
         @Throws(IOException::class)
         private fun extractFmuToTempFolder(zippedFmuFile: URL): File {
 
-            val baseName = FilenameUtils.getBaseName(zippedFmuFile.toString())
+            val baseName = FilenameUtilsLite.getBaseName(zippedFmuFile.toString())
             val tmp = Files.createTempFile(FMI4J_FILE_PREFIX + baseName, ".fmu").toFile()
-            IOUtils.toByteArray(zippedFmuFile).also { data ->
-                FileUtils.writeByteArrayToFile(tmp, data)
+            zippedFmuFile.readBytes().also { data ->
+                tmp.writeBytes(data)
             }
 
             LOG.debug("Copied fmu from url into $tmp")
@@ -313,7 +313,7 @@ class FmuFile private constructor(
         @Throws(IOException::class)
         private fun extractFmuToTempFolder(zippedFmuFile: File): File {
 
-            val baseName = FilenameUtils.getBaseName(zippedFmuFile.name)
+            val baseName = FilenameUtilsLite.getBaseName(zippedFmuFile.name)
             return Files.createTempDirectory(FMI4J_FILE_PREFIX + baseName).toFile().apply {
                 extractFmuToDirectory(zippedFmuFile, this)
             }
@@ -322,14 +322,21 @@ class FmuFile private constructor(
 
         @Throws(IOException::class)
         private fun extractFmuToDirectory(fmuFile: File, directory: File) {
+
             ZipFile(fmuFile).use { zipFile ->
                 val enu = zipFile.entries()
                 while (enu.hasMoreElements()) {
                     val zipEntry = enu.nextElement() as ZipEntry
                     if (!zipEntry.isDirectory) {
-                        val child = File(directory, zipEntry.name)
-                        IOUtils.toByteArray(zipFile.getInputStream(zipEntry)).also { data ->
-                            FileUtils.writeByteArrayToFile(child, data)
+                        val child = File(directory, zipEntry.name).also {
+                            if (!it.parentFile.exists()) {
+                                it.parentFile.mkdirs()
+                            }
+                            it.createNewFile()
+                        }
+                        zipFile.getInputStream(zipEntry).use {
+                            val data = it.readBytes(1024)
+                            child.writeBytes(data)
                         }
                     }
                 }
