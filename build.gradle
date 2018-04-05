@@ -1,5 +1,8 @@
 
+println "Gradle version is ${GradleVersion.current().version}"
+
 buildscript {
+
     ext.kotlin_version = '1.2.30'
 
     repositories {
@@ -14,21 +17,21 @@ wrapper {
     gradleVersion = '4.6'
 }
 
-subprojects {
+subprojects { sub ->
 
-    apply plugin: 'java-library'
-    apply plugin: 'kotlin'
+    apply plugin: 'java'
 
     sourceCompatibility = 1.8
     [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
     repositories {
         mavenCentral()
+        maven {
+            url "https://oss.sonatype.org/content/repositories/snapshots"
+        }
     }
 
     dependencies {
-
-        implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 
         implementation group: 'org.slf4j', name: 'slf4j-api', version: '1.7.25'
         runtimeOnly group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.7.25'
@@ -36,11 +39,94 @@ subprojects {
         testImplementation group: 'junit', name: 'junit', version: '4.12'
     }
 
-    compileKotlin {
-        kotlinOptions.jvmTarget = "1.8"
+
+    sub.plugins.withId ('kotlin') {
+        compileKotlin {
+            kotlinOptions.jvmTarget = "1.8"
+        }
+        compileTestKotlin {
+            kotlinOptions.jvmTarget = "1.8"
+        }
     }
-    compileTestKotlin {
-        kotlinOptions.jvmTarget = "1.8"
+
+
+    if(archivesBaseName.startsWith("fmi")) {
+
+        def snapshot = true
+
+        group = 'no.mechatronics.sfi.fmi4j'
+        version = '0.6.1'
+        if (snapshot) {
+            version += '-SNAPSHOT'
+        }
+
+        apply plugin: 'maven'
+        apply plugin: 'signing'
+
+
+        task sourcesJar(type: Jar, dependsOn: classes, description: 'Creates a jar from the source files.') {
+            classifier = 'sources'
+            from sourceSets.main.allSource
+        }
+
+        task javadocJar (type: Jar, dependsOn: javadoc) {
+            classifier = 'javadoc'
+            from javadoc.destinationDir
+        }
+
+        artifacts {
+            archives javadocJar, sourcesJar
+        }
+
+        signing {
+            sign configurations.archives
+        }
+
+        uploadArchives {
+            repositories {
+                mavenDeployer {
+                    beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+                    repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2") {
+                        authentication(userName: ossrhUsername, password: ossrhPassword)
+                    }
+
+                    snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots") {
+                        authentication(userName: ossrhUsername, password: ossrhPassword)
+                    }
+
+                    pom.project {
+                        name archivesBaseName
+                        packaging 'jar'
+                        // optionally artifactId can be defined here
+                        description 'A software library for dealing with Functional Mock-up Units (FMUs) on the JVM platform'
+                        url 'https://github.com/SFI-Mechatronics/fmi4j'
+
+                        scm {
+                            connection 'scm:git:git://github.com/SFI-Mechatronics/fmi4j.git'
+                            developerConnection 'scm:git:ssh://github.com/SFI-Mechatronics/fmi4j.git'
+                            url 'https://github.com/SFI-Mechatronics/fmi4j/tree/master'
+                        }
+
+                        licenses {
+                            license {
+                                name 'The MIT License'
+                                url 'https://opensource.org/licenses/mit-license.php'
+                            }
+                        }
+
+                        developers {
+                            developer {
+                                id 'laht'
+                                name 'Lars Ivar Hatledal'
+                                email 'laht@ntnu.no'
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
     }
 
 }

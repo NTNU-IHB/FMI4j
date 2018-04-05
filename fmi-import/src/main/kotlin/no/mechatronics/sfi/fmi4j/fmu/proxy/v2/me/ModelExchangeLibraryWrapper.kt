@@ -49,7 +49,7 @@ class ModelExchangeLibraryWrapper(
 
 
     /**
-     *
+     * @see Fmi2ModelExchangeLibrary.fmi2SetTime
      * @param time
      */
     fun setTime(time: Double): FmiStatus {
@@ -57,7 +57,8 @@ class ModelExchangeLibraryWrapper(
     }
 
     /**
-     *
+     * 
+     * @see Fmi2ModelExchangeLibrary.fmi2SetContinuousStates
      * @param x state
      */
     fun setContinuousStates(x: DoubleArray): FmiStatus {
@@ -65,17 +66,17 @@ class ModelExchangeLibraryWrapper(
     }
 
     /**
-     *
+     * @see Fmi2ModelExchangeLibrary.fmi2EnterEventMode
      */
     fun enterEventMode(): FmiStatus {
-        return (updateStatus(FmiStatus.valueOf(library.fmi2EnterEventMode(c))))
+        return updateStatus(FmiStatus.valueOf(library.fmi2EnterEventMode(c)))
     }
 
     /**
-     *
+     * @see Fmi2ModelExchangeLibrary.fmi2EnterContinuousTimeMode
      */
     fun enterContinuousTimeMode(): FmiStatus {
-        return (updateStatus(FmiStatus.valueOf(library.fmi2EnterContinuousTimeMode(c))))
+        return updateStatus(FmiStatus.valueOf(library.fmi2EnterContinuousTimeMode(c)))
     }
 
     fun newDiscreteStates(eventInfo: Fmi2EventInfo): FmiStatus {
@@ -91,7 +92,7 @@ class ModelExchangeLibraryWrapper(
     }
 
     /**
-     *
+     * @see Fmi2ModelExchangeLibrary.fmi2GetDerivatives
      * @param derivatives
      */
     fun getDerivatives(derivatives: DoubleArray): FmiStatus {

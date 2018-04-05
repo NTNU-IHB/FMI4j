@@ -250,24 +250,20 @@ internal class FmiState private constructor(
         }
     }
 
-    internal fun isCallLegalDuringState(fmiMethod: FmiMethod, additionalRestrictions: Supplier<Boolean>? = null, msg: String? = ""): Boolean {
+    internal fun isCallLegalDuringState(fmiMethod: FmiMethod, additionalRestrictions: Supplier<Boolean>? = null, log:Boolean=true): Boolean {
 
-        if (fmiMethod.bit and allowedStates == 0) {
-            LOG.warn("FMI method {} cannot be called during {} state!", fmiMethod.name, name)
-            return false
+        fun logMsg(): String {
+            return "FMI method ${fmiMethod.name} cannot be called during $name state!"
+        }
+
+        return if (fmiMethod.bit and allowedStates == 0) {
+            false.also { if (log) LOG.warn(logMsg()) }
         } else {
-
             if (additionalRestrictions != null) {
-                if (additionalRestrictions.get()) {
-                    return true
-                } else {
-                    LOG.warn("FMI method {} cannot be called during {} state!", fmiMethod.name, name, msg)
-                    return false
-                }
+                if (additionalRestrictions.get()) true else false.also { if (log) LOG.warn(logMsg()) }
             } else {
-                return true
+                true
             }
-
 
         }
 

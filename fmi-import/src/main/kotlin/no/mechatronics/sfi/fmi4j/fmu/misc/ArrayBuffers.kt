@@ -24,8 +24,9 @@
 
 package no.mechatronics.sfi.fmi4j.fmu.misc
 
-import no.mechatronics.sfi.fmi4j.modeldescription.variables.RealArray
-import no.mechatronics.sfi.fmi4j.modeldescription.variables.StringArray
+import no.mechatronics.sfi.fmi4j.common.RealArray
+import no.mechatronics.sfi.fmi4j.common.StringArray
+
 
 /**
  *

@@ -30,6 +30,7 @@ import no.mechatronics.sfi.fmi4j.fmu.proxy.v2.cs.Fmi2StatusKind
 import no.mechatronics.sfi.fmi4j.modeldescription.cs.CoSimulationModelDescription
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import java.lang.IllegalStateException
 
 class CoSimulationFmu internal constructor(
         fmuFile: FmuFile,
@@ -50,7 +51,7 @@ class CoSimulationFmu internal constructor(
     override val modelDescription: CoSimulationModelDescription
         get() = fmuFile.modelDescription.asCoSimulationModelDescription()
 
-    override fun init(start: Double, stop: Double): FmiStatus {
+    override fun init(start: Double, stop: Double): Boolean {
         return super.init(start, stop).also {
             currentTime = start
         }
@@ -59,23 +60,38 @@ class CoSimulationFmu internal constructor(
     /**
      * @see CoSimulationLibraryWrapper.doStep
      */
-    override fun doStep(stepSize: Double): FmiStatus {
+    override fun doStep(stepSize: Double): Boolean {
 
         if (!isInitialized) {
-            LOG.warn("Calling doStep without having called init(), " +
+            throw IllegalStateException("Calling doStep without having called init(), " +
                     "remember that you have to call init() again after a call to reset()!")
-            return FmiStatus.Discard
         }
 
-        return wrapper.doStep(currentTime, stepSize, true).also {
-            currentTime += stepSize
+        val tNext = currentTime + stepSize
+
+        if (stopDefined && tNext > stopTime) {
+            LOG.warn("Cannot perform step! tNext=$tNext > stopTime=$stopTime")
+            return false
+        }
+
+        return wrapper.doStep(currentTime, stepSize, noSetFMUStatePriorToCurrent = true).let { status ->
+            if (status == FmiStatus.OK) {
+                currentTime = tNext
+                true
+            } else {
+                false
+            }
         }
 
     }
 
-    override fun terminate(): FmiStatus {
-        return super.terminate(true)
-    }
+    /**
+     * Terminates and frees the FMU instance
+     *
+     * @see no.mechatronics.sfi.fmi4j.fmu.proxy.v2.Fmi2Library.fmi2Terminate
+     * @see no.mechatronics.sfi.fmi4j.fmu.proxy.v2.Fmi2Library.fmi2FreeInstance
+     */
+    override fun terminate() = super.terminate(true)
 
     /**
      * @see CoSimulationLibraryWrapper.cancelStep

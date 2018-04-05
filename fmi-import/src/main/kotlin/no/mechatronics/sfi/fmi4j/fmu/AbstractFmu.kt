@@ -25,8 +25,8 @@
 package no.mechatronics.sfi.fmi4j.fmu
 
 import no.mechatronics.sfi.fmi4j.common.FmiStatus
-import no.mechatronics.sfi.fmi4j.fmu.misc.DirectionalDerivatives
-import no.mechatronics.sfi.fmi4j.fmu.misc.FmuState
+import no.mechatronics.sfi.fmi4j.common.VariableAccessor
+import no.mechatronics.sfi.fmi4j.fmu.misc.*
 import no.mechatronics.sfi.fmi4j.fmu.proxy.v2.Fmi2Library
 import no.mechatronics.sfi.fmi4j.fmu.proxy.v2.Fmi2LibraryWrapper
 import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescription
@@ -46,12 +46,14 @@ abstract class AbstractFmu<out E: ModelDescription, out T: Fmi2LibraryWrapper<*>
     }
 
     val variableAccessor: VariableAccessor
-            = FmuVariableAccessor(modelVariables, wrapper)
+            = FmuVariableAccessor(this)
 
     init {
-        modelVariables.forEach{
-            if (it is AbstractTypedScalarVariable) {
-                it.accessor = variableAccessor
+        modelVariables.forEach{ variable ->
+            if (variable is AbstractTypedScalarVariable) {
+                variable::class.java.getField("accessor").also { field ->
+                    field.set(variable, variableAccessor)
+                }
             }
         }
     }
@@ -96,6 +98,12 @@ abstract class AbstractFmu<out E: ModelDescription, out T: Fmi2LibraryWrapper<*>
         get() = wrapper.isTerminated
 
 
+    protected var stopDefined = false
+    private set
+
+    protected var stopTime: Double = Double.MAX_VALUE
+    private set
+
     /**
      * @see Fmi2LibraryWrapper.lastStatus
      */
@@ -125,7 +133,7 @@ abstract class AbstractFmu<out E: ModelDescription, out T: Fmi2LibraryWrapper<*>
      * @param start the start time
      * @param stop the stop time
      */
-    open fun init(start: Double, stop: Double): FmiStatus {
+    open fun init(start: Double, stop: Double): Boolean {
 
         if (!isInitialized) {
 
@@ -135,40 +143,45 @@ abstract class AbstractFmu<out E: ModelDescription, out T: Fmi2LibraryWrapper<*>
 
             assignStartValues {
                 it.variability != Variability.CONSTANT &&
-                        it.initial == Initial.EXACT || it.initial == Initial.APPROX
+                        (it.initial == Initial.EXACT || it.initial == Initial.APPROX)
+            }.also {
+                LOG.debug("Applied start values to $it variables with variability != CONSTANT and initial == EXACT or APPROX ")
             }
 
-            val stopDefined = stop > start
-            val stop = if (stopDefined) stop else Double.MAX_VALUE
-            var status = wrapper.setupExperiment(false, 1E-4,
+            stopDefined = (stop > start)
+            if (stopDefined) stopTime = stop
+            LOG.debug("setupExperiment params: start=$start, stopDefined=$stopDefined, stop=$stop")
+            var status = wrapper.setupExperiment(false, 0.0,
                     start, stopDefined, stop)
             if (status != FmiStatus.OK) {
-                return lastStatus
+                return false
             }
             status = wrapper.enterInitializationMode()
-            LOG.debug("Called enterInitializationMode with status $status")
+            LOG.trace("Called enterInitializationMode with status $status")
             if (status != FmiStatus.OK) {
-                return lastStatus
+                return false
             }
 
             assignStartValues {
                 it.variability != Variability.CONSTANT &&
-                        (it.initial != Initial.EXACT || it.causality == Causality.INPUT)
+                        (it.initial == Initial.EXACT || it.causality == Causality.INPUT)
+            }.also {
+                LOG.debug("Applied start values to $it variables with variability != CONSTANT and initial == EXACT or causality == INPUT ")
             }
 
             status = wrapper.exitInitializationMode()
-            LOG.debug("Called exitInitializationMode with status $status")
+            LOG.trace("Called exitInitializationMode with status $status")
             if (status != FmiStatus.OK) {
-                return lastStatus
+                return false
             }
 
             isInitialized = true
 
-            return FmiStatus.OK
+            return true
 
         } else {
             LOG.warn("Trying to call init, but FMU has already been initialized, and has not been reset!")
-            return FmiStatus.Discard
+            return false
         }
 
     }
@@ -182,9 +195,10 @@ abstract class AbstractFmu<out E: ModelDescription, out T: Fmi2LibraryWrapper<*>
      * @see Fmi2Library.fmi2FreeInstance
      */
     @JvmOverloads
-    open fun terminate(freeInstance: Boolean = true): FmiStatus {
-        return wrapper.terminate(freeInstance).also { status ->
+    open fun terminate(freeInstance: Boolean = true): Boolean {
+        return wrapper.terminate(freeInstance).let { status ->
             LOG.debug("FMU '${modelDescription.modelName}' terminated with status $status! #${hashCode()}")
+            status == FmiStatus.OK
         }
     }
 
@@ -199,8 +213,10 @@ abstract class AbstractFmu<out E: ModelDescription, out T: Fmi2LibraryWrapper<*>
     /**
      * @see Fmi2Library.fmi2Reset
      */
-    fun reset(): FmiStatus {
-        return reset(true)
+    fun reset(): Boolean {
+        return reset(true).let { status ->
+            status == FmiStatus.OK
+        }
     }
 
     /**
@@ -212,7 +228,7 @@ abstract class AbstractFmu<out E: ModelDescription, out T: Fmi2LibraryWrapper<*>
      * @see Fmi2Library.fmi2Reset
      */
     fun reset(requireReinit: Boolean): FmiStatus {
-        return wrapper.reset().also { status ->
+        return wrapper.reset().also {
             if (requireReinit) {
                 isInitialized = false
             }
@@ -333,11 +349,12 @@ abstract class AbstractFmu<out E: ModelDescription, out T: Fmi2LibraryWrapper<*>
         return BooleanVariableVector(variableAccessor, variables)
     }
 
-    private fun assignStartValues(predicate: (TypedScalarVariable<*>) -> Boolean) {
-        modelVariables.filter {
+    private fun assignStartValues(predicate: (TypedScalarVariable<*>) -> Boolean): Int {
+        val variables = modelVariables.filter {
             it.start != null && predicate.invoke(it)
-        }.forEach { variable ->
+        }
 
+        variables.forEach { variable ->
             when (variable) {
                 is IntegerVariable -> variable.write(variable.start!!)
                 is RealVariable -> variable.write(variable.start!!)
@@ -345,8 +362,8 @@ abstract class AbstractFmu<out E: ModelDescription, out T: Fmi2LibraryWrapper<*>
                 is BooleanVariable -> variable.write(variable.start!!)
                 is EnumerationVariable -> variable.write(variable.start!!)
             }
-
         }
+        return variables.size
     }
 
 }

@@ -33,7 +33,6 @@ import no.mechatronics.sfi.fmi4j.fmu.misc.FmiBoolean
 import no.mechatronics.sfi.fmi4j.fmu.misc.FmuState
 import no.mechatronics.sfi.fmi4j.fmu.misc.LibraryProvider
 import no.mechatronics.sfi.fmi4j.fmu.proxy.v2.structs.Fmi2CallbackFunctions
-import no.mechatronics.sfi.fmi4j.modeldescription.variables.StringArray
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -240,7 +239,7 @@ abstract class Fmi2LibraryWrapper<out E : Fmi2Library>(
      */
     @JvmOverloads
     fun getString(vr: IntArray, value: StringArray = StringArray(vr.size, { "" })): FmuStringArrayRead {
-        return (library.fmi2GetString(c, vr, vr.size, value)).let {
+        return library.fmi2GetString(c, vr, vr.size, value).let {
             FmuStringArrayRead(value, updateStatus(it))
         }
     }

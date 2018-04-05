@@ -33,9 +33,9 @@ class FmiStateTest {
     @Test
     fun isCallLegalDuringState() {
 
-        assertFalse(FmiState.START.isCallLegalDuringState(FmiMethod.fmi2SetDebugLogging))
-        assertFalse(FmiState.START.isCallLegalDuringState(FmiMethod.fmi2Reset))
-        assertTrue(FmiState.START.isCallLegalDuringState(FmiMethod.fmi2GetTypesPlatform))
+        assertFalse(FmiState.START.isCallLegalDuringState(FmiMethod.fmi2SetDebugLogging, log=false))
+        assertFalse(FmiState.START.isCallLegalDuringState(FmiMethod.fmi2Reset, log=false))
+        assertTrue(FmiState.START.isCallLegalDuringState(FmiMethod.fmi2GetTypesPlatform, log=false))
 
     }
 

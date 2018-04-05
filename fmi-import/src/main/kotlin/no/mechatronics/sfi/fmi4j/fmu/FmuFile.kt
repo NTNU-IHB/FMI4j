@@ -39,9 +39,7 @@ import no.mechatronics.sfi.fmi4j.fmu.proxy.v2.structs.Fmi2CallbackFunctions
 import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescription
 import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescriptionParser
 import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescriptionProvider
-import org.apache.commons.io.FileUtils
-import org.apache.commons.io.FilenameUtils
-import org.apache.commons.io.IOUtils
+import org.apache.commons.io.FilenameUtilsLite
 import org.apache.commons.math3.ode.FirstOrderIntegrator
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -50,7 +48,6 @@ import java.io.File
 import java.io.FileNotFoundException
 import java.io.IOException
 import java.net.URL
-import java.nio.charset.Charset
 import java.nio.file.Files
 import java.util.zip.ZipEntry
 import java.util.zip.ZipFile
@@ -92,28 +89,40 @@ class FmuFile private constructor(
     override fun close() {
         if (!isClosed) {
 
-            instances.forEach {
-                if (!it.isTerminated) {
-                    it.terminate()
-                }
-                if (!it.wrapper.isInstanceFreed) {
-                    it.wrapper.freeInstance()
-                }
-            }
-            instances.clear()
-
-            libraries.forEach {
-                it.disposeLibrary()
-            }
-            libraries.clear()
-
-            if (fmuFile.deleteRecursively()) {
-                LOG.debug("Deleted fmu folder: $fmuFile")
-            } else {
-                LOG.debug("Failed to delete fmu folder: $fmuFile")
-            }
+            terminateInstances()
+            disposeNativeLibraries()
+            deleteExtractedFmuFolder()
 
             isClosed = true
+        }
+    }
+
+    private fun disposeNativeLibraries() {
+        libraries.forEach {
+            it.disposeLibrary()
+        }
+        libraries.clear()
+    }
+
+    private fun terminateInstances() {
+        instances.forEach {
+            if (!it.isTerminated) {
+                it.terminate()
+            }
+            if (!it.wrapper.isInstanceFreed) {
+                it.wrapper.freeInstance()
+            }
+        }
+        instances.clear()
+    }
+
+    fun deleteExtractedFmuFolder(): Boolean {
+        if (fmuFile.deleteRecursively()) {
+            LOG.debug("Deleted fmu folder: $fmuFile")
+            return true
+        } else {
+            LOG.debug("Failed to delete fmu folder: $fmuFile")
+            return false
         }
     }
 
@@ -121,7 +130,7 @@ class FmuFile private constructor(
      * Get the content of the modelDescription.xml file as a String
      */
     val modelDescriptionXml: String by lazy {
-        FileUtils.readFileToString(modelDescriptionFile, Charset.forName("UTF-8"))
+        modelDescriptionFile.readText(Charsets.UTF_8)
     }
 
     val modelDescription: ModelDescriptionProvider by lazy {
@@ -192,30 +201,28 @@ class FmuFile private constructor(
     fun asModelExchangeFmu(): ModelExchangeFmuBuilder
             = modelExchangeBuilder ?: throw IllegalStateException("FMU does not support Model Exchange!")
 
-
     override fun toString(): String {
         return "FmuFile(fmuFile=${fmuFile.absolutePath})"
     }
 
-    private val that = this
-
     inner class CoSimulationFmuBuilder internal constructor() {
+
         private val modelDescription
-            get() = that.modelDescription.asCoSimulationModelDescription()
+            get() = this@FmuFile.modelDescription.asCoSimulationModelDescription()
 
         private val libraryCache: LibraryProvider<Fmi2CoSimulationLibrary> by lazy {
             loadLibrary()
         }
 
         private fun loadLibrary(): LibraryProvider<Fmi2CoSimulationLibrary>
-                = loadLibrary(that, modelDescription, Fmi2CoSimulationLibrary::class.java).also { libraries.add(it) }
+                = loadLibrary(this@FmuFile, modelDescription, Fmi2CoSimulationLibrary::class.java).also { libraries.add(it) }
 
         @JvmOverloads
         fun newInstance(visible: Boolean = false, loggingOn: Boolean = false) : CoSimulationFmu {
             val lib = if (modelDescription.canBeInstantiatedOnlyOncePerProcess) loadLibrary() else libraryCache
-            val c = instantiate(that, modelDescription, lib.get(), Fmi2Type.CoSimulation, visible, loggingOn)
+            val c = instantiate(this@FmuFile, modelDescription, lib.get(), Fmi2Type.CoSimulation, visible, loggingOn)
             val wrapper = CoSimulationLibraryWrapper(c, lib)
-            return CoSimulationFmu(that, wrapper).also { instances.add(it) }
+            return CoSimulationFmu(this@FmuFile, wrapper).also { instances.add(it) }
         }
 
     }
@@ -223,29 +230,29 @@ class FmuFile private constructor(
     inner class ModelExchangeFmuBuilder {
 
         private val modelDescription
-            get() = that.modelDescription.asModelExchangeModelDescription()
+            get() = this@FmuFile.modelDescription.asModelExchangeModelDescription()
 
         private val libraryCache: LibraryProvider<Fmi2ModelExchangeLibrary> by lazy {
             loadLibrary()
         }
 
         private fun loadLibrary(): LibraryProvider<Fmi2ModelExchangeLibrary>
-                = loadLibrary(that, modelDescription, Fmi2ModelExchangeLibrary::class.java).also { libraries.add(it) }
+                = loadLibrary(this@FmuFile, modelDescription, Fmi2ModelExchangeLibrary::class.java).also { libraries.add(it) }
 
         @JvmOverloads
         fun newInstance(visible: Boolean = false, loggingOn: Boolean = false) : ModelExchangeFmu {
             val lib = if (modelDescription.canBeInstantiatedOnlyOncePerProcess) loadLibrary() else libraryCache
-            val c = instantiate(that, modelDescription, lib.get(), Fmi2Type.ModelExchange, visible, loggingOn)
+            val c = instantiate(this@FmuFile, modelDescription, lib.get(), Fmi2Type.ModelExchange, visible, loggingOn)
             val wrapper = ModelExchangeLibraryWrapper(c, lib)
-            return ModelExchangeFmu(that, wrapper).also { instances.add(it) }
+            return ModelExchangeFmu(this@FmuFile, wrapper).also { instances.add(it) }
         }
 
         @JvmOverloads
         fun newInstance(integrator: FirstOrderIntegrator, visible: Boolean = false, loggingOn: Boolean = false) : ModelExchangeFmuWithIntegrator {
             val lib = if (modelDescription.canBeInstantiatedOnlyOncePerProcess) loadLibrary() else libraryCache
-            val c = instantiate(that, modelDescription, lib.get(), Fmi2Type.ModelExchange, visible, loggingOn)
+            val c = instantiate(this@FmuFile, modelDescription, lib.get(), Fmi2Type.ModelExchange, visible, loggingOn)
             val wrapper = ModelExchangeLibraryWrapper(c, lib)
-            return ModelExchangeFmuWithIntegrator(ModelExchangeFmu(that, wrapper), integrator).also { instances.add(it.fmu) }
+            return ModelExchangeFmuWithIntegrator(ModelExchangeFmu(this@FmuFile, wrapper), integrator).also { instances.add(it.fmu) }
         }
 
     }
@@ -275,20 +282,22 @@ class FmuFile private constructor(
         @JvmStatic
         @Throws(IOException::class)
         fun from(url: URL): FmuFile {
-            val ext = FilenameUtils.getExtension(url.toString()).toLowerCase()
+
+            val ext = FilenameUtilsLite.getExtension(url.toString()).toLowerCase()
             if (ext != "fmu") {
                 throw IllegalArgumentException("File is not an FMU! Found extension: .$ext")
             }
             return FmuFile(extractFmuToTempFolder(url))
+
         }
 
         @Throws(IOException::class)
         private fun extractFmuToTempFolder(zippedFmuFile: URL): File {
 
-            val baseName = FilenameUtils.getBaseName(zippedFmuFile.toString())
+            val baseName = FilenameUtilsLite.getBaseName(zippedFmuFile.toString())
             val tmp = Files.createTempFile(FMI4J_FILE_PREFIX + baseName, ".fmu").toFile()
-            IOUtils.toByteArray(zippedFmuFile).also { data ->
-                FileUtils.writeByteArrayToFile(tmp, data)
+            zippedFmuFile.readBytes().also { data ->
+                tmp.writeBytes(data)
             }
 
             LOG.debug("Copied fmu from url into $tmp")
@@ -304,7 +313,7 @@ class FmuFile private constructor(
         @Throws(IOException::class)
         private fun extractFmuToTempFolder(zippedFmuFile: File): File {
 
-            val baseName = FilenameUtils.getBaseName(zippedFmuFile.name)
+            val baseName = FilenameUtilsLite.getBaseName(zippedFmuFile.name)
             return Files.createTempDirectory(FMI4J_FILE_PREFIX + baseName).toFile().apply {
                 extractFmuToDirectory(zippedFmuFile, this)
             }
@@ -313,14 +322,21 @@ class FmuFile private constructor(
 
         @Throws(IOException::class)
         private fun extractFmuToDirectory(fmuFile: File, directory: File) {
+
             ZipFile(fmuFile).use { zipFile ->
                 val enu = zipFile.entries()
                 while (enu.hasMoreElements()) {
                     val zipEntry = enu.nextElement() as ZipEntry
                     if (!zipEntry.isDirectory) {
-                        val child = File(directory, zipEntry.name)
-                        IOUtils.toByteArray(zipFile.getInputStream(zipEntry)).also { data ->
-                            FileUtils.writeByteArrayToFile(child, data)
+                        val child = File(directory, zipEntry.name).also {
+                            if (!it.parentFile.exists()) {
+                                it.parentFile.mkdirs()
+                            }
+                            it.createNewFile()
+                        }
+                        zipFile.getInputStream(zipEntry).use {
+                            val data = it.readBytes(1024)
+                            child.writeBytes(data)
                         }
                     }
                 }
@@ -354,7 +370,6 @@ class FmuFile private constructor(
                     FmiBoolean.convert(visible), FmiBoolean.convert(loggingOn) )
                     ?: throw IllegalStateException("Unable to instantiate FMU. Returned pointer is null!")
         }
-
 
     }
 

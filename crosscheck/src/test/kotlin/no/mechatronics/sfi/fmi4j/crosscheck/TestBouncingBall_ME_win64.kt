@@ -2,9 +2,15 @@ package no.mechatronics.sfi.fmi4j.crosscheck
 
 import org.junit.Assert
 import org.junit.Test
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import java.io.File
 
 class TestBouncingBall_ME_win64 {
+
+    companion object {
+        val LOG: Logger = LoggerFactory.getLogger(TestBouncingBall_ME_win64::class.java)
+    }
 
     @Test
     fun setup() {

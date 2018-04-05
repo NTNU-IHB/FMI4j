@@ -28,9 +28,7 @@ import no.mechatronics.sfi.fmi4j.common.FmiStatus;
 import no.mechatronics.sfi.fmi4j.common.FmuRead;
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.RealVariable;
 import org.apache.commons.math3.ode.FirstOrderIntegrator;
-import org.apache.commons.math3.ode.nonstiff.AdamsBashforthIntegrator;
 import org.apache.commons.math3.ode.nonstiff.ClassicalRungeKuttaIntegrator;
-import org.apache.commons.math3.ode.nonstiff.DormandPrince853Integrator;
 import org.apache.commons.math3.ode.nonstiff.EulerIntegrator;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -67,26 +65,14 @@ public class ModelExchangeTest_java {
         Assert.assertEquals("2.0", fmuFile.getModelDescription().getFmiVersion());
     }
 
-    @Test
-    public void test() {
-
-        int i = 0;
-        FirstOrderIntegrator integrator = null;
-        switch (i) {
-            case 0: integrator = new EulerIntegrator(1E-3); break;
-            case 1: integrator = new DormandPrince853Integrator(1E-8, 1.0, 1E-10, 1E-10); break;
-            case 2: integrator = new AdamsBashforthIntegrator(100, 1E-10, 1.0, 1E-10, 1E-10); break;
-            case 3: integrator = new ClassicalRungeKuttaIntegrator(1E-3); break;
-        }
-
-
+    public void runFmu(FirstOrderIntegrator integrator) {
         FmiSimulation fmu = fmuFile.asModelExchangeFmu()
                 .newInstance(integrator);
 
         RealVariable x0 = fmu.getModelVariables()
                 .getByName("x0").asRealVariable();
 
-        Assert.assertTrue(fmu.init() == FmiStatus.OK);
+        Assert.assertTrue(fmu.init());
 
         double macroStep = 1.0 / 10;
         while (fmu.getCurrentTime() < 1) {
@@ -97,6 +83,16 @@ public class ModelExchangeTest_java {
         }
 
         fmu.terminate();
+    }
+
+    @Test
+    public void testEuler() {
+        runFmu(new EulerIntegrator(1E-3));
+    }
+
+    @Test
+    public void testRungeKutta() {
+        runFmu(new ClassicalRungeKuttaIntegrator(1E-3));
     }
 
 }
