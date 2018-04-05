@@ -48,7 +48,7 @@ class ModelExchangeTest_kt {
 
         LOG.info("Using integrator: ${integrator.javaClass.simpleName}")
 
-        val fmu = fmuFile.asModelExchangeFmu().newInstance(integrator).use { fmu ->
+        fmuFile.asModelExchangeFmu().newInstance(integrator).use { fmu ->
 
             val x0 = fmu.modelVariables
                     .getByName("x0").asRealVariable()
