@@ -1,25 +1,21 @@
 
 
-repositories {
-    maven {
-        url "https://oss.sonatype.org/content/repositories/snapshots"
-    }
-}
+apply plugin: 'java-library'
+apply plugin: 'kotlin'
 
 dependencies {
 
-    api group: 'org.apache.commons', name: 'commons-math3', version: '3.6.1'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+    compile group: 'org.apache.commons', name: 'commons-math3', version: '3.6.1'
 
     implementation group: 'net.java.dev.jna', name: 'jna', version: '4.5.1'
     implementation group: 'net.java.dev.jna', name: 'jna-platform', version: '4.5.1'
 
-    //compile project(':fmi-common')
     compile project(':fmi-modeldescription')
 
     testImplementation group: 'org.siani.javafmi', name: 'fmu-wrapper', version: '2.24.2'
 
 }
-
 
 //include if users want to generate a fatJar from source
 task fatJar(type: Jar) {

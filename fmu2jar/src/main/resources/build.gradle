@@ -1,4 +1,6 @@
 
+println "Gradle version is ${GradleVersion.current().version}"
+
 buildscript {
     ext.kotlin_version = '1.2.30'
 
@@ -11,7 +13,7 @@ buildscript {
 }
 
 def snapshot = true
-def fmi_import_version = snapshot ? '0.6-SNAPSHOT' : '0.3'
+def fmi_import_version = snapshot ? '0.6-SNAPSHOT' : '0.6'
 
 apply plugin: 'kotlin'
 apply plugin: 'maven-publish'

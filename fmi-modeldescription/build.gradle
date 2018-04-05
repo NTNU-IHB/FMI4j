@@ -1,7 +1,10 @@
 
-repositories {
-}
+apply plugin: 'kotlin'
 
 dependencies {
 
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+
 }
+
+
