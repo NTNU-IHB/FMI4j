@@ -1,5 +1,6 @@
-package no.mechatronics.sfi.fmi4j.fmu
+package no.mechatronics.sfi.fmi4j.fmu.misc
 
+import no.mechatronics.sfi.fmi4j.fmu.FmuFile
 import org.junit.Assert
 import org.junit.Test
 import java.io.File

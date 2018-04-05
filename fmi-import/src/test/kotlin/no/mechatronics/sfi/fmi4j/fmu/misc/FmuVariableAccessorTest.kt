@@ -1,5 +1,7 @@
-package no.mechatronics.sfi.fmi4j.fmu
+package no.mechatronics.sfi.fmi4j.fmu.misc
 
+import no.mechatronics.sfi.fmi4j.fmu.CoSimulationFmuTest_kt
+import no.mechatronics.sfi.fmi4j.fmu.FmuFile
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.BooleanVariable
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.IntegerVariable
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.RealVariable

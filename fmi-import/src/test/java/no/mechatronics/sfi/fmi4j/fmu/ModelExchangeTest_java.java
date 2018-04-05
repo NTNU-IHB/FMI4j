@@ -30,10 +30,13 @@ import no.mechatronics.sfi.fmi4j.modeldescription.variables.RealVariable;
 import org.apache.commons.math3.ode.FirstOrderIntegrator;
 import org.apache.commons.math3.ode.nonstiff.ClassicalRungeKuttaIntegrator;
 import org.apache.commons.math3.ode.nonstiff.EulerIntegrator;
+import org.apache.commons.math3.ode.nonstiff.LutherIntegrator;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -43,7 +46,10 @@ import java.io.IOException;
  */
 public class ModelExchangeTest_java {
 
+    private static final Logger LOG = LoggerFactory.getLogger(ModelExchangeTest_java.class);
+
     private static FmuFile fmuFile;
+
 
     @BeforeClass
     public static void setUp() throws IOException {
@@ -65,7 +71,10 @@ public class ModelExchangeTest_java {
         Assert.assertEquals("2.0", fmuFile.getModelDescription().getFmiVersion());
     }
 
-    public void runFmu(FirstOrderIntegrator integrator) {
+    private void runFmu(FirstOrderIntegrator integrator) {
+
+        LOG.info("Using integrator: {}", integrator.getClass().getSimpleName());
+
         FmiSimulation fmu = fmuFile.asModelExchangeFmu()
                 .newInstance(integrator);
 
@@ -78,7 +87,7 @@ public class ModelExchangeTest_java {
         while (fmu.getCurrentTime() < 1) {
             FmuRead<Double> read = x0.read();
             Assert.assertTrue(read.getStatus() == FmiStatus.OK);
-            System.out.println("t=" + fmu.getCurrentTime() + ", x0=" + read.getValue());
+            LOG.info("t={}, x0={}", fmu.getCurrentTime(), read.getValue() );
             fmu.doStep(macroStep);
         }
 
@@ -93,6 +102,11 @@ public class ModelExchangeTest_java {
     @Test
     public void testRungeKutta() {
         runFmu(new ClassicalRungeKuttaIntegrator(1E-3));
+    }
+
+    @Test
+    public void testLuther() {
+        runFmu(new LutherIntegrator(1E-3));
     }
 
 }
