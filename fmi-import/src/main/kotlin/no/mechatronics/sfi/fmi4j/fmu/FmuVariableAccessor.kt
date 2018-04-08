@@ -29,17 +29,17 @@ import no.mechatronics.sfi.fmi4j.common.Real
 import no.mechatronics.sfi.fmi4j.common.RealArray
 import no.mechatronics.sfi.fmi4j.common.StringArray
 import no.mechatronics.sfi.fmi4j.common.VariableAccessor
+import no.mechatronics.sfi.fmi4j.fmu.proxy.v2.Fmi2LibraryWrapper
+import no.mechatronics.sfi.fmi4j.modeldescription.variables.ModelVariables
 import java.util.concurrent.ConcurrentHashMap
 
 /**
  * @author Lars Ivar Hatledal
  */
 class FmuVariableAccessor(
-        val fmu: AbstractFmu<*, *>
+        private val wrapper: Fmi2LibraryWrapper<*>,
+        private val modelVariables: ModelVariables
 ): VariableAccessor {
-
-    private val wrapper
-        get() = fmu.wrapper
 
    companion object {
        private val map = ConcurrentHashMap<String, Int>()
@@ -86,7 +86,7 @@ class FmuVariableAccessor(
     override fun writeBoolean(vr: IntArray, value: IntArray) = wrapper.setBoolean(vr, value)
 
     private fun process(name: String): Int {
-       return map.getOrPut(name, {fmu.modelVariables.getValueReference(name)})
+       return map.getOrPut(name, {modelVariables.getValueReference(name)})
     }
 
 

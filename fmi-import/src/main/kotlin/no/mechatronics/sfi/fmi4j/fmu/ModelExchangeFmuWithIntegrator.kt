@@ -39,7 +39,7 @@ private const val h = 1E-13
 class ModelExchangeFmuWithIntegrator internal constructor(
         internal val fmu: ModelExchangeFmu,
         private val integrator: FirstOrderIntegrator
-) : FmiSimulation {
+) : FmiSimulation, Fmu by fmu {
 
     private val states: DoubleArray
     private val nominalStates: DoubleArray
@@ -53,31 +53,7 @@ class ModelExchangeFmuWithIntegrator internal constructor(
     override var currentTime: Double = 0.0
         private set
 
-    /**
-     * @see AbstractFmu.isTerminated
-     */
-    override val isInitialized
-        get() = fmu.isInitialized
-
-    /**
-     * @see AbstractFmu.isTerminated
-     */
-    override val isTerminated
-        get() = fmu.isTerminated
-
-    /**
-     * @see AbstractFmu.lastStatus
-     */
-    override val lastStatus
-        get() = fmu.lastStatus
-
-    override val modelName: String
-        get() = fmu.modelDescription.modelName
-
     override val modelDescription = fmu.modelDescription
-    override val modelVariables = fmu.modelVariables
-
-    override val variableAccessor = fmu.variableAccessor
 
     init {
 
@@ -106,16 +82,6 @@ class ModelExchangeFmuWithIntegrator internal constructor(
             }
         }
     }
-
-    override fun reset() = fmu.reset()
-    override fun terminate() = fmu.terminate()
-
-    override fun close() {
-        terminate()
-    }
-
-    override fun init() = init(0.0)
-    override fun init(start: Double) = init(start, -1.0)
 
     override fun init(start: Double, stop: Double): Boolean {
 
@@ -167,8 +133,8 @@ class ModelExchangeFmuWithIntegrator internal constructor(
             var stateEvent = false
             if (tNext - time > h) {
                 solve(time, tNext).also { result ->
-                    stateEvent = result.stateEvent
-                    time = result.time
+                    stateEvent = result.first
+                    time = result.second
                 }
             } else {
                 time = tNext
@@ -211,12 +177,7 @@ class ModelExchangeFmuWithIntegrator internal constructor(
 
     }
 
-    private data class SolveResult(
-            val stateEvent: Boolean,
-            val time: Double
-    )
-
-    private fun solve(t: Double, tNext: Double): SolveResult {
+    private fun solve(t: Double, tNext: Double): Pair<Boolean, Double> {
 
         fmu.getContinuousStates(states)
         fmu.getDerivatives(derivatives)
@@ -241,7 +202,7 @@ class ModelExchangeFmuWithIntegrator internal constructor(
             return false
         }
 
-        return SolveResult(stateEvent(), integratedTime)
+        return stateEvent() to integratedTime
 
     }
 

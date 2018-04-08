@@ -39,14 +39,14 @@ import java.lang.UnsupportedOperationException
 abstract class AbstractFmu<out E: ModelDescription, out T: Fmi2LibraryWrapper<*>> internal constructor(
         val fmuFile: FmuFile,
         val wrapper: T
-) : Closeable {
+): Fmu {
 
     private companion object {
         val LOG: Logger = LoggerFactory.getLogger(AbstractFmu::class.java)
     }
 
-    val variableAccessor: VariableAccessor
-            = FmuVariableAccessor(this)
+    override val variableAccessor: VariableAccessor
+            = FmuVariableAccessor(wrapper, modelVariables)
 
     init {
         modelVariables.forEach{ variable ->
@@ -57,20 +57,6 @@ abstract class AbstractFmu<out E: ModelDescription, out T: Fmi2LibraryWrapper<*>
             }
         }
     }
-
-    abstract val modelDescription: E
-
-    /**
-     * @see ModelDescription.modelName
-     */
-    val modelName: String
-        get() = modelDescription.modelName
-
-    /**
-     * @see ModelDescription.modelVariables
-     */
-    val modelVariables: ModelVariables
-        get() = modelDescription.modelVariables
 
     /**
      * @see Fmi2Library.fmi2GetTypesPlatform
@@ -88,26 +74,26 @@ abstract class AbstractFmu<out E: ModelDescription, out T: Fmi2LibraryWrapper<*>
      * Has the FMU been initialized yet?
      * That is, has init() been called?
      */
-    var isInitialized = false
-        private set
+    override var isInitialized = false
+        protected set
 
     /**
      * @see Fmi2LibraryWrapper.isTerminated
      */
-    val isTerminated
+    override val isTerminated
         get() = wrapper.isTerminated
 
 
     protected var stopDefined = false
-    private set
+        private set
 
     protected var stopTime: Double = Double.MAX_VALUE
-    private set
+        private set
 
     /**
      * @see Fmi2LibraryWrapper.lastStatus
      */
-    val lastStatus: FmiStatus
+    override val lastStatus: FmiStatus
         get() =  wrapper.lastStatus
 
     /**
@@ -120,20 +106,20 @@ abstract class AbstractFmu<out E: ModelDescription, out T: Fmi2LibraryWrapper<*>
     /**
      * Call init with 0.0 as start.
      */
-    fun init() = init(0.0)
+    override fun init() = init(0.0)
 
     /**
      * Call init with provided start
      * @param start the start time
      */
-    fun init(start :Double) = init(start, -1.0)
+    override fun init(start :Double) = init(start, -1.0)
 
     /**
      * Call init with provided start and stop
      * @param start the start time
      * @param stop the stop time
      */
-    open fun init(start: Double, stop: Double): Boolean {
+    override fun init(start: Double, stop: Double): Boolean {
 
         if (!isInitialized) {
 
@@ -186,6 +172,10 @@ abstract class AbstractFmu<out E: ModelDescription, out T: Fmi2LibraryWrapper<*>
 
     }
 
+    override fun terminate(): Boolean {
+        return terminate(true)
+    }
+
     /**
      * Terminates the FMU
      *
@@ -194,8 +184,7 @@ abstract class AbstractFmu<out E: ModelDescription, out T: Fmi2LibraryWrapper<*>
      * @see Fmi2Library.fmi2Terminate
      * @see Fmi2Library.fmi2FreeInstance
      */
-    @JvmOverloads
-    open fun terminate(freeInstance: Boolean = true): Boolean {
+    fun terminate(freeInstance: Boolean): Boolean {
         return wrapper.terminate(freeInstance).let { status ->
             LOG.debug("FMU '${modelDescription.modelName}' terminated with status $status! #${hashCode()}")
             status == FmiStatus.OK
@@ -203,17 +192,9 @@ abstract class AbstractFmu<out E: ModelDescription, out T: Fmi2LibraryWrapper<*>
     }
 
     /**
-     * Same as calling terminate(true), needed in order to implement Closable
-     * @see Closeable
-     */
-    override fun close() {
-        terminate(true)
-    }
-
-    /**
      * @see Fmi2Library.fmi2Reset
      */
-    fun reset(): Boolean {
+    override fun reset(): Boolean {
         return reset(true).let { status ->
             status == FmiStatus.OK
         }

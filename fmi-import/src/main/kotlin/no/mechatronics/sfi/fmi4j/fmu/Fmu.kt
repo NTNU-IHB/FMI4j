@@ -31,15 +31,51 @@ import no.mechatronics.sfi.fmi4j.modeldescription.variables.ModelVariables
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.TypedScalarVariable
 import java.io.Closeable
 
-/**
- *
- * @author Lars Ivar Hatledal
- */
-interface FmiSimulation: Fmu {
+interface Fmu : Closeable {
 
-    val currentTime: Double
+    /**
+     * @see ModelDescription.guid
+     */
+    val guid: String
+        get() = modelDescription.guid
+    /**
+     * @see ModelDescription.modelName
+     */
+    val modelName: String
+        get() = modelDescription.modelName
+    /**
+     * @see ModelDescription.modelVariables
+     */
+    val modelVariables: ModelVariables
+        get() = modelDescription.modelVariables
 
-    fun doStep(stepSize: Double): Boolean
+    val modelDescription: ModelDescription
+    val variableAccessor: VariableAccessor
+
+    val lastStatus: FmiStatus
+    val isInitialized: Boolean
+    val isTerminated: Boolean
+
+    fun init(): Boolean
+    fun init(start: Double): Boolean
+    fun init(start: Double, stop: Double): Boolean
+
+    fun reset(): Boolean
+    fun terminate(): Boolean
+
+    /**
+     * Calls terminate()
+     *
+     * @see Closeable
+     */
+    override fun close() {
+        terminate()
+    }
+
+    /**
+     * @see ModelVariables.getByName
+     */
+    fun getVariableByName(name: String): TypedScalarVariable<*>
+            = modelVariables.getByName(name)
 
 }
-
