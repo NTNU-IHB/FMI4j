@@ -25,10 +25,10 @@
 
 package no.mechatronics.sfi.fmi4j.fmu
 
+import no.mechatronics.sfi.fmi4j.common.FmuVariableAccessor
 import no.mechatronics.sfi.fmi4j.common.Real
 import no.mechatronics.sfi.fmi4j.common.RealArray
 import no.mechatronics.sfi.fmi4j.common.StringArray
-import no.mechatronics.sfi.fmi4j.common.VariableAccessor
 import no.mechatronics.sfi.fmi4j.fmu.proxy.v2.Fmi2LibraryWrapper
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.ModelVariables
 import java.util.concurrent.ConcurrentHashMap
@@ -36,14 +36,10 @@ import java.util.concurrent.ConcurrentHashMap
 /**
  * @author Lars Ivar Hatledal
  */
-class FmuVariableAccessor(
+class FmuVariableAccessorImpl(
         private val wrapper: Fmi2LibraryWrapper<*>,
         private val modelVariables: ModelVariables
-): VariableAccessor {
-
-   companion object {
-       private val map = ConcurrentHashMap<String, Int>()
-   }
+): FmuVariableAccessor {
 
     //read
     override fun readInteger(name: String) = readInteger(process(name))
@@ -89,5 +85,8 @@ class FmuVariableAccessor(
        return map.getOrPut(name, {modelVariables.getValueReference(name)})
     }
 
+    private companion object {
+        val map = ConcurrentHashMap<String, Int>()
+    }
 
 }

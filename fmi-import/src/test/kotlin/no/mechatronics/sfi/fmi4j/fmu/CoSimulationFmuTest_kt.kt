@@ -74,12 +74,9 @@ class CoSimulationFmuTest_kt {
                     first1 = value
                 }
                 LOG.info("Temperature_Room=$value")
-
             }
 
-            (fmu as AbstractFmu<*, *>).reset(false)
-
-            Assert.assertTrue(fmu.lastStatus === FmiStatus.OK)
+            Assert.assertTrue((fmu as AbstractFmu<*, *>).reset(false))
 
             val first = AtomicBoolean(true)
             while (fmu.currentTime < 5) {
@@ -94,7 +91,6 @@ class CoSimulationFmuTest_kt {
                     Assert.assertEquals(first1, value, 0.0)
                 }
                 LOG.info("Temperature_Room=$value")
-
             }
 
             fmuFile.asCoSimulationFmu().newInstance().use { fmu2 ->

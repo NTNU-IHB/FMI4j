@@ -25,7 +25,7 @@
 package no.mechatronics.sfi.fmi4j.fmu
 
 import no.mechatronics.sfi.fmi4j.common.FmiStatus
-import no.mechatronics.sfi.fmi4j.common.VariableAccessor
+import no.mechatronics.sfi.fmi4j.common.FmuVariableAccessor
 import no.mechatronics.sfi.fmi4j.fmu.misc.*
 import no.mechatronics.sfi.fmi4j.fmu.proxy.v2.Fmi2Library
 import no.mechatronics.sfi.fmi4j.fmu.proxy.v2.Fmi2LibraryWrapper
@@ -33,7 +33,6 @@ import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescription
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.*
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import java.io.Closeable
 import java.lang.UnsupportedOperationException
 
 abstract class AbstractFmu<out E: ModelDescription, out T: Fmi2LibraryWrapper<*>> internal constructor(
@@ -45,8 +44,8 @@ abstract class AbstractFmu<out E: ModelDescription, out T: Fmi2LibraryWrapper<*>
         val LOG: Logger = LoggerFactory.getLogger(AbstractFmu::class.java)
     }
 
-    override val variableAccessor: VariableAccessor
-            = FmuVariableAccessor(wrapper, modelVariables)
+    override val variableAccessor: FmuVariableAccessor
+            = FmuVariableAccessorImpl(wrapper, modelVariables)
 
     init {
         modelVariables.forEach{ variable ->
@@ -195,21 +194,22 @@ abstract class AbstractFmu<out E: ModelDescription, out T: Fmi2LibraryWrapper<*>
      * @see Fmi2Library.fmi2Reset
      */
     override fun reset(): Boolean {
-        return reset(true).let { status ->
+        return wrapper.reset().let { status ->
             status == FmiStatus.OK
         }
     }
 
     /**
+     * Custom reset function for invoking reset on FMUs that dont comply with the standard (e.g. 20-sim).
      *
      * @param requireReinit According to the FMI spec, init() must be called after a call to reset().
      * Setting requireReinit to false allows you to ignore that.
-     * Only use if the tools you are using does not implement the standard correctly.
+     * Only use if the tool you are using does not implement the standard correctly.
      *
      * @see Fmi2Library.fmi2Reset
      */
-    fun reset(requireReinit: Boolean): FmiStatus {
-        return wrapper.reset().also {
+    fun reset(requireReinit: Boolean): Boolean {
+        return reset().also {
             if (requireReinit) {
                 isInitialized = false
             }

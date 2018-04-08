@@ -25,7 +25,7 @@
 package no.mechatronics.sfi.fmi4j.fmu
 
 import no.mechatronics.sfi.fmi4j.common.FmiStatus
-import no.mechatronics.sfi.fmi4j.common.VariableAccessor
+import no.mechatronics.sfi.fmi4j.common.FmuVariableAccessor
 import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescription
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.ModelVariables
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.TypedScalarVariable
@@ -50,7 +50,7 @@ interface Fmu : Closeable {
         get() = modelDescription.modelVariables
 
     val modelDescription: ModelDescription
-    val variableAccessor: VariableAccessor
+    val variableAccessor: FmuVariableAccessor
 
     val lastStatus: FmiStatus
     val isInitialized: Boolean

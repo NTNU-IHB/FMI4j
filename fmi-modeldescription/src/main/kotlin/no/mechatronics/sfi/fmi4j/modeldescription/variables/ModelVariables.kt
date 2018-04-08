@@ -98,6 +98,10 @@ interface ModelVariables: Iterable<TypedScalarVariable<*>> {
         return variables.firstOrNull({it.name == name}) ?: throw IllegalArgumentException("No variable with name '$name'")
     }
 
+    fun isValidValueReference(valueReference: Int): Boolean {
+        return valueReference in variables.mapNotNull { it.valueReference }
+    }
+
 }
 
 /**

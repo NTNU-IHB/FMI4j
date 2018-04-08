@@ -32,7 +32,7 @@ import java.io.Serializable
  *
  * @author Lars Ivar Hatledal
  */
-sealed class FmuRead<E>(
+sealed class FmuRead<out E>(
 
         /**
          * The value returned by the FMU during the call to getXXX
@@ -45,8 +45,6 @@ sealed class FmuRead<E>(
         val status: FmiStatus
 
 ): Serializable {
-
-
 
     override fun toString(): String {
         return "FmuRead(value=$value, status=$status)"
