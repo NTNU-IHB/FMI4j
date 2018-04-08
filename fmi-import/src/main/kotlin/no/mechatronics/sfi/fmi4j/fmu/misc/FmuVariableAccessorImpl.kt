@@ -23,7 +23,7 @@
  */
 
 
-package no.mechatronics.sfi.fmi4j.fmu
+package no.mechatronics.sfi.fmi4j.fmu.misc
 
 import no.mechatronics.sfi.fmi4j.common.FmuVariableAccessor
 import no.mechatronics.sfi.fmi4j.common.Real

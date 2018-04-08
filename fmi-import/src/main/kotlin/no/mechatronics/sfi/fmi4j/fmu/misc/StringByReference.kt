@@ -40,8 +40,4 @@ class StringByReference : ByReference {
         pointer.clear((if (size < 4) 4 else size).toLong())
     }
 
-    constructor(str: String) : super(if (str.length < 4) 4 else str.length + 1) {
-        value = str
-    }
-
 }

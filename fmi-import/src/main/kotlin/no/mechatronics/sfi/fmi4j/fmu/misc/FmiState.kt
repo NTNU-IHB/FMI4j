@@ -24,6 +24,7 @@
 
 package no.mechatronics.sfi.fmi4j.fmu.misc
 
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.util.function.Supplier
 
@@ -147,7 +148,7 @@ internal class FmiState private constructor(
 
     companion object {
 
-        private val LOG = LoggerFactory.getLogger(FmiState::class.java)
+        private val LOG: Logger = LoggerFactory.getLogger(FmiState::class.java)
 
         @JvmStatic
         val START = FmiState("START",

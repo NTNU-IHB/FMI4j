@@ -27,6 +27,9 @@ package no.mechatronics.sfi.fmi4j.fmu
 import com.sun.jna.Native
 import com.sun.jna.Platform
 import com.sun.jna.Pointer
+import no.mechatronics.sfi.fmi4j.fmu.cs.CoSimulationFmu
+import no.mechatronics.sfi.fmi4j.fmu.me.ModelExchangeFmu
+import no.mechatronics.sfi.fmi4j.fmu.me.ModelExchangeFmuWithIntegrator
 import no.mechatronics.sfi.fmi4j.fmu.misc.FmiBoolean
 import no.mechatronics.sfi.fmi4j.fmu.misc.LibraryProvider
 import no.mechatronics.sfi.fmi4j.fmu.proxy.v2.Fmi2Library

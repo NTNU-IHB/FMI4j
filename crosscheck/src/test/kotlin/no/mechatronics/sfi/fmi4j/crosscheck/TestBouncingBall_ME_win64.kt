@@ -15,7 +15,8 @@ class TestBouncingBall_ME_win64 {
     @Test
     fun setup() {
 
-        val path = "../test/fmi2/me/win64/FMUSDK/2.0.4/bouncingBall/bouncingBall.fmu"
+        val name = "bouncingBall"
+        val path = "../test/fmi2/me/win64/FMUSDK/2.0.4/bouncingBall/$name.fmu"
         Assert.assertTrue(File(path).exists())
 
         val args = arrayOf(
@@ -29,9 +30,11 @@ class TestBouncingBall_ME_win64 {
 
         FmuDriver.main(args)
 
-        File("bouncingBall_out.csv").apply {
+        val fileName = "${name}_out.csv"
+        File(fileName).apply {
             if (exists()) {
                 delete()
+                LOG.info("Deleted $fileName")
             }
         }
 

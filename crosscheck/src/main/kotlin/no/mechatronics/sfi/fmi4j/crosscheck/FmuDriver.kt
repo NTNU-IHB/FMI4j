@@ -88,8 +88,11 @@ object FmuDriver {
             val result = simulate(simOptions)
             simOptions.outputDirectory?.also { parent ->
                 File(parent,"${simOptions.fmu.modelDescription.modelName}_out.csv").apply {
-                    bufferedWriter().write(result)
-                    LOG.info("Wrote results to file ${absolutePath}")
+                    with(bufferedWriter()) {
+                        write(result)
+                        close()
+                    }
+                    LOG.info("Wrote results to file $absolutePath")
                 }
             }
 

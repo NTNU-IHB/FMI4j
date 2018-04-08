@@ -22,9 +22,12 @@
  * THE SOFTWARE.
  */
 
-package no.mechatronics.sfi.fmi4j.fmu
+package no.mechatronics.sfi.fmi4j.fmu.cs
 
 import no.mechatronics.sfi.fmi4j.common.FmiStatus
+import no.mechatronics.sfi.fmi4j.fmu.AbstractFmu
+import no.mechatronics.sfi.fmi4j.fmu.FmiSimulation
+import no.mechatronics.sfi.fmi4j.fmu.FmuFile
 import no.mechatronics.sfi.fmi4j.fmu.proxy.v2.cs.CoSimulationLibraryWrapper
 import no.mechatronics.sfi.fmi4j.fmu.proxy.v2.cs.Fmi2StatusKind
 import no.mechatronics.sfi.fmi4j.modeldescription.cs.CoSimulationModelDescription
@@ -101,14 +104,12 @@ class CoSimulationFmu internal constructor(
     /**
      * @see CoSimulationLibraryWrapper.setRealInputDerivatives
      */
-    fun setRealInputDerivatives(vr: IntArray, order: IntArray, value: DoubleArray)
-            = wrapper.setRealInputDerivatives(vr, order, value)
+    fun setRealInputDerivatives(vr: IntArray, order: IntArray, value: DoubleArray) = wrapper.setRealInputDerivatives(vr, order, value)
 
     /**
      * @see CoSimulationLibraryWrapper.getRealOutputDerivatives
      */
-    fun getRealOutputDerivatives(vr: IntArray, order: IntArray, value: DoubleArray)
-            = wrapper.getRealOutputDerivatives(vr, order, value)
+    fun getRealOutputDerivatives(vr: IntArray, order: IntArray, value: DoubleArray) = wrapper.getRealOutputDerivatives(vr, order, value)
 
     /**
      * @see CoSimulationLibraryWrapper.getStatus

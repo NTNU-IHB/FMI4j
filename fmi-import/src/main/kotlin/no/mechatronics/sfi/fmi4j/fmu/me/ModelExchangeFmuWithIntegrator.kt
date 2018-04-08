@@ -22,8 +22,10 @@
  * THE SOFTWARE.
  */
 
-package no.mechatronics.sfi.fmi4j.fmu
+package no.mechatronics.sfi.fmi4j.fmu.me
 
+import no.mechatronics.sfi.fmi4j.fmu.FmiSimulation
+import no.mechatronics.sfi.fmi4j.fmu.Fmu
 import no.mechatronics.sfi.fmi4j.fmu.proxy.v2.structs.Fmi2EventInfo
 import org.apache.commons.math3.ode.FirstOrderDifferentialEquations
 import org.apache.commons.math3.ode.FirstOrderIntegrator
@@ -193,7 +195,7 @@ class ModelExchangeFmuWithIntegrator internal constructor(
 
         fmu.getEventIndicators(eventIndicators)
 
-        fun stateEvent() : Boolean {
+        fun stateEvent(): Boolean {
             for (i in preEventIndicators.indices) {
                 if (preEventIndicators[i] * eventIndicators[i] < 0) {
                     return true
