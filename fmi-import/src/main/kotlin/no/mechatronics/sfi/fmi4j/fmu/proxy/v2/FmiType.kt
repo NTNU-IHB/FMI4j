@@ -24,18 +24,16 @@
 
 package no.mechatronics.sfi.fmi4j.fmu.proxy.v2
 
-import java.io.Serializable
-
 /**
+ * Represents the FMU type
  *
  * @author Lars Ivar Hatledal
  */
-enum class Fmi2Type(
+enum class FmiType(
         val code: Int
-) : Serializable {
+) {
 
     ModelExchange(0),
     CoSimulation(1)
 
 }
-

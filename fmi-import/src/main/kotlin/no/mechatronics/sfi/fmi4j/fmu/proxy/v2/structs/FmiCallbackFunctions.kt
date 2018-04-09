@@ -29,7 +29,6 @@ import com.sun.jna.Callback
 import com.sun.jna.Memory
 import com.sun.jna.Pointer
 import com.sun.jna.Structure
-import no.mechatronics.sfi.fmi4j.common.FmiStatus
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.util.Arrays
@@ -40,14 +39,19 @@ import kotlin.collections.set
  *
  * @author Lars Ivar Hatledal
  */
-open class Fmi2CallbackFunctions : Structure() {
+open class FmiCallbackFunctions private constructor(
+) : Structure() {
 
-    private companion object {
-        val LOG: Logger = LoggerFactory.getLogger(Fmi2CallbackFunctions::class.java)
-        val POINTERS: MutableMap<Pointer, Memory> = HashMap()
+    internal companion object {
+        private val LOG: Logger = LoggerFactory.getLogger(FmiCallbackFunctions::class.java)
+        private val POINTERS: MutableMap<Pointer, Memory> = HashMap()
+
+        fun byReference() = FmiCallbackFunctions()
+        fun byValue() = FmiCallbackFunctions().ByValue()
+
     }
 
-    class ByValue : Fmi2CallbackFunctions(), Structure.ByValue
+    inner class ByValue: FmiCallbackFunctions(), Structure.ByValue
 
     @JvmField
     internal var logger: CallbackLogger = FmiCallbackLoggerImpl()
@@ -56,7 +60,7 @@ open class Fmi2CallbackFunctions : Structure() {
     @JvmField
     internal var freeMemory: CallbackFreeMemory = CallbackFreeMemoryImpl()
     @JvmField
-    internal var stepFinished: StepFinished = StepFinishedImpl()
+    internal var stepFinished: StepFinished? = null
 
     override fun getFieldOrder(): List<String> {
         return Arrays.asList(
@@ -76,7 +80,13 @@ open class Fmi2CallbackFunctions : Structure() {
 
         override fun invoke(c: Pointer?, instanceName: String, status: Int, category: String, message: String, args: Pointer?) {
 
-            LOG.info("InstanceName: $instanceName, status: ${no.mechatronics.sfi.fmi4j.common.FmiStatus.valueOf(status)}, category: $category, message: $message")
+            val msg = "InstanceName: $instanceName, status: ${no.mechatronics.sfi.fmi4j.common.FmiStatus.valueOf(status)}, category: $category, message: $message"
+
+            when  {
+                category.contains("error", ignoreCase = true) -> LOG.error(msg)
+                else -> LOG.info(msg)
+            }
+
         }
 
     }

@@ -31,6 +31,9 @@ import no.mechatronics.sfi.fmi4j.modeldescription.variables.ModelVariables
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.TypedScalarVariable
 import java.io.Closeable
 
+/**
+ * @author Lars Ivar Hatledal
+ */
 interface Fmu : Closeable {
 
     /**
@@ -38,11 +41,13 @@ interface Fmu : Closeable {
      */
     val guid: String
         get() = modelDescription.guid
+
     /**
      * @see ModelDescription.modelName
      */
     val modelName: String
         get() = modelDescription.modelName
+
     /**
      * @see ModelDescription.modelVariables
      */
@@ -56,11 +61,32 @@ interface Fmu : Closeable {
     val isInitialized: Boolean
     val isTerminated: Boolean
 
-    fun init(): Boolean
-    fun init(start: Double): Boolean
-    fun init(start: Double, stop: Double): Boolean
+    /**
+     * Call init with 0.0 as start.
+     */
+    fun init()
 
+    /**
+     * Call init with start and default stop time
+     */
+    fun init(start: Double)
+
+    /**
+     * Initialise FMU with the provided start and stop value
+     *
+     * @param start FMU start time
+     * @param stop FMU stop time. If start > stop then stop is ignored
+     */
+    fun init(start: Double, stop: Double)
+
+    /**
+     * @see no.mechatronics.sfi.fmi4j.fmu.proxy.v2.FmiLibrary.fmi2Reset
+     */
     fun reset(): Boolean
+
+    /**
+     * @see no.mechatronics.sfi.fmi4j.fmu.proxy.v2.FmiLibrary.fmi2Terminate
+     */
     fun terminate(): Boolean
 
     /**

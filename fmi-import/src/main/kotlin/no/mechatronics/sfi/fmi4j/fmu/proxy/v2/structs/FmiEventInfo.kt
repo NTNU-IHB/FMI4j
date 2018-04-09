@@ -35,7 +35,7 @@ import java.util.*
  *
  * @author Lars Ivar Hatledal
  */
-open class Fmi2EventInfo : Structure() {
+open class FmiEventInfo : Structure() {
 
     @JvmField
     internal var newDiscreteStatesNeeded: Int = FmiFalse

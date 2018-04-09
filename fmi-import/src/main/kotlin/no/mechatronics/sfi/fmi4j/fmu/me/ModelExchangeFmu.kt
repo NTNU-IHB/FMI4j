@@ -27,7 +27,7 @@ package no.mechatronics.sfi.fmi4j.fmu.me
 import no.mechatronics.sfi.fmi4j.fmu.AbstractFmu
 import no.mechatronics.sfi.fmi4j.fmu.FmuFile
 import no.mechatronics.sfi.fmi4j.fmu.proxy.v2.me.ModelExchangeLibraryWrapper
-import no.mechatronics.sfi.fmi4j.fmu.proxy.v2.structs.Fmi2EventInfo
+import no.mechatronics.sfi.fmi4j.fmu.proxy.v2.structs.FmiEventInfo
 import no.mechatronics.sfi.fmi4j.modeldescription.me.ModelExchangeModelDescription
 
 /**
@@ -38,6 +38,8 @@ open class ModelExchangeFmu internal constructor(
         fmuFile: FmuFile,
         wrapper: ModelExchangeLibraryWrapper
 ) : AbstractFmu<ModelExchangeModelDescription, ModelExchangeLibraryWrapper>(fmuFile, wrapper) {
+
+    val eventInfo = FmiEventInfo()
 
     override val modelDescription: ModelExchangeModelDescription
         get() = fmuFile.modelDescription.asModelExchangeModelDescription()
@@ -69,9 +71,8 @@ open class ModelExchangeFmu internal constructor(
     /**
      * @see ModelExchangeLibraryWrapper.newDiscreteStates
      *
-     * @param eventInfo
      */
-    fun newDiscreteStates(eventInfo: Fmi2EventInfo) = wrapper.newDiscreteStates(eventInfo)
+    fun newDiscreteStates() = wrapper.newDiscreteStates(eventInfo)
 
     /**
      * @see ModelExchangeLibraryWrapper.completedIntegratorStep

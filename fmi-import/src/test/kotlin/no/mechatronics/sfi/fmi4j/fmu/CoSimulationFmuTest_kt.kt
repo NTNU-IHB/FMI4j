@@ -50,7 +50,7 @@ class CoSimulationFmuTest_kt {
             Assert.assertNotNull(startTemp)
             Assert.assertEquals(298.0, startTemp!!, 0.0)
 
-            Assert.assertTrue(fmu.init())
+            fmu.init()
             Assert.assertTrue(fmu.lastStatus === FmiStatus.OK)
 
             val heatCapacity1_C = fmu.getVariableByName("HeatCapacity1.C").asRealVariable()
@@ -94,7 +94,7 @@ class CoSimulationFmuTest_kt {
             }
 
             fmuFile.asCoSimulationFmu().newInstance().use { fmu2 ->
-                Assert.assertTrue(fmu2.init())
+                fmu2.init()
                 LOG.info("Temperature_Room=${fmu2.variableAccessor.readReal(temperatureRoom.valueReference)}")
             }
 

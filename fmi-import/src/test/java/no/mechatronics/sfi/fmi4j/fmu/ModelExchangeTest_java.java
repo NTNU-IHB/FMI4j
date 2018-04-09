@@ -53,10 +53,10 @@ public class ModelExchangeTest_java {
 
     @BeforeClass
     public static void setUp() throws IOException {
+
         String path = "../test/fmi2/me/win64/FMUSDK/2.0.4/vanDerPol/vanDerPol.fmu";
         final File file = new File(path);
         Assert.assertNotNull(file);
-
         fmuFile = FmuFile.from(file);
 
     }
@@ -76,12 +76,12 @@ public class ModelExchangeTest_java {
         LOG.info("Using integrator: {}", integrator.getClass().getSimpleName());
 
         FmiSimulation fmu = fmuFile.asModelExchangeFmu()
-                .newInstance(integrator);
+                .newInstance(integrator, false, true);
 
         RealVariable x0 = fmu.getModelVariables()
                 .getByName("x0").asRealVariable();
 
-        Assert.assertTrue(fmu.init());
+        fmu.init();
 
         double macroStep = 1.0 / 10;
         while (fmu.getCurrentTime() < 1) {

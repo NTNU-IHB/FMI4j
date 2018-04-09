@@ -29,7 +29,7 @@ import no.mechatronics.sfi.fmi4j.fmu.AbstractFmu
 import no.mechatronics.sfi.fmi4j.fmu.FmiSimulation
 import no.mechatronics.sfi.fmi4j.fmu.FmuFile
 import no.mechatronics.sfi.fmi4j.fmu.proxy.v2.cs.CoSimulationLibraryWrapper
-import no.mechatronics.sfi.fmi4j.fmu.proxy.v2.cs.Fmi2StatusKind
+import no.mechatronics.sfi.fmi4j.fmu.proxy.v2.cs.FmiStatusKind
 import no.mechatronics.sfi.fmi4j.modeldescription.cs.CoSimulationModelDescription
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -44,9 +44,7 @@ class CoSimulationFmu internal constructor(
         val LOG: Logger = LoggerFactory.getLogger(CoSimulationFmu::class.java)
     }
 
-    /**
-     * Current simulation time
-     */
+
     override var currentTime: Double = 0.0
         private set
 
@@ -54,10 +52,9 @@ class CoSimulationFmu internal constructor(
     override val modelDescription: CoSimulationModelDescription
         get() = fmuFile.modelDescription.asCoSimulationModelDescription()
 
-    override fun init(start: Double, stop: Double): Boolean {
-        return super.init(start, stop).also {
-            currentTime = start
-        }
+    override fun init(start: Double, stop: Double) {
+        super.init(start, stop)
+        currentTime = start
     }
 
     /**
@@ -91,8 +88,8 @@ class CoSimulationFmu internal constructor(
     /**
      * Terminates and frees the FMU instance
      *
-     * @see no.mechatronics.sfi.fmi4j.fmu.proxy.v2.Fmi2Library.fmi2Terminate
-     * @see no.mechatronics.sfi.fmi4j.fmu.proxy.v2.Fmi2Library.fmi2FreeInstance
+     * @see no.mechatronics.sfi.fmi4j.fmu.proxy.v2.FmiLibrary.fmi2Terminate
+     * @see no.mechatronics.sfi.fmi4j.fmu.proxy.v2.FmiLibrary.fmi2FreeInstance
      */
     override fun terminate() = super.terminate(true)
 
@@ -114,26 +111,26 @@ class CoSimulationFmu internal constructor(
     /**
      * @see CoSimulationLibraryWrapper.getStatus
      */
-    fun getStatus(s: Fmi2StatusKind) = wrapper.getStatus(s)
+    fun getStatus(s: FmiStatusKind) = wrapper.getStatus(s)
 
     /**
      * @see CoSimulationLibraryWrapper.getRealStatus
      */
-    fun getRealStatus(s: Fmi2StatusKind) = wrapper.getRealStatus(s)
+    fun getRealStatus(s: FmiStatusKind) = wrapper.getRealStatus(s)
 
     /**
      * @see CoSimulationLibraryWrapper.getIntegerStatus
      */
-    fun getIntegerStatus(s: Fmi2StatusKind) = wrapper.getIntegerStatus(s)
+    fun getIntegerStatus(s: FmiStatusKind) = wrapper.getIntegerStatus(s)
 
     /**
      * @see CoSimulationLibraryWrapper.getBooleanStatus
      */
-    fun getBooleanStatus(s: Fmi2StatusKind) = wrapper.getBooleanStatus(s)
+    fun getBooleanStatus(s: FmiStatusKind) = wrapper.getBooleanStatus(s)
 
     /**
      * @see CoSimulationLibraryWrapper.getStringStatus
      */
-    fun getStringStatus(s: Fmi2StatusKind) = wrapper.getStringStatus(s)
+    fun getStringStatus(s: FmiStatusKind) = wrapper.getStringStatus(s)
 
 }

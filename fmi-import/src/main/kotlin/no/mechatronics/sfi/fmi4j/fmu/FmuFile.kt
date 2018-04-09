@@ -32,13 +32,13 @@ import no.mechatronics.sfi.fmi4j.fmu.me.ModelExchangeFmu
 import no.mechatronics.sfi.fmi4j.fmu.me.ModelExchangeFmuWithIntegrator
 import no.mechatronics.sfi.fmi4j.fmu.misc.FmiBoolean
 import no.mechatronics.sfi.fmi4j.fmu.misc.LibraryProvider
-import no.mechatronics.sfi.fmi4j.fmu.proxy.v2.Fmi2Library
-import no.mechatronics.sfi.fmi4j.fmu.proxy.v2.Fmi2Type
+import no.mechatronics.sfi.fmi4j.fmu.proxy.v2.FmiLibrary
+import no.mechatronics.sfi.fmi4j.fmu.proxy.v2.FmiType
 import no.mechatronics.sfi.fmi4j.fmu.proxy.v2.cs.CoSimulationLibraryWrapper
-import no.mechatronics.sfi.fmi4j.fmu.proxy.v2.cs.Fmi2CoSimulationLibrary
-import no.mechatronics.sfi.fmi4j.fmu.proxy.v2.me.Fmi2ModelExchangeLibrary
+import no.mechatronics.sfi.fmi4j.fmu.proxy.v2.cs.FmiCoSimulationLibrary
+import no.mechatronics.sfi.fmi4j.fmu.proxy.v2.me.FmiModelExchangeLibrary
 import no.mechatronics.sfi.fmi4j.fmu.proxy.v2.me.ModelExchangeLibraryWrapper
-import no.mechatronics.sfi.fmi4j.fmu.proxy.v2.structs.Fmi2CallbackFunctions
+import no.mechatronics.sfi.fmi4j.fmu.proxy.v2.structs.FmiCallbackFunctions
 import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescription
 import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescriptionParser
 import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescriptionProvider
@@ -120,12 +120,12 @@ class FmuFile private constructor(
     }
 
     fun deleteExtractedFmuFolder(): Boolean {
-        if (fmuFile.deleteRecursively()) {
+        return if (fmuFile.deleteRecursively()) {
             LOG.debug("Deleted fmu folder: $fmuFile")
-            return true
+            true
         } else {
             LOG.debug("Failed to delete fmu folder: $fmuFile")
-            return false
+            false
         }
     }
 
@@ -174,7 +174,7 @@ class FmuFile private constructor(
                 RESOURCES_FOLDER).absolutePath.replace("\\", "/")}"
 
     fun getLibraryName(desc: ModelDescription): String {
-        return "${desc.modelIdentifier}${libraryExtension}"
+        return "${desc.modelIdentifier}$libraryExtension"
     }
 
     fun getFullLibraryPath(desc: ModelDescription): String {
@@ -213,17 +213,17 @@ class FmuFile private constructor(
         private val modelDescription
             get() = this@FmuFile.modelDescription.asCoSimulationModelDescription()
 
-        private val libraryCache: LibraryProvider<Fmi2CoSimulationLibrary> by lazy {
+        private val libraryCache: LibraryProvider<FmiCoSimulationLibrary> by lazy {
             loadLibrary()
         }
 
-        private fun loadLibrary(): LibraryProvider<Fmi2CoSimulationLibrary>
-                = loadLibrary(this@FmuFile, modelDescription, Fmi2CoSimulationLibrary::class.java).also { libraries.add(it) }
+        private fun loadLibrary(): LibraryProvider<FmiCoSimulationLibrary>
+                = loadLibrary(this@FmuFile, modelDescription, FmiCoSimulationLibrary::class.java).also { libraries.add(it) }
 
         @JvmOverloads
         fun newInstance(visible: Boolean = false, loggingOn: Boolean = false) : CoSimulationFmu {
             val lib = if (modelDescription.canBeInstantiatedOnlyOncePerProcess) loadLibrary() else libraryCache
-            val c = instantiate(this@FmuFile, modelDescription, lib.get(), Fmi2Type.CoSimulation, visible, loggingOn)
+            val c = instantiate(this@FmuFile, modelDescription, lib.get(), FmiType.CoSimulation, visible, loggingOn)
             val wrapper = CoSimulationLibraryWrapper(c, lib)
             return CoSimulationFmu(this@FmuFile, wrapper).also { instances.add(it) }
         }
@@ -235,17 +235,17 @@ class FmuFile private constructor(
         private val modelDescription
             get() = this@FmuFile.modelDescription.asModelExchangeModelDescription()
 
-        private val libraryCache: LibraryProvider<Fmi2ModelExchangeLibrary> by lazy {
+        private val libraryCache: LibraryProvider<FmiModelExchangeLibrary> by lazy {
             loadLibrary()
         }
 
-        private fun loadLibrary(): LibraryProvider<Fmi2ModelExchangeLibrary>
-                = loadLibrary(this@FmuFile, modelDescription, Fmi2ModelExchangeLibrary::class.java).also { libraries.add(it) }
+        private fun loadLibrary(): LibraryProvider<FmiModelExchangeLibrary>
+                = loadLibrary(this@FmuFile, modelDescription, FmiModelExchangeLibrary::class.java).also { libraries.add(it) }
 
         @JvmOverloads
         fun newInstance(visible: Boolean = false, loggingOn: Boolean = false) : ModelExchangeFmu {
             val lib = if (modelDescription.canBeInstantiatedOnlyOncePerProcess) loadLibrary() else libraryCache
-            val c = instantiate(this@FmuFile, modelDescription, lib.get(), Fmi2Type.ModelExchange, visible, loggingOn)
+            val c = instantiate(this@FmuFile, modelDescription, lib.get(), FmiType.ModelExchange, visible, loggingOn)
             val wrapper = ModelExchangeLibraryWrapper(c, lib)
             return ModelExchangeFmu(this@FmuFile, wrapper).also { instances.add(it) }
         }
@@ -253,13 +253,12 @@ class FmuFile private constructor(
         @JvmOverloads
         fun newInstance(integrator: FirstOrderIntegrator, visible: Boolean = false, loggingOn: Boolean = false) : ModelExchangeFmuWithIntegrator {
             val lib = if (modelDescription.canBeInstantiatedOnlyOncePerProcess) loadLibrary() else libraryCache
-            val c = instantiate(this@FmuFile, modelDescription, lib.get(), Fmi2Type.ModelExchange, visible, loggingOn)
+            val c = instantiate(this@FmuFile, modelDescription, lib.get(), FmiType.ModelExchange, visible, loggingOn)
             val wrapper = ModelExchangeLibraryWrapper(c, lib)
             return ModelExchangeFmuWithIntegrator(ModelExchangeFmu(this@FmuFile, wrapper), integrator).also { instances.add(it.fmu) }
         }
 
     }
-
 
     companion object {
 
@@ -354,7 +353,7 @@ class FmuFile private constructor(
             LOG.debug("Extracted fmu can be found in: $directory")
         }
 
-        private fun <E: Fmi2Library> loadLibrary(fmuFile: FmuFile, modelDescription: ModelDescription, type: Class<E>): LibraryProvider<E> {
+        private fun <E: FmiLibrary> loadLibrary(fmuFile: FmuFile, modelDescription: ModelDescription, type: Class<E>): LibraryProvider<E> {
 
             System.getProperty(LIBRARY_PATH)?.also {
                 if (fmuFile.libraryFolderPath !in it.split(";")) {
@@ -365,11 +364,11 @@ class FmuFile private constructor(
             return LibraryProvider({Native.loadLibrary(fmuFile.getLibraryName(modelDescription), type)})
         }
 
-        private fun instantiate(fmuFile: FmuFile, modelDescription: ModelDescription, library: Fmi2Library, fmiType: Fmi2Type, visible: Boolean, loggingOn: Boolean) : Pointer {
+        private fun instantiate(fmuFile: FmuFile, modelDescription: ModelDescription, library: FmiLibrary, fmiType: FmiType, visible: Boolean, loggingOn: Boolean) : Pointer {
             LOG.trace("Calling instantiate: visible=$visible, loggingOn=$loggingOn")
             return library.fmi2Instantiate(modelDescription.modelIdentifier,
                     fmiType.code, modelDescription.guid,
-                    fmuFile.resourcesPath, Fmi2CallbackFunctions.ByValue(),
+                    fmuFile.resourcesPath, FmiCallbackFunctions.byValue(),
                     FmiBoolean.convert(visible), FmiBoolean.convert(loggingOn) )
                     ?: throw IllegalStateException("Unable to instantiate FMU. Returned pointer is null!")
         }

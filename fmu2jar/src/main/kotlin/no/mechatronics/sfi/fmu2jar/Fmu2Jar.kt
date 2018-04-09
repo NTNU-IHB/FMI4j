@@ -44,7 +44,7 @@ class Fmu2Jar(
         private val file: File
 ) {
 
-    companion object {
+    private companion object {
         val LOG: Logger = LoggerFactory.getLogger(Fmu2Jar::class.java)
     }
 

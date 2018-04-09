@@ -63,7 +63,7 @@ public class CoSimulationFmuTest_java {
     }
 
     @Test
-    public void test() throws Exception {
+    public void test() {
 
         try(FmiSimulation fmu = fmuFile.asCoSimulationFmu().newInstance()) {
 
@@ -73,7 +73,7 @@ public class CoSimulationFmuTest_java {
                     .asRealVariable().getStart();
             Assert.assertEquals(298.0, startTemp,0);
 
-            Assert.assertTrue(fmu.init());
+            fmu.init();
             Assert.assertTrue(fmu.getLastStatus() == FmiStatus.OK);
 
             final RealVariable heatCapacity1_C
@@ -97,7 +97,8 @@ public class CoSimulationFmuTest_java {
                 }
                 LOG.info("temperature_room={}", value);
 
-                Assert.assertEquals(value, fmu.getVariableAccessor().readReal("Temperature_Room").getValue(), 0);
+                Assert.assertEquals(value, fmu.getVariableAccessor()
+                        .readReal("Temperature_Room").getValue(), 0);
 
             }
 
@@ -119,14 +120,13 @@ public class CoSimulationFmuTest_java {
             }
 
             try (FmiSimulation fmu2 = fmuFile.asCoSimulationFmu().newInstance()) {
-                if (fmu2.init()) {
-                    double value = fmu2.getVariableAccessor()
-                            .readReal(temperature_room.getValueReference()).getValue();
-                    LOG.info("temperature_room={}", value);
-                }
+                fmu2.init();
+                double value = fmu2.getVariableAccessor()
+                        .readReal(temperature_room.getValueReference()).getValue();
+                LOG.info("temperature_room={}", value);
             }
-
         }
 
     }
+
 }

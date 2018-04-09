@@ -104,24 +104,23 @@ object FmuDriver {
 
         val sb = StringBuilder()
         options.fmu.use { fmu ->
-            if (fmu.init(options.startTime, options.stopTime)) {
+            fmu.init(options.startTime, options.stopTime)
 
-                val format = CSVFormat.DEFAULT.withHeader("Time", *options.outputVariables.toTypedArray())
-                val printer = CSVPrinter(sb, format)
+            val format = CSVFormat.DEFAULT.withHeader("Time", *options.outputVariables.toTypedArray())
+            val printer = CSVPrinter(sb, format)
 
-                val outputVariables = options.outputVariables.map {
-                    fmu.modelVariables.getByName(it)
-                }
-
-                val dt = options.stepSize
-                while (fmu.currentTime <= options.stopTime) {
-                    printer.printRecord(fmu.currentTime, *outputVariables.map { it.read().value }.toTypedArray())
-                    if (!fmu.doStep(dt)) {
-                        break
-                    }
-                }
-
+            val outputVariables = options.outputVariables.map {
+                fmu.modelVariables.getByName(it)
             }
+
+            val dt = options.stepSize
+            while (fmu.currentTime <= options.stopTime) {
+                printer.printRecord(fmu.currentTime, *outputVariables.map { it.read().value }.toTypedArray())
+                if (!fmu.doStep(dt)) {
+                    break
+                }
+            }
+
         }
 
         return sb.toString()

@@ -30,8 +30,16 @@ package no.mechatronics.sfi.fmi4j.fmu
  */
 interface FmiSimulation: Fmu {
 
+    /**
+     * Current simulation time
+     */
     val currentTime: Double
 
+    /**
+     * Step simulation forward in time
+     *
+     * @param stepSize
+     */
     fun doStep(stepSize: Double): Boolean
 
 }

@@ -31,7 +31,7 @@ import kotlin.streams.toList
  *
  * @author Lars Ivar Hatledal
  */
-enum class Fmi2StatusKind(
+enum class FmiStatusKind(
         val code: Int
 ) {
 
@@ -67,7 +67,7 @@ enum class Fmi2StatusKind(
     companion object {
 
         @JvmStatic
-        fun valueOf(i: Int): Fmi2StatusKind {
+        fun valueOf(i: Int): FmiStatusKind {
             for (kind in values()) {
                 if (i == kind.code) {
                     return kind

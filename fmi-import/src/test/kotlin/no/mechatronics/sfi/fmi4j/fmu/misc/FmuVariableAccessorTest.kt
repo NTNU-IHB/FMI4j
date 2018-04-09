@@ -46,11 +46,9 @@ class FmuVariableAccessorTest {
 
         fmuFile.asCoSimulationFmu().newInstance().use { fmu ->
 
-            Assert.assertTrue(fmu.init())
+            fmu.init()
 
             fmu.modelVariables.forEach { variable ->
-
-//                println(variable)
 
                 when(variable) {
                     is IntegerVariable -> Assert.assertEquals(variable.read(), fmu.variableAccessor.readInteger(variable.valueReference))
@@ -70,7 +68,7 @@ class FmuVariableAccessorTest {
 
         fmuFile.asCoSimulationFmu().newInstance().use { fmu ->
 
-            Assert.assertTrue(fmu.init())
+            fmu.init()
 
             fmu.modelVariables.forEach { variable ->
 

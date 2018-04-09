@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory
 import java.io.File
 import java.io.IOException
 
-class ModelExchangeTest_kt {
+class ModelExchangeTest2_kt {
 
     private companion object {
 
@@ -25,7 +25,7 @@ class ModelExchangeTest_kt {
         @BeforeClass
         @Throws(IOException::class)
         fun setUp() {
-            val path = "../test/fmi2/me/win64/FMUSDK/2.0.4/vanDerPol/vanDerPol.fmu"
+            val path = "../test/fmi2/me/win64/FMUSDK/2.0.4/bouncingBall/bouncingBall.fmu"
             val file = File(path)
             Assert.assertNotNull(file)
             fmuFile = FmuFile.from(file)
@@ -48,18 +48,18 @@ class ModelExchangeTest_kt {
 
         LOG.info("Using integrator: ${integrator.javaClass.simpleName}")
 
-        fmuFile.asModelExchangeFmu().newInstance(integrator, loggingOn = true).use { fmu ->
+        fmuFile.asModelExchangeFmu().newInstance(integrator).use { fmu ->
 
-            val x0 = fmu.modelVariables
-                    .getByName("x0").asRealVariable()
+            val h = fmu.modelVariables
+                    .getByName("h").asRealVariable()
 
-            fmu.init(0.0, 0.0)
+           fmu.init()
 
             val macroStep = 1.0 / 10
             while (fmu.currentTime < 1) {
-                val read = x0.read()
+                val read = h.read()
                 Assert.assertTrue(read.status === FmiStatus.OK)
-                LOG.info("t=${fmu.currentTime}, x0=${read.value}")
+                LOG.info("t=${fmu.currentTime}, h=${read.value}")
                 fmu.doStep(macroStep)
             }
 

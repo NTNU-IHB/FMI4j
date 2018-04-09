@@ -28,13 +28,13 @@ import com.sun.jna.Pointer
 import com.sun.jna.ptr.DoubleByReference
 import com.sun.jna.ptr.IntByReference
 import no.mechatronics.sfi.fmi4j.fmu.misc.StringByReference
-import no.mechatronics.sfi.fmi4j.fmu.proxy.v2.Fmi2Library
+import no.mechatronics.sfi.fmi4j.fmu.proxy.v2.FmiLibrary
 
 /**
  *
  * @author Lars Ivar Hatledal
  */
-interface Fmi2CoSimulationLibrary : Fmi2Library {
+interface FmiCoSimulationLibrary : FmiLibrary {
 
     /**
      * Sets the n-th time derivative of real input variables. Argument “vr” is a vector of value

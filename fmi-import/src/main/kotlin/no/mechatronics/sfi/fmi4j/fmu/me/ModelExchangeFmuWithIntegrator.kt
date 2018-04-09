@@ -24,15 +24,15 @@
 
 package no.mechatronics.sfi.fmi4j.fmu.me
 
+import no.mechatronics.sfi.fmi4j.common.FmiStatus
 import no.mechatronics.sfi.fmi4j.fmu.FmiSimulation
 import no.mechatronics.sfi.fmi4j.fmu.Fmu
-import no.mechatronics.sfi.fmi4j.fmu.proxy.v2.structs.Fmi2EventInfo
 import org.apache.commons.math3.ode.FirstOrderDifferentialEquations
 import org.apache.commons.math3.ode.FirstOrderIntegrator
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-private const val h = 1E-13
+private const val EPS = 1E-13
 
 /**
  *
@@ -43,14 +43,12 @@ class ModelExchangeFmuWithIntegrator internal constructor(
         private val integrator: FirstOrderIntegrator
 ) : FmiSimulation, Fmu by fmu {
 
-    private val states: DoubleArray
+    private val x: DoubleArray
     private val nominalStates: DoubleArray
-    private val derivatives: DoubleArray
+    private val dx: DoubleArray
 
-    private val preEventIndicators: DoubleArray
-    private val eventIndicators: DoubleArray
-
-    private val eventInfo: Fmi2EventInfo
+    private val pz: DoubleArray
+    private val z: DoubleArray
 
     override var currentTime: Double = 0.0
         private set
@@ -62,14 +60,12 @@ class ModelExchangeFmuWithIntegrator internal constructor(
         val numberOfContinuousStates = modelDescription.numberOfContinuousStates
         val numberOfEventIndicators = modelDescription.numberOfEventIndicators
 
-        this.states = DoubleArray(numberOfContinuousStates)
+        this.x = DoubleArray(numberOfContinuousStates)
         this.nominalStates = DoubleArray(numberOfContinuousStates)
-        this.derivatives = DoubleArray(numberOfContinuousStates)
+        this.dx = DoubleArray(numberOfContinuousStates)
 
-        this.preEventIndicators = DoubleArray(numberOfEventIndicators)
-        this.eventIndicators = DoubleArray(numberOfEventIndicators)
-
-        this.eventInfo = Fmi2EventInfo()
+        this.pz = DoubleArray(numberOfEventIndicators)
+        this.z = DoubleArray(numberOfEventIndicators)
 
     }
 
@@ -78,39 +74,59 @@ class ModelExchangeFmuWithIntegrator internal constructor(
 
             override fun getDimension(): Int = modelDescription.numberOfContinuousStates
             override fun computeDerivatives(time: Double, y: DoubleArray, yDot: DoubleArray) {
-                for ((index, value) in derivatives.withIndex()) {
+                for ((index, value) in dx.withIndex()) {
                     yDot[index] = value
                 }
             }
         }
     }
 
-    override fun init(start: Double, stop: Double): Boolean {
+    private fun FmiStatus.warnOnStatusNotOK(functionName: String) {
+        if (this != FmiStatus.OK) {
+            LOG.warn("$functionName return status $this")
+        }
+    }
 
-        if (fmu.init(start, stop)) {
+    private fun eventIteration(): Boolean {
 
-            currentTime = start
+        fmu.eventInfo.setNewDiscreteStatesNeededTrue()
+        fmu.eventInfo.setTerminateSimulationFalse()
 
-            eventInfo.setNewDiscreteStatesNeededTrue()
-            eventInfo.setTerminateSimulationFalse()
-
-            while (eventInfo.getNewDiscreteStatesNeeded()) {
-                fmu.newDiscreteStates(eventInfo)
-                if (eventInfo.getTerminateSimulation()) {
-                    LOG.debug("eventInfo.getTerminateSimulation() returned true. Terminating FMU...")
-                    terminate()
-                    return false
-                }
+        while (fmu.eventInfo.getNewDiscreteStatesNeeded()) {
+            fmu.newDiscreteStates().also {
+                it.warnOnStatusNotOK("fmu.newDiscreteStates()")
             }
-
-            fmu.enterContinuousTimeMode()
-            fmu.getContinuousStates(states)
-            fmu.getNominalsOfContinuousStates(nominalStates)
-
-            return true
+            if (fmu.eventInfo.getTerminateSimulation()) {
+                LOG.debug("eventInfo.getTerminateSimulation() returned true. Terminating FMU...")
+                terminate()
+                return true
+            }
         }
 
-        return true
+        fmu.enterContinuousTimeMode().also {
+            it.warnOnStatusNotOK("fmu.enterContinuousTimeMode()")
+        }
+
+        return false
+    }
+
+    override fun init() {
+        init(0.0)
+    }
+
+    override fun init(start: Double) {
+        init(start, 0.0)
+    }
+
+    override fun init(start: Double, stop: Double) {
+
+        if (!isInitialized) {
+            fmu.init(start, stop)
+            currentTime = start
+            if (eventIteration()) {
+                throw IllegalArgumentException()
+            }
+        }
 
     }
 
@@ -120,20 +136,20 @@ class ModelExchangeFmuWithIntegrator internal constructor(
             throw IllegalArgumentException("stepSize must be positive and greater than 0! Was: $stepSize")
         }
 
-        var time = currentTime
-        val stopTime = time + stepSize
+        var time: Double = currentTime
+        val stopTime: Double = time + stepSize
 
         while (time < stopTime) {
 
             var tNext = Math.min(time + stepSize, stopTime)
 
-            val timeEvent = eventInfo.getNextEventTimeDefined() && (eventInfo.getNextEventTime() <= time)
+            val timeEvent = fmu.eventInfo.getNextEventTimeDefined() && fmu.eventInfo.getNextEventTime() <= time
             if (timeEvent) {
-                tNext = eventInfo.getNextEventTime()
+                tNext = fmu.eventInfo.getNextEventTime()
             }
 
             var stateEvent = false
-            if (tNext - time > h) {
+            if ((tNext - time) > EPS) {
                 solve(time, tNext).also { result ->
                     stateEvent = result.first
                     time = result.second
@@ -142,9 +158,11 @@ class ModelExchangeFmuWithIntegrator internal constructor(
                 time = tNext
             }
 
-            fmu.setTime(time)
+            fmu.setTime(time).also {
+                it.warnOnStatusNotOK("fmu.setTime()")
+            }
 
-            var stepEvent = false
+            var enterEventMode = false
             if (!modelDescription.completedIntegratorStepNotNeeded) {
                 val completedIntegratorStep = fmu.completedIntegratorStep()
                 if (completedIntegratorStep.terminateSimulation) {
@@ -152,24 +170,19 @@ class ModelExchangeFmuWithIntegrator internal constructor(
                     terminate()
                     return false
                 }
-                stepEvent = completedIntegratorStep.enterEventMode
+                enterEventMode = completedIntegratorStep.enterEventMode
             }
 
-            if (timeEvent || stateEvent || stepEvent) {
-                fmu.enterEventMode()
+            if (timeEvent || stateEvent || enterEventMode) {
 
-                eventInfo.setNewDiscreteStatesNeededTrue()
-                eventInfo.setTerminateSimulationFalse()
-
-                while (eventInfo.getNewDiscreteStatesNeeded()) {
-                    fmu.newDiscreteStates(eventInfo)
-                    if (eventInfo.getTerminateSimulation()) {
-                        LOG.debug("eventInfo.getTerminateSimulation() returned true. Terminating FMU...")
-                        terminate()
-                        return false
-                    }
+                fmu.enterEventMode().also {
+                    it.warnOnStatusNotOK("fmu.enterEventMode()")
                 }
-                fmu.enterContinuousTimeMode()
+
+                if (eventIteration()) {
+                    return false
+                }
+
             }
 
         }
@@ -181,23 +194,22 @@ class ModelExchangeFmuWithIntegrator internal constructor(
 
     private fun solve(t: Double, tNext: Double): Pair<Boolean, Double> {
 
-        fmu.getContinuousStates(states)
-        fmu.getDerivatives(derivatives)
+        fmu.getContinuousStates(x)
+        fmu.getDerivatives(dx)
 
         val dt = (tNext - t)
-        val integratedTime = integrator.integrate(ode, t, states, currentTime + dt, states)
+        val integratedTime = integrator.integrate(ode, t, x, (currentTime + dt), x)
 
-        fmu.setContinuousStates(states)
+        fmu.setContinuousStates(x)
 
-        for (i in preEventIndicators.indices) {
-            preEventIndicators[i] = eventIndicators[i]
-        }
+        System.arraycopy(z, 0, pz, 0, z.size)
 
-        fmu.getEventIndicators(eventIndicators)
+        fmu.getEventIndicators(z)
 
         fun stateEvent(): Boolean {
-            for (i in preEventIndicators.indices) {
-                if (preEventIndicators[i] * eventIndicators[i] < 0) {
+
+            for (i in pz.indices) {
+                if (pz[i] * z[i] < 0) {
                     return true
                 }
             }

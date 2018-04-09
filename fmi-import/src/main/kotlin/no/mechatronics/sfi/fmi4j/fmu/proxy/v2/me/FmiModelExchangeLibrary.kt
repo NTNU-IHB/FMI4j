@@ -26,14 +26,14 @@ package no.mechatronics.sfi.fmi4j.fmu.proxy.v2.me
 
 import com.sun.jna.Pointer
 import com.sun.jna.ptr.IntByReference
-import no.mechatronics.sfi.fmi4j.fmu.proxy.v2.Fmi2Library
-import no.mechatronics.sfi.fmi4j.fmu.proxy.v2.structs.Fmi2EventInfo
+import no.mechatronics.sfi.fmi4j.fmu.proxy.v2.FmiLibrary
+import no.mechatronics.sfi.fmi4j.fmu.proxy.v2.structs.FmiEventInfo
 
 /**
  *
  * @author Lars Ivar Hatledal
  */
-interface Fmi2ModelExchangeLibrary : Fmi2Library {
+interface FmiModelExchangeLibrary : FmiLibrary {
 
     /**
      * Set a new time instant and re-initialize caching of variables that depend on time, provided the
@@ -88,7 +88,7 @@ interface Fmi2ModelExchangeLibrary : Fmi2Library {
      * stopped before nextEventTime, for example due to a state event, the definition of
      * nextEventTime becomes obsolete.
      */
-    fun fmi2NewDiscreteStates(c: Pointer, eventInfo: Fmi2EventInfo): Int
+    fun fmi2NewDiscreteStates(c: Pointer, eventInfo: FmiEventInfo): Int
 
 
     /**

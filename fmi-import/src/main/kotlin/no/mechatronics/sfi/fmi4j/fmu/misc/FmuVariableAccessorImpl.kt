@@ -29,7 +29,7 @@ import no.mechatronics.sfi.fmi4j.common.FmuVariableAccessor
 import no.mechatronics.sfi.fmi4j.common.Real
 import no.mechatronics.sfi.fmi4j.common.RealArray
 import no.mechatronics.sfi.fmi4j.common.StringArray
-import no.mechatronics.sfi.fmi4j.fmu.proxy.v2.Fmi2LibraryWrapper
+import no.mechatronics.sfi.fmi4j.fmu.proxy.v2.FmiLibraryWrapper
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.ModelVariables
 import java.util.concurrent.ConcurrentHashMap
 
@@ -37,7 +37,7 @@ import java.util.concurrent.ConcurrentHashMap
  * @author Lars Ivar Hatledal
  */
 class FmuVariableAccessorImpl(
-        private val wrapper: Fmi2LibraryWrapper<*>,
+        private val wrapper: FmiLibraryWrapper<*>,
         private val modelVariables: ModelVariables
 ): FmuVariableAccessor {
 

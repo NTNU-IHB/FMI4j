@@ -68,7 +68,7 @@ class MainTest {
 
         instance.use { fmu ->
             val dt = 1.0/100
-            Assert.assertTrue(fmu.init())
+            fmu.init()
             while (instance.currentTime < 5) {
                 Assert.assertTrue(fmu.doStep(dt))
             }
