@@ -39,9 +39,9 @@ import no.mechatronics.sfi.fmi4j.fmu.proxy.v2.cs.FmiCoSimulationLibrary
 import no.mechatronics.sfi.fmi4j.fmu.proxy.v2.me.FmiModelExchangeLibrary
 import no.mechatronics.sfi.fmi4j.fmu.proxy.v2.me.ModelExchangeLibraryWrapper
 import no.mechatronics.sfi.fmi4j.fmu.proxy.v2.structs.FmiCallbackFunctions
-import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescription
 import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescriptionParser
 import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescriptionProvider
+import no.mechatronics.sfi.fmi4j.modeldescription.SpecificModelDescription
 import org.apache.commons.io.FilenameUtilsLite
 import org.apache.commons.math3.ode.FirstOrderIntegrator
 import org.slf4j.Logger
@@ -173,11 +173,11 @@ class FmuFile private constructor(
         get() = "file:///${File(fmuFile,
                 RESOURCES_FOLDER).absolutePath.replace("\\", "/")}"
 
-    fun getLibraryName(desc: ModelDescription): String {
+    fun getLibraryName(desc: SpecificModelDescription): String {
         return "${desc.modelIdentifier}$libraryExtension"
     }
 
-    fun getFullLibraryPath(desc: ModelDescription): String {
+    fun getFullLibraryPath(desc: SpecificModelDescription): String {
         return File(fmuFile,BINARIES_FOLDER + File.separator + libraryFolderName + platformBitness
                         + File.separator + desc.modelIdentifier + libraryExtension).absolutePath
     }
@@ -353,7 +353,7 @@ class FmuFile private constructor(
             LOG.debug("Extracted fmu can be found in: $directory")
         }
 
-        private fun <E: FmiLibrary> loadLibrary(fmuFile: FmuFile, modelDescription: ModelDescription, type: Class<E>): LibraryProvider<E> {
+        private fun <E: FmiLibrary> loadLibrary(fmuFile: FmuFile, modelDescription: SpecificModelDescription, type: Class<E>): LibraryProvider<E> {
 
             System.getProperty(LIBRARY_PATH)?.also {
                 if (fmuFile.libraryFolderPath !in it.split(";")) {
@@ -364,7 +364,7 @@ class FmuFile private constructor(
             return LibraryProvider({Native.loadLibrary(fmuFile.getLibraryName(modelDescription), type)})
         }
 
-        private fun instantiate(fmuFile: FmuFile, modelDescription: ModelDescription, library: FmiLibrary, fmiType: FmiType, visible: Boolean, loggingOn: Boolean) : Pointer {
+        private fun instantiate(fmuFile: FmuFile, modelDescription: SpecificModelDescription, library: FmiLibrary, fmiType: FmiType, visible: Boolean, loggingOn: Boolean) : Pointer {
             LOG.trace("Calling instantiate: visible=$visible, loggingOn=$loggingOn")
             return library.fmi2Instantiate(modelDescription.modelIdentifier,
                     fmiType.code, modelDescription.guid,

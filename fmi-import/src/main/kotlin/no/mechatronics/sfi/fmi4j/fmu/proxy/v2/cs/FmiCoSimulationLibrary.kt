@@ -141,7 +141,7 @@ interface FmiCoSimulationLibrary : FmiLibrary {
     /**
      * Extension method
      */
-    fun fmi2GetMaxStepsize(c: Pointer, value: DoubleByReference): Int
+    fun fmi2GetMaxStepSize(c: Pointer, value: DoubleByReference): Int
 
 }
 

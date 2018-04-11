@@ -17,7 +17,7 @@ class SerializeTest {
 
         private val LOG: Logger = LoggerFactory.getLogger(SerializeTest::class.java)
 
-        private lateinit var modelDescription: SimpleModelDescription
+        private lateinit var modelDescription: CommonModelDescription
 
         @JvmStatic
         @BeforeClass
@@ -41,7 +41,7 @@ class SerializeTest {
         }
 
         ObjectInputStream(ByteArrayInputStream(bos.bytes)).use {
-            val md: SimpleModelDescription = it.readObject() as SimpleModelDescription
+            val md: CommonModelDescription = it.readObject() as CommonModelDescription
             md.modelVariables.variables.forEach { LOG.info("$it") }
             LOG.info("${md.modelStructure}")
         }

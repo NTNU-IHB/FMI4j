@@ -24,7 +24,7 @@
 
 package no.mechatronics.sfi.fmu2jar.templates
 
-import no.mechatronics.sfi.fmi4j.modeldescription.SimpleModelDescription
+import no.mechatronics.sfi.fmi4j.modeldescription.CommonModelDescription
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.ModelVariables
 
 object CodeGeneration {
@@ -33,7 +33,7 @@ object CodeGeneration {
         CodeGeneration::class.java.classLoader.getResource("license_header.txt").readText(Charsets.UTF_8)
     }
 
-     fun generateWrapper(modelDescription: SimpleModelDescription): String {
+     fun generateWrapper(modelDescription: CommonModelDescription): String {
 
         val modelName: String = modelDescription.modelName
         val modelVariables: ModelVariables = modelDescription.modelVariables
@@ -99,7 +99,7 @@ class $modelName private constructor(
 
     }
 
-    private fun generateNewInstanceMethod(modelDescription: SimpleModelDescription): String {
+    private fun generateNewInstanceMethod(modelDescription: CommonModelDescription): String {
 
         val modelName = modelDescription.modelName
         return StringBuilder().apply {

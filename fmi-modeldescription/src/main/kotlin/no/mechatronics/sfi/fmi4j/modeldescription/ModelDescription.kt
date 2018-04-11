@@ -24,14 +24,8 @@
 
 package no.mechatronics.sfi.fmi4j.modeldescription
 
-import no.mechatronics.sfi.fmi4j.modeldescription.cs.CoSimulationDataImpl
-import no.mechatronics.sfi.fmi4j.modeldescription.cs.CoSimulationModelDescription
-import no.mechatronics.sfi.fmi4j.modeldescription.cs.CoSimulationModelDescriptionImpl
 import no.mechatronics.sfi.fmi4j.modeldescription.log.LogCategories
 import no.mechatronics.sfi.fmi4j.modeldescription.log.LogCategoriesImpl
-import no.mechatronics.sfi.fmi4j.modeldescription.me.ModelExchangeDataImpl
-import no.mechatronics.sfi.fmi4j.modeldescription.me.ModelExchangeModelDescription
-import no.mechatronics.sfi.fmi4j.modeldescription.me.ModelExchangeModelDescriptionImpl
 import no.mechatronics.sfi.fmi4j.modeldescription.misc.DefaultExperiment
 import no.mechatronics.sfi.fmi4j.modeldescription.misc.SourceFile
 import no.mechatronics.sfi.fmi4j.modeldescription.misc.VariableNamingConvention
@@ -39,16 +33,53 @@ import no.mechatronics.sfi.fmi4j.modeldescription.structure.ModelStructure
 import no.mechatronics.sfi.fmi4j.modeldescription.structure.ModelStructureImpl
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.ModelVariables
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.ModelVariablesImpl
-import java.io.Serializable
+import java.io.*
+import java.lang.IllegalArgumentException
+import java.net.URL
+import java.util.zip.ZipEntry
+import java.util.zip.ZipInputStream
+import javax.xml.bind.JAXB
 import javax.xml.bind.annotation.*
 
+
+private const val MODEL_DESC_FILE = "modelDescription.xml"
+
+object ModelDescriptionParser {
+
+    @JvmStatic
+    fun parse(url: URL): ModelDescriptionProvider = parse(url.openStream())
+
+    @JvmStatic
+    fun parse(file: File): ModelDescriptionProvider = parse(FileInputStream(file))
+
+    @JvmStatic
+    fun parse(xml: String): ModelDescriptionProvider = JAXB.unmarshal(StringReader(xml), ModelDescriptionImpl::class.java)
+
+    @JvmStatic
+    private fun parse(stream: InputStream): ModelDescriptionProvider = extractModelDescriptionXml(stream).let (::parse)
+
+    @JvmStatic
+    fun extractModelDescriptionXml(stream: InputStream): String {
+        ZipInputStream(stream).use {
+            var nextEntry: ZipEntry? = it.nextEntry
+            while (nextEntry != null) {
+                if (nextEntry.name == MODEL_DESC_FILE) {
+                    return it.bufferedReader(Charsets.UTF_8).use { it.readText() }
+                }
+                nextEntry = it.nextEntry
+            }
+        }
+        throw IllegalArgumentException("Input is not an valid FMU! No $MODEL_DESC_FILE present!")
+    }
+
+}
 
 /**
  * Static information related to an FMU
  *
  * @author Lars Ivar Hatledal
  */
-interface SimpleModelDescription {
+interface CommonModelDescription {
 
     /**
      * Version of “FMI for Model Exchange or Co-Simulation” that was used to
@@ -179,7 +210,7 @@ interface SimpleModelDescription {
 /**
  * @author Lars Ivar Hatledal
  */
-interface ModelDescription : SimpleModelDescription {
+interface SpecificModelDescription : CommonModelDescription {
 
     /**
      * Short class name according to C syntax, for
@@ -262,7 +293,7 @@ interface ModelDescription : SimpleModelDescription {
 
 }
 
-interface ModelDescriptionProvider: SimpleModelDescription {
+interface ModelDescriptionProvider: CommonModelDescription {
 
     fun asCoSimulationModelDescription(): CoSimulationModelDescription
 
@@ -275,7 +306,7 @@ interface ModelDescriptionProvider: SimpleModelDescription {
  */
 @XmlRootElement(name = "fmiModelDescription")
 @XmlAccessorType(XmlAccessType.FIELD)
-class ModelDescriptionImpl : SimpleModelDescription, ModelDescriptionProvider, Serializable {
+class ModelDescriptionImpl : CommonModelDescription, ModelDescriptionProvider, Serializable {
 
     @XmlAttribute
     override lateinit var fmiVersion: String
@@ -367,7 +398,7 @@ class ModelDescriptionImpl : SimpleModelDescription, ModelDescriptionProvider, S
     override fun asModelExchangeModelDescription(): ModelExchangeModelDescription
             = modelExchangeModelDescription ?: throw IllegalStateException("FMU does not support Model Exchange: modelDescription.xml does not contain a <ModelExchange> tag!")
 
-    internal val toStringContent: String
+    internal val stringContent: String
         get() = listOfNotNull(
                 "fmiVersion=$fmiVersion",
                 "modelName=$modelName",
@@ -386,7 +417,110 @@ class ModelDescriptionImpl : SimpleModelDescription, ModelDescriptionProvider, S
 
 
     override fun toString(): String {
-        return "ModelDescriptionImpl(\n$toStringContent\n)"
+        return "ModelDescriptionImpl(\n$stringContent\n)"
     }
 
 }
+
+
+/**
+ * @author Lars Ivar Hatledal
+ */
+interface CoSimulationModelDescription : SpecificModelDescription {
+
+    /**
+     * The slave is able to provide derivatives of
+     * outputs with maximum order. Calling of
+     * fmi2GetRealOutputDerivatives(...) is
+     * allowed up to the order defined by
+     * maxOutputDerivativeOrder.
+     *
+     */
+    val maxOutputDerivativeOrder: Int
+
+
+    /**
+     * The slave can handle variable
+     * communication step size. The
+     * communication step size (parameter
+     * communicationStepSize of
+     * fmi2DoStep(...) ) has not to be constant
+     * for each call.
+     *
+     */
+    val canHandleVariableCommunicationStepSize: Boolean
+
+    /**
+     * The slave is able to interpolate continuous
+     * inputs. Calling of
+     * fmi2SetRealInputDerivatives(...) has
+     * an effect for the slave.
+     *
+     */
+    val canInterpolateInputs: Boolean
+
+    /**
+     * This flag describes the ability to carry out the
+     * fmi2DoStep(...) call asynchronously.
+     *
+     */
+    val canRunAsynchronuously: Boolean
+
+}
+
+/**
+ * @author Lars Ivar Hatledal
+ */
+class CoSimulationModelDescriptionImpl(
+        private val modelDescription: ModelDescriptionImpl,
+        private val cs: CoSimulationData
+) : CommonModelDescription by modelDescription, CoSimulationModelDescription, CoSimulationData by cs, Serializable {
+
+    override fun toString(): String {
+        return "CoSimulationModelDescriptionImpl(\n${modelDescription.stringContent}\n)"
+    }
+
+}
+
+
+/**
+ * @author Lars Ivar Hatledal
+ */
+interface ModelExchangeModelDescription : SpecificModelDescription {
+
+    /**
+     * The (fixed) number of event indicators for an FMU based on FMI for
+     * Model Exchange.
+     */
+    val numberOfEventIndicators: Int
+
+    /**
+     * If true, function
+     * fmi2CompletedIntegratorStep need not to
+     * be called (which gives a slightly more efficient
+     * integration). If it is called, it has no effect.
+     * If false (the default), the function must be called
+     * after every completed integrator step, see
+     * section 3.2.2.
+     */
+    val completedIntegratorStepNotNeeded: Boolean
+}
+
+/**
+ *
+ * @author Lars Ivar Hatledal laht@ntnu.no.
+ */
+class ModelExchangeModelDescriptionImpl(
+        private val modelDescription: ModelDescriptionImpl,
+        private val me: ModelExchangeData
+) : CommonModelDescription by modelDescription, ModelExchangeModelDescription, ModelExchangeData by me, Serializable {
+
+    override val numberOfEventIndicators: Int
+        get() = modelDescription.numberOfEventIndicators
+
+    override fun toString(): String {
+        return "ModelExchangeModelDescriptionImpl(\n${modelDescription.stringContent}\nnumberOfEventIndicators=$numberOfEventIndicators\n)"
+    }
+
+}
+

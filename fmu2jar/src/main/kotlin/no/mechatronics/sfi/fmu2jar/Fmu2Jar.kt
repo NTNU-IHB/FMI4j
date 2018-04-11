@@ -24,8 +24,8 @@
 
 package no.mechatronics.sfi.fmu2jar
 
+import no.mechatronics.sfi.fmi4j.modeldescription.CommonModelDescription
 import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescriptionParser
-import no.mechatronics.sfi.fmi4j.modeldescription.SimpleModelDescription
 import no.mechatronics.sfi.fmu2jar.templates.CodeGeneration
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -48,7 +48,7 @@ class Fmu2Jar(
         val LOG: Logger = LoggerFactory.getLogger(Fmu2Jar::class.java)
     }
 
-    private val modelDescription: SimpleModelDescription
+    private val modelDescription: CommonModelDescription
 
     init {
         if (!file.name.endsWith(".fmu", true)) {

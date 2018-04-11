@@ -33,7 +33,7 @@ import javax.xml.bind.annotation.XmlAttribute
  *
  * @author Lars Ivar Hatledal
  */
-interface Category {
+interface LogCategory {
 
     /**
      * Name of the Category element.
@@ -52,7 +52,7 @@ interface Category {
  * @author Lars Ivar Hatledal
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-class CategoryImpl: Category, Serializable {
+class LogCategoryImpl: LogCategory, Serializable {
 
     @XmlAttribute
     override lateinit var name: String
@@ -64,7 +64,7 @@ class CategoryImpl: Category, Serializable {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as CategoryImpl
+        other as LogCategoryImpl
 
         if (name != other.name) return false
 

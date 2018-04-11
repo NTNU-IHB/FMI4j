@@ -119,7 +119,6 @@ class ModelExchangeFmuWithIntegrator internal constructor(
     }
 
     override fun init(start: Double, stop: Double) {
-
         if (!isInitialized) {
             fmu.init(start, stop)
             currentTime = start
@@ -127,7 +126,6 @@ class ModelExchangeFmuWithIntegrator internal constructor(
                 throw IllegalArgumentException()
             }
         }
-
     }
 
     override fun doStep(stepSize: Double): Boolean {

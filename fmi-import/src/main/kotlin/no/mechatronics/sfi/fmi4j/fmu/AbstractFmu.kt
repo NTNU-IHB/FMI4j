@@ -29,7 +29,7 @@ import no.mechatronics.sfi.fmi4j.common.FmuVariableAccessor
 import no.mechatronics.sfi.fmi4j.fmu.misc.*
 import no.mechatronics.sfi.fmi4j.fmu.proxy.v2.FmiLibrary
 import no.mechatronics.sfi.fmi4j.fmu.proxy.v2.FmiLibraryWrapper
-import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescription
+import no.mechatronics.sfi.fmi4j.modeldescription.SpecificModelDescription
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.*
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -37,7 +37,7 @@ import java.lang.UnsupportedOperationException
 
 private const val DEFAULT_STOP_TIME = (60 * 60 * 24).toDouble() //24 hours
 
-abstract class AbstractFmu<out E: ModelDescription, out T: FmiLibraryWrapper<*>> internal constructor(
+abstract class AbstractFmu<out E: SpecificModelDescription, out T: FmiLibraryWrapper<*>> internal constructor(
         val fmuFile: FmuFile,
         val wrapper: T
 ): Fmu {

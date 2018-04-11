@@ -5,8 +5,10 @@ import javax.xml.bind.annotation.XmlAccessType
 import javax.xml.bind.annotation.XmlAccessorType
 import javax.xml.bind.annotation.XmlAttribute
 
-
-interface TypedAttribute<E>: Serializable {
+/**
+ * @author Lars Ivar Hatledal
+ */
+interface TypedAttribute<out E>: Serializable {
 
     /**
      * If present, name of the type defined with TypeDefinitions / SimpleType providing defaults
@@ -31,7 +33,10 @@ interface TypedAttribute<E>: Serializable {
 
 }
 
-interface BoundedTypedAttribute<E> : TypedAttribute<E> {
+/**
+ * @author Lars Ivar Hatledal
+ */
+interface BoundedTypedAttribute<out E> : TypedAttribute<E> {
 
     /**
      * Minimum value of variable (variable Value ≥ min). If not defined, the
@@ -57,7 +62,7 @@ interface BoundedTypedAttribute<E> : TypedAttribute<E> {
  * @author Lars Ivar Hatledal
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-internal class IntegerAttribute internal constructor(): BoundedTypedAttribute<Int> {
+internal class IntegerAttribute: BoundedTypedAttribute<Int> {
 
     @XmlAttribute
     override val min: Int? = null
@@ -73,8 +78,11 @@ internal class IntegerAttribute internal constructor(): BoundedTypedAttribute<In
 
 }
 
+/**
+ * @author Lars Ivar Hatledal
+ */
 @XmlAccessorType(XmlAccessType.FIELD)
-internal class RealAttribute internal constructor() : BoundedTypedAttribute<Double> {
+internal class RealAttribute: BoundedTypedAttribute<Double> {
 
     @XmlAttribute
     override val min: Double? = null
@@ -166,7 +174,7 @@ internal class RealAttribute internal constructor() : BoundedTypedAttribute<Doub
  * @author Lars Ivar Hatledal
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-internal class StringAttribute internal constructor(): TypedAttribute<String> {
+internal class StringAttribute: TypedAttribute<String> {
 
     /**
      * @see ScalarVariable.start
@@ -183,7 +191,7 @@ internal class StringAttribute internal constructor(): TypedAttribute<String> {
  * @author Lars Ivar Hatledal
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-internal class BooleanAttribute internal constructor(): TypedAttribute<Boolean> {
+internal class BooleanAttribute: TypedAttribute<Boolean> {
 
     @XmlAttribute
     override var start: Boolean? = null
@@ -197,7 +205,7 @@ internal class BooleanAttribute internal constructor(): TypedAttribute<Boolean> 
  * @author Lars Ivar Hatledal
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-internal class EnumerationAttribute internal constructor(): BoundedTypedAttribute<Int> {
+internal class EnumerationAttribute: BoundedTypedAttribute<Int> {
 
     @XmlAttribute
     override val min: Int? = null
