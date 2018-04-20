@@ -38,9 +38,9 @@ private const val EPS = 1E-13
  *
  * @author Lars Ivar Hatledal
  */
-class ModelExchangeFmuWithIntegrator internal constructor(
+class ModelExchangeFmuWithSolver internal constructor(
         internal val fmu: ModelExchangeFmu,
-        private val integrator: FirstOrderIntegrator
+        private val solver: FirstOrderIntegrator
 ) : FmiSimulation, Fmu by fmu {
 
     private val x: DoubleArray
@@ -196,7 +196,7 @@ class ModelExchangeFmuWithIntegrator internal constructor(
         fmu.getDerivatives(dx)
 
         val dt = (tNext - t)
-        val integratedTime = integrator.integrate(ode, t, x, (currentTime + dt), x)
+        val integratedTime = solver.integrate(ode, t, x, (currentTime + dt), x)
 
         fmu.setContinuousStates(x)
 
@@ -219,7 +219,7 @@ class ModelExchangeFmuWithIntegrator internal constructor(
     }
 
     private companion object {
-        val LOG: Logger = LoggerFactory.getLogger(ModelExchangeFmuWithIntegrator::class.java)
+        val LOG: Logger = LoggerFactory.getLogger(ModelExchangeFmuWithSolver::class.java)
     }
 
 }

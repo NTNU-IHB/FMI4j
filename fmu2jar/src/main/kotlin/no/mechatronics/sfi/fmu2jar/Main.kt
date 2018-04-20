@@ -90,7 +90,7 @@ class Main {
               }
 
           } catch(ex: Exception) {
-              ex.printStackTrace(System.out)
+              ex.printStackTrace(System.err)
               error("Application error..")
           }
 
