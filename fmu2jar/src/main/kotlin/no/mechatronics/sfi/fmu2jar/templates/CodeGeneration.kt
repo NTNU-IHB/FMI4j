@@ -45,7 +45,7 @@ package no.mechatronics.sfi.fmu2jar.${modelName.toLowerCase()}
 
 import java.net.URL
 import no.mechatronics.sfi.fmi4j.fmu.FmiSimulation
-import no.mechatronics.sfi.fmi4j.fmu.FmuFile
+import no.mechatronics.sfi.fmi4j.fmu.Fmu
 import no.mechatronics.sfi.fmi4j.common.Real
 import no.mechatronics.sfi.fmi4j.common.FmiStatus
 import no.mechatronics.sfi.fmi4j.common.FmuRead
@@ -62,9 +62,9 @@ class $modelName private constructor(
 
     companion object {
 
-        private val fmuFile: FmuFile by lazy {
+        private val fmuFile: Fmu by lazy {
             val url: URL = $modelName::class.java.classLoader.getResource("$modelName.fmu")!!
-            FmuFile.from(url)
+            Fmu.from(url)
         }
         ${generateNewInstanceMethod(modelDescription)}
     }

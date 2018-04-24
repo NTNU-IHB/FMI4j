@@ -19,7 +19,7 @@ class ModelExchangeTest2_kt {
 
         private val LOG = LoggerFactory.getLogger(ModelExchangeTest_java::class.java)
 
-        private lateinit var fmuFile: FmuFile
+        private lateinit var fmu: Fmu
 
         @JvmStatic
         @BeforeClass
@@ -28,27 +28,27 @@ class ModelExchangeTest2_kt {
             val path = "../test/fmi2/me/win64/FMUSDK/2.0.4/bouncingBall/bouncingBall.fmu"
             val file = File(path)
             Assert.assertNotNull(file)
-            fmuFile = FmuFile.from(file)
+            fmu = Fmu.from(file)
         }
 
         @JvmStatic
         @AfterClass
         fun tearDown() {
-            fmuFile.close()
+            fmu.close()
         }
 
     }
 
     @Test
     fun testVersion() {
-        Assert.assertEquals("2.0", fmuFile.modelDescription.fmiVersion)
+        Assert.assertEquals("2.0", fmu.modelDescription.fmiVersion)
     }
 
-    private fun runFmu(integrator: FirstOrderIntegrator) {
+    private fun runFmu(solver: FirstOrderIntegrator) {
 
-        LOG.info("Using integrator: ${integrator.javaClass.simpleName}")
+        LOG.info("Using solver: ${solver.javaClass.simpleName}")
 
-        fmuFile.asModelExchangeFmu().newInstance(integrator).use { fmu ->
+        fmu.asModelExchangeFmu().newInstance(solver).use { fmu ->
 
             val h = fmu.modelVariables
                     .getByName("h").asRealVariable()

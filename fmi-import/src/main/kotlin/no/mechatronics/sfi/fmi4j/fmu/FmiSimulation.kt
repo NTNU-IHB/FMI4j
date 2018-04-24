@@ -28,7 +28,7 @@ package no.mechatronics.sfi.fmi4j.fmu
  *
  * @author Lars Ivar Hatledal
  */
-interface FmiSimulation: Fmu {
+interface FmiSimulation: FmuInstance {
 
     /**
      * Current simulation time

@@ -1,7 +1,7 @@
 package no.mechatronics.sfi.fmi4j.fmu.misc
 
-import no.mechatronics.sfi.fmi4j.fmu.CoSimulationFmuTest_kt
-import no.mechatronics.sfi.fmi4j.fmu.FmuFile
+import no.mechatronics.sfi.fmi4j.fmu.CoSimulationFmuInstanceInstanceTest_kt
+import no.mechatronics.sfi.fmi4j.fmu.Fmu
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.BooleanVariable
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.IntegerVariable
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.RealVariable
@@ -14,13 +14,13 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.File
 
-class FmuVariableAccessorTest {
+class FmuInstanceVariableAccessorTest {
 
     companion object {
 
-        val LOG: Logger = LoggerFactory.getLogger(CoSimulationFmuTest_kt::class.java)
+        val LOG: Logger = LoggerFactory.getLogger(CoSimulationFmuInstanceInstanceTest_kt::class.java)
 
-        private lateinit var fmuFile: FmuFile
+        private lateinit var fmu: Fmu
 
         @JvmStatic
         @BeforeClass
@@ -29,14 +29,14 @@ class FmuVariableAccessorTest {
             val path = "../test/fmi2/cs/win64/20Sim/4.6.4.8004/ControlledTemperature/ControlledTemperature.fmu"
             val file = File(path)
             Assert.assertNotNull(file)
-            fmuFile = FmuFile.from(file)
+            fmu = Fmu.from(file)
 
         }
 
         @JvmStatic
         @AfterClass
         fun tearDown() {
-            fmuFile.close()
+            fmu.close()
         }
 
     }
@@ -44,7 +44,7 @@ class FmuVariableAccessorTest {
     @Test
     fun test1() {
 
-        fmuFile.asCoSimulationFmu().newInstance().use { fmu ->
+        fmu.asCoSimulationFmu().newInstance().use { fmu ->
 
             fmu.init()
 
@@ -66,7 +66,7 @@ class FmuVariableAccessorTest {
     @Test
     fun test2() {
 
-        fmuFile.asCoSimulationFmu().newInstance().use { fmu ->
+        fmu.asCoSimulationFmu().newInstance().use { fmu ->
 
             fmu.init()
 

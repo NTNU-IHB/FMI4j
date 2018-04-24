@@ -27,7 +27,7 @@ package no.mechatronics.sfi.fmi4j.fmu.cs
 import no.mechatronics.sfi.fmi4j.common.FmiStatus
 import no.mechatronics.sfi.fmi4j.fmu.AbstractFmu
 import no.mechatronics.sfi.fmi4j.fmu.FmiSimulation
-import no.mechatronics.sfi.fmi4j.fmu.FmuFile
+import no.mechatronics.sfi.fmi4j.fmu.Fmu
 import no.mechatronics.sfi.fmi4j.fmu.proxy.v2.cs.CoSimulationLibraryWrapper
 import no.mechatronics.sfi.fmi4j.fmu.proxy.v2.cs.FmiStatusKind
 import no.mechatronics.sfi.fmi4j.modeldescription.CoSimulationModelDescription
@@ -35,13 +35,13 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.lang.IllegalStateException
 
-class CoSimulationFmu internal constructor(
-        fmuFile: FmuFile,
+class CoSimulationFmuInstance internal constructor(
+        fmu: Fmu,
         wrapper: CoSimulationLibraryWrapper
-) : AbstractFmu<CoSimulationModelDescription, CoSimulationLibraryWrapper>(fmuFile, wrapper), FmiSimulation {
+) : AbstractFmu<CoSimulationModelDescription, CoSimulationLibraryWrapper>(fmu, wrapper), FmiSimulation {
 
     private companion object {
-        val LOG: Logger = LoggerFactory.getLogger(CoSimulationFmu::class.java)
+        val LOG: Logger = LoggerFactory.getLogger(CoSimulationFmuInstance::class.java)
     }
 
 
@@ -50,7 +50,7 @@ class CoSimulationFmu internal constructor(
 
 
     override val modelDescription: CoSimulationModelDescription
-        get() = fmuFile.modelDescription.asCoSimulationModelDescription()
+        get() = fmu.modelDescription.asCoSimulationModelDescription()
 
     override fun init(start: Double, stop: Double) {
         super.init(start, stop)

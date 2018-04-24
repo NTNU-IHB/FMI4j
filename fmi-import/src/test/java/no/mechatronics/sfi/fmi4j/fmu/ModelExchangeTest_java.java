@@ -48,7 +48,7 @@ public class ModelExchangeTest_java {
 
     private static final Logger LOG = LoggerFactory.getLogger(ModelExchangeTest_java.class);
 
-    private static FmuFile fmuFile;
+    private static Fmu fmu;
 
 
     @BeforeClass
@@ -57,41 +57,41 @@ public class ModelExchangeTest_java {
         String path = "../test/fmi2/me/win64/FMUSDK/2.0.4/vanDerPol/vanDerPol.fmu";
         final File file = new File(path);
         Assert.assertNotNull(file);
-        fmuFile = FmuFile.from(file);
+        fmu = Fmu.from(file);
 
     }
 
     @AfterClass
     public static void tearDown() {
-        fmuFile.close();
+        fmu.close();
     }
 
     @Test
     public void testVersion() {
-        Assert.assertEquals("2.0", fmuFile.getModelDescription().getFmiVersion());
+        Assert.assertEquals("2.0", fmu.getModelDescription().getFmiVersion());
     }
 
     private void runFmu(FirstOrderIntegrator integrator) {
 
-        LOG.info("Using integrator: {}", integrator.getClass().getSimpleName());
+        LOG.info("Using solver: {}", integrator.getClass().getSimpleName());
 
-        FmiSimulation fmu = fmuFile.asModelExchangeFmu()
+        FmiSimulation instance = ModelExchangeTest_java.fmu.asModelExchangeFmu()
                 .newInstance(integrator, false, true);
 
-        RealVariable x0 = fmu.getModelVariables()
+        RealVariable x0 = instance.getModelVariables()
                 .getByName("x0").asRealVariable();
 
-        fmu.init();
+        instance.init();
 
         double macroStep = 1.0 / 10;
-        while (fmu.getCurrentTime() < 1) {
+        while (instance.getCurrentTime() < 1) {
             FmuRead<Double> read = x0.read();
-            Assert.assertTrue(read.getStatus() == FmiStatus.OK);
-            LOG.info("t={}, x0={}", fmu.getCurrentTime(), read.getValue() );
-            fmu.doStep(macroStep);
+            Assert.assertSame(read.getStatus(), FmiStatus.OK);
+            LOG.info("t={}, x0={}", instance.getCurrentTime(), read.getValue() );
+            instance.doStep(macroStep);
         }
 
-        fmu.terminate();
+        instance.terminate();
     }
 
     @Test

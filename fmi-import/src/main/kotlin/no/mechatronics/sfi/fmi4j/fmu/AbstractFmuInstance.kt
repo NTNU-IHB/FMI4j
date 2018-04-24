@@ -38,9 +38,9 @@ import java.lang.UnsupportedOperationException
 private const val DEFAULT_STOP_TIME = (60 * 60 * 24).toDouble() //24 hours
 
 abstract class AbstractFmu<out E: SpecificModelDescription, out T: FmiLibraryWrapper<*>> internal constructor(
-        val fmuFile: FmuFile,
+        val fmu: Fmu,
         val wrapper: T
-): Fmu {
+): FmuInstance {
 
     private companion object {
         private val LOG: Logger = LoggerFactory.getLogger(AbstractFmu::class.java)
@@ -142,7 +142,7 @@ abstract class AbstractFmu<out E: SpecificModelDescription, out T: FmiLibraryWra
             stopDefined = (stop > start)
             if (stopDefined) stopTime = stop
             LOG.debug("setupExperiment params: start=$start, stopDefined=$stopDefined, stop=$stopTime")
-            wrapper.setupExperiment(false, 0.0, start, stopDefined, stopTime).also {
+            wrapper.setupExperiment(true, 1E-4, start, stopDefined, stopTime).also {
                 if (it != FmiStatus.OK) {
                     throw IllegalStateException("setupExperiment returned status $it")
                 }
@@ -182,7 +182,7 @@ abstract class AbstractFmu<out E: SpecificModelDescription, out T: FmiLibraryWra
     /**
      * Terminates the FMU
      *
-     * @param freeInstance true if you are completely finished with the fmu
+     * @param freeInstance true if you are completely finished with the fmuInstance
      *
      * @see FmiLibrary.fmi2Terminate
      * @see FmiLibrary.fmi2FreeInstance
@@ -198,9 +198,8 @@ abstract class AbstractFmu<out E: SpecificModelDescription, out T: FmiLibraryWra
      * @see FmiLibrary.fmi2Reset
      */
     override fun reset(): Boolean {
-        return wrapper.reset().let { status ->
-            status == FmiStatus.OK
-        }
+        return wrapper.reset() == FmiStatus.OK
+
     }
 
     /**

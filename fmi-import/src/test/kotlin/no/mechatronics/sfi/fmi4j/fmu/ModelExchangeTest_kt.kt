@@ -19,7 +19,7 @@ class ModelExchangeTest_kt {
 
         private val LOG = LoggerFactory.getLogger(ModelExchangeTest_java::class.java)
 
-        private lateinit var fmuFile: FmuFile
+        private lateinit var fmu: Fmu
 
         @JvmStatic
         @BeforeClass
@@ -28,27 +28,27 @@ class ModelExchangeTest_kt {
             val path = "../test/fmi2/me/win64/FMUSDK/2.0.4/vanDerPol/vanDerPol.fmu"
             val file = File(path)
             Assert.assertNotNull(file)
-            fmuFile = FmuFile.from(file)
+            fmu = Fmu.from(file)
         }
 
         @JvmStatic
         @AfterClass
         fun tearDown() {
-            fmuFile.close()
+            fmu.close()
         }
 
     }
 
     @Test
     fun testVersion() {
-        Assert.assertEquals("2.0", fmuFile.modelDescription.fmiVersion)
+        Assert.assertEquals("2.0", fmu.modelDescription.fmiVersion)
     }
 
     private fun runFmu(integrator: FirstOrderIntegrator) {
 
         LOG.info("Using integrator: ${integrator.javaClass.simpleName}")
 
-        fmuFile.asModelExchangeFmu().newInstance(integrator, loggingOn = true).use { fmu ->
+        fmu.asModelExchangeFmu().newInstance(integrator, loggingOn = true).use { fmu ->
 
             val x0 = fmu.modelVariables
                     .getByName("x0").asRealVariable()

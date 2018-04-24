@@ -11,13 +11,13 @@ import org.slf4j.LoggerFactory
 import java.io.File
 import java.util.concurrent.atomic.AtomicBoolean
 
-class CoSimulationFmuTest_kt {
+class CoSimulationFmuInstanceInstanceTest_kt {
 
     companion object {
 
-        val LOG: Logger = LoggerFactory.getLogger(CoSimulationFmuTest_kt::class.java)
+        val LOG: Logger = LoggerFactory.getLogger(CoSimulationFmuInstanceInstanceTest_kt::class.java)
 
-        private lateinit var fmuFile: FmuFile
+        private lateinit var fmu: Fmu
 
         @JvmStatic
         @BeforeClass
@@ -26,14 +26,14 @@ class CoSimulationFmuTest_kt {
             val path = "../test/fmi2/cs/win64/20Sim/4.6.4.8004/ControlledTemperature/ControlledTemperature.fmu"
             val file = File(path)
             Assert.assertNotNull(file)
-            fmuFile = FmuFile.from(file)
+            fmu = Fmu.from(file)
 
         }
 
         @JvmStatic
         @AfterClass
         fun tearDown() {
-            fmuFile.close()
+            fmu.close()
         }
 
     }
@@ -42,29 +42,29 @@ class CoSimulationFmuTest_kt {
     @Throws(Exception::class)
     fun test() {
 
-        fmuFile.asCoSimulationFmu().newInstance(loggingOn = true).use { fmu ->
+        fmu.asCoSimulationFmu().newInstance(loggingOn = true).use { instance ->
 
-            Assert.assertEquals("2.0", fmu.modelDescription.fmiVersion)
+            Assert.assertEquals("2.0", instance.modelDescription.fmiVersion)
 
-            val startTemp = fmu.getVariableByName("HeatCapacity1.T0").asRealVariable().start
+            val startTemp = instance.getVariableByName("HeatCapacity1.T0").asRealVariable().start
             Assert.assertNotNull(startTemp)
             Assert.assertEquals(298.0, startTemp!!, 0.0)
 
-            fmu.init()
-            Assert.assertTrue(fmu.lastStatus === FmiStatus.OK)
+            instance.init()
+            Assert.assertTrue(instance.lastStatus === FmiStatus.OK)
 
-            val heatCapacity1_C = fmu.getVariableByName("HeatCapacity1.C").asRealVariable()
+            val heatCapacity1_C = instance.getVariableByName("HeatCapacity1.C").asRealVariable()
             Assert.assertEquals(0.1, heatCapacity1_C.start!!, 0.0)
             println(heatCapacity1_C.read().value)
 
-            val temperatureRoom = fmu.getVariableByName("Temperature_Room").asRealVariable()
+            val temperatureRoom = instance.getVariableByName("Temperature_Room").asRealVariable()
 
             var first1 = java.lang.Double.NaN
 
             val dt = 1.0 / 100
             for (i in 0..4) {
-                fmu.doStep(dt)
-                Assert.assertTrue(fmu.lastStatus === FmiStatus.OK)
+                instance.doStep(dt)
+                Assert.assertTrue(instance.lastStatus === FmiStatus.OK)
 
                 val read = temperatureRoom.read()
                 Assert.assertTrue(read.status == FmiStatus.OK)
@@ -76,12 +76,12 @@ class CoSimulationFmuTest_kt {
                 LOG.info("Temperature_Room=$value")
             }
 
-            Assert.assertTrue((fmu as AbstractFmu<*, *>).reset(false))
+            Assert.assertTrue((instance as AbstractFmu<*, *>).reset(false))
 
             val first = AtomicBoolean(true)
-            while (fmu.currentTime < 5) {
-                fmu.doStep(dt)
-                Assert.assertTrue(fmu.lastStatus === FmiStatus.OK)
+            while (instance.currentTime < 5) {
+                instance.doStep(dt)
+                Assert.assertTrue(instance.lastStatus === FmiStatus.OK)
 
                 val read = temperatureRoom.read()
                 Assert.assertTrue(read.status == FmiStatus.OK)
@@ -93,7 +93,7 @@ class CoSimulationFmuTest_kt {
                 LOG.info("Temperature_Room=$value")
             }
 
-            fmuFile.asCoSimulationFmu().newInstance().use { fmu2 ->
+            fmu.asCoSimulationFmu().newInstance().use { fmu2 ->
                 fmu2.init()
                 LOG.info("Temperature_Room=${fmu2.variableAccessor.readReal(temperatureRoom.valueReference)}")
             }

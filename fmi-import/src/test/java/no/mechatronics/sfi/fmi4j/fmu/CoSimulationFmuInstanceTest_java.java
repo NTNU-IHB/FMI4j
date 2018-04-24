@@ -41,11 +41,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
 /**
  * @author Lars Ivar Hatledal
  */
-public class CoSimulationFmuTest_java {
+public class CoSimulationFmuInstanceTest_java {
 
-    private final static Logger LOG = LoggerFactory.getLogger(CoSimulationFmuTest_java.class);
+    private final static Logger LOG = LoggerFactory.getLogger(CoSimulationFmuInstanceTest_java.class);
 
-    private static FmuFile fmuFile;
+    private static Fmu fmuFile;
 
     @BeforeClass
     public static void setUp() throws IOException {
@@ -53,7 +53,7 @@ public class CoSimulationFmuTest_java {
         String path = "../test/fmi2/cs/win64/20Sim/4.6.4.8004/ControlledTemperature/ControlledTemperature.fmu";
         final File file = new File(path);
         Assert.assertNotNull(file);
-        fmuFile = FmuFile.from(file);
+        fmuFile = Fmu.from(file);
 
     }
 
@@ -74,7 +74,7 @@ public class CoSimulationFmuTest_java {
             Assert.assertEquals(298.0, startTemp,0);
 
             fmu.init();
-            Assert.assertTrue(fmu.getLastStatus() == FmiStatus.OK);
+            Assert.assertSame(fmu.getLastStatus(), FmiStatus.OK);
 
             final RealVariable heatCapacity1_C
                     = fmu.getVariableByName("HeatCapacity1.C").asRealVariable();
@@ -89,9 +89,9 @@ public class CoSimulationFmuTest_java {
             double dt = 1d/100;
             for (int i = 0; i < 5; i++) {
                 fmu.doStep(dt);
-                Assert.assertTrue(fmu.getLastStatus() == FmiStatus.OK);
+                Assert.assertSame(fmu.getLastStatus(), FmiStatus.OK);
                 double value = temperature_room.read().getValue();
-                Assert.assertTrue(fmu.getLastStatus() == FmiStatus.OK);
+                Assert.assertSame(fmu.getLastStatus(), FmiStatus.OK);
                 if (Double.isNaN(first1)) {
                     first1 = value;
                 }
@@ -104,14 +104,14 @@ public class CoSimulationFmuTest_java {
 
             ((AbstractFmu) fmu).reset(false);
 
-            Assert.assertTrue(fmu.getLastStatus() == FmiStatus.OK);
+            Assert.assertSame(fmu.getLastStatus(), FmiStatus.OK);
 
             AtomicBoolean first = new AtomicBoolean(true);
             while (fmu.getCurrentTime() < 5) {
                 fmu.doStep(dt);
-                Assert.assertTrue(fmu.getLastStatus() == FmiStatus.OK);
+                Assert.assertSame(fmu.getLastStatus(), FmiStatus.OK);
                 double value = temperature_room.read().getValue();
-                Assert.assertTrue(fmu.getLastStatus() == FmiStatus.OK);
+                Assert.assertSame(fmu.getLastStatus(), FmiStatus.OK);
                 if (first.getAndSet(false)) {
                     Assert.assertEquals(first1, value, 0);
                 }
