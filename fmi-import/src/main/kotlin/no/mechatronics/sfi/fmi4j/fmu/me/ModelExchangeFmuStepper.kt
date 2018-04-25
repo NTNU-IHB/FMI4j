@@ -38,7 +38,7 @@ private const val EPS = 1E-13
  *
  * @author Lars Ivar Hatledal
  */
-class ModelExchangeFmuWithSolver internal constructor(
+class ModelExchangeFmuStepper internal constructor(
         internal val fmuInstance: ModelExchangeFmuInstance,
         private val solver: FirstOrderIntegrator
 ) : FmiSimulation, FmuInstance by fmuInstance {
@@ -219,7 +219,7 @@ class ModelExchangeFmuWithSolver internal constructor(
     }
 
     private companion object {
-        val LOG: Logger = LoggerFactory.getLogger(ModelExchangeFmuWithSolver::class.java)
+        val LOG: Logger = LoggerFactory.getLogger(ModelExchangeFmuStepper::class.java)
     }
 
 }

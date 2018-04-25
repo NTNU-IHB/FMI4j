@@ -29,7 +29,7 @@ import com.sun.jna.Platform
 import com.sun.jna.Pointer
 import no.mechatronics.sfi.fmi4j.fmu.cs.CoSimulationFmuInstance
 import no.mechatronics.sfi.fmi4j.fmu.me.ModelExchangeFmuInstance
-import no.mechatronics.sfi.fmi4j.fmu.me.ModelExchangeFmuWithSolver
+import no.mechatronics.sfi.fmi4j.fmu.me.ModelExchangeFmuStepper
 import no.mechatronics.sfi.fmi4j.fmu.misc.FmiBoolean
 import no.mechatronics.sfi.fmi4j.fmu.misc.LibraryProvider
 import no.mechatronics.sfi.fmi4j.fmu.misc.extractTo
@@ -257,11 +257,11 @@ class Fmu private constructor(
         }
 
         @JvmOverloads
-        fun newInstance(integrator: FirstOrderIntegrator, visible: Boolean = false, loggingOn: Boolean = false): ModelExchangeFmuWithSolver {
+        fun newInstance(integrator: FirstOrderIntegrator, visible: Boolean = false, loggingOn: Boolean = false): ModelExchangeFmuStepper {
             val lib = if (modelDescription.canBeInstantiatedOnlyOncePerProcess) loadLibrary() else libraryCache
             val c = instantiate(this@Fmu, modelDescription, lib.get(), FmiType.ModelExchange, visible, loggingOn)
             val wrapper = ModelExchangeLibraryWrapper(c, lib)
-            return ModelExchangeFmuWithSolver(ModelExchangeFmuInstance(this@Fmu, wrapper), integrator).also { instances.add(it.fmuInstance) }
+            return ModelExchangeFmuStepper(ModelExchangeFmuInstance(this@Fmu, wrapper), integrator).also { instances.add(it.fmuInstance) }
         }
 
     }
