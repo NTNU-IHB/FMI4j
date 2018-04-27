@@ -13,9 +13,11 @@ class TestOptions:
         self.vr = vr
 
 
-# options = TestOptions("C:\\Users\laht\\IdeaProjects\\FMI4j\\test\\fmi2\\cs\\win64\\FMUSDK\\2.0.4\\BouncingBall\\bouncingBall.fmu", 1E-3, 100, 0)
+options = TestOptions(
+    "C:\\Users\laht\\IdeaProjects\\FMI4j\\test\\fmi2\\cs\\win64\\FMUSDK\\2.0.4\\BouncingBall\\bouncingBall.fmu", 1E-3,
+    50, 0)
 # options = TestOptions("C:\\Users\\laht\\Local Documents\\Vico\\Extra\\FMUs\\20161108\\HydraulicCylinderComplex.fmu", 1E-4, 20, 155)
-options = TestOptions("C:\\Users\\laht\\IdeaProjects\\FMI4j\\test\\fmi2\\cs\\win64\\20sim\\4.6.4.8004\\TorsionBar\\TorsionBar.fmu", 1E-5, 12, 2)
+# options = TestOptions("C:\\Users\\laht\\IdeaProjects\\FMI4j\\test\\fmi2\\cs\\win64\\20sim\\4.6.4.8004\\TorsionBar\\TorsionBar.fmu", 1E-5, 12, 2)
 
 
 def main():
