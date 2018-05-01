@@ -76,7 +76,7 @@ class LogCategoryImpl: LogCategory, Serializable {
     }
 
     override fun toString(): String {
-        return "CategoryImpl(name=$name, description=$description)"
+        return "LogCategoryImpl(name=$name, description=$description)"
     }
 
 }

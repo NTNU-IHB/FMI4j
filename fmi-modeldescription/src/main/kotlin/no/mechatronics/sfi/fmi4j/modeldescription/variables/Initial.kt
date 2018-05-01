@@ -59,18 +59,21 @@ enum class Initial: Serializable {
      * The variable is initialized with the start value (provided under Real,
      * Integer, Boolean, String or Enumeration).
      */
-    @XmlEnumValue("exact") EXACT,
+    @XmlEnumValue("exact")
+    EXACT,
 
     /**
      * The variable is an iteration variable of an algebraic loop and the
      * iteration at initialization starts with the start value.
      */
-    @XmlEnumValue("approx") APPROX,
+    @XmlEnumValue("approx")
+    APPROX,
 
     /**
      * The variable is calculated from other categories during initialization. It
      * is not allowed to provide a “start” value.
      */
-    @XmlEnumValue("calculated") CALCULATED;
+    @XmlEnumValue("calculated")
+    CALCULATED;
 }
 
