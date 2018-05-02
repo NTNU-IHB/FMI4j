@@ -50,7 +50,7 @@ class ModelDescriptionTest_CS {
             val path = "../test/fmi2/cs/win64/20sim/4.6.4.8004/ControlledTemperature/modelDescription.xml"
             val file = File(path)
             Assert.assertTrue(file.exists())
-            val xml = file.readText(Charsets.UTF_8)
+            val xml = file.readText()
             modelDescription = ModelDescriptionParser.parse(xml).asCoSimulationModelDescription()
         }
     }

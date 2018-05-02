@@ -76,6 +76,10 @@ internal class IntegerAttribute: BoundedTypedAttribute<Int> {
     @XmlAttribute
     override val declaredType: String? = null
 
+    override fun toString(): String {
+        return "IntegerAttribute(min=$min, max=$max, start=$start, declaredType=$declaredType)"
+    }
+
 }
 
 /**
@@ -168,6 +172,10 @@ internal class RealAttribute: BoundedTypedAttribute<Double> {
     @XmlAttribute
     val relativeQuantity: String? = null
 
+    override fun toString(): String {
+        return "RealAttribute(min=$min, max=$max, start=$start, declaredType=$declaredType, nominal=$nominal, derivative=$derivative, unbounded=$unbounded, reinit=$reinit, quantity=$quantity, unit=$unit, displayUnit=$displayUnit, relativeQuantity=$relativeQuantity)"
+    }
+
 }
 
 /**
@@ -185,6 +193,10 @@ internal class StringAttribute: TypedAttribute<String> {
     @XmlAttribute
     override val declaredType: String? = null
 
+    override fun toString(): String {
+        return "StringAttribute(start=$start, declaredType=$declaredType)"
+    }
+
 }
 
 /**
@@ -198,6 +210,10 @@ internal class BooleanAttribute: TypedAttribute<Boolean> {
 
     @XmlAttribute
     override val declaredType: String? = null
+
+    override fun toString(): String {
+        return "BooleanAttribute(start=$start, declaredType=$declaredType)"
+    }
 
 }
 
@@ -221,5 +237,9 @@ internal class EnumerationAttribute: BoundedTypedAttribute<Int> {
 
     @XmlAttribute
     override val declaredType: String? = null
+
+    override fun toString(): String {
+        return "EnumerationAttribute(min=$min, max=$max, quantity=$quantity, start=$start, declaredType=$declaredType)"
+    }
 
 }

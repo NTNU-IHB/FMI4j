@@ -24,6 +24,7 @@
 
 package no.mechatronics.sfi.fmi4j.modeldescription.misc
 
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty
 import java.io.Serializable
 import javax.xml.bind.annotation.XmlAccessType
 import javax.xml.bind.annotation.XmlAccessorType
@@ -48,7 +49,8 @@ interface SourceFile {
 @XmlAccessorType(XmlAccessType.FIELD)
 class SourceFileImpl: SourceFile, Serializable {
 
-    @XmlAttribute(name="name")
+    @XmlAttribute()
+    @JacksonXmlProperty
     override lateinit var name: String
 
     override fun toString(): String {

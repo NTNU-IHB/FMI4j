@@ -24,6 +24,10 @@
 
 package no.mechatronics.sfi.fmi4j.modeldescription.structure
 
+import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement
 import java.io.Serializable
 import javax.xml.bind.annotation.XmlAccessType
 import javax.xml.bind.annotation.XmlAccessorType
@@ -91,29 +95,51 @@ class ModelStructureImpl: ModelStructure, Serializable {
 
     @XmlElementWrapper(name = "Outputs")
     @XmlElement(name = "Unknown")
+    @JacksonXmlElementWrapper(localName = "Outputs")
     private val _outputs: List<Int>? = null
 
     override val outputs: List<Int>
         get() = _outputs ?: emptyList()
 
-    @XmlElementWrapper(name = "Derivatives")
-    @XmlElement(name = "Unknown")
-    private val _derivatives: List<UnknownImpl>? = null
+    @JacksonXmlProperty(localName = "Derivatives")
+    private val _derivatives: Derivatives? = null
 
     override val derivatives: List<Unknown>
-        get() = _derivatives ?: emptyList()
+        get() = _derivatives?.unknowns ?: emptyList()
 
 
-    @XmlElementWrapper(name = "InitialUnknowns")
-    @XmlElement(name = "Unknown")
-    private val _initialUnknowns: List<UnknownImpl>? = null
+    @JacksonXmlProperty(localName = "InitialUnknowns")
+    private val _initialUnknowns: InitialUnknowns? = null
 
     override val initialUnknowns: List<Unknown>
-        get() = _initialUnknowns ?: emptyList()
+        get() {
+            return _initialUnknowns?.unknowns ?: emptyList()
+        }
 
     override fun toString(): String {
-        return "ModelStructure(outputs=$outputs, derivatives=$derivatives, initialUnknowns=$initialUnknowns)"
+        return "ModelStructureImpl(outputs=$outputs, derivatives=$derivatives, initialUnknowns=$initialUnknowns)"
     }
 
 }
+
+@JacksonXmlRootElement(localName = "Outputs")
+class Outputs(
+        @JacksonXmlProperty(localName = "Unknown")
+        @JacksonXmlElementWrapper(useWrapping = false)
+        val unknowns: List<UnknownImpl>? = null
+)
+
+@JacksonXmlRootElement(localName = "Derivatives")
+class Derivatives(
+        @JsonProperty("Unknown")
+        @JacksonXmlElementWrapper(useWrapping = false)
+        val unknowns: List<UnknownImpl>? = null
+)
+
+@JacksonXmlRootElement(localName = "InitialUnknowns")
+class InitialUnknowns(
+        @JsonProperty("Unknown")
+        @JacksonXmlElementWrapper(useWrapping = false)
+        val unknowns: List<UnknownImpl>? = null
+)
 
