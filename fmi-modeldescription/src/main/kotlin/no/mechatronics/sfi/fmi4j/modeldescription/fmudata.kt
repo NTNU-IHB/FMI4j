@@ -104,7 +104,7 @@ sealed class FmuDataImpl : FmuData, Serializable {
         get() = _sourceFiles ?: emptyList()
 
     override fun toString(): String {
-        return "CoSimulationData{modelIdentifier=$modelIdentifier, needsExecutionTool=$needsExecutionTool, canNotUseMemoryManagementFunctions=$canNotUseMemoryManagementFunctions, canGetAndSetFMUstate=$canGetAndSetFMUstate, canSerializeFMUstate=$canSerializeFMUstate, providesDirectionalDerivative=$providesDirectionalDerivative}"
+        return "FmuDataImpl{modelIdentifier=$modelIdentifier, needsExecutionTool=$needsExecutionTool, canNotUseMemoryManagementFunctions=$canNotUseMemoryManagementFunctions, canGetAndSetFMUstate=$canGetAndSetFMUstate, canSerializeFMUstate=$canSerializeFMUstate, providesDirectionalDerivative=$providesDirectionalDerivative}"
     }
 
 }
@@ -128,7 +128,7 @@ internal class CoSimulationDataImpl : FmuDataImpl(), CoSimulationData {
     override val canRunAsynchronuously: Boolean = false
 
     override fun toString(): String {
-        return "CoSimulationData{modelIdentifier=$modelIdentifier, needsExecutionTool=$needsExecutionTool, canHandleVariableCommunicationStepSize=$canHandleVariableCommunicationStepSize, canInterpolateInputs=$canInterpolateInputs, maxOutputDerivativeOrder=$maxOutputDerivativeOrder, canRunAsynchronuously=$canRunAsynchronuously, canBeInstantiatedOnlyOncePerProcess=$canBeInstantiatedOnlyOncePerProcess, canNotUseMemoryManagementFunctions=$canNotUseMemoryManagementFunctions, canGetAndSetFMUstate=$canGetAndSetFMUstate, canSerializeFMUstate=$canSerializeFMUstate, providesDirectionalDerivative=$providesDirectionalDerivative}"
+        return "CoSimulationDataImpl{modelIdentifier=$modelIdentifier, needsExecutionTool=$needsExecutionTool, canHandleVariableCommunicationStepSize=$canHandleVariableCommunicationStepSize, canInterpolateInputs=$canInterpolateInputs, maxOutputDerivativeOrder=$maxOutputDerivativeOrder, canRunAsynchronuously=$canRunAsynchronuously, canBeInstantiatedOnlyOncePerProcess=$canBeInstantiatedOnlyOncePerProcess, canNotUseMemoryManagementFunctions=$canNotUseMemoryManagementFunctions, canGetAndSetFMUstate=$canGetAndSetFMUstate, canSerializeFMUstate=$canSerializeFMUstate, providesDirectionalDerivative=$providesDirectionalDerivative}"
     }
 
 }
@@ -143,7 +143,7 @@ internal class ModelExchangeDataImpl : FmuDataImpl(), ModelExchangeData {
     override val completedIntegratorStepNotNeeded: Boolean = false
 
     override fun toString(): String {
-        return "ModelExchangeData{modelIdentifier=$modelIdentifier, needsExecutionTool=$needsExecutionTool, completedIntegratorStepNotNeeded=$completedIntegratorStepNotNeeded, canBeInstantiatedOnlyOncePerProcess=$canBeInstantiatedOnlyOncePerProcess, canNotUseMemoryManagementFunctions=$canNotUseMemoryManagementFunctions, canGetAndSetFMUstate=$canGetAndSetFMUstate, canSerializeFMUstate=$canSerializeFMUstate, providesDirectionalDerivative=$providesDirectionalDerivative}"
+        return "ModelExchangeDataImpl{modelIdentifier=$modelIdentifier, needsExecutionTool=$needsExecutionTool, completedIntegratorStepNotNeeded=$completedIntegratorStepNotNeeded, canBeInstantiatedOnlyOncePerProcess=$canBeInstantiatedOnlyOncePerProcess, canNotUseMemoryManagementFunctions=$canNotUseMemoryManagementFunctions, canGetAndSetFMUstate=$canGetAndSetFMUstate, canSerializeFMUstate=$canSerializeFMUstate, providesDirectionalDerivative=$providesDirectionalDerivative}"
     }
 
 }

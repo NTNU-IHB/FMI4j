@@ -1,18 +1,13 @@
 
 apply plugin: 'kotlin'
 
-//def version = System.getProperty("java.version")
-//def jdk9 = version.startsWith("1.9")
-//def atLeastJdk10 = version.split("\\.")[0].toInteger() >= 10
-
 dependencies {
 
-//    if (jdk9 || atLeastJdk10) {
+        //need to include JAXB explicitly in order to support >= Java9
         implementation group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.0'
-        runtimeOnly group: 'com.sun.xml.bind', name: 'jaxb-core', version: '2.3.0'
-        runtimeOnly group: 'com.sun.xml.bind', name: 'jaxb-impl', version: '2.3.0'
-        runtimeOnly group: 'javax.activation', name: 'activation', version: '1.1.1'
-//    }
+        runtime group: 'com.sun.xml.bind', name: 'jaxb-core', version: '2.3.0'
+        runtime group: 'com.sun.xml.bind', name: 'jaxb-impl', version: '2.3.0'
+        runtime group: 'javax.activation', name: 'activation', version: '1.1.1'
 
 }
 
