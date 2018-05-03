@@ -29,7 +29,7 @@ package no.mechatronics.sfi.fmi4j.common
  *
  * @author Lars Ivar Hatledal
  */
-interface VariableAccessor {
+interface FmuVariableAccessor {
 
     fun readInteger(name: String): FmuIntegerRead
     fun readInteger(valueReference: Int) : FmuIntegerRead

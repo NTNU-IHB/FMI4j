@@ -1,6 +1,5 @@
 package no.mechatronics.sfi.fmi4j.modeldescription
 
-import no.mechatronics.sfi.fmi4j.modeldescription.me.ModelExchangeModelDescription
 import org.junit.Assert
 import org.junit.BeforeClass
 import org.junit.Test
@@ -59,7 +58,7 @@ class ModelDescriptionTest_ME {
     @Test
     fun testModelIdentifier() {
         val modelIdentifier = modelDescription.modelIdentifier
-        println("modelIdentifier=$modelIdentifier")
+        LOG.info("modelIdentifier=$modelIdentifier")
         Assert.assertEquals("vanDerPol", modelIdentifier)
     }
 
@@ -73,7 +72,7 @@ class ModelDescriptionTest_ME {
     @Test
     fun testLogCategories() {
         val logCategories = modelDescription.logCategories!!.map { it.name }
-        println(logCategories)
+        LOG.info("$logCategories")
         Assert.assertTrue(logCategories.containsAll(
                 listOf("logAll", "logError", "logFmiCall", "logEvent")
         ))

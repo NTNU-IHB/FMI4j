@@ -31,9 +31,9 @@ import no.mechatronics.sfi.fmi4j.modeldescription.variables.*
  * @author Lars Ivar Hatledal
  */
 sealed class ScalarVariableVector<out E: TypedScalarVariable<*>> constructor(
-        protected val accessor: VariableAccessor,
+        protected val accessor: FmuVariableAccessor,
         protected val variables: List<E>
-): Iterable<E> {
+) {
 
     val size: Int = variables.size
 
@@ -43,16 +43,13 @@ sealed class ScalarVariableVector<out E: TypedScalarVariable<*>> constructor(
         variables.map { it.valueReference }.toIntArray()
     }
 
-    override fun iterator(): Iterator<E>
-            = variables.iterator()
-
 }
 
 /**
  * @author Lars Ivar Hatledal
  */
 class IntegerVariableVector internal constructor(
-        accessor: VariableAccessor,
+        accessor: FmuVariableAccessor,
         variables: List<IntegerVariable>
 ): ScalarVariableVector<IntegerVariable>(accessor, variables) {
 
@@ -72,7 +69,7 @@ class IntegerVariableVector internal constructor(
  * @author Lars Ivar Hatledal
  */
 class RealVariableVector internal constructor(
-        accessor: VariableAccessor,
+        accessor: FmuVariableAccessor,
         variables: List<RealVariable>
 ): ScalarVariableVector<RealVariable>(accessor, variables) {
 
@@ -92,7 +89,7 @@ class RealVariableVector internal constructor(
  * @author Lars Ivar Hatledal
  */
 class StringVariableVector internal constructor(
-        accessor: VariableAccessor,
+        accessor: FmuVariableAccessor,
         variables: List<StringVariable>
 ): ScalarVariableVector<StringVariable>(accessor, variables) {
 
@@ -112,7 +109,7 @@ class StringVariableVector internal constructor(
  * @author Lars Ivar Hatledal
  */
 class BooleanVariableVector internal constructor(
-        accessor: VariableAccessor,
+        accessor: FmuVariableAccessor,
         variables: List<BooleanVariable>
 ): ScalarVariableVector<BooleanVariable>(accessor, variables) {
 

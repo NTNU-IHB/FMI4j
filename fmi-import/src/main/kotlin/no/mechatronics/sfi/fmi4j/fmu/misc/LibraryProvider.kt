@@ -24,7 +24,7 @@
 
 package no.mechatronics.sfi.fmi4j.fmu.misc
 
-import no.mechatronics.sfi.fmi4j.fmu.proxy.v2.Fmi2Library
+import no.mechatronics.sfi.fmi4j.fmu.proxy.v2.FmiLibrary
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.util.function.Supplier
@@ -33,7 +33,7 @@ import java.util.function.Supplier
  *
  * @author Lars Ivar Hatledal
  */
-class LibraryProvider<E : Fmi2Library>(
+class LibraryProvider<E : FmiLibrary>(
         private val librarySupplier: () -> E
 ) : Supplier<E> {
 

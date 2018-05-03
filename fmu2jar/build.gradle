@@ -25,7 +25,6 @@ configurations.all {
 
 dependencies {
 
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     compile group: 'commons-cli', name: 'commons-cli', version: '1.4'
 
     compile project(':fmi-modeldescription')

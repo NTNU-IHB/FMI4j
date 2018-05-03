@@ -1,4 +1,4 @@
-rootProject.name = 'fmi4j'
+rootProject.name = 'FMI4j'
 
 include 'fmi-import'
 include 'fmi-modeldescription'

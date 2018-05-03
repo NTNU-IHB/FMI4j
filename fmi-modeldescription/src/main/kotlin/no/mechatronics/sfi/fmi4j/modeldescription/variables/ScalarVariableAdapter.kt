@@ -38,26 +38,26 @@ class ScalarVariableAdapter : XmlAdapter<Any, AbstractTypedScalarVariable<*>>() 
     override fun unmarshal(v: Any): AbstractTypedScalarVariable<*> {
 
         val node = v as Node
-        val child = node.childNodes.item(0)
-
         val unmarshal by lazy {
-            val ctx = JAXBContext.newInstance(ScalarVariableImpl::class.java)
-            ctx.createUnmarshaller().unmarshal(node, ScalarVariableImpl::class.java).value
+            JAXBContext.newInstance(ScalarVariableImpl::class.java).let {
+                it.createUnmarshaller().unmarshal(node, ScalarVariableImpl::class.java).value
+            }
         }
 
+        val child = node.childNodes.item(0)
         return when (child.nodeName) {
-            "Integer" -> IntegerVariable(unmarshal)
-            "Real" -> RealVariable(unmarshal)
-            "String" -> StringVariable(unmarshal)
-            "Boolean" -> BooleanVariable(unmarshal)
-            "Enumeration" -> EnumerationVariable(unmarshal)
+            INTEGER_TYPE -> IntegerVariable(unmarshal)
+            REAL_TYPE -> RealVariable(unmarshal)
+            STRING_TYPE -> StringVariable(unmarshal)
+            BOOLEAN_TYPE -> BooleanVariable(unmarshal)
+            ENUMERATION_TYPE -> EnumerationVariable(unmarshal)
             else -> throw RuntimeException("Error parsing XML. Don't know what to do with '${child.nodeName}'")
         }
 
     }
 
     override fun marshal(v: AbstractTypedScalarVariable<*>?): Any {
-        TODO("not implemented")
+        TODO("not required")
     }
 
 }

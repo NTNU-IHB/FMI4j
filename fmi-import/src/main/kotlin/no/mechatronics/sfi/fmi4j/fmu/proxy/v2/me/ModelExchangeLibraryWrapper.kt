@@ -30,18 +30,27 @@ import no.mechatronics.sfi.fmi4j.common.FmiStatus
 import no.mechatronics.sfi.fmi4j.fmu.misc.FmiBoolean
 import no.mechatronics.sfi.fmi4j.fmu.misc.FmiTrue
 import no.mechatronics.sfi.fmi4j.fmu.misc.LibraryProvider
-import no.mechatronics.sfi.fmi4j.fmu.proxy.v2.Fmi2LibraryWrapper
-import no.mechatronics.sfi.fmi4j.fmu.proxy.v2.structs.Fmi2EventInfo
+import no.mechatronics.sfi.fmi4j.fmu.proxy.v2.FmiLibraryWrapper
+import no.mechatronics.sfi.fmi4j.fmu.proxy.v2.structs.FmiEventInfo
 
 
 /**
  *
- * @author laht
+ * @author Lars Ivar Hatledal
+ */
+data class CompletedIntegratorStep(
+        val enterEventMode: Boolean,
+        val terminateSimulation: Boolean
+)
+
+/**
+ *
+ * @author Lars Ivar Hatledal
  */
 class ModelExchangeLibraryWrapper(
         c: Pointer,
-        library: LibraryProvider<Fmi2ModelExchangeLibrary>
-) : Fmi2LibraryWrapper<Fmi2ModelExchangeLibrary>(c, library) {
+        library: LibraryProvider<FmiModelExchangeLibrary>
+) : FmiLibraryWrapper<FmiModelExchangeLibrary>(c, library) {
 
 
     private val enterEventMode = IntByReference()
@@ -49,7 +58,7 @@ class ModelExchangeLibraryWrapper(
 
 
     /**
-     * @see Fmi2ModelExchangeLibrary.fmi2SetTime
+     * @see FmiModelExchangeLibrary.fmi2SetTime
      * @param time
      */
     fun setTime(time: Double): FmiStatus {
@@ -58,7 +67,7 @@ class ModelExchangeLibraryWrapper(
 
     /**
      * 
-     * @see Fmi2ModelExchangeLibrary.fmi2SetContinuousStates
+     * @see FmiModelExchangeLibrary.fmi2SetContinuousStates
      * @param x state
      */
     fun setContinuousStates(x: DoubleArray): FmiStatus {
@@ -66,20 +75,20 @@ class ModelExchangeLibraryWrapper(
     }
 
     /**
-     * @see Fmi2ModelExchangeLibrary.fmi2EnterEventMode
+     * @see FmiModelExchangeLibrary.fmi2EnterEventMode
      */
     fun enterEventMode(): FmiStatus {
         return updateStatus(FmiStatus.valueOf(library.fmi2EnterEventMode(c)))
     }
 
     /**
-     * @see Fmi2ModelExchangeLibrary.fmi2EnterContinuousTimeMode
+     * @see FmiModelExchangeLibrary.fmi2EnterContinuousTimeMode
      */
     fun enterContinuousTimeMode(): FmiStatus {
         return updateStatus(FmiStatus.valueOf(library.fmi2EnterContinuousTimeMode(c)))
     }
 
-    fun newDiscreteStates(eventInfo: Fmi2EventInfo): FmiStatus {
+    fun newDiscreteStates(eventInfo: FmiEventInfo): FmiStatus {
         return updateStatus(FmiStatus.valueOf(library.fmi2NewDiscreteStates(c, eventInfo)))
     }
 
@@ -92,7 +101,7 @@ class ModelExchangeLibraryWrapper(
     }
 
     /**
-     * @see Fmi2ModelExchangeLibrary.fmi2GetDerivatives
+     * @see FmiModelExchangeLibrary.fmi2GetDerivatives
      * @param derivatives
      */
     fun getDerivatives(derivatives: DoubleArray): FmiStatus {

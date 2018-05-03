@@ -12,13 +12,11 @@ public class ControlledTemperatureTest {
     @Test
     public void test() {
 
-       try( ControlledTemperature ct = ControlledTemperature.newInstance()) {
-           if (ct.init()) {
+       try(ControlledTemperature ct = ControlledTemperature.newInstance()) {
 
-               double temp = ct.getOutputs().getTemperature_Reference().getValue();
-               LOG.info("Temperature_reference={}", temp);
-
-           }
+           ct.init();
+           double temp = ct.getOutputs().getTemperature_Reference().getValue();
+           LOG.info("Temperature_reference={}", temp);
 
        }
 

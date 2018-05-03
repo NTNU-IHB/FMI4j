@@ -3,7 +3,7 @@ println "Gradle version is ${GradleVersion.current().version}"
 
 buildscript {
 
-    ext.kotlin_version = '1.2.30'
+    ext.kotlin_version = '1.2.40'
 
     repositories {
         mavenCentral()
@@ -33,6 +33,10 @@ subprojects { sub ->
 
     dependencies {
 
+        sub.plugins.withId ('kotlin') {
+            compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+        }
+
         implementation group: 'org.slf4j', name: 'slf4j-api', version: '1.7.25'
         runtimeOnly group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.7.25'
 
@@ -50,15 +54,18 @@ subprojects { sub ->
     }
 
 
-    if(archivesBaseName.startsWith("fmi")) {
+    if(sub.name.startsWith("fmi")) {
 
         def snapshot = true
 
         group = 'no.mechatronics.sfi.fmi4j'
-        version = '0.6.1'
+        version = '0.6.2'
         if (snapshot) {
             version += '-SNAPSHOT'
         }
+
+        println("maven version for $archivesBaseName is: $version")
+
 
         apply plugin: 'maven'
         apply plugin: 'signing'

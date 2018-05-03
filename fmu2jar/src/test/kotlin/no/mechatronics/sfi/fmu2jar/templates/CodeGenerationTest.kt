@@ -23,7 +23,7 @@ class CodeGenerationTest {
         val md = ModelDescriptionParser.parse(xml)
         Assert.assertNotNull(md)
 
-        LOG.info( CodeGeneration.generateWrapper(md) )
+        LOG.info(CodeGeneration.generateWrapper(md) )
 
     }
 

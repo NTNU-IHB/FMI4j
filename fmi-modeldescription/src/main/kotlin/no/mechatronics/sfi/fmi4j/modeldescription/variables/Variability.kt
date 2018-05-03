@@ -69,14 +69,16 @@ enum class Variability: Serializable {
     /**
      * The value of the variable never changes.
      */
-    @XmlEnumValue("constant") CONSTANT,
+    @XmlEnumValue("constant")
+    CONSTANT,
 
     /**
      * The value of the variable is fixed after initialization, in other words
      * after fmi2ExitInitializationMode was called the variable value does not
      * change anymore.
      */
-    @XmlEnumValue("fixed") FIXED,
+    @XmlEnumValue("fixed")
+    FIXED,
 
     /**
      * The value of the variable is constant between external events
@@ -88,7 +90,8 @@ enum class Variability: Serializable {
      * Point (CoSimulation) and the categories with variability = "tunable" and
      * causality = "calculatedParameter" or "output" must be newly computed.
      */
-    @XmlEnumValue("tunable") TUNABLE,
+    @XmlEnumValue("tunable")
+    TUNABLE,
 
     /**
      * ModelExchange: The value of the variable is constant between external and
@@ -97,13 +100,15 @@ enum class Variability: Serializable {
      * data system and its value is only changed at Communication Points (also
      * inside the slave).
      */
-    @XmlEnumValue("discrete") DISCRETE,
+    @XmlEnumValue("discrete")
+    DISCRETE,
 
     /**
      * Only a variable of type = “Real” can be “continuous”. ModelExchange: No
      * restrictions on value changes. CoSimulation: By convention, the variable
      * is from a differential
      */
-    @XmlEnumValue("continuous") CONTINUOUS;
+    @XmlEnumValue("continuous")
+    CONTINUOUS;
 
 }

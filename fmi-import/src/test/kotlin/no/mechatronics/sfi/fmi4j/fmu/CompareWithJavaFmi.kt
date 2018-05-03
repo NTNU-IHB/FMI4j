@@ -1,5 +1,6 @@
 package no.mechatronics.sfi.fmi4j.fmu
 
+
 import org.javafmi.proxy.Status
 import org.javafmi.wrapper.Simulation
 import org.junit.AfterClass
@@ -21,18 +22,18 @@ class CompareWithJavaFmi {
 
         const val path = "../test/fmi2/cs/win64/20Sim/4.6.4.8004/ControlledTemperature/ControlledTemperature.fmu"
 
-        lateinit var fmuFile: FmuFile
+        lateinit var fmu: Fmu
 
         @JvmStatic
         @BeforeClass
         fun setup() {
-            fmuFile = FmuFile.Companion.from(File(path))
+            fmu = Fmu.from(File(path))
         }
 
         @JvmStatic
         @AfterClass
         fun tearDown() {
-            fmuFile.close()
+            fmu.close()
             Simulation(path).apply {
                 fmuFile.deleteTemporalFolder()
             }
@@ -61,7 +62,7 @@ class CompareWithJavaFmi {
             duration1 = Duration.between(start, end).toMillis()
         }
 
-        fmuFile.asCoSimulationFmu().newInstance().apply {
+        fmu.asCoSimulationFmu().newInstance().apply {
 
             val start = Instant.now()
             init(0.0)

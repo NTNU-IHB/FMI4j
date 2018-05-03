@@ -23,27 +23,23 @@
  */
 
 
-package no.mechatronics.sfi.fmi4j.fmu
+package no.mechatronics.sfi.fmi4j.fmu.misc
 
+import no.mechatronics.sfi.fmi4j.common.FmuVariableAccessor
 import no.mechatronics.sfi.fmi4j.common.Real
 import no.mechatronics.sfi.fmi4j.common.RealArray
 import no.mechatronics.sfi.fmi4j.common.StringArray
-import no.mechatronics.sfi.fmi4j.common.VariableAccessor
+import no.mechatronics.sfi.fmi4j.fmu.proxy.v2.FmiLibraryWrapper
+import no.mechatronics.sfi.fmi4j.modeldescription.variables.ModelVariables
 import java.util.concurrent.ConcurrentHashMap
 
 /**
  * @author Lars Ivar Hatledal
  */
-class FmuVariableAccessor(
-        val fmu: AbstractFmu<*, *>
-): VariableAccessor {
-
-    private val wrapper
-        get() = fmu.wrapper
-
-   companion object {
-       private val map = ConcurrentHashMap<String, Int>()
-   }
+class FmuVariableAccessorImpl(
+        private val wrapper: FmiLibraryWrapper<*>,
+        private val modelVariables: ModelVariables
+): FmuVariableAccessor {
 
     //read
     override fun readInteger(name: String) = readInteger(process(name))
@@ -86,8 +82,11 @@ class FmuVariableAccessor(
     override fun writeBoolean(vr: IntArray, value: IntArray) = wrapper.setBoolean(vr, value)
 
     private fun process(name: String): Int {
-       return map.getOrPut(name, {fmu.modelVariables.getValueReference(name)})
+       return map.getOrPut(name, {modelVariables.getValueReference(name)})
     }
 
+    private companion object {
+        val map = ConcurrentHashMap<String, Int>()
+    }
 
 }

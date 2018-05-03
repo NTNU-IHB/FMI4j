@@ -30,13 +30,16 @@ import com.sun.jna.Pointer
 import com.sun.jna.ptr.PointerByReference
 import no.mechatronics.sfi.fmi4j.common.RealArray
 import no.mechatronics.sfi.fmi4j.common.StringArray
-import no.mechatronics.sfi.fmi4j.fmu.proxy.v2.structs.Fmi2CallbackFunctions
+import no.mechatronics.sfi.fmi4j.fmu.proxy.v2.structs.FmiCallbackFunctions
+
+
 
 /**
+ * Interface to the native FMI functions. Used by JNA
  *
  * @author Lars Ivar Hatledal laht@ntnu.no.
  */
-interface Fmi2Library : Library {
+interface FmiLibrary : Library {
 
     /**
      * Returns the string to uniquely identify the “fmi2TypesPlatform.h” header file used for
@@ -139,7 +142,7 @@ interface Fmi2Library : Library {
      * logging is disabled. [The FMU enable/disables LogCategories which are useful for
      * debugging according to this argument. Which LogCategories the FMU sets is unspecified.]
      */
-    fun fmi2Instantiate(instanceName: String, type: Int, guid: String, resourceLocation: String, functions: Fmi2CallbackFunctions, visible: Int, loggingOn: Int): Pointer?
+    fun fmi2Instantiate(instanceName: String, type: Int, guid: String, resourceLocation: String, functions: FmiCallbackFunctions, visible: Int, loggingOn: Int): Pointer?
 
     /**
      * Informs the FMU that the simulation run is terminated. After calling this function, the final

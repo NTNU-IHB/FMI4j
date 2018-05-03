@@ -26,8 +26,8 @@ package no.mechatronics.sfi.fmi4j.modeldescription.variables
 
 import no.mechatronics.sfi.fmi4j.common.FmiStatus
 import no.mechatronics.sfi.fmi4j.common.FmuRead
+import no.mechatronics.sfi.fmi4j.common.FmuVariableAccessor
 import no.mechatronics.sfi.fmi4j.common.Real
-import no.mechatronics.sfi.fmi4j.common.VariableAccessor
 import java.io.Serializable
 import javax.xml.bind.annotation.*
 
@@ -215,7 +215,7 @@ interface BoundedScalarVariable<E>: TypedScalarVariable<E> {
 sealed class AbstractTypedScalarVariable<E>: TypedScalarVariable<E>, Serializable {
 
     @JvmField
-    internal var accessor: VariableAccessor? = null
+    internal var accessor: FmuVariableAccessor? = null
 
 }
 

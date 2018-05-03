@@ -17,12 +17,10 @@ class ControlledTemperatureTest_kt {
     fun test() {
 
         ControlledTemperature.newInstance().use { ct ->
-            if (ct.init()) {
 
-                val temp: FmuRead<Real> = ct.outputs.getTemperature_Reference()
-                LOG.info("Temperature_reference=$temp")
-
-            }
+            ct.init()
+            val temp: FmuRead<Real> = ct.outputs.getTemperature_Reference()
+            LOG.info("Temperature_reference=$temp")
 
         }
 

@@ -25,31 +25,32 @@
 package no.mechatronics.sfi.fmi4j.fmu
 
 import no.mechatronics.sfi.fmi4j.common.FmiStatus
-import no.mechatronics.sfi.fmi4j.common.VariableAccessor
+import no.mechatronics.sfi.fmi4j.common.FmuVariableAccessor
 import no.mechatronics.sfi.fmi4j.fmu.misc.*
-import no.mechatronics.sfi.fmi4j.fmu.proxy.v2.Fmi2Library
-import no.mechatronics.sfi.fmi4j.fmu.proxy.v2.Fmi2LibraryWrapper
-import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescription
+import no.mechatronics.sfi.fmi4j.fmu.proxy.v2.FmiLibrary
+import no.mechatronics.sfi.fmi4j.fmu.proxy.v2.FmiLibraryWrapper
+import no.mechatronics.sfi.fmi4j.modeldescription.SpecificModelDescription
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.*
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import java.io.Closeable
 import java.lang.UnsupportedOperationException
 
-abstract class AbstractFmu<out E: ModelDescription, out T: Fmi2LibraryWrapper<*>> internal constructor(
-        val fmuFile: FmuFile,
+private const val DEFAULT_STOP_TIME = (60 * 60 * 24).toDouble() //24 hours
+
+abstract class AbstractFmu<out E: SpecificModelDescription, out T: FmiLibraryWrapper<*>> internal constructor(
+        val fmu: Fmu,
         val wrapper: T
-) : Closeable {
+): FmuInstance {
 
     private companion object {
-        val LOG: Logger = LoggerFactory.getLogger(AbstractFmu::class.java)
+        private val LOG: Logger = LoggerFactory.getLogger(AbstractFmu::class.java)
     }
 
-    val variableAccessor: VariableAccessor
-            = FmuVariableAccessor(this)
+    override val variableAccessor: FmuVariableAccessor
+            = FmuVariableAccessorImpl(wrapper, modelVariables)
 
     init {
-        modelVariables.forEach{ variable ->
+        modelVariables.forEach { variable ->
             if (variable is AbstractTypedScalarVariable) {
                 variable::class.java.getField("accessor").also { field ->
                     field.set(variable, variableAccessor)
@@ -58,28 +59,14 @@ abstract class AbstractFmu<out E: ModelDescription, out T: Fmi2LibraryWrapper<*>
         }
     }
 
-    abstract val modelDescription: E
-
     /**
-     * @see ModelDescription.modelName
-     */
-    val modelName: String
-        get() = modelDescription.modelName
-
-    /**
-     * @see ModelDescription.modelVariables
-     */
-    val modelVariables: ModelVariables
-        get() = modelDescription.modelVariables
-
-    /**
-     * @see Fmi2Library.fmi2GetTypesPlatform
+     * @see FmiLibrary.fmi2GetTypesPlatform
      */
     val typesPlatform
         get() = wrapper.typesPlatform
 
     /**
-     * @see Fmi2Library.fmi2GetVersion
+     * @see FmiLibrary.fmi2GetVersion
      */
     val version
         get() = wrapper.version
@@ -88,52 +75,56 @@ abstract class AbstractFmu<out E: ModelDescription, out T: Fmi2LibraryWrapper<*>
      * Has the FMU been initialized yet?
      * That is, has init() been called?
      */
-    var isInitialized = false
-        private set
+    override var isInitialized = false
+        protected set
 
     /**
-     * @see Fmi2LibraryWrapper.isTerminated
+     * @see FmiLibraryWrapper.isTerminated
      */
-    val isTerminated
+    override val isTerminated
         get() = wrapper.isTerminated
 
 
     protected var stopDefined = false
-    private set
+        private set
 
-    protected var stopTime: Double = Double.MAX_VALUE
-    private set
+    protected var stopTime: Double = 0.0
+        private set
 
     /**
-     * @see Fmi2LibraryWrapper.lastStatus
+     * @see FmiLibraryWrapper.lastStatus
      */
-    val lastStatus: FmiStatus
+    override val lastStatus: FmiStatus
         get() =  wrapper.lastStatus
 
     /**
-     * @see Fmi2Library.fmi2SetDebugLogging
+     * @see FmiLibrary.fmi2SetDebugLogging
      */
     fun setDebugLogging(loggingOn: Boolean, nCategories: Int, categories: Array<String>): FmiStatus
             =  wrapper.setDebugLogging(loggingOn, nCategories, categories)
 
-
-    /**
-     * Call init with 0.0 as start.
-     */
-    fun init() = init(0.0)
+    override fun init() {
+        init(0.0)
+    }
 
     /**
      * Call init with provided start
+     *
      * @param start the start time
      */
-    fun init(start :Double) = init(start, -1.0)
+    override fun init(start: Double) {
+        init(start, 0.0)
+    }
 
     /**
      * Call init with provided start and stop
      * @param start the start time
      * @param stop the stop time
+     *
+     * @throws IllegalArgumentException if start < 0
+     * @throws IllegalStateException if a necessary FMU call does not return OK
      */
-    open fun init(start: Double, stop: Double): Boolean {
+    override fun init(start: Double, stop: Double) {
 
         if (!isInitialized) {
 
@@ -150,16 +141,17 @@ abstract class AbstractFmu<out E: ModelDescription, out T: Fmi2LibraryWrapper<*>
 
             stopDefined = (stop > start)
             if (stopDefined) stopTime = stop
-            LOG.debug("setupExperiment params: start=$start, stopDefined=$stopDefined, stop=$stop")
-            var status = wrapper.setupExperiment(false, 0.0,
-                    start, stopDefined, stop)
-            if (status != FmiStatus.OK) {
-                return false
+            LOG.debug("setupExperiment params: start=$start, stopDefined=$stopDefined, stop=$stopTime")
+            wrapper.setupExperiment(true, 1E-4, start, stopDefined, stopTime).also {
+                if (it != FmiStatus.OK) {
+                    throw IllegalStateException("setupExperiment returned status $it")
+                }
             }
-            status = wrapper.enterInitializationMode()
-            LOG.trace("Called enterInitializationMode with status $status")
-            if (status != FmiStatus.OK) {
-                return false
+
+            wrapper.enterInitializationMode().also {
+                if (it != FmiStatus.OK) {
+                    throw IllegalStateException("enterInitializationMode returned status $it")
+                }
             }
 
             assignStartValues {
@@ -169,33 +161,33 @@ abstract class AbstractFmu<out E: ModelDescription, out T: Fmi2LibraryWrapper<*>
                 LOG.debug("Applied start values to $it variables with variability != CONSTANT and initial == EXACT or causality == INPUT ")
             }
 
-            status = wrapper.exitInitializationMode()
-            LOG.trace("Called exitInitializationMode with status $status")
-            if (status != FmiStatus.OK) {
-                return false
+            wrapper.exitInitializationMode().also {
+                if (it != FmiStatus.OK) {
+                    throw IllegalArgumentException("exitInitializationMode returned status $it")
+                }
             }
 
             isInitialized = true
 
-            return true
-
         } else {
             LOG.warn("Trying to call init, but FMU has already been initialized, and has not been reset!")
-            return false
         }
 
+    }
+
+    override fun terminate(): Boolean {
+        return terminate(true)
     }
 
     /**
      * Terminates the FMU
      *
-     * @param freeInstance true if you are completely finished with the fmu
+     * @param freeInstance true if you are completely finished with the fmuInstance
      *
-     * @see Fmi2Library.fmi2Terminate
-     * @see Fmi2Library.fmi2FreeInstance
+     * @see FmiLibrary.fmi2Terminate
+     * @see FmiLibrary.fmi2FreeInstance
      */
-    @JvmOverloads
-    open fun terminate(freeInstance: Boolean = true): Boolean {
+    fun terminate(freeInstance: Boolean): Boolean {
         return wrapper.terminate(freeInstance).let { status ->
             LOG.debug("FMU '${modelDescription.modelName}' terminated with status $status! #${hashCode()}")
             status == FmiStatus.OK
@@ -203,32 +195,24 @@ abstract class AbstractFmu<out E: ModelDescription, out T: Fmi2LibraryWrapper<*>
     }
 
     /**
-     * Same as calling terminate(true), needed in order to implement Closable
-     * @see Closeable
+     * @see FmiLibrary.fmi2Reset
      */
-    override fun close() {
-        terminate(true)
+    override fun reset(): Boolean {
+        return wrapper.reset() == FmiStatus.OK
+
     }
 
     /**
-     * @see Fmi2Library.fmi2Reset
-     */
-    fun reset(): Boolean {
-        return reset(true).let { status ->
-            status == FmiStatus.OK
-        }
-    }
-
-    /**
+     * Custom reset function for invoking reset on FMUs that dont comply with the standard (e.g. 20-sim).
      *
      * @param requireReinit According to the FMI spec, init() must be called after a call to reset().
      * Setting requireReinit to false allows you to ignore that.
-     * Only use if the tools you are using does not implement the standard correctly.
+     * Only use if the tool you are using does not implement the standard correctly.
      *
-     * @see Fmi2Library.fmi2Reset
+     * @see FmiLibrary.fmi2Reset
      */
-    fun reset(requireReinit: Boolean): FmiStatus {
-        return wrapper.reset().also {
+    fun reset(requireReinit: Boolean): Boolean {
+        return reset().also {
             if (requireReinit) {
                 isInitialized = false
             }
@@ -236,7 +220,7 @@ abstract class AbstractFmu<out E: ModelDescription, out T: Fmi2LibraryWrapper<*>
     }
 
     /**
-     * @see Fmi2Library.fmi2GetDirectionalDerivative
+     * @see FmiLibrary.fmi2GetDirectionalDerivative
      */
     fun getDirectionalDerivative(d: DirectionalDerivatives): FmiStatus {
         return if (!modelDescription.providesDirectionalDerivative) {
@@ -248,7 +232,7 @@ abstract class AbstractFmu<out E: ModelDescription, out T: Fmi2LibraryWrapper<*>
     }
 
     /**
-     * @see Fmi2Library.fmi2GetFMUstate
+     * @see FmiLibrary.fmi2GetFMUstate
      */
     @JvmOverloads
     fun getFMUState(state: FmuState = FmuState()): FmuState {
@@ -259,7 +243,7 @@ abstract class AbstractFmu<out E: ModelDescription, out T: Fmi2LibraryWrapper<*>
     }
 
     /**
-     * @see Fmi2Library.fmi2SetFMUstate
+     * @see FmiLibrary.fmi2SetFMUstate
      */
     fun setFMUState(fmuState: FmuState): FmiStatus {
         if (!modelDescription.canGetAndSetFMUstate) {
@@ -269,7 +253,7 @@ abstract class AbstractFmu<out E: ModelDescription, out T: Fmi2LibraryWrapper<*>
     }
 
     /**
-     * @see Fmi2Library.fmi2FreeFMUstate
+     * @see FmiLibrary.fmi2FreeFMUstate
      */
     fun freeFMUState(fmuState: FmuState): FmiStatus {
         if (!modelDescription.canGetAndSetFMUstate) {
@@ -279,7 +263,7 @@ abstract class AbstractFmu<out E: ModelDescription, out T: Fmi2LibraryWrapper<*>
     }
 
     /**
-     * @see Fmi2Library.fmi2SerializedFMUstateSize
+     * @see FmiLibrary.fmi2SerializedFMUstateSize
      */
     fun serializedFMUStateSize(fmuState: FmuState): Int {
         if (!modelDescription.canSerializeFMUstate) {
@@ -289,7 +273,7 @@ abstract class AbstractFmu<out E: ModelDescription, out T: Fmi2LibraryWrapper<*>
     }
 
     /**
-     * @see Fmi2Library.fmi2SerializeFMUstate
+     * @see FmiLibrary.fmi2SerializeFMUstate
      */
     fun serializeFMUState(fmuState: FmuState):ByteArray {
         if (!modelDescription.canSerializeFMUstate) {
@@ -299,7 +283,7 @@ abstract class AbstractFmu<out E: ModelDescription, out T: Fmi2LibraryWrapper<*>
     }
 
     /**
-     * @see Fmi2Library.fmi2DeSerializeFMUstate
+     * @see FmiLibrary.fmi2DeSerializeFMUstate
      */
     fun deSerializeFMUState(serializedState: ByteArray): FmuState {
         if (!modelDescription.canSerializeFMUstate) {

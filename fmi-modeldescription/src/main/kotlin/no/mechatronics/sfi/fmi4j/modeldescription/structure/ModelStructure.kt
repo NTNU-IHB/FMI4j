@@ -112,7 +112,7 @@ class ModelStructureImpl: ModelStructure, Serializable {
         get() = _initialUnknowns ?: emptyList()
 
     override fun toString(): String {
-        return "ModelStructure(outputs=$outputs, derivatives=$derivatives, initialUnknowns=$initialUnknowns)"
+        return "ModelStructureImpl(outputs=$outputs, derivatives=$derivatives, initialUnknowns=$initialUnknowns)"
     }
 
 }

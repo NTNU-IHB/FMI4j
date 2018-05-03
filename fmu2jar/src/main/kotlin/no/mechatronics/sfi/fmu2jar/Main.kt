@@ -54,7 +54,7 @@ class Main {
       fun main(args: Array<String>) {
 
           val options = Options().apply {
-              addOption(HELP, false, "Prints this message")
+              addOption(HELP, false, "Prints this message and quits")
               addOption(FMU_FILE, true, "Path to the FMU")
               addOption(MAVEN_LOCAL_OPT, false, "Should the .jar be published to maven local? (optional)")
               addOption(OUTPUT_FOLDER, true, "Specify where to copy the generated .jar. Not needed if '-$MAVEN_LOCAL_OPT true'")
@@ -90,7 +90,7 @@ class Main {
               }
 
           } catch(ex: Exception) {
-              ex.printStackTrace(System.out)
+              ex.printStackTrace(System.err)
               error("Application error..")
           }
 

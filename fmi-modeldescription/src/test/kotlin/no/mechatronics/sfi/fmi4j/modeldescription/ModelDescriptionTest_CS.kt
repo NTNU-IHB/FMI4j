@@ -24,7 +24,6 @@
 
 package no.mechatronics.sfi.fmi4j.modeldescription
 
-import no.mechatronics.sfi.fmi4j.modeldescription.cs.CoSimulationModelDescription
 import no.mechatronics.sfi.fmi4j.modeldescription.misc.DefaultExperiment
 import no.mechatronics.sfi.fmi4j.modeldescription.misc.VariableNamingConvention
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.ModelVariables
@@ -125,14 +124,6 @@ class ModelDescriptionTest_CS {
         LOG.info("HeatCapacity1.T0=$variable")
         Assert.assertEquals(298.0, variable.start!!, 0.0)
     }
-
-//    @Test
-//    fun testTypeName() {
-//        val variables: ModelVariables =  modelDescription.modelVariables
-//        val variable: RealVariable = variables.getByName("Temperature_Room") as RealVariable
-//        LOG.info("Temperature_Room=$variable")
-//        Assert.assertEquals("Real", variable.typeName)
-//    }
 
     @Test
     fun testMinMax() {

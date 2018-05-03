@@ -12,8 +12,6 @@ repositories {
 
 dependencies {
 
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
-
     compile group: 'commons-cli', name: 'commons-cli', version: '1.4'
     compile group: 'org.apache.commons', name: 'commons-csv', version: '1.5'
 

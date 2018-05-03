@@ -25,7 +25,7 @@
 package no.mechatronics.sfi.fmi4j.crosscheck
 
 import no.mechatronics.sfi.fmi4j.fmu.FmiSimulation
-import no.mechatronics.sfi.fmi4j.fmu.FmuFile
+import no.mechatronics.sfi.fmi4j.fmu.Fmu
 import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.Options
@@ -40,7 +40,7 @@ const val STEP_SIZE = "stepSize"
 const val START_TIME = "startTime"
 const val STOP_TIME = "stopTime"
 const val OUTPUT_VARIABLES = "outputs"
-const val FMU = "fmu"
+const val FMU = "fmuInstance"
 const val HELP = "help"
 const val OUT_DIR = "outputDirectory"
 const val CS = "cs"
@@ -51,7 +51,7 @@ class SimulationOptions(
 ) {
 
     val me: Boolean = cmd.hasOption(ME)
-    val fmu: FmiSimulation = FmuFile.from(File(cmd.getOptionValue(FMU))).let {
+    val fmu: FmiSimulation = Fmu.from(File(cmd.getOptionValue(FMU))).let {
         if (cmd.hasOption(ME)) {
             it.asModelExchangeFmu().newInstance(EulerIntegrator(1E-3))
         } else {
@@ -88,8 +88,11 @@ object FmuDriver {
             val result = simulate(simOptions)
             simOptions.outputDirectory?.also { parent ->
                 File(parent,"${simOptions.fmu.modelDescription.modelName}_out.csv").apply {
-                    bufferedWriter().write(result)
-                    LOG.info("Wrote results to file ${absolutePath}")
+                    with(bufferedWriter()) {
+                        write(result)
+                        close()
+                    }
+                    LOG.info("Wrote results to file $absolutePath")
                 }
             }
 
@@ -101,24 +104,23 @@ object FmuDriver {
 
         val sb = StringBuilder()
         options.fmu.use { fmu ->
-            if (fmu.init(options.startTime, options.stopTime)) {
+            fmu.init(options.startTime, options.stopTime)
 
-                val format = CSVFormat.DEFAULT.withHeader("Time", *options.outputVariables.toTypedArray())
-                val printer = CSVPrinter(sb, format)
+            val format = CSVFormat.DEFAULT.withHeader("Time", *options.outputVariables.toTypedArray())
+            val printer = CSVPrinter(sb, format)
 
-                val outputVariables = options.outputVariables.map {
-                    fmu.modelVariables.getByName(it)
-                }
-
-                val dt = options.stepSize
-                while (fmu.currentTime <= options.stopTime) {
-                    printer.printRecord(fmu.currentTime, *outputVariables.map { it.read().value }.toTypedArray())
-                    if (!fmu.doStep(dt)) {
-                        break
-                    }
-                }
-
+            val outputVariables = options.outputVariables.map {
+                fmu.modelVariables.getByName(it)
             }
+
+            val dt = options.stepSize
+            while (fmu.currentTime <= options.stopTime) {
+                printer.printRecord(fmu.currentTime, *outputVariables.map { it.read().value }.toTypedArray())
+                if (!fmu.doStep(dt)) {
+                    break
+                }
+            }
+
         }
 
         return sb.toString()

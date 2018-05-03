@@ -32,11 +32,11 @@ import javax.xml.bind.annotation.XmlElement
 /**
  * @author Lars Ivar Hatledal
  */
-interface LogCategories: Iterable<Category> {
+interface LogCategories: Iterable<LogCategory> {
 
     val size: Int
     operator fun contains(category: String): Boolean
-    operator fun contains(category: Category): Boolean
+    operator fun contains(category: LogCategory): Boolean
 
 }
 
@@ -46,16 +46,16 @@ class LogCategoriesImpl : LogCategories, Serializable {
     override val size
         get() = categories.size
 
-    override fun iterator(): Iterator<Category>
+    override fun iterator(): Iterator<LogCategory>
             = categories.iterator()
 
     @XmlElement(name = "Category")
-    private val _categories: List<CategoryImpl>? = null
+    private val _categories: List<LogCategoryImpl>? = null
 
-    private val categories: List<Category>
+    private val categories: List<LogCategory>
         get() = _categories ?: emptyList()
 
-    override fun contains(category: Category)
+    override fun contains(category: LogCategory)
             = categories.contains(category)
 
     override fun contains(category: String)
