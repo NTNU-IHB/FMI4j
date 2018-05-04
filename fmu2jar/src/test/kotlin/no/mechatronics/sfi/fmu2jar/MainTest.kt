@@ -49,7 +49,7 @@ class MainTest {
         val args = arrayOf<String>(
                 "-fmu", file.absolutePath,
                 "-out", out.absolutePath,
-                "-mavenLocal"
+                "-mvn"
         )
 
         LOG.info(args.joinToString(" "))

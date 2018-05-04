@@ -25,9 +25,8 @@ class ModelExchangeTest2_kt {
         @BeforeClass
         @Throws(IOException::class)
         fun setUp() {
-            val path = "../test/fmi2/me/win64/FMUSDK/2.0.4/bouncingBall/bouncingBall.fmu"
-            val file = File(path)
-            Assert.assertNotNull(file)
+            val file = File(TEST_FMUs, "FMI_2.0/ModelExchange/win64/FMUSDK/2.0.4/bouncingBall/bouncingBall.fmu")
+            Assert.assertTrue(file.exists())
             fmu = Fmu.from(file)
         }
 

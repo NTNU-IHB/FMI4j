@@ -24,17 +24,17 @@ data class TestOptions(
 
 private val options = listOf(
         TestOptions(
-            fmuPath = "test/fmi2/cs/win64/FMUSDK/2.0.4/BouncingBall/bouncingBall.fmu",
+                fmuPath = "$TEST_FMUs/FMI_2.0/CoSimulation/win64/FMUSDK/2.0.4/BouncingBall/bouncingBall.fmu",
             stepSize = 1E-3,
                 stopTime = 50.0,
             vr = 0),
+//        TestOptions(
+//                fmuPath = "C:/Users/laht/Local Documents/Vico/Extra/FMUs/20161108/HydraulicCylinderComplex.fmu",
+//                stepSize = 1E-4,
+//                stopTime = 20.0,
+//                vr = 155),
         TestOptions(
-                fmuPath = "C:\\Users\\laht\\Local Documents\\Vico\\Extra\\FMUs\\20161108\\HydraulicCylinderComplex.fmu",
-                stepSize = 1E-4,
-                stopTime = 20.0,
-                vr = 155),
-        TestOptions(
-                fmuPath = "C:\\Users\\laht\\IdeaProjects\\FMI4j\\test\\fmi2\\cs\\win64\\20sim\\4.6.4.8004\\TorsionBar\\TorsionBar.fmu",
+                fmuPath = "$TEST_FMUs/FMI_2.0/CoSimulation/win64/20sim/4.6.4.8004/TorsionBar/TorsionBar.fmu",
                 stepSize = 1E-5,
                 stopTime = 12.0,
                 vr = 2))
@@ -46,7 +46,7 @@ object Benchmark {
     @JvmStatic
     fun main(args: Array<String>) {
 
-        for (option in intArrayOf(0).map { options[it] }) {
+        for (option in intArrayOf(0, 1).map { options[it] }) {
 
             LOG.info("Running FMU '${option.fmuName}'")
 

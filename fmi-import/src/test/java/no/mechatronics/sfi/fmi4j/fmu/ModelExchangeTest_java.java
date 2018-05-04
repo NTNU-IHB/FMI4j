@@ -52,13 +52,10 @@ public class ModelExchangeTest_java {
 
 
     @BeforeClass
-    public static void setUp() throws IOException {
-
-        String path = "../test/fmi2/me/win64/FMUSDK/2.0.4/vanDerPol/vanDerPol.fmu";
-        final File file = new File(path);
-        Assert.assertNotNull(file);
+    public static void setup() throws IOException {
+        final File file = new File(TEST_FMUsKt.getTEST_FMUs(), "FMI_2.0/ModelExchange/win64/FMUSDK/2.0.4/vanDerPol/vanDerPol.fmu");
+        Assert.assertTrue(file.exists());
         fmu = Fmu.from(file);
-
     }
 
     @AfterClass

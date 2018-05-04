@@ -22,12 +22,9 @@ class CoSimulationFmuInstanceInstanceTest_kt {
         @JvmStatic
         @BeforeClass
         fun setUp() {
-
-            val path = "../test/fmi2/cs/win64/20Sim/4.6.4.8004/ControlledTemperature/ControlledTemperature.fmu"
-            val file = File(path)
-            Assert.assertNotNull(file)
+            val file = File(TEST_FMUs, "FMI_2.0/CoSimulation/win64/20Sim/4.6.4.8004/ControlledTemperature/ControlledTemperature.fmu")
+            Assert.assertTrue(file.exists())
             fmu = Fmu.from(file)
-
         }
 
         @JvmStatic
