@@ -12,7 +12,9 @@ repositories {
 
 dependencies {
 
-    compile group: 'commons-cli', name: 'commons-cli', version: '1.4'
+    //compile group: 'commons-cli', name: 'commons-cli', version: '1.4'
+
+    implementation group: 'info.picocli', name: 'picocli', version: '2.3.0'
     compile group: 'org.apache.commons', name: 'commons-csv', version: '1.5'
 
     compile project(':fmi-import')

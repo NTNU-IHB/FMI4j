@@ -20,7 +20,7 @@ class CompareWithJavaFmi {
 
         val LOG: Logger = LoggerFactory.getLogger(CompareWithJavaFmi::class.java)
 
-        const val path = "../test/fmi2/cs/win64/20Sim/4.6.4.8004/ControlledTemperature/ControlledTemperature.fmu"
+        val path: String = "$TEST_FMUs/FMI_2.0/CoSimulation/win64/20Sim/4.6.4.8004/ControlledTemperature/ControlledTemperature.fmu"
 
         lateinit var fmu: Fmu
 

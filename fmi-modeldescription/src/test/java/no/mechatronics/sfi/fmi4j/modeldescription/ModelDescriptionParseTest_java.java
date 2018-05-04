@@ -1,26 +1,21 @@
 package no.mechatronics.sfi.fmi4j.modeldescription;
 
 
-import kotlin.io.FilesKt;
-import kotlin.text.Charsets;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.File;
-import java.io.IOException;
 
 public class ModelDescriptionParseTest_java {
 
     @Test
-    public void test() throws IOException {
+    public void test() {
 
-        File file1 = new File("../test/fmi2/cs/win64/20sim/4.6.4.8004/ControlledTemperature/ControlledTemperature.fmu");
-        Assert.assertTrue(file1.exists());
-        ModelDescriptionParser.parse(file1).asCoSimulationModelDescription();
+        File fmu = new File(TEST_FMUsKt.getTEST_FMUs(), "FMI_2.0/CoSimulation/win64/20sim/4.6.4.8004/ControlledTemperature/ControlledTemperature.fmu");
+        Assert.assertTrue(fmu.exists());
+        ModelDescriptionParser.parse(fmu).asCoSimulationModelDescription();
 
-        File file2 = new File("../test/fmi2/cs/win64/20sim/4.6.4.8004/ControlledTemperature/modelDescription.xml");
-        Assert.assertTrue(file2.exists());
-        String xml = FilesKt.readText(file2, Charsets.UTF_8);
+        String xml = ModelDescriptionParser.extractModelDescriptionXml(fmu);
         ModelDescriptionParser.parse(xml).asCoSimulationModelDescription();
 
     }

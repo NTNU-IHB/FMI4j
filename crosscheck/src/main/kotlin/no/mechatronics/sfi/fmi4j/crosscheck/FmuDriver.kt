@@ -24,107 +24,85 @@
 
 package no.mechatronics.sfi.fmi4j.crosscheck
 
-import no.mechatronics.sfi.fmi4j.fmu.FmiSimulation
 import no.mechatronics.sfi.fmi4j.fmu.Fmu
-import org.apache.commons.cli.CommandLine
-import org.apache.commons.cli.DefaultParser
-import org.apache.commons.cli.Options
 import org.apache.commons.csv.CSVFormat
 import org.apache.commons.csv.CSVPrinter
 import org.apache.commons.math3.ode.nonstiff.EulerIntegrator
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import picocli.CommandLine
 import java.io.File
 
-const val STEP_SIZE = "stepSize"
-const val START_TIME = "startTime"
-const val STOP_TIME = "stopTime"
-const val OUTPUT_VARIABLES = "outputs"
-const val FMU = "fmuInstance"
-const val HELP = "help"
-const val OUT_DIR = "outputDirectory"
-const val CS = "cs"
-const val ME = "me"
-
-class SimulationOptions(
-        private val cmd: CommandLine
-) {
-
-    val me: Boolean = cmd.hasOption(ME)
-    val fmu: FmiSimulation = Fmu.from(File(cmd.getOptionValue(FMU))).let {
-        if (cmd.hasOption(ME)) {
-            it.asModelExchangeFmu().newInstance(EulerIntegrator(1E-3))
-        } else {
-            it.asCoSimulationFmu().newInstance()
-        }
-    }
-    val stepSize: Double = cmd.getOptionValue(STEP_SIZE)?.toDouble() ?: 1E-3
-    val startTime: Double = cmd.getOptionValue(START_TIME)?.toDouble() ?: 0.0
-    val stopTime: Double = cmd.getOptionValue(STOP_TIME)?.toDouble() ?: 10.0
-    val outputVariables: List<String> = cmd.getOptionValue(OUTPUT_VARIABLES)?.split(" ") ?: emptyList()
-    val outputDirectory: String? = cmd.getOptionValue(OUT_DIR)
-
-}
 
 object FmuDriver {
 
     private val LOG: Logger = LoggerFactory.getLogger(FmuDriver::class.java)
 
-    @JvmStatic
-    fun main(args: Array<String>) {
 
-        Options().apply {
+    @CommandLine.Command(name = "fmudriver")
+    class Args : Runnable {
 
-            addOption(HELP, false, "Prints this message")
-            addOption(FMU, true, "path to the FMU")
-            addOption(STEP_SIZE, true, "The stepsize")
-            addOption(STOP_TIME, true, "The stoptime")
-            addOption(OUTPUT_VARIABLES, true, "The variables to print")
-            addOption(OUT_DIR, true, "output folder")
-            addOption(ME, false, "Model Exchange?")
+        @CommandLine.Option(names = ["-h", "--help"], description = ["Print this message and quits."], usageHelp = true)
+        private var showHelp = false
 
-        }.also {
-            val simOptions = DefaultParser().parse(it, args).let (::SimulationOptions)
-            val result = simulate(simOptions)
-            simOptions.outputDirectory?.also { parent ->
-                File(parent,"${simOptions.fmu.modelDescription.modelName}_out.csv").apply {
-                    with(bufferedWriter()) {
-                        write(result)
-                        close()
-                    }
-                    LOG.info("Wrote results to file $absolutePath")
+        @CommandLine.Option(names = ["-fmu", "--fmuPath"], description = ["Path to the FMU."], required = true)
+        private lateinit var fmuPath: File
+
+        @CommandLine.Option(names = ["-out", "--outputFolder"], description = ["Folder to store .csv result."], required = false)
+        private var outputFolder: String? = null
+
+        @CommandLine.Option(names = ["-dt", "--stepSize"], description = ["Step-size."], required = false)
+        private var dt: Double = 1E-3
+
+        @CommandLine.Option(names = ["-start", "--startTime"], description = ["Start time."], required = false)
+        private var startTime: Double = 0.0
+
+        @CommandLine.Option(names = ["-stop", "--stopTime"], description = ["Stop time."], required = false)
+        private var stopTime: Double = 10.0
+
+        @CommandLine.Option(names = ["-me"], description = ["Stop time."], required = false)
+        private var modelExchange: Boolean = false
+
+        @CommandLine.Option(names = ["-vars", "--variables"], description = ["Variables to print"], split = ", ")
+        private var outputVariables: Array<String> = arrayOf()
+
+        override fun run() {
+
+            Fmu.from(fmuPath).let {
+                if (modelExchange) it.asModelExchangeFmu().newInstance(EulerIntegrator(1E-3)) else it.asCoSimulationFmu().newInstance()
+            }.use { slave ->
+
+                slave.init(startTime, stopTime)
+
+                val sb = StringBuilder()
+                val format = CSVFormat.DEFAULT.withHeader("Time", *outputVariables)
+                val printer = CSVPrinter(sb, format)
+
+                val outputVariables = outputVariables.map {
+                    slave.modelVariables.getByName(it)
                 }
+
+                while (slave.currentTime <= stopTime) {
+                    printer.printRecord(slave.currentTime, *outputVariables.map { it.read().value }.toTypedArray())
+                    if (!slave.doStep(dt)) {
+                        break
+                    }
+                }
+
+                File(outputFolder, "${slave.modelName}_out.csv").apply {
+                    writeText(sb.toString())
+                    LOG.info("Wrote results to file $absoluteFile")
+                }
+
             }
 
         }
 
     }
 
-    private fun simulate(options: SimulationOptions): String {
-
-        val sb = StringBuilder()
-        options.fmu.use { fmu ->
-            fmu.init(options.startTime, options.stopTime)
-
-            val format = CSVFormat.DEFAULT.withHeader("Time", *options.outputVariables.toTypedArray())
-            val printer = CSVPrinter(sb, format)
-
-            val outputVariables = options.outputVariables.map {
-                fmu.modelVariables.getByName(it)
-            }
-
-            val dt = options.stepSize
-            while (fmu.currentTime <= options.stopTime) {
-                printer.printRecord(fmu.currentTime, *outputVariables.map { it.read().value }.toTypedArray())
-                if (!fmu.doStep(dt)) {
-                    break
-                }
-            }
-
-        }
-
-        return sb.toString()
-
+    @JvmStatic
+    fun main(args: Array<String>) {
+        CommandLine.run(Args(), System.out, *args)
     }
 
 

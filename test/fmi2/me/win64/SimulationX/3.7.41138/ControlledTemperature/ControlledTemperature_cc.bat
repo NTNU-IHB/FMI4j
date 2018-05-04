@@ -1,2 +1,0 @@
-@echo off
-%~dp0fmuCheck.win64.exe -e "%~dp0ControlledTemperature_cc.log" -o "%~dp0ControlledTemperature_cc.csv" -i "%~dp0ControlledTemperature_in.csv" -l 4 -h 1e-3 -s 10 "%~dp0ControlledTemperature.fmu

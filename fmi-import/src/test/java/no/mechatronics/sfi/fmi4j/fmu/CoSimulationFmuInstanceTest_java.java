@@ -49,12 +49,9 @@ public class CoSimulationFmuInstanceTest_java {
 
     @BeforeClass
     public static void setUp() throws IOException {
-
-        String path = "../test/fmi2/cs/win64/20Sim/4.6.4.8004/ControlledTemperature/ControlledTemperature.fmu";
-        final File file = new File(path);
-        Assert.assertNotNull(file);
+        final File file = new File(TEST_FMUsKt.getTEST_FMUs(), "FMI_2.0/CoSimulation/win64/20Sim/4.6.4.8004/ControlledTemperature/ControlledTemperature.fmu");
+        Assert.assertTrue(file.exists());
         fmuFile = Fmu.from(file);
-
     }
 
     @AfterClass

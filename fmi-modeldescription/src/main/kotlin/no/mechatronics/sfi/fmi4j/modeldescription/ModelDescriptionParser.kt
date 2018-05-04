@@ -62,6 +62,16 @@ object ModelDescriptionParser {
     }
 
     @JvmStatic
+    fun extractModelDescriptionXml(url: URL): String {
+        return url.openStream().use { extractModelDescriptionXml(it) }
+    }
+
+    @JvmStatic
+    fun extractModelDescriptionXml(file: File): String {
+        return file.inputStream().use { extractModelDescriptionXml(it) }
+    }
+
+    @JvmStatic
     fun extractModelDescriptionXml(stream: InputStream): String {
         ZipInputStream(stream).use {
             var nextEntry: ZipEntry? = it.nextEntry
