@@ -6,8 +6,7 @@ import org.javafmi.wrapper.Simulation
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.File
-import java.time.Duration
-import java.time.Instant
+import kotlin.system.measureTimeMillis
 
 
 data class TestOptions(
@@ -25,8 +24,8 @@ data class TestOptions(
 private val options = listOf(
         TestOptions(
                 fmuPath = "$TEST_FMUs/FMI_2.0/CoSimulation/win64/FMUSDK/2.0.4/BouncingBall/bouncingBall.fmu",
-                stepSize = 1E-3,
-                stopTime = 50.0,
+                stepSize = 1E-2,
+                stopTime = 100.0,
                 vr = 0),
         TestOptions(
                 fmuPath = "$TEST_FMUs/FMI_2.0/CoSimulation/win64/20sim/4.6.4.8004/TorsionBar/TorsionBar.fmu",
@@ -45,10 +44,12 @@ object Benchmark {
 
             LOG.info("Running FMU '${option.fmuName}'")
 
-            runJavaFMI(option)
-            System.gc()
-            runFmi4j(option)
 
+
+            runJavaFMI(option)
+            // System.gc()
+            runFmi4j(option)
+            //System.gc()
             println()
 
         }
@@ -59,7 +60,8 @@ object Benchmark {
 
         Fmu.from(File(option.fmuPath)).use { fmu ->
 
-            val iter = 3
+            val iter = 1
+            var total = 0.0
             for (i in 0..iter) {
 
                 fmu.asCoSimulationFmu().newInstance(loggingOn = false).use { instance ->
@@ -67,19 +69,19 @@ object Benchmark {
                     val h = instance.modelVariables.getByValueReference(option.vr)[0] as RealVariable
                     instance.init(0.0, option.stopTime)
 
-                    val start = Instant.now()
-                    var sum = 0.0
-                    var j = 0
-                    while (instance.currentTime < option.stopTime - option.stepSize) {
-                        !instance.doStep(option.stepSize)
-                        sum += h.read().value
-                        j += 1
-                    }
 
-                    val end = Instant.now()
+                    var j = 0
+                    var sum = 0.0
+                    measureTimeMillis {
+                        while (instance.currentTime < option.stopTime - option.stepSize) {
+                            !instance.doStep(option.stepSize)
+                            sum += h.read().value
+                            j += 1
+                        }
+                    }.also { total = it.toDouble() }
 
                     if (i == iter) {
-                        println("FMI4j: ${Duration.between(start, end).toMillis()}ms")
+                        println("FMI4j: ${total}ms")
                         println("sum=$sum, iter=$j")
                     }
 
@@ -93,7 +95,8 @@ object Benchmark {
 
     fun runJavaFMI(option: TestOptions) {
 
-        val iter = 3
+        val iter = 1
+        var total = 0.0
         for (i in 0..iter) {
 
             Simulation(option.fmuPath).apply {
@@ -101,19 +104,18 @@ object Benchmark {
                 val h = read(modelDescription.getModelVariable(option.vr).name)
                 init(0.0, option.stopTime)
 
-                val start = Instant.now()
-                var sum = 0.0
                 var j = 0
-                while (currentTime < option.stopTime - option.stepSize) {
-                    doStep(option.stepSize)
-                    sum += h.asDouble()
-                    j++
-                }
-
-                val end = Instant.now()
+                var sum = 0.0
+                measureTimeMillis {
+                    while (currentTime < option.stopTime - option.stepSize) {
+                        doStep(option.stepSize)
+                        sum += h.asDouble()
+                        j++
+                    }
+                }.also { total = it.toDouble() }
 
                 if (i == iter) {
-                    println("JavaFMI: ${Duration.between(start, end).toMillis()}ms")
+                    println("JavaFMI: ${total}ms")
                     println("sum=$sum, iter=$j")
                 }
 
