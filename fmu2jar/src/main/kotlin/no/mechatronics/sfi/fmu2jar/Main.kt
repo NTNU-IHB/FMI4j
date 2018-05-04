@@ -24,10 +24,22 @@
 
 package no.mechatronics.sfi.fmu2jar
 
-import org.apache.commons.cli.DefaultParser
-import org.apache.commons.cli.HelpFormatter
-import org.apache.commons.cli.Options
+
+import picocli.CommandLine
 import java.io.File
+
+class Main {
+
+    companion object {
+
+        @JvmStatic
+        fun main(args: Array<String>) {
+            CommandLine.run(Args(), System.out, *args)
+        }
+
+    }
+
+}
 
 class GenerateOptions(
         val mavenLocal: Boolean,
@@ -40,62 +52,45 @@ class GenerateOptions(
     }
 }
 
+@CommandLine.Command(name = "fmu2jar")
+class Args : Runnable {
 
-class Main {
+    @CommandLine.Option(names = ["-h", "--help"], description = ["Print this message and quits."], usageHelp = true)
+    private var showHelp = false
 
-  companion object {
+    @CommandLine.Option(names = ["-fmu", "--fmuPath"], description = ["Path to the FMU."], required = true)
+    private lateinit var fmuPath: File
 
-      private const val HELP = "help"
-      private const val FMU_FILE = "fmu"
-      private const val OUTPUT_FOLDER = "out"
-      private const val MAVEN_LOCAL_OPT = "mavenLocal"
+    @CommandLine.Option(names = ["-mvn", "--maven"], description = ["Should the .jar be published to maven local?"], required = false)
+    private var mvn: Boolean = false
 
-      @JvmStatic
-      fun main(args: Array<String>) {
+    @CommandLine.Option(names = ["-out", "--output"], description = ["Specify where to copy the generated .jar. Not needed if [-mvn --maven] has been specified."], required = false)
+    private var outputFolder: File? = null
 
-          val options = Options().apply {
-              addOption(HELP, false, "Prints this message and quits")
-              addOption(FMU_FILE, true, "Path to the FMU")
-              addOption(MAVEN_LOCAL_OPT, false, "Should the .jar be published to maven local? (optional)")
-              addOption(OUTPUT_FOLDER, true, "Specify where to copy the generated .jar. Not needed if '-$MAVEN_LOCAL_OPT true'")
-          }
+    override fun run() {
 
-          val cmd = DefaultParser().parse(options, args)
-          if (args.isEmpty() || cmd.hasOption(HELP)) {
-              HelpFormatter().printHelp("fmu2jar", options)
-          }
+        fmuPath.apply {
+            if (!(exists() && name.endsWith(".fmu", true))) {
+                error("Not a valid file: $absolutePath")
+            }
+        }
 
-          try {
+        try {
 
-              cmd.apply {
+        } catch (ex: Exception) {
+            ex.printStackTrace(System.err)
+            error("Application error..")
+        }
 
-                  getOptionValue(FMU_FILE)?.also { path ->
-                      val file = File(path.replace("\\", "/")).absoluteFile
-                      if (!(file.exists() && file.name.endsWith(".fmu", true))) {
-                          error("Not a valid file: ${file.absolutePath}")
-                      }
+        Fmu2Jar(fmuPath.absoluteFile).apply {
+            generateJar(GenerateOptions(
+                    mavenLocal = mvn,
+                    outputFolder = outputFolder?.absoluteFile
+            ))
+        }
 
-                      var outputFolder: File? = getOptionValue(OUTPUT_FOLDER)?.let {
-                          File(it.replace("\\", "/")).absoluteFile
-                      }
-
-                      Fmu2Jar(file).apply {
-                          generateJar(GenerateOptions(
-                                  mavenLocal = hasOption(MAVEN_LOCAL_OPT),
-                                  outputFolder = outputFolder))
-                      }
-
-                  }
-
-              }
-
-          } catch(ex: Exception) {
-              ex.printStackTrace(System.err)
-              error("Application error..")
-          }
-
-      }
-
-  }
-
+    }
 }
+
+
+
