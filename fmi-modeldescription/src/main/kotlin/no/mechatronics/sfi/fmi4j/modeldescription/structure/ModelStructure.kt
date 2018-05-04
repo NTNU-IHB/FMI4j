@@ -31,8 +31,6 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement
 import java.io.Serializable
 import javax.xml.bind.annotation.XmlAccessType
 import javax.xml.bind.annotation.XmlAccessorType
-import javax.xml.bind.annotation.XmlElement
-import javax.xml.bind.annotation.XmlElementWrapper
 
 
 /**
@@ -53,7 +51,7 @@ interface ModelStructure {
      * Ordered list of all outputs, in other words a list of ScalarVariable indices
      * where every corresponding ScalarVariable must have causality = "output"
      */
-    val outputs: List<Int>
+    val outputs: List<Unknown>
 
     /**
      * Ordered list of all state derivatives, in other words a list of ScalarVariable
@@ -93,13 +91,12 @@ interface ModelStructure {
 @XmlAccessorType(XmlAccessType.FIELD)
 class ModelStructureImpl: ModelStructure, Serializable {
 
-    @XmlElementWrapper(name = "Outputs")
-    @XmlElement(name = "Unknown")
-    @JacksonXmlElementWrapper(localName = "Outputs")
-    private val _outputs: List<Int>? = null
 
-    override val outputs: List<Int>
-        get() = _outputs ?: emptyList()
+    @JacksonXmlProperty(localName = "Outputs")
+    private val _outputs: Outputs? = null
+
+    override val outputs: List<Unknown>
+        get() = _outputs?.unknowns ?: emptyList()
 
     @JacksonXmlProperty(localName = "Derivatives")
     private val _derivatives: Derivatives? = null
@@ -127,19 +124,19 @@ class Outputs(
         @JacksonXmlProperty(localName = "Unknown")
         @JacksonXmlElementWrapper(useWrapping = false)
         val unknowns: List<UnknownImpl>? = null
-)
+) : Serializable
 
 @JacksonXmlRootElement(localName = "Derivatives")
 class Derivatives(
         @JsonProperty("Unknown")
         @JacksonXmlElementWrapper(useWrapping = false)
         val unknowns: List<UnknownImpl>? = null
-)
+) : Serializable
 
 @JacksonXmlRootElement(localName = "InitialUnknowns")
 class InitialUnknowns(
         @JsonProperty("Unknown")
         @JacksonXmlElementWrapper(useWrapping = false)
         val unknowns: List<UnknownImpl>? = null
-)
+) : Serializable
 

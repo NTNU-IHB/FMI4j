@@ -16,16 +16,15 @@ class TestBouncingBall_ME_win64 {
     fun setup() {
 
         val name = "bouncingBall"
-        val path = "../test/fmi2/me/win64/FMUSDK/2.0.4/bouncingBall/$name.fmu"
+        val path = "$TEST_FMUs/FMI_2.0/ModelExchange/win64/FMUSDK/2.0.4/bouncingBall/$name.fmu"
         Assert.assertTrue(File(path).exists())
 
         val args = arrayOf(
-                "-$FMU", "\"$path\"",
-                "-$STEP_SIZE", "0.01",
-                "-$STOP_TIME", "4",
-                "-$OUTPUT_VARIABLES", "h der(h) v der(v) g e",
-                "-$OUT_DIR", ".",
-                "-$ME"
+                "-fmu", "\"$path\"",
+                "-dt", "0.01",
+                "-stop", "4",
+                "-me",
+                "-vars", "h, der(h), v, der(v), g, e"
         )
 
         FmuDriver.main(args)

@@ -43,13 +43,13 @@ class MainTest {
 
         val fmuName = "ControlledTemperature"
 
-        val path = "../test/fmi2/cs/win64/20sim/4.6.4.8004/ControlledTemperature/$fmuName.fmu"
+        val path = "${System.getenv("TEST_FMUs")}/FMI_2.0/CoSimulation//win64/20sim/4.6.4.8004/ControlledTemperature/$fmuName.fmu"
         val file = File(path)
         Assert.assertTrue(file.exists())
         val args = arrayOf<String>(
                 "-fmu", file.absolutePath,
                 "-out", out.absolutePath,
-                "-mavenLocal"
+                "-mvn"
         )
 
         LOG.info(args.joinToString(" "))

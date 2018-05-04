@@ -16,13 +16,9 @@ class CodeGenerationTest {
     @Test
     fun generateBody() {
 
-        val path = "../test/fmi2/cs/win64/20sim/4.6.4.8004/ControlledTemperature/modelDescription.xml"
-        val file = File(path)
+        val file = File(System.getenv("TEST_FMUs"), "FMI_2.0/CoSimulation/win64/20sim/4.6.4.8004/ControlledTemperature/ControlledTemperature.fmu")
         Assert.assertTrue(file.exists())
-        val xml = file.readText(Charsets.UTF_8)
-        val md = ModelDescriptionParser.parse(xml)
-        Assert.assertNotNull(md)
-
+        val md = ModelDescriptionParser.parse(file)
         LOG.info(CodeGeneration.generateWrapper(md) )
 
     }

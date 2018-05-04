@@ -26,12 +26,7 @@ package no.mechatronics.sfi.fmi4j.modeldescription.variables
 
 import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.databind.DeserializationContext
-import com.fasterxml.jackson.databind.JsonNode
-import com.fasterxml.jackson.databind.MapperFeature
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer
-import com.fasterxml.jackson.databind.module.SimpleModule
-import com.fasterxml.jackson.module.kotlin.*
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.w3c.dom.Node
 import javax.xml.bind.JAXBContext
 import javax.xml.bind.annotation.adapters.XmlAdapter
@@ -46,44 +41,26 @@ class ScalarVariableAdapter : XmlAdapter<Any, AbstractTypedScalarVariable<*>>() 
     override fun unmarshal(v: Any): AbstractTypedScalarVariable<*> {
 
         val node = v as Node
-        val child = node.childNodes.item(0)
-
         val unmarshal by lazy {
-            val ctx = JAXBContext.newInstance(ScalarVariableImpl::class.java)
-            ctx.createUnmarshaller().unmarshal(node, ScalarVariableImpl::class.java).value
+            JAXBContext.newInstance(ScalarVariableImpl::class.java).let {
+                it.createUnmarshaller().unmarshal(node, ScalarVariableImpl::class.java).value
+            }
         }
 
+        val child = node.childNodes.item(0)
         return when (child.nodeName) {
-            "Integer" -> IntegerVariable(unmarshal)
-            "Real" -> RealVariable(unmarshal)
-            "String" -> StringVariable(unmarshal)
-            "Boolean" -> BooleanVariable(unmarshal)
-            "Enumeration" -> EnumerationVariable(unmarshal)
+            INTEGER_TYPE -> IntegerVariable(unmarshal)
+            REAL_TYPE -> RealVariable(unmarshal)
+            STRING_TYPE -> StringVariable(unmarshal)
+            BOOLEAN_TYPE -> BooleanVariable(unmarshal)
+            ENUMERATION_TYPE -> EnumerationVariable(unmarshal)
             else -> throw RuntimeException("Error parsing XML. Don't know what to do with '${child.nodeName}'")
         }
 
     }
 
     override fun marshal(v: AbstractTypedScalarVariable<*>?): Any {
-        TODO("not implemented")
-    }
-
-}
-
-private fun assignAttributeManually(tree: JsonNode, variable: ScalarVariableImpl) {
-
-//    val tree1 = parser.readValueAs(Map::class.java)
-//    println(tree1)
-//    val tree2 = parser.readValueAs(Map::class.java)
-//    println(tree2)
-//    println("################")
-
-    when {
-        tree.has(INTEGER_TYPE) -> variable.integerAttribute = IntegerAttribute()
-        tree.has(REAL_TYPE) -> variable.realAttribute = RealAttribute()
-        tree.has(STRING_TYPE) -> variable.stringAttribute = StringAttribute()
-        tree.has(BOOLEAN_TYPE) -> variable.booleanAttribute = BooleanAttribute()
-        tree.has(ENUMERATION_TYPE) -> variable.enumerationAttribute = EnumerationAttribute()
+        TODO("not required")
     }
 
 }
@@ -92,32 +69,7 @@ class ScalarVariableAdapter2: StdDeserializer<AbstractTypedScalarVariable<*>>(nu
 
     override fun deserialize(parser: JsonParser, ctxt: DeserializationContext): AbstractTypedScalarVariable<*>? {
 
-
-        val tree = parser.readValueAsTree<JsonNode>()
-
-        val mapper = jacksonObjectMapper().apply {
-
-            SimpleModule().apply {
-                addDeserializer(AbstractTypedScalarVariable::class.java, ScalarVariableAdapter2())
-            }.also { registerModule(it) }
-
-
-            enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS)
-
-
-        }
-
-        println(tree)
-        println(tree.toString())
-
-        val variable = mapper.readValue(tree.toString(), ScalarVariableImpl::class.java)
-        println(variable)
-        variable ?: return null.also { println("faen") }
-
-        if (variable.noAttributes) {
-            println("no attribs")
-            assignAttributeManually(tree, variable)
-        }
+        val variable = parser.readValueAs(ScalarVariableImpl::class.java)
 
         return when {
             variable.integerAttribute != null -> IntegerVariable(variable)

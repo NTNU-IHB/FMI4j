@@ -24,8 +24,8 @@
 
 package no.mechatronics.sfi.fmi4j.modeldescription.variables
 
-import com.fasterxml.jackson.annotation.JsonInclude
-import com.fasterxml.jackson.annotation.JsonSubTypes
+import com.fasterxml.jackson.annotation.JsonSetter
+import com.fasterxml.jackson.annotation.Nulls
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement
@@ -138,22 +138,27 @@ class ScalarVariableImpl internal constructor() : ScalarVariable, Serializable {
 
     @XmlElement(name = INTEGER_TYPE)
     @JacksonXmlProperty(localName = INTEGER_TYPE)
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
     internal var integerAttribute: IntegerAttribute? = null
 
     @XmlElement(name = REAL_TYPE)
     @JacksonXmlProperty(localName = REAL_TYPE)
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
     internal var realAttribute: RealAttribute? = null
 
     @XmlElement(name = STRING_TYPE)
     @JacksonXmlProperty(localName = STRING_TYPE)
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
     internal var stringAttribute: StringAttribute? = null
 
     @XmlElement(name = BOOLEAN_TYPE)
     @JacksonXmlProperty(localName = BOOLEAN_TYPE)
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
     internal var booleanAttribute: BooleanAttribute? = null
 
     @XmlElement(name = ENUMERATION_TYPE)
     @JacksonXmlProperty(localName = ENUMERATION_TYPE)
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
     internal var enumerationAttribute: EnumerationAttribute? = null
 
     internal val noAttributes: Boolean

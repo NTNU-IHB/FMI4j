@@ -24,6 +24,7 @@
 
 package no.mechatronics.sfi.fmi4j.modeldescription.log
 
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty
 import java.io.Serializable
 import javax.xml.bind.annotation.XmlAccessType
@@ -52,6 +53,7 @@ class LogCategoriesImpl : LogCategories, Serializable {
 
     @XmlElement(name = "Category")
     @JacksonXmlProperty(localName = "Category")
+    @JacksonXmlElementWrapper(useWrapping = false)
     private val _categories: List<LogCategoryImpl>? = null
 
     private val categories: List<LogCategory>

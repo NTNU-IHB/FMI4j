@@ -1,28 +1,18 @@
 
 apply plugin: 'kotlin'
 
-//def version = System.getProperty("java.version")
-//def jdk9 = version.startsWith("1.9")
-//def atLeastJdk10 = version.split("\\.")[0].toInteger() >= 10
-
 dependencies {
 
     compile group: "com.fasterxml.jackson.module", name: "jackson-module-kotlin", version: "2.9.5"
     compile group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-xml', version: '2.9.5'
     compile group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.9.5'
     compile group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.9.5'
-
-
-
     compile group: 'org.jetbrains.kotlin', name: 'kotlin-reflect', version: '1.2.41'
 
-
-//    if (jdk9 || atLeastJdk10) {
-        implementation group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.0'
-        runtimeOnly group: 'com.sun.xml.bind', name: 'jaxb-core', version: '2.3.0'
-        runtimeOnly group: 'com.sun.xml.bind', name: 'jaxb-impl', version: '2.3.0'
-        runtimeOnly group: 'javax.activation', name: 'activation', version: '1.1.1'
-//    }
+    implementation group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.0'
+    runtime group: 'com.sun.xml.bind', name: 'jaxb-core', version: '2.3.0'
+    runtime group: 'com.sun.xml.bind', name: 'jaxb-impl', version: '2.3.0'
+    runtime group: 'javax.activation', name: 'activation', version: '1.1.1'
 
 }
 
