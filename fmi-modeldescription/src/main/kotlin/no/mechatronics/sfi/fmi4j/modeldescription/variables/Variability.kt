@@ -24,10 +24,6 @@
 
 package no.mechatronics.sfi.fmi4j.modeldescription.variables
 
-import java.io.Serializable
-import javax.xml.bind.annotation.XmlEnum
-import javax.xml.bind.annotation.XmlEnumValue
-import javax.xml.bind.annotation.XmlType
 
 /**
  * Enumeration that defines the time dependency of the variable, in other words it defines
@@ -62,14 +58,11 @@ import javax.xml.bind.annotation.XmlType
  *
  * @author Lars Ivar Hatledal
  */
-@XmlType
-@XmlEnum(String::class)
-enum class Variability: Serializable {
+enum class Variability {
 
     /**
      * The value of the variable never changes.
      */
-    @XmlEnumValue("constant")
     CONSTANT,
 
     /**
@@ -77,7 +70,6 @@ enum class Variability: Serializable {
      * after fmi2ExitInitializationMode was called the variable value does not
      * change anymore.
      */
-    @XmlEnumValue("fixed")
     FIXED,
 
     /**
@@ -90,7 +82,6 @@ enum class Variability: Serializable {
      * Point (CoSimulation) and the categories with variability = "tunable" and
      * causality = "calculatedParameter" or "output" must be newly computed.
      */
-    @XmlEnumValue("tunable")
     TUNABLE,
 
     /**
@@ -100,7 +91,6 @@ enum class Variability: Serializable {
      * data system and its value is only changed at Communication Points (also
      * inside the slave).
      */
-    @XmlEnumValue("discrete")
     DISCRETE,
 
     /**
@@ -108,7 +98,6 @@ enum class Variability: Serializable {
      * restrictions on value changes. CoSimulation: By convention, the variable
      * is from a differential
      */
-    @XmlEnumValue("continuous")
     CONTINUOUS;
 
 }

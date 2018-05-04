@@ -30,7 +30,7 @@ import com.fasterxml.jackson.dataformat.xml.XmlMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.readValue
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.AbstractTypedScalarVariable
-import no.mechatronics.sfi.fmi4j.modeldescription.variables.ScalarVariableAdapter2
+import no.mechatronics.sfi.fmi4j.modeldescription.variables.ScalarVariableAdapter
 import java.io.File
 import java.io.FileInputStream
 import java.io.InputStream
@@ -50,7 +50,7 @@ object ModelDescriptionParser {
         XmlMapper().apply {
             registerModule(KotlinModule())
             registerModule(JacksonXmlModule().apply {
-                addDeserializer(AbstractTypedScalarVariable::class.java, ScalarVariableAdapter2())
+                addDeserializer(AbstractTypedScalarVariable::class.java, ScalarVariableAdapter())
             })
             enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS)
         }

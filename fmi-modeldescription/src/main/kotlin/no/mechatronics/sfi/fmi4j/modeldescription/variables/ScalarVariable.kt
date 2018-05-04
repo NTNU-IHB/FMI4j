@@ -34,7 +34,6 @@ import no.mechatronics.sfi.fmi4j.common.FmuRead
 import no.mechatronics.sfi.fmi4j.common.FmuVariableAccessor
 import no.mechatronics.sfi.fmi4j.common.Real
 import java.io.Serializable
-import javax.xml.bind.annotation.*
 
 const val INTEGER_TYPE = "Integer"
 const val REAL_TYPE = "Real"
@@ -100,69 +99,52 @@ interface ScalarVariable {
 /**
  * @author Lars Ivar Hatledal
  */
-@XmlRootElement(name="ScalarVariable")
-@XmlAccessorType(XmlAccessType.FIELD)
 @JacksonXmlRootElement(localName = "ScalarVariable")
 class ScalarVariableImpl internal constructor() : ScalarVariable, Serializable {
 
-    @XmlAttribute
     @JacksonXmlProperty
     override lateinit var name: String
 
-    @XmlAttribute
     @JacksonXmlProperty
     override val declaredType: String? = null
 
-    @XmlAttribute
     @JacksonXmlProperty
     override val description: String? = null
 
-    @XmlAttribute
     @JacksonXmlProperty
     override val causality: Causality? = null
 
-    @XmlAttribute
     @JacksonXmlProperty
     override val variability: Variability? = null
 
-    @XmlAttribute
     @JacksonXmlProperty
     override val initial: Initial? = null
 
-    @XmlAttribute(name="valueReference")
     @JacksonXmlProperty(localName = "valueReference")
     private val _valueReference: Int? = null
 
     override val valueReference: Int
         get() = _valueReference ?: throw IllegalStateException("ValueReference was null!")
 
-    @XmlElement(name = INTEGER_TYPE)
     @JacksonXmlProperty(localName = INTEGER_TYPE)
     @JsonSetter(nulls = Nulls.AS_EMPTY)
     internal var integerAttribute: IntegerAttribute? = null
 
-    @XmlElement(name = REAL_TYPE)
     @JacksonXmlProperty(localName = REAL_TYPE)
     @JsonSetter(nulls = Nulls.AS_EMPTY)
     internal var realAttribute: RealAttribute? = null
 
-    @XmlElement(name = STRING_TYPE)
     @JacksonXmlProperty(localName = STRING_TYPE)
     @JsonSetter(nulls = Nulls.AS_EMPTY)
     internal var stringAttribute: StringAttribute? = null
 
-    @XmlElement(name = BOOLEAN_TYPE)
     @JacksonXmlProperty(localName = BOOLEAN_TYPE)
     @JsonSetter(nulls = Nulls.AS_EMPTY)
     internal var booleanAttribute: BooleanAttribute? = null
 
-    @XmlElement(name = ENUMERATION_TYPE)
     @JacksonXmlProperty(localName = ENUMERATION_TYPE)
     @JsonSetter(nulls = Nulls.AS_EMPTY)
     internal var enumerationAttribute: EnumerationAttribute? = null
-
-    internal val noAttributes: Boolean
-        get() = integerAttribute == null && realAttribute == null && stringAttribute == null && booleanAttribute == null && enumerationAttribute == null
 
     override fun toString(): String {
         return "ScalarVariableImpl(name='$name', declaredType=$declaredType, description=$description, causality=$causality, variability=$variability, initial=$initial, _valueReference=$_valueReference, integerAttribute=$integerAttribute, realAttribute=$realAttribute, stringAttribute=$stringAttribute, booleanAttribute=$booleanAttribute, enumerationAttribute=$enumerationAttribute)"
@@ -242,7 +224,7 @@ interface BoundedScalarVariable<E>: TypedScalarVariable<E> {
 /**
  * @author Lars Ivar Hatledal
  */
-@JsonDeserialize(using = ScalarVariableAdapter2::class)
+@JsonDeserialize(using = ScalarVariableAdapter::class)
 sealed class AbstractTypedScalarVariable<E>: TypedScalarVariable<E>, Serializable {
 
     @JvmField

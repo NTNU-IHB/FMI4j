@@ -26,9 +26,6 @@ package no.mechatronics.sfi.fmi4j.modeldescription.structure
 
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty
 import java.io.Serializable
-import javax.xml.bind.annotation.XmlAccessType
-import javax.xml.bind.annotation.XmlAccessorType
-import javax.xml.bind.annotation.XmlAttribute
 
 /**
  *
@@ -61,17 +58,14 @@ interface Unknown {
 /**
  * @author Lars Ivar Hatledal
  */
-@XmlAccessorType(XmlAccessType.FIELD)
 class UnknownImpl: Unknown, Serializable {
 
-    @XmlAttribute(name = "index")
     @JacksonXmlProperty(localName = "index")
     private var _index: Int? = null
 
     override val index: Int
         get() = _index ?: throw AssertionError("Index was null!")
 
-    @XmlAttribute(name="dependencies")
     @JacksonXmlProperty(localName = "dependencies")
     private var _dependencies: String? = null
 
@@ -81,7 +75,7 @@ class UnknownImpl: Unknown, Serializable {
         } ?: emptyList()
 
 
-    @XmlAttribute
+    @JacksonXmlProperty
     override val dependenciesKind: DependenciesKind? = null
 
     override fun toString(): String {

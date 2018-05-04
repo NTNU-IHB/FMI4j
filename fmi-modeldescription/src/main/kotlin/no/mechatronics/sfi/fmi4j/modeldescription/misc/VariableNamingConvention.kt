@@ -24,11 +24,6 @@
 
 package no.mechatronics.sfi.fmi4j.modeldescription.misc
 
-import java.io.Serializable
-import javax.xml.bind.annotation.XmlEnum
-import javax.xml.bind.annotation.XmlEnumValue
-import javax.xml.bind.annotation.XmlType
-
 /**
  *
  * Defines whether the variable names in “ModelVariables /
@@ -41,14 +36,9 @@ import javax.xml.bind.annotation.XmlType
  *
  * @author Lars Ivar Hatledal
  */
-@XmlType
-@XmlEnum(String::class)
-enum class VariableNamingConvention: Serializable {
+enum class VariableNamingConvention {
 
-    @XmlEnumValue("flat")
     FLAT,
-
-    @XmlEnumValue("structured")
     STRUCTURED
 
 }

@@ -1,9 +1,7 @@
 package no.mechatronics.sfi.fmi4j.modeldescription.variables
 
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty
 import java.io.Serializable
-import javax.xml.bind.annotation.XmlAccessType
-import javax.xml.bind.annotation.XmlAccessorType
-import javax.xml.bind.annotation.XmlAttribute
 
 /**
  * @author Lars Ivar Hatledal
@@ -61,19 +59,18 @@ interface BoundedTypedAttribute<out E> : TypedAttribute<E> {
 /**
  * @author Lars Ivar Hatledal
  */
-@XmlAccessorType(XmlAccessType.FIELD)
 internal class IntegerAttribute: BoundedTypedAttribute<Int> {
 
-    @XmlAttribute
+    @JacksonXmlProperty
     override val min: Int? = null
 
-    @XmlAttribute
+    @JacksonXmlProperty
     override val max: Int? = null
 
-    @XmlAttribute
+    @JacksonXmlProperty
     override val start: Int? = null
 
-    @XmlAttribute
+    @JacksonXmlProperty
     override val declaredType: String? = null
 
     override fun toString(): String {
@@ -85,19 +82,18 @@ internal class IntegerAttribute: BoundedTypedAttribute<Int> {
 /**
  * @author Lars Ivar Hatledal
  */
-@XmlAccessorType(XmlAccessType.FIELD)
 internal class RealAttribute: BoundedTypedAttribute<Double> {
 
-    @XmlAttribute
+    @JacksonXmlProperty
     override val min: Double? = null
 
-    @XmlAttribute
+    @JacksonXmlProperty
     override val max: Double? = null
 
-    @XmlAttribute
+    @JacksonXmlProperty
     override val start: Double? = null
 
-    @XmlAttribute
+    @JacksonXmlProperty
     override val declaredType: String? = null
 
     /**
@@ -109,13 +105,13 @@ internal class RealAttribute: BoundedTypedAttribute<Double> {
      * where tolerance is, e.g., the relative tolerance defined in
      * <DefaultExperiment>, see section 2.2.5.]
      */
-    @XmlAttribute
+    @JacksonXmlProperty
     val nominal : Double?  = null
 
     /**
      * If present, this variable is the derivative of variable with ScalarVariable index "derivative",
      */
-    @XmlAttribute
+    @JacksonXmlProperty
     val derivative: Int? = null
 
     /**
@@ -127,7 +123,7 @@ internal class RealAttribute: BoundedTypedAttribute<Double> {
      * corresponding bound for the relative error to zero (relative tolerance = 0.0), if
      * the corresponding variable or an alias of it is a continuous state variable.]
      */
-    @XmlAttribute
+    @JacksonXmlProperty
     val unbounded: Boolean? = null
 
     /**
@@ -135,14 +131,14 @@ internal class RealAttribute: BoundedTypedAttribute<Double> {
      * <br>
      * If true, state can be reinitialized at an event by the FMU. If false, state will never be reinitialized at an event by the FMU
      */
-    @XmlAttribute
+    @JacksonXmlProperty
     val reinit: Boolean = false
 
     /**
      * Physical quantity of the variable, for example “Angle”, or “Energy”. The
      * quantity names are not standardized.
      */
-    @XmlAttribute
+    @JacksonXmlProperty
     val quantity: String? = null
 
     /**
@@ -150,7 +146,7 @@ internal class RealAttribute: BoundedTypedAttribute<Double> {
      * for the model equations [, for example “N.m”: in this case a Unit.name =
      * "N.m" must be present under UnitDefinitions].
      */
-    @XmlAttribute
+    @JacksonXmlProperty
     val unit: String? = null
 
     /**
@@ -161,7 +157,7 @@ internal class RealAttribute: BoundedTypedAttribute<Double> {
      * displayUnit is defined in element Real, but unit is not, or unit is not
      * defined under <UnitDefinitions><Unit>.
      */
-    @XmlAttribute
+    @JacksonXmlProperty
     val displayUnit: String? = null
 
     /**
@@ -169,7 +165,7 @@ internal class RealAttribute: BoundedTypedAttribute<Double> {
      * (for example 10 degree Celsius = 10 Kelvin if “relativeQuantity = true”
      * and not 283,15 Kelvin).
      */
-    @XmlAttribute
+    @JacksonXmlProperty
     val relativeQuantity: String? = null
 
     override fun toString(): String {
@@ -181,16 +177,15 @@ internal class RealAttribute: BoundedTypedAttribute<Double> {
 /**
  * @author Lars Ivar Hatledal
  */
-@XmlAccessorType(XmlAccessType.FIELD)
 internal class StringAttribute: TypedAttribute<String> {
 
     /**
      * @see ScalarVariable.start
      */
-    @XmlAttribute
+    @JacksonXmlProperty
     override var start: String? = null
 
-    @XmlAttribute
+    @JacksonXmlProperty
     override val declaredType: String? = null
 
     override fun toString(): String {
@@ -202,13 +197,12 @@ internal class StringAttribute: TypedAttribute<String> {
 /**
  * @author Lars Ivar Hatledal
  */
-@XmlAccessorType(XmlAccessType.FIELD)
 internal class BooleanAttribute: TypedAttribute<Boolean> {
 
-    @XmlAttribute
+    @JacksonXmlProperty
     override var start: Boolean? = null
 
-    @XmlAttribute
+    @JacksonXmlProperty
     override val declaredType: String? = null
 
     override fun toString(): String {
@@ -220,22 +214,21 @@ internal class BooleanAttribute: TypedAttribute<Boolean> {
 /**
  * @author Lars Ivar Hatledal
  */
-@XmlAccessorType(XmlAccessType.FIELD)
 internal class EnumerationAttribute: BoundedTypedAttribute<Int> {
 
-    @XmlAttribute
+    @JacksonXmlProperty
     override val min: Int? = null
 
-    @XmlAttribute
+    @JacksonXmlProperty
     override val max: Int? = null
 
-    @XmlAttribute
+    @JacksonXmlProperty
     val quantity: String? = null
 
-    @XmlAttribute
+    @JacksonXmlProperty
     override var start: Int? = null
 
-    @XmlAttribute
+    @JacksonXmlProperty
     override val declaredType: String? = null
 
     override fun toString(): String {

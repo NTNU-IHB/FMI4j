@@ -27,9 +27,6 @@ package no.mechatronics.sfi.fmi4j.modeldescription.log
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty
 import java.io.Serializable
-import javax.xml.bind.annotation.XmlAccessType
-import javax.xml.bind.annotation.XmlAccessorType
-import javax.xml.bind.annotation.XmlElement
 
 /**
  * @author Lars Ivar Hatledal
@@ -42,7 +39,6 @@ interface LogCategories: Iterable<LogCategory> {
 
 }
 
-@XmlAccessorType(XmlAccessType.FIELD)
 class LogCategoriesImpl : LogCategories, Serializable {
 
     override val size
@@ -51,7 +47,6 @@ class LogCategoriesImpl : LogCategories, Serializable {
     override fun iterator(): Iterator<LogCategory>
             = categories.iterator()
 
-    @XmlElement(name = "Category")
     @JacksonXmlProperty(localName = "Category")
     @JacksonXmlElementWrapper(useWrapping = false)
     private val _categories: List<LogCategoryImpl>? = null

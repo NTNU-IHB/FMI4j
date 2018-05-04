@@ -24,19 +24,13 @@
 
 package no.mechatronics.sfi.fmi4j.modeldescription.variables
 
-import java.io.Serializable
-import javax.xml.bind.annotation.XmlEnum
-import javax.xml.bind.annotation.XmlEnumValue
-import javax.xml.bind.annotation.XmlType
 
 /**
  * Enumeration that defines the causality of the variable.
  *
  * @author Lars Ivar Hatledal laht@ntnu.no.
  */
-@XmlType
-@XmlEnum(String::class)
-enum class Causality: Serializable {
+enum class Causality {
 
     /**
      * Independent parameter (a data value that is constant during the
@@ -44,7 +38,6 @@ enum class Causality: Serializable {
      * connections). variability must be "fixed" or "tunable". initial must be
      * exact or not present (meaning exact).
      */
-    @XmlEnumValue("parameter")
     PARAMETER,
 
     /**
@@ -53,14 +46,12 @@ enum class Causality: Serializable {
      * be "fixed" or "tunable". initial must be "approx", "calculated" or not
      * present (meaning calculated).
      */
-    @XmlEnumValue("calculatedParameter")
     CALCULATED_PARAMETER,
 
     /**
      * The variable value can be provided from another model or slave. It is not
      * allowed to define initial.
      */
-    @XmlEnumValue("input")
     INPUT,
 
     /**
@@ -68,7 +59,6 @@ enum class Causality: Serializable {
      * relationship to the inputs is defined via the dependencies attribute of
      * <fmiModelDescription><ModelStructure><Outputs><Unknown>.
      */
-    @XmlEnumValue("output")
     OUTPUT,
 
     /**
@@ -76,7 +66,6 @@ enum class Causality: Serializable {
      * continuoustime state (see section 2.2.8). It is not allowed to use the
      * variable value in another model or slave.
      */
-    @XmlEnumValue("local")
     LOCAL,
 
     /**
@@ -92,7 +81,6 @@ enum class Causality: Serializable {
      * currentCommunicationPoint and communicationStepSize of fmi2DoStep for
      * CoSimulation. [The actual value can be inquired with fmi2GetReal.]
      */
-    @XmlEnumValue("independent")
     INDEPENDENT;
 
 }

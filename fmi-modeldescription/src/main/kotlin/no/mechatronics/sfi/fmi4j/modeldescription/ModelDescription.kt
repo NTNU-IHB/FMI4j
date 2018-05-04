@@ -24,8 +24,6 @@
 
 package no.mechatronics.sfi.fmi4j.modeldescription
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement
 import no.mechatronics.sfi.fmi4j.modeldescription.log.LogCategories
@@ -35,15 +33,9 @@ import no.mechatronics.sfi.fmi4j.modeldescription.misc.SourceFile
 import no.mechatronics.sfi.fmi4j.modeldescription.misc.VariableNamingConvention
 import no.mechatronics.sfi.fmi4j.modeldescription.structure.ModelStructure
 import no.mechatronics.sfi.fmi4j.modeldescription.structure.ModelStructureImpl
-import no.mechatronics.sfi.fmi4j.modeldescription.variables.*
-import java.io.*
-import java.lang.IllegalArgumentException
-import java.net.URL
-import java.util.zip.ZipEntry
-import java.util.zip.ZipInputStream
-import javax.xml.bind.JAXB
-import javax.xml.bind.annotation.*
-
+import no.mechatronics.sfi.fmi4j.modeldescription.variables.ModelVariables
+import no.mechatronics.sfi.fmi4j.modeldescription.variables.ModelVariablesImpl
+import java.io.Serializable
 
 
 /**
@@ -276,56 +268,42 @@ interface ModelDescriptionProvider: CommonModelDescription {
 /**
  * @author Lars Ivar Hatledal
  */
-@XmlRootElement(name = "fmiModelDescription")
-@XmlAccessorType(XmlAccessType.FIELD)
 @JacksonXmlRootElement(localName = "fmiModelDescription")
 class ModelDescriptionImpl : CommonModelDescription, ModelDescriptionProvider, Serializable {
 
-    @XmlAttribute
     @JacksonXmlProperty()
     override lateinit var fmiVersion: String
 
-    @XmlAttribute
     @JacksonXmlProperty()
     override lateinit var modelName: String
 
-    @XmlAttribute
     @JacksonXmlProperty()
     override lateinit var guid: String
 
-    @XmlAttribute
     @JacksonXmlProperty()
     override val license: String? = null
 
-    @XmlAttribute
     @JacksonXmlProperty()
     override val copyright: String? = null
 
-    @XmlAttribute
     @JacksonXmlProperty()
     override val author: String? = null
 
-    @XmlAttribute
     @JacksonXmlProperty()
     override val version: String? = null
 
-    @XmlAttribute
     @JacksonXmlProperty()
     override val description: String? = null
 
-    @XmlAttribute
     @JacksonXmlProperty()
     override val generationTool: String? = null
 
-    @XmlAttribute
     @JacksonXmlProperty()
     override val variableNamingConvention: VariableNamingConvention? = null
 
-    @XmlAttribute
     @JacksonXmlProperty()
     override val generationDateAndTime: String? = null
 
-    @XmlElement(name = "DefaultExperiment")
     @JacksonXmlProperty(localName = "DefaultExperiment")
     override val defaultExperiment: DefaultExperiment? = null
 
@@ -334,29 +312,24 @@ class ModelDescriptionImpl : CommonModelDescription, ModelDescriptionProvider, S
      * Model Exchange.
      * For Co-Simulation, this value is ignored
      */
-    @XmlAttribute
     @JacksonXmlProperty()
     val numberOfEventIndicators: Int = 0
 
     @JacksonXmlProperty(localName = "ModelVariables")
     override lateinit var modelVariables: ModelVariablesImpl
 
-    @XmlElement(name = "ModelStructure")
     @JacksonXmlProperty(localName = "ModelStructure")
     override lateinit var modelStructure: ModelStructureImpl
 
-    @XmlElement(name = "LogCategories")
     @JacksonXmlProperty(localName = "LogCategories")
     private val _logCategories: LogCategoriesImpl? = null
 
     override val logCategories: LogCategories?
         get() = _logCategories
 
-    @XmlElement(name = "CoSimulation")
     @JacksonXmlProperty(localName = "CoSimulation")
     private val cs: CoSimulationDataImpl? = null
 
-    @XmlElement(name = "ModelExchange")
     @JacksonXmlProperty(localName = "ModelExchange")
     private val me: ModelExchangeDataImpl? = null
 

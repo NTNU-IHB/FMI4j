@@ -27,45 +27,9 @@ package no.mechatronics.sfi.fmi4j.modeldescription.variables
 import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.databind.DeserializationContext
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer
-import org.w3c.dom.Node
-import javax.xml.bind.JAXBContext
-import javax.xml.bind.annotation.adapters.XmlAdapter
 
 
-/**
- * @author Lars Ivar Hatledal
- */
-class ScalarVariableAdapter : XmlAdapter<Any, AbstractTypedScalarVariable<*>>() {
-
-    @Throws(Exception::class)
-    override fun unmarshal(v: Any): AbstractTypedScalarVariable<*> {
-
-        val node = v as Node
-        val unmarshal by lazy {
-            JAXBContext.newInstance(ScalarVariableImpl::class.java).let {
-                it.createUnmarshaller().unmarshal(node, ScalarVariableImpl::class.java).value
-            }
-        }
-
-        val child = node.childNodes.item(0)
-        return when (child.nodeName) {
-            INTEGER_TYPE -> IntegerVariable(unmarshal)
-            REAL_TYPE -> RealVariable(unmarshal)
-            STRING_TYPE -> StringVariable(unmarshal)
-            BOOLEAN_TYPE -> BooleanVariable(unmarshal)
-            ENUMERATION_TYPE -> EnumerationVariable(unmarshal)
-            else -> throw RuntimeException("Error parsing XML. Don't know what to do with '${child.nodeName}'")
-        }
-
-    }
-
-    override fun marshal(v: AbstractTypedScalarVariable<*>?): Any {
-        TODO("not required")
-    }
-
-}
-
-class ScalarVariableAdapter2: StdDeserializer<AbstractTypedScalarVariable<*>>(null as Class<*>?) {
+class ScalarVariableAdapter : StdDeserializer<AbstractTypedScalarVariable<*>>(null as Class<*>?) {
 
     override fun deserialize(parser: JsonParser, ctxt: DeserializationContext): AbstractTypedScalarVariable<*>? {
 
@@ -78,7 +42,7 @@ class ScalarVariableAdapter2: StdDeserializer<AbstractTypedScalarVariable<*>>(nu
             variable.booleanAttribute != null -> BooleanVariable(variable)
             variable.enumerationAttribute != null -> EnumerationVariable(variable)
             else -> null
-        }.also { println(it) }
+        }
 
     }
 }

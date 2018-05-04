@@ -24,17 +24,11 @@
 
 package no.mechatronics.sfi.fmi4j.modeldescription.variables
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement
 import no.mechatronics.sfi.fmi4j.common.StringArray
 import java.io.Serializable
-import java.lang.reflect.Type
-import javax.xml.bind.annotation.XmlAccessType
-import javax.xml.bind.annotation.XmlAccessorType
-import javax.xml.bind.annotation.XmlElement
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter
 
 /**
  * @author Lars Ivar Hatledal
@@ -112,12 +106,9 @@ interface ModelVariables: Iterable<TypedScalarVariable<*>> {
 /**
  * @author Lars Ivar Hatledal
  */
-@XmlAccessorType(XmlAccessType.FIELD)
 @JacksonXmlRootElement(localName = "ModelVariables")
 class ModelVariablesImpl : ModelVariables, Serializable {
 
-    @XmlElement(name = "ScalarVariable")
-    @XmlJavaTypeAdapter(ScalarVariableAdapter::class)
     @JacksonXmlProperty(localName = "ScalarVariable")
     @JacksonXmlElementWrapper(useWrapping = false)
     private val _variables: List<AbstractTypedScalarVariable<*>>? = null
