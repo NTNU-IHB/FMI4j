@@ -100,6 +100,13 @@ class ControlledTemperatureTest {
     }
 
     @Test
+    fun testOutputs() {
+        val outputs = modelDescription.modelStructure.outputs
+        LOG.info("outputs=$outputs")
+        Assert.assertTrue(outputs.map { it.index }.containsAll(listOf(115, 116)))
+    }
+
+    @Test
     fun testDefaultExperiment() {
         val ex: DefaultExperiment = modelDescription.defaultExperiment!!
         Assert.assertEquals(0.0, ex.startTime, 0.0)

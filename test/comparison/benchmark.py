@@ -16,7 +16,7 @@ class TestOptions:
 TEST_FMUs = os.environ.get('TEST_FMUs')
 
 options = TestOptions("{}/FMI_2.0/CoSimulation/win64/FMUSDK/2.0.4/BouncingBall/bouncingBall.fmu".format(TEST_FMUs),
-                      1E-3, 50, 0)
+                      1E-2, 100, 0)
 
 
 # options = TestOptions("{}/FMI_2.0/CoSimulation/win64/20sim/4.6.4.8004/TorsionBar/TorsionBar.fmu", 1E-5, 12, 2)

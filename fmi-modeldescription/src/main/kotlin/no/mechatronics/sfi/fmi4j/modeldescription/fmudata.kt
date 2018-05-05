@@ -24,10 +24,11 @@
 
 package no.mechatronics.sfi.fmi4j.modeldescription
 
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty
 import no.mechatronics.sfi.fmi4j.modeldescription.misc.SourceFile
 import no.mechatronics.sfi.fmi4j.modeldescription.misc.SourceFileImpl
 import java.io.Serializable
-import javax.xml.bind.annotation.*
 
 interface FmuData {
 
@@ -72,32 +73,31 @@ interface ModelExchangeData: FmuData {
 /**
  * @author Lars Ivar Hatledal
  */
-@XmlAccessorType(XmlAccessType.FIELD)
 sealed class FmuDataImpl : FmuData, Serializable {
 
-    @XmlAttribute
+    @JacksonXmlProperty
     override lateinit var modelIdentifier: String
 
-    @XmlAttribute
+    @JacksonXmlProperty
     override val needsExecutionTool: Boolean = false
 
-    @XmlAttribute
+    @JacksonXmlProperty
     override val canNotUseMemoryManagementFunctions: Boolean = false
 
-    @XmlAttribute
+    @JacksonXmlProperty
     override val canGetAndSetFMUstate: Boolean = false
 
-    @XmlAttribute
+    @JacksonXmlProperty
     override val canSerializeFMUstate: Boolean = false
 
-    @XmlAttribute
+    @JacksonXmlProperty
     override val providesDirectionalDerivative: Boolean = false
 
-    @XmlAttribute
+    @JacksonXmlProperty
     override val canBeInstantiatedOnlyOncePerProcess: Boolean = false
 
-    @XmlElementWrapper(name = "SourceFiles")
-    @XmlElement(name = "File")
+    @JacksonXmlElementWrapper(localName = "SourceFiles")
+    @JacksonXmlProperty(localName = "File")
     private val _sourceFiles: List<SourceFileImpl>? = null
 
     override val sourceFiles
@@ -112,19 +112,18 @@ sealed class FmuDataImpl : FmuData, Serializable {
 /**
  * @author Lars Ivar Hatledal
  */
-@XmlAccessorType(XmlAccessType.FIELD)
 internal class CoSimulationDataImpl : FmuDataImpl(), CoSimulationData {
 
-    @XmlAttribute
+    @JacksonXmlProperty
     override val canHandleVariableCommunicationStepSize: Boolean = false
 
-    @XmlAttribute
+    @JacksonXmlProperty
     override val canInterpolateInputs: Boolean = false
 
-    @XmlAttribute
+    @JacksonXmlProperty
     override val maxOutputDerivativeOrder: Int = 0
 
-    @XmlAttribute
+    @JacksonXmlProperty
     override val canRunAsynchronuously: Boolean = false
 
     override fun toString(): String {
@@ -136,10 +135,9 @@ internal class CoSimulationDataImpl : FmuDataImpl(), CoSimulationData {
 /**
  * @author Lars Ivar Hatledal
  */
-@XmlAccessorType(XmlAccessType.FIELD)
 internal class ModelExchangeDataImpl : FmuDataImpl(), ModelExchangeData {
 
-    @XmlAttribute
+    @JacksonXmlProperty
     override val completedIntegratorStepNotNeeded: Boolean = false
 
     override fun toString(): String {

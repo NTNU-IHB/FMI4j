@@ -24,10 +24,8 @@
 
 package no.mechatronics.sfi.fmi4j.modeldescription.log
 
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty
 import java.io.Serializable
-import javax.xml.bind.annotation.XmlAccessType
-import javax.xml.bind.annotation.XmlAccessorType
-import javax.xml.bind.annotation.XmlAttribute
 
 /**
  *
@@ -51,13 +49,12 @@ interface LogCategory {
 /**
  * @author Lars Ivar Hatledal
  */
-@XmlAccessorType(XmlAccessType.FIELD)
 class LogCategoryImpl: LogCategory, Serializable {
 
-    @XmlAttribute
+    @JacksonXmlProperty
     override lateinit var name: String
 
-    @XmlAttribute
+    @JacksonXmlProperty
     override val description: String? = null
 
     override fun equals(other: Any?): Boolean {

@@ -24,10 +24,6 @@
 
 package no.mechatronics.sfi.fmi4j.modeldescription.variables
 
-import java.io.Serializable
-import javax.xml.bind.annotation.XmlEnum
-import javax.xml.bind.annotation.XmlEnumValue
-import javax.xml.bind.annotation.XmlType
 
 /**
  * Enumeration that defines how the variable is initialized. It is not allowed to provide a
@@ -52,28 +48,23 @@ import javax.xml.bind.annotation.XmlType
  *
  * @author Lars Ivar Hatledal
  */
-@XmlType
-@XmlEnum(String::class)
-enum class Initial: Serializable {
+enum class Initial {
     /**
      * The variable is initialized with the start value (provided under Real,
      * Integer, Boolean, String or Enumeration).
      */
-    @XmlEnumValue("exact")
     EXACT,
 
     /**
      * The variable is an iteration variable of an algebraic loop and the
      * iteration at initialization starts with the start value.
      */
-    @XmlEnumValue("approx")
     APPROX,
 
     /**
      * The variable is calculated from other categories during initialization. It
      * is not allowed to provide a “start” value.
      */
-    @XmlEnumValue("calculated")
     CALCULATED;
 }
 

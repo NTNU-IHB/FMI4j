@@ -3,11 +3,8 @@ apply plugin: 'kotlin'
 
 dependencies {
 
-        //need to include JAXB explicitly in order to support >= Java9
-        implementation group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.0'
-        runtime group: 'com.sun.xml.bind', name: 'jaxb-core', version: '2.3.0'
-        runtime group: 'com.sun.xml.bind', name: 'jaxb-impl', version: '2.3.0'
-        runtime group: 'javax.activation', name: 'activation', version: '1.1.1'
+    implementation group: "com.fasterxml.jackson.module", name: "jackson-module-kotlin", version: "2.9.5"
+    implementation group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-xml', version: '2.9.5'
 
 }
 

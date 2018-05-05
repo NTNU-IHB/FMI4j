@@ -24,14 +24,19 @@
 
 package no.mechatronics.sfi.fmi4j.modeldescription
 
+import com.fasterxml.jackson.databind.MapperFeature
+import com.fasterxml.jackson.dataformat.xml.JacksonXmlModule
+import com.fasterxml.jackson.dataformat.xml.XmlMapper
+import com.fasterxml.jackson.module.kotlin.KotlinModule
+import com.fasterxml.jackson.module.kotlin.readValue
+import no.mechatronics.sfi.fmi4j.modeldescription.variables.AbstractTypedScalarVariable
+import no.mechatronics.sfi.fmi4j.modeldescription.variables.ScalarVariableAdapter
 import java.io.File
 import java.io.FileInputStream
 import java.io.InputStream
-import java.io.StringReader
 import java.net.URL
 import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
-import javax.xml.bind.JAXB
 
 
 private const val MODEL_DESC_FILE = "modelDescription.xml"
@@ -40,6 +45,16 @@ private const val MODEL_DESC_FILE = "modelDescription.xml"
  * Parses the modelDescription.xml holding static information about an FMU
  */
 object ModelDescriptionParser {
+
+    private val mapper by lazy {
+        XmlMapper().apply {
+            registerModule(KotlinModule())
+            registerModule(JacksonXmlModule().apply {
+                addDeserializer(AbstractTypedScalarVariable::class.java, ScalarVariableAdapter())
+            })
+            enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS)
+        }
+    }
 
     @JvmStatic
     fun parse(url: URL): ModelDescriptionProvider {
@@ -53,7 +68,7 @@ object ModelDescriptionParser {
 
     @JvmStatic
     fun parse(xml: String): ModelDescriptionProvider {
-        return JAXB.unmarshal(StringReader(xml), ModelDescriptionImpl::class.java)
+        return mapper.readValue<ModelDescriptionImpl>(xml)
     }
 
     @JvmStatic

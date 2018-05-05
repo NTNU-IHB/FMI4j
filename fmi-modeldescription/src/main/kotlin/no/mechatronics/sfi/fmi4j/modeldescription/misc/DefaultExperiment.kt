@@ -24,10 +24,8 @@
 
 package no.mechatronics.sfi.fmi4j.modeldescription.misc
 
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty
 import java.io.Serializable
-import javax.xml.bind.annotation.XmlAccessType
-import javax.xml.bind.annotation.XmlAccessorType
-import javax.xml.bind.annotation.XmlAttribute
 
 
 /**
@@ -41,32 +39,31 @@ import javax.xml.bind.annotation.XmlAttribute
  *
  * @author Lars Ivar Hatledal
  */
-@XmlAccessorType(XmlAccessType.FIELD)
 data class DefaultExperiment(
 
         /**
          * Default start time of simulation
          */
-        @XmlAttribute
+        @JacksonXmlProperty
         val startTime: Double = 0.0,
 
         /**
          * Default stop time of simulation
          */
-        @XmlAttribute
+        @JacksonXmlProperty
         val stopTime: Double = 0.0,
 
         /**
          * Default relative integration tolerance
          */
-        @XmlAttribute
+        @JacksonXmlProperty
         val tolerance: Double = 1E-4,
 
         /***
          * ModelExchange: Default step size for fixed step integrators
          * CoSimulation: Preferred communicationStepSize
          */
-        @XmlAttribute
+        @JacksonXmlProperty
         val stepSize: Double = 1E-3
 
 ) : Serializable {

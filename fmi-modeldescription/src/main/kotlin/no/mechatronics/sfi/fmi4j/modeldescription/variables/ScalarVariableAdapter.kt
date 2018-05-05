@@ -24,40 +24,25 @@
 
 package no.mechatronics.sfi.fmi4j.modeldescription.variables
 
-import org.w3c.dom.Node
-import javax.xml.bind.JAXBContext
-import javax.xml.bind.annotation.adapters.XmlAdapter
+import com.fasterxml.jackson.core.JsonParser
+import com.fasterxml.jackson.databind.DeserializationContext
+import com.fasterxml.jackson.databind.deser.std.StdDeserializer
 
 
-/**
- * @author Lars Ivar Hatledal
- */
-class ScalarVariableAdapter : XmlAdapter<Any, AbstractTypedScalarVariable<*>>() {
+class ScalarVariableAdapter : StdDeserializer<AbstractTypedScalarVariable<*>>(null as Class<*>?) {
 
-    @Throws(Exception::class)
-    override fun unmarshal(v: Any): AbstractTypedScalarVariable<*> {
+    override fun deserialize(parser: JsonParser, ctxt: DeserializationContext): AbstractTypedScalarVariable<*>? {
 
-        val node = v as Node
-        val unmarshal by lazy {
-            JAXBContext.newInstance(ScalarVariableImpl::class.java).let {
-                it.createUnmarshaller().unmarshal(node, ScalarVariableImpl::class.java).value
-            }
-        }
+        val variable = parser.readValueAs(ScalarVariableImpl::class.java)
 
-        val child = node.childNodes.item(0)
-        return when (child.nodeName) {
-            INTEGER_TYPE -> IntegerVariable(unmarshal)
-            REAL_TYPE -> RealVariable(unmarshal)
-            STRING_TYPE -> StringVariable(unmarshal)
-            BOOLEAN_TYPE -> BooleanVariable(unmarshal)
-            ENUMERATION_TYPE -> EnumerationVariable(unmarshal)
-            else -> throw RuntimeException("Error parsing XML. Don't know what to do with '${child.nodeName}'")
+        return when {
+            variable.integerAttribute != null -> IntegerVariable(variable)
+            variable.realAttribute != null -> RealVariable(variable)
+            variable.stringAttribute != null -> StringVariable(variable)
+            variable.booleanAttribute != null -> BooleanVariable(variable)
+            variable.enumerationAttribute != null -> EnumerationVariable(variable)
+            else -> null
         }
 
     }
-
-    override fun marshal(v: AbstractTypedScalarVariable<*>?): Any {
-        TODO("not required")
-    }
-
 }

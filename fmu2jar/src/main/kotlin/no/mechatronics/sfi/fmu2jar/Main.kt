@@ -77,16 +77,16 @@ class Args : Runnable {
 
         try {
 
+            Fmu2Jar(fmuPath.absoluteFile).apply {
+                generateJar(GenerateOptions(
+                        mavenLocal = mvn,
+                        outputFolder = outputFolder?.absoluteFile
+                ))
+            }
+
         } catch (ex: Exception) {
             ex.printStackTrace(System.err)
             error("Application error..")
-        }
-
-        Fmu2Jar(fmuPath.absoluteFile).apply {
-            generateJar(GenerateOptions(
-                    mavenLocal = mvn,
-                    outputFolder = outputFolder?.absoluteFile
-            ))
         }
 
     }
