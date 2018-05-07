@@ -42,7 +42,7 @@ interface Unknown {
     val index: Int
 
     /**
-     * Defines the dependency of the Unknown (directly or inderectly via auxiliary variables)
+     * Defines the dependency of the Unknown (directly or indirectly via auxiliary variables)
      * on the Knowns in Continous-Time and Event Mode (ModelExchange) and at Communication Points (CoSimulation)
      */
     val dependencies: List<Int>
