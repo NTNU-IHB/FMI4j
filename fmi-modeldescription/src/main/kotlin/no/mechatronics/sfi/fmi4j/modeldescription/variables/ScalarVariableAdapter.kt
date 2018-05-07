@@ -36,11 +36,11 @@ class ScalarVariableAdapter : StdDeserializer<AbstractTypedScalarVariable<*>>(nu
         val variable = parser.readValueAs(ScalarVariableImpl::class.java)
 
         return when {
-            variable.integerAttribute != null -> IntegerVariable(variable)
-            variable.realAttribute != null -> RealVariable(variable)
-            variable.stringAttribute != null -> StringVariable(variable)
-            variable.booleanAttribute != null -> BooleanVariable(variable)
-            variable.enumerationAttribute != null -> EnumerationVariable(variable)
+            variable.integerAttribute != null -> IntegerVariableImpl(variable)
+            variable.realAttribute != null -> RealVariableImpl(variable)
+            variable.stringAttribute != null -> StringVariableImpl(variable)
+            variable.booleanAttribute != null -> BooleanVariableImpl(variable)
+            variable.enumerationAttribute != null -> EnumerationVariableImpl(variable)
             else -> null
         }
 

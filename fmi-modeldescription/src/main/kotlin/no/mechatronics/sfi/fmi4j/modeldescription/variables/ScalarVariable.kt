@@ -196,11 +196,12 @@ interface TypedScalarVariable<E>: ScalarVariable {
     fun asBooleanVariable(): BooleanVariable
             = if (this is BooleanVariable) this else throw IllegalAccessException("Variable is not an ${BooleanVariable::class.java.simpleName}, but an ${this::class.java.simpleName}")
 
-    fun asEnumerationVariable(): EnumerationVariable = if (this is EnumerationVariable) this else throw IllegalAccessException("Variable is not an ${EnumerationVariable::class.java.simpleName}, but an ${this::class.java.simpleName}")
+    fun asEnumerationVariable(): EnumerationVariable
+            = if (this is EnumerationVariable) this else throw IllegalAccessException("Variable is not an ${EnumerationVariable::class.java.simpleName}, but an ${this::class.java.simpleName}")
 
 }
 
-interface BoundedScalarVariable<E>: TypedScalarVariable<E> {
+interface BoundedTypedScalarVariable<E>: TypedScalarVariable<E> {
 
     /**
      * Minimum value of variable (variable Value ≥ min). If not defined, the
@@ -232,14 +233,16 @@ sealed class AbstractTypedScalarVariable<E>: TypedScalarVariable<E>, Serializabl
 
 }
 
-sealed class AbstractBoundedScalarVariable<E>: BoundedScalarVariable<E>, AbstractTypedScalarVariable<E>()
+sealed class AbstractBoundedTypedScalarVariable<E>: BoundedTypedScalarVariable<E>, AbstractTypedScalarVariable<E>()
+
+interface IntegerVariable : BoundedTypedScalarVariable<Int>
 
 /**
  * @author Lars Ivar Hatledal
  */
-class IntegerVariable internal constructor(
+class IntegerVariableImpl internal constructor(
         private val v : ScalarVariableImpl
-) : ScalarVariable by v, AbstractBoundedScalarVariable<Int>() {
+) : ScalarVariable by v, IntegerVariable, AbstractBoundedTypedScalarVariable<Int>() {
 
     private val attribute: IntegerAttribute
             = v.integerAttribute ?: throw AssertionError("Variable is not of type Integer!")
@@ -271,25 +274,12 @@ class IntegerVariable internal constructor(
             declaredType?.also { add("declaredType=$declaredType") }
         }.joinToString (", ")
 
-        return "${IntegerVariable::class.java.simpleName}($entries)"
+        return "${IntegerVariableImpl::class.java.simpleName}($entries)"
     }
 
 }
 
-/**
- * @author Lars Ivar Hatledal
- */
-class RealVariable internal constructor(
-        private val v : ScalarVariableImpl
-) : ScalarVariable by v, AbstractBoundedScalarVariable<Real>() {
-
-    private val attribute: RealAttribute
-            = v.realAttribute ?: throw AssertionError("Variable is not of type Real!")
-
-    override val min = attribute.min
-    override val max = attribute.max
-    override var start = attribute.start
-
+interface RealVariable : BoundedTypedScalarVariable<Real> {
 
     /**
      * Nominal value of variable. If not defined and no other information about the
@@ -300,7 +290,7 @@ class RealVariable internal constructor(
      * where tolerance is, e.g., the relative tolerance defined in
      * <DefaultExperiment>, see section 2.2.5.]
      */
-    val nominal = attribute.nominal
+    val nominal: Double?
 
     /**
      * If true, indicates that the variable gets during time integration much larger
@@ -311,20 +301,20 @@ class RealVariable internal constructor(
      * corresponding bound for the relative error to zero (relative tolerance = 0.0), if
      * the corresponding variable or an alias of it is a continuous state variable.]
      */
-    val unbounded = attribute.unbounded
+    val unbounded: Boolean?
 
     /**
      * Physical quantity of the variable, for example “Angle”, or “Energy”. The
      * quantity names are not standardized.
      */
-    val quantity = attribute.quantity
+    val quantity: String?
 
     /**
      * Unit of the variable defined with UnitDefinitions.Unit.name that is used
      * for the model equations [, for example “N.m”: in this case a Unit.name =
      * "N.m" must be present under UnitDefinitions].
      */
-    val unit = attribute.unit
+    val unit: String?
 
     /**
      * Default display unit. The conversion to the “unit” is defined with the element
@@ -334,26 +324,49 @@ class RealVariable internal constructor(
      * displayUnit is defined in element Real, but unit is not, or unit is not
      * defined under <UnitDefinitions><Unit>.
      */
-    val displayUnit = attribute.displayUnit
+    val displayUnit: String?
 
     /**
      * If this attribute is true, then the “offset” of “displayUnit” must be ignored
      * (for example 10 degree Celsius = 10 Kelvin if “relativeQuantity = true”
      * and not 283,15 Kelvin).
      */
-    val relativeQuantity = attribute.relativeQuantity
+    val relativeQuantity: String?
 
     /**
      * Only for Model exchange
      * <br>
      * If true, state can be reinitialized at an event by the FMU. If false, state will never be reinitialized at an event by the FMU
      */
-    val reinit = attribute.reinit
+    val reinit: Boolean?
 
     /**
      * If present, this variable is the derivative of variable with ScalarVariable index "derivative",
      */
-    val derivative = attribute.derivative
+    val derivative: Int?
+}
+
+/**
+ * @author Lars Ivar Hatledal
+ */
+class RealVariableImpl internal constructor(
+        private val v : ScalarVariableImpl
+) : ScalarVariable by v, RealVariable, AbstractBoundedTypedScalarVariable<Real>() {
+
+    private val attribute: RealAttribute
+            = v.realAttribute ?: throw AssertionError("Variable is not of type Real!")
+
+    override val min: Double? = attribute.min
+    override val max: Double? = attribute.max
+    override var start: Double? = attribute.start
+    override val nominal: Double? = attribute.nominal
+    override val unbounded: Boolean? = attribute.unbounded
+    override val quantity: String? = attribute.quantity
+    override val unit: String? = attribute.unit
+    override val displayUnit: String? = attribute.displayUnit
+    override val relativeQuantity: String? = attribute.relativeQuantity
+    override val reinit: Boolean? = attribute.reinit
+    override val derivative: Int? = attribute.derivative
 
     override fun read(): FmuRead<Real> {
         return accessor?.readReal(valueReference) ?: throw IllegalStateException("No accessor assigned!")
@@ -386,18 +399,20 @@ class RealVariable internal constructor(
             declaredType?.also { add("declaredType=$declaredType") }
         }.joinToString (", ")
 
-        return "${RealVariable::class.java.simpleName}($entries)"
+        return "${RealVariableImpl::class.java.simpleName}($entries)"
 
     }
 
 }
 
+interface StringVariable : TypedScalarVariable<String>
+
 /**
  * @author Lars Ivar Hatledal
  */
-class StringVariable internal constructor(
+class StringVariableImpl internal constructor(
         private val v : ScalarVariableImpl
-) : ScalarVariable by v, AbstractTypedScalarVariable<String>() {
+) : ScalarVariable by v, StringVariable, AbstractTypedScalarVariable<String>() {
 
     private val attribute: StringAttribute
             = v.stringAttribute ?: throw AssertionError("Variable is not of type String!")
@@ -426,18 +441,20 @@ class StringVariable internal constructor(
             declaredType?.also { add("declaredType=$declaredType") }
         }.joinToString (", ")
 
-        return "${StringVariable::class.java.simpleName}($entries)"
+        return "${StringVariableImpl::class.java.simpleName}($entries)"
 
     }
 
 }
 
+interface BooleanVariable: TypedScalarVariable<Boolean>
+
 /**
  * @author Lars Ivar Hatledal
  */
-class BooleanVariable internal constructor(
+class BooleanVariableImpl internal constructor(
         private val v : ScalarVariableImpl
-) : ScalarVariable by v, AbstractTypedScalarVariable<Boolean>() {
+) : ScalarVariable by v, BooleanVariable, AbstractTypedScalarVariable<Boolean>() {
 
     private val attribute: BooleanAttribute
             = v.booleanAttribute ?: throw AssertionError("Variable is not of type Boolean!")
@@ -466,15 +483,25 @@ class BooleanVariable internal constructor(
             declaredType?.also { add("declaredType=$declaredType") }
         }.joinToString (", ")
 
-        return "${BooleanVariable::class.java.simpleName}($entries)"
+        return "${BooleanVariableImpl::class.java.simpleName}($entries)"
 
     }
 
 }
 
-class EnumerationVariable internal constructor(
+interface EnumerationVariable: BoundedTypedScalarVariable<Int> {
+
+    /**
+     * Physical quantity of the variable, for example “Angle”, or “Energy”. The
+     * quantity names are not standardized.
+     */
+    val quantity: String?
+
+}
+
+class EnumerationVariableImpl internal constructor(
         private val v: ScalarVariableImpl
-): ScalarVariable by v, AbstractBoundedScalarVariable<Int>() {
+): ScalarVariable by v, EnumerationVariable, AbstractBoundedTypedScalarVariable<Int>() {
 
     private val attribute: EnumerationAttribute
             = v.enumerationAttribute ?: throw AssertionError("Variable is not of type Enumeration!")
@@ -483,7 +510,7 @@ class EnumerationVariable internal constructor(
     override val max: Int? = attribute.max
     override var start: Int? = attribute.start
 
-    val quantity: String? = attribute.quantity
+    override val quantity: String? = attribute.quantity
 
     override fun read(): FmuRead<Int> {
         return accessor?.readInteger(valueReference) ?: throw IllegalStateException("No accessor assigned!")
@@ -510,7 +537,7 @@ class EnumerationVariable internal constructor(
             declaredType?.also { add("declaredType=$declaredType") }
         }.joinToString (", ")
 
-        return "${EnumerationVariable::class.java.simpleName}($entries)"
+        return "${EnumerationVariableImpl::class.java.simpleName}($entries)"
 
     }
 

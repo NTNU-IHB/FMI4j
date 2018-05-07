@@ -1,9 +1,10 @@
 package no.mechatronics.sfi.fmu2jar;
 
-import no.mechatronics.sfi.fmu2jar.controlledtemperature.ControlledTemperature;
+
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import no.mechatronics.sfi.fmu2jar.controlledtemperature.ControlledTemperature;
 
 public class ControlledTemperatureTest {
 
