@@ -66,10 +66,4 @@ data class DefaultExperiment(
         @JacksonXmlProperty
         val stepSize: Double = 1E-3
 
-) : Serializable {
-
-    override fun toString(): String {
-        return "DefaultExperiment(startTime=$startTime, stopTime=$stopTime, tolerance=$tolerance, stepSize=$stepSize)"
-    }
-
-}
+) : Serializable

@@ -14,10 +14,8 @@ def fmuName = "ControlledTemperature"
 def m2 = System.getProperty("user.home") + "/.m2/repository"
 def jar = new File("${m2}/${group.replace(".", "/")}/${fmuName}/$version/${fmuName}-${version}.jar")
 
-println(jar)
-
 def debug = jar.exists()
-println("Debug mode=${debug}")
+println("${archivesBaseName}:debug mode=${debug}")
 
 apply plugin: 'kotlin'
 apply plugin: 'application'
