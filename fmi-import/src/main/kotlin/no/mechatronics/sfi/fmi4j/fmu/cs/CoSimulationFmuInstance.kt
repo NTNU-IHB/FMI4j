@@ -26,7 +26,7 @@ package no.mechatronics.sfi.fmi4j.fmu.cs
 
 import no.mechatronics.sfi.fmi4j.common.FmiStatus
 import no.mechatronics.sfi.fmi4j.fmu.AbstractFmu
-import no.mechatronics.sfi.fmi4j.fmu.FmiSimulation
+import no.mechatronics.sfi.fmi4j.common.FmiSimulation
 import no.mechatronics.sfi.fmi4j.fmu.Fmu
 import no.mechatronics.sfi.fmi4j.fmu.proxy.v2.cs.CoSimulationLibraryWrapper
 import no.mechatronics.sfi.fmi4j.fmu.proxy.v2.cs.FmiStatusKind

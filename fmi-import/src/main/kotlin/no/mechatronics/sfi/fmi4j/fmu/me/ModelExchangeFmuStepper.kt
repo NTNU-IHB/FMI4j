@@ -24,9 +24,9 @@
 
 package no.mechatronics.sfi.fmi4j.fmu.me
 
+import no.mechatronics.sfi.fmi4j.common.FmiSimulation
 import no.mechatronics.sfi.fmi4j.common.FmiStatus
-import no.mechatronics.sfi.fmi4j.fmu.FmiSimulation
-import no.mechatronics.sfi.fmi4j.fmu.FmuInstance
+import no.mechatronics.sfi.fmi4j.common.FmuInstance
 import org.apache.commons.math3.ode.FirstOrderDifferentialEquations
 import org.apache.commons.math3.ode.FirstOrderIntegrator
 import org.slf4j.Logger

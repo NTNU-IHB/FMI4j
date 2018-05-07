@@ -25,6 +25,7 @@
 package no.mechatronics.sfi.fmi4j.fmu
 
 import no.mechatronics.sfi.fmi4j.common.FmiStatus
+import no.mechatronics.sfi.fmi4j.common.FmuInstance
 import no.mechatronics.sfi.fmi4j.common.FmuVariableAccessor
 import no.mechatronics.sfi.fmi4j.fmu.misc.*
 import no.mechatronics.sfi.fmi4j.fmu.proxy.v2.FmiLibrary
