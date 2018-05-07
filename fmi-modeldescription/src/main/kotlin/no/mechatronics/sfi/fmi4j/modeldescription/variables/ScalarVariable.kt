@@ -184,15 +184,20 @@ interface TypedScalarVariable<E>: ScalarVariable {
      */
     fun write(value: E): FmiStatus
 
-    fun asIntegerVariable(): IntegerVariable = if (this is IntegerVariable) this else throw IllegalAccessException("Variable is not an ${IntegerVariable::class.java.simpleName}, but an ${this::class.java.simpleName}")
+    fun asIntegerVariable(): IntegerVariable
+            = if (this is IntegerVariable) this else throw IllegalAccessException("Variable is not an ${IntegerVariable::class.java.simpleName}, but an ${this::class.java.simpleName}")
 
-    fun asRealVariable(): RealVariable = if (this is RealVariable) this else throw throw IllegalAccessException("Variable is not an ${RealVariable::class.java.simpleName}, but an ${this::class.java.simpleName}")
+    fun asRealVariable(): RealVariable
+            = if (this is RealVariable) this else throw throw IllegalAccessException("Variable is not an ${RealVariable::class.java.simpleName}, but an ${this::class.java.simpleName}")
 
-    fun asStringVariable(): StringVariable = if (this is StringVariable) this else throw IllegalAccessException("Variable is not an ${StringVariable::class.java.simpleName}, but an ${this::class.java.simpleName}")
+    fun asStringVariable(): StringVariable
+            = if (this is StringVariable) this else throw IllegalAccessException("Variable is not an ${StringVariable::class.java.simpleName}, but an ${this::class.java.simpleName}")
 
-    fun asBooleanVariable(): BooleanVariable = if (this is BooleanVariable) this else throw IllegalAccessException("Variable is not an ${BooleanVariable::class.java.simpleName}, but an ${this::class.java.simpleName}")
+    fun asBooleanVariable(): BooleanVariable
+            = if (this is BooleanVariable) this else throw IllegalAccessException("Variable is not an ${BooleanVariable::class.java.simpleName}, but an ${this::class.java.simpleName}")
 
-    fun asEnumerationVariable(): EnumerationVariable = if (this is EnumerationVariable) this else throw IllegalAccessException("Variable is not an ${EnumerationVariable::class.java.simpleName}, but an ${this::class.java.simpleName}")
+    fun asEnumerationVariable(): EnumerationVariable
+            = if (this is EnumerationVariable) this else throw IllegalAccessException("Variable is not an ${EnumerationVariable::class.java.simpleName}, but an ${this::class.java.simpleName}")
 
 }
 
@@ -224,7 +229,9 @@ interface BoundedTypedScalarVariable<E>: TypedScalarVariable<E> {
  * @author Lars Ivar Hatledal
  */
 @JsonDeserialize(using = ScalarVariableAdapter::class)
-sealed class AbstractTypedScalarVariable<E>: TypedScalarVariable<E>, Serializable {
+sealed class AbstractTypedScalarVariable<E>(
+        v: ScalarVariable
+): ScalarVariable by v, TypedScalarVariable<E>, Serializable {
 
     @JvmField
     internal var accessor: FmuVariableAccessor? = null
@@ -234,7 +241,9 @@ sealed class AbstractTypedScalarVariable<E>: TypedScalarVariable<E>, Serializabl
 /**
  * @author Lars Ivar Hatledal
  */
-sealed class AbstractBoundedTypedScalarVariable<E>: BoundedTypedScalarVariable<E>, AbstractTypedScalarVariable<E>()
+sealed class AbstractBoundedTypedScalarVariable<E>(
+        v: ScalarVariable
+): BoundedTypedScalarVariable<E>, AbstractTypedScalarVariable<E>(v)
 
 /**
  * @author Lars Ivar Hatledal
@@ -244,23 +253,23 @@ interface IntegerVariable : BoundedTypedScalarVariable<Int>
 /**
  * @author Lars Ivar Hatledal
  */
-class IntegerVariableImpl internal constructor(
-        private val v : ScalarVariableImpl
-) : ScalarVariable by v, IntegerVariable, AbstractBoundedTypedScalarVariable<Int>() {
-
-    private val attribute: IntegerAttribute
-            = v.integerAttribute ?: throw AssertionError("Variable is not of type Integer!")
+class IntegerVariableImpl constructor(
+        v : ScalarVariable,
+        attribute: IntegerAttribute
+): IntegerVariable, AbstractBoundedTypedScalarVariable<Int>(v) {
 
     override val min: Int? = attribute.min
     override val max: Int? = attribute.max
     override var start = attribute.start
 
     override fun read(): FmuIntegerRead {
-        return accessor?.readInteger(valueReference) ?: throw IllegalStateException("No accessor assigned!")
+        return accessor?.readInteger(valueReference)
+                ?: throw IllegalStateException("No accessor assigned!")
     }
 
     override fun write(value: Int): FmiStatus {
-        return accessor?.writeInteger(valueReference, value) ?: throw IllegalStateException("No accessor assigned!")
+        return accessor?.writeInteger(valueReference, value)
+                ?: throw IllegalStateException("No accessor assigned!")
     }
 
     override fun toString(): String {
@@ -356,12 +365,10 @@ interface RealVariable : BoundedTypedScalarVariable<Real> {
 /**
  * @author Lars Ivar Hatledal
  */
-class RealVariableImpl internal constructor(
-        private val v : ScalarVariableImpl
-) : ScalarVariable by v, RealVariable, AbstractBoundedTypedScalarVariable<Real>() {
-
-    private val attribute: RealAttribute
-            = v.realAttribute ?: throw AssertionError("Variable is not of type Real!")
+class RealVariableImpl constructor(
+        v : ScalarVariable,
+        attribute: RealAttribute
+): RealVariable, AbstractBoundedTypedScalarVariable<Real>(v) {
 
     override val min: Double? = attribute.min
     override val max: Double? = attribute.max
@@ -376,11 +383,13 @@ class RealVariableImpl internal constructor(
     override val derivative: Int? = attribute.derivative
 
     override fun read(): FmuRealRead {
-        return accessor?.readReal(valueReference) ?: throw IllegalStateException("No accessor assigned!")
+        return accessor?.readReal(valueReference)
+                ?: throw IllegalStateException("No accessor assigned!")
     }
 
     override fun write(value: Real): FmiStatus {
-        return accessor?.writeReal(valueReference, value) ?: throw IllegalStateException("No accessor assigned!")
+        return accessor?.writeReal(valueReference, value)
+                ?: throw IllegalStateException("No accessor assigned!")
     }
 
     override fun toString(): String {
@@ -420,12 +429,10 @@ interface StringVariable : TypedScalarVariable<String>
 /**
  * @author Lars Ivar Hatledal
  */
-class StringVariableImpl internal constructor(
-        private val v : ScalarVariableImpl
-) : ScalarVariable by v, StringVariable, AbstractTypedScalarVariable<String>() {
-
-    private val attribute: StringAttribute
-            = v.stringAttribute ?: throw AssertionError("Variable is not of type String!")
+class StringVariableImpl constructor(
+        v : ScalarVariable,
+        attribute: StringAttribute
+): StringVariable, AbstractTypedScalarVariable<String>(v) {
 
     override var start = attribute.start
 
@@ -467,12 +474,10 @@ interface BooleanVariable: TypedScalarVariable<Boolean>
 /**
  * @author Lars Ivar Hatledal
  */
-class BooleanVariableImpl internal constructor(
-        private val v : ScalarVariableImpl
-) : ScalarVariable by v, BooleanVariable, AbstractTypedScalarVariable<Boolean>() {
-
-    private val attribute: BooleanAttribute
-            = v.booleanAttribute ?: throw AssertionError("Variable is not of type Boolean!")
+class BooleanVariableImpl constructor(
+        v : ScalarVariable,
+        attribute: BooleanAttribute
+): BooleanVariable, AbstractTypedScalarVariable<Boolean>(v) {
 
     override var start = attribute.start
 
@@ -522,11 +527,10 @@ interface EnumerationVariable: BoundedTypedScalarVariable<Int> {
 /**
  * @author Lars Ivar Hatledal
  */
-class EnumerationVariableImpl internal constructor(
-        private val v: ScalarVariableImpl
-): ScalarVariable by v, EnumerationVariable, AbstractBoundedTypedScalarVariable<Int>() {
-
-    private val attribute: EnumerationAttribute = v.enumerationAttribute ?: throw AssertionError("Variable is not of type Enumeration!")
+class EnumerationVariableImpl constructor(
+        v : ScalarVariable,
+        attribute: EnumerationAttribute
+): EnumerationVariable, AbstractBoundedTypedScalarVariable<Int>(v) {
 
     override val min: Int? = attribute.min
     override val max: Int? = attribute.max
