@@ -26,11 +26,7 @@ package no.mechatronics.sfi.fmi4j.modeldescription
 
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement
-import no.mechatronics.sfi.fmi4j.modeldescription.log.LogCategories
-import no.mechatronics.sfi.fmi4j.modeldescription.log.LogCategoriesImpl
-import no.mechatronics.sfi.fmi4j.modeldescription.misc.DefaultExperiment
-import no.mechatronics.sfi.fmi4j.modeldescription.misc.SourceFile
-import no.mechatronics.sfi.fmi4j.modeldescription.misc.VariableNamingConvention
+import no.mechatronics.sfi.fmi4j.modeldescription.misc.*
 import no.mechatronics.sfi.fmi4j.modeldescription.structure.ModelStructure
 import no.mechatronics.sfi.fmi4j.modeldescription.structure.ModelStructureImpl
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.ModelVariables
@@ -269,76 +265,71 @@ interface ModelDescriptionProvider: CommonModelDescription {
  * @author Lars Ivar Hatledal
  */
 @JacksonXmlRootElement(localName = "fmiModelDescription")
-class ModelDescriptionImpl : CommonModelDescription, ModelDescriptionProvider, Serializable {
+data class ModelDescriptionImpl(
 
-    @JacksonXmlProperty()
-    override lateinit var fmiVersion: String
+        @JacksonXmlProperty()
+        override var fmiVersion: String,
 
-    @JacksonXmlProperty()
-    override lateinit var modelName: String
+        @JacksonXmlProperty()
+        override var modelName: String,
 
-    @JacksonXmlProperty()
-    override lateinit var guid: String
+        @JacksonXmlProperty()
+        override var guid: String,
 
-    @JacksonXmlProperty()
-    override val license: String? = null
+        @JacksonXmlProperty()
+        override val license: String? = null,
 
-    @JacksonXmlProperty()
-    override val copyright: String? = null
+        @JacksonXmlProperty()
+        override val copyright: String? = null,
 
-    @JacksonXmlProperty()
-    override val author: String? = null
+        @JacksonXmlProperty()
+        override val author: String? = null,
 
-    @JacksonXmlProperty()
-    override val version: String? = null
+        @JacksonXmlProperty()
+        override val version: String? = null,
 
-    @JacksonXmlProperty()
-    override val description: String? = null
+        @JacksonXmlProperty()
+        override val description: String? = null,
 
-    @JacksonXmlProperty()
-    override val generationTool: String? = null
+        @JacksonXmlProperty()
+        override val generationTool: String? = null,
 
-    @JacksonXmlProperty()
-    override val variableNamingConvention: VariableNamingConvention? = null
+        @JacksonXmlProperty()
+        override val generationDateAndTime: String? = null,
 
-    @JacksonXmlProperty()
-    override val generationDateAndTime: String? = null
+        @JacksonXmlProperty()
+        override val variableNamingConvention: VariableNamingConvention? = null,
 
-    @JacksonXmlProperty(localName = "DefaultExperiment")
-    override val defaultExperiment: DefaultExperiment? = null
+        @JacksonXmlProperty(localName = "DefaultExperiment")
+        override val defaultExperiment: DefaultExperiment? = null,
 
-    /**
-     * The (fixed) number of event indicators for an FMU based on FMI for
-     * Model Exchange.
-     * For Co-Simulation, this value is ignored
-     */
-    @JacksonXmlProperty()
-    val numberOfEventIndicators: Int = 0
+        /**
+         * The (fixed) number of event indicators for an FMU based on FMI for Model Exchange.
+         * For Co-Simulation, this value is ignored
+         */
+        val numberOfEventIndicators: Int = 0,
 
-    @JacksonXmlProperty(localName = "ModelVariables")
-    override lateinit var modelVariables: ModelVariablesImpl
+        @JacksonXmlProperty(localName = "ModelVariables")
+        override var modelVariables: ModelVariablesImpl,
 
-    @JacksonXmlProperty(localName = "ModelStructure")
-    override lateinit var modelStructure: ModelStructureImpl
+        @JacksonXmlProperty(localName = "ModelStructure")
+        override var modelStructure: ModelStructureImpl,
 
-    @JacksonXmlProperty(localName = "LogCategories")
-    private val _logCategories: LogCategoriesImpl? = null
+        @JacksonXmlProperty(localName = "LogCategories")
+        override val logCategories: LogCategories? = null,
 
-    override val logCategories: LogCategories?
-        get() = _logCategories
+        @JacksonXmlProperty(localName = "CoSimulation")
+        private val cs: CoSimulationDataImpl? = null,
 
-    @JacksonXmlProperty(localName = "CoSimulation")
-    private val cs: CoSimulationDataImpl? = null
+        @JacksonXmlProperty(localName = "ModelExchange")
+        private val me: ModelExchangeDataImpl? = null
 
-    @JacksonXmlProperty(localName = "ModelExchange")
-    private val me: ModelExchangeDataImpl? = null
+) : CommonModelDescription, ModelDescriptionProvider, Serializable {
 
-    @delegate:Transient
     private val coSimulationModelDescription: CoSimulationModelDescription? by lazy {
         cs?.let { CoSimulationModelDescriptionImpl(this, it) }
     }
 
-    @delegate:Transient
     private val modelExchangeModelDescription: ModelExchangeModelDescription? by lazy {
         me?.let { ModelExchangeModelDescriptionImpl(this, it) }
     }

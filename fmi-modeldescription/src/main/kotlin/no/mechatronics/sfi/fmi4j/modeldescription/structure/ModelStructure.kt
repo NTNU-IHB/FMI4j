@@ -88,7 +88,6 @@ interface ModelStructure {
  */
 class ModelStructureImpl: ModelStructure, Serializable {
 
-
     @JacksonXmlProperty(localName = "Outputs")
     private val _outputs: Outputs? = null
 
@@ -100,7 +99,6 @@ class ModelStructureImpl: ModelStructure, Serializable {
 
     override val derivatives: List<Unknown>
         get() = _derivatives?.unknowns ?: emptyList()
-
 
     @JacksonXmlProperty(localName = "InitialUnknowns")
     private val _initialUnknowns: InitialUnknowns? = null

@@ -44,36 +44,39 @@ interface ModelVariables: Iterable<TypedScalarVariable<*>> {
     val variables: List<TypedScalarVariable<*>>
 
     val integers: List<IntegerVariable>
-        get() = variables.mapNotNull { if (it is IntegerVariable) it.asIntegerVariable() else null }
+        get() = variables.mapNotNull { (it as? IntegerVariable)?.asIntegerVariable() }
 
     val reals: List<RealVariable>
-        get() = variables.mapNotNull { if (it is RealVariable) it.asRealVariable() else null }
+        get() = variables.mapNotNull { (it as? RealVariable)?.asRealVariable() }
 
     val strings: List<StringVariable>
-        get() = variables.mapNotNull { if (it is StringVariable) it.asStringVariable() else null }
+        get() = variables.mapNotNull { (it as? StringVariable)?.asStringVariable() }
 
     val booleans: List<BooleanVariable>
-        get() = variables.mapNotNull { if (it is BooleanVariable) it.asBooleanVariable() else null }
+        get() = variables.mapNotNull { (it as? BooleanVariable)?.asBooleanVariable() }
 
     val enumerations: List<EnumerationVariable>
-        get() = variables.mapNotNull { if (it is EnumerationVariable) it.asEnumerationVariable() else null }
+        get() = variables.mapNotNull { (it as? EnumerationVariable)?.asEnumerationVariable() }
 
-    operator fun get(index: Int): TypedScalarVariable<*>
-            = variables[index]
+    operator fun get(index: Int): TypedScalarVariable<*> = variables[index]
 
-    override fun iterator(): Iterator<TypedScalarVariable<*>>
-            = variables.iterator()
+    override fun iterator(): Iterator<TypedScalarVariable<*>> = variables.iterator()
 
     /**
      * Get the valueReference of the variable named <name>
      * @name name
      * @throws IllegalArgumentException if there is no variable with the provided name
      */
-    fun getValueReference(name: String) : Int
-            = variables.firstOrNull({it.name == name})?.valueReference ?: throw IllegalArgumentException("No variable with name '$name'")
+    fun getValueReference(name: String): Int {
+        return variables.firstOrNull({ it.name == name })?.valueReference
+                ?: throw IllegalArgumentException("No variable with name '$name'")
+    }
 
-    fun getValueReferences(names: StringArray): IntArray
-            = names.map { getValueReference(it) }.toIntArray()
+
+    fun getValueReferences(names: StringArray): IntArray {
+        return names.map { getValueReference(it) }.toIntArray()
+    }
+
 
     /**
     * Get all variables with the given valueReference

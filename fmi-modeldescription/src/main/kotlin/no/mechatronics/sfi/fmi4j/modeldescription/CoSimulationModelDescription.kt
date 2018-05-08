@@ -33,40 +33,29 @@ import java.io.Serializable
 interface CoSimulationModelDescription : SpecificModelDescription {
 
     /**
-     * The slave is able to provide derivatives of
-     * outputs with maximum order. Calling of
-     * fmi2GetRealOutputDerivatives(...) is
-     * allowed up to the order defined by
+     * The slave is able to provide derivatives of outputs with maximum order.
+     * Calling of mi2GetRealOutputDerivatives(...) is allowed up to the order defined by
      * maxOutputDerivativeOrder.
-     *
      */
     val maxOutputDerivativeOrder: Int
 
 
     /**
-     * The slave can handle variable
-     * communication step size. The
-     * communication step size (parameter
-     * communicationStepSize of
-     * fmi2DoStep(...) ) has not to be constant
-     * for each call.
-     *
+     * The slave can handle variable communication step size.
+     * The communication step size (parameter communicationStepSize of fmi2DoStep(...) )
+     * has not to be constant for each call.
      */
     val canHandleVariableCommunicationStepSize: Boolean
 
     /**
-     * The slave is able to interpolate continuous
-     * inputs. Calling of
-     * fmi2SetRealInputDerivatives(...) has
-     * an effect for the slave.
-     *
+     * The slave is able to interpolate continuous inputs.
+     * Calling of fmi2SetRealInputDerivatives(...) has an effect for the slave.
      */
     val canInterpolateInputs: Boolean
 
     /**
      * This flag describes the ability to carry out the
      * fmi2DoStep(...) call asynchronously.
-     *
      */
     val canRunAsynchronuously: Boolean
 
@@ -75,7 +64,7 @@ interface CoSimulationModelDescription : SpecificModelDescription {
 /**
  * @author Lars Ivar Hatledal
  */
-class CoSimulationModelDescriptionImpl(
+class CoSimulationModelDescriptionImpl internal constructor(
         private val modelDescription: ModelDescriptionImpl,
         private val cs: CoSimulationData
 ) : CommonModelDescription by modelDescription, CoSimulationModelDescription, CoSimulationData by cs, Serializable {

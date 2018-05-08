@@ -27,9 +27,12 @@ package no.mechatronics.sfi.fmi4j.modeldescription
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty
 import no.mechatronics.sfi.fmi4j.modeldescription.misc.SourceFile
-import no.mechatronics.sfi.fmi4j.modeldescription.misc.SourceFileImpl
 import java.io.Serializable
 
+/**
+ *
+ * @author Lars Ivar Hatledal
+ */
 interface FmuData {
 
     val modelIdentifier: String
@@ -98,7 +101,7 @@ sealed class FmuDataImpl : FmuData, Serializable {
 
     @JacksonXmlElementWrapper(localName = "SourceFiles")
     @JacksonXmlProperty(localName = "File")
-    private val _sourceFiles: List<SourceFileImpl>? = null
+    private val _sourceFiles: List<SourceFile>? = null
 
     override val sourceFiles
         get() = _sourceFiles ?: emptyList()
@@ -112,36 +115,28 @@ sealed class FmuDataImpl : FmuData, Serializable {
 /**
  * @author Lars Ivar Hatledal
  */
-internal class CoSimulationDataImpl : FmuDataImpl(), CoSimulationData {
+data class CoSimulationDataImpl(
 
-    @JacksonXmlProperty
-    override val canHandleVariableCommunicationStepSize: Boolean = false
+        @JacksonXmlProperty
+        override val canHandleVariableCommunicationStepSize: Boolean = false,
 
-    @JacksonXmlProperty
-    override val canInterpolateInputs: Boolean = false
+        @JacksonXmlProperty
+        override val canInterpolateInputs: Boolean = false,
 
-    @JacksonXmlProperty
-    override val maxOutputDerivativeOrder: Int = 0
+        @JacksonXmlProperty
+        override val maxOutputDerivativeOrder: Int = 0,
 
-    @JacksonXmlProperty
-    override val canRunAsynchronuously: Boolean = false
+        @JacksonXmlProperty
+        override val canRunAsynchronuously: Boolean = false
 
-    override fun toString(): String {
-        return "CoSimulationDataImpl{modelIdentifier=$modelIdentifier, needsExecutionTool=$needsExecutionTool, canHandleVariableCommunicationStepSize=$canHandleVariableCommunicationStepSize, canInterpolateInputs=$canInterpolateInputs, maxOutputDerivativeOrder=$maxOutputDerivativeOrder, canRunAsynchronuously=$canRunAsynchronuously, canBeInstantiatedOnlyOncePerProcess=$canBeInstantiatedOnlyOncePerProcess, canNotUseMemoryManagementFunctions=$canNotUseMemoryManagementFunctions, canGetAndSetFMUstate=$canGetAndSetFMUstate, canSerializeFMUstate=$canSerializeFMUstate, providesDirectionalDerivative=$providesDirectionalDerivative}"
-    }
-
-}
+) : FmuDataImpl(), CoSimulationData
 
 /**
  * @author Lars Ivar Hatledal
  */
-internal class ModelExchangeDataImpl : FmuDataImpl(), ModelExchangeData {
+data class ModelExchangeDataImpl(
 
-    @JacksonXmlProperty
-    override val completedIntegratorStepNotNeeded: Boolean = false
+        @JacksonXmlProperty
+        override val completedIntegratorStepNotNeeded: Boolean = false
 
-    override fun toString(): String {
-        return "ModelExchangeDataImpl{modelIdentifier=$modelIdentifier, needsExecutionTool=$needsExecutionTool, completedIntegratorStepNotNeeded=$completedIntegratorStepNotNeeded, canBeInstantiatedOnlyOncePerProcess=$canBeInstantiatedOnlyOncePerProcess, canNotUseMemoryManagementFunctions=$canNotUseMemoryManagementFunctions, canGetAndSetFMUstate=$canGetAndSetFMUstate, canSerializeFMUstate=$canSerializeFMUstate, providesDirectionalDerivative=$providesDirectionalDerivative}"
-    }
-
-}
+) : FmuDataImpl(), ModelExchangeData

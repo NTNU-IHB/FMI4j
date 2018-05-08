@@ -54,7 +54,7 @@ interface ModelExchangeModelDescription : SpecificModelDescription {
  *
  * @author Lars Ivar Hatledal laht@ntnu.no.
  */
-class ModelExchangeModelDescriptionImpl(
+class ModelExchangeModelDescriptionImpl internal constructor(
         private val modelDescription: ModelDescriptionImpl,
         private val me: ModelExchangeData
 ) : CommonModelDescription by modelDescription, ModelExchangeModelDescription, ModelExchangeData by me, Serializable {
