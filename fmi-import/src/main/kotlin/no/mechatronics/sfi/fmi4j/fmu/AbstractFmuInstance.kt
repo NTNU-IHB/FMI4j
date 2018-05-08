@@ -36,8 +36,6 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.lang.UnsupportedOperationException
 
-private const val DEFAULT_STOP_TIME = (60 * 60 * 24).toDouble() //24 hours
-
 abstract class AbstractFmuInstance<out E : SpecificModelDescription, out T : FmiLibraryWrapper<*>> internal constructor(
         val fmu: Fmu,
         val wrapper: T
@@ -200,7 +198,6 @@ abstract class AbstractFmuInstance<out E : SpecificModelDescription, out T : Fmi
      */
     override fun reset(): Boolean {
         return wrapper.reset() == FmiStatus.OK
-
     }
 
     /**
