@@ -63,15 +63,30 @@ interface TypedScalarVariable<E> : ScalarVariable {
      */
     fun write(value: E): FmiStatus
 
-    fun asIntegerVariable(): IntegerVariable = if (this is IntegerVariable) this else throw IllegalAccessException("Variable is not an ${IntegerVariable::class.java.simpleName}, but an ${this::class.java.simpleName}")
+    fun asIntegerVariable(): IntegerVariable = when {
+        this is IntegerVariable -> this
+        else -> throw IllegalAccessException("Variable is not an ${IntegerVariable::class.java.simpleName}, but an ${this::class.java.simpleName}")
+    }
 
-    fun asRealVariable(): RealVariable = if (this is RealVariable) this else throw throw IllegalAccessException("Variable is not an ${RealVariable::class.java.simpleName}, but an ${this::class.java.simpleName}")
+    fun asRealVariable(): RealVariable = when {
+        this is RealVariable -> this
+        else -> throw throw IllegalAccessException("Variable is not an ${RealVariable::class.java.simpleName}, but an ${this::class.java.simpleName}")
+    }
 
-    fun asStringVariable(): StringVariable = if (this is StringVariable) this else throw IllegalAccessException("Variable is not an ${StringVariable::class.java.simpleName}, but an ${this::class.java.simpleName}")
+    fun asStringVariable(): StringVariable = when {
+        this is StringVariable -> this
+        else -> throw IllegalAccessException("Variable is not an ${StringVariable::class.java.simpleName}, but an ${this::class.java.simpleName}")
+    }
 
-    fun asBooleanVariable(): BooleanVariable = if (this is BooleanVariable) this else throw IllegalAccessException("Variable is not an ${BooleanVariable::class.java.simpleName}, but an ${this::class.java.simpleName}")
+    fun asBooleanVariable(): BooleanVariable = when {
+        this is BooleanVariable -> this
+        else -> throw IllegalAccessException("Variable is not an ${BooleanVariable::class.java.simpleName}, but an ${this::class.java.simpleName}")
+    }
 
-    fun asEnumerationVariable(): EnumerationVariable = if (this is EnumerationVariable) this else throw IllegalAccessException("Variable is not an ${EnumerationVariable::class.java.simpleName}, but an ${this::class.java.simpleName}")
+    fun asEnumerationVariable(): EnumerationVariable = when {
+        this is EnumerationVariable -> this
+        else -> throw IllegalAccessException("Variable is not an ${EnumerationVariable::class.java.simpleName}, but an ${this::class.java.simpleName}")
+    }
 
 }
 
@@ -227,7 +242,8 @@ interface RealVariable : BoundedTypedScalarVariable<Real> {
     /**
      * Only for Model exchange
      * <br>
-     * If true, state can be reinitialized at an event by the FMU. If false, state will never be reinitialized at an event by the FMU
+     * If true, state can be reinitialized at an event by the FMU.
+     * If false, state will never be reinitialized at an event by the FMU
      */
     val reinit: Boolean?
 

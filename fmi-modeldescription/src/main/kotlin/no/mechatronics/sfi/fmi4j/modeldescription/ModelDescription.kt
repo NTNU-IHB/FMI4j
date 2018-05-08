@@ -271,10 +271,10 @@ data class ModelDescriptionImpl(
         override var fmiVersion: String,
 
         @JacksonXmlProperty()
-        override var modelName: String,
+        override val modelName: String,
 
         @JacksonXmlProperty()
-        override var guid: String,
+        override val guid: String,
 
         @JacksonXmlProperty()
         override val license: String? = null,
@@ -326,13 +326,27 @@ data class ModelDescriptionImpl(
 
 ) : CommonModelDescription, ModelDescriptionProvider, Serializable {
 
-    private val coSimulationModelDescription: CoSimulationModelDescription? by lazy {
-        cs?.let { CoSimulationModelDescriptionImpl(this, it) }
-    }
+    @Transient
+    private var _modelExchangeModelDescription: ModelExchangeModelDescription? = null
 
-    private val modelExchangeModelDescription: ModelExchangeModelDescription? by lazy {
-        me?.let { ModelExchangeModelDescriptionImpl(this, it) }
-    }
+    private val modelExchangeModelDescription: ModelExchangeModelDescription?
+        get() {
+            if (_modelExchangeModelDescription == null && supportsModelExchange) {
+                _modelExchangeModelDescription = ModelExchangeModelDescriptionImpl(this, me!!)
+            }
+            return _modelExchangeModelDescription
+        }
+
+    @Transient
+    private var _coSimulationModelDescription: CoSimulationModelDescription? = null
+
+    private val coSimulationModelDescription: CoSimulationModelDescription?
+        get() {
+            if (_coSimulationModelDescription == null && supportsCoSimulation) {
+                _coSimulationModelDescription = CoSimulationModelDescriptionImpl(this, cs!!)
+            }
+            return _coSimulationModelDescription
+        }
 
     override val supportsModelExchange: Boolean
         get() = me != null
@@ -365,8 +379,7 @@ data class ModelDescriptionImpl(
                 generationTool?.let { "generationTool=$generationTool" },
                 variableNamingConvention?.let { "variableNamingConvention=$variableNamingConvention" },
                 generationDateAndTime?.let { "generationDateAndTime=$generationDateAndTime" },
-                defaultExperiment?.let { "defaultExperiment=$defaultExperiment" },
-                numberOfEventIndicators.let { "numberOfEventIndicators=$numberOfEventIndicators" }
+                defaultExperiment?.let { "defaultExperiment=$defaultExperiment" }
         ).joinToString ("\n")
 
 

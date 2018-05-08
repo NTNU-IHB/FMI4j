@@ -27,6 +27,7 @@ package no.mechatronics.sfi.fmi4j.modeldescription.variables
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement
+import com.google.gson.annotations.SerializedName
 import no.mechatronics.sfi.fmi4j.common.StringArray
 import java.io.Serializable
 
@@ -68,15 +69,13 @@ interface ModelVariables: Iterable<TypedScalarVariable<*>> {
      * @throws IllegalArgumentException if there is no variable with the provided name
      */
     fun getValueReference(name: String): Int {
-        return variables.firstOrNull({ it.name == name })?.valueReference
+        return variables.firstOrNull { it.name == name }?.valueReference
                 ?: throw IllegalArgumentException("No variable with name '$name'")
     }
-
 
     fun getValueReferences(names: StringArray): IntArray {
         return names.map { getValueReference(it) }.toIntArray()
     }
-
 
     /**
     * Get all variables with the given valueReference
@@ -112,13 +111,21 @@ interface ModelVariables: Iterable<TypedScalarVariable<*>> {
 @JacksonXmlRootElement(localName = "ModelVariables")
 class ModelVariablesImpl : ModelVariables, Serializable {
 
+    @SerializedName("variables")
     @JacksonXmlProperty(localName = "ScalarVariable")
     @JacksonXmlElementWrapper(useWrapping = false)
     private val _variables: List<ScalarVariableImpl>? = null
 
-    override val variables: List<TypedScalarVariable<*>> by lazy {
-        _variables?.map { it.toTyped() } ?: emptyList()
-    }
+    @Transient
+    private var __variables: List<TypedScalarVariable<*>>? = null
+
+    override val variables: List<TypedScalarVariable<*>>
+        get() {
+            if (__variables == null) {
+                __variables = _variables!!.map { it.toTyped() }
+            }
+            return __variables!!
+        }
 
     override fun toString(): String {
         return "ModelVariablesImpl(variables=$variables)"

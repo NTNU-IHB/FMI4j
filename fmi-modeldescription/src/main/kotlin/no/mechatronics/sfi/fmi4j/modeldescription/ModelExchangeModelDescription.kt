@@ -56,7 +56,7 @@ interface ModelExchangeModelDescription : SpecificModelDescription {
  */
 class ModelExchangeModelDescriptionImpl internal constructor(
         private val modelDescription: ModelDescriptionImpl,
-        private val me: ModelExchangeData
+        me: ModelExchangeData
 ) : CommonModelDescription by modelDescription, ModelExchangeModelDescription, ModelExchangeData by me, Serializable {
 
     override val numberOfEventIndicators: Int

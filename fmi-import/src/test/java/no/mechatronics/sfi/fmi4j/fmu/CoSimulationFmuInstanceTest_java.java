@@ -100,7 +100,7 @@ public class CoSimulationFmuInstanceTest_java {
 
             }
 
-            ((AbstractFmu) fmu).reset(false);
+            ((AbstractFmuInstance) fmu).reset(false);
 
             Assert.assertSame(fmu.getLastStatus(), FmiStatus.OK);
 

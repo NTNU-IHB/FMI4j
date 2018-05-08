@@ -83,7 +83,7 @@ class Fmu private constructor(
     var hasDeletedExtractedFmuFolder = false
         private set
 
-    private val instances = mutableListOf<AbstractFmu<*, *>>()
+    private val instances = mutableListOf<AbstractFmuInstance<*, *>>()
     private val libraries = mutableListOf<LibraryProvider<*>>()
 
 

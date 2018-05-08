@@ -38,13 +38,13 @@ import java.lang.UnsupportedOperationException
 
 private const val DEFAULT_STOP_TIME = (60 * 60 * 24).toDouble() //24 hours
 
-abstract class AbstractFmu<out E: SpecificModelDescription, out T: FmiLibraryWrapper<*>> internal constructor(
+abstract class AbstractFmuInstance<out E : SpecificModelDescription, out T : FmiLibraryWrapper<*>> internal constructor(
         val fmu: Fmu,
         val wrapper: T
 ): FmuInstance {
 
     private companion object {
-        private val LOG: Logger = LoggerFactory.getLogger(AbstractFmu::class.java)
+        private val LOG: Logger = LoggerFactory.getLogger(AbstractFmuInstance::class.java)
     }
 
     override val variableAccessor: FmuVariableAccessor

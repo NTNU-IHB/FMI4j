@@ -66,7 +66,7 @@ interface CoSimulationModelDescription : SpecificModelDescription {
  */
 class CoSimulationModelDescriptionImpl internal constructor(
         private val modelDescription: ModelDescriptionImpl,
-        private val cs: CoSimulationData
+        cs: CoSimulationData
 ) : CommonModelDescription by modelDescription, CoSimulationModelDescription, CoSimulationData by cs, Serializable {
 
     override fun toString(): String {
