@@ -1,6 +1,8 @@
-package no.mechatronics.sfi.fmi4j.fmu
+package no.mechatronics.sfi.fmi4j.fmu.misc
 
 
+import no.mechatronics.sfi.fmi4j.fmu.Fmu
+import no.mechatronics.sfi.fmi4j.fmu.TEST_FMUs
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.RealVariable
 import org.javafmi.wrapper.Simulation
 import org.slf4j.Logger
@@ -43,8 +45,6 @@ object Benchmark {
         for (option in intArrayOf(0).map { options[it] }) {
 
             LOG.info("Running FMU '${option.fmuName}'")
-
-
 
             runJavaFMI(option)
             // System.gc()
