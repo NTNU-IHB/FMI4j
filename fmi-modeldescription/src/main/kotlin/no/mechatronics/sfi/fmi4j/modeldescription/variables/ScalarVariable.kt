@@ -26,7 +26,6 @@ package no.mechatronics.sfi.fmi4j.modeldescription.variables
 
 import com.fasterxml.jackson.annotation.JsonSetter
 import com.fasterxml.jackson.annotation.Nulls
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement
 import no.mechatronics.sfi.fmi4j.common.*
@@ -143,6 +142,23 @@ class ScalarVariableImpl internal constructor() : ScalarVariable, Serializable {
     @JsonSetter(nulls = Nulls.AS_EMPTY)
     internal var enumerationAttribute: EnumerationAttribute? = null
 
+
+    /**
+     * Return a typed version of this variable.
+     */
+    fun toTyped(): TypedScalarVariable<*> {
+
+        return when {
+            integerAttribute != null -> IntegerVariableImpl(this, integerAttribute!!)
+            realAttribute != null -> RealVariableImpl(this, realAttribute!!)
+            stringAttribute != null -> StringVariableImpl(this, stringAttribute!!)
+            booleanAttribute != null -> BooleanVariableImpl(this, booleanAttribute!!)
+            enumerationAttribute != null -> EnumerationVariableImpl(this, enumerationAttribute!!)
+            else -> throw IllegalStateException()
+        }
+
+    }
+
     override fun toString(): String {
         return "ScalarVariableImpl(name='$name', declaredType=$declaredType, description=$description, causality=$causality, variability=$variability, initial=$initial, _valueReference=$_valueReference, integerAttribute=$integerAttribute, realAttribute=$realAttribute, stringAttribute=$stringAttribute, booleanAttribute=$booleanAttribute, enumerationAttribute=$enumerationAttribute)"
     }
@@ -228,7 +244,6 @@ interface BoundedTypedScalarVariable<E>: TypedScalarVariable<E> {
 /**
  * @author Lars Ivar Hatledal
  */
-@JsonDeserialize(using = ScalarVariableAdapter::class)
 sealed class AbstractTypedScalarVariable<E>(
         v: ScalarVariable
 ): ScalarVariable by v, TypedScalarVariable<E>, Serializable {

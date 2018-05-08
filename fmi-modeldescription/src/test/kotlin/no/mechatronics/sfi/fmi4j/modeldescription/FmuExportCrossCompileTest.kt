@@ -63,6 +63,7 @@ class FmuExportCrossCompileTest {
 
         ObjectInputStream(ByteArrayInputStream(bos.toByteArray())).use {
             val md: CommonModelDescription = it.readObject() as CommonModelDescription
+            Assert.assertEquals(modelDescription.modelVariables.size, md.modelVariables.variables.size)
             md.modelVariables.variables.forEach { LOG.info("$it") }
             LOG.info("${md.modelStructure}")
         }

@@ -111,10 +111,11 @@ class ModelVariablesImpl : ModelVariables, Serializable {
 
     @JacksonXmlProperty(localName = "ScalarVariable")
     @JacksonXmlElementWrapper(useWrapping = false)
-    private val _variables: List<AbstractTypedScalarVariable<*>>? = null
+    private val _variables: List<ScalarVariableImpl>? = null
 
-    override val variables: List<TypedScalarVariable<*>>
-        get() = _variables ?: emptyList()
+    override val variables: List<TypedScalarVariable<*>> by lazy {
+        _variables?.map { it.toTyped() } ?: emptyList()
+    }
 
     override fun toString(): String {
         return "ModelVariablesImpl(variables=$variables)"
