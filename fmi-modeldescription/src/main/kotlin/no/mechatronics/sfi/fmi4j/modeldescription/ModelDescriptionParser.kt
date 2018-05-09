@@ -53,22 +53,22 @@ object ModelDescriptionParser {
     }
 
     @JvmStatic
-    fun parse(url: URL): CommonModelDescription {
+    fun parse(url: URL): ModelDescriptionProvider {
         return parse(url.openStream())
     }
 
     @JvmStatic
-    fun parse(file: File): CommonModelDescription {
+    fun parse(file: File): ModelDescriptionProvider {
         return parse(FileInputStream(file))
     }
 
     @JvmStatic
-    fun parse(xml: String): CommonModelDescription {
+    fun parse(xml: String): ModelDescriptionProvider {
         return mapper.readValue<ModelDescriptionImpl>(xml)
     }
 
     @JvmStatic
-    private fun parse(stream: InputStream): CommonModelDescription {
+    private fun parse(stream: InputStream): ModelDescriptionProvider {
         return parse(extractModelDescriptionXml(stream))
     }
 

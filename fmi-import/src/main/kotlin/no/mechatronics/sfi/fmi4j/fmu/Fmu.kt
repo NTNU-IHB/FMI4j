@@ -42,6 +42,7 @@ import no.mechatronics.sfi.fmi4j.fmu.proxy.v2.me.ModelExchangeLibraryWrapper
 import no.mechatronics.sfi.fmi4j.fmu.proxy.v2.structs.FmiCallbackFunctions
 import no.mechatronics.sfi.fmi4j.modeldescription.CommonModelDescription
 import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescriptionParser
+import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescriptionProvider
 import no.mechatronics.sfi.fmi4j.modeldescription.SpecificModelDescription
 import org.apache.commons.math3.ode.FirstOrderIntegrator
 import org.slf4j.Logger
@@ -142,7 +143,7 @@ class Fmu private constructor(
         modelDescriptionFile.readText()
     }
 
-    val modelDescription: CommonModelDescription by lazy {
+    val modelDescription: ModelDescriptionProvider by lazy {
         ModelDescriptionParser.parse(modelDescriptionXml)
     }
 
