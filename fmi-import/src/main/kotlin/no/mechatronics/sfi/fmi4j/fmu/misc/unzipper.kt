@@ -30,10 +30,32 @@ import java.io.InputStream
 import java.net.URL
 import java.util.zip.ZipInputStream
 
+/**
+ * Extracts the content of this File to the specified folder
+ *
+ * @param directory folder to extract to
+ */
+fun File.extractTo(directory: File) {
+    inputStream().extractTo(directory)
+}
 
-private fun extractTo(directory: File, inputStream: InputStream) {
+/**
+ * Extracts the content of this URL to the specified folder
+ *
+ * @param directory folder to extract to
+ */
+fun URL.extractTo(directory: File) {
+    openStream().extractTo(directory)
+}
 
-    ZipInputStream(inputStream).use { zis ->
+/**
+ * Extracts the content of this stream to the specified folder
+ *
+ * @param directory folder to extract to
+ */
+private fun InputStream.extractTo(directory: File) {
+
+    ZipInputStream(this).use { zis ->
         var zipEntry = zis.nextEntry
         while (zipEntry != null) {
             if (!zipEntry.isDirectory) {
@@ -52,10 +74,3 @@ private fun extractTo(directory: File, inputStream: InputStream) {
 
 }
 
-fun File.extractTo(directory: File) {
-    extractTo(directory, inputStream())
-}
-
-fun URL.extractTo(directory: File) {
-    extractTo(directory, openStream())
-}

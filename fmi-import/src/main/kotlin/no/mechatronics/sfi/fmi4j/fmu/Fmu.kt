@@ -229,7 +229,6 @@ class Fmu private constructor(
             }
         }
 
-
         @JvmOverloads
         fun newInstance(visible: Boolean = false, loggingOn: Boolean = false) : CoSimulationFmuInstance {
             val lib = if (modelDescription.canBeInstantiatedOnlyOncePerProcess) loadLibrary() else libraryCache
@@ -334,8 +333,6 @@ class Fmu private constructor(
             }
 
         }
-
-
 
         private fun <E: FmiLibrary> loadLibrary(fmu: Fmu, modelDescription: SpecificModelDescription, type: Class<E>): LibraryProvider<E> {
 
