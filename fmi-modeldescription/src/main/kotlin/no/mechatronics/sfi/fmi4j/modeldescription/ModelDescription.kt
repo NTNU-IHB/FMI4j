@@ -164,6 +164,10 @@ interface CommonModelDescription {
      */
     val supportsCoSimulation: Boolean
 
+    fun asCoSimulationModelDescription(): CoSimulationModelDescription
+
+    fun asModelExchangeModelDescription(): ModelExchangeModelDescription
+
 }
 
 
@@ -253,13 +257,6 @@ interface SpecificModelDescription : CommonModelDescription {
 
 }
 
-interface ModelDescriptionProvider: CommonModelDescription {
-
-    fun asCoSimulationModelDescription(): CoSimulationModelDescription
-
-    fun asModelExchangeModelDescription() : ModelExchangeModelDescription
-
-}
 
 /**
  * @author Lars Ivar Hatledal
@@ -324,7 +321,7 @@ class ModelDescriptionImpl(
         @JacksonXmlProperty(localName = "ModelExchange")
         private val me: ModelExchangeDataImpl? = null
 
-) : CommonModelDescription, ModelDescriptionProvider, Serializable {
+) : CommonModelDescription, Serializable {
 
     @Transient
     private var _modelExchangeModelDescription: ModelExchangeModelDescription? = null

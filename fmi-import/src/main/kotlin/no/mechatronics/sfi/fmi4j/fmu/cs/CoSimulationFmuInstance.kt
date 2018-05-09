@@ -48,7 +48,6 @@ class CoSimulationFmuInstance internal constructor(
     override var currentTime: Double = 0.0
         private set
 
-
     override val modelDescription: CoSimulationModelDescription
         get() = fmu.modelDescription.asCoSimulationModelDescription()
 

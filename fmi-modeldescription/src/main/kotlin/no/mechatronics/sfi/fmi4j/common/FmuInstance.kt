@@ -24,6 +24,7 @@
 
 package no.mechatronics.sfi.fmi4j.common
 
+import no.mechatronics.sfi.fmi4j.modeldescription.CommonModelDescription
 import no.mechatronics.sfi.fmi4j.modeldescription.SpecificModelDescription
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.ModelVariables
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.TypedScalarVariable
@@ -35,24 +36,12 @@ import java.io.Closeable
 interface FmuInstance : Closeable {
 
     /**
-     * @see SpecificModelDescription.guid
-     */
-    val guid: String
-        get() = modelDescription.guid
-
-    /**
-     * @see SpecificModelDescription.modelName
-     */
-    val modelName: String
-        get() = modelDescription.modelName
-
-    /**
      * @see SpecificModelDescription.modelVariables
      */
     val modelVariables: ModelVariables
         get() = modelDescription.modelVariables
 
-    val modelDescription: SpecificModelDescription
+    val modelDescription: CommonModelDescription
     val variableAccessor: FmuVariableAccessor
 
     val lastStatus: FmiStatus
@@ -99,7 +88,8 @@ interface FmuInstance : Closeable {
     /**
      * @see ModelVariables.getByName
      */
-    fun getVariableByName(name: String): TypedScalarVariable<*>
-            = modelVariables.getByName(name)
+    fun getVariableByName(name: String): TypedScalarVariable<*> {
+        return modelVariables.getByName(name)
+    }
 
 }

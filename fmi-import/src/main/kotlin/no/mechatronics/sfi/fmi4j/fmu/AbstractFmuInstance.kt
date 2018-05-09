@@ -45,6 +45,8 @@ abstract class AbstractFmuInstance<out E : SpecificModelDescription, out T : Fmi
         private val LOG: Logger = LoggerFactory.getLogger(AbstractFmuInstance::class.java)
     }
 
+    abstract override val modelDescription: E
+
     override val variableAccessor: FmuVariableAccessor
             = FmuVariableAccessorImpl(wrapper, modelVariables)
 
@@ -273,7 +275,7 @@ abstract class AbstractFmuInstance<out E : SpecificModelDescription, out T : Fmi
     /**
      * @see FmiLibrary.fmi2SerializeFMUstate
      */
-    fun serializeFMUState(fmuState: FmuState):ByteArray {
+    fun serializeFMUState(fmuState: FmuState): ByteArray {
         if (!modelDescription.canSerializeFMUstate) {
             throw UnsupportedOperationException("Method call not allowed, FMU cannot serialize FMU state!")
         }
