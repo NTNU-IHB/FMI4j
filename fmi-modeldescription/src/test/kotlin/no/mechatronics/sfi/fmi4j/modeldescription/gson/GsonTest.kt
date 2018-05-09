@@ -29,6 +29,7 @@ class GsonTest {
                     val json = gson.toJson(md)
                     LOG.info("$json")
 
+                    @Suppress("NAME_SHADOWING")
                     val md = gson.fromJson(json, ModelExchangeModelDescriptionImpl::class.java)
                     LOG.info("${md.modelVariables}")
 
