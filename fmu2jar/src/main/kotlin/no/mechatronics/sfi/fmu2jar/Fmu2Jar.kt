@@ -65,7 +65,7 @@ class Fmu2Jar(
     }
 
     private fun copyGradleWrapper(parentDir: File) {
-        val zipStream: InputStream = javaClass.classLoader.getResourceAsStream("myzip.zip")
+        val zipStream: InputStream = javaClass.classLoader.getResourceAsStream("gradle.zip")
         ZipInputStream(zipStream).use { zis ->
             var nextEntry: ZipEntry? = zis.nextEntry
             while (nextEntry != null) {

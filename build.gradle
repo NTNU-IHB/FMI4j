@@ -14,7 +14,7 @@ buildscript {
 }
 
 wrapper {
-    gradleVersion = '4.6'
+    gradleVersion = '4.7'
 }
 
 subprojects { sub ->
@@ -57,7 +57,6 @@ subprojects { sub ->
     if(sub.name.startsWith("fmi")) {
 
         def snapshot = false
-
         group = 'no.mechatronics.sfi.fmi4j'
         version = '0.7.1'
         if (snapshot) {
@@ -66,10 +65,8 @@ subprojects { sub ->
 
         println("maven version for $archivesBaseName is: $version")
 
-
         apply plugin: 'maven'
         apply plugin: 'signing'
-
 
         task sourcesJar(type: Jar, dependsOn: classes, description: 'Creates a jar from the source files.') {
             classifier = 'sources'
