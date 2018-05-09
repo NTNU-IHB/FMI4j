@@ -42,7 +42,7 @@ configurations.all {
 dependencies {
 
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
-    compile group: 'no.mechatronics.sfi.fmi4j', name: 'fmi-import', version: '0.7.1', changing: false
+    compile group: 'no.mechatronics.sfi.fmi4j', name: 'fmi-import', version: '0.7.2-SNAPSHOT', changing: true
 
 }
 
