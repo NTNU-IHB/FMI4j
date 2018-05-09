@@ -1,7 +1,7 @@
 package no.mechatronics.sfi.fmu2jar
 
 
-import no.mechatronics.sfi.fmi4j.fmu.FmiSimulation
+import no.mechatronics.sfi.fmi4j.common.FmiSimulation
 import org.junit.AfterClass
 import org.junit.Assert
 import org.junit.BeforeClass

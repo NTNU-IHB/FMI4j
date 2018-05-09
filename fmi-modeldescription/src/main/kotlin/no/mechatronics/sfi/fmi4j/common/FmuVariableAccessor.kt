@@ -32,41 +32,41 @@ package no.mechatronics.sfi.fmi4j.common
 interface FmuVariableAccessor {
 
     fun readInteger(name: String): FmuIntegerRead
-    fun readInteger(valueReference: Int) : FmuIntegerRead
-    fun readInteger(vr: IntArray) : FmuIntegerArrayRead
-    fun readInteger(vr: IntArray, value: IntArray) : FmuIntegerArrayRead
+    fun readInteger(vr: ValueReference): FmuIntegerRead
+    fun readInteger(vr: ValueReferences): FmuIntegerArrayRead
+    fun readInteger(vr: ValueReferences, value: IntArray): FmuIntegerArrayRead
 
     fun readReal(name: String): FmuRealRead
-    fun readReal(valueReference: Int) : FmuRealRead
-    fun readReal(vr: IntArray) : FmuRealArrayRead
-    fun readReal(vr: IntArray, value: RealArray) : FmuRealArrayRead
+    fun readReal(vr: ValueReference): FmuRealRead
+    fun readReal(vr: ValueReferences): FmuRealArrayRead
+    fun readReal(vr: ValueReferences, value: RealArray): FmuRealArrayRead
 
     fun readString(name: String): FmuStringRead
-    fun readString(valueReference: Int) : FmuStringRead
-    fun readString(vr: IntArray) : FmuStringArrayRead
-    fun readString(vr: IntArray, value: StringArray) : FmuStringArrayRead
+    fun readString(vr: ValueReference): FmuStringRead
+    fun readString(vr: ValueReferences): FmuStringArrayRead
+    fun readString(vr: ValueReferences, value: StringArray): FmuStringArrayRead
 
     fun readBoolean(name: String): FmuBooleanRead
-    fun readBoolean(valueReference: Int): FmuBooleanRead
-    fun readBoolean(vr: IntArray): FmuBooleanArrayRead
-    fun readBoolean(vr: IntArray, value: BooleanArray): FmuBooleanArrayRead
-    fun readBoolean(vr: IntArray, value: IntArray): FmuIntegerArrayRead
+    fun readBoolean(vr: ValueReference): FmuBooleanRead
+    fun readBoolean(vr: ValueReferences): FmuBooleanArrayRead
+    fun readBoolean(vr: ValueReferences, value: BooleanArray): FmuBooleanArrayRead
+    fun readBoolean(vr: ValueReferences, value: IntArray): FmuIntegerArrayRead
 
     fun writeInteger(name: String, value: Int): FmiStatus
-    fun writeInteger(valueReference: Int, value: Int): FmiStatus
-    fun writeInteger(vr: IntArray, value: IntArray): FmiStatus
+    fun writeInteger(vr: ValueReference, value: Int): FmiStatus
+    fun writeInteger(vr: ValueReferences, value: IntArray): FmiStatus
 
     fun writeReal(name: String, value: Real): FmiStatus
-    fun writeReal(valueReference: Int, value: Real): FmiStatus
-    fun writeReal(vr: IntArray, value: RealArray): FmiStatus
+    fun writeReal(vr: ValueReference, value: Real): FmiStatus
+    fun writeReal(vr: ValueReferences, value: RealArray): FmiStatus
 
     fun writeString(name: String, value: String): FmiStatus
-    fun writeString(valueReference: Int, value: String): FmiStatus
-    fun writeString(vr: IntArray, value: StringArray): FmiStatus
+    fun writeString(vr: ValueReference, value: String): FmiStatus
+    fun writeString(vr: ValueReferences, value: StringArray): FmiStatus
 
     fun writeBoolean(name: String, value: Boolean): FmiStatus
-    fun writeBoolean(valueReference: Int, value: Boolean): FmiStatus
-    fun writeBoolean(vr: IntArray, value: IntArray): FmiStatus
-    fun writeBoolean(vr: IntArray, value: BooleanArray): FmiStatus
+    fun writeBoolean(vr: ValueReference, value: Boolean): FmiStatus
+    fun writeBoolean(vr: ValueReferences, value: IntArray): FmiStatus
+    fun writeBoolean(vr: ValueReferences, value: BooleanArray): FmiStatus
 
 }

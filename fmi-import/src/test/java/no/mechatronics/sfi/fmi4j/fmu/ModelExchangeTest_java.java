@@ -24,6 +24,7 @@
 
 package no.mechatronics.sfi.fmi4j.fmu;
 
+import no.mechatronics.sfi.fmi4j.common.FmiSimulation;
 import no.mechatronics.sfi.fmi4j.common.FmiStatus;
 import no.mechatronics.sfi.fmi4j.common.FmuRead;
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.RealVariable;

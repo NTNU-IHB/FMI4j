@@ -26,11 +26,7 @@ package no.mechatronics.sfi.fmi4j.modeldescription
 
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement
-import no.mechatronics.sfi.fmi4j.modeldescription.log.LogCategories
-import no.mechatronics.sfi.fmi4j.modeldescription.log.LogCategoriesImpl
-import no.mechatronics.sfi.fmi4j.modeldescription.misc.DefaultExperiment
-import no.mechatronics.sfi.fmi4j.modeldescription.misc.SourceFile
-import no.mechatronics.sfi.fmi4j.modeldescription.misc.VariableNamingConvention
+import no.mechatronics.sfi.fmi4j.modeldescription.misc.*
 import no.mechatronics.sfi.fmi4j.modeldescription.structure.ModelStructure
 import no.mechatronics.sfi.fmi4j.modeldescription.structure.ModelStructureImpl
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.ModelVariables
@@ -257,91 +253,101 @@ interface SpecificModelDescription : CommonModelDescription {
 
 }
 
-interface ModelDescriptionProvider: CommonModelDescription {
+interface ModelDescriptionProvider : CommonModelDescription {
 
     fun asCoSimulationModelDescription(): CoSimulationModelDescription
 
-    fun asModelExchangeModelDescription() : ModelExchangeModelDescription
+    fun asModelExchangeModelDescription(): ModelExchangeModelDescription
 
 }
+
 
 /**
  * @author Lars Ivar Hatledal
  */
 @JacksonXmlRootElement(localName = "fmiModelDescription")
-class ModelDescriptionImpl : CommonModelDescription, ModelDescriptionProvider, Serializable {
+class ModelDescriptionImpl(
 
-    @JacksonXmlProperty()
-    override lateinit var fmiVersion: String
+        @JacksonXmlProperty()
+        override var fmiVersion: String,
 
-    @JacksonXmlProperty()
-    override lateinit var modelName: String
+        @JacksonXmlProperty()
+        override val modelName: String,
 
-    @JacksonXmlProperty()
-    override lateinit var guid: String
+        @JacksonXmlProperty()
+        override val guid: String,
 
-    @JacksonXmlProperty()
-    override val license: String? = null
+        @JacksonXmlProperty()
+        override val license: String? = null,
 
-    @JacksonXmlProperty()
-    override val copyright: String? = null
+        @JacksonXmlProperty()
+        override val copyright: String? = null,
 
-    @JacksonXmlProperty()
-    override val author: String? = null
+        @JacksonXmlProperty()
+        override val author: String? = null,
 
-    @JacksonXmlProperty()
-    override val version: String? = null
+        @JacksonXmlProperty()
+        override val version: String? = null,
 
-    @JacksonXmlProperty()
-    override val description: String? = null
+        @JacksonXmlProperty()
+        override val description: String? = null,
 
-    @JacksonXmlProperty()
-    override val generationTool: String? = null
+        @JacksonXmlProperty()
+        override val generationTool: String? = null,
 
-    @JacksonXmlProperty()
-    override val variableNamingConvention: VariableNamingConvention? = null
+        @JacksonXmlProperty()
+        override val generationDateAndTime: String? = null,
 
-    @JacksonXmlProperty()
-    override val generationDateAndTime: String? = null
+        @JacksonXmlProperty()
+        override val variableNamingConvention: VariableNamingConvention? = null,
 
-    @JacksonXmlProperty(localName = "DefaultExperiment")
-    override val defaultExperiment: DefaultExperiment? = null
+        @JacksonXmlProperty(localName = "DefaultExperiment")
+        override val defaultExperiment: DefaultExperiment? = null,
 
-    /**
-     * The (fixed) number of event indicators for an FMU based on FMI for
-     * Model Exchange.
-     * For Co-Simulation, this value is ignored
-     */
-    @JacksonXmlProperty()
-    val numberOfEventIndicators: Int = 0
+        /**
+         * The (fixed) number of event indicators for an FMU based on FMI for Model Exchange.
+         * For Co-Simulation, this value is ignored
+         */
+        val numberOfEventIndicators: Int = 0,
 
-    @JacksonXmlProperty(localName = "ModelVariables")
-    override lateinit var modelVariables: ModelVariablesImpl
+        @JacksonXmlProperty(localName = "ModelVariables")
+        override var modelVariables: ModelVariablesImpl,
 
-    @JacksonXmlProperty(localName = "ModelStructure")
-    override lateinit var modelStructure: ModelStructureImpl
+        @JacksonXmlProperty(localName = "ModelStructure")
+        override var modelStructure: ModelStructureImpl,
 
-    @JacksonXmlProperty(localName = "LogCategories")
-    private val _logCategories: LogCategoriesImpl? = null
+        @JacksonXmlProperty(localName = "LogCategories")
+        override val logCategories: LogCategories? = null,
 
-    override val logCategories: LogCategories?
-        get() = _logCategories
+        @JacksonXmlProperty(localName = "CoSimulation")
+        private val cs: CoSimulationDataImpl? = null,
 
-    @JacksonXmlProperty(localName = "CoSimulation")
-    private val cs: CoSimulationDataImpl? = null
+        @JacksonXmlProperty(localName = "ModelExchange")
+        private val me: ModelExchangeDataImpl? = null
 
-    @JacksonXmlProperty(localName = "ModelExchange")
-    private val me: ModelExchangeDataImpl? = null
+) : ModelDescriptionProvider, Serializable {
 
-    @delegate:Transient
-    private val coSimulationModelDescription: CoSimulationModelDescription? by lazy {
-        cs?.let { CoSimulationModelDescriptionImpl(this, it) }
-    }
+    @Transient
+    private var _modelExchangeModelDescription: ModelExchangeModelDescription? = null
 
-    @delegate:Transient
-    private val modelExchangeModelDescription: ModelExchangeModelDescription? by lazy {
-        me?.let { ModelExchangeModelDescriptionImpl(this, it) }
-    }
+    private val modelExchangeModelDescription: ModelExchangeModelDescription?
+        get() {
+            if (_modelExchangeModelDescription == null && supportsModelExchange) {
+                _modelExchangeModelDescription = ModelExchangeModelDescriptionImpl(this, me!!)
+            }
+            return _modelExchangeModelDescription
+        }
+
+    @Transient
+    private var _coSimulationModelDescription: CoSimulationModelDescription? = null
+
+    private val coSimulationModelDescription: CoSimulationModelDescription?
+        get() {
+            if (_coSimulationModelDescription == null && supportsCoSimulation) {
+                _coSimulationModelDescription = CoSimulationModelDescriptionImpl(this, cs!!)
+            }
+            return _coSimulationModelDescription
+        }
 
     override val supportsModelExchange: Boolean
         get() = me != null
@@ -374,8 +380,7 @@ class ModelDescriptionImpl : CommonModelDescription, ModelDescriptionProvider, S
                 generationTool?.let { "generationTool=$generationTool" },
                 variableNamingConvention?.let { "variableNamingConvention=$variableNamingConvention" },
                 generationDateAndTime?.let { "generationDateAndTime=$generationDateAndTime" },
-                defaultExperiment?.let { "defaultExperiment=$defaultExperiment" },
-                numberOfEventIndicators.let { "numberOfEventIndicators=$numberOfEventIndicators" }
+                defaultExperiment?.let { "defaultExperiment=$defaultExperiment" }
         ).joinToString ("\n")
 
 
@@ -385,105 +390,4 @@ class ModelDescriptionImpl : CommonModelDescription, ModelDescriptionProvider, S
 
 }
 
-
-/**
- * @author Lars Ivar Hatledal
- */
-interface CoSimulationModelDescription : SpecificModelDescription {
-
-    /**
-     * The slave is able to provide derivatives of
-     * outputs with maximum order. Calling of
-     * fmi2GetRealOutputDerivatives(...) is
-     * allowed up to the order defined by
-     * maxOutputDerivativeOrder.
-     *
-     */
-    val maxOutputDerivativeOrder: Int
-
-
-    /**
-     * The slave can handle variable
-     * communication step size. The
-     * communication step size (parameter
-     * communicationStepSize of
-     * fmi2DoStep(...) ) has not to be constant
-     * for each call.
-     *
-     */
-    val canHandleVariableCommunicationStepSize: Boolean
-
-    /**
-     * The slave is able to interpolate continuous
-     * inputs. Calling of
-     * fmi2SetRealInputDerivatives(...) has
-     * an effect for the slave.
-     *
-     */
-    val canInterpolateInputs: Boolean
-
-    /**
-     * This flag describes the ability to carry out the
-     * fmi2DoStep(...) call asynchronously.
-     *
-     */
-    val canRunAsynchronuously: Boolean
-
-}
-
-/**
- * @author Lars Ivar Hatledal
- */
-class CoSimulationModelDescriptionImpl(
-        private val modelDescription: ModelDescriptionImpl,
-        private val cs: CoSimulationData
-) : CommonModelDescription by modelDescription, CoSimulationModelDescription, CoSimulationData by cs, Serializable {
-
-    override fun toString(): String {
-        return "CoSimulationModelDescriptionImpl(\n${modelDescription.stringContent}\n)"
-    }
-
-}
-
-
-/**
- * @author Lars Ivar Hatledal
- */
-interface ModelExchangeModelDescription : SpecificModelDescription {
-
-    /**
-     * The (fixed) number of event indicators for an FMU based on FMI for
-     * Model Exchange.
-     */
-    val numberOfEventIndicators: Int
-
-    /**
-     * If true, function
-     * fmi2CompletedIntegratorStep need not to
-     * be called (which gives a slightly more efficient
-     * integration). If it is called, it has no effect.
-     * If false (the default), the function must be called
-     * after every completed integrator step, see
-     * section 3.2.2.
-     */
-    val completedIntegratorStepNotNeeded: Boolean
-}
-
-/**
- *
- * @author Lars Ivar Hatledal laht@ntnu.no.
- */
-class ModelExchangeModelDescriptionImpl(
-        private val modelDescription: ModelDescriptionImpl,
-        private val me: ModelExchangeData
-) : CommonModelDescription by modelDescription, ModelExchangeModelDescription, ModelExchangeData by me, Serializable {
-
-    override val numberOfEventIndicators: Int
-        get() = modelDescription.numberOfEventIndicators
-
-    override fun toString(): String {
-        return "ModelExchangeModelDescriptionImpl(\n${modelDescription.stringContent}\nnumberOfEventIndicators=$numberOfEventIndicators\n)"
-    }
-
-}
 

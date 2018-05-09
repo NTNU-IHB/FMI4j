@@ -40,6 +40,7 @@ import no.mechatronics.sfi.fmi4j.fmu.proxy.v2.cs.FmiCoSimulationLibrary
 import no.mechatronics.sfi.fmi4j.fmu.proxy.v2.me.FmiModelExchangeLibrary
 import no.mechatronics.sfi.fmi4j.fmu.proxy.v2.me.ModelExchangeLibraryWrapper
 import no.mechatronics.sfi.fmi4j.fmu.proxy.v2.structs.FmiCallbackFunctions
+import no.mechatronics.sfi.fmi4j.modeldescription.CommonModelDescription
 import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescriptionParser
 import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescriptionProvider
 import no.mechatronics.sfi.fmi4j.modeldescription.SpecificModelDescription
@@ -83,7 +84,7 @@ class Fmu private constructor(
     var hasDeletedExtractedFmuFolder = false
         private set
 
-    private val instances = mutableListOf<AbstractFmu<*, *>>()
+    private val instances = mutableListOf<AbstractFmuInstance<*, *>>()
     private val libraries = mutableListOf<LibraryProvider<*>>()
 
 
@@ -139,7 +140,7 @@ class Fmu private constructor(
      * Get the content of the modelDescription.xml file as a String
      */
     val modelDescriptionXml: String by lazy {
-        modelDescriptionFile.readText(Charsets.UTF_8)
+        modelDescriptionFile.readText()
     }
 
     val modelDescription: ModelDescriptionProvider by lazy {
@@ -223,8 +224,11 @@ class Fmu private constructor(
             loadLibrary()
         }
 
-        private fun loadLibrary(): LibraryProvider<FmiCoSimulationLibrary>
-                = loadLibrary(this@Fmu, modelDescription, FmiCoSimulationLibrary::class.java).also { libraries.add(it) }
+        private fun loadLibrary(): LibraryProvider<FmiCoSimulationLibrary> {
+            return loadLibrary(this@Fmu, modelDescription, FmiCoSimulationLibrary::class.java).also {
+                libraries.add(it)
+            }
+        }
 
         @JvmOverloads
         fun newInstance(visible: Boolean = false, loggingOn: Boolean = false) : CoSimulationFmuInstance {
@@ -245,8 +249,11 @@ class Fmu private constructor(
             loadLibrary()
         }
 
-        private fun loadLibrary(): LibraryProvider<FmiModelExchangeLibrary>
-                = loadLibrary(this@Fmu, modelDescription, FmiModelExchangeLibrary::class.java).also { libraries.add(it) }
+        private fun loadLibrary(): LibraryProvider<FmiModelExchangeLibrary> {
+            return loadLibrary(this@Fmu, modelDescription, FmiModelExchangeLibrary::class.java).also {
+                libraries.add(it)
+            }
+        }
 
         @JvmOverloads
         fun newInstance(visible: Boolean = false, loggingOn: Boolean = false) : ModelExchangeFmuInstance {
@@ -301,7 +308,7 @@ class Fmu private constructor(
                 throw FileNotFoundException("No such file: $file!")
             }
 
-            val temp =  Companion.createTempDir(file.nameWithoutExtension)
+            val temp = createTempDir(file.nameWithoutExtension)
             file.extractTo(temp)
 
             return Fmu(temp).also {
@@ -322,14 +329,11 @@ class Fmu private constructor(
             val temp = createTempDir(File(url.file).nameWithoutExtension)
             url.extractTo(temp)
 
-
             return Fmu(temp).also {
                 files.add(it)
             }
 
         }
-
-
 
         private fun <E: FmiLibrary> loadLibrary(fmu: Fmu, modelDescription: SpecificModelDescription, type: Class<E>): LibraryProvider<E> {
 

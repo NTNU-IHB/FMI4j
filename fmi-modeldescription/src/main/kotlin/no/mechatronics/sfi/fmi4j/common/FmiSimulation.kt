@@ -22,22 +22,25 @@
  * THE SOFTWARE.
  */
 
-package no.mechatronics.sfi.fmi4j.fmu.misc
-
-import com.sun.jna.ptr.ByReference
-
+package no.mechatronics.sfi.fmi4j.common
 
 /**
- * https://stackoverflow.com/questions/29162569/jna-passing-string-by-reference-to-dll-but-non-return
+ *
+ * @author Lars Ivar Hatledal
  */
-class StringByReference : ByReference {
+interface FmiSimulation: FmuInstance {
 
-    var value: String
-        get() = pointer.getString(0)
-        set(str) = pointer.setString(0, str)
+    /**
+     * Current simulation time
+     */
+    val currentTime: Double
 
-    @JvmOverloads constructor(size: Int = 0) : super(if (size < 4) 4 else size) {
-        pointer.clear((if (size < 4) 4 else size).toLong())
-    }
+    /**
+     * Step simulation forward in time
+     *
+     * @param stepSize
+     */
+    fun doStep(stepSize: Double): Boolean
 
 }
+

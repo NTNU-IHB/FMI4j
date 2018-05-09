@@ -24,6 +24,28 @@
 
 package no.mechatronics.sfi.fmi4j.fmu.misc
 
+import com.sun.jna.ptr.ByReference
+import com.sun.jna.ptr.PointerByReference
+
+/**
+ *
+ * @author Lars Ivar Hatledal
+ */
+class FmuState : PointerByReference()
+
+/**
+ *
+ * @author Lars Ivar Hatledal
+ */
+internal class ArrayBuffers {
+
+    val vr = IntArray(1)
+    val iv = IntArray(1)
+    val rv = DoubleArray(1)
+    val sv = Array(1, { "" })
+
+}
+
 /**
  *
  * @author Lars Ivar Hatledal
@@ -36,5 +58,20 @@ class DirectionalDerivatives(
     val vKnownRef = IntArray(size)
     val dvKnown = DoubleArray(size)
     val dvUnknown = DoubleArray(size)
+
+}
+
+/**
+ * https://stackoverflow.com/questions/29162569/jna-passing-string-by-reference-to-dll-but-non-return
+ */
+class StringByReference : ByReference {
+
+    var value: String
+        get() = pointer.getString(0)
+        set(str) = pointer.setString(0, str)
+
+    @JvmOverloads constructor(size: Int = 0) : super(if (size < 4) 4 else size) {
+        pointer.clear((if (size < 4) 4 else size).toLong())
+    }
 
 }

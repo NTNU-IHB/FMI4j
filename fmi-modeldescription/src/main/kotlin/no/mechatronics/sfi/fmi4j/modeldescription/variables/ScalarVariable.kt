@@ -26,13 +26,9 @@ package no.mechatronics.sfi.fmi4j.modeldescription.variables
 
 import com.fasterxml.jackson.annotation.JsonSetter
 import com.fasterxml.jackson.annotation.Nulls
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement
-import no.mechatronics.sfi.fmi4j.common.FmiStatus
-import no.mechatronics.sfi.fmi4j.common.FmuRead
-import no.mechatronics.sfi.fmi4j.common.FmuVariableAccessor
-import no.mechatronics.sfi.fmi4j.common.Real
+import no.mechatronics.sfi.fmi4j.common.*
 import java.io.Serializable
 
 const val INTEGER_TYPE = "Integer"
@@ -99,419 +95,91 @@ interface ScalarVariable {
 /**
  * @author Lars Ivar Hatledal
  */
-@JacksonXmlRootElement(localName = "ScalarVariable")
-class ScalarVariableImpl internal constructor() : ScalarVariable, Serializable {
+class ScalarVariableImpl(
 
-    @JacksonXmlProperty
-    override lateinit var name: String
+        @JacksonXmlProperty
+        override val name: String,
 
-    @JacksonXmlProperty
-    override val declaredType: String? = null
+        @JacksonXmlProperty
+        override val valueReference: Int,
 
-    @JacksonXmlProperty
-    override val description: String? = null
+        @JacksonXmlProperty
+        override val declaredType: String? = null,
 
-    @JacksonXmlProperty
-    override val causality: Causality? = null
+        @JacksonXmlProperty
+        override val description: String? = null,
 
-    @JacksonXmlProperty
-    override val variability: Variability? = null
+        @JacksonXmlProperty
+        override val causality: Causality? = null,
 
-    @JacksonXmlProperty
-    override val initial: Initial? = null
+        @JacksonXmlProperty
+        override val variability: Variability? = null,
 
-    @JacksonXmlProperty(localName = "valueReference")
-    private val _valueReference: Int? = null
+        @JacksonXmlProperty
+        override val initial: Initial? = null
 
-    override val valueReference: Int
-        get() = _valueReference ?: throw IllegalStateException("ValueReference was null!")
+
+) : ScalarVariable, Serializable {
 
     @JacksonXmlProperty(localName = INTEGER_TYPE)
     @JsonSetter(nulls = Nulls.AS_EMPTY)
-    internal var integerAttribute: IntegerAttribute? = null
+    var integerAttribute: IntegerAttribute? = null
 
     @JacksonXmlProperty(localName = REAL_TYPE)
     @JsonSetter(nulls = Nulls.AS_EMPTY)
-    internal var realAttribute: RealAttribute? = null
+    var realAttribute: RealAttribute? = null
 
     @JacksonXmlProperty(localName = STRING_TYPE)
     @JsonSetter(nulls = Nulls.AS_EMPTY)
-    internal var stringAttribute: StringAttribute? = null
+    var stringAttribute: StringAttribute? = null
 
     @JacksonXmlProperty(localName = BOOLEAN_TYPE)
     @JsonSetter(nulls = Nulls.AS_EMPTY)
-    internal var booleanAttribute: BooleanAttribute? = null
+    var booleanAttribute: BooleanAttribute? = null
 
     @JacksonXmlProperty(localName = ENUMERATION_TYPE)
     @JsonSetter(nulls = Nulls.AS_EMPTY)
-    internal var enumerationAttribute: EnumerationAttribute? = null
-
-    override fun toString(): String {
-        return "ScalarVariableImpl(name='$name', declaredType=$declaredType, description=$description, causality=$causality, variability=$variability, initial=$initial, _valueReference=$_valueReference, integerAttribute=$integerAttribute, realAttribute=$realAttribute, stringAttribute=$stringAttribute, booleanAttribute=$booleanAttribute, enumerationAttribute=$enumerationAttribute)"
-    }
-
-}
-
-interface TypedScalarVariable<E>: ScalarVariable {
+    var enumerationAttribute: EnumerationAttribute? = null
 
     /**
-     * Initial or guess value of variable. This value is also stored in the C functions
-     * [Therefore, calling fmi2SetXXX to set start values is only necessary, if a different
-     * value as stored in the xml file is desired.] The interpretation of start is defined by
-     * ScalarVariable / initial. A different start value can be provided with an
-     * fmi2SetXXX function before fmi2ExitInitializationMode is called (but not
-     * for categories with variability = ″constant″).
-     * [The standard approach is to set the start value before
-     * fmi2EnterInitializationMode. However, if the initialization shall be modified
-     * in the calling environment (e.g. changing from initialization of states to steadystate
-     * initialization), it is also possible to use the start value as iteration variable of
-     * an algebraic loop: Via an additional condition in the environment, such as 𝑥̇ = 0,
-     * the actual start value is determined.]
+     * Return a typed version of this variable.
      */
-    var start: E?
+    fun toTyped(): TypedScalarVariable<*> {
 
-    /**
-     * Accesses the FMU and returns the current value of the variable
-     * represented by this valueReference, as well as the status
-     */
-    fun read(): FmuRead<E>
+        return when {
+            integerAttribute != null -> IntegerVariableImpl(this)
+            realAttribute != null -> RealVariableImpl(this)
+            stringAttribute != null -> StringVariableImpl(this)
+            booleanAttribute != null -> BooleanVariableImpl(this)
+            enumerationAttribute != null -> EnumerationVariableImpl(this)
+            else -> throw IllegalStateException("All attributes are null!")
+        }
 
-    /**
-     * Accesses the FMU and writes the provided value to the FMU
-     * variable represented by this valueReference
-     *
-     * @value value to set
-     */
-    fun write(value: E): FmiStatus
-
-    fun asIntegerVariable(): IntegerVariable
-            = if (this is IntegerVariable) this else throw IllegalAccessException("Variable is not an ${IntegerVariable::class.java.simpleName}, but an ${this::class.java.simpleName}")
-
-    fun asRealVariable(): RealVariable
-            = if (this is RealVariable) this else throw throw IllegalAccessException("Variable is not an ${RealVariable::class.java.simpleName}, but an ${this::class.java.simpleName}")
-
-    fun asStringVariable(): StringVariable
-            = if (this is StringVariable) this else throw IllegalAccessException("Variable is not an ${StringVariable::class.java.simpleName}, but an ${this::class.java.simpleName}")
-
-    fun asBooleanVariable(): BooleanVariable
-            = if (this is BooleanVariable) this else throw IllegalAccessException("Variable is not an ${BooleanVariable::class.java.simpleName}, but an ${this::class.java.simpleName}")
-
-    fun asEnumerationVariable(): EnumerationVariable = if (this is EnumerationVariable) this else throw IllegalAccessException("Variable is not an ${EnumerationVariable::class.java.simpleName}, but an ${this::class.java.simpleName}")
-
-}
-
-interface BoundedScalarVariable<E>: TypedScalarVariable<E> {
-
-    /**
-     * Minimum value of variable (variable Value ≥ min). If not defined, the
-     * minimum is the largest negative number that can be represented on the
-     * machine. The min definition is an information from the FMU to the
-     * environment defining the region in which the FMU is designed to operate, see
-     * also comment after this table.
-     */
-    val min: E?
-
-    /**
-     * Maximum value of variable (variableValue ≤ max). If not defined, the
-     * maximum is the largest positive number that can be represented on the
-     * machine. The max definition is an information from the FMU to the
-     * environment defining the region in which the FMU is designed to operate, see
-     * also comment after this table.
-     */
-    val max: E?
-}
-
-/**
- * @author Lars Ivar Hatledal
- */
-@JsonDeserialize(using = ScalarVariableAdapter::class)
-sealed class AbstractTypedScalarVariable<E>: TypedScalarVariable<E>, Serializable {
-
-    @JvmField
-    internal var accessor: FmuVariableAccessor? = null
-
-}
-
-sealed class AbstractBoundedScalarVariable<E>: BoundedScalarVariable<E>, AbstractTypedScalarVariable<E>()
-
-/**
- * @author Lars Ivar Hatledal
- */
-class IntegerVariable internal constructor(
-        private val v : ScalarVariableImpl
-) : ScalarVariable by v, AbstractBoundedScalarVariable<Int>() {
-
-    private val attribute: IntegerAttribute
-            = v.integerAttribute ?: throw AssertionError("Variable is not of type Integer!")
-
-    override val min: Int? = attribute.min
-    override val max: Int? = attribute.max
-    override var start = attribute.start
-
-    override fun read(): FmuRead<Int> {
-        return accessor?.readInteger(valueReference) ?: throw IllegalStateException("No accessor assigned!")
-    }
-
-    override fun write(value: Int): FmiStatus {
-        return accessor?.writeInteger(valueReference, value) ?: throw IllegalStateException("No accessor assigned!")
     }
 
     override fun toString(): String {
+
+        val attribute = when {
+            integerAttribute != null -> integerAttribute
+            realAttribute != null -> realAttribute
+            stringAttribute != null -> stringAttribute
+            booleanAttribute != null -> booleanAttribute
+            enumerationAttribute != null -> enumerationAttribute
+            else -> throw IllegalStateException("All attributes are null!")
+        }
+
         val entries = mutableListOf<String>().apply {
             add("name=$name")
             add("valueReference=$valueReference")
-            start?.also { add("start=$start") }
-            accessor?.also { add("value=${read().value}") }
-            min?.also { add("min=$min") }
-            max?.also { add("min=$min") }
             causality?.also { add("causality=$causality") }
             variability?.also { add("variability=$variability") }
             initial?.also { add("initial=$initial") }
             description?.also { add("description=$description") }
             declaredType?.also { add("declaredType=$declaredType") }
+            add("attribute=$attribute")
         }.joinToString (", ")
 
-        return "${IntegerVariable::class.java.simpleName}($entries)"
-    }
-
-}
-
-/**
- * @author Lars Ivar Hatledal
- */
-class RealVariable internal constructor(
-        private val v : ScalarVariableImpl
-) : ScalarVariable by v, AbstractBoundedScalarVariable<Real>() {
-
-    private val attribute: RealAttribute
-            = v.realAttribute ?: throw AssertionError("Variable is not of type Real!")
-
-    override val min = attribute.min
-    override val max = attribute.max
-    override var start = attribute.start
-
-
-    /**
-     * Nominal value of variable. If not defined and no other information about the
-     * nominal value is available, then nominal = 1 is assumed.
-     * [The nominal value of a variable can be, for example used to determine the
-     * absolute tolerance for this variable as needed by numerical algorithms:
-     * absoluteTolerance = nominal*tolerance*0.01
-     * where tolerance is, e.g., the relative tolerance defined in
-     * <DefaultExperiment>, see section 2.2.5.]
-     */
-    val nominal = attribute.nominal
-
-    /**
-     * If true, indicates that the variable gets during time integration much larger
-     * than its nominal value nominal. [Typical examples are the monotonically
-     * increasing rotation angles of crank shafts and the longitudinal position of a
-     * vehicle along the track in long distance simulations. This information can, for
-     * example, be used to increase numerical stability and accuracy by setting the
-     * corresponding bound for the relative error to zero (relative tolerance = 0.0), if
-     * the corresponding variable or an alias of it is a continuous state variable.]
-     */
-    val unbounded = attribute.unbounded
-
-    /**
-     * Physical quantity of the variable, for example “Angle”, or “Energy”. The
-     * quantity names are not standardized.
-     */
-    val quantity = attribute.quantity
-
-    /**
-     * Unit of the variable defined with UnitDefinitions.Unit.name that is used
-     * for the model equations [, for example “N.m”: in this case a Unit.name =
-     * "N.m" must be present under UnitDefinitions].
-     */
-    val unit = attribute.unit
-
-    /**
-     * Default display unit. The conversion to the “unit” is defined with the element
-     * “<fmiModelDescription><UnitDefinitions>”. If the corresponding
-     * “displayUnit” is not defined under <UnitDefinitions> <Unit>
-     * <DisplayUnit>, then displayUnit is ignored. It is an error if
-     * displayUnit is defined in element Real, but unit is not, or unit is not
-     * defined under <UnitDefinitions><Unit>.
-     */
-    val displayUnit = attribute.displayUnit
-
-    /**
-     * If this attribute is true, then the “offset” of “displayUnit” must be ignored
-     * (for example 10 degree Celsius = 10 Kelvin if “relativeQuantity = true”
-     * and not 283,15 Kelvin).
-     */
-    val relativeQuantity = attribute.relativeQuantity
-
-    /**
-     * Only for Model exchange
-     * <br>
-     * If true, state can be reinitialized at an event by the FMU. If false, state will never be reinitialized at an event by the FMU
-     */
-    val reinit = attribute.reinit
-
-    /**
-     * If present, this variable is the derivative of variable with ScalarVariable index "derivative",
-     */
-    val derivative = attribute.derivative
-
-    override fun read(): FmuRead<Real> {
-        return accessor?.readReal(valueReference) ?: throw IllegalStateException("No accessor assigned!")
-    }
-
-    override fun write(value: Real): FmiStatus {
-        return accessor?.writeReal(valueReference, value) ?: throw IllegalStateException("No accessor assigned!")
-    }
-
-    override fun toString(): String {
-
-        val entries = mutableListOf<String>().apply {
-            add("name=$name")
-            add("valueReference=$valueReference")
-            start?.also { add("start=$start") }
-            accessor?.also { add("value=${read().value}") }
-            min?.also { add("min=$min") }
-            max?.also { add("min=$min") }
-            causality?.also { add("causality=$causality") }
-            variability?.also { add("variability=$variability") }
-            initial?.also { add("initial=$initial") }
-            nominal?.also { add("nominal=$nominal") }
-            unbounded?.also { add("unbounded=$unbounded") }
-            quantity?.also { add("quantity=$quantity") }
-            unit?.also { add("unit=$unit") }
-            displayUnit?.also { add("displayUnit=$displayUnit") }
-            relativeQuantity?.also { add("relativeQuantity=$relativeQuantity") }
-            derivative?.also { add("derivative=$derivative") }
-            description?.also { add("description=$description") }
-            declaredType?.also { add("declaredType=$declaredType") }
-        }.joinToString (", ")
-
-        return "${RealVariable::class.java.simpleName}($entries)"
-
-    }
-
-}
-
-/**
- * @author Lars Ivar Hatledal
- */
-class StringVariable internal constructor(
-        private val v : ScalarVariableImpl
-) : ScalarVariable by v, AbstractTypedScalarVariable<String>() {
-
-    private val attribute: StringAttribute
-            = v.stringAttribute ?: throw AssertionError("Variable is not of type String!")
-
-    override var start = attribute.start
-
-    override fun read(): FmuRead<String> {
-        return accessor?.readString(valueReference) ?: throw IllegalStateException("No accessor assigned!")
-    }
-
-    override fun write(value: String): FmiStatus {
-        return accessor?.writeString(valueReference, value) ?: throw IllegalStateException("No accessor assigned!")
-    }
-
-    override fun toString(): String {
-
-        val entries = mutableListOf<String>().apply {
-            add("name=$name")
-            add("valueReference=$valueReference")
-            start?.also { add("start=$start") }
-            accessor?.also { add("value=${read().value}") }
-            causality?.also { add("causality=$causality") }
-            variability?.also { add("variability=$variability") }
-            initial?.also { add("initial=$initial") }
-            description?.also { add("description=$description") }
-            declaredType?.also { add("declaredType=$declaredType") }
-        }.joinToString (", ")
-
-        return "${StringVariable::class.java.simpleName}($entries)"
-
-    }
-
-}
-
-/**
- * @author Lars Ivar Hatledal
- */
-class BooleanVariable internal constructor(
-        private val v : ScalarVariableImpl
-) : ScalarVariable by v, AbstractTypedScalarVariable<Boolean>() {
-
-    private val attribute: BooleanAttribute
-            = v.booleanAttribute ?: throw AssertionError("Variable is not of type Boolean!")
-
-    override var start = attribute.start
-
-    override fun read(): FmuRead<Boolean> {
-        return accessor?.readBoolean(valueReference) ?: throw IllegalStateException("No accessor assigned!")
-    }
-
-    override fun write(value: Boolean): FmiStatus {
-        return accessor?.writeBoolean(valueReference, value) ?: throw IllegalStateException("No accessor assigned!")
-    }
-
-    override fun toString(): String {
-
-        val entries = mutableListOf<String>().apply {
-            add("name=$name")
-            add("valueReference=$valueReference")
-            start?.also { add("start=$start") }
-            accessor?.also { add("value=${read().value}") }
-            causality?.also { add("causality=$causality") }
-            variability?.also { add("variability=$variability") }
-            initial?.also { add("initial=$initial") }
-            description?.also { add("description=$description") }
-            declaredType?.also { add("declaredType=$declaredType") }
-        }.joinToString (", ")
-
-        return "${BooleanVariable::class.java.simpleName}($entries)"
-
-    }
-
-}
-
-class EnumerationVariable internal constructor(
-        private val v: ScalarVariableImpl
-): ScalarVariable by v, AbstractBoundedScalarVariable<Int>() {
-
-    private val attribute: EnumerationAttribute
-            = v.enumerationAttribute ?: throw AssertionError("Variable is not of type Enumeration!")
-
-    override val min: Int? = attribute.min
-    override val max: Int? = attribute.max
-    override var start: Int? = attribute.start
-
-    val quantity: String? = attribute.quantity
-
-    override fun read(): FmuRead<Int> {
-        return accessor?.readInteger(valueReference) ?: throw IllegalStateException("No accessor assigned!")
-    }
-
-    override fun write(value: Int): FmiStatus {
-        return accessor?.writeInteger(valueReference, value) ?: throw IllegalStateException("No accessor assigned!")
-    }
-
-    override fun toString(): String {
-
-        val entries = mutableListOf<String>().apply {
-            add("name=$name")
-            add("valueReference=$valueReference")
-            start?.also { add("start=$start") }
-            accessor?.also { add("value=${read().value}") }
-            min?.also { add("min=$min") }
-            max?.also { add("min=$min") }
-            quantity?.also { add("quantity=$quantity") }
-            causality?.also { add("causality=$causality") }
-            variability?.also { add("variability=$variability") }
-            initial?.also { add("initial=$initial") }
-            description?.also { add("description=$description") }
-            declaredType?.also { add("declaredType=$declaredType") }
-        }.joinToString (", ")
-
-        return "${EnumerationVariable::class.java.simpleName}($entries)"
-
+        return "ScalarVariableImpl($entries)"
     }
 
 }

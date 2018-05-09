@@ -73,7 +73,7 @@ class CoSimulationFmuInstanceInstanceTest_kt {
                 LOG.info("Temperature_Room=$value")
             }
 
-            Assert.assertTrue((instance as AbstractFmu<*, *>).reset(false))
+            Assert.assertTrue((instance as AbstractFmuInstance<*, *>).reset(false))
 
             val first = AtomicBoolean(true)
             while (instance.currentTime < 5) {

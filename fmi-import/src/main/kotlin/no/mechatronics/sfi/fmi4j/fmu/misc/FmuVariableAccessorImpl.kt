@@ -25,10 +25,7 @@
 
 package no.mechatronics.sfi.fmi4j.fmu.misc
 
-import no.mechatronics.sfi.fmi4j.common.FmuVariableAccessor
-import no.mechatronics.sfi.fmi4j.common.Real
-import no.mechatronics.sfi.fmi4j.common.RealArray
-import no.mechatronics.sfi.fmi4j.common.StringArray
+import no.mechatronics.sfi.fmi4j.common.*
 import no.mechatronics.sfi.fmi4j.fmu.proxy.v2.FmiLibraryWrapper
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.ModelVariables
 import java.util.concurrent.ConcurrentHashMap
@@ -43,50 +40,52 @@ class FmuVariableAccessorImpl(
 
     //read
     override fun readInteger(name: String) = readInteger(process(name))
-    override fun readInteger(valueReference: Int) = wrapper.getInteger(valueReference)
-    override fun readInteger(vr: IntArray) = wrapper.getInteger(vr)
-    override fun readInteger(vr: IntArray, value: IntArray) = wrapper.getInteger(vr, value)
+
+    override fun readInteger(vr: ValueReference) = wrapper.getInteger(vr)
+    override fun readInteger(vr: ValueReferences) = wrapper.getInteger(vr)
+    override fun readInteger(vr: ValueReferences, value: IntArray) = wrapper.getInteger(vr, value)
 
     override fun readReal(name: String) = readReal(process(name))
-    override fun readReal(valueReference: Int) = wrapper.getReal(valueReference)
-    override fun readReal(vr: IntArray) = wrapper.getReal(vr)
-    override fun readReal(vr: IntArray, value: RealArray) = wrapper.getReal(vr, value)
+    override fun readReal(vr: ValueReference) = wrapper.getReal(vr)
+    override fun readReal(vr: ValueReferences) = wrapper.getReal(vr)
+    override fun readReal(vr: ValueReferences, value: RealArray) = wrapper.getReal(vr, value)
 
     override fun readString(name: String) = readString(process(name))
-    override fun readString(valueReference: Int) = wrapper.getString(valueReference)
-    override fun readString(vr: IntArray) = wrapper.getString(vr)
-    override fun readString(vr: IntArray, value: StringArray) = wrapper.getString(vr, value)
+    override fun readString(vr: ValueReference) = wrapper.getString(vr)
+    override fun readString(vr: ValueReferences) = wrapper.getString(vr)
+    override fun readString(vr: ValueReferences, value: StringArray) = wrapper.getString(vr, value)
 
     override fun readBoolean(name: String) = readBoolean(process(name))
-    override fun readBoolean(valueReference: Int) = wrapper.getBoolean(valueReference)
-    override fun readBoolean(vr: IntArray) = wrapper.getBoolean(vr)
-    override fun readBoolean(vr: IntArray, value: BooleanArray) = wrapper.getBoolean(vr, value)
-    override fun readBoolean(vr: IntArray, value: IntArray) = wrapper.getBoolean(vr, value)
+    override fun readBoolean(vr: ValueReference) = wrapper.getBoolean(vr)
+    override fun readBoolean(vr: ValueReferences) = wrapper.getBoolean(vr)
+    override fun readBoolean(vr: ValueReferences, value: BooleanArray) = wrapper.getBoolean(vr, value)
+    override fun readBoolean(vr: ValueReferences, value: IntArray) = wrapper.getBoolean(vr, value)
 
     //write
     override fun writeInteger(name: String, value: Int) = wrapper.setInteger(process(name), value)
-    override fun writeInteger(valueReference: Int, value: Int) = wrapper.setInteger(valueReference, value)
-    override fun writeInteger(vr: IntArray, value: IntArray) = wrapper.setInteger(vr, value)
 
-    override fun writeReal(valueReference: Int, value: Real) =  wrapper.setReal(valueReference, value)
+    override fun writeInteger(vr: ValueReference, value: Int) = wrapper.setInteger(vr, value)
+    override fun writeInteger(vr: ValueReferences, value: IntArray) = wrapper.setInteger(vr, value)
+
+    override fun writeReal(vr: Int, value: Real) = wrapper.setReal(vr, value)
     override fun writeReal(name: String, value: Real) = wrapper.setReal(process(name), value)
-    override fun writeReal(vr: IntArray, value: DoubleArray) = wrapper.setReal(vr, value)
+    override fun writeReal(vr: ValueReferences, value: DoubleArray) = wrapper.setReal(vr, value)
 
     override fun writeString(name: String, value: String) =  wrapper.setString(process(name), value)
-    override fun writeString(valueReference: Int, value: String) = wrapper.setString(valueReference, value)
-    override fun writeString(vr: IntArray, value: StringArray) = wrapper.setString(vr, value)
+    override fun writeString(vr: ValueReference, value: String) = wrapper.setString(vr, value)
+    override fun writeString(vr: ValueReferences, value: StringArray) = wrapper.setString(vr, value)
 
     override fun writeBoolean(name: String, value: Boolean) = wrapper.setBoolean(process(name), value)
-    override fun writeBoolean(valueReference: Int, value: Boolean) = wrapper.setBoolean(valueReference, value)
-    override fun writeBoolean(vr: IntArray, value: BooleanArray) = wrapper.setBoolean(vr, value)
-    override fun writeBoolean(vr: IntArray, value: IntArray) = wrapper.setBoolean(vr, value)
+    override fun writeBoolean(vr: ValueReference, value: Boolean) = wrapper.setBoolean(vr, value)
+    override fun writeBoolean(vr: ValueReferences, value: BooleanArray) = wrapper.setBoolean(vr, value)
+    override fun writeBoolean(vr: ValueReferences, value: IntArray) = wrapper.setBoolean(vr, value)
 
     private fun process(name: String): Int {
-       return map.getOrPut(name, {modelVariables.getValueReference(name)})
+        return map.getOrPut(name, { modelVariables.getValueReference(name) })
     }
 
     private companion object {
-        val map = ConcurrentHashMap<String, Int>()
+        val map = mutableMapOf<String, Int>()
     }
 
 }

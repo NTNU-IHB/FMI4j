@@ -22,34 +22,48 @@
  * THE SOFTWARE.
  */
 
-package no.mechatronics.sfi.fmi4j.modeldescription.misc
+package no.mechatronics.sfi.fmi4j.modeldescription
 
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty
 import java.io.Serializable
+
 
 /**
  * @author Lars Ivar Hatledal
  */
-interface SourceFile {
+interface ModelExchangeModelDescription : SpecificModelDescription {
 
     /**
-     * Name of the file including the path to the sources
-     * directory, using forward slash as separator
+     * The (fixed) number of event indicators for an FMU based on FMI for
+     * Model Exchange.
      */
-    val name: String
+    val numberOfEventIndicators: Int
 
+    /**
+     * If true, function
+     * fmi2CompletedIntegratorStep need not to
+     * be called (which gives a slightly more efficient
+     * integration). If it is called, it has no effect.
+     * If false (the default), the function must be called
+     * after every completed integrator step, see
+     * section 3.2.2.
+     */
+    val completedIntegratorStepNotNeeded: Boolean
 }
 
 /**
- * @author Lars Ivar Hatledal
+ *
+ * @author Lars Ivar Hatledal laht@ntnu.no.
  */
-class SourceFileImpl: SourceFile, Serializable {
+class ModelExchangeModelDescriptionImpl internal constructor(
+        private val modelDescription: ModelDescriptionImpl,
+        me: ModelExchangeData
+) : CommonModelDescription by modelDescription, ModelExchangeModelDescription, ModelExchangeData by me, Serializable {
 
-    @JacksonXmlProperty
-    override lateinit var name: String
+    override val numberOfEventIndicators: Int
+        get() = modelDescription.numberOfEventIndicators
 
     override fun toString(): String {
-        return "SourceFileImpl(name='$name')"
+        return "ModelExchangeModelDescriptionImpl(\n${modelDescription.stringContent}\nnumberOfEventIndicators=$numberOfEventIndicators\n)"
     }
 
 }

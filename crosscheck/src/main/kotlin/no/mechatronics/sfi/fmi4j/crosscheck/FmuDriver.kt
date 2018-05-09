@@ -89,7 +89,7 @@ object FmuDriver {
                     }
                 }
 
-                File(outputFolder, "${slave.modelName}_out.csv").apply {
+                File(outputFolder, "${slave.modelDescription.modelName}_out.csv").apply {
                     writeText(sb.toString())
                     LOG.info("Wrote results to file $absoluteFile")
                 }

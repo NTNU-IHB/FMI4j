@@ -22,62 +22,55 @@
  * THE SOFTWARE.
  */
 
-package no.mechatronics.sfi.fmi4j.modeldescription.structure
+package no.mechatronics.sfi.fmi4j.modeldescription
 
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty
 import java.io.Serializable
 
+
 /**
- *
- * Dependency of scalar Unknown from Knowns in continous-time and event mode (Model Exchange),
- * and at communications points (Co-simulation)
- *
  * @author Lars Ivar Hatledal
  */
-interface Unknown {
+interface CoSimulationModelDescription : SpecificModelDescription {
 
     /**
-     * ScalarVariable index of Unknown
+     * The slave is able to provide derivatives of outputs with maximum order.
+     * Calling of mi2GetRealOutputDerivatives(...) is allowed up to the order defined by
+     * maxOutputDerivativeOrder.
      */
-    val index: Int
+    val maxOutputDerivativeOrder: Int
+
 
     /**
-     * Defines the dependency of the Unknown (directly or indirectly via auxiliary variables)
-     * on the Knowns in Continous-Time and Event Mode (ModelExchange) and at Communication Points (CoSimulation)
+     * The slave can handle variable communication step size.
+     * The communication step size (parameter communicationStepSize of fmi2DoStep(...) )
+     * has not to be constant for each call.
      */
-    val dependencies: List<Int>
+    val canHandleVariableCommunicationStepSize: Boolean
 
     /**
-     * If present, it must be assumed that the Unknown depends on the Knowns
-     * without a particular structure.
+     * The slave is able to interpolate continuous inputs.
+     * Calling of fmi2SetRealInputDerivatives(...) has an effect for the slave.
      */
-    val dependenciesKind: DependenciesKind?
+    val canInterpolateInputs: Boolean
+
+    /**
+     * This flag describes the ability to carry out the
+     * fmi2DoStep(...) call asynchronously.
+     */
+    val canRunAsynchronuously: Boolean
 
 }
 
 /**
  * @author Lars Ivar Hatledal
  */
-class UnknownImpl(
-
-        @JacksonXmlProperty
-        override var index: Int,
-
-        @JacksonXmlProperty(localName = "dependencies")
-        private var _dependencies: String? = null,
-
-        @JacksonXmlProperty
-        override val dependenciesKind: DependenciesKind? = null
-
-) : Unknown, Serializable {
-
-    override val dependencies: List<Int>
-        get() = _dependencies?.let {
-            it.split(" ").mapNotNull { it.toIntOrNull() }
-        } ?: emptyList()
+class CoSimulationModelDescriptionImpl internal constructor(
+        private val modelDescription: ModelDescriptionImpl,
+        cs: CoSimulationData
+) : CommonModelDescription by modelDescription, CoSimulationModelDescription, CoSimulationData by cs, Serializable {
 
     override fun toString(): String {
-        return "UnknownImpl(index=$index, dependencies=$dependencies, dependenciesKind=$dependenciesKind)"
+        return "CoSimulationModelDescriptionImpl(\n${modelDescription.stringContent}\n)"
     }
 
 }

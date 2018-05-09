@@ -11,8 +11,6 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescriptionImpl
 import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescriptionParser
 import no.mechatronics.sfi.fmi4j.modeldescription.TEST_FMUs
-import no.mechatronics.sfi.fmi4j.modeldescription.variables.AbstractTypedScalarVariable
-import no.mechatronics.sfi.fmi4j.modeldescription.variables.ScalarVariableAdapter
 import org.junit.Assert
 import org.junit.Test
 import org.slf4j.Logger
@@ -33,9 +31,7 @@ class TestJackson {
 
         val mapper = XmlMapper().apply {
             registerModule(KotlinModule())
-            registerModule(JacksonXmlModule().apply {
-                addDeserializer(AbstractTypedScalarVariable::class.java, ScalarVariableAdapter())
-            })
+            registerModule(JacksonXmlModule())
             enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS)
         }
         val md = mapper.readValue<ModelDescriptionImpl>(ModelDescriptionParser.extractModelDescriptionXml(file))

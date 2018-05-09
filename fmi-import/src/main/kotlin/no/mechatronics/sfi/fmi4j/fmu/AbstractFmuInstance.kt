@@ -25,6 +25,7 @@
 package no.mechatronics.sfi.fmi4j.fmu
 
 import no.mechatronics.sfi.fmi4j.common.FmiStatus
+import no.mechatronics.sfi.fmi4j.common.FmuInstance
 import no.mechatronics.sfi.fmi4j.common.FmuVariableAccessor
 import no.mechatronics.sfi.fmi4j.fmu.misc.*
 import no.mechatronics.sfi.fmi4j.fmu.proxy.v2.FmiLibrary
@@ -35,16 +36,16 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.lang.UnsupportedOperationException
 
-private const val DEFAULT_STOP_TIME = (60 * 60 * 24).toDouble() //24 hours
-
-abstract class AbstractFmu<out E: SpecificModelDescription, out T: FmiLibraryWrapper<*>> internal constructor(
+abstract class AbstractFmuInstance<out E : SpecificModelDescription, out T : FmiLibraryWrapper<*>> internal constructor(
         val fmu: Fmu,
         val wrapper: T
 ): FmuInstance {
 
     private companion object {
-        private val LOG: Logger = LoggerFactory.getLogger(AbstractFmu::class.java)
+        private val LOG: Logger = LoggerFactory.getLogger(AbstractFmuInstance::class.java)
     }
+
+    abstract override val modelDescription: E
 
     override val variableAccessor: FmuVariableAccessor
             = FmuVariableAccessorImpl(wrapper, modelVariables)
@@ -199,7 +200,6 @@ abstract class AbstractFmu<out E: SpecificModelDescription, out T: FmiLibraryWra
      */
     override fun reset(): Boolean {
         return wrapper.reset() == FmiStatus.OK
-
     }
 
     /**
@@ -275,7 +275,7 @@ abstract class AbstractFmu<out E: SpecificModelDescription, out T: FmiLibraryWra
     /**
      * @see FmiLibrary.fmi2SerializeFMUstate
      */
-    fun serializeFMUState(fmuState: FmuState):ByteArray {
+    fun serializeFMUState(fmuState: FmuState): ByteArray {
         if (!modelDescription.canSerializeFMUstate) {
             throw UnsupportedOperationException("Method call not allowed, FMU cannot serialize FMU state!")
         }

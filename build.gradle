@@ -3,7 +3,7 @@ println "Gradle version is ${GradleVersion.current().version}"
 
 buildscript {
 
-    ext.kotlin_version = '1.2.40'
+    ext.kotlin_version = '1.2.41'
 
     repositories {
         mavenCentral()
@@ -56,10 +56,10 @@ subprojects { sub ->
 
     if(sub.name.startsWith("fmi")) {
 
-        def snapshot = false
+        def snapshot = true
 
         group = 'no.mechatronics.sfi.fmi4j'
-        version = '0.7'
+        version = '0.7.1'
         if (snapshot) {
             version += '-SNAPSHOT'
         }

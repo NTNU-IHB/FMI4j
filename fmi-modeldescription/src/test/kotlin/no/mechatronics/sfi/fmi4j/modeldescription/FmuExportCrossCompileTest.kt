@@ -15,14 +15,14 @@ class FmuExportCrossCompileTest {
 
         private val LOG: Logger = LoggerFactory.getLogger(FmuExportCrossCompileTest::class.java)
 
-        private lateinit var modelDescription: CommonModelDescription
+        private lateinit var modelDescription: CoSimulationModelDescription
 
         @JvmStatic
         @BeforeClass
         fun setup() {
             val fmu = File(TEST_FMUs, "FMI_2.0/CoSimulation/win64/OpenModelica/v1.11.0/FmuExportCrossCompile/FmuExportCrossCompile.fmu")
             Assert.assertTrue(fmu.exists())
-            modelDescription = ModelDescriptionParser.parse(fmu)
+            modelDescription = ModelDescriptionParser.parse(fmu).asCoSimulationModelDescription()
         }
 
     }
@@ -62,7 +62,8 @@ class FmuExportCrossCompileTest {
         }
 
         ObjectInputStream(ByteArrayInputStream(bos.toByteArray())).use {
-            val md: CommonModelDescription = it.readObject() as CommonModelDescription
+            val md: CommonModelDescription = it.readObject() as CoSimulationModelDescription
+            Assert.assertEquals(modelDescription.modelVariables.size, md.modelVariables.size)
             md.modelVariables.variables.forEach { LOG.info("$it") }
             LOG.info("${md.modelStructure}")
         }

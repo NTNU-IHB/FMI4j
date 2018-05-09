@@ -25,6 +25,7 @@
 package no.mechatronics.sfi.fmi4j.fmu;
 
 
+import no.mechatronics.sfi.fmi4j.common.FmiSimulation;
 import no.mechatronics.sfi.fmi4j.common.FmiStatus;
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.RealVariable;
 import org.junit.AfterClass;
@@ -99,7 +100,7 @@ public class CoSimulationFmuInstanceTest_java {
 
             }
 
-            ((AbstractFmu) fmu).reset(false);
+            ((AbstractFmuInstance) fmu).reset(false);
 
             Assert.assertSame(fmu.getLastStatus(), FmiStatus.OK);
 

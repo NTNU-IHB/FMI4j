@@ -1,6 +1,8 @@
-package no.mechatronics.sfi.fmi4j.fmu
+package no.mechatronics.sfi.fmi4j.fmu.misc
 
 
+import no.mechatronics.sfi.fmi4j.fmu.Fmu
+import no.mechatronics.sfi.fmi4j.fmu.TEST_FMUs
 import org.javafmi.proxy.Status
 import org.javafmi.wrapper.Simulation
 import org.junit.AfterClass

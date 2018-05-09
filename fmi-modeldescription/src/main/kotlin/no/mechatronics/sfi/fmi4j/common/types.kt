@@ -26,5 +26,7 @@ package no.mechatronics.sfi.fmi4j.common
 
 
 typealias Real = Double
+typealias ValueReference = Int
+typealias ValueReferences = IntArray
 typealias RealArray = DoubleArray
 typealias StringArray = Array<String>

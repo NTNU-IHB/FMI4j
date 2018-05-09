@@ -44,11 +44,11 @@ $licenseHeader
 package no.mechatronics.sfi.fmu2jar.${modelName.toLowerCase()}
 
 import java.net.URL
-import no.mechatronics.sfi.fmi4j.fmu.FmiSimulation
 import no.mechatronics.sfi.fmi4j.fmu.Fmu
 import no.mechatronics.sfi.fmi4j.common.Real
-import no.mechatronics.sfi.fmi4j.common.FmiStatus
 import no.mechatronics.sfi.fmi4j.common.FmuRead
+import no.mechatronics.sfi.fmi4j.common.FmiStatus
+import no.mechatronics.sfi.fmi4j.common.FmiSimulation
 ${modelDescription.supportsModelExchange.let { if (it) "import org.apache.commons.math3.ode.FirstOrderIntegrator" else ""}}
 
 /**

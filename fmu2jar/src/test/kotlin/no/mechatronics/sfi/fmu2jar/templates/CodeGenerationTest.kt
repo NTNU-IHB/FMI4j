@@ -1,11 +1,12 @@
 package no.mechatronics.sfi.fmu2jar.templates
 
-import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescriptionParser
+
 import org.junit.Assert
 import org.junit.Test
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.File
+import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescriptionParser
 
 class CodeGenerationTest {
 
