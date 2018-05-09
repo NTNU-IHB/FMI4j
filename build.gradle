@@ -56,7 +56,7 @@ subprojects { sub ->
 
     if(sub.name.startsWith("fmi")) {
 
-        def snapshot = true
+        def snapshot = false
 
         group = 'no.mechatronics.sfi.fmi4j'
         version = '0.7.1'
