@@ -265,7 +265,7 @@ interface ModelDescriptionProvider: CommonModelDescription {
  * @author Lars Ivar Hatledal
  */
 @JacksonXmlRootElement(localName = "fmiModelDescription")
-data class ModelDescriptionImpl(
+class ModelDescriptionImpl(
 
         @JacksonXmlProperty()
         override var fmiVersion: String,

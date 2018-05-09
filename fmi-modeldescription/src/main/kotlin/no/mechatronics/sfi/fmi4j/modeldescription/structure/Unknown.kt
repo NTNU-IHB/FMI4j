@@ -58,25 +58,23 @@ interface Unknown {
 /**
  * @author Lars Ivar Hatledal
  */
-class UnknownImpl: Unknown, Serializable {
+class UnknownImpl(
 
-    @JacksonXmlProperty(localName = "index")
-    private var _index: Int? = null
+        @JacksonXmlProperty
+        override var index: Int,
 
-    override val index: Int
-        get() = _index ?: throw AssertionError("Index was null!")
+        @JacksonXmlProperty(localName = "dependencies")
+        private var _dependencies: String? = null,
 
-    @JacksonXmlProperty(localName = "dependencies")
-    private var _dependencies: String? = null
+        @JacksonXmlProperty
+        override val dependenciesKind: DependenciesKind? = null
+
+) : Unknown, Serializable {
 
     override val dependencies: List<Int>
         get() = _dependencies?.let {
             it.split(" ").mapNotNull { it.toIntOrNull() }
         } ?: emptyList()
-
-
-    @JacksonXmlProperty
-    override val dependenciesKind: DependenciesKind? = null
 
     override fun toString(): String {
         return "UnknownImpl(index=$index, dependencies=$dependencies, dependenciesKind=$dependenciesKind)"

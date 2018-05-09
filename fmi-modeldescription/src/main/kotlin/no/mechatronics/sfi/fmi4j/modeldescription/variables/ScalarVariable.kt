@@ -95,7 +95,7 @@ interface ScalarVariable {
 /**
  * @author Lars Ivar Hatledal
  */
-data class ScalarVariableImpl(
+class ScalarVariableImpl(
 
         @JacksonXmlProperty
         override val name: String,

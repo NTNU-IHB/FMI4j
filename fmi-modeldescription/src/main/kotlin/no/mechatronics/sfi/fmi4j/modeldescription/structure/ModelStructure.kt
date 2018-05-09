@@ -86,22 +86,24 @@ interface ModelStructure {
  *
  * @author Lars Ivar Hatledal
  */
-class ModelStructureImpl: ModelStructure, Serializable {
+class ModelStructureImpl(
 
-    @JacksonXmlProperty(localName = "Outputs")
-    private val _outputs: Outputs? = null
+        @JacksonXmlProperty(localName = "Outputs")
+        private val _outputs: Outputs? = null,
+
+        @JacksonXmlProperty(localName = "Derivatives")
+        private val _derivatives: Derivatives? = null,
+
+        @JacksonXmlProperty(localName = "InitialUnknowns")
+        private val _initialUnknowns: InitialUnknowns? = null
+
+) : ModelStructure, Serializable {
 
     override val outputs: List<Unknown>
         get() = _outputs?.unknowns ?: emptyList()
 
-    @JacksonXmlProperty(localName = "Derivatives")
-    private val _derivatives: Derivatives? = null
-
     override val derivatives: List<Unknown>
         get() = _derivatives?.unknowns ?: emptyList()
-
-    @JacksonXmlProperty(localName = "InitialUnknowns")
-    private val _initialUnknowns: InitialUnknowns? = null
 
     override val initialUnknowns: List<Unknown>
         get() {
@@ -114,21 +116,19 @@ class ModelStructureImpl: ModelStructure, Serializable {
 
 }
 
-@JacksonXmlRootElement(localName = "Outputs")
+
 class Outputs(
         @JacksonXmlProperty(localName = "Unknown")
         @JacksonXmlElementWrapper(useWrapping = false)
         val unknowns: List<UnknownImpl>? = null
 ) : Serializable
 
-@JacksonXmlRootElement(localName = "Derivatives")
 class Derivatives(
         @JsonProperty("Unknown")
         @JacksonXmlElementWrapper(useWrapping = false)
         val unknowns: List<UnknownImpl>? = null
 ) : Serializable
 
-@JacksonXmlRootElement(localName = "InitialUnknowns")
 class InitialUnknowns(
         @JsonProperty("Unknown")
         @JacksonXmlElementWrapper(useWrapping = false)

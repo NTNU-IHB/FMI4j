@@ -83,7 +83,7 @@ interface BoundedTypedAttribute<out E> : TypedAttribute<E> {
 /**
  * @author Lars Ivar Hatledal
  */
-data class IntegerAttribute(
+class IntegerAttribute(
 
         @JacksonXmlProperty
         override val min: Int? = null,
@@ -102,7 +102,7 @@ data class IntegerAttribute(
 /**
  * @author Lars Ivar Hatledal
  */
-data class RealAttribute(
+class RealAttribute(
 
         @JacksonXmlProperty
         override val min: Double? = null,
@@ -195,7 +195,7 @@ data class RealAttribute(
 /**
  * @author Lars Ivar Hatledal
  */
-data class StringAttribute(
+class StringAttribute(
 
         @JacksonXmlProperty
         override var start: String? = null,
@@ -208,7 +208,7 @@ data class StringAttribute(
 /**
  * @author Lars Ivar Hatledal
  */
-data class BooleanAttribute(
+class BooleanAttribute(
 
         @JacksonXmlProperty
         override var start: Boolean? = null,
@@ -221,7 +221,7 @@ data class BooleanAttribute(
 /**
  * @author Lars Ivar Hatledal
  */
-data class EnumerationAttribute(
+class EnumerationAttribute(
 
         @JacksonXmlProperty
         override val min: Int? = null,
