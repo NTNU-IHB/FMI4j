@@ -11,11 +11,11 @@ import org.slf4j.LoggerFactory
 import java.io.File
 import java.util.concurrent.atomic.AtomicBoolean
 
-class CoSimulationFmuInstanceInstanceTest_kt {
+class CoSimulationFmuInstanceTest_kt {
 
     companion object {
 
-        val LOG: Logger = LoggerFactory.getLogger(CoSimulationFmuInstanceInstanceTest_kt::class.java)
+        val LOG: Logger = LoggerFactory.getLogger(CoSimulationFmuInstanceTest_kt::class.java)
 
         private lateinit var fmu: Fmu
 
