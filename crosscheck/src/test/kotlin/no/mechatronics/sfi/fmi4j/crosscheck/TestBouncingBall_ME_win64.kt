@@ -1,7 +1,7 @@
 package no.mechatronics.sfi.fmi4j.crosscheck
 
-import org.junit.Assert
-import org.junit.Test
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.File
@@ -13,11 +13,11 @@ class TestBouncingBall_ME_win64 {
     }
 
     @Test
-    fun setup() {
+    fun test() {
 
         val name = "bouncingBall"
         val path = "$TEST_FMUs/FMI_2.0/ModelExchange/win64/FMUSDK/2.0.4/bouncingBall/$name.fmu"
-        Assert.assertTrue(File(path).exists())
+        Assertions.assertTrue(File(path).exists())
 
         val args = arrayOf(
                 "-fmu", "\"$path\"",

@@ -5,42 +5,41 @@ import org.apache.commons.math3.ode.FirstOrderIntegrator
 import org.apache.commons.math3.ode.nonstiff.ClassicalRungeKuttaIntegrator
 import org.apache.commons.math3.ode.nonstiff.EulerIntegrator
 import org.apache.commons.math3.ode.nonstiff.LutherIntegrator
-import org.junit.AfterClass
-import org.junit.Assert
-import org.junit.BeforeClass
-import org.junit.Test
+import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInstance
 import org.slf4j.LoggerFactory
 import java.io.File
-import java.io.IOException
 
+
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class ModelExchangeTest2_kt {
 
     private companion object {
 
         private val LOG = LoggerFactory.getLogger(ModelExchangeTest_java::class.java)
 
-        private lateinit var fmu: Fmu
-
-        @JvmStatic
-        @BeforeClass
-        @Throws(IOException::class)
-        fun setUp() {
-            val file = File(TEST_FMUs, "FMI_2.0/ModelExchange/win64/FMUSDK/2.0.4/bouncingBall/bouncingBall.fmu")
-            Assert.assertTrue(file.exists())
-            fmu = Fmu.from(file)
-        }
-
-        @JvmStatic
-        @AfterClass
-        fun tearDown() {
-            fmu.close()
-        }
-
     }
+
+    private val fmu: Fmu
+
+    init {
+        val file = File(TEST_FMUs, "FMI_2.0/ModelExchange/win64/FMUSDK/2.0.4/bouncingBall/bouncingBall.fmu")
+        Assertions.assertTrue(file.exists())
+        fmu = Fmu.from(file)
+    }
+
+
+    @AfterAll
+    fun tearDown() {
+        fmu.close()
+    }
+
 
     @Test
     fun testVersion() {
-        Assert.assertEquals("2.0", fmu.modelDescription.fmiVersion)
+        Assertions.assertEquals("2.0", fmu.modelDescription.fmiVersion)
     }
 
     private fun runFmu(solver: FirstOrderIntegrator) {
@@ -52,12 +51,12 @@ class ModelExchangeTest2_kt {
             val h = fmu.modelVariables
                     .getByName("h").asRealVariable()
 
-           fmu.init()
+            fmu.init()
 
             val macroStep = 1.0 / 10
             while (fmu.currentTime < 1) {
                 val read = h.read()
-                Assert.assertTrue(read.status === FmiStatus.OK)
+                Assertions.assertTrue(read.status === FmiStatus.OK)
                 LOG.info("t=${fmu.currentTime}, h=${read.value}")
                 fmu.doStep(macroStep)
             }

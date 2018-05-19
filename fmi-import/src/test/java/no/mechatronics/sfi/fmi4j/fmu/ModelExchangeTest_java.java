@@ -32,10 +32,7 @@ import org.apache.commons.math3.ode.FirstOrderIntegrator;
 import org.apache.commons.math3.ode.nonstiff.ClassicalRungeKuttaIntegrator;
 import org.apache.commons.math3.ode.nonstiff.EulerIntegrator;
 import org.apache.commons.math3.ode.nonstiff.LutherIntegrator;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,6 +42,7 @@ import java.io.IOException;
 /**
  * @author Lars Ivar Hatledal
  */
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class ModelExchangeTest_java {
 
     private static final Logger LOG = LoggerFactory.getLogger(ModelExchangeTest_java.class);
@@ -52,21 +50,23 @@ public class ModelExchangeTest_java {
     private static Fmu fmu;
 
 
-    @BeforeClass
+    @BeforeAll
     public static void setup() throws IOException {
+        LOG.debug("setup");
         final File file = new File(TEST_FMUsKt.getTEST_FMUs(), "FMI_2.0/ModelExchange/win64/FMUSDK/2.0.4/vanDerPol/vanDerPol.fmu");
-        Assert.assertTrue(file.exists());
+        Assertions.assertTrue(file.exists());
         fmu = Fmu.from(file);
     }
 
-    @AfterClass
+    @AfterAll
     public static void tearDown() {
+        LOG.debug("tearDown");
         fmu.close();
     }
 
     @Test
     public void testVersion() {
-        Assert.assertEquals("2.0", fmu.getModelDescription().getFmiVersion());
+        Assertions.assertEquals("2.0", fmu.getModelDescription().getFmiVersion());
     }
 
     private void runFmu(FirstOrderIntegrator integrator) {
@@ -84,7 +84,7 @@ public class ModelExchangeTest_java {
         double macroStep = 1.0 / 10;
         while (instance.getCurrentTime() < 1) {
             FmuRead<Double> read = x0.read();
-            Assert.assertSame(read.getStatus(), FmiStatus.OK);
+            Assertions.assertSame(read.getStatus(), FmiStatus.OK);
             LOG.info("t={}, x0={}", instance.getCurrentTime(), read.getValue() );
             instance.doStep(macroStep);
         }

@@ -24,18 +24,17 @@
 
 package no.mechatronics.sfi.fmi4j.fmu.misc
 
-import org.junit.Assert.assertFalse
-import org.junit.Assert.assertTrue
-import org.junit.Test
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
 
 class FmiStateTest {
 
     @Test
     fun isCallLegalDuringState() {
 
-        assertFalse(FmiState.START.isCallLegalDuringState(FmiMethod.fmi2SetDebugLogging, log=false))
-        assertFalse(FmiState.START.isCallLegalDuringState(FmiMethod.fmi2Reset, log=false))
-        assertTrue(FmiState.START.isCallLegalDuringState(FmiMethod.fmi2GetTypesPlatform, log=false))
+        Assertions.assertFalse(FmiState.START.isCallLegalDuringState(FmiMethod.fmi2SetDebugLogging, log = false))
+        Assertions.assertFalse(FmiState.START.isCallLegalDuringState(FmiMethod.fmi2Reset, log = false))
+        Assertions.assertTrue(FmiState.START.isCallLegalDuringState(FmiMethod.fmi2GetTypesPlatform, log = false))
 
     }
 

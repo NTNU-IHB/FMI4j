@@ -11,8 +11,8 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescriptionImpl
 import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescriptionParser
 import no.mechatronics.sfi.fmi4j.modeldescription.TEST_FMUs
-import org.junit.Assert
-import org.junit.Test
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.File
@@ -27,7 +27,7 @@ class TestJackson {
     fun test() {
 
         val file = File(TEST_FMUs, "FMI_2.0/CoSimulation/win64/FMUSDK/2.0.4/BouncingBall/bouncingBall.fmu")
-        Assert.assertTrue(file.exists())
+        Assertions.assertTrue(file.exists())
 
         val mapper = XmlMapper().apply {
             registerModule(KotlinModule())
@@ -67,7 +67,7 @@ class TestJackson {
         }
         val variable = mapper.readValue<ScalarVariable>(xml)
 
-        Assert.assertNotNull(variable.real)
+        Assertions.assertNotNull(variable.real)
 
     }
 

@@ -2,10 +2,10 @@ package no.mechatronics.sfi.fmu2jar
 
 
 import no.mechatronics.sfi.fmi4j.common.FmiSimulation
-import org.junit.AfterClass
-import org.junit.Assert
-import org.junit.BeforeClass
-import org.junit.Test
+import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInstance
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.File
@@ -13,30 +13,24 @@ import java.net.URLClassLoader
 import java.nio.file.Files
 
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class MainTest {
 
     companion object {
-
         val LOG: Logger = LoggerFactory.getLogger(MainTest::class.java)
-
-        lateinit var out: File
-
-        @JvmStatic
-        @BeforeClass
-        fun setUp() {
-            out = Files.createTempDirectory("fmu2jar_test_").toFile()
-            LOG.info("Created out dir: ${out.absolutePath}")
-        }
-
-        @JvmStatic
-        @AfterClass
-        fun tearDown() {
-            if (out.deleteRecursively()) {
-                LOG.info("Deleted generated folder and all it's contents: ${out.absolutePath}")
-            }
-        }
-
     }
+
+    private val out = Files.createTempDirectory("fmu2jar_test_").toFile().also {
+        LOG.info("Created out dir: $it.absolutePath")
+    }
+
+    @AfterAll
+    fun tearDown() {
+        if (out.deleteRecursively()) {
+            LOG.info("Deleted generated folder and all it's contents: ${out.absolutePath}")
+        }
+    }
+
 
     @Test
     fun testMain() {
@@ -45,7 +39,7 @@ class MainTest {
 
         val path = "${System.getenv("TEST_FMUs")}/FMI_2.0/CoSimulation/win64/20sim/4.6.4.8004/ControlledTemperature/$fmuName.fmu"
         val file = File(path)
-        Assert.assertTrue(file.exists())
+        Assertions.assertTrue(file.exists())
         val args = arrayOf<String>(
                 "-fmu", file.absolutePath,
                 "-out", out.absolutePath,
@@ -57,8 +51,8 @@ class MainTest {
         Main.main(args)
 
         val myJar = out.listFiles()[0]
-        Assert.assertTrue(myJar.name.endsWith(".jar"))
-        Assert.assertTrue(myJar.length() > 0)
+        Assertions.assertTrue(myJar.name.endsWith(".jar"))
+        Assertions.assertTrue(myJar.length() > 0)
 
         val child = URLClassLoader(arrayOf(myJar.toURI().toURL()), this.javaClass.classLoader)
         val classToLoad = Class.forName("no.mechatronics.sfi.fmu2jar.${fmuName.toLowerCase()}.$fmuName", true, child)
@@ -70,7 +64,7 @@ class MainTest {
             val dt = 1.0/100
             fmu.init()
             while (instance.currentTime < 5) {
-                Assert.assertTrue(fmu.doStep(dt))
+                Assertions.assertTrue(fmu.doStep(dt))
             }
         }
 
