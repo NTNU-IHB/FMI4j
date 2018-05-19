@@ -1,7 +1,7 @@
 package no.mechatronics.sfi.fmi4j.crosscheck
 
-import org.junit.Assert
-import org.junit.Test
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.File
@@ -13,10 +13,10 @@ class TestControlledTemperature_CS_win64 {
     }
 
     @Test
-    fun setup() {
+    fun test() {
 
         val path = "$TEST_FMUs/FMI_2.0/CoSimulation/win64/20sim/4.6.4.8004/ControlledTemperature/ControlledTemperature.fmu"
-        Assert.assertTrue(File(path).exists())
+        Assertions.assertTrue(File(path).exists())
 
         val args = arrayOf(
                 "-fmu", "\"$path\"",

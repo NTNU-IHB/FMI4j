@@ -2,56 +2,52 @@ package no.mechatronics.sfi.fmi4j.fmu
 
 
 import no.mechatronics.sfi.fmi4j.common.FmiStatus
-import org.junit.AfterClass
-import org.junit.Assert
-import org.junit.BeforeClass
-import org.junit.Test
+import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInstance
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.File
 import java.util.concurrent.atomic.AtomicBoolean
 
+
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class CoSimulationFmuInstanceTest_kt {
 
     companion object {
-
         val LOG: Logger = LoggerFactory.getLogger(CoSimulationFmuInstanceTest_kt::class.java)
+    }
 
-        private lateinit var fmu: Fmu
+    private val fmu: Fmu
 
-        @JvmStatic
-        @BeforeClass
-        fun setUp() {
-            val file = File(TEST_FMUs, "FMI_2.0/CoSimulation/win64/20Sim/4.6.4.8004/ControlledTemperature/ControlledTemperature.fmu")
-            Assert.assertTrue(file.exists())
-            fmu = Fmu.from(file)
-        }
+    init {
+        val file = File(TEST_FMUs, "FMI_2.0/CoSimulation/win64/20Sim/4.6.4.8004/ControlledTemperature/ControlledTemperature.fmu")
+        Assertions.assertTrue(file.exists())
+        fmu = Fmu.from(file)
+    }
 
-        @JvmStatic
-        @AfterClass
-        fun tearDown() {
-            fmu.close()
-        }
-
+    @AfterAll
+    fun tearDown() {
+        fmu.close()
     }
 
     @Test
-    @Throws(Exception::class)
     fun test() {
 
         fmu.asCoSimulationFmu().newInstance(loggingOn = true).use { instance ->
 
-            Assert.assertEquals("2.0", instance.modelDescription.fmiVersion)
+            Assertions.assertEquals("2.0", instance.modelDescription.fmiVersion)
 
             val startTemp = instance.getVariableByName("HeatCapacity1.T0").asRealVariable().start
-            Assert.assertNotNull(startTemp)
-            Assert.assertEquals(298.0, startTemp!!, 0.0)
+            Assertions.assertNotNull(startTemp)
+            Assertions.assertEquals(298.0, startTemp!!)
 
             instance.init()
-            Assert.assertTrue(instance.lastStatus === FmiStatus.OK)
+            Assertions.assertTrue(instance.lastStatus === FmiStatus.OK)
 
             val heatCapacity1_C = instance.getVariableByName("HeatCapacity1.C").asRealVariable()
-            Assert.assertEquals(0.1, heatCapacity1_C.start!!, 0.0)
+            Assertions.assertEquals(0.1, heatCapacity1_C.start!!)
             println(heatCapacity1_C.read().value)
 
             val temperatureRoom = instance.getVariableByName("Temperature_Room").asRealVariable()
@@ -61,10 +57,10 @@ class CoSimulationFmuInstanceTest_kt {
             val dt = 1.0 / 100
             for (i in 0..4) {
                 instance.doStep(dt)
-                Assert.assertTrue(instance.lastStatus === FmiStatus.OK)
+                Assertions.assertTrue(instance.lastStatus === FmiStatus.OK)
 
                 val read = temperatureRoom.read()
-                Assert.assertTrue(read.status == FmiStatus.OK)
+                Assertions.assertTrue(read.status == FmiStatus.OK)
                 val value = read.value
 
                 if (java.lang.Double.isNaN(first1)) {
@@ -73,19 +69,19 @@ class CoSimulationFmuInstanceTest_kt {
                 LOG.info("Temperature_Room=$value")
             }
 
-            Assert.assertTrue((instance as AbstractFmuInstance<*, *>).reset(false))
+            Assertions.assertTrue((instance as AbstractFmuInstance<*, *>).reset(false))
 
             val first = AtomicBoolean(true)
             while (instance.currentTime < 5) {
                 instance.doStep(dt)
-                Assert.assertTrue(instance.lastStatus === FmiStatus.OK)
+                Assertions.assertTrue(instance.lastStatus === FmiStatus.OK)
 
                 val read = temperatureRoom.read()
-                Assert.assertTrue(read.status == FmiStatus.OK)
+                Assertions.assertTrue(read.status == FmiStatus.OK)
                 val value = read.value
 
                 if (first.getAndSet(false)) {
-                    Assert.assertEquals(first1, value, 0.0)
+                    Assertions.assertEquals(first1, value)
                 }
                 LOG.info("Temperature_Room=$value")
             }
