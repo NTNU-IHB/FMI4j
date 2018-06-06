@@ -54,7 +54,7 @@ subprojects { sub ->
     }
 
 
-    if(sub.name.startsWith("fmi")) {
+    if(sub.name.startsWith("fmi") && hasProperty("ossrhUsername")  && hasProperty("ossrhPassword")) {
 
         def snapshot = false
         group = 'no.mechatronics.sfi.fmi4j'
