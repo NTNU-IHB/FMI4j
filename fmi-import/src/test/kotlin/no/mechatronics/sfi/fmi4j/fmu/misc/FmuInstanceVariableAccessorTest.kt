@@ -1,7 +1,7 @@
 package no.mechatronics.sfi.fmi4j.fmu.misc
 
+import no.mechatronics.sfi.fmi4j.TestUtils
 import no.mechatronics.sfi.fmi4j.fmu.Fmu
-import no.mechatronics.sfi.fmi4j.fmu.TEST_FMUs
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.BooleanVariable
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.IntegerVariable
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.RealVariable
@@ -21,11 +21,11 @@ class FmuInstanceVariableAccessorTest {
         val LOG: Logger = LoggerFactory.getLogger(FmuInstanceVariableAccessorTest::class.java)
     }
 
-
     private val fmu: Fmu
 
     init {
-        val file = File(TEST_FMUs, "FMI_2.0/CoSimulation/win64/20Sim/4.6.4.8004/ControlledTemperature/ControlledTemperature.fmu")
+        val file = File(TestUtils.getTEST_FMUs(),
+                "FMI_2.0/CoSimulation/${TestUtils.getOs()}/20Sim/4.6.4.8004/ControlledTemperature/ControlledTemperature.fmu")
         Assertions.assertTrue(file.exists())
         fmu = Fmu.from(file)
     }

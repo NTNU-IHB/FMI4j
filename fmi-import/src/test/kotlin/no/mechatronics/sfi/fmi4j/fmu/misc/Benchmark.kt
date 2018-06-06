@@ -1,8 +1,8 @@
 package no.mechatronics.sfi.fmi4j.fmu.misc
 
 
+import no.mechatronics.sfi.fmi4j.TestUtils
 import no.mechatronics.sfi.fmi4j.fmu.Fmu
-import no.mechatronics.sfi.fmi4j.fmu.TEST_FMUs
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.RealVariable
 import org.javafmi.wrapper.Simulation
 import org.slf4j.Logger
@@ -22,15 +22,14 @@ data class TestOptions(
 
 }
 
-
 private val options = listOf(
         TestOptions(
-                fmuPath = "$TEST_FMUs/FMI_2.0/CoSimulation/win64/FMUSDK/2.0.4/BouncingBall/bouncingBall.fmu",
+                fmuPath = "${TestUtils.getTEST_FMUs()}/FMI_2.0/CoSimulation/win64/FMUSDK/2.0.4/BouncingBall/bouncingBall.fmu",
                 stepSize = 1E-2,
                 stopTime = 100.0,
                 vr = 0),
         TestOptions(
-                fmuPath = "$TEST_FMUs/FMI_2.0/CoSimulation/win64/20sim/4.6.4.8004/TorsionBar/TorsionBar.fmu",
+                fmuPath = "${TestUtils.getTEST_FMUs()}/FMI_2.0/CoSimulation/win64/20sim/4.6.4.8004/TorsionBar/TorsionBar.fmu",
                 stepSize = 1E-5,
                 stopTime = 12.0,
                 vr = 2))
