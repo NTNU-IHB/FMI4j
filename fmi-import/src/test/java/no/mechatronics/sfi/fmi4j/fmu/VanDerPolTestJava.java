@@ -24,6 +24,7 @@
 
 package no.mechatronics.sfi.fmi4j.fmu;
 
+import no.mechatronics.sfi.fmi4j.TestUtils;
 import no.mechatronics.sfi.fmi4j.common.FmiSimulation;
 import no.mechatronics.sfi.fmi4j.common.FmiStatus;
 import no.mechatronics.sfi.fmi4j.common.FmuRead;
@@ -32,10 +33,10 @@ import org.apache.commons.math3.ode.FirstOrderIntegrator;
 import org.apache.commons.math3.ode.nonstiff.ClassicalRungeKuttaIntegrator;
 import org.apache.commons.math3.ode.nonstiff.EulerIntegrator;
 import org.apache.commons.math3.ode.nonstiff.LutherIntegrator;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
+import org.junit.jupiter.api.condition.EnabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,35 +46,40 @@ import java.io.IOException;
 /**
  * @author Lars Ivar Hatledal
  */
-public class ModelExchangeTest_java {
+@EnabledOnOs(OS.WINDOWS)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@EnabledIfEnvironmentVariable(named = "TEST_FMUs", matches = ".*")
+public class VanDerPolTestJava {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ModelExchangeTest_java.class);
+    private static final Logger LOG = LoggerFactory.getLogger(VanDerPolTestJava.class);
 
     private static Fmu fmu;
 
-
-    @BeforeClass
+    @BeforeAll
     public static void setup() throws IOException {
-        final File file = new File(TEST_FMUsKt.getTEST_FMUs(), "FMI_2.0/ModelExchange/win64/FMUSDK/2.0.4/vanDerPol/vanDerPol.fmu");
-        Assert.assertTrue(file.exists());
+        LOG.debug("setup");
+        final File file = new File(TestUtils.getTEST_FMUs(),
+                "FMI_2.0/ModelExchange/win64/FMUSDK/2.0.4/vanDerPol/vanDerPol.fmu");
+        Assertions.assertTrue(file.exists());
         fmu = Fmu.from(file);
     }
 
-    @AfterClass
+    @AfterAll
     public static void tearDown() {
+        LOG.debug("tearDown");
         fmu.close();
     }
 
     @Test
     public void testVersion() {
-        Assert.assertEquals("2.0", fmu.getModelDescription().getFmiVersion());
+        Assertions.assertEquals("2.0", fmu.getModelDescription().getFmiVersion());
     }
 
     private void runFmu(FirstOrderIntegrator integrator) {
 
         LOG.info("Using solver: {}", integrator.getClass().getSimpleName());
 
-        FmiSimulation instance = ModelExchangeTest_java.fmu.asModelExchangeFmu()
+        FmiSimulation instance = VanDerPolTestJava.fmu.asModelExchangeFmu()
                 .newInstance(integrator, false, true);
 
         RealVariable x0 = instance.getModelVariables()
@@ -84,7 +90,7 @@ public class ModelExchangeTest_java {
         double macroStep = 1.0 / 10;
         while (instance.getCurrentTime() < 1) {
             FmuRead<Double> read = x0.read();
-            Assert.assertSame(read.getStatus(), FmiStatus.OK);
+            Assertions.assertSame(read.getStatus(), FmiStatus.OK);
             LOG.info("t={}, x0={}", instance.getCurrentTime(), read.getValue() );
             instance.doStep(macroStep);
         }

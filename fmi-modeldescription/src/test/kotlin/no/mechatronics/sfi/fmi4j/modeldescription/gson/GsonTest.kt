@@ -2,13 +2,17 @@ package no.mechatronics.sfi.fmi4j.modeldescription.gson
 
 
 import com.google.gson.GsonBuilder
+import no.mechatronics.sfi.fmi4j.TestUtils
 import no.mechatronics.sfi.fmi4j.modeldescription.*
-import org.junit.Assert
-import org.junit.Test
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.condition.EnabledOnOs
+import org.junit.jupiter.api.condition.OS
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.File
 
+@EnabledOnOs(OS.WINDOWS)
 class GsonTest {
 
     companion object {
@@ -18,8 +22,9 @@ class GsonTest {
     @Test
     fun test() {
 
-        val fmu = File(TEST_FMUs, "FMI_2.0/ModelExchange/win64/FMUSDK/2.0.4/vanDerPol/vanDerPol.fmu")
-        Assert.assertTrue(fmu.exists())
+        val fmu = File(TestUtils.getTEST_FMUs(),
+                "FMI_2.0/ModelExchange/win64/FMUSDK/2.0.4/vanDerPol/vanDerPol.fmu")
+        Assertions.assertTrue(fmu.exists())
         val md = ModelDescriptionParser.parse(fmu).asModelExchangeModelDescription()
 
         GsonBuilder()

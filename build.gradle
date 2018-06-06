@@ -40,9 +40,21 @@ subprojects { sub ->
         implementation group: 'org.slf4j', name: 'slf4j-api', version: '1.7.25'
         runtimeOnly group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.7.25'
 
-        testImplementation group: 'junit', name: 'junit', version: '4.12'
+        testImplementation('org.junit.jupiter:junit-jupiter-api:5.2.0')
+        testImplementation('org.junit.jupiter:junit-jupiter-params:5.2.0')
+        testRuntimeOnly('org.junit.jupiter:junit-jupiter-engine:5.2.0')
+
     }
 
+    test {
+
+        useJUnitPlatform()
+
+        reports {
+            html.enabled = true
+        }
+
+    }
 
     sub.plugins.withId ('kotlin') {
         compileKotlin {
@@ -56,9 +68,9 @@ subprojects { sub ->
 
     if(sub.name.startsWith("fmi") && hasProperty("ossrhUsername")  && hasProperty("ossrhPassword")) {
 
-        def snapshot = false
+        def snapshot = true
         group = 'no.mechatronics.sfi.fmi4j'
-        version = '0.7.1'
+        version = '0.7.2'
         if (snapshot) {
             version += '-SNAPSHOT'
         }

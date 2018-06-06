@@ -1,46 +1,47 @@
 package no.mechatronics.sfi.fmi4j.fmu
 
+import no.mechatronics.sfi.fmi4j.TestUtils
 import no.mechatronics.sfi.fmi4j.common.FmiStatus
 import org.apache.commons.math3.ode.FirstOrderIntegrator
 import org.apache.commons.math3.ode.nonstiff.ClassicalRungeKuttaIntegrator
 import org.apache.commons.math3.ode.nonstiff.EulerIntegrator
 import org.apache.commons.math3.ode.nonstiff.LutherIntegrator
-import org.junit.AfterClass
-import org.junit.Assert
-import org.junit.BeforeClass
-import org.junit.Test
+import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInstance
+import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable
+import org.junit.jupiter.api.condition.EnabledOnOs
+import org.junit.jupiter.api.condition.OS
 import org.slf4j.LoggerFactory
 import java.io.File
-import java.io.IOException
 
-class ModelExchangeTest_kt {
+@EnabledOnOs(OS.WINDOWS)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@EnabledIfEnvironmentVariable(named = "TEST_FMUs", matches = ".*")
+class VanDerPolTest {
 
     private companion object {
+        private val LOG = LoggerFactory.getLogger(VanDerPolTestJava::class.java)
+    }
 
-        private val LOG = LoggerFactory.getLogger(ModelExchangeTest_java::class.java)
+    private val fmu: Fmu
 
-        private lateinit var fmu: Fmu
+    init {
+        val file = File(TestUtils.getTEST_FMUs(),
+                "FMI_2.0/ModelExchange/win64/FMUSDK/2.0.4/vanDerPol/vanDerPol.fmu")
+        Assertions.assertTrue(file.exists())
+        fmu = Fmu.from(file)
+    }
 
-        @JvmStatic
-        @BeforeClass
-        @Throws(IOException::class)
-        fun setUp() {
-            val file = File(TEST_FMUs, "FMI_2.0/ModelExchange/win64/FMUSDK/2.0.4/vanDerPol/vanDerPol.fmu")
-            Assert.assertTrue(file.exists())
-            fmu = Fmu.from(file)
-        }
-
-        @JvmStatic
-        @AfterClass
-        fun tearDown() {
-            fmu.close()
-        }
-
+    @AfterAll
+    fun tearDown() {
+        fmu.close()
     }
 
     @Test
     fun testVersion() {
-        Assert.assertEquals("2.0", fmu.modelDescription.fmiVersion)
+        Assertions.assertEquals("2.0", fmu.modelDescription.fmiVersion)
     }
 
     private fun runFmu(integrator: FirstOrderIntegrator) {
@@ -57,7 +58,7 @@ class ModelExchangeTest_kt {
             val macroStep = 1.0 / 10
             while (fmu.currentTime < 1) {
                 val read = x0.read()
-                Assert.assertTrue(read.status === FmiStatus.OK)
+                Assertions.assertTrue(read.status === FmiStatus.OK)
                 LOG.info("t=${fmu.currentTime}, x0=${read.value}")
                 fmu.doStep(macroStep)
             }
@@ -80,4 +81,5 @@ class ModelExchangeTest_kt {
     fun testLuther() {
         runFmu(LutherIntegrator(1E-3))
     }
+
 }

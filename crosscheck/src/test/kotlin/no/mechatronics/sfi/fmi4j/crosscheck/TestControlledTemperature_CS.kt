@@ -4,42 +4,35 @@ import no.mechatronics.sfi.fmi4j.TestUtils
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable
-import org.junit.jupiter.api.condition.EnabledOnOs
-import org.junit.jupiter.api.condition.OS
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.File
 
-@EnabledOnOs(OS.WINDOWS)
 @EnabledIfEnvironmentVariable(named = "TEST_FMUs", matches = ".*")
-class TestBouncingBall_ME_win64 {
+class TestControlledTemperature_CS {
 
     companion object {
-        val LOG: Logger = LoggerFactory.getLogger(TestBouncingBall_ME_win64::class.java)
+        val LOG: Logger = LoggerFactory.getLogger(TestControlledTemperature_CS::class.java)
     }
 
     @Test
     fun test() {
 
-        val name = "bouncingBall"
-        val path = "${TestUtils.getTEST_FMUs()}/FMI_2.0/ModelExchange/win64/FMUSDK/2.0.4/bouncingBall/$name.fmu"
+        val path = "${TestUtils.getTEST_FMUs()}/FMI_2.0/CoSimulation/${TestUtils.getOs()}/20Sim/4.6.4.8004/ControlledTemperature/ControlledTemperature.fmu"
         Assertions.assertTrue(File(path).exists())
 
         val args = arrayOf(
                 "-fmu", "\"$path\"",
-                "-dt", "0.01",
-                "-stop", "4",
-                "-me",
-                "-vars", "h, der(h), v, der(v), g, e"
+                "-dt", "1E-4",
+                "-stop", "5",
+                "-vars", "Temperature_Reference, Temperature_Room"
         )
 
         FmuDriver.main(args)
 
-        val fileName = "${name}_out.csv"
-        File(fileName).apply {
+        File("ControlledTemperature_out.csv").apply {
             if (exists()) {
                 delete()
-                LOG.info("Deleted $fileName")
             }
         }
 
