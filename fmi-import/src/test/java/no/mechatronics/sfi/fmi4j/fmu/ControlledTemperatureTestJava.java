@@ -25,6 +25,7 @@
 package no.mechatronics.sfi.fmi4j.fmu;
 
 
+import no.mechatronics.sfi.fmi4j.TestUtils;
 import no.mechatronics.sfi.fmi4j.common.FmiSimulation;
 import no.mechatronics.sfi.fmi4j.common.FmiStatus;
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.RealVariable;
@@ -32,6 +33,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.io.File;
@@ -41,15 +43,19 @@ import java.util.concurrent.atomic.AtomicBoolean;
 /**
  * @author Lars Ivar Hatledal
  */
-public class CoSimulationFmuInstanceTest_java {
 
-    private final static Logger LOG = LoggerFactory.getLogger(CoSimulationFmuInstanceTest_java.class);
+@EnabledIfEnvironmentVariable(named = "TEST_FMUs", matches = ".*")
+public class ControlledTemperatureTestJava {
+
+    private final static Logger LOG = LoggerFactory.getLogger(ControlledTemperatureTestJava.class);
 
     private static Fmu fmuFile;
 
     @BeforeAll
     public static void setUp() throws IOException {
-        final File file = new File(TEST_FMUsKt.getTEST_FMUs(), "FMI_2.0/CoSimulation/win64/20Sim/4.6.4.8004/ControlledTemperature/ControlledTemperature.fmu");
+
+        final File file = new File(TestUtils.getTEST_FMUs(),
+                "FMI_2.0/CoSimulation/" + TestUtils.getOs() + "/20Sim/4.6.4.8004/ControlledTemperature/ControlledTemperature.fmu");
         Assertions.assertTrue(file.exists());
         fmuFile = Fmu.from(file);
     }

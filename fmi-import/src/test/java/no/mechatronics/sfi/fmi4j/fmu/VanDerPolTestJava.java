@@ -24,6 +24,7 @@
 
 package no.mechatronics.sfi.fmi4j.fmu;
 
+import no.mechatronics.sfi.fmi4j.TestUtils;
 import no.mechatronics.sfi.fmi4j.common.FmiSimulation;
 import no.mechatronics.sfi.fmi4j.common.FmiStatus;
 import no.mechatronics.sfi.fmi4j.common.FmuRead;
@@ -33,6 +34,9 @@ import org.apache.commons.math3.ode.nonstiff.ClassicalRungeKuttaIntegrator;
 import org.apache.commons.math3.ode.nonstiff.EulerIntegrator;
 import org.apache.commons.math3.ode.nonstiff.LutherIntegrator;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
+import org.junit.jupiter.api.condition.EnabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,18 +46,20 @@ import java.io.IOException;
 /**
  * @author Lars Ivar Hatledal
  */
+@EnabledOnOs(OS.WINDOWS)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class ModelExchangeTest_java {
+@EnabledIfEnvironmentVariable(named = "TEST_FMUs", matches = ".*")
+public class VanDerPolTestJava {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ModelExchangeTest_java.class);
+    private static final Logger LOG = LoggerFactory.getLogger(VanDerPolTestJava.class);
 
     private static Fmu fmu;
-
 
     @BeforeAll
     public static void setup() throws IOException {
         LOG.debug("setup");
-        final File file = new File(TEST_FMUsKt.getTEST_FMUs(), "FMI_2.0/ModelExchange/win64/FMUSDK/2.0.4/vanDerPol/vanDerPol.fmu");
+        final File file = new File(TestUtils.getTEST_FMUs(),
+                "FMI_2.0/ModelExchange/win64/FMUSDK/2.0.4/vanDerPol/vanDerPol.fmu");
         Assertions.assertTrue(file.exists());
         fmu = Fmu.from(file);
     }
@@ -73,7 +79,7 @@ public class ModelExchangeTest_java {
 
         LOG.info("Using solver: {}", integrator.getClass().getSimpleName());
 
-        FmiSimulation instance = ModelExchangeTest_java.fmu.asModelExchangeFmu()
+        FmiSimulation instance = VanDerPolTestJava.fmu.asModelExchangeFmu()
                 .newInstance(integrator, false, true);
 
         RealVariable x0 = instance.getModelVariables()

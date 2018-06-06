@@ -1,11 +1,17 @@
 package no.mechatronics.sfi.fmi4j.crosscheck
 
+import no.mechatronics.sfi.fmi4j.TestUtils
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable
+import org.junit.jupiter.api.condition.EnabledOnOs
+import org.junit.jupiter.api.condition.OS
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.File
 
+@EnabledOnOs(OS.WINDOWS)
+@EnabledIfEnvironmentVariable(named = "TEST_FMUs", matches = ".*")
 class TestBouncingBall_ME_win64 {
 
     companion object {
@@ -16,7 +22,7 @@ class TestBouncingBall_ME_win64 {
     fun test() {
 
         val name = "bouncingBall"
-        val path = "$TEST_FMUs/FMI_2.0/ModelExchange/win64/FMUSDK/2.0.4/bouncingBall/$name.fmu"
+        val path = "${TestUtils.getTEST_FMUs()}/FMI_2.0/ModelExchange/win64/FMUSDK/2.0.4/bouncingBall/$name.fmu"
         Assertions.assertTrue(File(path).exists())
 
         val args = arrayOf(

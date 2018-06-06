@@ -1,13 +1,20 @@
 package no.mechatronics.sfi.fmi4j.modeldescription
 
+import no.mechatronics.sfi.fmi4j.TestUtils
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
+import org.junit.jupiter.api.condition.DisabledOnOs
+import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable
+import org.junit.jupiter.api.condition.EnabledOnOs
+import org.junit.jupiter.api.condition.OS
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.File
 
+@EnabledOnOs(OS.WINDOWS)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@EnabledIfEnvironmentVariable(named = "TEST_FMUs", matches = ".*")
 class VanDerPolTest {
 
     companion object {
@@ -18,13 +25,13 @@ class VanDerPolTest {
 
     init {
 
-        val fmu = File(TEST_FMUs, "FMI_2.0/ModelExchange/win64/FMUSDK/2.0.4/vanDerPol/vanDerPol.fmu")
+        val fmu = File(TestUtils.getTEST_FMUs(),
+                "FMI_2.0/ModelExchange/win64/FMUSDK/2.0.4/vanDerPol/vanDerPol.fmu")
 
         Assertions.assertTrue(fmu.exists())
         modelDescription = ModelDescriptionParser.parse(fmu).asModelExchangeModelDescription()
 
     }
-
 
     @Test
     fun testFmiVersion() {
