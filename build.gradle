@@ -40,7 +40,10 @@ subprojects { sub ->
         implementation group: 'org.slf4j', name: 'slf4j-api', version: '1.7.25'
         runtimeOnly group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.7.25'
 
-        testImplementation group: 'junit', name: 'junit', version: '4.12'
+        testImplementation('org.junit.jupiter:junit-jupiter-api:5.2.0')
+        testImplementation('org.junit.jupiter:junit-jupiter-params:5.2.0')
+        testRuntimeOnly('org.junit.jupiter:junit-jupiter-engine:5.2.0')
+
     }
 
 
