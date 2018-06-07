@@ -40,7 +40,7 @@ class MainTest {
 
         val fmuName = "ControlledTemperature"
 
-        val path = "${TestUtils.getTEST_FMUs()}/FMI_2.0/CoSimulation/${TestUtils.getOs()}/20Sim/4.6.4.8004/ControlledTemperature/$fmuName.fmu"
+        val path = "${TestUtils.getTEST_FMUs()}/FMI_2.0/CoSimulation/${TestUtils.getOs()}/20sim/4.6.4.8004/ControlledTemperature/$fmuName.fmu"
         val file = File(path)
         Assertions.assertTrue(file.exists())
         val args = arrayOf<String>(
