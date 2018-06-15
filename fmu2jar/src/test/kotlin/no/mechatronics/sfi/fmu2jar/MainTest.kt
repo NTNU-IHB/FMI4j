@@ -1,7 +1,6 @@
 package no.mechatronics.sfi.fmu2jar
 
 
-import no.mechatronics.sfi.fmi4j.TestUtils
 import no.mechatronics.sfi.fmi4j.common.FmiSimulation
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Assertions
