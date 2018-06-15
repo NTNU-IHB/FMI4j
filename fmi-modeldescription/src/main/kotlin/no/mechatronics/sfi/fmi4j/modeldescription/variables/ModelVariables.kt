@@ -82,7 +82,7 @@ interface ModelVariables: Iterable<TypedScalarVariable<*>> {
     * @throws IllegalArgumentException if there are no variables with the provided value reference
     */
     fun getByValueReference(vr: Int): List<TypedScalarVariable<*>> {
-        val filter = getVariables().filter { it.valueReference == vr }
+        val filter = filter { it.valueReference == vr }
         if (filter.isEmpty()) {
             throw IllegalArgumentException("No variable with value reference '$vr'")
         }
@@ -95,12 +95,12 @@ interface ModelVariables: Iterable<TypedScalarVariable<*>> {
      * @throws IllegalArgumentException if there is no variable with the provided name
      */
     fun getByName(name: String) : TypedScalarVariable<*> {
-        return getVariables().firstOrNull({ it.name == name })
+        return firstOrNull { it.name == name }
                 ?: throw IllegalArgumentException("No variable with name '$name'")
     }
 
     fun isValidValueReference(valueReference: Int): Boolean {
-        return valueReference in getVariables().map { it.valueReference }
+        return valueReference in map { it.valueReference }
     }
 
 }
