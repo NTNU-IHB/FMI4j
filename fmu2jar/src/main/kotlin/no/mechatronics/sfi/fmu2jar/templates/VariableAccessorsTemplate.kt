@@ -98,24 +98,27 @@ object VariableAccessorsTemplate {
 
     }
 
-
     private fun generateGet(variable: TypedScalarVariable<*>, sb: StringBuilder) {
         sb.append("""
         ${generateJavaDoc(variable)}
-        fun get${capitalizeFirstLetterAndReplaceDotsWithSlash(variable)}(): FmuRead<${variable.kotlinTypename}> = fmu.variableAccessor.read${variable.typeName}(${variable.valueReference})
+        fun get${capitalizeFirstLetterAndReplaceDotsWithSlash(variable)}(): FmuRead<${variable.kotlinTypename}> {
+            return fmu.variableAccessor.read${variable.typeName}(${variable.valueReference})
+        }
             """)
     }
 
     private fun generateSet(variable: TypedScalarVariable<*>, sb :StringBuilder) {
         sb.append("""
         ${generateJavaDoc(variable)}
-        fun set${capitalizeFirstLetterAndReplaceDotsWithSlash(variable)}(value: ${variable.typeName}): FmiStatus = fmu.variableAccessor.write${variable.typeName}(${variable.valueReference}, value)
+        fun set${capitalizeFirstLetterAndReplaceDotsWithSlash(variable)}(value: ${variable.typeName}): FmiStatus {
+            return fmu.variableAccessor.write${variable.typeName}(${variable.valueReference}, value)
+        }
             """)
     }
 
     fun generateInputsBody(modelVariables: ModelVariables) : String {
         return StringBuilder().apply {
-            modelVariables.variables.filter {
+            modelVariables.filter {
                 it.causality == Causality.INPUT
             }.forEach({
                 generateGet(it, this)
@@ -126,7 +129,7 @@ object VariableAccessorsTemplate {
 
     fun generateOutputsBody(modelVariables: ModelVariables) : String {
         return StringBuilder().apply {
-            modelVariables.variables.filter {
+            modelVariables.filter {
                 it.causality == Causality.OUTPUT
             }.forEach({
                 generateGet(it, this)
@@ -136,7 +139,7 @@ object VariableAccessorsTemplate {
 
     fun generateCalculatedParametersBody(modelVariables: ModelVariables) : String {
         return StringBuilder().apply {
-            modelVariables.variables.filter {
+            modelVariables.filter {
                 it.causality == Causality.CALCULATED_PARAMETER
             }.forEach({
                 generateGet(it, this)
@@ -146,7 +149,7 @@ object VariableAccessorsTemplate {
 
     fun generateParametersBody(modelVariables: ModelVariables) : String {
         return StringBuilder().apply {
-            modelVariables.variables.filter {
+            modelVariables.filter {
                 it.causality == Causality.PARAMETER
             }.forEach({
                 generateGet(it, this)
@@ -157,7 +160,7 @@ object VariableAccessorsTemplate {
 
     fun generateLocalsBody(modelVariables: ModelVariables) : String {
         return StringBuilder().apply {
-            modelVariables.variables.filter {
+            modelVariables.filter {
                 it.causality == Causality.LOCAL
             }.forEach({
                 generateGet(it, this)
