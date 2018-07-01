@@ -12,7 +12,6 @@ buildscript {
     }
 }
 
-
 apply plugin: 'kotlin'
 apply plugin: 'maven-publish'
 
@@ -35,14 +34,10 @@ repositories {
 
 }
 
-configurations.all {
-    resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
-}
-
 dependencies {
 
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
-    compile group: 'no.mechatronics.sfi.fmi4j', name: 'fmi-import', version: '0.7.2-SNAPSHOT', changing: true
+    compile group: 'no.mechatronics.sfi.fmi4j', name: 'fmi-import', version: '0.7.2'
 
 }
 
