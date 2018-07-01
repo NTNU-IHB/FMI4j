@@ -18,7 +18,7 @@ class TestControlledTemperature_CS {
     @Test
     fun test() {
 
-        val path = "${TestUtils.getTEST_FMUs()}/FMI_2.0/CoSimulation/${TestUtils.getOs()}/20Sim/4.6.4.8004/ControlledTemperature/ControlledTemperature.fmu"
+        val path = "${TestUtils.getTEST_FMUs()}/FMI_2.0/CoSimulation/${TestUtils.getOs()}/20sim/4.6.4.8004/ControlledTemperature/ControlledTemperature.fmu"
         Assertions.assertTrue(File(path).exists())
 
         val args = arrayOf(

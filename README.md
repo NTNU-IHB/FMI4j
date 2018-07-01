@@ -10,9 +10,12 @@ FMI4j is a software library for dealing with Functional Mock-up Units (FMUs) on 
 
 
 FMI4j supports [FMI](http://fmi-standard.org/) 2.0 for **Model Exchange** and **Co-simulation**.
-For Model Exchange, solvers from Apache Commons Math are also included.
+For Model Exchange, solvers from [Apache Commons Math](http://commons.apache.org/proper/commons-math/userguide/ode.html) are also included.
 
 
 To get started head over to the [Wiki](https://github.com/SFI-Mechatronics/FMI4j/wiki)!
 
 
+#### Running tests
+
+In order to run the tests, a system variable named __TEST_FMUs__ must be present on your system. This variable should point to the location of the content found [here](https://github.com/markaren/TEST_FMUs).

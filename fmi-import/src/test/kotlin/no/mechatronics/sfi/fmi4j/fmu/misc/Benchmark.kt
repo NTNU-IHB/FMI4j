@@ -29,10 +29,15 @@ private val options = listOf(
                 stopTime = 100.0,
                 vr = 0),
         TestOptions(
-                fmuPath = "${TestUtils.getTEST_FMUs()}/FMI_2.0/CoSimulation/win64/20sim/4.6.4.8004/TorsionBar/TorsionBar.fmu",
+                fmuPath = "${TestUtils.getTEST_FMUs()}/FMI_2.0/CoSimulation/${TestUtils.getOs()}/20sim/4.6.4.8004/TorsionBar/TorsionBar.fmu",
                 stepSize = 1E-5,
                 stopTime = 12.0,
-                vr = 2))
+                vr = 2),
+        TestOptions(
+                fmuPath = "${TestUtils.getTEST_FMUs()}/FMI_2.0/CoSimulation/${TestUtils.getOs()}/20sim/4.6.4.8004/ControlledTemperature/ControlledTemperature.fmu",
+                stepSize = 1E-4,
+                stopTime = 10.0,
+                vr = 46))
 
 object Benchmark {
 
@@ -41,7 +46,7 @@ object Benchmark {
     @JvmStatic
     fun main(args: Array<String>) {
 
-        for (option in intArrayOf(0).map { options[it] }) {
+        for (option in intArrayOf(2).map { options[it] }) {
 
             LOG.info("Running FMU '${option.fmuName}'")
 

@@ -55,7 +55,7 @@ public class ControlledTemperatureTestJava {
     public static void setUp() throws IOException {
 
         final File file = new File(TestUtils.getTEST_FMUs(),
-                "FMI_2.0/CoSimulation/" + TestUtils.getOs() + "/20Sim/4.6.4.8004/ControlledTemperature/ControlledTemperature.fmu");
+                "FMI_2.0/CoSimulation/" + TestUtils.getOs() + "/20sim/4.6.4.8004/ControlledTemperature/ControlledTemperature.fmu");
         Assertions.assertTrue(file.exists());
         fmuFile = Fmu.from(file);
     }

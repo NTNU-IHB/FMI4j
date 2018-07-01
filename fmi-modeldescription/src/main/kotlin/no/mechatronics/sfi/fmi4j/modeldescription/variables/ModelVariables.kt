@@ -27,7 +27,6 @@ package no.mechatronics.sfi.fmi4j.modeldescription.variables
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement
-import com.google.gson.annotations.SerializedName
 import no.mechatronics.sfi.fmi4j.common.StringArray
 import java.io.Serializable
 
@@ -40,28 +39,28 @@ interface ModelVariables: Iterable<TypedScalarVariable<*>> {
      * Get the number of model categories held by this structure
      */
     val size: Int
-        get() = variables.size
+        get() = getVariables().size
 
-    val variables: List<TypedScalarVariable<*>>
+    fun getVariables(): List<TypedScalarVariable<*>>
 
     val integers: List<IntegerVariable>
-        get() = variables.mapNotNull { (it as? IntegerVariable)?.asIntegerVariable() }
+        get() = mapNotNull { (it as? IntegerVariable)?.asIntegerVariable() }
 
     val reals: List<RealVariable>
-        get() = variables.mapNotNull { (it as? RealVariable)?.asRealVariable() }
+        get() = mapNotNull { (it as? RealVariable)?.asRealVariable() }
 
     val strings: List<StringVariable>
-        get() = variables.mapNotNull { (it as? StringVariable)?.asStringVariable() }
+        get() = mapNotNull { (it as? StringVariable)?.asStringVariable() }
 
     val booleans: List<BooleanVariable>
-        get() = variables.mapNotNull { (it as? BooleanVariable)?.asBooleanVariable() }
+        get() = mapNotNull { (it as? BooleanVariable)?.asBooleanVariable() }
 
     val enumerations: List<EnumerationVariable>
-        get() = variables.mapNotNull { (it as? EnumerationVariable)?.asEnumerationVariable() }
+        get() = mapNotNull { (it as? EnumerationVariable)?.asEnumerationVariable() }
 
-    operator fun get(index: Int): TypedScalarVariable<*> = variables[index]
+    operator fun get(index: Int): TypedScalarVariable<*> = getVariables()[index]
 
-    override fun iterator(): Iterator<TypedScalarVariable<*>> = variables.iterator()
+    override fun iterator(): Iterator<TypedScalarVariable<*>> = getVariables().iterator()
 
     /**
      * Get the valueReference of the variable named <name>
@@ -69,7 +68,7 @@ interface ModelVariables: Iterable<TypedScalarVariable<*>> {
      * @throws IllegalArgumentException if there is no variable with the provided name
      */
     fun getValueReference(name: String): Int {
-        return variables.firstOrNull { it.name == name }?.valueReference
+        return firstOrNull { it.name == name }?.valueReference
                 ?: throw IllegalArgumentException("No variable with name '$name'")
     }
 
@@ -83,7 +82,7 @@ interface ModelVariables: Iterable<TypedScalarVariable<*>> {
     * @throws IllegalArgumentException if there are no variables with the provided value reference
     */
     fun getByValueReference(vr: Int): List<TypedScalarVariable<*>> {
-        val filter = variables.filter { it.valueReference == vr }
+        val filter = filter { it.valueReference == vr }
         if (filter.isEmpty()) {
             throw IllegalArgumentException("No variable with value reference '$vr'")
         }
@@ -96,11 +95,12 @@ interface ModelVariables: Iterable<TypedScalarVariable<*>> {
      * @throws IllegalArgumentException if there is no variable with the provided name
      */
     fun getByName(name: String) : TypedScalarVariable<*> {
-        return variables.firstOrNull({it.name == name}) ?: throw IllegalArgumentException("No variable with name '$name'")
+        return firstOrNull { it.name == name }
+                ?: throw IllegalArgumentException("No variable with name '$name'")
     }
 
     fun isValidValueReference(valueReference: Int): Boolean {
-        return valueReference in variables.map { it.valueReference }
+        return valueReference in map { it.valueReference }
     }
 
 }
@@ -111,21 +111,19 @@ interface ModelVariables: Iterable<TypedScalarVariable<*>> {
 @JacksonXmlRootElement(localName = "ModelVariables")
 class ModelVariablesImpl : ModelVariables, Serializable {
 
-    @SerializedName("variables")
     @JacksonXmlProperty(localName = "ScalarVariable")
     @JacksonXmlElementWrapper(useWrapping = false)
-    private val _variables: List<ScalarVariableImpl>? = null
+    private val variables: List<ScalarVariableImpl>? = null
 
     @Transient
-    private var __variables: List<TypedScalarVariable<*>>? = null
+    private var _variables: List<TypedScalarVariable<*>>? = null
 
-    override val variables: List<TypedScalarVariable<*>>
-        get() {
-            if (__variables == null) {
-                __variables = _variables!!.map { it.toTyped() }
-            }
-            return __variables!!
+    override fun getVariables(): List<TypedScalarVariable<*>> {
+        if (_variables == null) {
+            _variables = variables!!.map { it.toTyped() }
         }
+        return _variables!!
+    }
 
     override fun toString(): String {
         return "ModelVariablesImpl(variables=$variables)"

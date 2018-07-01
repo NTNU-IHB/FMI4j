@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable
-import org.junit.jupiter.api.condition.OS
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.*
@@ -67,7 +66,7 @@ class FmuExportCrossCompileTest {
         ObjectInputStream(ByteArrayInputStream(bos.toByteArray())).use {
             val md: CommonModelDescription = it.readObject() as CoSimulationModelDescription
             Assertions.assertEquals(modelDescription.modelVariables.size, md.modelVariables.size)
-            md.modelVariables.variables.forEach { LOG.info("$it") }
+            md.modelVariables.forEach { LOG.info("$it") }
             LOG.info("${md.modelStructure}")
         }
 

@@ -3,7 +3,7 @@ println "Gradle version is ${GradleVersion.current().version}"
 
 buildscript {
 
-    ext.kotlin_version = '1.2.41'
+    ext.kotlin_version = '1.2.50'
 
     repositories {
         mavenCentral()
@@ -16,6 +16,9 @@ buildscript {
 wrapper {
     gradleVersion = '4.7'
 }
+
+ext.hasOssrhUsername = hasProperty("ossrhUsername")
+ext.hasOssrhPassword = hasProperty("ossrhPassword")
 
 subprojects { sub ->
 
@@ -65,10 +68,9 @@ subprojects { sub ->
         }
     }
 
+    if(sub.name.startsWith("fmi") && hasOssrhUsername && hasOssrhPassword) {
 
-    if(sub.name.startsWith("fmi") && hasProperty("ossrhUsername")  && hasProperty("ossrhPassword")) {
-
-        def snapshot = true
+        def snapshot = false
         group = 'no.mechatronics.sfi.fmi4j'
         version = '0.7.2'
         if (snapshot) {
