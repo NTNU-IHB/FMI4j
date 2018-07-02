@@ -35,7 +35,7 @@ configurations.all {
 
 dependencies {
 
-    implementation group: 'info.picocli', name: 'picocli', version: '2.3.0'
+    implementation group: 'info.picocli', name: 'picocli', version: '3.1.0'
 
     compile project(':fmi-modeldescription')
 
