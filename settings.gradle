@@ -3,6 +3,5 @@ rootProject.name = 'FMI4j'
 include 'fmi-import'
 include 'fmi-modeldescription'
 
-include 'crosscheck'
 include 'fmu2jar'
 
