@@ -1,6 +1,0 @@
-[Tool]
-name=FMI4j
-href=https://github.com/SFI-Mechatronics/FMI4j
-import_me_20=A
-master_cs_20=A
-note=FMI4j is a cross-platform software library for dealing with FMUs on the JVM platform. Support for both FMI 2.0 for Co-simulation and Model Exchange has been implemented.
