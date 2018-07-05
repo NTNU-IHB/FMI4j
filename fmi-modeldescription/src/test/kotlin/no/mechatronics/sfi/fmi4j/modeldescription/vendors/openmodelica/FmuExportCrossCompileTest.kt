@@ -1,6 +1,9 @@
-package no.mechatronics.sfi.fmi4j.modeldescription
+package no.mechatronics.sfi.fmi4j.modeldescription.vendors.openmodelica
 
 import no.mechatronics.sfi.fmi4j.TestUtils
+import no.mechatronics.sfi.fmi4j.modeldescription.CoSimulationModelDescription
+import no.mechatronics.sfi.fmi4j.modeldescription.CommonModelDescription
+import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescriptionParser
 import no.mechatronics.sfi.fmi4j.modeldescription.misc.VariableNamingConvention
 import no.mechatronics.sfi.fmi4j.modeldescription.structure.DependenciesKind
 import org.junit.jupiter.api.Assertions
@@ -55,7 +58,7 @@ class FmuExportCrossCompileTest {
     }
 
     @Test
-    fun test1() {
+    fun testSerialization() {
 
         val bos = ByteArrayOutputStream()
         ObjectOutputStream(bos).use {

@@ -1,7 +1,8 @@
-package no.mechatronics.sfi.fmi4j.importer
+package no.mechatronics.sfi.fmi4j.importer.me.vendors.fmusdk
 
 import no.mechatronics.sfi.fmi4j.TestUtils
 import no.mechatronics.sfi.fmi4j.common.FmiStatus
+import no.mechatronics.sfi.fmi4j.importer.Fmu
 import org.apache.commons.math3.ode.FirstOrderIntegrator
 import org.apache.commons.math3.ode.nonstiff.ClassicalRungeKuttaIntegrator
 import org.apache.commons.math3.ode.nonstiff.EulerIntegrator
@@ -16,22 +17,20 @@ import org.junit.jupiter.api.condition.OS
 import org.slf4j.LoggerFactory
 import java.io.File
 
-
 @EnabledOnOs(OS.WINDOWS)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @EnabledIfEnvironmentVariable(named = "TEST_FMUs", matches = ".*")
-class BouncingBallTest {
+class VanDerPolTest {
 
     private companion object {
-
-        private val LOG = LoggerFactory.getLogger(BouncingBallTest::class.java)
+        private val LOG = LoggerFactory.getLogger(VanDerPolTest::class.java)
     }
 
     private val fmu: Fmu
 
     init {
         val file = File(TestUtils.getTEST_FMUs(),
-                "FMI_2.0/ModelExchange/win64/FMUSDK/2.0.4/bouncingBall/bouncingBall.fmu")
+                "FMI_2.0/ModelExchange/win64/FMUSDK/2.0.4/vanDerPol/vanDerPol.fmu")
         Assertions.assertTrue(file.exists())
         fmu = Fmu.from(file)
     }
@@ -46,22 +45,22 @@ class BouncingBallTest {
         Assertions.assertEquals("2.0", fmu.modelDescription.fmiVersion)
     }
 
-    private fun runFmu(solver: FirstOrderIntegrator) {
+    private fun runFmu(integrator: FirstOrderIntegrator) {
 
-        LOG.info("Using solver: ${solver.javaClass.simpleName}")
+        LOG.info("Using integrator: ${integrator.javaClass.simpleName}")
 
-        fmu.asModelExchangeFmu().newInstance(solver).use { fmu ->
+        fmu.asModelExchangeFmu().newInstance(integrator, loggingOn = true).use { fmu ->
 
-            val h = fmu.modelVariables
-                    .getByName("h").asRealVariable()
+            val x0 = fmu.modelVariables
+                    .getByName("x0").asRealVariable()
 
-            fmu.init()
+            fmu.init(0.0, 0.0)
 
             val macroStep = 1.0 / 10
             while (fmu.currentTime < 1) {
-                val read = h.read()
+                val read = x0.read()
                 Assertions.assertTrue(read.status === FmiStatus.OK)
-                LOG.info("t=${fmu.currentTime}, h=${read.value}")
+                LOG.info("t=${fmu.currentTime}, x0=${read.value}")
                 fmu.doStep(macroStep)
             }
 
@@ -83,4 +82,5 @@ class BouncingBallTest {
     fun testLuther() {
         runFmu(LutherIntegrator(1E-3))
     }
+
 }

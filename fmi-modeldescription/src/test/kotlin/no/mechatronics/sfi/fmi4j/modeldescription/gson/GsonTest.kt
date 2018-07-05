@@ -12,7 +12,6 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.File
 
-@EnabledOnOs(OS.WINDOWS)
 class GsonTest {
 
     companion object {
@@ -23,7 +22,7 @@ class GsonTest {
     fun test() {
 
         val fmu = File(TestUtils.getTEST_FMUs(),
-                "FMI_2.0/ModelExchange/win64/FMUSDK/2.0.4/vanDerPol/vanDerPol.fmu")
+                "FMI_2.0/ModelExchange/${TestUtils.getOs()}/MapleSim/2017/ControlledTemperature/ControlledTemperature.fmu")
         Assertions.assertTrue(fmu.exists())
         val modelDescription = ModelDescriptionParser.parse(fmu).asModelExchangeModelDescription()
 
