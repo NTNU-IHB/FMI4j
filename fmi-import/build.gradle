@@ -1,36 +1,31 @@
 
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.github.jengelman.gradle.plugins:shadow:2.0.4'
+    }
+}
 
-apply plugin: 'java-library'
 apply plugin: 'kotlin'
+apply plugin: 'com.github.johnrengelman.shadow'
 
 dependencies {
 
     compile group: 'org.apache.commons', name: 'commons-math3', version: '3.6.1'
 
-    implementation group: 'net.java.dev.jna', name: 'jna', version: '4.5.1'
-    implementation group: 'net.java.dev.jna', name: 'jna-platform', version: '4.5.1'
+    implementation group: 'net.java.dev.jna', name: 'jna', version: '4.5.2'
+    implementation group: 'net.java.dev.jna', name: 'jna-platform', version: '4.5.2'
 
     compile project(':fmi-modeldescription')
 
-    testImplementation group: 'org.siani.javafmi', name: 'fmu-wrapper', version: '2.24.3'
+    testImplementation group: 'org.siani.javafmi', name: 'fmu-wrapper', version: '2.24.4'
 
 }
 
-//include if users want to generate a fatJar from source
-task fatJar(type: Jar) {
-    manifest {
-        attributes 'Implementation-Title': project.name,
-                'Implementation-Version': "1.0",
-                'Main-Class': ''
-    }
-    baseName = project.name
-    from {
-        configurations.compile.collect {
-            it.isDirectory() ? it : zipTree(it)
-        }
-    }
-    with jar
+shadowJar {
+    baseName = archivesBaseName + "-shadow"
+    classifier = null
+    version = null
 }
-
-
-
