@@ -64,9 +64,9 @@ subprojects { sub ->
 
     if(sub.name.startsWith("fmi") && hasOssrhUsername && hasOssrhPassword) {
 
-        def snapshot = false
+        def snapshot = true
         group = 'no.mechatronics.sfi.fmi4j'
-        version = '0.7.3'
+        version = '0.7.4'
         if (snapshot) {
             version += '-SNAPSHOT'
         }
