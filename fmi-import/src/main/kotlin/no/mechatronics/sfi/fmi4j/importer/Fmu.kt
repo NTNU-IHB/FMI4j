@@ -90,7 +90,7 @@ class Fmu private constructor(
     override fun close() {
         if (!isClosed) {
 
-            LOG.debug("Closing ${Fmu::class.java.simpleName}..")
+            LOG.debug("Closing FMU '${modelDescription.modelName}'..")
 
             terminateInstances()
             disposeNativeLibraries()
