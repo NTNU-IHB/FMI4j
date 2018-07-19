@@ -14,7 +14,7 @@ buildscript {
 }
 
 wrapper {
-    gradleVersion = '4.7'
+    gradleVersion = '4.9'
 }
 
 ext.hasOssrhUsername = hasProperty("ossrhUsername")
@@ -24,9 +24,6 @@ subprojects { sub ->
 
     apply plugin: 'java'
 
-    sourceCompatibility = 1.8
-    [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
-
     repositories {
         mavenCentral()
         maven {
@@ -34,29 +31,26 @@ subprojects { sub ->
         }
     }
 
+    def slf4j_version = '1.7.25'
+    def junit_version = '5.2.0'
+
     dependencies {
 
         sub.plugins.withId ('kotlin') {
             compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
         }
 
-        implementation group: 'org.slf4j', name: 'slf4j-api', version: '1.7.25'
-        runtimeOnly group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.7.25'
+        implementation group: 'org.slf4j', name: 'slf4j-api', version: slf4j_version
+        runtimeOnly group: 'org.slf4j', name: 'slf4j-log4j12', version: slf4j_version
 
-        testImplementation('org.junit.jupiter:junit-jupiter-api:5.2.0')
-        testImplementation('org.junit.jupiter:junit-jupiter-params:5.2.0')
-        testRuntimeOnly('org.junit.jupiter:junit-jupiter-engine:5.2.0')
+        testImplementation("org.junit.jupiter:junit-jupiter-api:$junit_version")
+        testImplementation("org.junit.jupiter:junit-jupiter-params:$junit_version")
+        testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junit_version")
 
     }
 
     test {
-
         useJUnitPlatform()
-
-        reports {
-            html.enabled = true
-        }
-
     }
 
     sub.plugins.withId ('kotlin') {
