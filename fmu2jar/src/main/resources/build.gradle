@@ -2,7 +2,7 @@
 println "Gradle version is ${GradleVersion.current().version}"
 
 buildscript {
-    ext.kotlin_version = '1.2.50'
+    ext.kotlin_version = '1.2.51'
 
     repositories {
         mavenCentral()
@@ -19,25 +19,17 @@ group = 'no.mechatronics.sfi.fmu2jar'
 version = '1.0-SNAPSHOT'
 
 wrapper {
-    gradleVersion = '4.7'
+    gradleVersion = '4.9'
 }
-
-sourceCompatibility = 1.8
-[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
 repositories {
     mavenCentral()
-
-    maven {
-       url "https://oss.sonatype.org/content/repositories/snapshots"
-    }
-
 }
 
 dependencies {
 
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
-    compile group: 'no.mechatronics.sfi.fmi4j', name: 'fmi-import', version: '0.7.2'
+    compile group: 'no.mechatronics.sfi.fmi4j', name: 'fmi-import', version: '0.7.3'
 
 }
 

@@ -67,12 +67,12 @@ interface FmuInstance : Closeable {
     fun init(start: Double, stop: Double)
 
     /**
-     * @see no.mechatronics.sfi.fmi4j.fmu.proxy.v2.FmiLibrary.fmi2Reset
+     * @see no.mechatronics.sfi.fmi4j.importer.proxy.v2.FmiLibrary.fmi2Reset
      */
     fun reset(): Boolean
 
     /**
-     * @see no.mechatronics.sfi.fmi4j.fmu.proxy.v2.FmiLibrary.fmi2Terminate
+     * @see no.mechatronics.sfi.fmi4j.importer.proxy.v2.FmiLibrary.fmi2Terminate
      */
     fun terminate(): Boolean
 

@@ -27,6 +27,7 @@ package no.mechatronics.sfi.fmi4j.modeldescription
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement
 import no.mechatronics.sfi.fmi4j.modeldescription.misc.*
+import no.mechatronics.sfi.fmi4j.modeldescription.misc.Unit
 import no.mechatronics.sfi.fmi4j.modeldescription.structure.ModelStructure
 import no.mechatronics.sfi.fmi4j.modeldescription.structure.ModelStructureImpl
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.ModelVariables
@@ -138,6 +139,14 @@ interface CommonModelDescription {
      */
     val modelStructure: ModelStructure
 
+
+    /**
+     * A global list of unit and display unit definitions [for example to convert
+     * display units into the units used in the model equations].
+     */
+    val unitDefinitions: List<Unit>?
+
+    val typeDefinitions: List<SimpleType>?
 
     /**
      * A global list of log categories that can be set to define the log
@@ -304,12 +313,6 @@ class ModelDescriptionImpl(
         @JacksonXmlProperty(localName = "DefaultExperiment")
         override val defaultExperiment: DefaultExperiment? = null,
 
-        /**
-         * The (fixed) number of event indicators for an FMU based on FMI for Model Exchange.
-         * For Co-Simulation, this value is ignored
-         */
-        val numberOfEventIndicators: Int = 0,
-
         @JacksonXmlProperty(localName = "ModelVariables")
         override var modelVariables: ModelVariablesImpl,
 
@@ -319,11 +322,24 @@ class ModelDescriptionImpl(
         @JacksonXmlProperty(localName = "LogCategories")
         override val logCategories: LogCategories? = null,
 
+        @JacksonXmlProperty(localName = "UnitDefinitions")
+        override val unitDefinitions: List<Unit>? = null,
+
+        @JacksonXmlProperty(localName = "TypeDefinitions")
+        override val typeDefinitions: List<SimpleType>? = null,
+
         @JacksonXmlProperty(localName = "CoSimulation")
         private val cs: CoSimulationDataImpl? = null,
 
         @JacksonXmlProperty(localName = "ModelExchange")
-        private val me: ModelExchangeDataImpl? = null
+        private val me: ModelExchangeDataImpl? = null,
+
+        /**
+         * The (fixed) number of event indicators for an FMU based on FMI for Model Exchange.
+         * For Co-Simulation, this value is ignored
+         */
+        val numberOfEventIndicators: Int = 0
+
 
 ) : ModelDescriptionProvider, Serializable {
 
