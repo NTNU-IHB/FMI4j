@@ -17,7 +17,6 @@ import org.junit.jupiter.api.condition.OS
 import org.slf4j.LoggerFactory
 import java.io.File
 
-
 @EnabledOnOs(OS.WINDOWS)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @EnabledIfEnvironmentVariable(named = "TEST_FMUs", matches = ".*")

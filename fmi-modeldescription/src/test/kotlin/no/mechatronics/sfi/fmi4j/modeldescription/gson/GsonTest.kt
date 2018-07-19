@@ -1,6 +1,5 @@
 package no.mechatronics.sfi.fmi4j.modeldescription.gson
 
-
 import com.google.gson.GsonBuilder
 import no.mechatronics.sfi.fmi4j.TestUtils
 import no.mechatronics.sfi.fmi4j.modeldescription.*

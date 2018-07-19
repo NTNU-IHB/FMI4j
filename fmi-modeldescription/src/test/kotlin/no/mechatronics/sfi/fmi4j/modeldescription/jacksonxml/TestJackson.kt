@@ -41,7 +41,6 @@ class TestJackson {
         }
         val md = mapper.readValue<ModelDescriptionImpl>(ModelDescriptionParser.extractModelDescriptionXml(file))
 
-
         LOG.info("${md.modelVariables.size}")
         LOG.info("${md.modelStructure.outputs}")
         LOG.info("${md.modelStructure.derivatives}")

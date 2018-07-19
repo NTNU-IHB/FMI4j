@@ -10,15 +10,17 @@ import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
+import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.File
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@EnabledIfEnvironmentVariable(named = "TEST_FMUs", matches = ".*")
 class FmuInstanceVariableAccessorTest {
 
     companion object {
-        val LOG: Logger = LoggerFactory.getLogger(FmuInstanceVariableAccessorTest::class.java)
+        private val LOG: Logger = LoggerFactory.getLogger(FmuInstanceVariableAccessorTest::class.java)
     }
 
     private val fmu: Fmu
@@ -34,7 +36,6 @@ class FmuInstanceVariableAccessorTest {
     fun tearDown() {
         fmu.close()
     }
-
 
     @Test
     fun test1() {

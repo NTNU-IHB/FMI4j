@@ -16,13 +16,13 @@ class TestIllegalFmuInstanceType {
     @Test
     fun testNewInstanceME() {
         val file = File(TestUtils.getTEST_FMUs(),
-                "FMI_2.0/CoSimulation/${TestUtils.getOs()}/20Sim/4.6.4.8004/ControlledTemperature/ControlledTemperature.fmu")
+                "FMI_2.0/CoSimulation/${TestUtils.getOs()}/20sim/4.6.4.8004/ControlledTemperature/ControlledTemperature.fmu")
         Assertions.assertTrue(file.exists())
-        Assertions.assertThrows(IllegalStateException::class.java, {
+        Assertions.assertThrows(IllegalStateException::class.java) {
             Fmu.from(file).use {
                 it.asModelExchangeFmu()
             }
-        })
+        }
     }
 
     @Test
@@ -31,25 +31,25 @@ class TestIllegalFmuInstanceType {
         val file = File(TestUtils.getTEST_FMUs(),
                 "FMI_2.0/ModelExchange/win64/FMUSDK/2.0.4/vanDerPol/vanDerPol.fmu")
         Assertions.assertTrue(file.exists())
-        Assertions.assertThrows(IllegalStateException::class.java, {
+        Assertions.assertThrows(IllegalStateException::class.java) {
             Fmu.from(file).use {
                 it.asCoSimulationFmu()
             }
-        })
+        }
     }
 
     @Test
     fun testWrongExtension() {
-        Assertions.assertThrows(IllegalArgumentException::class.java, {
+        Assertions.assertThrows(IllegalArgumentException::class.java) {
             Fmu.from(File("test.dummy"))
-        })
+        }
     }
 
     @Test
     fun testNoSuchFile() {
-        Assertions.assertThrows(FileNotFoundException::class.java, {
+        Assertions.assertThrows(FileNotFoundException::class.java) {
             Fmu.from(File("test.fmu"))
-        })
+        }
     }
 
 }
