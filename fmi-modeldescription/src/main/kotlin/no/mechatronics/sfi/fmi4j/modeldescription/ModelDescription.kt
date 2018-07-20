@@ -326,7 +326,7 @@ class ModelDescriptionImpl(
         override val unitDefinitions: List<Unit>? = null,
 
         @JacksonXmlProperty(localName = "TypeDefinitions")
-        override val typeDefinitions: List<SimpleType>? = null,
+        override val typeDefinitions: List<SimpleTypeImpl>? = null,
 
         @JacksonXmlProperty(localName = "CoSimulation")
         private val cs: CoSimulationDataImpl? = null,

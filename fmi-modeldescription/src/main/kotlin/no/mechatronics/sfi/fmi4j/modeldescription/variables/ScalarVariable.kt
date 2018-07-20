@@ -27,8 +27,6 @@ package no.mechatronics.sfi.fmi4j.modeldescription.variables
 import com.fasterxml.jackson.annotation.JsonSetter
 import com.fasterxml.jackson.annotation.Nulls
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement
-import no.mechatronics.sfi.fmi4j.common.*
 import java.io.Serializable
 
 const val INTEGER_TYPE = "Integer"

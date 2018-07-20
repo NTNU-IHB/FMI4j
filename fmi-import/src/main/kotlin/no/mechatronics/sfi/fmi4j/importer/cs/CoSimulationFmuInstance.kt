@@ -25,8 +25,8 @@
 package no.mechatronics.sfi.fmi4j.importer.cs
 
 import no.mechatronics.sfi.fmi4j.common.FmiStatus
-import no.mechatronics.sfi.fmi4j.importer.AbstractFmuInstance
 import no.mechatronics.sfi.fmi4j.common.FmiSimulation
+import no.mechatronics.sfi.fmi4j.importer.AbstractFmuInstance
 import no.mechatronics.sfi.fmi4j.importer.Fmu
 import no.mechatronics.sfi.fmi4j.importer.proxy.v2.cs.CoSimulationLibraryWrapper
 import no.mechatronics.sfi.fmi4j.importer.proxy.v2.cs.FmiStatusKind
@@ -38,12 +38,11 @@ import java.lang.IllegalStateException
 class CoSimulationFmuInstance internal constructor(
         fmu: Fmu,
         wrapper: CoSimulationLibraryWrapper
-) : no.mechatronics.sfi.fmi4j.importer.AbstractFmuInstance<CoSimulationModelDescription, CoSimulationLibraryWrapper>(fmu, wrapper), FmiSimulation {
+) : AbstractFmuInstance<CoSimulationModelDescription, CoSimulationLibraryWrapper>(fmu, wrapper), FmiSimulation {
 
     private companion object {
         val LOG: Logger = LoggerFactory.getLogger(CoSimulationFmuInstance::class.java)
     }
-
 
     override var currentTime: Double = 0.0
         private set

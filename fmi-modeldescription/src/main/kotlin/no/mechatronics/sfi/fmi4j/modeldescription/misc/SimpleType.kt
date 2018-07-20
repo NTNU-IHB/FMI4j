@@ -32,6 +32,19 @@ import java.io.Serializable
 
 interface SimpleType {
 
+    /**
+     * Name of SimpleType element.
+     * "name" must be unique with respect to all other elements
+     * of the TypeDefinitions list. Furthermore, "name" of a SimpleType
+     * must bee different to all "name"s of ScalarVariable
+     */
+    val name: String
+
+    /**
+     * Description of the SimpleType
+     */
+    val description: String
+
 }
 
 /**
@@ -39,22 +52,13 @@ interface SimpleType {
  */
 data class SimpleTypeImpl(
 
-        /**
-         * Name of SimpleType element.
-         * "name" must be unique with respect to all other elements
-         * of the TypeDefinitions list. Furthermore, "name" of a SimpleType
-         * must bee different to all "name"s of ScalarVariable
-         */
         @JacksonXmlProperty
-        val name: String,
+        override val name: String,
 
-        /**
-         * Description of the SimpleType
-         */
         @JacksonXmlProperty
-        val description: String
+        override val description: String
 
-) : Serializable {
+) : SimpleType, Serializable {
 
     @JacksonXmlProperty(localName = INTEGER_TYPE)
     @JsonSetter(nulls = Nulls.AS_EMPTY)

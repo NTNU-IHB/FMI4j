@@ -1,4 +1,4 @@
-package no.mechatronics.sfi.fmi4j.importer.cs.vendors.fmusdk
+package no.mechatronics.sfi.fmi4j.importer.me.vendors.fmusdk
 
 import no.mechatronics.sfi.fmi4j.TestUtils
 import no.mechatronics.sfi.fmi4j.common.FmiStatus
@@ -27,14 +27,8 @@ class BouncingBallTest {
         private val LOG = LoggerFactory.getLogger(BouncingBallTest::class.java)
     }
 
-    private val fmu: Fmu
-
-    init {
-        val file = File(TestUtils.getTEST_FMUs(),
-                "FMI_2.0/ModelExchange/win64/FMUSDK/2.0.4/bouncingBall/bouncingBall.fmu")
-        Assertions.assertTrue(file.exists())
-        fmu = Fmu.from(file)
-    }
+    private val fmu = Fmu.from(File(TestUtils.getTEST_FMUs(),
+            "FMI_2.0/ModelExchange/win64/FMUSDK/2.0.4/bouncingBall/bouncingBall.fmu"))
 
     @AfterAll
     fun tearDown() {
@@ -83,4 +77,5 @@ class BouncingBallTest {
     fun testLuther() {
         runFmu(LutherIntegrator(1E-3))
     }
+
 }
