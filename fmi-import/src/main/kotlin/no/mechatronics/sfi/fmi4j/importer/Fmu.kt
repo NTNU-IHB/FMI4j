@@ -335,14 +335,7 @@ class Fmu private constructor(
         }
 
         private fun <E: FmiLibrary> loadLibrary(fmu: Fmu, modelDescription: SpecificModelDescription, type: Class<E>): LibraryProvider<E> {
-
-            System.getProperty(LIBRARY_PATH)?.also {
-                if (fmu.libraryFolderPath !in it.split(";")) {
-                    System.setProperty(LIBRARY_PATH, "$it;${fmu.libraryFolderPath}")
-                }
-            } ?:  System.setProperty(LIBRARY_PATH, fmu.libraryFolderPath)
-
-            return LibraryProvider({Native.loadLibrary(fmu.getLibraryName(modelDescription), type)})
+            return LibraryProvider { Native.loadLibrary(fmu.getFullLibraryPath(modelDescription), type) }
         }
 
         private fun instantiate(fmu: Fmu, modelDescription: SpecificModelDescription, library: FmiLibrary, fmiType: FmiType, visible: Boolean, loggingOn: Boolean) : Pointer {
