@@ -28,9 +28,9 @@ class FmuExportCrossCompileTest {
     init {
         val fmu = File(TestUtils.getTEST_FMUs(),
                 "FMI_2.0/CoSimulation/${TestUtils.getOs()}/OpenModelica/v1.11.0/FmuExportCrossCompile/FmuExportCrossCompile.fmu")
-        println(fmu)
         Assertions.assertTrue(fmu.exists())
         modelDescription = ModelDescriptionParser.parse(fmu).asCoSimulationModelDescription()
+
     }
 
     @Test

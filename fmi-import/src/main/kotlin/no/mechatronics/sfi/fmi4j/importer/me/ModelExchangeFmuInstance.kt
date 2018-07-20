@@ -24,7 +24,6 @@
 
 package no.mechatronics.sfi.fmi4j.importer.me
 
-import no.mechatronics.sfi.fmi4j.importer.AbstractFmuInstance
 import no.mechatronics.sfi.fmi4j.importer.Fmu
 import no.mechatronics.sfi.fmi4j.importer.proxy.v2.me.ModelExchangeLibraryWrapper
 import no.mechatronics.sfi.fmi4j.importer.proxy.v2.structs.FmiEventInfo
