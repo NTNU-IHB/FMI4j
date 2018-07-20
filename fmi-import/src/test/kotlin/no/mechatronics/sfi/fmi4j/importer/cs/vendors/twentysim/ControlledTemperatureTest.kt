@@ -16,7 +16,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 class ControlledTemperatureTest {
 
     companion object {
-        val LOG: Logger = LoggerFactory.getLogger(ControlledTemperatureTest::class.java)
+        private val LOG: Logger = LoggerFactory.getLogger(ControlledTemperatureTest::class.java)
     }
 
     @Test

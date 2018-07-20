@@ -23,14 +23,9 @@ class FmuInstanceVariableAccessorTest {
         private val LOG: Logger = LoggerFactory.getLogger(FmuInstanceVariableAccessorTest::class.java)
     }
 
-    private val fmu: Fmu
+    private val fmu = Fmu.from(File(TestUtils.getTEST_FMUs(),
+            "FMI_2.0/CoSimulation/${TestUtils.getOs()}/20sim/4.6.4.8004/ControlledTemperature/ControlledTemperature.fmu"))
 
-    init {
-        val file = File(TestUtils.getTEST_FMUs(),
-                "FMI_2.0/CoSimulation/${TestUtils.getOs()}/20sim/4.6.4.8004/ControlledTemperature/ControlledTemperature.fmu")
-        Assertions.assertTrue(file.exists())
-        fmu = Fmu.from(file)
-    }
 
     @AfterAll
     fun tearDown() {
@@ -40,15 +35,15 @@ class FmuInstanceVariableAccessorTest {
     @Test
     fun test1() {
 
-        fmu.asCoSimulationFmu().newInstance().use { fmu ->
+        fmu.asCoSimulationFmu().newInstance().use { instance ->
 
-            fmu.init()
-            fmu.modelVariables.forEach { variable ->
+            instance.init()
+            instance.modelVariables.forEach { variable ->
                 when(variable) {
-                    is IntegerVariable -> Assertions.assertEquals(variable.read(), fmu.variableAccessor.readInteger(variable.valueReference))
-                    is RealVariable -> Assertions.assertEquals(variable.read(), fmu.variableAccessor.readReal(variable.valueReference))
-                    is StringVariable -> Assertions.assertEquals(variable.read(), fmu.variableAccessor.readString(variable.valueReference))
-                    is BooleanVariable -> Assertions.assertEquals(variable.read(), fmu.variableAccessor.readBoolean(variable.valueReference))
+                    is IntegerVariable -> Assertions.assertEquals(variable.read(), instance.variableAccessor.readInteger(variable.valueReference))
+                    is RealVariable -> Assertions.assertEquals(variable.read(), instance.variableAccessor.readReal(variable.valueReference))
+                    is StringVariable -> Assertions.assertEquals(variable.read(), instance.variableAccessor.readString(variable.valueReference))
+                    is BooleanVariable -> Assertions.assertEquals(variable.read(), instance.variableAccessor.readBoolean(variable.valueReference))
                 }
             }
 
@@ -59,15 +54,15 @@ class FmuInstanceVariableAccessorTest {
     @Test
     fun test2() {
 
-        fmu.asCoSimulationFmu().newInstance().use { fmu ->
+        fmu.asCoSimulationFmu().newInstance().use { instance ->
 
-            fmu.init()
-            fmu.modelVariables.forEach { variable ->
+            instance.init()
+            instance.modelVariables.forEach { variable ->
                 when(variable) {
-                    is IntegerVariable -> Assertions.assertEquals(fmu.variableAccessor.readInteger(variable.valueReference), fmu.variableAccessor.readInteger(variable.name))
-                    is RealVariable -> Assertions.assertEquals(fmu.variableAccessor.readReal(variable.valueReference), fmu.variableAccessor.readReal(variable.name))
-                    is StringVariable -> Assertions.assertEquals(fmu.variableAccessor.readString(variable.valueReference), fmu.variableAccessor.readString(variable.name))
-                    is BooleanVariable -> Assertions.assertEquals(fmu.variableAccessor.readBoolean(variable.valueReference), fmu.variableAccessor.readBoolean(variable.name))
+                    is IntegerVariable -> Assertions.assertEquals(instance.variableAccessor.readInteger(variable.valueReference), instance.variableAccessor.readInteger(variable.name))
+                    is RealVariable -> Assertions.assertEquals(instance.variableAccessor.readReal(variable.valueReference), instance.variableAccessor.readReal(variable.name))
+                    is StringVariable -> Assertions.assertEquals(instance.variableAccessor.readString(variable.valueReference), instance.variableAccessor.readString(variable.name))
+                    is BooleanVariable -> Assertions.assertEquals(instance.variableAccessor.readBoolean(variable.valueReference), instance.variableAccessor.readBoolean(variable.name))
                 }
             }
 

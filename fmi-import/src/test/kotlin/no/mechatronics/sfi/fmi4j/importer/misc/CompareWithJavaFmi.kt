@@ -59,7 +59,6 @@ class CompareWithJavaFmi {
     }
 
 
-
     private fun doTest(stepSize: Double, stop: Double): Pair<Long, Long> {
 
         var duration1: Long? = null

@@ -2,7 +2,6 @@ package no.mechatronics.sfi.fmi4j.importer.cs.vendors.maplesim
 
 import no.mechatronics.sfi.fmi4j.TestUtils
 import no.mechatronics.sfi.fmi4j.common.FmiStatus
-import no.mechatronics.sfi.fmi4j.importer.AbstractFmuInstance
 import no.mechatronics.sfi.fmi4j.importer.Fmu
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
@@ -10,7 +9,6 @@ import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.File
-import java.util.concurrent.atomic.AtomicBoolean
 
 @EnabledIfEnvironmentVariable(named = "TEST_FMUs", matches = ".*")
 class ControlledTemperatureTest {
@@ -27,7 +25,7 @@ class ControlledTemperatureTest {
 
         Fmu.from(file).use { fmu ->
 
-            fmu.asCoSimulationFmu().newInstance(loggingOn = true).use { instance ->
+            fmu.asCoSimulationFmu().newInstance().use { instance ->
 
                 Assertions.assertEquals("2.0", instance.modelDescription.fmiVersion)
 

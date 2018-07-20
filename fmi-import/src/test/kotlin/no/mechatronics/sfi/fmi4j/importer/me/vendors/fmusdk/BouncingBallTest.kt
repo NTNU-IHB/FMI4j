@@ -23,7 +23,6 @@ import java.io.File
 class BouncingBallTest {
 
     private companion object {
-
         private val LOG = LoggerFactory.getLogger(BouncingBallTest::class.java)
     }
 
