@@ -1,0 +1,10 @@
+
+apply plugin: 'kotlin'
+
+dependencies {
+
+    compile group: 'org.apache.commons', name: 'commons-math3', version: '3.6.1'
+
+    compile project(':fmi-import')
+
+}

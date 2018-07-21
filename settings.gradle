@@ -1,7 +1,9 @@
 rootProject.name = 'FMI4j'
 
 include 'fmi-import'
+include 'fmi-import-solvers-apache-math3'
 include 'fmi-modeldescription'
 
 include 'fmu2jar'
+
 

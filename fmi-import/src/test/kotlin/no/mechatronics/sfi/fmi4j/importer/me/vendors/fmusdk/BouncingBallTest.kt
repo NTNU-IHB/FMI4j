@@ -3,10 +3,8 @@ package no.mechatronics.sfi.fmi4j.importer.me.vendors.fmusdk
 import no.mechatronics.sfi.fmi4j.TestUtils
 import no.mechatronics.sfi.fmi4j.common.FmiStatus
 import no.mechatronics.sfi.fmi4j.importer.Fmu
-import org.apache.commons.math3.ode.FirstOrderIntegrator
-import org.apache.commons.math3.ode.nonstiff.ClassicalRungeKuttaIntegrator
-import org.apache.commons.math3.ode.nonstiff.EulerIntegrator
-import org.apache.commons.math3.ode.nonstiff.LutherIntegrator
+import no.mechatronics.sfi.fmi4j.importer.me.Solver
+import no.sfi.mechatronics.fmi4j.me.ApacheSolvers
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
@@ -39,9 +37,9 @@ class BouncingBallTest {
         Assertions.assertEquals("2.0", fmu.modelDescription.fmiVersion)
     }
 
-    private fun runFmu(solver: FirstOrderIntegrator) {
+    private fun runFmu(solver: Solver) {
 
-        LOG.info("Using solver: ${solver.javaClass.simpleName}")
+        LOG.info("Using solver: '${solver.name}'")
 
         fmu.asModelExchangeFmu().newInstance(solver).use { fmu ->
 
@@ -64,17 +62,22 @@ class BouncingBallTest {
 
     @Test
     fun testEuler() {
-        runFmu(EulerIntegrator(1E-3))
+        runFmu(ApacheSolvers.euler(1E-3))
     }
 
     @Test
     fun testRungeKutta() {
-        runFmu(ClassicalRungeKuttaIntegrator(1E-3))
+        runFmu(ApacheSolvers.rk4(1E-3))
     }
 
     @Test
     fun testLuther() {
-        runFmu(LutherIntegrator(1E-3))
+        runFmu(ApacheSolvers.luther(1E-3))
+    }
+
+    @Test
+    fun testMidpoint() {
+        runFmu(ApacheSolvers.midpoint(1E-3))
     }
 
 }

@@ -28,11 +28,9 @@ import no.mechatronics.sfi.fmi4j.TestUtils;
 import no.mechatronics.sfi.fmi4j.common.FmiSimulation;
 import no.mechatronics.sfi.fmi4j.common.FmiStatus;
 import no.mechatronics.sfi.fmi4j.common.FmuRead;
+import no.mechatronics.sfi.fmi4j.importer.me.Solver;
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.RealVariable;
-import org.apache.commons.math3.ode.FirstOrderIntegrator;
-import org.apache.commons.math3.ode.nonstiff.ClassicalRungeKuttaIntegrator;
-import org.apache.commons.math3.ode.nonstiff.EulerIntegrator;
-import org.apache.commons.math3.ode.nonstiff.LutherIntegrator;
+import no.sfi.mechatronics.fmi4j.me.ApacheSolvers;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 import org.junit.jupiter.api.condition.EnabledOnOs;
@@ -75,12 +73,12 @@ public class VanDerPolTestJava {
         Assertions.assertEquals("2.0", fmu.getModelDescription().getFmiVersion());
     }
 
-    private void runFmu(FirstOrderIntegrator integrator) {
+    private void runFmu(Solver solver) {
 
-        LOG.info("Using solver: {}", integrator.getClass().getSimpleName());
+        LOG.info("Using solver: {}", solver.getName());
 
         FmiSimulation instance = VanDerPolTestJava.fmu.asModelExchangeFmu()
-                .newInstance(integrator, false, true);
+                .newInstance(solver, false, true);
 
         RealVariable x0 = instance.getModelVariables()
                 .getByName("x0").asRealVariable();
@@ -100,17 +98,17 @@ public class VanDerPolTestJava {
 
     @Test
     public void testEuler() {
-        runFmu(new EulerIntegrator(1E-3));
+        runFmu(ApacheSolvers.euler(1E-3));
     }
 
     @Test
     public void testRungeKutta() {
-        runFmu(new ClassicalRungeKuttaIntegrator(1E-3));
+        runFmu(ApacheSolvers.rk4(1E-3));
     }
 
     @Test
     public void testLuther() {
-        runFmu(new LutherIntegrator(1E-3));
+        runFmu(ApacheSolvers.luther(1E-3));
     }
 
 }

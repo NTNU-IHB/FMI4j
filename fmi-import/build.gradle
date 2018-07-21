@@ -13,13 +13,12 @@ apply plugin: 'com.github.johnrengelman.shadow'
 
 dependencies {
 
-    compile group: 'org.apache.commons', name: 'commons-math3', version: '3.6.1'
-
     implementation group: 'net.java.dev.jna', name: 'jna', version: '4.5.2'
     implementation group: 'net.java.dev.jna', name: 'jna-platform', version: '4.5.2'
 
     compile project(':fmi-modeldescription')
 
+    testImplementation project(':fmi-import-solvers-apache-math3')
     testImplementation group: 'org.siani.javafmi', name: 'fmu-wrapper', version: '2.24.4'
 
 }
