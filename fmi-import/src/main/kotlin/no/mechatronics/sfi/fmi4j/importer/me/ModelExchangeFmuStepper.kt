@@ -35,6 +35,7 @@ import org.slf4j.LoggerFactory
 private const val EPS = 1E-13
 
 /**
+ * Wraps a Model Exchange instance, turning it into a FmiSimulation
  *
  * @author Lars Ivar Hatledal
  */

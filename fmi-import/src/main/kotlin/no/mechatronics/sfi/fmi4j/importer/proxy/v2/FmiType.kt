@@ -27,6 +27,9 @@ package no.mechatronics.sfi.fmi4j.importer.proxy.v2
 /**
  * Represents the FMU type
  *
+ * ModelExchange=0
+ * CoSimulation=1
+ *
  * @author Lars Ivar Hatledal
  */
 enum class FmiType(

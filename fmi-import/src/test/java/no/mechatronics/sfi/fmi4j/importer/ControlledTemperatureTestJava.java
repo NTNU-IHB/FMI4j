@@ -68,66 +68,39 @@ public class ControlledTemperatureTestJava {
     @Test
     public void test() {
 
-        try(FmiSimulation fmu = fmuFile.asCoSimulationFmu().newInstance()) {
+        try(FmiSimulation instance = fmuFile.asCoSimulationFmu().newInstance()) {
 
-            Assertions.assertEquals("2.0", fmu.getModelDescription().getFmiVersion());
+            Assertions.assertEquals("2.0", instance.getModelDescription().getFmiVersion());
 
-            final double startTemp = fmu.getVariableByName("HeatCapacity1.T0")
+            final double startTemp = instance.getVariableByName("HeatCapacity1.T0")
                     .asRealVariable().getStart();
             Assertions.assertEquals(298.0, startTemp);
 
-            fmu.init();
-            Assertions.assertSame(fmu.getLastStatus(), FmiStatus.OK);
+            instance.init();
+            Assertions.assertSame(instance.getLastStatus(), FmiStatus.OK);
 
             final RealVariable heatCapacity1_C
-                    = fmu.getVariableByName("HeatCapacity1.C").asRealVariable();
+                    = instance.getVariableByName("HeatCapacity1.C").asRealVariable();
             Assertions.assertEquals(0.1, (double) heatCapacity1_C.getStart());
             LOG.info("heatCapacity1_C={}", heatCapacity1_C.read().getValue());
 
             final RealVariable temperature_room
-                    = fmu.getVariableByName("Temperature_Room").asRealVariable();
+                    = instance.getVariableByName("Temperature_Room").asRealVariable();
 
-            double first1 = Double.NaN;
-
-            double dt = 1d/100;
+            double dt = 1d / 100;
             for (int i = 0; i < 5; i++) {
-                fmu.doStep(dt);
-                Assertions.assertSame(fmu.getLastStatus(), FmiStatus.OK);
+                instance.doStep(dt);
+                Assertions.assertSame(instance.getLastStatus(), FmiStatus.OK);
                 double value = temperature_room.read().getValue();
-                Assertions.assertSame(fmu.getLastStatus(), FmiStatus.OK);
-                if (Double.isNaN(first1)) {
-                    first1 = value;
-                }
+                Assertions.assertSame(instance.getLastStatus(), FmiStatus.OK);
+
                 LOG.info("temperature_room={}", value);
 
-                Assertions.assertEquals(value, (double) fmu.getVariableAccessor()
+                Assertions.assertEquals(value, (double) instance.getVariableAccessor()
                         .readReal("Temperature_Room").getValue());
 
             }
 
-            ((AbstractFmuInstance) fmu).reset(false);
-
-            Assertions.assertSame(fmu.getLastStatus(), FmiStatus.OK);
-
-            AtomicBoolean first = new AtomicBoolean(true);
-            while (fmu.getCurrentTime() < 5) {
-                fmu.doStep(dt);
-                Assertions.assertSame(fmu.getLastStatus(), FmiStatus.OK);
-                double value = temperature_room.read().getValue();
-                Assertions.assertSame(fmu.getLastStatus(), FmiStatus.OK);
-                if (first.getAndSet(false)) {
-                    Assertions.assertEquals(first1, value);
-                }
-                LOG.info("temperature_room={}", value);
-
-            }
-
-            try (FmiSimulation fmu2 = fmuFile.asCoSimulationFmu().newInstance()) {
-                fmu2.init();
-                double value = fmu2.getVariableAccessor()
-                        .readReal(temperature_room.getValueReference()).getValue();
-                LOG.info("temperature_room={}", value);
-            }
         }
 
     }

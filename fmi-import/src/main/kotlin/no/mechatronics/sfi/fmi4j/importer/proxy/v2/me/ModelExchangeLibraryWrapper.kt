@@ -29,10 +29,9 @@ import com.sun.jna.ptr.IntByReference
 import no.mechatronics.sfi.fmi4j.common.FmiStatus
 import no.mechatronics.sfi.fmi4j.importer.misc.FmiBoolean
 import no.mechatronics.sfi.fmi4j.importer.misc.FmiTrue
-import no.mechatronics.sfi.fmi4j.importer.misc.LibraryProvider
+import no.mechatronics.sfi.fmi4j.importer.misc.FmiLibraryProvider
 import no.mechatronics.sfi.fmi4j.importer.proxy.v2.FmiLibraryWrapper
 import no.mechatronics.sfi.fmi4j.importer.proxy.v2.structs.FmiEventInfo
-
 
 /**
  *
@@ -49,7 +48,7 @@ data class CompletedIntegratorStep(
  */
 class ModelExchangeLibraryWrapper(
         c: Pointer,
-        library: LibraryProvider<FmiModelExchangeLibrary>
+        library: FmiLibraryProvider<FmiModelExchangeLibrary>
 ) : FmiLibraryWrapper<FmiModelExchangeLibrary>(c, library) {
 
 

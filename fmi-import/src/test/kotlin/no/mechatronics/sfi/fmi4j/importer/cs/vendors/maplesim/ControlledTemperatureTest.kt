@@ -2,6 +2,7 @@ package no.mechatronics.sfi.fmi4j.importer.cs.vendors.maplesim
 
 import no.mechatronics.sfi.fmi4j.TestUtils
 import no.mechatronics.sfi.fmi4j.common.FmiStatus
+import no.mechatronics.sfi.fmi4j.importer.AbstractFmuInstance
 import no.mechatronics.sfi.fmi4j.importer.Fmu
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
@@ -46,11 +47,11 @@ class ControlledTemperatureTest {
                     instance.doStep(dt)
                     Assertions.assertTrue(instance.lastStatus === FmiStatus.OK)
 
-                    val read = tempInputValue.read()
-                    Assertions.assertTrue(read.status == FmiStatus.OK)
-                    val value = read.value
+                    tempInputValue.read().also {
+                        Assertions.assertTrue(it.status == FmiStatus.OK)
+                        LOG.info("t=${instance.currentTime}, outputs[2]=${it.value}")
+                    }
 
-                    LOG.info("TempInput.value=$value")
                 }
 
             }

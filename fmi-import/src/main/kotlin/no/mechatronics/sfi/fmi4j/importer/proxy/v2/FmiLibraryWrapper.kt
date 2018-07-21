@@ -22,31 +22,29 @@
  * THE SOFTWARE.
  */
 
-
 package no.mechatronics.sfi.fmi4j.importer.proxy.v2
 
 import com.sun.jna.Memory
 import com.sun.jna.Pointer
 import no.mechatronics.sfi.fmi4j.common.*
-import no.mechatronics.sfi.fmi4j.importer.misc.ArrayBuffers
-import no.mechatronics.sfi.fmi4j.importer.misc.FmiBoolean
-import no.mechatronics.sfi.fmi4j.importer.misc.FmuState
-import no.mechatronics.sfi.fmi4j.importer.misc.LibraryProvider
+import no.mechatronics.sfi.fmi4j.importer.misc.*
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-
 
 /**
  * @author Lars Ivar Hatledal
  */
 abstract class FmiLibraryWrapper<out E : FmiLibrary>(
-        protected var c: Pointer,
-        private val libraryProvider: LibraryProvider<E>
+        private var _c: Pointer?,
+        private val libraryProvider: FmiLibraryProvider<E>
 ) {
 
     private companion object {
         val LOG: Logger = LoggerFactory.getLogger(FmiLibraryWrapper::class.java)
     }
+
+    protected val c: Pointer
+        get() = _c!!
 
     private val buffers: ArrayBuffers = ArrayBuffers()
 
@@ -94,7 +92,7 @@ abstract class FmiLibraryWrapper<out E : FmiLibrary>(
      */
     fun setDebugLogging(loggingOn: Boolean, nCategories: Int, categories: StringArray): FmiStatus {
         return updateStatus(library.fmi2SetDebugLogging(c,
-                FmiBoolean.convert(loggingOn), nCategories, categories))
+                loggingOn.fmiType(), nCategories, categories))
     }
 
     /**
@@ -102,8 +100,8 @@ abstract class FmiLibraryWrapper<out E : FmiLibrary>(
      */
     fun setupExperiment(toleranceDefined: Boolean, tolerance: Double, startTime: Double, stopTimeDefined: Boolean, stopTime: Double): FmiStatus {
         return updateStatus(library.fmi2SetupExperiment(c,
-                FmiBoolean.convert(toleranceDefined), tolerance,
-                startTime, FmiBoolean.convert(stopTimeDefined), stopTime))
+                toleranceDefined.fmiType(), tolerance,
+                startTime, stopTimeDefined.fmiType(), stopTime))
     }
 
     /**
@@ -142,7 +140,7 @@ abstract class FmiLibraryWrapper<out E : FmiLibrary>(
 
         } else {
             LOG.warn("Terminated has already been called..")
-            return FmiStatus.Discard
+            return FmiStatus.OK
         }
     }
 
@@ -154,6 +152,7 @@ abstract class FmiLibraryWrapper<out E : FmiLibrary>(
             var success = false
             try {
                 library.fmi2FreeInstance(c)
+                _c = null
                 success = true
             } catch (ex: Error) {
                 LOG.error("Error caught on fmi2FreeInstance: ${ex.javaClass.simpleName}")
@@ -416,10 +415,4 @@ abstract class FmiLibraryWrapper<out E : FmiLibrary>(
     }
 
 }
-
-
-
-
-
-
 

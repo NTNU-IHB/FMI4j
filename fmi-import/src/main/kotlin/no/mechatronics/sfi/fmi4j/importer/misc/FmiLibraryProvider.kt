@@ -30,10 +30,11 @@ import org.slf4j.LoggerFactory
 import java.util.function.Supplier
 
 /**
+ * Wraps the native FMI library
  *
  * @author Lars Ivar Hatledal
  */
-class LibraryProvider<E : FmiLibrary>(
+class FmiLibraryProvider<E : FmiLibrary>(
         private val librarySupplier: () -> E
 ) : Supplier<E> {
 
@@ -54,7 +55,7 @@ class LibraryProvider<E : FmiLibrary>(
     }
 
     private companion object {
-        val LOG: Logger = LoggerFactory.getLogger(LibraryProvider::class.java)
+        val LOG: Logger = LoggerFactory.getLogger(FmiLibraryProvider::class.java)
     }
 
 }

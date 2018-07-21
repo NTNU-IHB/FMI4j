@@ -31,56 +31,32 @@ class ControlledTemperatureTest {
 
                 Assertions.assertEquals("2.0", instance.modelDescription.fmiVersion)
 
-                val startTemp = instance.getVariableByName("HeatCapacity1.T0").asRealVariable().start
+                val startTemp = instance.getVariableByName("HeatCapacity1.T0")
+                        .asRealVariable().start
                 Assertions.assertNotNull(startTemp)
                 Assertions.assertEquals(298.0, startTemp!!)
 
                 instance.init()
                 Assertions.assertTrue(instance.lastStatus === FmiStatus.OK)
 
-                val heatCapacity1_C = instance.getVariableByName("HeatCapacity1.C").asRealVariable()
+                val heatCapacity1_C = instance.getVariableByName("HeatCapacity1.C")
+                        .asRealVariable()
                 Assertions.assertEquals(0.1, heatCapacity1_C.start!!)
                 LOG.debug("heatCapacity1_C=${heatCapacity1_C.read().value}")
 
-                val temperatureRoom = instance.getVariableByName("Temperature_Room").asRealVariable()
-
-                var first1 = java.lang.Double.NaN
+                val temperatureRoom = instance.getVariableByName("Temperature_Room")
+                        .asRealVariable()
 
                 val dt = 1.0 / 100
                 for (i in 0..4) {
-                    instance.doStep(dt)
+                    Assertions.assertTrue(instance.doStep(dt))
                     Assertions.assertTrue(instance.lastStatus === FmiStatus.OK)
 
                     val read = temperatureRoom.read()
                     Assertions.assertTrue(read.status == FmiStatus.OK)
                     val value = read.value
 
-                    if (java.lang.Double.isNaN(first1)) {
-                        first1 = value
-                    }
-                    LOG.info("Temperature_Room=$value")
-                }
-
-                Assertions.assertTrue((instance as AbstractFmuInstance<*, *>).reset(false))
-
-                val first = AtomicBoolean(true)
-                while (instance.currentTime < 5) {
-                    instance.doStep(dt)
-                    Assertions.assertTrue(instance.lastStatus === FmiStatus.OK)
-
-                    val read = temperatureRoom.read()
-                    Assertions.assertTrue(read.status == FmiStatus.OK)
-                    val value = read.value
-
-                    if (first.getAndSet(false)) {
-                        Assertions.assertEquals(first1, value)
-                    }
-                    LOG.info("Temperature_Room=$value")
-                }
-
-                fmu.asCoSimulationFmu().newInstance().use { fmu2 ->
-                    fmu2.init()
-                    LOG.info("Temperature_Room=${fmu2.variableAccessor.readReal(temperatureRoom.valueReference)}")
+                    LOG.info("t=${instance.currentTime}, Temperature_Room=$value")
                 }
 
             }

@@ -35,6 +35,10 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.lang.IllegalStateException
 
+/**
+ *
+ * @author Lars Ivar Hatledal
+ */
 class CoSimulationFmuInstance internal constructor(
         fmu: Fmu,
         wrapper: CoSimulationLibraryWrapper
@@ -99,12 +103,14 @@ class CoSimulationFmuInstance internal constructor(
     /**
      * @see CoSimulationLibraryWrapper.setRealInputDerivatives
      */
-    fun setRealInputDerivatives(vr: IntArray, order: IntArray, value: DoubleArray) = wrapper.setRealInputDerivatives(vr, order, value)
+    fun setRealInputDerivatives(vr: IntArray, order: IntArray, value: DoubleArray)
+            = wrapper.setRealInputDerivatives(vr, order, value)
 
     /**
      * @see CoSimulationLibraryWrapper.getRealOutputDerivatives
      */
-    fun getRealOutputDerivatives(vr: IntArray, order: IntArray, value: DoubleArray) = wrapper.getRealOutputDerivatives(vr, order, value)
+    fun getRealOutputDerivatives(vr: IntArray, order: IntArray, value: DoubleArray)
+            = wrapper.getRealOutputDerivatives(vr, order, value)
 
     /**
      * @see CoSimulationLibraryWrapper.getStatus

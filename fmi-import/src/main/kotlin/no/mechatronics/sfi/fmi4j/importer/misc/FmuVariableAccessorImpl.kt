@@ -39,7 +39,6 @@ class FmuVariableAccessorImpl(
 
     //read
     override fun readInteger(name: String) = readInteger(process(name))
-
     override fun readInteger(vr: ValueReference) = wrapper.getInteger(vr)
     override fun readInteger(vr: ValueReferences) = wrapper.getInteger(vr)
     override fun readInteger(vr: ValueReferences, value: IntArray) = wrapper.getInteger(vr, value)
@@ -62,7 +61,6 @@ class FmuVariableAccessorImpl(
 
     //write
     override fun writeInteger(name: String, value: Int) = wrapper.setInteger(process(name), value)
-
     override fun writeInteger(vr: ValueReference, value: Int) = wrapper.setInteger(vr, value)
     override fun writeInteger(vr: ValueReferences, value: IntArray) = wrapper.setInteger(vr, value)
 

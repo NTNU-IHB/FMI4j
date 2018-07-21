@@ -1,5 +1,6 @@
-package no.mechatronics.sfi.fmi4j.importer
+package no.mechatronics.sfi.fmi4j.importer.misc
 
+import no.mechatronics.sfi.fmi4j.importer.Fmu
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
