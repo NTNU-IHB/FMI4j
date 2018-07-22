@@ -24,13 +24,15 @@ wrapper {
 
 repositories {
     mavenCentral()
+    maven {
+        url "https://oss.sonatype.org/content/repositories/snapshots/"
+    }
 }
 
 dependencies {
-
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
-    compile group: 'no.mechatronics.sfi.fmi4j', name: 'fmi-import', version: '0.7.3'
-
+    compile group: 'no.mechatronics.sfi.fmi4j', name: 'fmi-import', version: '0.7.4'
+    compile group: 'no.mechatronics.sfi.fmi4j', name: 'fmi-import-solvers-apache-math3', version: '0.7.4'
 }
 
 task sourcesJar(type: Jar, dependsOn: classes, description: 'Creates a jar from the source files.') {
@@ -45,21 +47,17 @@ task javadocJar (type: Jar, dependsOn: javadoc) {
 
 jar {
     manifest {
-        attributes(
-                "Class-Path": configurations.compile.collect {
-                    it.getName()
-                }.join(' '))
+        attributes("Class-Path": configurations.compile
+                .collect { it.getName() }.join(' '))
     }
 }
 
 publishing {
     publications {
         mavenJava(MavenPublication) {
-
             from components.java
             artifact sourcesJar
             artifact javadocJar
-
         }
     }
 
