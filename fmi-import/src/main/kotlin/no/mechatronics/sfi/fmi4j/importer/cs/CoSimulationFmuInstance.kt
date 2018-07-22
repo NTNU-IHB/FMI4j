@@ -25,8 +25,8 @@
 package no.mechatronics.sfi.fmi4j.importer.cs
 
 import no.mechatronics.sfi.fmi4j.common.FmiStatus
-import no.mechatronics.sfi.fmi4j.importer.AbstractFmuInstance
 import no.mechatronics.sfi.fmi4j.common.FmiSimulation
+import no.mechatronics.sfi.fmi4j.importer.AbstractFmuInstance
 import no.mechatronics.sfi.fmi4j.importer.Fmu
 import no.mechatronics.sfi.fmi4j.importer.proxy.v2.cs.CoSimulationLibraryWrapper
 import no.mechatronics.sfi.fmi4j.importer.proxy.v2.cs.FmiStatusKind
@@ -35,15 +35,18 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.lang.IllegalStateException
 
+/**
+ *
+ * @author Lars Ivar Hatledal
+ */
 class CoSimulationFmuInstance internal constructor(
         fmu: Fmu,
         wrapper: CoSimulationLibraryWrapper
-) : no.mechatronics.sfi.fmi4j.importer.AbstractFmuInstance<CoSimulationModelDescription, CoSimulationLibraryWrapper>(fmu, wrapper), FmiSimulation {
+) : AbstractFmuInstance<CoSimulationModelDescription, CoSimulationLibraryWrapper>(fmu, wrapper), FmiSimulation {
 
     private companion object {
         val LOG: Logger = LoggerFactory.getLogger(CoSimulationFmuInstance::class.java)
     }
-
 
     override var currentTime: Double = 0.0
         private set
@@ -100,12 +103,14 @@ class CoSimulationFmuInstance internal constructor(
     /**
      * @see CoSimulationLibraryWrapper.setRealInputDerivatives
      */
-    fun setRealInputDerivatives(vr: IntArray, order: IntArray, value: DoubleArray) = wrapper.setRealInputDerivatives(vr, order, value)
+    fun setRealInputDerivatives(vr: IntArray, order: IntArray, value: DoubleArray)
+            = wrapper.setRealInputDerivatives(vr, order, value)
 
     /**
      * @see CoSimulationLibraryWrapper.getRealOutputDerivatives
      */
-    fun getRealOutputDerivatives(vr: IntArray, order: IntArray, value: DoubleArray) = wrapper.getRealOutputDerivatives(vr, order, value)
+    fun getRealOutputDerivatives(vr: IntArray, order: IntArray, value: DoubleArray)
+            = wrapper.getRealOutputDerivatives(vr, order, value)
 
     /**
      * @see CoSimulationLibraryWrapper.getStatus

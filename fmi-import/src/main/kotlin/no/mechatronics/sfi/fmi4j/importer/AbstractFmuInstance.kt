@@ -36,6 +36,11 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.lang.UnsupportedOperationException
 
+/**
+ * Base class for FMU instances
+ *
+ * @author Lars Ivar Hatledal
+ */
 abstract class AbstractFmuInstance<out E : SpecificModelDescription, out T : FmiLibraryWrapper<*>> internal constructor(
         val fmu: Fmu,
         val wrapper: T
@@ -199,23 +204,8 @@ abstract class AbstractFmuInstance<out E : SpecificModelDescription, out T : Fmi
      * @see FmiLibrary.fmi2Reset
      */
     override fun reset(): Boolean {
-        return wrapper.reset() == FmiStatus.OK
-    }
-
-    /**
-     * Custom reset function for invoking reset on FMUs that dont comply with the standard (e.g. 20-sim).
-     *
-     * @param requireReinit According to the FMI spec, init() must be called after a call to reset().
-     * Setting requireReinit to false allows you to ignore that.
-     * Only use if the tool you are using does not implement the standard correctly.
-     *
-     * @see FmiLibrary.fmi2Reset
-     */
-    fun reset(requireReinit: Boolean): Boolean {
-        return reset().also {
-            if (requireReinit) {
-                isInitialized = false
-            }
+        return (wrapper.reset() == FmiStatus.OK).also {
+            isInitialized = false
         }
     }
 

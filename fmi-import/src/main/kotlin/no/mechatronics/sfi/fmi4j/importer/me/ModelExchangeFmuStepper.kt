@@ -27,20 +27,19 @@ package no.mechatronics.sfi.fmi4j.importer.me
 import no.mechatronics.sfi.fmi4j.common.FmiSimulation
 import no.mechatronics.sfi.fmi4j.common.FmiStatus
 import no.mechatronics.sfi.fmi4j.common.FmuInstance
-import org.apache.commons.math3.ode.FirstOrderDifferentialEquations
-import org.apache.commons.math3.ode.FirstOrderIntegrator
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
 private const val EPS = 1E-13
 
 /**
+ * Wraps a Model Exchange instance, turning it into a FmiSimulation
  *
  * @author Lars Ivar Hatledal
  */
 class ModelExchangeFmuStepper internal constructor(
-        internal val fmuInstance: ModelExchangeFmuInstance,
-        private val solver: FirstOrderIntegrator
+        private val fmuInstance: ModelExchangeFmuInstance,
+        private val solver: Solver
 ) : FmiSimulation, FmuInstance by fmuInstance {
 
     private val x: DoubleArray
@@ -67,18 +66,15 @@ class ModelExchangeFmuStepper internal constructor(
         this.pz = DoubleArray(numberOfEventIndicators)
         this.z = DoubleArray(numberOfEventIndicators)
 
-    }
-
-    private val ode: FirstOrderDifferentialEquations by lazy {
-        object : FirstOrderDifferentialEquations {
-
-            override fun getDimension(): Int = modelDescription.numberOfContinuousStates
+        this.solver.setEquations(object : Equations {
+            override val dimension: Int = modelDescription.numberOfContinuousStates
             override fun computeDerivatives(time: Double, y: DoubleArray, yDot: DoubleArray) {
                 for ((index, value) in dx.withIndex()) {
                     yDot[index] = value
                 }
             }
-        }
+        })
+
     }
 
     private fun FmiStatus.warnOnStatusNotOK(functionName: String) {
@@ -196,7 +192,7 @@ class ModelExchangeFmuStepper internal constructor(
         fmuInstance.getDerivatives(dx)
 
         val dt = (tNext - t)
-        val integratedTime = solver.integrate(ode, t, x, (currentTime + dt), x)
+        val integratedTime = solver.integrate(t, x, (currentTime + dt), x)
 
         fmuInstance.setContinuousStates(x)
 

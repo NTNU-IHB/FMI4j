@@ -44,8 +44,19 @@ interface FmuInstance : Closeable {
     val modelDescription: CommonModelDescription
     val variableAccessor: FmuVariableAccessor
 
+    /**
+     * The last status returned by the FMU
+     */
     val lastStatus: FmiStatus
+
+    /**
+     * Has init been called?
+     */
     val isInitialized: Boolean
+
+    /**
+     * Has terminate been called?
+     */
     val isTerminated: Boolean
 
     /**

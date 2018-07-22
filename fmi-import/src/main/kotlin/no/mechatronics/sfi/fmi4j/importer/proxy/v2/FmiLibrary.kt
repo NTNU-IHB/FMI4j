@@ -33,7 +33,6 @@ import no.mechatronics.sfi.fmi4j.common.StringArray
 import no.mechatronics.sfi.fmi4j.importer.proxy.v2.structs.FmiCallbackFunctions
 
 
-
 /**
  * Interface to the native FMI functions. Used by JNA
  *

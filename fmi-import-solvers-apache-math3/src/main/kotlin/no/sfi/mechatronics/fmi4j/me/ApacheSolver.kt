@@ -22,21 +22,44 @@
  * THE SOFTWARE.
  */
 
-package no.mechatronics.sfi.fmi4j.importer.proxy.v2
+package no.sfi.mechatronics.fmi4j.me
+
+import no.mechatronics.sfi.fmi4j.importer.me.Equations
+import no.mechatronics.sfi.fmi4j.importer.me.Solver
+import org.apache.commons.math3.ode.FirstOrderDifferentialEquations
+import org.apache.commons.math3.ode.FirstOrderIntegrator
 
 /**
- * Represents the FMU type
- *
- * ModelExchange=0
- * CoSimulation=1
+ * Wraps solvers from apache commons math3 to be used by FMI4j
+ * to solve Model Exchange FMUs
  *
  * @author Lars Ivar Hatledal
  */
-enum class FmiType(
-        val code: Int
-) {
+class ApacheSolver(
+        private val solver: FirstOrderIntegrator
+) : Solver {
 
-    ModelExchange(0),
-    CoSimulation(1)
+    override val name: String
+        get() = solver.name
+
+
+    lateinit var equations: FirstOrderDifferentialEquations
+
+    override fun setEquations(equations: Equations) {
+        this.equations = object : FirstOrderDifferentialEquations {
+            override fun computeDerivatives(t: Double, y: DoubleArray, yDot: DoubleArray) {
+                return equations.computeDerivatives(t, y, yDot)
+            }
+
+            override fun getDimension(): Int {
+                return equations.dimension
+            }
+        }
+    }
+
+    override fun integrate(t0: Double, x0: DoubleArray, t: Double, x: DoubleArray): Double {
+        return solver.integrate(equations, t0, x0, t, x)
+    }
 
 }
+

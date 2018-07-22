@@ -66,7 +66,7 @@ subprojects { sub ->
 
         def snapshot = false
         group = 'no.mechatronics.sfi.fmi4j'
-        version = '0.7.3'
+        version = '0.7.4'
         if (snapshot) {
             version += '-SNAPSHOT'
         }

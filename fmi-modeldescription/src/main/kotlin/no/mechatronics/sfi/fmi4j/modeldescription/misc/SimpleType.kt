@@ -30,14 +30,11 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.*
 import java.io.Serializable
 
-interface SimpleType {
-
-}
 
 /**
  * @author Lars Ivar Hatledal
  */
-data class SimpleTypeImpl(
+data class SimpleType(
 
         /**
          * Name of SimpleType element.

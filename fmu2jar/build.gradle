@@ -72,3 +72,4 @@ task deleteCachedControlledTemperature(type: Delete) {
     delete "${m2}/${group.replace(".", "/")}/${fmuName}"
 }
 
+clean.dependsOn(deleteCachedControlledTemperature)

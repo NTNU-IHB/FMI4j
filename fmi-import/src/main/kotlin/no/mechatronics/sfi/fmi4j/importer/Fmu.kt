@@ -30,8 +30,9 @@ import com.sun.jna.Pointer
 import no.mechatronics.sfi.fmi4j.importer.cs.CoSimulationFmuInstance
 import no.mechatronics.sfi.fmi4j.importer.me.ModelExchangeFmuInstance
 import no.mechatronics.sfi.fmi4j.importer.me.ModelExchangeFmuStepper
+import no.mechatronics.sfi.fmi4j.importer.me.Solver
 import no.mechatronics.sfi.fmi4j.importer.misc.FmiBoolean
-import no.mechatronics.sfi.fmi4j.importer.misc.LibraryProvider
+import no.mechatronics.sfi.fmi4j.importer.misc.FmiLibraryProvider
 import no.mechatronics.sfi.fmi4j.importer.misc.extractTo
 import no.mechatronics.sfi.fmi4j.importer.proxy.v2.FmiLibrary
 import no.mechatronics.sfi.fmi4j.importer.proxy.v2.FmiType
@@ -43,7 +44,6 @@ import no.mechatronics.sfi.fmi4j.importer.proxy.v2.structs.FmiCallbackFunctions
 import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescriptionParser
 import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescriptionProvider
 import no.mechatronics.sfi.fmi4j.modeldescription.SpecificModelDescription
-import org.apache.commons.math3.ode.FirstOrderIntegrator
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.Closeable
@@ -52,8 +52,6 @@ import java.io.FileNotFoundException
 import java.io.IOException
 import java.net.URL
 import java.nio.file.Files
-
-private const val LIBRARY_PATH = "jna.library.path"
 
 private const val RESOURCES_FOLDER = "resources"
 private const val BINARIES_FOLDER = "binaries"
@@ -71,11 +69,16 @@ private const val MODEL_DESC = "modelDescription.xml"
 
 /**
  *
+ * Represents an FMU
+ *
  * @author Lars Ivar Hatledal
  */
 class Fmu private constructor(
         private val fmuFile: File
 ): Closeable {
+
+    private val instances = mutableListOf<AbstractFmuInstance<*, *>>()
+    private val libraries = mutableListOf<FmiLibraryProvider<*>>()
 
     var isClosed = false
         private set
@@ -83,57 +86,18 @@ class Fmu private constructor(
     var hasDeletedExtractedFmuFolder = false
         private set
 
-    private val instances = mutableListOf<no.mechatronics.sfi.fmi4j.importer.AbstractFmuInstance<*, *>>()
-    private val libraries = mutableListOf<LibraryProvider<*>>()
+    /**
+     * Does the FMU support Co-simulation?
+     */
+    val supportsCoSimulation: Boolean
+        get() = modelDescription.supportsCoSimulation
 
+    /**
+     * Does the FMU support Model Exchange?
+     */
+    val supportsModelExchange: Boolean
+        get() = modelDescription.supportsModelExchange
 
-    override fun close() {
-        if (!isClosed) {
-
-            LOG.debug("Closing FMU '${modelDescription.modelName}'..")
-
-            terminateInstances()
-            disposeNativeLibraries()
-            deleteExtractedFmuFolder()
-
-            files.remove(this)
-            isClosed = true
-        }
-    }
-
-    private fun disposeNativeLibraries() {
-        libraries.forEach {
-            it.disposeLibrary()
-        }
-        libraries.clear()
-    }
-
-    private fun terminateInstances() {
-        instances.forEach {
-            if (!it.isTerminated) {
-                it.terminate()
-            }
-            if (!it.wrapper.isInstanceFreed) {
-                it.wrapper.freeInstance()
-            }
-        }
-        instances.clear()
-    }
-
-    fun deleteExtractedFmuFolder(): Boolean {
-
-        if (!hasDeletedExtractedFmuFolder) {
-            return if (fmuFile.deleteRecursively()) {
-                LOG.debug("Deleted extracted FMU contents: $fmuFile")
-                hasDeletedExtractedFmuFolder = true
-                true
-            } else {
-                LOG.debug("Failed to delete extracted FMU contents: $fmuFile")
-                false
-            }
-        }
-        return true
-    }
 
     /**
      * Get the content of the modelDescription.xml file as a String
@@ -196,11 +160,57 @@ class Fmu private constructor(
         if (supportsModelExchange) ModelExchangeFmuBuilder() else null
     }
 
-    val supportsCoSimulation: Boolean
-        get() = modelDescription.supportsCoSimulation
+    override fun close() {
+        if (!isClosed) {
 
-    val supportsModelExchange: Boolean
-        get() = modelDescription.supportsModelExchange
+            LOG.debug("Closing FMU '${modelDescription.modelName}'..")
+
+            terminateInstances()
+            disposeNativeLibraries()
+            deleteExtractedFmuFolder()
+
+            fmus.remove(this)
+            isClosed = true
+        }
+    }
+
+    private fun disposeNativeLibraries() {
+        libraries.forEach {
+            it.disposeLibrary()
+        }
+        libraries.clear()
+    }
+
+    private fun terminateInstances() {
+        instances.forEach {
+            if (!it.isTerminated) {
+                it.terminate()
+            }
+            if (!it.wrapper.isInstanceFreed) {
+                it.wrapper.freeInstance()
+            }
+        }
+        instances.clear()
+    }
+
+    /**
+     * Deletes the temporary folder where the FMU was extracted
+     * Should not be called by users, but is exposed in case manual cleanup is required
+     */
+    fun deleteExtractedFmuFolder(): Boolean {
+
+        if (!hasDeletedExtractedFmuFolder) {
+            return if (fmuFile.deleteRecursively()) {
+                LOG.debug("Deleted extracted FMU contents: $fmuFile")
+                hasDeletedExtractedFmuFolder = true
+                true
+            } else {
+                LOG.debug("Failed to delete extracted FMU contents: $fmuFile")
+                false
+            }
+        }
+        return true
+    }
 
     @Throws(IllegalStateException::class)
     fun asCoSimulationFmu(): CoSimulationFmuBuilder
@@ -219,11 +229,11 @@ class Fmu private constructor(
         private val modelDescription
             get() = this@Fmu.modelDescription.asCoSimulationModelDescription()
 
-        private val libraryCache: LibraryProvider<FmiCoSimulationLibrary> by lazy {
+        private val libraryCache: FmiLibraryProvider<FmiCoSimulationLibrary> by lazy {
             loadLibrary()
         }
 
-        private fun loadLibrary(): LibraryProvider<FmiCoSimulationLibrary> {
+        private fun loadLibrary(): FmiLibraryProvider<FmiCoSimulationLibrary> {
             return loadLibrary(this@Fmu, modelDescription, FmiCoSimulationLibrary::class.java).also {
                 libraries.add(it)
             }
@@ -244,11 +254,11 @@ class Fmu private constructor(
         private val modelDescription
             get() = this@Fmu.modelDescription.asModelExchangeModelDescription()
 
-        private val libraryCache: LibraryProvider<FmiModelExchangeLibrary> by lazy {
+        private val libraryCache: FmiLibraryProvider<FmiModelExchangeLibrary> by lazy {
             loadLibrary()
         }
 
-        private fun loadLibrary(): LibraryProvider<FmiModelExchangeLibrary> {
+        private fun loadLibrary(): FmiLibraryProvider<FmiModelExchangeLibrary> {
             return loadLibrary(this@Fmu, modelDescription, FmiModelExchangeLibrary::class.java).also {
                 libraries.add(it)
             }
@@ -263,11 +273,14 @@ class Fmu private constructor(
         }
 
         @JvmOverloads
-        fun newInstance(integrator: FirstOrderIntegrator, visible: Boolean = false, loggingOn: Boolean = false): ModelExchangeFmuStepper {
+        fun newInstance(solver: Solver, visible: Boolean = false, loggingOn: Boolean = false): ModelExchangeFmuStepper {
             val lib = if (modelDescription.canBeInstantiatedOnlyOncePerProcess) loadLibrary() else libraryCache
             val c = instantiate(this@Fmu, modelDescription, lib.get(), FmiType.ModelExchange, visible, loggingOn)
             val wrapper = ModelExchangeLibraryWrapper(c, lib)
-            return ModelExchangeFmuStepper(ModelExchangeFmuInstance(this@Fmu, wrapper), integrator).also { instances.add(it.fmuInstance) }
+            val instance = ModelExchangeFmuInstance(this@Fmu, wrapper).also {
+                instances.add(it)
+            }
+            return ModelExchangeFmuStepper(instance, solver)
         }
 
     }
@@ -276,11 +289,11 @@ class Fmu private constructor(
 
         private val LOG: Logger = LoggerFactory.getLogger(Fmu::class.java)
 
-        private val files = mutableListOf<Fmu>()
+        private val fmus = mutableListOf<Fmu>()
 
         init {
             Runtime.getRuntime().addShutdownHook(Thread {
-                files.toMutableList().forEach{ it.close() }
+                fmus.toMutableList().forEach{ it.close() }
             })
         }
 
@@ -294,6 +307,9 @@ class Fmu private constructor(
             }
         }
 
+        /**
+         * Creates an FMU from the provided File
+         */
         @JvmStatic
         @Throws(IOException::class, FileNotFoundException::class)
         fun from (file: File): Fmu {
@@ -311,11 +327,14 @@ class Fmu private constructor(
             file.extractTo(temp)
 
             return Fmu(temp).also {
-                files.add(it)
+                fmus.add(it)
             }
 
         }
 
+        /**
+         * Creates an FMU from the provided URL.
+         */
         @JvmStatic
         @Throws(IOException::class)
         fun from(url: URL): Fmu {
@@ -329,20 +348,13 @@ class Fmu private constructor(
             url.extractTo(temp)
 
             return Fmu(temp).also {
-                files.add(it)
+                fmus.add(it)
             }
 
         }
 
-        private fun <E: FmiLibrary> loadLibrary(fmu: Fmu, modelDescription: SpecificModelDescription, type: Class<E>): LibraryProvider<E> {
-
-            System.getProperty(LIBRARY_PATH)?.also {
-                if (fmu.libraryFolderPath !in it.split(";")) {
-                    System.setProperty(LIBRARY_PATH, "$it;${fmu.libraryFolderPath}")
-                }
-            } ?:  System.setProperty(LIBRARY_PATH, fmu.libraryFolderPath)
-
-            return LibraryProvider({Native.loadLibrary(fmu.getLibraryName(modelDescription), type)})
+        private fun <E: FmiLibrary> loadLibrary(fmu: Fmu, modelDescription: SpecificModelDescription, type: Class<E>): FmiLibraryProvider<E> {
+            return FmiLibraryProvider { Native.loadLibrary(fmu.getFullLibraryPath(modelDescription), type) }
         }
 
         private fun instantiate(fmu: Fmu, modelDescription: SpecificModelDescription, library: FmiLibrary, fmiType: FmiType, visible: Boolean, loggingOn: Boolean) : Pointer {

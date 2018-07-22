@@ -10,7 +10,6 @@ import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.File
-import java.util.concurrent.atomic.AtomicBoolean
 
 @EnabledIfEnvironmentVariable(named = "TEST_FMUs", matches = ".*")
 class ControlledTemperatureTest {
@@ -27,7 +26,7 @@ class ControlledTemperatureTest {
 
         Fmu.from(file).use { fmu ->
 
-            fmu.asCoSimulationFmu().newInstance(loggingOn = true).use { instance ->
+            fmu.asCoSimulationFmu().newInstance().use { instance ->
 
                 Assertions.assertEquals("2.0", instance.modelDescription.fmiVersion)
 
@@ -48,11 +47,11 @@ class ControlledTemperatureTest {
                     instance.doStep(dt)
                     Assertions.assertTrue(instance.lastStatus === FmiStatus.OK)
 
-                    val read = tempInputValue.read()
-                    Assertions.assertTrue(read.status == FmiStatus.OK)
-                    val value = read.value
+                    tempInputValue.read().also {
+                        Assertions.assertTrue(it.status == FmiStatus.OK)
+                        LOG.info("t=${instance.currentTime}, outputs[2]=${it.value}")
+                    }
 
-                    LOG.info("TempInput.value=$value")
                 }
 
             }

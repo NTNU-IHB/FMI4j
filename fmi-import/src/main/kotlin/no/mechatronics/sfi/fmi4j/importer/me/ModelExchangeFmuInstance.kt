@@ -37,7 +37,7 @@ import no.mechatronics.sfi.fmi4j.modeldescription.ModelExchangeModelDescription
 open class ModelExchangeFmuInstance internal constructor(
         fmu: Fmu,
         wrapper: ModelExchangeLibraryWrapper
-) : no.mechatronics.sfi.fmi4j.importer.AbstractFmuInstance<ModelExchangeModelDescription, ModelExchangeLibraryWrapper>(fmu, wrapper) {
+) : AbstractFmuInstance<ModelExchangeModelDescription, ModelExchangeLibraryWrapper>(fmu, wrapper) {
 
     val eventInfo = FmiEventInfo()
 

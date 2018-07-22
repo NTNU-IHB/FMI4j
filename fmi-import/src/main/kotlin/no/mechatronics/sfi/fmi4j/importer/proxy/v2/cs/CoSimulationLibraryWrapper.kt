@@ -28,17 +28,18 @@ import com.sun.jna.Pointer
 import com.sun.jna.ptr.DoubleByReference
 import com.sun.jna.ptr.IntByReference
 import no.mechatronics.sfi.fmi4j.importer.misc.FmiBoolean
-import no.mechatronics.sfi.fmi4j.importer.misc.LibraryProvider
+import no.mechatronics.sfi.fmi4j.importer.misc.FmiLibraryProvider
 import no.mechatronics.sfi.fmi4j.importer.misc.StringByReference
 import no.mechatronics.sfi.fmi4j.importer.proxy.v2.FmiLibraryWrapper
 
 
 /**
+ *
  * @author Lars Ivar Hatledal
  */
 class CoSimulationLibraryWrapper(
         c: Pointer,
-        library: LibraryProvider<FmiCoSimulationLibrary>
+        library: FmiLibraryProvider<FmiCoSimulationLibrary>
 ) : FmiLibraryWrapper<FmiCoSimulationLibrary>(c, library) {
 
     /**

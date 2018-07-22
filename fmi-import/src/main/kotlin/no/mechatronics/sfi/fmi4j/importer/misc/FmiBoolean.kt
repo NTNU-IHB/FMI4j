@@ -24,9 +24,13 @@
 
 package no.mechatronics.sfi.fmi4j.importer.misc
 
-const val FmiTrue = 1
-const val FmiFalse = 0
+const val FmiTrue: Int = 1
+const val FmiFalse: Int = 0
 
+/**
+ *
+ * @author Lars Ivar Hatledal
+ */
 object FmiBoolean {
 
     fun convert(value: Boolean): Int {
@@ -41,4 +45,8 @@ object FmiBoolean {
         }
     }
 
+}
+
+fun Boolean.fmiType(): Int {
+    return FmiBoolean.convert(this)
 }
