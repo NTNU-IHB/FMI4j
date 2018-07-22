@@ -1,6 +1,5 @@
 package no.mechatronics.sfi.fmu2jar.templates
 
-
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.File
@@ -14,7 +13,7 @@ import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable
 class CodeGenerationTest {
 
     companion object {
-        val LOG: Logger = LoggerFactory.getLogger(CodeGenerationTest::class.java)
+        private val LOG: Logger = LoggerFactory.getLogger(CodeGenerationTest::class.java)
     }
 
     @Test
