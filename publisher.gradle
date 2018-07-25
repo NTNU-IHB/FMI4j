@@ -20,7 +20,7 @@ class PublishPlugin implements Plugin<Project>{
     }
 
     void apply(Project project) {
-        project.task('publishToMavenCentral') {
+        if (project.hasProperty("ossrhUsername") && project.hasProperty("ossrhPassword")) {
 
             project.apply(plugin: MavenPublishPlugin)
             project.apply(plugin: SigningPlugin)
