@@ -1,5 +1,7 @@
 
-apply plugin: 'kotlin'
+plugins {
+    id 'kotlin'
+}
 
 def jackson_version = '2.9.6'
 

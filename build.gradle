@@ -1,21 +1,9 @@
 
+plugins {
+    id "org.jetbrains.kotlin.jvm" version "1.2.51" apply false //apply in sub-projects
+}
+
 println "Gradle version is ${GradleVersion.current().version}"
-
-buildscript {
-
-    ext.kotlin_version = '1.2.51'
-
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-    }
-}
-
-wrapper {
-    gradleVersion = '4.9'
-}
 
 ext.hasOssrhUsername = hasProperty("ossrhUsername")
 ext.hasOssrhPassword = hasProperty("ossrhPassword")
@@ -31,13 +19,14 @@ subprojects { sub ->
         }
     }
 
+
     def slf4j_version = '1.7.25'
     def junit_version = '5.2.0'
 
     dependencies {
 
         sub.plugins.withId ('kotlin') {
-            compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+            compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
         }
 
         implementation group: 'org.slf4j', name: 'slf4j-api', version: slf4j_version
@@ -62,6 +51,7 @@ subprojects { sub ->
         }
     }
 
+
     if(sub.name.startsWith("fmi") && hasOssrhUsername && hasOssrhPassword) {
 
         def snapshot = true
@@ -73,72 +63,74 @@ subprojects { sub ->
 
         println("maven version for $archivesBaseName is: $version")
 
-        apply plugin: 'maven'
+        apply plugin: 'maven-publish'
         apply plugin: 'signing'
 
-        task sourcesJar(type: Jar, dependsOn: classes, description: 'Creates a jar from the source files.') {
+        group = 'no.mechatronics.sfi.fmuproxy'
+        version = '0.1-SNAPSHOT'
+
+        task sourcesJar(type: Jar) {
             classifier = 'sources'
             from sourceSets.main.allSource
         }
 
-        task javadocJar (type: Jar, dependsOn: javadoc) {
+        task javadocJar(type: Jar, dependsOn: javadoc) {
             classifier = 'javadoc'
             from javadoc.destinationDir
         }
 
-        artifacts {
-            archives javadocJar, sourcesJar
-        }
+        publishing {
+            publications {
+                mavenJava(MavenPublication) {
 
-        signing {
-            sign configurations.archives
-        }
+                    from components.java
+                    artifact sourcesJar
+                    artifact javadocJar
 
-        uploadArchives {
-            repositories {
-                mavenDeployer {
-                    beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-
-                    repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2") {
-                        authentication(userName: ossrhUsername, password: ossrhPassword)
-                    }
-
-                    snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots") {
-                        authentication(userName: ossrhUsername, password: ossrhPassword)
-                    }
-
-                    pom.project {
-                        name archivesBaseName
-                        packaging 'jar'
-                        // optionally artifactId can be defined here
-                        description 'A software library for dealing with Functional Mock-up Units (FMUs) on the JVM platform'
-                        url 'https://github.com/SFI-Mechatronics/fmi4j'
+                    pom {
+                        name = archivesBaseName
+                        description = 'A software library for dealing with Functional Mock-up Units (FMUs) on the JVM platform'
+                        url = 'https://github.com/SFI-Mechatronics/FMI4j'
 
                         scm {
-                            connection 'scm:git:git://github.com/SFI-Mechatronics/fmi4j.git'
-                            developerConnection 'scm:git:ssh://github.com/SFI-Mechatronics/fmi4j.git'
-                            url 'https://github.com/SFI-Mechatronics/fmi4j/tree/master'
+                            connection = 'scm:git:git://github.com/SFI-Mechatronics/FMI4j.git'
+                            developerConnection = 'scm:git:ssh://github.com/SFI-Mechatronics/FMI4j.git'
+                            url = 'https://github.com/SFI-Mechatronics/FMI4j/tree/master'
                         }
 
                         licenses {
                             license {
-                                name 'The MIT License'
-                                url 'https://opensource.org/licenses/mit-license.php'
+                                name = 'The MIT License'
+                                url = 'https://opensource.org/licenses/mit-license.php'
                             }
                         }
 
                         developers {
                             developer {
-                                id 'laht'
-                                name 'Lars Ivar Hatledal'
-                                email 'laht@ntnu.no'
+                                id = 'laht'
+                                name = 'Lars Ivar Hatledal'
+                                email = 'laht@ntnu.no'
                             }
                         }
                     }
                 }
             }
+            repositories {
+                maven {
+                    def releasesRepoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2"
+                    def snapshotsRepoUrl = "https://oss.sonatype.org/content/repositories/snapshots"
+                    url version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+                    credentials {
+                        username = ossrhUsername
+                        password = ossrhPassword
+                    }
+                }
+            }
         }
 
+        signing {
+            sign publishing.publications.mavenJava
+        }
     }
 
 }

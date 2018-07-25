@@ -1,22 +1,15 @@
 
-buildscript {
-    repositories {
-        jcenter()
-    }
-    dependencies {
-        classpath 'com.github.jengelman.gradle.plugins:shadow:2.0.4'
-    }
+plugins {
+    id 'kotlin'
+    id "com.github.johnrengelman.shadow" version "2.0.4"
 }
-
-apply plugin: 'kotlin'
-apply plugin: 'com.github.johnrengelman.shadow'
 
 dependencies {
 
+    compile project(':fmi-modeldescription')
+
     implementation group: 'net.java.dev.jna', name: 'jna', version: '4.5.2'
     implementation group: 'net.java.dev.jna', name: 'jna-platform', version: '4.5.2'
-
-    compile project(':fmi-modeldescription')
 
     testImplementation project(':fmi-import-solvers-apache-math3')
     testImplementation group: 'org.siani.javafmi', name: 'fmu-wrapper', version: '2.24.4'
