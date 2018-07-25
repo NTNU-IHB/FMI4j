@@ -4,6 +4,8 @@ plugins {
     id "com.github.johnrengelman.shadow" version "2.0.4"
 }
 
+apply from: rootProject.file('publisher.gradle')
+
 dependencies {
 
     compile project(':fmi-modeldescription')
