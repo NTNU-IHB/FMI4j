@@ -41,7 +41,7 @@ build/
 
 *.iml
 
-crosscheck/*.csv
+*.csv
 
 /**/out/
 /**/build/
