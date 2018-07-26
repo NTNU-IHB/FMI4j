@@ -2,15 +2,16 @@ package no.mechatronics.sfi.fmi4j.modeldescription.gson
 
 import com.google.gson.GsonBuilder
 import no.mechatronics.sfi.fmi4j.TestUtils
-import no.mechatronics.sfi.fmi4j.modeldescription.*
+import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescriptionParser
+import no.mechatronics.sfi.fmi4j.modeldescription.ModelExchangeModelDescriptionImpl
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.condition.EnabledOnOs
-import org.junit.jupiter.api.condition.OS
+import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.File
 
+@EnabledIfEnvironmentVariable(named = "TEST_FMUs", matches = ".*")
 class GsonTest {
 
     companion object {

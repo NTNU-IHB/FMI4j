@@ -44,16 +44,15 @@ import java.util.*
 class ControlledTemperatureTest {
 
     companion object {
-
         private val LOG: Logger = LoggerFactory.getLogger(ControlledTemperatureTest::class.java)
-
     }
 
     private val modelDescription: CoSimulationModelDescription
 
     init {
         val fmu = File(TestUtils.getTEST_FMUs(),
-                "FMI_2.0/CoSimulation/${TestUtils.getOs()}/20sim/4.6.4.8004/ControlledTemperature/ControlledTemperature.fmu")
+                "FMI_2.0/CoSimulation/${TestUtils.getOs()}" +
+                        "/20sim/4.6.4.8004/ControlledTemperature/ControlledTemperature.fmu")
         Assertions.assertTrue(fmu.exists())
         modelDescription = ModelDescriptionParser.parse(fmu).asCoSimulationModelDescription()
     }
