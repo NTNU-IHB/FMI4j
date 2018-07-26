@@ -19,7 +19,6 @@ subprojects { sub ->
         }
     }
 
-
     def slf4j_version = '1.7.25'
     def junit_version = '5.2.0'
 
