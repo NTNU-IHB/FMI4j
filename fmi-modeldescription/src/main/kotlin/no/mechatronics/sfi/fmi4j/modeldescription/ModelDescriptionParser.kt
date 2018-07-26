@@ -37,12 +37,12 @@ import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
 
 
-private const val MODEL_DESC_FILE = "modelDescription.xml"
-
 /**
  * Parses the modelDescription.xml holding static information about an FMU
  */
 object ModelDescriptionParser {
+
+    private const val MODEL_DESC_FILE = "modelDescription.xml"
 
     private val mapper by lazy {
         XmlMapper().apply {
