@@ -35,7 +35,7 @@ open class FmuPlugin : Plugin<Project> {
 
             if (file.name.toLowerCase().endsWith(".fmu")) {
                 val md = ModelDescriptionParser.parse(file)
-                val src = CodeGenerator.generateBody(md)
+                val src = CodeGenerator(md).generateBody()
 
                 println(src)
 
