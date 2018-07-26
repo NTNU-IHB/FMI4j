@@ -43,6 +43,10 @@ interface ModelVariables : Iterable<TypedScalarVariable<*>> {
 
     fun getVariables(): List<TypedScalarVariable<*>>
 
+    operator fun get(index: Int): TypedScalarVariable<*> = getVariables()[index]
+
+    override fun iterator(): Iterator<TypedScalarVariable<*>> = getVariables().iterator()
+
     val integers: List<IntegerVariable>
         get() = mapNotNull { (it as? IntegerVariable)?.asIntegerVariable() }
 
@@ -58,12 +62,18 @@ interface ModelVariables : Iterable<TypedScalarVariable<*>> {
     val enumerations: List<EnumerationVariable>
         get() = mapNotNull { (it as? EnumerationVariable)?.asEnumerationVariable() }
 
-    operator fun get(index: Int): TypedScalarVariable<*> = getVariables()[index]
-
-    override fun iterator(): Iterator<TypedScalarVariable<*>> = getVariables().iterator()
+    /**
+     * Does a variable with the provided valueReference exist?
+     *
+     * @param valueReference
+     */
+    fun isValidValueReference(valueReference: Int): Boolean {
+        return valueReference in map { it.valueReference }
+    }
 
     /**
      * Get the valueReference of the variable named <name>
+     *
      * @name name
      * @throws IllegalArgumentException if there is no variable with the provided name
      */
@@ -72,21 +82,22 @@ interface ModelVariables : Iterable<TypedScalarVariable<*>> {
                 ?: throw IllegalArgumentException("No variable with name '$name'")
     }
 
-    fun getValueReferences(names: StringArray): IntArray {
-        return names.map { getValueReference(it) }.toIntArray()
+    /**
+     * Get a list of value references matching the provided names
+     * @throws IllegalArgumentException if a name is provided that does not match a variable
+     */
+    fun getValueReferences(names: StringArray): List<Int> {
+        return names.map { getValueReference(it) }
     }
 
     /**
      * Get all variables with the given valueReference
+     *
      * @vr valueReference
      * @throws IllegalArgumentException if there are no variables with the provided value reference
      */
     fun getByValueReference(vr: Int): List<TypedScalarVariable<*>> {
-        val filter = filter { it.valueReference == vr }
-        if (filter.isEmpty()) {
-            throw IllegalArgumentException("No variable with value reference '$vr'")
-        }
-        return filter
+        return filter { it.valueReference == vr }
     }
 
     /**
@@ -99,8 +110,11 @@ interface ModelVariables : Iterable<TypedScalarVariable<*>> {
                 ?: throw IllegalArgumentException("No variable with name '$name'")
     }
 
-    fun isValidValueReference(valueReference: Int): Boolean {
-        return valueReference in map { it.valueReference }
+    /**
+     * Return a list of all variables with the proved causality
+     */
+    fun getByCausality(causality: Causality): List<TypedScalarVariable<*>> {
+        return filter { it.causality == causality }
     }
 
 }

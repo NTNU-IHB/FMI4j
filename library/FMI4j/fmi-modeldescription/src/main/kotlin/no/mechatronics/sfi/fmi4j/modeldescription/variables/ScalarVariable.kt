@@ -29,11 +29,7 @@ import com.fasterxml.jackson.annotation.Nulls
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty
 import java.io.Serializable
 
-const val INTEGER_TYPE = "Integer"
-const val REAL_TYPE = "Real"
-const val STRING_TYPE = "String"
-const val BOOLEAN_TYPE = "Boolean"
-const val ENUMERATION_TYPE = "Enumeration"
+
 
 /**
  * @author Lars Ivar Hatledal
@@ -88,6 +84,14 @@ interface ScalarVariable {
      */
     val initial: Initial?
 
+    companion object {
+        const val INTEGER_TYPE = "Integer"
+        const val REAL_TYPE = "Real"
+        const val STRING_TYPE = "String"
+        const val BOOLEAN_TYPE = "Boolean"
+        const val ENUMERATION_TYPE = "Enumeration"
+    }
+
 }
 
 /**
@@ -119,23 +123,23 @@ class ScalarVariableImpl(
 
 ) : ScalarVariable, Serializable {
 
-    @JacksonXmlProperty(localName = INTEGER_TYPE)
+    @JacksonXmlProperty(localName = ScalarVariable.INTEGER_TYPE)
     @JsonSetter(nulls = Nulls.AS_EMPTY)
     var integerAttribute: IntegerAttribute? = null
 
-    @JacksonXmlProperty(localName = REAL_TYPE)
+    @JacksonXmlProperty(localName = ScalarVariable.REAL_TYPE)
     @JsonSetter(nulls = Nulls.AS_EMPTY)
     var realAttribute: RealAttribute? = null
 
-    @JacksonXmlProperty(localName = STRING_TYPE)
+    @JacksonXmlProperty(localName = ScalarVariable.STRING_TYPE)
     @JsonSetter(nulls = Nulls.AS_EMPTY)
     var stringAttribute: StringAttribute? = null
 
-    @JacksonXmlProperty(localName = BOOLEAN_TYPE)
+    @JacksonXmlProperty(localName = ScalarVariable.BOOLEAN_TYPE)
     @JsonSetter(nulls = Nulls.AS_EMPTY)
     var booleanAttribute: BooleanAttribute? = null
 
-    @JacksonXmlProperty(localName = ENUMERATION_TYPE)
+    @JacksonXmlProperty(localName = ScalarVariable.ENUMERATION_TYPE)
     @JsonSetter(nulls = Nulls.AS_EMPTY)
     var enumerationAttribute: EnumerationAttribute? = null
 

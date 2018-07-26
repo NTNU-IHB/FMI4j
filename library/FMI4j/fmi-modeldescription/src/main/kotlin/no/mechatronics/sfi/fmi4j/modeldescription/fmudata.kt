@@ -101,10 +101,7 @@ sealed class FmuDataImpl : FmuData, Serializable {
 
     @JacksonXmlElementWrapper(localName = "SourceFiles")
     @JacksonXmlProperty(localName = "File")
-    private val _sourceFiles: List<SourceFile>? = null
-
-    override val sourceFiles
-        get() = _sourceFiles ?: emptyList()
+    override val sourceFiles: List<SourceFile> = emptyList()
 
     override fun toString(): String {
         return "FmuDataImpl{modelIdentifier=$modelIdentifier, needsExecutionTool=$needsExecutionTool, canNotUseMemoryManagementFunctions=$canNotUseMemoryManagementFunctions, canGetAndSetFMUstate=$canGetAndSetFMUstate, canSerializeFMUstate=$canSerializeFMUstate, providesDirectionalDerivative=$providesDirectionalDerivative}"

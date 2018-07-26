@@ -53,23 +53,23 @@ data class SimpleType(
 
 ) : Serializable {
 
-    @JacksonXmlProperty(localName = INTEGER_TYPE)
+    @JacksonXmlProperty(localName = ScalarVariable.INTEGER_TYPE)
     @JsonSetter(nulls = Nulls.AS_EMPTY)
     var integerAttribute: IntegerAttribute? = null
 
-    @JacksonXmlProperty(localName = REAL_TYPE)
+    @JacksonXmlProperty(localName = ScalarVariable.REAL_TYPE)
     @JsonSetter(nulls = Nulls.AS_EMPTY)
     var realAttribute: RealAttribute? = null
 
-    @JacksonXmlProperty(localName = STRING_TYPE)
+    @JacksonXmlProperty(localName = ScalarVariable.STRING_TYPE)
     @JsonSetter(nulls = Nulls.AS_EMPTY)
     var stringAttribute: StringAttribute? = null
 
-    @JacksonXmlProperty(localName = BOOLEAN_TYPE)
+    @JacksonXmlProperty(localName = ScalarVariable.BOOLEAN_TYPE)
     @JsonSetter(nulls = Nulls.AS_EMPTY)
     var booleanAttribute: BooleanAttribute? = null
 
-    @JacksonXmlProperty(localName = ENUMERATION_TYPE)
+    @JacksonXmlProperty(localName = ScalarVariable.ENUMERATION_TYPE)
     @JsonSetter(nulls = Nulls.AS_EMPTY)
     var enumerationAttribute: EnumerationAttribute? = null
 

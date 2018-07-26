@@ -53,7 +53,6 @@ class ControlledTemperatureTest {
         val fmu = File(TestUtils.getTEST_FMUs(),
                 "FMI_2.0/CoSimulation/${TestUtils.getOs()}" +
                         "/20sim/4.6.4.8004/ControlledTemperature/ControlledTemperature.fmu")
-        Assertions.assertTrue(fmu.exists())
         modelDescription = ModelDescriptionParser.parse(fmu).asCoSimulationModelDescription()
     }
 
@@ -73,7 +72,8 @@ class ControlledTemperatureTest {
 
     @Test
     fun testGetByValueReference() {
-        val result = modelDescription.modelVariables.getByValueReference(19)
+        val result = modelDescription.modelVariables
+                .getByValueReference(19)
         Assertions.assertEquals(5, result.size)
     }
 
@@ -134,15 +134,6 @@ class ControlledTemperatureTest {
         Assertions.assertEquals(298.0, variable.start!!)
     }
 
-//    @Test
-//    fun testMinMax() {
-//        val variables =  modelDescription.modelVariables
-//        val variable = variables.getByName("Temperature_Room") as RealVariable
-//        LOG.info("Temperature_Room=$variable")
-//        Assertions.assertEquals(2.0, variable.min)
-//        Assertions.assertEquals(4.0, variable.max)
-//    }
-
     @Test
     fun needsExecutionTool() {
         Assertions.assertTrue(!modelDescription.needsExecutionTool)
@@ -153,12 +144,11 @@ class ControlledTemperatureTest {
         Assertions.assertTrue(modelDescription.canNotUseMemoryManagementFunctions)
     }
 
-
     @Test
     fun testSourceFiles() {
 
         val sourceFiles = modelDescription.sourceFiles
-        LOG.info("$sourceFiles")
+        LOG.info("${sourceFiles.joinToString("\n")}")
         Assertions.assertTrue(sourceFiles.map { it.name }.containsAll(
                 Arrays.asList("EulerAngles.c",
                         "fmi2Functions.c",
