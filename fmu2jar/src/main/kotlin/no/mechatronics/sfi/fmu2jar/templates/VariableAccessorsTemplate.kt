@@ -26,7 +26,9 @@ package no.mechatronics.sfi.fmu2jar.templates
 
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.*
 
-
+/**
+ * @author Lars Ivar Hatledal
+ */
 private val TypedScalarVariable<*>.typeName: String
     get() = when(this) {
         is IntegerVariable -> INTEGER_TYPE
@@ -46,7 +48,6 @@ private val TypedScalarVariable<*>.kotlinTypename: String
         is EnumerationVariable -> "Int"
         else -> throw IllegalStateException("$this is not a valid variable type..")
     }
-
 
 
 object VariableAccessorsTemplate {
@@ -120,10 +121,10 @@ object VariableAccessorsTemplate {
         return StringBuilder().apply {
             modelVariables.filter {
                 it.causality == Causality.INPUT
-            }.forEach({
+            }.forEach {
                 generateGet(it, this)
                 generateSet(it, this)
-            })
+            }
         }.toString()
     }
 
@@ -131,9 +132,9 @@ object VariableAccessorsTemplate {
         return StringBuilder().apply {
             modelVariables.filter {
                 it.causality == Causality.OUTPUT
-            }.forEach({
+            }.forEach {
                 generateGet(it, this)
-            })
+            }
         }.toString()
     }
 
@@ -141,9 +142,9 @@ object VariableAccessorsTemplate {
         return StringBuilder().apply {
             modelVariables.filter {
                 it.causality == Causality.CALCULATED_PARAMETER
-            }.forEach({
+            }.forEach {
                 generateGet(it, this)
-            })
+            }
         }.toString()
     }
 
@@ -151,10 +152,10 @@ object VariableAccessorsTemplate {
         return StringBuilder().apply {
             modelVariables.filter {
                 it.causality == Causality.PARAMETER
-            }.forEach({
+            }.forEach {
                 generateGet(it, this)
                 generateSet(it, this)
-            })
+            }
         }.toString()
     }
 
@@ -162,10 +163,10 @@ object VariableAccessorsTemplate {
         return StringBuilder().apply {
             modelVariables.filter {
                 it.causality == Causality.LOCAL
-            }.forEach({
+            }.forEach {
                 generateGet(it, this)
                 generateSet(it, this)
-            })
+            }
         }.toString()
     }
 

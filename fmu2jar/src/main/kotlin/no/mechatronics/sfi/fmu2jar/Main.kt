@@ -24,10 +24,12 @@
 
 package no.mechatronics.sfi.fmu2jar
 
-
 import picocli.CommandLine
 import java.io.File
 
+/**
+ * @author Lars Ivar Hatledal
+ */
 class Main {
 
     companion object {
