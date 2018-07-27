@@ -1,101 +1,99 @@
 
 plugins {
-    id 'signing'
-    id 'maven-publish'
+    id 'com.gradle.plugin-publish' version '0.10.0' apply false
     id 'java-gradle-plugin'
-    id 'com.gradle.plugin-publish' version '0.9.10'
     id "org.gradle.kotlin.kotlin-dsl" version '0.18.0'
 }
 
-def snapshot = true
-version = "0.1"
-if (snapshot) {
-    version += "-SNAPSHOT"
-}
-group = "no.mechatronics.sfi.fmi4j"
-
+group = plugin_group
+version = plugin_version
 println("maven version for ${archivesBaseName} is: ${version}")
 
-def pluginId = "${group}.FmuPlugin"
-def description = "Gradle plugin for simplifying interaction with FMUs"
+def description = "Gradle plugin for simplifying programmatic interaction with FMUs"
 
 dependencies {
-    implementation group: "no.mechatronics.sfi.fmi4j", name: 'fmi-modeldescription', version: '0.7.5-SNAPSHOT', changing: true
+    implementation group: "no.mechatronics.sfi.fmi4j", name: 'fmi-modeldescription', version: fmi4j_version, changing: snapshot
 }
 
-gradlePlugin {
-    plugins {
-        fmuPlugin {
-            id = pluginId
-            implementationClass = pluginId
+if (!snapshot) {
+
+    apply plugin: 'com.gradle.plugin-publish'
+
+    gradlePlugin {
+        plugins {
+            fmuPlugin {
+                id = pluginId
+                implementationClass = pluginId
+            }
+        }
+
+    }
+
+    pluginBundle {
+        website = 'https://sfi-mechatronics.github.io/FMI4j/'
+        vcsUrl = 'https://github.com/SFI-Mechatronics/FMI4j'
+        description = "$description"
+        tags = ['fmi', 'fmu', 'fmi4j']
+
+        plugins {
+            fmuPlugin {
+                displayName = "Gradle FMU plugin"
+            }
         }
     }
 
-}
+} else {
 
-pluginBundle {
-    website = 'https://sfi-mechatronics.github.io/FMI4j/'
-    vcsUrl = 'https://github.com/SFI-Mechatronics/FMI4j'
-    description = 'Gradle plugin for working with FMUs on the JVM.'
-    tags = ['fmi', 'fmu', 'fmi4j']
+    apply plugin: 'signing'
+    apply plugin: 'maven-publish'
 
-    plugins {
-        fmuPlugin {
-            id = pluginId
-            displayName = "Gradle FMU plugin"
-            description = "$description"
-        }
-    }
-}
+    publishing {
+        publications {
+            mavenJava(MavenPublication) {
 
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
+                from components.java
 
-            from components.java
+                pom {
+                    name = archivesBaseName
+                    description = "$description"
+                    url = 'https://github.com/SFI-Mechatronics/FMI4j'
 
-            pom {
-                name = archivesBaseName
-                description = description
-                url = 'https://github.com/SFI-Mechatronics/FMI4j'
-
-                scm {
-                    connection = 'scm:git:git://github.com/SFI-Mechatronics/FMI4j.git'
-                    developerConnection = 'scm:git:ssh://github.com/SFI-Mechatronics/FMI4j.git'
-                    url = 'https://github.com/SFI-Mechatronics/FMI4j/tree/master'
-                }
-
-                licenses {
-                    license {
-                        name = 'The MIT License'
-                        url = 'https://opensource.org/licenses/mit-license.php'
+                    scm {
+                        connection = 'scm:git:git://github.com/SFI-Mechatronics/FMI4j.git'
+                        developerConnection = 'scm:git:ssh://github.com/SFI-Mechatronics/FMI4j.git'
+                        url = 'https://github.com/SFI-Mechatronics/FMI4j/tree/master'
                     }
-                }
 
-                developers {
-                    developer {
-                        id = 'laht'
-                        name = 'Lars Ivar Hatledal'
-                        email = 'laht@ntnu.no'
+                    licenses {
+                        license {
+                            name = 'The MIT License'
+                            url = 'https://opensource.org/licenses/mit-license.php'
+                        }
+                    }
+
+                    developers {
+                        developer {
+                            id = 'laht'
+                            name = 'Lars Ivar Hatledal'
+                            email = 'laht@ntnu.no'
+                        }
                     }
                 }
             }
         }
-    }
-    repositories {
-        maven {
-            def releasesRepoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2"
-            def snapshotsRepoUrl = "https://oss.sonatype.org/content/repositories/snapshots"
-            url version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
-            credentials {
-                username = ossrhUsername
-                password = ossrhPassword
+        repositories {
+            maven {
+                url "https://oss.sonatype.org/content/repositories/snapshots"
+                credentials {
+                    username = ossrhUsername
+                    password = ossrhPassword
+                }
             }
         }
     }
-}
 
-signing {
-    sign publishing.publications.mavenJava
-}
+    signing {
+        sign publishing.publications.mavenJava
+    }
 
+}

@@ -3,22 +3,36 @@ plugins {
     id "org.jetbrains.kotlin.jvm" version "1.2.51" apply false
 }
 
+
+ext.snapshot = true
+ext.plugin_version = '0.1'
+if (snapshot) {
+    plugin_version += "-SNAPSHOT"
+}
+ext.plugin_group = "no.mechatronics.sfi.fmi4j"
+ext.pluginId = "${plugin_group}.FmuPlugin"
+ext.fmi4j_version = !snapshot ? '0.8' : '0.8.1-SNAPSHOT'
+
 subprojects { sub ->
 
     apply plugin: 'kotlin'
 
     repositories {
-        mavenCentral()
-        maven {
-            url "https://oss.sonatype.org/content/repositories/snapshots"
+        jcenter()
+        if (snapshot) {
+            maven {
+                url "https://oss.sonatype.org/content/repositories/snapshots"
+            }
         }
     }
 
     def slf4j_version = '1.7.25'
     def junit_version = '5.2.0'
 
-    configurations.all {
-        resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+    if (snapshot) {
+       configurations.all {
+           resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+       }
     }
 
     dependencies {

@@ -1,17 +1,19 @@
 buildscript {
     repositories {
-        mavenCentral()
-        maven {
-            url "https://oss.sonatype.org/content/repositories/snapshots"
+        jcenter()
+        if (snapshot) {
+            maven {
+                url "https://oss.sonatype.org/content/repositories/snapshots"
+            }
         }
     }
     dependencies {
-        classpath "no.mechatronics.sfi.fmi4j:fmu-plugin:0.1-SNAPSHOT"
+        classpath "${plugin_group}:fmu-plugin:$plugin_version"
     }
 }
 
-apply plugin: 'no.mechatronics.sfi.fmi4j.FmuPlugin'
+apply plugin: "${pluginId}"
 
 dependencies {
-    implementation group: "no.mechatronics.sfi.fmi4j", name: 'fmi-import', version: '0.7.5-SNAPSHOT', changing: true
+    implementation group: "no.mechatronics.sfi.fmi4j", name: 'fmi-import', version: fmi4j_version, changing: snapshot
 }
