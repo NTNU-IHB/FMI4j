@@ -63,6 +63,25 @@ interface TypedScalarVariable<E> : ScalarVariable {
      */
     fun write(value: E): FmiStatus
 
+    /**
+     * Get the type name
+     *
+     * IntegerVariable -> "Integer"
+     * RealVariable -> "Real"
+     * StringVariable -> "String"
+     * BooleanVariable -> "Boolean"
+     * EnumerationVariable -> "Enumeration"
+     */
+    val typeName: String
+        get() = when(this) {
+            is IntegerVariable -> ScalarVariable.INTEGER_TYPE
+            is RealVariable -> ScalarVariable.REAL_TYPE
+            is StringVariable -> ScalarVariable.STRING_TYPE
+            is BooleanVariable -> ScalarVariable.BOOLEAN_TYPE
+            is EnumerationVariable -> ScalarVariable.ENUMERATION_TYPE
+            else -> throw IllegalStateException("Instance $this is not a valid type!")
+        }
+
     fun asIntegerVariable(): IntegerVariable = when {
         this is IntegerVariable -> this
         else -> throw IllegalAccessException("Variable is not an ${IntegerVariable::class.java.simpleName}, but an ${this::class.java.simpleName}")

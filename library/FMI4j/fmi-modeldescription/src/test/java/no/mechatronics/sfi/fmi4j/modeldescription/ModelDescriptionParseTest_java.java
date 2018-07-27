@@ -15,7 +15,8 @@ public class ModelDescriptionParseTest_java {
     public void test() {
 
         File fmu = new File(TestUtils.getTEST_FMUs(),
-                "FMI_2.0/CoSimulation/" + TestUtils.getOs() + "/20sim/4.6.4.8004/ControlledTemperature/ControlledTemperature.fmu");
+                "FMI_2.0/CoSimulation/" + TestUtils.getOs() +
+                        "/20sim/4.6.4.8004/ControlledTemperature/ControlledTemperature.fmu");
         Assertions.assertTrue(fmu.exists());
         ModelDescriptionParser.parse(fmu).asCoSimulationModelDescription();
 

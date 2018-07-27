@@ -111,7 +111,7 @@ interface ModelVariables : Iterable<TypedScalarVariable<*>> {
     }
 
     /**
-     * Return a list of all variables with the proved causality
+     * Return a list of all variables with the provided causality
      */
     fun getByCausality(causality: Causality): List<TypedScalarVariable<*>> {
         return filter { it.causality == causality }

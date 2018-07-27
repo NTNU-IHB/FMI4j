@@ -100,8 +100,8 @@ interface CommonModelDescription {
      * ScalarVariable / name” and in “TypeDefinitions / Type /
      * name” follow a particular convention. For the details, see section 2.2.9.
      * Currently standardized are:
-     * • “FLAT”: A list of strings (the default).
-     * • “STRUCTURED“: Hierarchical names with “.” as hierarchy separator,
+     * “FLAT”: A list of strings (the default).
+     * “STRUCTURED“: Hierarchical names with “.” as hierarchy separator,
      * and with array elements and derivative characterization.
      */
     val variableNamingConvention: VariableNamingConvention?
@@ -122,8 +122,7 @@ interface CommonModelDescription {
     val defaultExperiment: DefaultExperiment?
 
     /**
-     * The central FMU data structure defining all categories of the FMU that
-     * are visible/accessible via the FMU functions.
+     * List of defined ScalarVariables
      */
     val modelVariables: ModelVariables
 
@@ -146,6 +145,9 @@ interface CommonModelDescription {
      */
     val unitDefinitions: List<Unit>?
 
+    /**
+     * The type definitions
+     */
     val typeDefinitions: List<SimpleType>?
 
     /**

@@ -35,14 +35,17 @@ import java.io.Closeable
  */
 interface FmuInstance : Closeable {
 
+
+    val modelDescription: CommonModelDescription
+
+    val variableAccessor: FmuVariableAccessor
+
     /**
      * @see SpecificModelDescription.modelVariables
      */
+    @JvmDefault
     val modelVariables: ModelVariables
         get() = modelDescription.modelVariables
-
-    val modelDescription: CommonModelDescription
-    val variableAccessor: FmuVariableAccessor
 
     /**
      * The last status returned by the FMU
@@ -92,6 +95,7 @@ interface FmuInstance : Closeable {
      *
      * @see Closeable
      */
+    @JvmDefault
     override fun close() {
         terminate()
     }
@@ -99,6 +103,7 @@ interface FmuInstance : Closeable {
     /**
      * @see ModelVariables.getByName
      */
+    @JvmDefault
     fun getVariableByName(name: String): TypedScalarVariable<*> {
         return modelVariables.getByName(name)
     }
