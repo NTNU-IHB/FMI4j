@@ -8,13 +8,17 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.condition.OS
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import java.io.File
 
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class TestPlugin {
 
-    var temp = createTempDir("fmi4j_plugin", "")
+    private val LOG: Logger = LoggerFactory.getLogger(TestPlugin::class.java)
+
+    private var temp = createTempDir("fmi4j_plugin", "")
 
     init {
 
@@ -38,14 +42,13 @@ class TestPlugin {
 
     }
 
-    @Test
+
     fun test() {
 
         val task = "generateSources"
         val result = gradle(task)
+        LOG.debug(result.output)
         Assertions.assertEquals(result.task(":$task")?.outcome, TaskOutcome.SUCCESS)
-
-        println(result.output)
 
     }
 

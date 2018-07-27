@@ -1,0 +1,55 @@
+
+plugins {
+    id 'maven-publish'
+    id 'java-gradle-plugin'
+    id 'com.gradle.plugin-publish' version '0.9.10'
+    id "org.gradle.kotlin.kotlin-dsl" version '0.18.0'
+}
+
+
+def snapshot = true
+version = "0.1"
+if (snapshot) {
+    version += "-SNAPSHOT"
+}
+group = "no.mechatronics.sfi.fmi4j"
+
+def pluginId = "${group}.FmuPlugin"
+
+dependencies {
+    implementation group: "no.mechatronics.sfi.fmi4j", name: 'fmi-modeldescription', version: '0.7.5-SNAPSHOT', changing: true
+}
+
+gradlePlugin {
+    plugins {
+        fmuPlugin {
+            id = pluginId
+            implementationClass = pluginId
+        }
+    }
+
+}
+
+pluginBundle {
+    website = 'https://sfi-mechatronics.github.io/FMI4j/'
+    vcsUrl = 'https://github.com/SFI-Mechatronics/FMI4j'
+    description = 'Gradle plugin for working with FMUs on the JVM.'
+    tags = ['fmi', 'fmu', 'fmi4j']
+
+    plugins {
+        fmuPlugin {
+            id = pluginId
+            displayName = "Gradle FMU plugin"
+            description = "Gradle plugin for simplifying interaction with FMUs"
+        }
+    }
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+        }
+    }
+
+}
