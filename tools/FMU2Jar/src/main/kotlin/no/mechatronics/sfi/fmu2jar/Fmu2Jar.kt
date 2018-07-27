@@ -132,7 +132,7 @@ class Fmu2Jar(
 
         try {
 
-            val cmd = mutableListOf("${parentDir.absolutePath}/gradlew.bat", "clean", "build")
+            val cmd = mutableListOf("${parentDir.absolutePath}/gradlew", "clean", "build")
             if (options.mavenLocal) {
                 cmd.add("publishToMavenLocal")
             }

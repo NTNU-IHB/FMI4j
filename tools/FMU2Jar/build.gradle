@@ -17,7 +17,7 @@ repositories {
     }
 }
 
-def fmi4j_snapshot = false
+def fmi4j_snapshot = true
 def fmi4j_version = !fmi4j_snapshot ? '0.7.4' : '0.7.5-SNAPSHOT'
 
 if (fmi4j_snapshot) {

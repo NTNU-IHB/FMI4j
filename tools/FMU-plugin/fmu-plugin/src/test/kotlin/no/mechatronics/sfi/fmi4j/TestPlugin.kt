@@ -37,19 +37,17 @@ class TestPlugin {
         }
 
         File(temp, "build.gradle").apply {
-            writeText("plugins { id 'fmu-plugin'} \n")
+            writeText("plugins { id 'no.mechatronics.sfi.fmi4j.FmuPlugin'} \n")
         }
 
     }
 
 
     fun test() {
-
         val task = "generateSources"
         val result = gradle(task)
         LOG.debug(result.output)
         Assertions.assertEquals(result.task(":$task")?.outcome, TaskOutcome.SUCCESS)
-
     }
 
     @AfterAll

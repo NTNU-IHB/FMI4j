@@ -22,8 +22,14 @@
  * THE SOFTWARE.
  */
 
-package no.mechatronics.sfi.fmi4j.importer.me
+package no.mechatronics.sfi.fmi4j.solvers
 
+/**
+ * Interface for solvers
+ * A solver is used to solve Model Exchange FMUs
+ *
+ * @author Lars Ivar Hatledal
+ */
 interface Solver {
 
     /**
@@ -49,6 +55,9 @@ interface Solver {
 
 }
 
+/**
+ * @author Lars Ivar Hatledal
+ */
 interface Equations {
 
     /**

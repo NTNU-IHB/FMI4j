@@ -5,12 +5,10 @@ plugins {
 
 println "Gradle version is ${GradleVersion.current().version}"
 
-ext.hasOssrhUsername = hasProperty("ossrhUsername")
-ext.hasOssrhPassword = hasProperty("ossrhPassword")
-
 subprojects { sub ->
 
-    apply plugin: 'java'
+    apply plugin: 'kotlin'
+    apply plugin: 'java-library'
 
     repositories {
         mavenCentral()
@@ -25,7 +23,7 @@ subprojects { sub ->
     dependencies {
 
         sub.plugins.withId ('kotlin') {
-            compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+            implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
         }
 
         implementation group: 'org.slf4j', name: 'slf4j-api', version: slf4j_version

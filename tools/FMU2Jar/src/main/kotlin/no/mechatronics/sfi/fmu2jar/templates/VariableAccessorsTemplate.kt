@@ -27,35 +27,22 @@ package no.mechatronics.sfi.fmu2jar.templates
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.*
 
 /**
- * @author Lars Ivar Hatledal
+ * @author Lar Ivar Hatledal
  */
-private val TypedScalarVariable<*>.typeName: String
-    get() = when(this) {
-        is IntegerVariable -> INTEGER_TYPE
-        is RealVariable -> REAL_TYPE
-        is StringVariable -> STRING_TYPE
-        is BooleanVariable -> BOOLEAN_TYPE
-        is EnumerationVariable -> ENUMERATION_TYPE
-        else -> throw IllegalStateException("$this is not a valid variable type..")
-    }
-
-private val TypedScalarVariable<*>.kotlinTypename: String
-    get() = when (this) {
-        is IntegerVariable -> "Int"
-        is RealVariable -> "Real"
-        is StringVariable -> "String"
-        is BooleanVariable -> "Boolean"
-        is EnumerationVariable -> "Int"
-        else -> throw IllegalStateException("$this is not a valid variable type..")
-    }
-
-
 object VariableAccessorsTemplate {
 
-    private fun capitalizeFirstLetterAndReplaceDotsWithSlash(variable: ScalarVariable): String {
-        return variable.name.let {
-            it.substring(0, 1).capitalize() + it.substring(1, it.length).replace(".", "_")
+    private val TypedScalarVariable<*>.kotlinTypename: String
+        get() = when (this) {
+            is IntegerVariable -> "Int"
+            is RealVariable -> "Real"
+            is StringVariable -> "String"
+            is BooleanVariable -> "Boolean"
+            is EnumerationVariable -> "Int"
+            else -> throw IllegalStateException("$this is not a valid variable type..")
         }
+
+    private fun capitalizeFirstLetterAndReplaceDotsWithSlash(variable: ScalarVariable): String {
+        return variable.name.replace(".", "_").decapitalize()
     }
 
     private fun generateJavaDoc(v: TypedScalarVariable<*>) : String {
@@ -119,9 +106,7 @@ object VariableAccessorsTemplate {
 
     fun generateInputsBody(modelVariables: ModelVariables) : String {
         return StringBuilder().apply {
-            modelVariables.filter {
-                it.causality == Causality.INPUT
-            }.forEach {
+            modelVariables.getByCausality(Causality.INPUT).forEach {
                 generateGet(it, this)
                 generateSet(it, this)
             }
@@ -130,9 +115,7 @@ object VariableAccessorsTemplate {
 
     fun generateOutputsBody(modelVariables: ModelVariables) : String {
         return StringBuilder().apply {
-            modelVariables.filter {
-                it.causality == Causality.OUTPUT
-            }.forEach {
+            modelVariables.getByCausality(Causality.OUTPUT).forEach {
                 generateGet(it, this)
             }
         }.toString()
@@ -140,9 +123,7 @@ object VariableAccessorsTemplate {
 
     fun generateCalculatedParametersBody(modelVariables: ModelVariables) : String {
         return StringBuilder().apply {
-            modelVariables.filter {
-                it.causality == Causality.CALCULATED_PARAMETER
-            }.forEach {
+            modelVariables.getByCausality(Causality.CALCULATED_PARAMETER).forEach {
                 generateGet(it, this)
             }
         }.toString()
@@ -150,9 +131,7 @@ object VariableAccessorsTemplate {
 
     fun generateParametersBody(modelVariables: ModelVariables) : String {
         return StringBuilder().apply {
-            modelVariables.filter {
-                it.causality == Causality.PARAMETER
-            }.forEach {
+            modelVariables.getByCausality(Causality.PARAMETER).forEach {
                 generateGet(it, this)
                 generateSet(it, this)
             }
@@ -161,9 +140,7 @@ object VariableAccessorsTemplate {
 
     fun generateLocalsBody(modelVariables: ModelVariables) : String {
         return StringBuilder().apply {
-            modelVariables.filter {
-                it.causality == Causality.LOCAL
-            }.forEach {
+            modelVariables.getByCausality(Causality.LOCAL).forEach {
                 generateGet(it, this)
                 generateSet(it, this)
             }

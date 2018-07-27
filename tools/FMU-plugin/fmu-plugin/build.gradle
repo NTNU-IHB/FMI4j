@@ -1,11 +1,11 @@
 
 plugins {
+    id 'signing'
     id 'maven-publish'
     id 'java-gradle-plugin'
     id 'com.gradle.plugin-publish' version '0.9.10'
     id "org.gradle.kotlin.kotlin-dsl" version '0.18.0'
 }
-
 
 def snapshot = true
 version = "0.1"
@@ -14,7 +14,10 @@ if (snapshot) {
 }
 group = "no.mechatronics.sfi.fmi4j"
 
+println("maven version for ${archivesBaseName} is: ${version}")
+
 def pluginId = "${group}.FmuPlugin"
+def description = "Gradle plugin for simplifying interaction with FMUs"
 
 dependencies {
     implementation group: "no.mechatronics.sfi.fmi4j", name: 'fmi-modeldescription', version: '0.7.5-SNAPSHOT', changing: true
@@ -40,7 +43,7 @@ pluginBundle {
         fmuPlugin {
             id = pluginId
             displayName = "Gradle FMU plugin"
-            description = "Gradle plugin for simplifying interaction with FMUs"
+            description = "$description"
         }
     }
 }
@@ -48,8 +51,51 @@ pluginBundle {
 publishing {
     publications {
         mavenJava(MavenPublication) {
+
             from components.java
+
+            pom {
+                name = archivesBaseName
+                description = description
+                url = 'https://github.com/SFI-Mechatronics/FMI4j'
+
+                scm {
+                    connection = 'scm:git:git://github.com/SFI-Mechatronics/FMI4j.git'
+                    developerConnection = 'scm:git:ssh://github.com/SFI-Mechatronics/FMI4j.git'
+                    url = 'https://github.com/SFI-Mechatronics/FMI4j/tree/master'
+                }
+
+                licenses {
+                    license {
+                        name = 'The MIT License'
+                        url = 'https://opensource.org/licenses/mit-license.php'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id = 'laht'
+                        name = 'Lars Ivar Hatledal'
+                        email = 'laht@ntnu.no'
+                    }
+                }
+            }
         }
     }
-
+    repositories {
+        maven {
+            def releasesRepoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2"
+            def snapshotsRepoUrl = "https://oss.sonatype.org/content/repositories/snapshots"
+            url version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+            credentials {
+                username = ossrhUsername
+                password = ossrhPassword
+            }
+        }
+    }
 }
+
+signing {
+    sign publishing.publications.mavenJava
+}
+

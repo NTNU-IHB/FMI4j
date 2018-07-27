@@ -1,7 +1,6 @@
 buildscript {
     repositories {
         mavenCentral()
-        mavenLocal()
         maven {
             url "https://oss.sonatype.org/content/repositories/snapshots"
         }
@@ -11,17 +10,8 @@ buildscript {
     }
 }
 
-
 apply plugin: 'no.mechatronics.sfi.fmi4j.FmuPlugin'
 
 dependencies {
     implementation group: "no.mechatronics.sfi.fmi4j", name: 'fmi-import', version: '0.7.5-SNAPSHOT', changing: true
 }
-
-//sourceSets {
-//    main {
-//        java {
-//            srcDirs += new File(buildDir, "generated/fmus")
-//        }
-//    }
-//}

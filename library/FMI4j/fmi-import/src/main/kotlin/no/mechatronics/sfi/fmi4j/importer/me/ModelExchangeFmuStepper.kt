@@ -27,6 +27,8 @@ package no.mechatronics.sfi.fmi4j.importer.me
 import no.mechatronics.sfi.fmi4j.common.FmiSimulation
 import no.mechatronics.sfi.fmi4j.common.FmiStatus
 import no.mechatronics.sfi.fmi4j.common.FmuInstance
+import no.mechatronics.sfi.fmi4j.solvers.Equations
+import no.mechatronics.sfi.fmi4j.solvers.Solver
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 

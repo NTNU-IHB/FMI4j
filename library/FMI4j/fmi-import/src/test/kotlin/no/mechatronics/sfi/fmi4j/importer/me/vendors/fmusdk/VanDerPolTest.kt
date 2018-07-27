@@ -27,7 +27,7 @@ package no.mechatronics.sfi.fmi4j.importer.me.vendors.fmusdk
 import no.mechatronics.sfi.fmi4j.TestUtils
 import no.mechatronics.sfi.fmi4j.common.FmiStatus
 import no.mechatronics.sfi.fmi4j.importer.Fmu
-import no.mechatronics.sfi.fmi4j.importer.me.Solver
+import no.mechatronics.sfi.fmi4j.solvers.Solver
 import no.sfi.mechatronics.fmi4j.me.ApacheSolvers
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Assertions

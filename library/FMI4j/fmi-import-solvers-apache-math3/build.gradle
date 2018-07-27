@@ -1,13 +1,9 @@
 
-plugins {
-    id 'kotlin'
-}
-
 apply from: rootProject.file('publisher.gradle')
 
 dependencies {
 
-    compile project(':fmi-import')
-    compile group: 'org.apache.commons', name: 'commons-math3', version: '3.6.1'
+    api project(':fmi-import-solvers-api')
+    api group: 'org.apache.commons', name: 'commons-math3', version: '3.6.1'
 
 }

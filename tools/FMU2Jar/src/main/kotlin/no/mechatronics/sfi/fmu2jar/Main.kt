@@ -60,7 +60,7 @@ class Args : Runnable {
     @CommandLine.Option(names = ["-h", "--help"], description = ["Print this message and quits."], usageHelp = true)
     private var showHelp = false
 
-    @CommandLine.Option(names = ["-fmu", "--fmuPath"], description = ["Path to the FMU."], required = true)
+    @CommandLine.Option(names = ["-f", "--fmu"], description = ["Path to the FMU."], required = true)
     private lateinit var fmuPath: File
 
     @CommandLine.Option(names = ["-mvn", "--maven"], description = ["Should the .jar be published to maven local?"], required = false)

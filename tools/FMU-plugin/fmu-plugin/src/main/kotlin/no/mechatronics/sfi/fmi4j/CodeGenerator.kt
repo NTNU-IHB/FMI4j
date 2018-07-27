@@ -59,7 +59,7 @@ class CodeGenerator(
 
         var solverImport = ""
         if (md.supportsModelExchange) {
-            solverImport = "import no.mechatronics.sfi.fmi4j.importer.me.Solver"
+            solverImport = "import no.mechatronics.sfi.fmi4j.solvers.Solver"
         }
 
         return """
@@ -175,6 +175,9 @@ public class $modelName implements FmiSimulation {
     private Parameters parameters;
     private CalculatedParameters calculatedParameters;
 
+    /**
+     * Access variables with causality=LOCAL
+     */
     public Locals getLocals() {
         if (locals == null) {
             locals = new Locals();
@@ -182,6 +185,9 @@ public class $modelName implements FmiSimulation {
         return locals;
     }
 
+    /**
+     * Access variables with causality=INPUT
+     */
     public Inputs getInputs() {
      if (inputs == null) {
             inputs = new Inputs();
@@ -189,6 +195,9 @@ public class $modelName implements FmiSimulation {
         return inputs;
     }
 
+    /**
+     * Access variables with causality=OUTPUT
+     */
     public Outputs getOutputs() {
      if (outputs == null) {
             outputs = new Outputs();
@@ -196,6 +205,9 @@ public class $modelName implements FmiSimulation {
         return outputs;
     }
 
+    /**
+     * Access variables with causality=PARAMETER
+     */
     public Parameters getParameters() {
      if (parameters == null) {
             parameters = new Parameters();
@@ -203,6 +215,9 @@ public class $modelName implements FmiSimulation {
         return parameters;
     }
 
+    /**
+     * Access variables with causality=CALCULATED_PARAMETER
+     */
     public CalculatedParameters getCalculatedParameters() {
      if (calculatedParameters == null) {
             calculatedParameters = new CalculatedParameters();

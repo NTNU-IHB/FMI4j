@@ -30,7 +30,6 @@ import com.sun.jna.Pointer
 import no.mechatronics.sfi.fmi4j.importer.cs.CoSimulationFmuInstance
 import no.mechatronics.sfi.fmi4j.importer.me.ModelExchangeFmuInstance
 import no.mechatronics.sfi.fmi4j.importer.me.ModelExchangeFmuStepper
-import no.mechatronics.sfi.fmi4j.importer.me.Solver
 import no.mechatronics.sfi.fmi4j.importer.misc.FmiBoolean
 import no.mechatronics.sfi.fmi4j.importer.misc.FmiLibraryProvider
 import no.mechatronics.sfi.fmi4j.importer.misc.extractTo
@@ -44,6 +43,7 @@ import no.mechatronics.sfi.fmi4j.importer.proxy.v2.structs.FmiCallbackFunctions
 import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescriptionParser
 import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescriptionProvider
 import no.mechatronics.sfi.fmi4j.modeldescription.SpecificModelDescription
+import no.mechatronics.sfi.fmi4j.solvers.Solver
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.Closeable
@@ -63,7 +63,7 @@ private const val WINDOWS_LIBRARY_EXTENSION = ".dll"
 private const val LINUX_LIBRARY_EXTENSION = ".so"
 
 private const val FMU_EXTENSION = "fmu"
-internal const val FMI4J_FILE_PREFIX = "fmi4j_"
+private const val FMI4J_FILE_PREFIX = "fmi4j_"
 
 private const val MODEL_DESC = "modelDescription.xml"
 

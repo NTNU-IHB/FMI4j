@@ -24,8 +24,8 @@
 
 package no.sfi.mechatronics.fmi4j.me
 
-import no.mechatronics.sfi.fmi4j.importer.me.Equations
-import no.mechatronics.sfi.fmi4j.importer.me.Solver
+import no.mechatronics.sfi.fmi4j.solvers.Equations
+import no.mechatronics.sfi.fmi4j.solvers.Solver
 import org.apache.commons.math3.ode.FirstOrderDifferentialEquations
 import org.apache.commons.math3.ode.FirstOrderIntegrator
 
@@ -41,7 +41,6 @@ class ApacheSolver(
 
     override val name: String
         get() = solver.name
-
 
     lateinit var equations: FirstOrderDifferentialEquations
 
