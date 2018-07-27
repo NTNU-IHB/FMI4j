@@ -1,0 +1,75 @@
+
+plugins {
+    id "application"
+    id "org.jetbrains.kotlin.jvm" version "1.2.51"
+    id "com.github.johnrengelman.shadow" version "2.0.4"
+}
+
+println "Gradle version is ${GradleVersion.current().version}"
+
+def group = "no.mechatronics.sfi.fmu2jar"
+mainClassName = "${group}.Main"
+
+repositories {
+    mavenCentral()
+    maven {
+        url "https://oss.sonatype.org/content/repositories/snapshots"
+    }
+}
+
+def fmi4j_snapshot = false
+def fmi4j_version = !fmi4j_snapshot ? '0.7.4' : '0.7.5-SNAPSHOT'
+
+if (fmi4j_snapshot) {
+    configurations.all {
+        resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+    }
+}
+
+def slf4j_version = '1.7.25'
+def junit_version = '5.2.0'
+
+dependencies {
+
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+
+    compile group: 'info.picocli', name: 'picocli', version: '3.1.0'
+    compile group: 'no.mechatronics.sfi.fmi4j', name: 'fmi-modeldescription', version: fmi4j_version, changing: fmi4j_snapshot
+
+    compile group: 'org.slf4j', name: 'slf4j-api', version: slf4j_version
+    runtime group: 'org.slf4j', name: 'slf4j-log4j12', version: slf4j_version
+
+    testCompile("org.junit.jupiter:junit-jupiter-api:$junit_version")
+    testCompile("org.junit.jupiter:junit-jupiter-params:$junit_version")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junit_version")
+
+    testCompile group: 'no.mechatronics.sfi.fmi4j', name: 'fmi-import', version: fmi4j_version, changing: fmi4j_snapshot
+
+}
+
+test {
+    useJUnitPlatform()
+}
+
+compileKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+}
+compileTestKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+}
+
+shadowJar {
+    baseName = "fmu2jar"
+    classifier = null
+    version = null
+}
+
+task deleteCachedControlledTemperature(type: Delete) {
+
+    def fmuName = "ControlledTemperature"
+    def m2 = System.getProperty("user.home") + "/.m2/repository"
+    delete "$m2/${group.replace(".", "/")}/$fmuName"
+    
+}
+
+clean.dependsOn(deleteCachedControlledTemperature)

@@ -1,0 +1,25 @@
+
+plugins {
+    id 'kotlin'
+    id "com.github.johnrengelman.shadow" version "2.0.4"
+}
+
+apply from: rootProject.file('publisher.gradle')
+
+dependencies {
+
+    compile project(':fmi-modeldescription')
+
+    implementation group: 'net.java.dev.jna', name: 'jna', version: '4.5.2'
+    implementation group: 'net.java.dev.jna', name: 'jna-platform', version: '4.5.2'
+
+    testImplementation project(':fmi-import-solvers-apache-math3')
+    testImplementation group: 'org.siani.javafmi', name: 'fmu-wrapper', version: '2.24.4'
+
+}
+
+shadowJar {
+    baseName = archivesBaseName + "-shadow"
+    classifier = null
+    version = null
+}
