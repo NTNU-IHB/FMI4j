@@ -278,27 +278,27 @@ public class $modelName implements FmiSimulation {
 
     }
 
-    public static class VariableAccessor<E> {
-
-        private final TypedScalarVariable<E> variable;
-
-        private VariableAccessor(TypedScalarVariable<E> variable) {
-            this.variable = variable;
-        }
-
-        public FmiStatus write(E value) {
-            return variable.write(value);
-        }
-
-        public FmuRead<E> read() {
-            return variable.read();
-        }
-
-        public TypedScalarVariable<E> get() {
-            return variable;
-        }
-
-    }
+//    public static class VariableAccessor<E> {
+//
+//        private final TypedScalarVariable<E> variable;
+//
+//        private VariableAccessor(TypedScalarVariable<E> variable) {
+//            this.variable = variable;
+//        }
+//
+//        public FmiStatus write(E value) {
+//            return variable.write(value);
+//        }
+//
+//        public FmuRead<E> read() {
+//            return variable.read();
+//        }
+//
+//        public TypedScalarVariable<E> get() {
+//            return variable;
+//        }
+//
+//    }
 
 }
 
@@ -344,23 +344,20 @@ public class $modelName implements FmiSimulation {
 
             md.modelVariables.getByCausality(causality).forEach { v ->
 
-                val functionName = v.name.replace(".", "_").decapitalize()
-                val typeData = when (v) {
-                    is IntegerVariable -> "Integer" to "asIntegerVariable"
-                    is RealVariable -> "Double" to "asRealVariable"
-                    is StringVariable -> "String" to "asStringVariable"
-                    is BooleanVariable -> "Boolean" to "asBooleanVariable"
-                    is EnumerationVariable -> "Integer" to "asEnumerationVariable"
-                    else -> throw IllegalArgumentException("$v is not a valid type!")
+                if (!v.name.contains("[")) {
+
+                    val functionName = v.name.replace(".", "_").decapitalize()
+
+                    sb.append("""
+                    |${generateJavaDoc(v)}
+                    |public ${v.typeName}Variable $functionName() {
+                    |    return instance.getModelDescription().getModelVariables().getByName("${v.name}").as${v.typeName}Variable();
+                    |}
+                    |
+                    """.trimMargin())
+
                 }
 
-                sb.append("""
-                |${generateJavaDoc(v)}
-                |public VariableAccessor<${typeData.first}> $functionName() {
-                |    return new VariableAccessor(instance.getModelDescription().getModelVariables().getByName("${v.name}").${typeData.second}());
-                |}
-                |
-                """.trimMargin())
 
             }
 

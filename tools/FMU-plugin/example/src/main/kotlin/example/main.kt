@@ -8,8 +8,12 @@ fun main(args: Array<String>) {
     ControlledTemperature.newInstance().use {
 
         it.init()
-        println(it.outputs.temperature_Reference().read())
 
+        it.outputs.temperature_Reference().apply {
+
+            println("$name=${read()}")
+
+        }
     }
 
 }

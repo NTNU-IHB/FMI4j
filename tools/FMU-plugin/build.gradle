@@ -5,7 +5,6 @@ plugins {
 
 subprojects { sub ->
 
-    apply plugin: 'java'
     apply plugin: 'kotlin'
 
     repositories {

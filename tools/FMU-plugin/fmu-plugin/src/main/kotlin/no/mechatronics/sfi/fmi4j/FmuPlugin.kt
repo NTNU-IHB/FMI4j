@@ -45,17 +45,15 @@ open class FmuPlugin : Plugin<Project> {
 
     override fun apply(target: Project) {
 
-        val srcDir = File(target.projectDir, "src/main/resources/fmus")
-        val outDir = File(target.buildDir, "generated/fmus")
-
         target.run {
 
+            val srcDir = File(projectDir, "src/main/resources/fmus")
+            val outDir = File(buildDir, "generated/fmus")
+
             the<JavaPluginConvention>().sourceSets {
-                "main" {
-                    java {
-                        srcDirs += outDir
+                    getByName("main") {
+                        java.srcDir(outDir)
                     }
-                }
             }
 
             tasks {
@@ -63,9 +61,6 @@ open class FmuPlugin : Plugin<Project> {
                 val compileJava by tasks.getting(JavaCompile::class)
 
                 "generateSources"(Task::class) {
-
-
-
 
                     compileSources(srcDir, outDir)
                     compileJava.dependsOn(this)
