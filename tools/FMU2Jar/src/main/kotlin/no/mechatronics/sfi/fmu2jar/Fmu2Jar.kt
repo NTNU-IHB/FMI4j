@@ -26,13 +26,13 @@ package no.mechatronics.sfi.fmu2jar
 
 import no.mechatronics.sfi.fmi4j.modeldescription.CommonModelDescription
 import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescriptionParser
-import no.mechatronics.sfi.fmu2jar.templates.CodeGeneration
+import no.mechatronics.sfi.fmu2jar.cli.Args
+import no.mechatronics.sfi.fmu2jar.cli.GenerateOptions
+import no.mechatronics.sfi.fmu2jar.codegen.CodeGenerator
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import java.io.File
-import java.io.FileInputStream
-import java.io.FileOutputStream
-import java.io.InputStream
+import picocli.CommandLine
+import java.io.*
 import java.nio.file.Files
 import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
@@ -44,8 +44,15 @@ class Fmu2Jar(
         private val file: File
 ) {
 
-    private companion object {
-        val LOG: Logger = LoggerFactory.getLogger(Fmu2Jar::class.java)
+    companion object {
+
+        private val LOG: Logger = LoggerFactory.getLogger(Fmu2Jar::class.java)
+
+        @JvmStatic
+        fun main(args: Array<String>) {
+            CommandLine.run(Args(), System.out, *args)
+        }
+
     }
 
     private val modelDescription: CommonModelDescription
@@ -61,7 +68,7 @@ class Fmu2Jar(
         FileOutputStream(File(parentDir, "build.gradle")).use {
             javaClass.classLoader.getResourceAsStream("build.gradle").copyTo(it)
         }
-        LOG.debug("Build file copied")
+        LOG.debug("Build file copied.")
     }
 
     private fun copyGradleWrapper(parentDir: File) {
@@ -84,18 +91,22 @@ class Fmu2Jar(
                 nextEntry = zis.nextEntry
             }
         }
-        LOG.debug("Gradle wrapper copied")
+        LOG.debug("Gradle wrapper copied.")
     }
 
     private fun copySourceFile(parentDir: File) {
-        File(parentDir, "src/main/kotlin/no/mechatronics/sfi/fmu2jar/${modelDescription.modelName}.kt").apply {
+
+        val fileName = "${modelDescription.modelName}.java"
+        File(parentDir, "src/main/java/no/mechatronics/sfi/fmu2jar/$fileName").apply {
             if (!parentFile.exists()) {
                 parentFile.mkdirs()
             }
             createNewFile()
-            writeText(CodeGeneration.generateWrapper(modelDescription))
+            CodeGenerator(modelDescription).apply {
+                writeText(generateBody())
+            }
         }
-        LOG.debug("Source file copied")
+        LOG.debug("Source file '$fileName' copied.")
     }
 
     private fun copyFmuFile(parentDir: File) {
@@ -109,7 +120,7 @@ class Fmu2Jar(
                 }
             }
         }
-        LOG.debug("FMU copied")
+        LOG.debug("FMU copied.")
     }
 
     fun generateJar(options: GenerateOptions) {
@@ -132,7 +143,7 @@ class Fmu2Jar(
 
         try {
 
-            val cmd = mutableListOf("${parentDir.absolutePath}/gradlew", "clean", "build")
+            val cmd = mutableListOf("${parentDir.absolutePath}/gradlew.bat", "clean", "build")
             if (options.mavenLocal) {
                 cmd.add("publishToMavenLocal")
             }
@@ -169,7 +180,6 @@ class Fmu2Jar(
         }
 
     }
-
 
 }
 

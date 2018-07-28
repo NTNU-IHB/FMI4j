@@ -1,11 +1,11 @@
-package no.mechatronics.sfi.fmu2jar.templates
+package no.mechatronics.sfi.fmu2jar.codegen
 
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.File
 import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescriptionParser
-import no.mechatronics.sfi.fmu2jar.TEST_FMUs
-import no.mechatronics.sfi.fmu2jar.currentOS
+import no.mechatronics.sfi.fmu2jar.util.TEST_FMUs
+import no.mechatronics.sfi.fmu2jar.util.currentOS
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable
@@ -25,7 +25,7 @@ class CodeGenerationTest {
                         "ControlledTemperature/ControlledTemperature.fmu")
         Assertions.assertTrue(file.exists())
         val md = ModelDescriptionParser.parse(file)
-        LOG.info(CodeGeneration.generateWrapper(md) )
+        LOG.info( CodeGenerator(md).generateBody() )
 
     }
 

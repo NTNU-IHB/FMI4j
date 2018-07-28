@@ -1,4 +1,4 @@
-package no.mechatronics.sfi.fmu2jar
+package no.mechatronics.sfi.fmu2jar.util
 
 import org.junit.jupiter.api.condition.OS
 

@@ -1,6 +1,8 @@
 package no.mechatronics.sfi.fmu2jar
 
 import no.mechatronics.sfi.fmi4j.common.FmiSimulation
+import no.mechatronics.sfi.fmu2jar.util.TEST_FMUs
+import no.mechatronics.sfi.fmu2jar.util.currentOS
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
@@ -35,24 +37,24 @@ class MainTest {
     fun testMain() {
 
         val fmuName = "ControlledTemperature"
-        val file = File("$TEST_FMUs" +
+        val file = File(TEST_FMUs +
                 "/FMI_2.0/CoSimulation/$currentOS/20sim/4.6.4.8004/ControlledTemperature/$fmuName.fmu")
         Assertions.assertTrue(file.exists())
         val args = arrayOf<String>(
-                "-fmu", file.absolutePath,
+                "--fmu", file.absolutePath,
                 "-out", out.absolutePath,
                 "-mvn")
 
-        LOG.info(args.joinToString(" "))
+        LOG.debug(args.joinToString(" "))
 
-        Main.main(args)
+        Fmu2Jar.main(args)
 
         val myJar = out.listFiles()[0]
         Assertions.assertTrue(myJar.name.endsWith(".jar"))
         Assertions.assertTrue(myJar.length() > 0)
 
         val child = URLClassLoader(arrayOf(myJar.toURI().toURL()), this.javaClass.classLoader)
-        val classToLoad = Class.forName("no.mechatronics.sfi.fmu2jar.${fmuName.toLowerCase()}.$fmuName", true, child)
+        val classToLoad = Class.forName("no.mechatronics.sfi.fmu2jar.$fmuName", true, child)
 
         val method = classToLoad.getDeclaredMethod("newInstance")
         val instance = method.invoke(null) as FmiSimulation

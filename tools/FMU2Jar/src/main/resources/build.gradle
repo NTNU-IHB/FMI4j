@@ -2,7 +2,6 @@
 plugins {
     id "java-library"
     id "maven-publish"
-    id "org.jetbrains.kotlin.jvm" version "1.2.51"
 }
 
 println "Gradle version is ${GradleVersion.current().version}"
@@ -17,7 +16,6 @@ repositories {
 def fmi4j_version = '0.8'
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
     api group: 'no.mechatronics.sfi.fmi4j', name: 'fmi-import', version: fmi4j_version
     api group: 'no.mechatronics.sfi.fmi4j', name: 'fmi-import-solvers-apache-math3', version: fmi4j_version
 }
@@ -25,11 +23,6 @@ dependencies {
 task sourcesJar(type: Jar, dependsOn: classes, description: 'Creates a jar from the source files.') {
     classifier = 'sources'
     from sourceSets.main.allSource
-}
-
-task javadocJar (type: Jar, dependsOn: javadoc) {
-    classifier = 'javadoc'
-    from javadoc.destinationDir
 }
 
 jar {
@@ -44,7 +37,6 @@ publishing {
         mavenJava(MavenPublication) {
             from components.java
             artifact sourcesJar
-            artifact javadocJar
         }
     }
 
