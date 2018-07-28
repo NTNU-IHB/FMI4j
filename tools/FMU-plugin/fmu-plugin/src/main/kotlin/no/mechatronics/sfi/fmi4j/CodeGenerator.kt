@@ -24,6 +24,7 @@
 
 package no.mechatronics.sfi.fmi4j
 
+import no.mechatronics.sfi.fmi4j.modeldescription.CommonModelDescription
 import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescriptionProvider
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.*
 import org.slf4j.LoggerFactory
@@ -33,29 +34,14 @@ import java.io.File
  * @author Lars Ivar Hatledal
  */
 class CodeGenerator(
-        private val outputDir: File,
-        private val md: ModelDescriptionProvider
+        private val md: CommonModelDescription
 ) {
 
     private val LOG = LoggerFactory.getLogger(CodeGenerator::class.java)
 
     private val modelName = md.modelName
 
-    fun generate() {
-
-        generateBody().also {
-            File(outputDir, "no/mechatronics/sfi/fmi4j/$modelName.java").apply {
-                parentFile.mkdirs()
-                if (!createNewFile()) {
-                    LOG.warn("'$this' already exist!")
-                }
-                writeText(it)
-            }
-        }
-
-    }
-
-    private fun generateBody(): String {
+    fun generateBody(): String {
 
         var solverImport = ""
         if (md.supportsModelExchange) {
@@ -292,28 +278,6 @@ public class $modelName implements FmiSimulation {
         ${generateAccessors(Causality.LOCAL)}
 
     }
-
-//    public static class VariableAccessor<E> {
-//
-//        private final TypedScalarVariable<E> variable;
-//
-//        private VariableAccessor(TypedScalarVariable<E> variable) {
-//            this.variable = variable;
-//        }
-//
-//        public FmiStatus write(E value) {
-//            return variable.write(value);
-//        }
-//
-//        public FmuRead<E> read() {
-//            return variable.read();
-//        }
-//
-//        public TypedScalarVariable<E> get() {
-//            return variable;
-//        }
-//
-//    }
 
 }
 

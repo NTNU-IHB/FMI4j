@@ -72,7 +72,7 @@ open class FmuPlugin : Plugin<Project> {
 
     }
 
-    private fun compileSources(srcDir: File, outDir: File) {
+    private fun compileSources(srcDir: File, outputDir: File) {
 
         if (!srcDir.exists()) {
             throw IllegalArgumentException("No such file: '$srcDir'")
@@ -82,7 +82,14 @@ open class FmuPlugin : Plugin<Project> {
 
             if (file.name.toLowerCase().endsWith(".fmu")) {
                 val md = ModelDescriptionParser.parse(file)
-                CodeGenerator(outDir, md).generate()
+                CodeGenerator(md).apply {
+                    generateBody().also {
+                        File(outputDir, "no/mechatronics/sfi/fmi4j/${md.modelName}.java").apply {
+                            parentFile.mkdirs()
+                            writeText(it)
+                        }
+                    }
+                }
             }
 
         }
