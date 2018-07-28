@@ -23,7 +23,7 @@ To get started head over to the [Wiki](https://github.com/SFI-Mechatronics/FMI4j
 
 ```java
 
-Fmu fmu = Fmu.from(new File("path/to/fmu.fmu));
+Fmu fmu = Fmu.from(new File("path/to/fmu.fmu)); //URLs are also supported
 
 FmiSimulation instance = fmu.asCoSimulationFmu().newInstance();
 
@@ -49,8 +49,8 @@ fmu.close() // <- also done automatically by the library if you forget to do it 
 
 For any FMUs located in your ```resources/fmus``` folder, the plugin generates Java code which makes it easier to interact with them progamatically.
 
-Among other things, it generates type safe getter and setters for FMU variables that are grouped by causality. 
-It also generates javadoc based on the information found in the ```modelDescription.xml```
+Among other things, it generates type safe getter and setters for the FMU variables - grouped by causality. 
+It also generates javadoc based on the information found in the ```modelDescription.xml```.
 
 To use it, simply add the following to your build.gradle
 
@@ -58,10 +58,10 @@ To use it, simply add the following to your build.gradle
 
 buildscript {
     repositories {
-        mavenCentral()
+        jcenter()
     }
     dependencies {
-        classpath "no.mechatronics.sfi.fmi4j:fmu-plugin:0.1-SNAPSHOT"
+        classpath "no.mechatronics.sfi.fmi4j:fmu-plugin:0.1"
     }
 }
 
