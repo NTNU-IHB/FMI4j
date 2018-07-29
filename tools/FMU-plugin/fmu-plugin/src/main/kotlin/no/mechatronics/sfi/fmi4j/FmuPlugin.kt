@@ -24,18 +24,16 @@
 
 package no.mechatronics.sfi.fmi4j
 
+import no.mechatronics.sfi.fmi4j.codegen.CodeGenerator
 import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescriptionParser
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.compile.JavaCompile
-import org.gradle.jvm.tasks.Jar
 import org.gradle.kotlin.dsl.getting
 import org.gradle.kotlin.dsl.invoke
 import org.gradle.kotlin.dsl.the
-import org.gradle.kotlin.dsl.withConvention
-import org.gradle.language.java.JavaSourceSet
 import java.io.File
 
 /**

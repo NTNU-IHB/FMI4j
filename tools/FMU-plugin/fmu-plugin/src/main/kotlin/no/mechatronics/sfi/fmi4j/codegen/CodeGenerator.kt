@@ -22,13 +22,11 @@
  * THE SOFTWARE.
  */
 
-package no.mechatronics.sfi.fmi4j
+package no.mechatronics.sfi.fmi4j.codegen
 
 import no.mechatronics.sfi.fmi4j.modeldescription.CommonModelDescription
-import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescriptionProvider
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.*
 import org.slf4j.LoggerFactory
-import java.io.File
 
 /**
  * @author Lars Ivar Hatledal
