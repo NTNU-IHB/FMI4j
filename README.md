@@ -37,7 +37,7 @@ instance.init(); //throws on error
 double stop = 10;
 double stepSize = 1.0/100;
 while(instance.getCurrentTime() <= stop) {
-  instance.doStep(stepSize);
+    instance.doStep(stepSize);
 }
 instance.terminate(); //or close
 
@@ -51,6 +51,36 @@ For any FMUs located in your ```resources/fmus``` folder, the plugin generates J
 
 Among other things, it generates type safe getter and setters for the FMU variables - grouped by causality. 
 It also generates javadoc based on the information found in the ```modelDescription.xml```.
+
+Example:
+
+```kotlin
+
+ControlledTemperature.newInstance().use { instance ->
+
+        instance.init()
+        
+        //Variables are grouped by causality and have types!
+        val tempRef: RealVariable 
+                = instance.outputs.temperature_Reference()
+
+        val stop = 10.0
+        val stepSize = 1E-2
+        while (instance.currentTime <= stop) {
+            
+            if (!instance.doStep(stepSize)) {
+                break;
+            }
+
+            val read = tempRef.read()
+            println("t=${instance.currentTime}, ${tempRef.name}=${read.value}")
+            
+        }
+
+    }
+
+```
+
 
 To use it, simply add the following to your build.gradle
 
