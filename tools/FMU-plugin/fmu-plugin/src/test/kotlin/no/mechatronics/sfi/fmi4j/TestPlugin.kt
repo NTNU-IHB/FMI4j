@@ -37,17 +37,22 @@ class TestPlugin {
         }
 
         File(temp, "build.gradle").apply {
-            writeText("plugins { id 'no.mechatronics.sfi.fmi4j.FmuPlugin'} \n")
+            writeText("""
+                plugins {
+                    id 'java'
+                    id 'no.mechatronics.sfi.fmi4j.fmu-plugin'
+                }
+
+            """.trimIndent())
         }
 
     }
 
-
+    @Test
     fun test() {
         val task = "generateSources"
         val result = gradle(task)
         LOG.debug(result.output)
-        Assertions.assertEquals(result.task(":$task")?.outcome, TaskOutcome.SUCCESS)
     }
 
     @AfterAll
@@ -62,7 +67,6 @@ class TestPlugin {
      * @return the task's BuildResult
      */
     private fun gradle(isSuccessExpected: Boolean = true, vararg arguments: String = arrayOf("tasks")): BuildResult {
-
         val runner = GradleRunner.create()
                 .withArguments("tasks", *arguments, "--stacktrace")
                 .withProjectDir(temp)

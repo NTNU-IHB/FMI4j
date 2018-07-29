@@ -1,99 +1,49 @@
 
 plugins {
-    id 'com.gradle.plugin-publish' version '0.10.0' apply false
+    id 'maven-publish'
     id 'java-gradle-plugin'
+    id 'com.gradle.plugin-publish' version '0.10.0'
     id "org.gradle.kotlin.kotlin-dsl" version '0.18.0'
 }
 
-group = plugin_group
-version = plugin_version
+version = "0.1-SNAPSHOT"
+group = "no.mechatronics.sfi.fmi4j"
 println("maven version for ${archivesBaseName} is: ${version}")
 
+def pluginId = "${group}.${archivesBaseName}"
 def description = "Gradle plugin for simplifying programmatic interaction with FMUs"
 
 dependencies {
-    implementation group: "no.mechatronics.sfi.fmi4j", name: 'fmi-modeldescription', version: fmi4j_version, changing: snapshot
+    implementation group: "no.mechatronics.sfi.fmi4j", name: 'fmi-modeldescription', version: '0.8'
 }
 
-if (!snapshot) {
-
-    apply plugin: 'com.gradle.plugin-publish'
-
-    gradlePlugin {
-        plugins {
-            fmuPlugin {
-                id = pluginId
-                implementationClass = pluginId
-            }
-        }
-
-    }
-
-    pluginBundle {
-        website = 'https://sfi-mechatronics.github.io/FMI4j/'
-        vcsUrl = 'https://github.com/SFI-Mechatronics/FMI4j'
-        description = "$description"
-        tags = ['fmi', 'fmu', 'fmi4j']
-
-        plugins {
-            fmuPlugin {
-                displayName = "Gradle FMU plugin"
-            }
+gradlePlugin {
+    plugins {
+        fmuPlugin {
+            id = pluginId
+            implementationClass = "${group}.FmuPlugin"
         }
     }
-
-} else {
-
-    apply plugin: 'signing'
-    apply plugin: 'maven-publish'
-
-    publishing {
-        publications {
-            mavenJava(MavenPublication) {
-
-                from components.java
-
-                pom {
-                    name = archivesBaseName
-                    description = "$description"
-                    url = 'https://github.com/SFI-Mechatronics/FMI4j'
-
-                    scm {
-                        connection = 'scm:git:git://github.com/SFI-Mechatronics/FMI4j.git'
-                        developerConnection = 'scm:git:ssh://github.com/SFI-Mechatronics/FMI4j.git'
-                        url = 'https://github.com/SFI-Mechatronics/FMI4j/tree/master'
-                    }
-
-                    licenses {
-                        license {
-                            name = 'The MIT License'
-                            url = 'https://opensource.org/licenses/mit-license.php'
-                        }
-                    }
-
-                    developers {
-                        developer {
-                            id = 'laht'
-                            name = 'Lars Ivar Hatledal'
-                            email = 'laht@ntnu.no'
-                        }
-                    }
-                }
-            }
-        }
-        repositories {
-            maven {
-                url "https://oss.sonatype.org/content/repositories/snapshots"
-                credentials {
-                    username = ossrhUsername
-                    password = ossrhPassword
-                }
-            }
-        }
-    }
-
-    signing {
-        sign publishing.publications.mavenJava
-    }
-
 }
+
+pluginBundle {
+    website = 'https://sfi-mechatronics.github.io/FMI4j/'
+    vcsUrl = 'https://github.com/SFI-Mechatronics/FMI4j'
+    description = description
+    tags = ['fmi', 'fmu', 'fmi4j']
+
+    plugins {
+        fmuPlugin {
+            displayName = "Gradle FMU plugin"
+        }
+    }
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+        }
+    }
+}
+
