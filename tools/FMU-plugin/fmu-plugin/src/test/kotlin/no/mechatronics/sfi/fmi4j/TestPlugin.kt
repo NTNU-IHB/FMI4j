@@ -40,7 +40,7 @@ class TestPlugin {
             writeText("""
                 plugins {
                     id 'java'
-                    id 'no.mechatronics.sfi.fmi4j.fmu-plugin'
+                    id 'no.mechatronics.sfi.fmi4j.FmuPlugin'
                 }
 
             """.trimIndent())

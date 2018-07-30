@@ -29,12 +29,25 @@ import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescriptionParser
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.artifacts.Dependency
+import org.gradle.api.artifacts.DependencyResolutionListener
+import org.gradle.api.artifacts.ResolvableDependencies
 import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.kotlin.dsl.getting
 import org.gradle.kotlin.dsl.invoke
 import org.gradle.kotlin.dsl.the
 import java.io.File
+
+
+open class FmuPluginExtension(
+        project: Project
+) {
+
+    var configurationName: String = "compile"
+    var version: String = "0.8"
+
+}
 
 /**
  * @author Lars Ivar Hatledal
@@ -54,12 +67,24 @@ open class FmuPlugin : Plugin<Project> {
                     }
             }
 
+            val fmi4j = extensions.create("fmi4j", FmuPluginExtension::class.java, this)
+
+            gradle.addListener(object: DependencyResolutionListener {
+                override fun beforeResolve(_dependencies: ResolvableDependencies) {
+                    dependencies.add(fmi4j.configurationName, "no.mechatronics.sfi.fmi4j:fmi-import:${fmi4j.version}")
+                    gradle.removeListener(this)
+                }
+
+                override fun afterResolve(dependencies: ResolvableDependencies?) {
+
+                }
+            })
+
             tasks {
 
                 val compileJava by tasks.getting(JavaCompile::class)
 
                 "generateSources"(Task::class) {
-
                     compileSources(srcDir, outDir)
                     compileJava.dependsOn(this)
 
@@ -91,7 +116,6 @@ open class FmuPlugin : Plugin<Project> {
             }
 
         }
-
 
 
     }

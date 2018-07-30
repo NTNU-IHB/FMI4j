@@ -1,17 +1,14 @@
 
 plugins {
     id 'maven-publish'
-    id 'java-gradle-plugin'
     id 'com.gradle.plugin-publish' version '0.10.0'
+    id 'java-gradle-plugin'
     id "org.gradle.kotlin.kotlin-dsl" version '0.18.0'
 }
 
-version = "0.1-SNAPSHOT"
+version = "0.2"
 group = "no.mechatronics.sfi.fmi4j"
 println("maven version for ${archivesBaseName} is: ${version}")
-
-def pluginId = "${group}.FmuPlugin"
-def description = "Gradle plugin for simplifying programmatic interaction with FMUs"
 
 dependencies {
     implementation group: "no.mechatronics.sfi.fmi4j", name: 'fmi-modeldescription', version: '0.8'
@@ -20,8 +17,8 @@ dependencies {
 gradlePlugin {
     plugins {
         fmuPlugin {
-            id = pluginId
-            implementationClass = pluginId
+            id = "${group}.FmuPlugin"
+            implementationClass = "${group}.FmuPlugin"
         }
     }
 }
@@ -29,7 +26,7 @@ gradlePlugin {
 pluginBundle {
     website = 'https://sfi-mechatronics.github.io/FMI4j/'
     vcsUrl = 'https://github.com/SFI-Mechatronics/FMI4j'
-    description = description
+    description = "Gradle plugin for simplifying programmatic interaction with FMUs"
     tags = ['fmi', 'fmu', 'fmi4j']
 
     plugins {
