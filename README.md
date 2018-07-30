@@ -23,7 +23,7 @@ To get started head over to the [Wiki](https://github.com/SFI-Mechatronics/FMI4j
 
 ```java
 
-Fmu fmu = Fmu.from(new File("path/to/fmu.fmu)); //URLs are also supported
+Fmu fmu = Fmu.from(new File("path/to/fmu.fmu")); //URLs are also supported
 
 FmiSimulation instance = fmu.asCoSimulationFmu().newInstance();
 
@@ -39,7 +39,7 @@ double stepSize = 1.0/100;
 while(instance.getCurrentTime() <= stop) {
     instance.doStep(stepSize);
 }
-instance.terminate(); //or close
+instance.terminate(); //or close, try with resources is also supported
 
 fmu.close() // <- also done automatically by the library if you forget to do it yourself
 
@@ -52,11 +52,11 @@ For any FMUs located in your ```resources/fmus``` folder, the plugin generates J
 Among other things, it generates type safe getter and setters for the FMU variables - grouped by causality. 
 It also generates javadoc based on the information found in the ```modelDescription.xml```.
 
-Example:
+Example for an FMU named _ControlledTemperature_ given in Kotlin:
 
 ```kotlin
 
-ControlledTemperature.newInstance().use { instance ->
+ControlledTemperature.newInstance().use { instance -> //try with resources
 
         instance.init()
         
@@ -100,11 +100,12 @@ compile group: "no.mechatronics.sfi.fmi4j", name: 'fmi-import', version: '0.8'
 
 ### <a name="fmu2jar"></a> FMU2Jar
 
-FMU2Jar is similar to the Gradle-plugin, but you can use it without Gradle. 
+FMU2Jar is similar to the Gradle plugin, but it does not require Gradle. 
 
-It is a command line application which takes an FMU in and produces a Jar file. 
+It's a command line application which takes an FMU in and produces a Jar file. 
 You can also tell the application to install the Jar into your local maven repository (``.m2``),
 The jar file contains code that makes it easier to work with the FMU progamatically just as the Gradle plugin does. 
+
 
 #### Running tests
 
