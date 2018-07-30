@@ -1,14 +1,6 @@
-buildscript {
-    repositories {
-        jcenter()
-        mavenLocal()
-    }
-    dependencies {
-        classpath 'no.mechatronics.sfi.fmi4j:fmu-plugin:0.1-SNAPSHOT'
-    }
+plugins {
+    id "no.mechatronics.sfi.fmi4j.FmuPlugin" version "0.1"
 }
-
-apply plugin: 'no.mechatronics.sfi.fmi4j.fmu-plugin'
 
 dependencies {
     implementation group: "no.mechatronics.sfi.fmi4j", name: 'fmi-import', version: "0.8"

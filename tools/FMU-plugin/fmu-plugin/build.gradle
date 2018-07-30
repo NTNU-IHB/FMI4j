@@ -10,7 +10,7 @@ version = "0.1-SNAPSHOT"
 group = "no.mechatronics.sfi.fmi4j"
 println("maven version for ${archivesBaseName} is: ${version}")
 
-def pluginId = "${group}.${archivesBaseName}"
+def pluginId = "${group}.FmuPlugin"
 def description = "Gradle plugin for simplifying programmatic interaction with FMUs"
 
 dependencies {
@@ -21,7 +21,7 @@ gradlePlugin {
     plugins {
         fmuPlugin {
             id = pluginId
-            implementationClass = "${group}.FmuPlugin"
+            implementationClass = pluginId
         }
     }
 }
@@ -43,6 +43,9 @@ publishing {
     publications {
         mavenJava(MavenPublication) {
             from components.java
+            pom {
+                name = "FmuPlugin"
+            }
         }
     }
 }
