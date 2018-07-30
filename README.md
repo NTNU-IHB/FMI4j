@@ -81,21 +81,14 @@ ControlledTemperature.newInstance().use { instance ->
 
 ```
 
+The plugin has been added to the [Gradle Plugin portal](https://plugins.gradle.org/plugin/no.mechatronics.sfi.fmi4j.FmuPlugin).
 
 To use it, simply add the following to your build.gradle
 
 ```gradle
-
-buildscript {
-    repositories {
-        jcenter()
-    }
-    dependencies {
-        classpath "no.mechatronics.sfi.fmi4j:fmu-plugin:0.1"
-    }
+plugins {
+    id "no.mechatronics.sfi.fmi4j.FmuPlugin" version "0.1"
 }
-
-apply plugin: 'no.mechatronics.sfi.fmi4j.FmuPlugin'
 
 ```
 
