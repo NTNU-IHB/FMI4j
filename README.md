@@ -87,16 +87,13 @@ To use it, simply add the following to your build.gradle
 
 ```gradle
 plugins {
-    id "no.mechatronics.sfi.fmi4j.FmuPlugin" version "0.1"
+    id "no.mechatronics.sfi.fmi4j.FmuPlugin" version "0.2"
 }
 
 ```
 
-and add a dependency to the latest version of ```fmi-import```
+The plugin will automatically add the required FMI4j artifact _fmi-import_ to your project. 
 
-```gradle
-compile group: "no.mechatronics.sfi.fmi4j", name: 'fmi-import', version: '0.8'
-```
 
 ### <a name="fmu2jar"></a> FMU2Jar
 
