@@ -92,8 +92,14 @@ plugins {
 
 ```
 
-The plugin will automatically add the required FMI4j artifact _fmi-import_ to your project. 
+The plugin will automatically add a dependency to the FMI4j artifact ```fmi-import```. It defaults to the _implementation_ configuration. You can change this behaviour through the _fmi4j_ extension. E.g:
 
+```gradle
+fmi4j {
+    version = "0.8"
+    configurationName = "compile"
+}
+```
 
 ### <a name="fmu2jar"></a> FMU2Jar
 
