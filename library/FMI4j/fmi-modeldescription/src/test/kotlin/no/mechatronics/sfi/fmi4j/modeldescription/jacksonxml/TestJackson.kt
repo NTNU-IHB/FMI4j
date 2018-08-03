@@ -29,7 +29,8 @@ class TestJackson {
     fun test() {
 
         val file = File(TestUtils.getTEST_FMUs(),
-                "FMI_2.0/CoSimulation/${TestUtils.getOs()}/MapleSim/2017/ControlledTemperature/ControlledTemperature.fmu")
+                "FMI_2.0/CoSimulation/${TestUtils.getOs()}" +
+                        "/MapleSim/2017/ControlledTemperature/ControlledTemperature.fmu")
         Assertions.assertTrue(file.exists())
 
         val mapper = XmlMapper().apply {
@@ -37,11 +38,17 @@ class TestJackson {
             registerModule(JacksonXmlModule())
             enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS)
         }
-        val md = mapper.readValue<ModelDescriptionImpl>(ModelDescriptionParser.extractModelDescriptionXml(file))
+
+        val md = ModelDescriptionParser.extractModelDescriptionXml(file).let {
+            LOG.info(it)
+            mapper.readValue<ModelDescriptionImpl>(it)
+        }
 
         LOG.info("${md.modelVariables.size}")
         LOG.info("${md.modelStructure.outputs}")
         LOG.info("${md.modelStructure.derivatives}")
+
+        LOG.info("${md.unitDefinitions}")
 
     }
 
