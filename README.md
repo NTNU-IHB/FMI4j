@@ -114,8 +114,7 @@ The jar file contains code that makes it easier to work with the FMU progamatica
 In order to run the tests, a system variable named __TEST_FMUs__ must be present on your system. 
 This variable should point to the location of the content found [here](https://github.com/markaren/TEST_FMUs).
 
-
-
+___
 
 To get started head over to the [Wiki](https://github.com/SFI-Mechatronics/FMI4j/wiki)!
 
