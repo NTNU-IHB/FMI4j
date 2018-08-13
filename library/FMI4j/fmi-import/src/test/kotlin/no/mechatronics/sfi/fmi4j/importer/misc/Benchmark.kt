@@ -65,7 +65,7 @@ object Benchmark {
         Fmu.from(File(option.fmuPath)).use { fmu ->
 
             val iter = 1
-            var total = 0.0
+            var elapsed = 0L
             for (i in 0..iter) {
 
                 fmu.asCoSimulationFmu().newInstance(loggingOn = false).use { instance ->
@@ -82,10 +82,10 @@ object Benchmark {
                             sum += h.read().value
                             j += 1
                         }
-                    }.also { total = it.toDouble() }
+                    }.also { elapsed = it }
 
                     if (i == iter) {
-                        println("FMI4j: ${total}ms")
+                        println("FMI4j: ${elapsed}ms")
                         println("sum=$sum, iter=$j")
                     }
 
@@ -100,7 +100,7 @@ object Benchmark {
     fun runJavaFMI(option: TestOptions) {
 
         val iter = 1
-        var total = 0.0
+        var elapsed = 0L
         for (i in 0..iter) {
 
             Simulation(option.fmuPath).apply {
@@ -116,10 +116,10 @@ object Benchmark {
                         sum += h.asDouble()
                         j++
                     }
-                }.also { total = it.toDouble() }
+                }.also { elapsed = it }
 
                 if (i == iter) {
-                    println("JavaFMI: ${total}ms")
+                    println("JavaFMI: ${elapsed}ms")
                     println("sum=$sum, iter=$j")
                 }
 

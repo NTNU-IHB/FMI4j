@@ -39,8 +39,7 @@ import kotlin.collections.set
  *
  * @author Lars Ivar Hatledal
  */
-open class FmiCallbackFunctions private constructor(
-) : Structure() {
+open class FmiCallbackFunctions private constructor() : Structure() {
 
     internal companion object {
         private val LOG: Logger = LoggerFactory.getLogger(FmiCallbackFunctions::class.java)

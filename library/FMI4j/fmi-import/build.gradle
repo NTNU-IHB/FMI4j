@@ -1,5 +1,8 @@
 
+import org.apache.tools.ant.taskdefs.condition.Os
+
 plugins {
+    id "c"
     id "com.github.johnrengelman.shadow" version "2.0.4"
 }
 
@@ -23,3 +26,35 @@ shadowJar {
     classifier = null
     version = null
 }
+
+
+model {
+    components {
+        fmi(NativeLibrarySpec) {
+            binaries.all {
+                cCompiler.args "-I/usr/lib/jvm/java-8-openjdk-amd64/include"
+                cCompiler.args "-I/usr/lib/jvm/java-8-openjdk-amd64/include/linux"
+            }
+        }
+    }
+}
+
+
+
+task generateJNI(type: Exec) {
+
+    if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+
+        commandLine 'cmd', '/c', 'javac'
+
+    } else if (Os.isFamily(Os.FAMILY_UNIX)) {
+
+        commandLine 'javac', "${workingDir}/src/main/java/no/mechatronics/sfi/fmi4j/jni/FmiLibrary.java", "-h", "src/fmi/c"
+
+    } else {
+
+    }
+
+}
+
+generateJNI.dependsOn(compileJava)
