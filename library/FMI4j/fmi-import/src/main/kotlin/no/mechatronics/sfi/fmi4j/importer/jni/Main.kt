@@ -24,8 +24,9 @@ fun main(args: Array<String>) {
 
     try {
 
-        val libName = "${temp.absolutePath}/binaries/linux64/ControlledTemperature.so"
+        val libName = "${temp.absolutePath}/binaries/$currentOS/ControlledTemperature.so"
         FmiLibrary(libName).use { lib ->
+
             println(lib.fmiVersion)
             println(lib.typesPlatform)
 

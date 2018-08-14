@@ -28,97 +28,84 @@ shadowJar {
 }
 
 
-model {
 
-    platforms {
-        linux32 {
-            architecture "x86"
-            operatingSystem "linux"
+    model {
+
+        platforms {
+            linux32 {
+                architecture "x86"
+                operatingSystem "linux"
+            }
+            linux64 {
+                architecture "x86_64"
+                operatingSystem "linux"
+            }
+            win32 {
+                architecture "x86"
+                operatingSystem "windows"
+            }
+            win64 {
+                architecture "x86_64"
+                operatingSystem "windows"
+            }
         }
-        linux64 {
-            architecture "x86_64"
-            operatingSystem "linux"
+
+        toolChains {
+            gcc(Gcc) {
+                target("linux32")
+                target("linux64")
+                target("win32")
+                target("win64")
+            }
+            clang(Clang) {
+                target("linux32")
+                target("linux64")
+                target("win32")
+                target("win64")
+            }
         }
-        win32 {
-            architecture "x86"
-            operatingSystem "windows"
-        }
-        win64 {
-            architecture "x86_64"
-            operatingSystem "windows"
-        }
-    }
-
-    toolChains {
-        gcc(Gcc) {
-            target("linux32")
-            target("linux64")
-            target("win32")
-            target("win64")
-        }
-        clang(Clang) {
-            target("linux32")
-            target("linux64")
-            target("win32")
-            target("win64")
-        }
-    }
 
 
-    components {
-        fmi(NativeLibrarySpec) {
-            targetPlatform "linux32"
-            targetPlatform "linux64"
-            targetPlatform "win32"
-            targetPlatform "win64"
+        components {
+            fmi(NativeLibrarySpec) {
 
+                targetPlatform "linux32"
+                targetPlatform "linux64"
+                targetPlatform "win32"
+                targetPlatform "win64"
 
+                binaries.all {
 
-            binaries.all {
-
-                cCompiler.args '-I', "${org.gradle.internal.jvm.Jvm.current().javaHome}/include"
-                if (Os.isFamily(Os.FAMILY_UNIX)) {
+                    cCompiler.args '-I', "${org.gradle.internal.jvm.Jvm.current().javaHome}/include"
                     cCompiler.args '-I', "${org.gradle.internal.jvm.Jvm.current().javaHome}/include/linux"
-                } else if (Os.isFamily(Os.FAMILY_WINDOWS)) {
-                    cCompiler.args '-I', "${org.gradle.internal.jvm.Jvm.current().javaHome}/include/win32"
-                }
 
-                if (targetPlatform.operatingSystem.windows) {
-                    cCompiler.args "-fPIC"
+                    if (targetPlatform.operatingSystem.windows) {
+                        cCompiler.args "-fPIC"
+                    }
+
                 }
 
             }
 
         }
 
-    }
-
-    buildTypes {
-        release
-    }
-
-
-    tasks {
-        buildAllExecutables(Task) {
-            dependsOn $.binaries.findAll { it.buildable }
+        buildTypes {
+            release
         }
-        copyNativeLibs(Copy) {
-            from "$buildDir/libs/fmi/shared"
-            into "$projectDir/src/main/resources/native/fmi"
-            dependsOn buildAllExecutables
+
+
+        tasks {
+            buildAllExecutables(Task) {
+                dependsOn $.binaries.findAll { it.buildable }
+            }
+            copyNativeLibs(Copy) {
+                from "$buildDir/libs/fmi/shared"
+                into "$projectDir/src/main/resources/native/fmi"
+                dependsOn buildAllExecutables
+            }
         }
     }
-}
 
-println System.properties.'java.home'
-
-//task copyNativeLibs(type: Copy) {
-//    from "$buildDir/libs/fmi/shared"
-//    into "$projectDir/src/main/resources/native/fmi"
-//}
-//
-//copyNativeLibs.dependsOn(buildAllExecutables)
-////compileJava.dependsOn(copyNativeLibs)
 
 
 //task generateJNI(type: Exec) {

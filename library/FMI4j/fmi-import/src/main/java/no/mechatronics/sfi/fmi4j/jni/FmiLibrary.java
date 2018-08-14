@@ -11,7 +11,7 @@ public class FmiLibrary implements Closeable {
 
     static {
 
-        String fileName = "libfmi.so";
+        String fileName = OSUtil.getLibPrefix() + "fmi." + OSUtil.getLibExtension();
         try (InputStream is = FmiLibrary.class.getClassLoader()
                 .getResourceAsStream("native/fmi/" + OSUtil.getCurrentOS() + "/" + fileName)) {
 
