@@ -100,7 +100,6 @@ shadowJar {
             release
         }
 
-
         tasks {
             buildAllExecutables(Task) {
                 dependsOn $.binaries.findAll { it.buildable }
