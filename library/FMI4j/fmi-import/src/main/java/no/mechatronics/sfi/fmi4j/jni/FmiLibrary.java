@@ -1,14 +1,38 @@
 package no.mechatronics.sfi.fmi4j.jni;
 
+import no.mechatronics.sfi.fmi4j.importer.misc.OSUtil;
+
 import java.io.Closeable;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 
 public class FmiLibrary implements Closeable {
 
     static {
 
-        System.load("/home/laht/Documents/FMI4j/library/FMI4j/fmi-import/build/libs/fmi/shared/libfmi.so");
+        String fileName = "libfmi.so";
+        try (InputStream is = FmiLibrary.class.getClassLoader()
+                .getResourceAsStream("native/fmi/" + OSUtil.getCurrentOS() + "/" + fileName)) {
+
+            File copy = new File(fileName);
+            copy.deleteOnExit();
+            try (FileOutputStream fos = new FileOutputStream(copy)) {
+                byte[] buffer = new byte[1024];
+                int bytes = is.read(buffer);
+                while (bytes >= 0) {
+                    fos.write(buffer, 0, bytes);
+                    bytes = is.read(buffer);
+                }
+            }
+            System.load(copy.getAbsolutePath());
+
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
 
     }
+
 
     public FmiLibrary(String libName) {
         if (!load(libName)) {

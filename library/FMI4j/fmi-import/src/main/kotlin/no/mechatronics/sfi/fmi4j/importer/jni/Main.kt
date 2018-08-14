@@ -1,17 +1,17 @@
 package no.mechatronics.sfi.fmi4j.importer.jni
 
 import no.mechatronics.sfi.fmi4j.importer.misc.extractTo
+import no.mechatronics.sfi.fmi4j.importer.misc.currentOS
 import no.mechatronics.sfi.fmi4j.jni.FmiLibrary
 import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescriptionParser
 import java.io.File
-import java.util.*
 import kotlin.system.measureTimeMillis
 
 
 fun main(args: Array<String>) {
 
     val file = File("${System.getenv("TEST_FMUs")}" +
-            "/FMI_2.0/CoSimulation/linux64/20sim/4.6.4.8004/" +
+            "/FMI_2.0/CoSimulation/$currentOS/20sim/4.6.4.8004/" +
             "ControlledTemperature/ControlledTemperature.fmu")
 
 
@@ -19,21 +19,18 @@ fun main(args: Array<String>) {
         file.extractTo(it)
     }
 
-    val md = ModelDescriptionParser.parse(File(temp, "modelDescription.xml").readText()).asCoSimulationModelDescription()
+    val md = ModelDescriptionParser.parse(File(temp, "modelDescription.xml")
+            .readText()).asCoSimulationModelDescription()
 
     try {
+
         val libName = "${temp.absolutePath}/binaries/linux64/ControlledTemperature.so"
-
-        System.load(libName)
-
         FmiLibrary(libName).use { lib ->
             println(lib.fmiVersion)
             println(lib.typesPlatform)
 
             for (i in 0..2) {
                 val c = lib.instantiate(md.modelIdentifier, 1, md.guid, File(temp, "resources").absolutePath, false, false)
-
-                println(c)
 
                 val status = lib.setupExperiment(c, false, 1E-3, 0.0, false, 0.0)
 
@@ -42,9 +39,6 @@ fun main(args: Array<String>) {
 
                 val d = DoubleArray(1)
                 val vr = intArrayOf(47)
-
-                lib.getReal(c, vr, d)
-                println("value=${Arrays.toString(d)}")
 
                 measureTimeMillis {
 
