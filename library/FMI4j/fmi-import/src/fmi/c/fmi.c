@@ -161,15 +161,15 @@ JNIEXPORT void JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_freeInstanc
     return;
 }
 
-JNIEXPORT int JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_getInteger(JNIEnv *env, jobject obj, jlong c, jintArray vr, jintArray ref) {
+JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_getInteger(JNIEnv *env, jobject obj, jlong c, jintArray vr, jintArray ref) {
 
     const jsize size = (*env)->GetArrayLength(env, vr);
-    jint *_vr = (*env)->GetIntArrayElements(env, vr, 0);
+    const jint *_vr = (*env)->GetIntArrayElements(env, vr, 0);
 
-    fmi2Status (*fmi2GetInteger)(fmi2Component, const fmi2ValueReference[], size_t, fmi2Integer   []);
+    fmi2Status (*fmi2GetInteger)(fmi2Component, const fmi2ValueReference[], size_t, fmi2Integer[]);
     fmi2GetInteger = load_function("fmi2GetInteger");
 
-    int* _ref = malloc(sizeof(int) * size);
+    fmi2Integer* _ref = malloc(sizeof(fmi2Integer) * size);
     int status = (*fmi2GetInteger)((void*) c, _vr, size, _ref);
 
     (*env)->SetIntArrayRegion(env, ref, 0, size, _ref);
@@ -179,30 +179,31 @@ JNIEXPORT int JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_getInteger(J
     return status;
 }
 
-JNIEXPORT int JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_getReal(JNIEnv *env, jobject obj, jlong c, jintArray vr, jdoubleArray ref) {
+JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_getReal(JNIEnv *env, jobject obj, jlong c, jintArray vr, jdoubleArray ref) {
 
     const jsize size = (*env)->GetArrayLength(env, vr);
-    jint *_vr = (*env)->GetIntArrayElements(env, vr, 0);
+    const jint *_vr = (*env)->GetIntArrayElements(env, vr, 0);
 
-    fmi2Status (*fmi2GetReal)(fmi2Component, const fmi2ValueReference[], size_t, fmi2Real   []);
+    fmi2Status (*fmi2GetReal)(fmi2Component, const fmi2ValueReference[], size_t, fmi2Real[]);
     fmi2GetReal = load_function("fmi2GetReal");
 
-    double* _ref = malloc(sizeof(double) * size);
+    fmi2Real* _ref = malloc(sizeof(fmi2Real) * size);
     int status = (*fmi2GetReal)((void*) c, _vr, size, _ref);
 
     (*env)->SetDoubleArrayRegion(env, ref, 0, size, _ref);
 
     free(_ref);
+    (*env)->ReleaseIntArrayElements(env, vr, _vr, NULL);
 
     return status;
 }
 
-JNIEXPORT int JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_getString(JNIEnv *env, jobject obj, jlong c, jintArray vr, jobjectArray ref) {
+JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_getString(JNIEnv *env, jobject obj, jlong c, jintArray vr, jobjectArray ref) {
 
     const jsize size = (*env)->GetArrayLength(env, vr);
-    jint *_vr = (*env)->GetIntArrayElements(env, vr, 0);
+    const jint *_vr = (*env)->GetIntArrayElements(env, vr, 0);
 
-    fmi2Status (*fmi2GetString)(fmi2Component, const fmi2ValueReference[], size_t, fmi2String   []);
+    fmi2Status (*fmi2GetString)(fmi2Component, const fmi2ValueReference[], size_t, fmi2String[]);
     fmi2GetString = load_function("fmi2GetString");
 
     char* _ref = malloc(sizeof(char) * size);
@@ -219,6 +220,99 @@ JNIEXPORT int JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_getString(JN
     }
 
     free(_ref);
+    (*env)->ReleaseIntArrayElements(env, vr, _vr, NULL);
+
+    return status;
+}
+
+JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_getBoolean(JNIEnv *env, jobject obj, jlong c, jintArray vr, jbooleanArray ref) {
+
+    const jsize size = (*env)->GetArrayLength(env, vr);
+    const jboolean *_vr = (*env)->GetBooleanArrayElements(env, vr, 0);
+
+    fmi2Status (*fmi2GetBoolean)(fmi2Component, const fmi2ValueReference[], size_t, fmi2Boolean[]);
+    fmi2GetBoolean = load_function("fmi2GetBoolean");
+
+    fmi2Boolean* _ref = malloc(sizeof(fmi2Boolean) * size);
+    int status = (*fmi2GetBoolean)((void*) c, _vr, size, _ref);
+
+    (*env)->SetBooleanArrayRegion(env, ref, 0, size, _ref);
+
+    free(_ref);
+    (*env)->ReleaseIntArrayElements(env, vr, _vr, NULL);
+
+    return status;
+}
+
+JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_setInteger(JNIEnv *env, jobject obj, jlong c, jintArray vr, jintArray values) {
+
+    const jsize size = (*env)->GetArrayLength(env, vr);
+    const jint *_vr = (*env)->GetIntArrayElements(env, vr, 0);
+    const jint *_values = (*env)->GetIntArrayElements(env, vr, 0);
+
+    fmi2Status (*fmi2SetInteger)(fmi2Component, const fmi2ValueReference[], size_t, fmi2Integer[]);
+    fmi2SetInteger = load_function("fmi2SetInteger");
+
+    int status = (*fmi2SetInteger)((void*) c, _vr, size, _values);
+
+    (*env)->ReleaseIntArrayElements(env, vr, _vr, NULL);
+    (*env)->ReleaseIntArrayElements(env, values, _values, NULL);
+
+    return status;
+}
+
+JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_setReal(JNIEnv *env, jobject obj, jlong c, jintArray vr, jdoubleArray values) {
+
+    const jsize size = (*env)->GetArrayLength(env, vr);
+    const jint *_vr = (*env)->GetIntArrayElements(env, vr, 0);
+    const jdouble *_values = (*env)->GetDoubleArrayElements(env, vr, 0);
+
+    fmi2Status (*fmi2SetReal)(fmi2Component, const fmi2ValueReference[], size_t, fmi2Real[]);
+    fmi2SetReal = load_function("fmi2SetReal");
+
+    int status = (*fmi2SetReal)((void*) c, _vr, size, _values);
+
+    (*env)->ReleaseIntArrayElements(env, vr, _vr, NULL);
+    (*env)->ReleaseDoubleArrayElements(env, values, _values, NULL);
+
+    return status;
+}
+
+JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_setString(JNIEnv *env, jobject obj, jlong c, jintArray vr, jobjectArray values) {
+
+    const jsize size = (*env)->GetArrayLength(env, vr);
+    const jint *_vr = (*env)->GetIntArrayElements(env, vr, 0);
+
+    char* _values = malloc(sizeof(char) * size);
+    for (int i = 0; i < size; i++) {
+       jstring str = (jstring) (*env)->GetObjectArrayElement(env, values, i);
+       _values[i] = (*env)->GetStringUTFChars(env, str, NULL);
+    }
+
+    fmi2Status (*fmi2SetString)(fmi2Component, const fmi2ValueReference[], size_t, fmi2String[]);
+    fmi2SetString = load_function("fmi2SetString");
+
+    int status = (*fmi2SetString)((void*) c, _vr, size, _values);
+
+    free(_values);
+    (*env)->ReleaseIntArrayElements(env, vr, _vr, NULL);
+
+    return status;
+}
+
+JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_setBoolean(JNIEnv *env, jobject obj, jlong c, jintArray vr, jbooleanArray values) {
+
+    const jsize size = (*env)->GetArrayLength(env, vr);
+    const jint *_vr = (*env)->GetIntArrayElements(env, vr, 0);
+    const jboolean *_values = (*env)->GetBooleanArrayElements(env, vr, 0);
+
+    fmi2Status (*fmi2SetBoolean)(fmi2Component, const fmi2ValueReference[], size_t, fmi2Boolean[]);
+    fmi2SetBoolean = load_function("fmi2SetBoolean");
+
+    int status = (*fmi2SetBoolean)((void*) c, _vr, size, _values);
+
+    (*env)->ReleaseIntArrayElements(env, vr, _vr, NULL);
+    (*env)->ReleaseBooleanArrayElements(env, values, _values, NULL);
 
     return status;
 }
