@@ -33,7 +33,7 @@ public class FmiLibrary implements Closeable {
 
     public native int setDebugLogging(long c, boolean loggingOn, int nCategories, String[] categories);
 
-    public native int setupExperiment(long c, boolean toleranceDefined, double tolerance, double startTime, boolean stopTimeDefined, double stopTime);
+    public native int setupExperiment(long c, boolean toleranceDefined, double tolerance, double startTime, double stopTime);
 
     public native int enterInitializationMode(long c);
 
@@ -49,20 +49,22 @@ public class FmiLibrary implements Closeable {
 
     public native void fmi2FreeInstance(long c);
 
-    public native int getInteger(long pointer, int vr);
+    //red
+    public native int getInteger(long c, int vr[], int[] ref);
 
-    public native int[] getInteger(long pointer, int[] vr);
+    public native int getReal(long c, int[] vr, double[] ref);
 
-    public native double getReal(long pointer, int vr);
+    public native int getString(long c, int[] vr, String[] ref);
 
-    public native int getReal(long pointer, int[] vr, double[] ref);
+    public native int getBoolean(long c, int[] vr, boolean[] ref);
 
-    public native String getString(long pointer, int vr);
+    //write
+    public native int setInteger(long c, int vr[], int[] values);
 
-    public native String[] getString(long pointer, int[] vr);
+    public native int setReal(long c, int[] vr, double[] values);
 
-    public native boolean getBoolean(long pointer, int vr);
+    public native int setString(long c, int[] vr, String[] values);
 
-    public native boolean[] getBoolean(long pointer, int vr[]);
+    public native int setBoolean(long c, int[] vr, boolean[] values);
 
 }

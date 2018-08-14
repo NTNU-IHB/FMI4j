@@ -108,11 +108,13 @@ JNIEXPORT jlong JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_instantiat
     return (jlong) c;
 }
 
+JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_setupExperiment(JNIEnv *env, jobject obj, jlong c, jboolean toleranceDefined, jdouble tolerance, jdouble startTime, jdouble stopTime) {
 
-JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_setupExperiment(JNIEnv *env, jobject obj, jlong c, jboolean toleranceDefined, jdouble tolerance, jdouble startTime, jboolean stopTimeDefined, jdouble stopTime) {
+    fmi2Boolean stopTimeDefined = stopTime <= 0 ? 0 : 1;
+
     int (*fmi2SetupExperiment)(fmi2Component, fmi2Boolean, fmi2Real, fmi2Real, fmi2Boolean, fmi2Real);
     fmi2SetupExperiment = load_function("fmi2SetupExperiment");
-    int status = (*fmi2SetupExperiment)((void*) c, toleranceDefined == JNI_FALSE ? 0 : 1, tolerance, startTime, stopTimeDefined == JNI_FALSE ? 0 : 1, stopTime);
+    int status = (*fmi2SetupExperiment)((void*) c, toleranceDefined, tolerance, startTime, stopTimeDefined, stopTime);
     return status;
 }
 
@@ -167,7 +169,7 @@ JNIEXPORT int JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_getInteger(J
     fmi2Status (*fmi2GetInteger)(fmi2Component, const fmi2ValueReference[], size_t, fmi2Integer   []);
     fmi2GetInteger = load_function("fmi2GetInteger");
 
-    jint* _ref = malloc(sizeof(int) * size);
+    int* _ref = malloc(sizeof(int) * size);
     int status = (*fmi2GetInteger)((void*) c, _vr, size, _ref);
 
     (*env)->SetIntArrayRegion(env, ref, 0, size, _ref);
@@ -185,10 +187,36 @@ JNIEXPORT int JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_getReal(JNIE
     fmi2Status (*fmi2GetReal)(fmi2Component, const fmi2ValueReference[], size_t, fmi2Real   []);
     fmi2GetReal = load_function("fmi2GetReal");
 
-    jdouble* _ref = malloc(sizeof(double) * size);
+    double* _ref = malloc(sizeof(double) * size);
     int status = (*fmi2GetReal)((void*) c, _vr, size, _ref);
 
     (*env)->SetDoubleArrayRegion(env, ref, 0, size, _ref);
+
+    free(_ref);
+
+    return status;
+}
+
+JNIEXPORT int JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_getString(JNIEnv *env, jobject obj, jlong c, jintArray vr, jobjectArray ref) {
+
+    const jsize size = (*env)->GetArrayLength(env, vr);
+    jint *_vr = (*env)->GetIntArrayElements(env, vr, 0);
+
+    fmi2Status (*fmi2GetString)(fmi2Component, const fmi2ValueReference[], size_t, fmi2String   []);
+    fmi2GetString = load_function("fmi2GetString");
+
+    char* _ref = malloc(sizeof(char) * size);
+    for (int i = 0; i < size; i++) {
+        jstring str = (jstring) (*env)->GetObjectArrayElement(env, ref, i);
+        _ref[i] = (*env)->GetStringUTFChars(env, str, NULL);
+    }
+
+    int status = (*fmi2GetString)((void*) c, _vr, size, _ref);
+
+    for (int i = 0; i < size; i++) {
+        jstring value = (*env)->NewStringUTF(env, _ref[i]);
+        (*env)->SetObjectArrayElement(env, ref, i, value);
+    }
 
     free(_ref);
 

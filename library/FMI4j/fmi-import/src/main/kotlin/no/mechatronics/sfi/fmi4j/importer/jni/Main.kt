@@ -1,12 +1,11 @@
 package no.mechatronics.sfi.fmi4j.importer.jni
 
-import no.mechatronics.sfi.fmi4j.importer.misc.extractTo
 import no.mechatronics.sfi.fmi4j.importer.misc.currentOS
+import no.mechatronics.sfi.fmi4j.importer.misc.extractTo
 import no.mechatronics.sfi.fmi4j.importer.misc.libExtension
 import no.mechatronics.sfi.fmi4j.jni.FmiLibrary
 import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescriptionParser
 import java.io.File
-import java.util.*
 import kotlin.system.measureTimeMillis
 
 
@@ -35,7 +34,7 @@ fun main(args: Array<String>) {
             for (i in 0..2) {
                 val c = lib.instantiate(md.modelIdentifier, 1, md.guid, File(temp, "resources").absolutePath, false, false)
 
-                val status = lib.setupExperiment(c, false, 1E-3, 0.0, false, 0.0)
+                val status = lib.setupExperiment(c, false, 1E-3, 0.0, 0.0)
 
                 lib.enterInitializationMode(c)
                 lib.exitInitializationMode(c)
