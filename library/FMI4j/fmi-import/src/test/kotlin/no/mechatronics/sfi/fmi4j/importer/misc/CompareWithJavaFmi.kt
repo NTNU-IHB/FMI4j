@@ -24,7 +24,8 @@ class CompareWithJavaFmi {
         private val LOG: Logger = LoggerFactory.getLogger(CompareWithJavaFmi::class.java)
     }
 
-    private val path = "${TestUtils.getTEST_FMUs()}/FMI_2.0/CoSimulation/${TestUtils.getOs()}/20sim/4.6.4.8004/ControlledTemperature/ControlledTemperature.fmu"
+    private val path = "${TestUtils.getTEST_FMUs()}/FMI_2.0/CoSimulation/${TestUtils.getOs()}" +
+            "/20sim/4.6.4.8004/ControlledTemperature/ControlledTemperature.fmu"
 
     private val fmu = Fmu.from(File(path))
 
