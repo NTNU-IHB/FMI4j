@@ -22,7 +22,7 @@ DLL_HANDLE handle;
 
 function_ptr* load_function(const char* function_name) {
 #ifdef WIN32
-	return  (function_ptr)GetProcAddress(handle, function_name);
+	return  (function_ptr) GetProcAddress(handle, function_name);
 #else
 	return dlsym(handle, function_name);
 #endif
@@ -58,21 +58,10 @@ JNIEXPORT jboolean JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_load(JN
 
 }
 
-JNIEXPORT jboolean JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_close(JNIEnv *env, jobject obj) {
-    if (handle) {
-        #ifdef WIN32
-            return FreeLibrary(handle) == 0 ? JNI_FALSE : JNI_FALSE;
-        #else
-            return dlclose(handle)  == 0 ? JNI_FALSE : JNI_FALSE;
-        #endif
-    }
-    return JNI_FALSE;
-}
-
 JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_setDebugLogging(JNIEnv *env, jobject obj, jlong c, jboolean loggingOn, jobjectArray categories) {
 
-    jsize nCategories = (*env)->GetArrayLength(env, categories);
-    const char* _categories[nCategories];
+    const jsize nCategories = (*env)->GetArrayLength(env, categories);
+    char* _categories = malloc(sizeof(char) * nCategories);
 
     for (int i = 0; i < nCategories; i++) {
         jstring str = (jstring) (*env)->GetObjectArrayElement(env, categories, i);
@@ -82,6 +71,9 @@ JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_setDebugLog
     int (*fmi2SetDebugLogging)(void*, int, int, const char* []);
     fmi2SetDebugLogging = load_function("fmi2SetDebugLogging");
     int status = (*fmi2SetDebugLogging)((void*) c, loggingOn == JNI_FALSE ? 0 : 1, nCategories, _categories);
+
+    free(_categories);
+
     return status;
 }
 
@@ -169,32 +161,47 @@ JNIEXPORT void JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_freeInstanc
 
 JNIEXPORT int JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_getInteger(JNIEnv *env, jobject obj, jlong c, jintArray vr, jintArray ref) {
 
-    jsize size = (*env)->GetArrayLength(env, vr);
+    const jsize size = (*env)->GetArrayLength(env, vr);
     jint *_vr = (*env)->GetIntArrayElements(env, vr, 0);
 
     fmi2Status (*fmi2GetInteger)(fmi2Component, const fmi2ValueReference[], size_t, fmi2Integer   []);
     fmi2GetInteger = load_function("fmi2GetInteger");
 
-    jint _ref [size];
+    jint* _ref = malloc(sizeof(int) * size);
     int status = (*fmi2GetInteger)((void*) c, _vr, size, _ref);
 
     (*env)->SetIntArrayRegion(env, ref, 0, size, _ref);
+
+    free(_ref);
 
     return status;
 }
 
 JNIEXPORT int JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_getReal(JNIEnv *env, jobject obj, jlong c, jintArray vr, jdoubleArray ref) {
 
-    jsize size = (*env)->GetArrayLength(env, vr);
+    const jsize size = (*env)->GetArrayLength(env, vr);
     jint *_vr = (*env)->GetIntArrayElements(env, vr, 0);
 
     fmi2Status (*fmi2GetReal)(fmi2Component, const fmi2ValueReference[], size_t, fmi2Real   []);
     fmi2GetReal = load_function("fmi2GetReal");
 
-    jdouble _ref [size];
+    jdouble* _ref = malloc(sizeof(double) * size);
     int status = (*fmi2GetReal)((void*) c, _vr, size, _ref);
 
     (*env)->SetDoubleArrayRegion(env, ref, 0, size, _ref);
 
+    free(_ref);
+
     return status;
+}
+
+JNIEXPORT jboolean JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_close(JNIEnv *env, jobject obj) {
+    if (handle) {
+        #ifdef WIN32
+            return FreeLibrary(handle) == 0 ? JNI_FALSE : JNI_FALSE;
+        #else
+            return dlclose(handle)  == 0 ? JNI_FALSE : JNI_FALSE;
+        #endif
+    }
+    return JNI_FALSE;
 }

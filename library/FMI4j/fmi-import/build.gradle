@@ -76,11 +76,18 @@ shadowJar {
 
                 binaries.all {
 
-                    cCompiler.args '-I', "${org.gradle.internal.jvm.Jvm.current().javaHome}/include"
-                    cCompiler.args '-I', "${org.gradle.internal.jvm.Jvm.current().javaHome}/include/linux"
+                    if (Os.isFamily(Os.FAMILY_UNIX)) {
+                        cCompiler.args '-I', "${org.gradle.internal.jvm.Jvm.current().javaHome}/include"
+                        cCompiler.args '-I', "${org.gradle.internal.jvm.Jvm.current().javaHome}/include/linux"
 
-                    if (targetPlatform.operatingSystem.windows) {
-                        cCompiler.args "-fPIC"
+                        if (targetPlatform.operatingSystem.windows) {
+                            cCompiler.args "-fPIC"
+                        }
+
+                    } else if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+                        cCompiler.args "-I${org.gradle.internal.jvm.Jvm.current().javaHome}/include"
+                        cCompiler.args "-I${org.gradle.internal.jvm.Jvm.current().javaHome}/include/win32"
+
                     }
 
                 }

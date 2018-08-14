@@ -2,9 +2,11 @@ package no.mechatronics.sfi.fmi4j.importer.jni
 
 import no.mechatronics.sfi.fmi4j.importer.misc.extractTo
 import no.mechatronics.sfi.fmi4j.importer.misc.currentOS
+import no.mechatronics.sfi.fmi4j.importer.misc.libExtension
 import no.mechatronics.sfi.fmi4j.jni.FmiLibrary
 import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescriptionParser
 import java.io.File
+import java.util.*
 import kotlin.system.measureTimeMillis
 
 
@@ -24,7 +26,7 @@ fun main(args: Array<String>) {
 
     try {
 
-        val libName = "${temp.absolutePath}/binaries/$currentOS/ControlledTemperature.so"
+        val libName = "${temp.absolutePath}/binaries/$currentOS/ControlledTemperature.$libExtension"
         FmiLibrary(libName).use { lib ->
 
             println(lib.fmiVersion)
@@ -49,7 +51,7 @@ fun main(args: Array<String>) {
                     while (t <= stop) {
 
                         lib.getReal(c, vr, d)
-                        //println("t=$t, value=${Arrays.toString(d)}")
+//                        println("t=$t, value=${Arrays.toString(d)}")
 
                         val status = lib.step(c, t, dt, true)
                         t += dt
