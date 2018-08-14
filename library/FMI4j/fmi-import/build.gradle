@@ -32,36 +32,36 @@ shadowJar {
     model {
 
         platforms {
-            linux32 {
-                architecture "x86"
-                operatingSystem "linux"
-            }
-            linux64 {
-                architecture "x86_64"
-                operatingSystem "linux"
-            }
-            win32 {
-                architecture "x86"
-                operatingSystem "windows"
-            }
-            win64 {
-                architecture "x86_64"
-                operatingSystem "windows"
+            if (Os.isFamily(Os.FAMILY_UNIX)) {
+                linux32 {
+                    architecture "x86"
+                    operatingSystem "linux"
+                }
+                linux64 {
+                    architecture "x86_64"
+                    operatingSystem "linux"
+                }
+            } else  if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+                win32 {
+                    architecture "x86"
+                    operatingSystem "windows"
+                }
+                win64 {
+                    architecture "x86_64"
+                    operatingSystem "windows"
+                }
             }
         }
 
         toolChains {
             gcc(Gcc) {
-                target("linux32")
-                target("linux64")
-                target("win32")
-                target("win64")
-            }
-            clang(Clang) {
-                target("linux32")
-                target("linux64")
-                target("win32")
-                target("win64")
+                if (Os.isFamily(Os.FAMILY_UNIX)) {
+                    target("linux32")
+                    target("linux64")
+                }  else if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+                    target("win32")
+                    target("win64")
+                }
             }
         }
 
@@ -69,25 +69,22 @@ shadowJar {
         components {
             fmi(NativeLibrarySpec) {
 
-                targetPlatform "linux32"
-                targetPlatform "linux64"
-                targetPlatform "win32"
-                targetPlatform "win64"
+                if (Os.isFamily(Os.FAMILY_UNIX)) {
+                    targetPlatform "linux32"
+                    targetPlatform "linux64"
+                } else if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+                    targetPlatform "win32"
+                    targetPlatform "win64"
+                }
 
                 binaries.all {
 
                     if (Os.isFamily(Os.FAMILY_UNIX)) {
                         cCompiler.args '-I', "${org.gradle.internal.jvm.Jvm.current().javaHome}/include"
                         cCompiler.args '-I', "${org.gradle.internal.jvm.Jvm.current().javaHome}/include/linux"
-
-                        if (targetPlatform.operatingSystem.windows) {
-                            cCompiler.args "-fPIC"
-                        }
-
                     } else if (Os.isFamily(Os.FAMILY_WINDOWS)) {
                         cCompiler.args "-I${org.gradle.internal.jvm.Jvm.current().javaHome}/include"
                         cCompiler.args "-I${org.gradle.internal.jvm.Jvm.current().javaHome}/include/win32"
-
                     }
 
                 }
