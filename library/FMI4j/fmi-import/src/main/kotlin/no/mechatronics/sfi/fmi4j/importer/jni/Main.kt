@@ -37,7 +37,7 @@ fun main(args: Array<String>) {
         val libName = "${temp.absolutePath}/binaries/$currentOS/${md.modelIdentifier}.$libExtension"
         FmiLibrary(libName).use { lib ->
 
-            println(lib.fmiVersion)
+            println(lib.version)
             println(lib.typesPlatform)
 
             val d = DoubleArray(1)

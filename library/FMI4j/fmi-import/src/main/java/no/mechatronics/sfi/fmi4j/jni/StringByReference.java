@@ -22,31 +22,10 @@
  * THE SOFTWARE.
  */
 
-package no.mechatronics.sfi.fmi4j.importer.misc
+package no.mechatronics.sfi.fmi4j.jni;
 
-const val FmiTrue: Int = 1
-const val FmiFalse: Int = 0
+public class StringByReference {
 
-/**
- *
- * @author Lars Ivar Hatledal
- */
-object FmiBoolean {
+    public String value;
 
-    fun convert(value: Boolean): Int {
-        return if (value) FmiTrue else FmiFalse
-    }
-
-    fun convert(value: Int): Boolean {
-        return when (value) {
-            FmiTrue -> true
-            FmiFalse -> false
-            else -> throw IllegalArgumentException()
-        }
-    }
-
-}
-
-fun Boolean.fmiType(): Int {
-    return FmiBoolean.convert(this)
 }

@@ -26,14 +26,14 @@
 package no.mechatronics.sfi.fmi4j.importer.misc
 
 import no.mechatronics.sfi.fmi4j.common.*
-import no.mechatronics.sfi.fmi4j.importer.proxy.v2.FmiLibraryWrapper
+import no.mechatronics.sfi.fmi4j.importer.FmiLibraryWrapper
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.ModelVariables
 
 /**
  * @author Lars Ivar Hatledal
  */
 class FmuVariableAccessorImpl(
-        private val wrapper: FmiLibraryWrapper<*>,
+        private val wrapper: FmiLibraryWrapper,
         private val modelVariables: ModelVariables
 ) : FmuVariableAccessor {
 
@@ -58,7 +58,6 @@ class FmuVariableAccessorImpl(
     override fun readBoolean(vr: ValueReference) = wrapper.getBoolean(vr)
     override fun readBoolean(vr: ValueReferences) = wrapper.getBoolean(vr)
     override fun readBoolean(vr: ValueReferences, value: BooleanArray) = wrapper.getBoolean(vr, value)
-    override fun readBoolean(vr: ValueReferences, value: IntArray) = wrapper.getBoolean(vr, value)
 
     //write
     override fun writeInteger(name: String, value: Int) = wrapper.setInteger(process(name), value)
@@ -77,7 +76,6 @@ class FmuVariableAccessorImpl(
     override fun writeBoolean(name: String, value: Boolean) = wrapper.setBoolean(process(name), value)
     override fun writeBoolean(vr: ValueReference, value: Boolean) = wrapper.setBoolean(vr, value)
     override fun writeBoolean(vr: ValueReferences, value: BooleanArray) = wrapper.setBoolean(vr, value)
-    override fun writeBoolean(vr: ValueReferences, value: IntArray) = wrapper.setBoolean(vr, value)
 
     private fun process(name: String): Int {
         return map.getOrPut(name) { modelVariables.getValueReference(name) }

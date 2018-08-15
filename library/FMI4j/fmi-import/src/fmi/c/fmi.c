@@ -58,26 +58,7 @@ JNIEXPORT jboolean JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_load(JN
 
 }
 
-JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_setDebugLogging(JNIEnv *env, jobject obj, jlong c, jboolean loggingOn, jobjectArray categories) {
-
-    const jsize nCategories = (*env)->GetArrayLength(env, categories);
-    char* _categories = malloc(sizeof(char) * nCategories);
-
-    for (int i = 0; i < nCategories; i++) {
-        jstring str = (jstring) (*env)->GetObjectArrayElement(env, categories, i);
-        _categories[i] = (*env)->GetStringUTFChars(env, str, NULL);
-    }
-
-    int (*fmi2SetDebugLogging)(void*, int, int, const char* []);
-    fmi2SetDebugLogging = load_function("fmi2SetDebugLogging");
-    int status = (*fmi2SetDebugLogging)((void*) c, loggingOn == JNI_FALSE ? 0 : 1, nCategories, _categories);
-
-    free(_categories);
-
-    return status;
-}
-
-JNIEXPORT jstring JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_getFmiVersion(JNIEnv *env, jobject obj) {
+JNIEXPORT jstring JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_getVersion(JNIEnv *env, jobject obj) {
     const char* (*fmi2GetVersion)(void);
     fmi2GetVersion = load_function("fmi2GetVersion");
     const char* version = (*fmi2GetVersion)();
@@ -106,6 +87,26 @@ JNIEXPORT jlong JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_instantiat
     (*env)->ReleaseStringUTFChars(env, resourceLocation, _resourceLocation);
 
     return (jlong) c;
+}
+
+
+JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_setDebugLogging(JNIEnv *env, jobject obj, jlong c, jboolean loggingOn, jobjectArray categories) {
+
+    const jsize nCategories = (*env)->GetArrayLength(env, categories);
+    char* _categories = malloc(sizeof(char) * nCategories);
+
+    for (int i = 0; i < nCategories; i++) {
+        jstring str = (jstring) (*env)->GetObjectArrayElement(env, categories, i);
+        _categories[i] = (*env)->GetStringUTFChars(env, str, NULL);
+    }
+
+    int (*fmi2SetDebugLogging)(void*, int, int, const char* []);
+    fmi2SetDebugLogging = load_function("fmi2SetDebugLogging");
+    int status = (*fmi2SetDebugLogging)((void*) c, loggingOn == JNI_FALSE ? 0 : 1, nCategories, _categories);
+
+    free(_categories);
+
+    return status;
 }
 
 JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_setupExperiment(JNIEnv *env, jobject obj, jlong c, jboolean toleranceDefined, jdouble tolerance, jdouble startTime, jdouble stopTime) {
@@ -220,7 +221,7 @@ JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_getString(J
 JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_getBoolean(JNIEnv *env, jobject obj, jlong c, jintArray vr, jbooleanArray ref) {
 
     const jsize size = (*env)->GetArrayLength(env, vr);
-    const jboolean *_vr = (*env)->GetBooleanArrayElements(env, vr, 0);
+    const jint *_vr = (*env)->GetIntArrayElements(env, vr, 0);
 
     fmi2Status (*fmi2GetBoolean)(fmi2Component, const fmi2ValueReference[], size_t, fmi2Boolean[]);
     fmi2GetBoolean = load_function("fmi2GetBoolean");
@@ -315,7 +316,7 @@ JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_getFMUstate
     jclass cls;
     jfieldID id;
 
-    cls = (*env)->FindClass(env, "no/mechatronics/sfi/fmi4j/jni/Pointer");
+    cls = (*env)->FindClass(env, "no/mechatronics/sfi/fmi4j/jni/PointerByReference");
     id = (*env)->GetFieldID(env, cls, "value", "I");
 
     fmi2Status (*fmi2GetFMUstate)(fmi2Component, fmi2FMUstate*);
@@ -427,7 +428,7 @@ JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_setRealInpu
 
 }
 
-JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_getRealOuputDerivatives(JNIEnv *env, jobject obj, jlong c, jintArray vr, jintArray order, jdoubleArray value) {
+JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_getRealOutputDerivatives(JNIEnv *env, jobject obj, jlong c, jintArray vr, jintArray order, jdoubleArray value) {
 
     const jsize nvr = (*env)->GetArrayLength(env, vr);
 
@@ -547,6 +548,34 @@ JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_getNominals
 
     (*env)->SetDoubleArrayRegion(env, x_nominal, 0, size, _x_nominal);
     free(_x_nominal);
+
+    return status;
+}
+
+void setBoolean(JNIEnv *env, jobject obj, jboolean value) {
+
+    jclass cls;
+    jfieldID id;
+
+    cls = (*env)->FindClass(env, "no/mechatronics/sfi/fmi4j/jni/BooleanByReference");
+    id = (*env)->GetFieldID(env, cls, "value", "B");
+
+    (*env)->SetBooleanField(env, obj, id, value);
+
+}
+
+
+JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_completedIntegratorStep(JNIEnv *env, jobject obj, jlong c, jboolean noSetFMUStatePriorToCurrentPoint, jobject enterEventMode, jobject terminateSimulation) {
+
+    fmi2Boolean _enterEventMode;
+    fmi2Boolean _terminateSimulation;
+
+    int (*fmi2CompletedIntegratorStep)(fmi2Component, fmi2Boolean, fmi2Boolean*, fmi2Boolean*);
+    fmi2CompletedIntegratorStep = load_function("fmi2CompletedIntegratorStep");
+    int status = (*fmi2CompletedIntegratorStep)((void*) c, noSetFMUStatePriorToCurrentPoint == JNI_FALSE ? 0 : 1, _enterEventMode, _terminateSimulation);
+
+    setBoolean(env, enterEventMode, _enterEventMode == 0 ? JNI_FALSE : JNI_TRUE);
+    setBoolean(env, terminateSimulation, (jboolean) _terminateSimulation == 0 ? JNI_FALSE : JNI_TRUE);
 
     return status;
 }

@@ -87,14 +87,14 @@ class ModelExchangeFmuStepper internal constructor(
 
     private fun eventIteration(): Boolean {
 
-        fmuInstance.eventInfo.setNewDiscreteStatesNeededTrue()
-        fmuInstance.eventInfo.setTerminateSimulationFalse()
+        fmuInstance.eventInfo.newDiscreteStatesNedeed = true
+        fmuInstance.eventInfo.terminateSimulation = false
 
-        while (fmuInstance.eventInfo.getNewDiscreteStatesNeeded()) {
+        while (fmuInstance.eventInfo.newDiscreteStatesNedeed) {
             fmuInstance.newDiscreteStates().also {
                 it.warnOnStatusNotOK("fmuInstance.newDiscreteStates()")
             }
-            if (fmuInstance.eventInfo.getTerminateSimulation()) {
+            if (fmuInstance.eventInfo.terminateSimulation) {
                 LOG.debug("eventInfo.getTerminateSimulation() returned true. Terminating FMU...")
                 terminate()
                 return true
@@ -139,9 +139,9 @@ class ModelExchangeFmuStepper internal constructor(
 
             var tNext = Math.min(time + stepSize, stopTime)
 
-            val timeEvent = fmuInstance.eventInfo.getNextEventTimeDefined() && fmuInstance.eventInfo.getNextEventTime() <= time
+            val timeEvent = fmuInstance.eventInfo.nextEventTimeDefined && fmuInstance.eventInfo.nextEventTime <= time
             if (timeEvent) {
-                tNext = fmuInstance.eventInfo.getNextEventTime()
+                tNext = fmuInstance.eventInfo.nextEventTime
             }
 
             var stateEvent = false

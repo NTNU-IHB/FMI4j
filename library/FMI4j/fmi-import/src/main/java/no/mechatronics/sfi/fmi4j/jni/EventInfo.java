@@ -22,40 +22,15 @@
  * THE SOFTWARE.
  */
 
-package no.mechatronics.sfi.fmi4j.importer.misc
+package no.mechatronics.sfi.fmi4j.jni;
 
-import no.mechatronics.sfi.fmi4j.importer.proxy.v2.FmiLibrary
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
-import java.util.function.Supplier
+public class EventInfo {
 
-/**
- * Wraps the native FMI library
- *
- * @author Lars Ivar Hatledal
- */
-class FmiLibraryProvider<E : FmiLibrary>(
-        private val librarySupplier: () -> E
-) : Supplier<E> {
-
-    private var library: E? = null
-
-    override fun get(): E {
-        if (library == null) {
-            library = librarySupplier.invoke()
-            LOG.debug("Library loaded")
-        }
-        return library!!
-    }
-
-    internal fun disposeLibrary() {
-        library = null
-        System.gc()
-        LOG.debug("Library disposed")
-    }
-
-    private companion object {
-        val LOG: Logger = LoggerFactory.getLogger(FmiLibraryProvider::class.java)
-    }
+    public boolean newDiscreteStatesNedeed;
+    public boolean terminateSimulation;
+    public boolean nominalsOfContinuousStatesChanged;
+    public boolean valuesOfContinuousStatesChanged;
+    public boolean nextEventTimeDefined;
+    public double nextEventTime;
 
 }

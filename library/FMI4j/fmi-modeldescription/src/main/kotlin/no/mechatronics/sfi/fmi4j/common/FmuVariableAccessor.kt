@@ -50,7 +50,6 @@ interface FmuVariableAccessor {
     fun readBoolean(vr: ValueReference): FmuBooleanRead
     fun readBoolean(vr: ValueReferences): FmuBooleanArrayRead
     fun readBoolean(vr: ValueReferences, value: BooleanArray): FmuBooleanArrayRead
-    fun readBoolean(vr: ValueReferences, value: IntArray): FmuIntegerArrayRead
 
     fun writeInteger(name: String, value: Int): FmiStatus
     fun writeInteger(vr: ValueReference, value: Int): FmiStatus
@@ -66,7 +65,6 @@ interface FmuVariableAccessor {
 
     fun writeBoolean(name: String, value: Boolean): FmiStatus
     fun writeBoolean(vr: ValueReference, value: Boolean): FmiStatus
-    fun writeBoolean(vr: ValueReferences, value: IntArray): FmiStatus
     fun writeBoolean(vr: ValueReferences, value: BooleanArray): FmiStatus
 
 }

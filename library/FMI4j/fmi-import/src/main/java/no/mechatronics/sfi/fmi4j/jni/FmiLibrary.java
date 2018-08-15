@@ -1,3 +1,27 @@
+/*
+ * The MIT License
+ *
+ * Copyright 2017-2018 Norwegian University of Technology
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING  FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
 package no.mechatronics.sfi.fmi4j.jni;
 
 import no.mechatronics.sfi.fmi4j.importer.misc.OSUtil;
@@ -27,7 +51,7 @@ public class FmiLibrary implements Closeable {
 
     public native void close();
 
-    public native String getFmiVersion();
+    public native String getVersion();
 
     public native String getTypesPlatform();
 
@@ -50,7 +74,7 @@ public class FmiLibrary implements Closeable {
 
     public native int reset(long c);
 
-    public native void fmi2FreeInstance(long c);
+    public native void freeInstance(long c);
 
     //red
     public native int getInteger(long c, int vr[], int[] ref);
@@ -84,15 +108,27 @@ public class FmiLibrary implements Closeable {
      Functions for FMI2 for Co-simulation
      ****************************************************/
 
-    private native int setRealInputDerivatives(
-            long c, int[] vr, int[] order, double[] values);
-
-
     public native int step(
             long c, double currentCommunicationPoint,
             double communicationStepSize, boolean noSetFMUStatePriorToCurrentPoint);
 
     public native int cancelStep(long c);
+
+    public native int setRealInputDerivatives(long c, int[] vr, int[] order, double[] value);
+
+    public native int getRealOutputDerivatives(long c, int[] vr, int[] order, double[] value);
+
+    public native int getStatus(long c, int s, IntByReference value);
+
+    public native int getRealStatus(long c, int s, DoubleByReference value);
+
+    public native int getIntegerStatus(long c, int s, IntByReference value);
+
+    public native int getStringStatus(long c, int s, StringByReference value);
+
+    public native int getBooleanStatus(long c, int s, BooleanByReference value);
+
+    public native int getMaxStepSize(long c, DoubleByReference stepSize);
 
     /***************************************************
      Functions for FMI2 for Model Exchange
@@ -100,14 +136,23 @@ public class FmiLibrary implements Closeable {
 
     public native int enterEventMode(long c);
 
+    public native int newDiscreteStates(long c, EventInfo ev);
+
     public native int enterContinuousTimeMode(long c);
 
-    public native int completedIntegratorStep(
-            long c, boolean noSetFMUStatePriorToCurrentPoint,
-            BooleanByReference enterEventMode, BooleanByReference terminateSimulation);
-
-    public native int setTime(double time);
-
     public native int setContinuousStates(long c, double[] x);
+
+    public native int completedIntegratorStep(long c, boolean noSetFMUStatePriorToCurrentPoint,
+                                              BooleanByReference enterEventMode, BooleanByReference terminateSimulation);
+
+    public native int setTime(long c, double time);
+
+    public native int getDerivatives(long c, double[] derivatives);
+
+    public native int getEventIndicators(long c, double[] eventIndicators);
+
+    public native int getContinuousStates(long c, double[] x);
+
+    public native int getNominalsOfContinuousStates(long c, double[] x_nominals);
 
 }
