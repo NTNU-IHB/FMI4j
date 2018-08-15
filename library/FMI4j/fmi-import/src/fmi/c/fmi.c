@@ -159,11 +159,11 @@ JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_getInteger(
     const jsize size = (*env)->GetArrayLength(env, vr);
     const jint *_vr = (*env)->GetIntArrayElements(env, vr, 0);
 
+    fmi2Integer* _ref = malloc(sizeof(fmi2Integer) * size);
+
     fmi2Status (*fmi2GetInteger)(fmi2Component, const fmi2ValueReference[], size_t, fmi2Integer[]);
     fmi2GetInteger = load_function("fmi2GetInteger");
-
-    fmi2Integer* _ref = malloc(sizeof(fmi2Integer) * size);
-    int status = (*fmi2GetInteger)((void*) c, _vr, size, _ref);
+    fmi2Status status = (*fmi2GetInteger)((void*) c, _vr, size, _ref);
 
     (*env)->SetIntArrayRegion(env, ref, 0, size, _ref);
 
@@ -177,11 +177,11 @@ JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_getReal(JNI
     const jsize size = (*env)->GetArrayLength(env, vr);
     const jint *_vr = (*env)->GetIntArrayElements(env, vr, 0);
 
+    fmi2Real* _ref = malloc(sizeof(fmi2Real) * size);
+
     fmi2Status (*fmi2GetReal)(fmi2Component, const fmi2ValueReference[], size_t, fmi2Real[]);
     fmi2GetReal = load_function("fmi2GetReal");
-
-    fmi2Real* _ref = malloc(sizeof(fmi2Real) * size);
-    int status = (*fmi2GetReal)((void*) c, _vr, size, _ref);
+    fmi2Status status = (*fmi2GetReal)((void*) c, _vr, size, _ref);
 
     (*env)->SetDoubleArrayRegion(env, ref, 0, size, _ref);
 
@@ -205,7 +205,7 @@ JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_getString(J
         _ref[i] = (*env)->GetStringUTFChars(env, str, NULL);
     }
 
-    int status = (*fmi2GetString)((void*) c, _vr, size, _ref);
+    fmi2Status status = (*fmi2GetString)((void*) c, _vr, size, _ref);
 
     for (int i = 0; i < size; i++) {
         jstring value = (*env)->NewStringUTF(env, _ref[i]);
@@ -223,11 +223,11 @@ JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_getBoolean(
     const jsize size = (*env)->GetArrayLength(env, vr);
     const jint *_vr = (*env)->GetIntArrayElements(env, vr, 0);
 
+    fmi2Boolean* _ref = malloc(sizeof(fmi2Boolean) * size);
+
     fmi2Status (*fmi2GetBoolean)(fmi2Component, const fmi2ValueReference[], size_t, fmi2Boolean[]);
     fmi2GetBoolean = load_function("fmi2GetBoolean");
-
-    fmi2Boolean* _ref = malloc(sizeof(fmi2Boolean) * size);
-    int status = (*fmi2GetBoolean)((void*) c, _vr, size, _ref);
+    fmi2Status status = (*fmi2GetBoolean)((void*) c, _vr, size, _ref);
 
     (*env)->SetBooleanArrayRegion(env, ref, 0, size, _ref);
 
@@ -262,8 +262,7 @@ JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_setReal(JNI
 
     fmi2Status (*fmi2SetReal)(fmi2Component, const fmi2ValueReference[], size_t, fmi2Real[]);
     fmi2SetReal = load_function("fmi2SetReal");
-
-    int status = (*fmi2SetReal)((void*) c, _vr, size, _values);
+    fmi2Status status = (*fmi2SetReal)((void*) c, _vr, size, _values);
 
     (*env)->ReleaseIntArrayElements(env, vr, _vr, NULL);
     (*env)->ReleaseDoubleArrayElements(env, values, _values, NULL);
@@ -284,8 +283,7 @@ JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_setString(J
 
     fmi2Status (*fmi2SetString)(fmi2Component, const fmi2ValueReference[], size_t, fmi2String[]);
     fmi2SetString = load_function("fmi2SetString");
-
-    int status = (*fmi2SetString)((void*) c, _vr, size, _values);
+    fmi2Status status = (*fmi2SetString)((void*) c, _vr, size, _values);
 
     free(_values);
     (*env)->ReleaseIntArrayElements(env, vr, _vr, NULL);
@@ -301,8 +299,7 @@ JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_setBoolean(
 
     fmi2Status (*fmi2SetBoolean)(fmi2Component, const fmi2ValueReference[], size_t, fmi2Boolean[]);
     fmi2SetBoolean = load_function("fmi2SetBoolean");
-
-    int status = (*fmi2SetBoolean)((void*) c, _vr, size, _values);
+    fmi2Status status = (*fmi2SetBoolean)((void*) c, _vr, size, _values);
 
     (*env)->ReleaseIntArrayElements(env, vr, _vr, NULL);
     (*env)->ReleaseBooleanArrayElements(env, values, _values, NULL);
@@ -315,15 +312,14 @@ JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_getFMUstate
 
     jclass cls;
     jfieldID id;
+    fmi2FMUstate _state;
 
     cls = (*env)->FindClass(env, "no/mechatronics/sfi/fmi4j/jni/PointerByReference");
     id = (*env)->GetFieldID(env, cls, "value", "J");
 
     fmi2Status (*fmi2GetFMUstate)(fmi2Component, fmi2FMUstate*);
     fmi2GetFMUstate = load_function("fmi2GetFMUstate");
-
-    fmi2FMUstate _state;
-    int status = (*fmi2GetFMUstate)((void*) c, &_state);
+    fmi2Status status = (*fmi2GetFMUstate)((void*) c, &_state);
 
     (*env)->SetIntField(env, state, id, (jlong) _state);
 
@@ -341,8 +337,7 @@ JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_setFMUstate
 
     fmi2Status (*fmi2setFMUstate)(fmi2Component, fmi2FMUstate);
     fmi2setFMUstate = load_function("fmi2SetFMUstate");
-
-    int status = (*fmi2setFMUstate)((void*) c, (void*) state);
+    fmi2Status status = (*fmi2setFMUstate)((void*) c, (void*) state);
 
     return status;
 
@@ -360,8 +355,7 @@ JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_getDirectio
 
     fmi2Status (*fmi2GetDirectionalDerivative)(fmi2Component, const fmi2ValueReference[], size_t, const fmi2ValueReference[], size_t, const fmi2Real[], fmi2Real[]);
     fmi2GetDirectionalDerivative = load_function("fmi2GetDirectionalDerivative");
-
-    int status = (*fmi2GetDirectionalDerivative)((void*) c, _vUnknown_ref, nUknown, _vKnown_ref, nKnown, _dvKnown_ref, _dvUnknown_ref);
+    fmi2Status status = (*fmi2GetDirectionalDerivative)((void*) c, _vUnknown_ref, nUknown, _vKnown_ref, nKnown, _dvKnown_ref, _dvUnknown_ref);
 
     (*env)->ReleaseIntArrayElements(env, vUnknown_ref, _vUnknown_ref, NULL);
     (*env)->ReleaseIntArrayElements(env, vKnown_ref, _vKnown_ref, NULL);
@@ -380,6 +374,7 @@ JNIEXPORT jboolean JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_close(J
         #else
             return dlclose(handle)  == 0 ? JNI_FALSE : JNI_FALSE;
         #endif
+        handle = NULL;
     }
     return JNI_FALSE;
 }
@@ -390,16 +385,16 @@ Functions for FMI2 for Co-Simulation
 ****************************************************/
 
 JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_step(JNIEnv *env, jobject obj, jlong c, jdouble currentCommunicationPoint, jdouble communicationStepSize, jboolean noSetFMUStatePriorToCurrentPoint) {
-    int (*fmi2DoStep)(fmi2Component, fmi2Real, fmi2Real, fmi2Boolean);
+    fmi2Status (*fmi2DoStep)(fmi2Component, fmi2Real, fmi2Real, fmi2Boolean);
     fmi2DoStep = load_function("fmi2DoStep");
-    int status = (*fmi2DoStep)((void*) c, currentCommunicationPoint, communicationStepSize, noSetFMUStatePriorToCurrentPoint == JNI_FALSE ? 0 : 1);
+    fmi2Status status = (*fmi2DoStep)((void*) c, currentCommunicationPoint, communicationStepSize, noSetFMUStatePriorToCurrentPoint == JNI_FALSE ? 0 : 1);
     return status;
 }
 
 JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_cancelStep(JNIEnv *env, jobject obj, jlong c) {
-    int (*fmi2CancelStep)(fmi2Component);
+    fmi2Status (*fmi2CancelStep)(fmi2Component);
     fmi2CancelStep = load_function("fmi2CancelStep");
-    int status = (*fmi2CancelStep)((void*) c);
+    fmi2Status status = (*fmi2CancelStep)((void*) c);
     return status;
 }
 
@@ -413,8 +408,7 @@ JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_setRealInpu
 
     fmi2Status (*fmi2SetRealInputDerivatives)(fmi2Component, const fmi2ValueReference [], size_t, const fmi2Integer [], const fmi2Real []);
     fmi2SetRealInputDerivatives = load_function("fmi2SetRealInputDerivatives");
-
-    int status = (*fmi2SetRealInputDerivatives)((void*) c, _vr, nvr, _order, _value);
+    fmi2Status status = (*fmi2SetRealInputDerivatives)((void*) c, _vr, nvr, _order, _value);
 
     (*env)->ReleaseIntArrayElements(env, vr, _vr, NULL);
     (*env)->ReleaseIntArrayElements(env, order, _order, NULL);
@@ -435,8 +429,7 @@ JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_getRealOutp
 
     fmi2Status (*fmi2GetRealOutputDerivatives)(fmi2Component, const fmi2ValueReference [], size_t, const fmi2Integer [], fmi2Real []);
     fmi2GetRealOutputDerivatives = load_function("fmi2GetRealOutputDerivatives");
-
-    int status = (*fmi2GetRealOutputDerivatives)((void*) c, _vr, nvr, _order, _value);
+    fmi2Status status = (*fmi2GetRealOutputDerivatives)((void*) c, _vr, nvr, _order, _value);
 
     (*env)->ReleaseIntArrayElements(env, vr, _vr, NULL);
     (*env)->ReleaseIntArrayElements(env, order, _order, NULL);
@@ -454,34 +447,34 @@ Functions for FMI2 for Model Exchange
 ****************************************************/
 
 JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_enterEventMode(JNIEnv *env, jobject obj, jlong c) {
-    int (*fmi2EnterEventMode)(fmi2Component);
+    fmi2Status (*fmi2EnterEventMode)(fmi2Component);
     fmi2EnterEventMode = load_function("fmi2EnterEventMode");
-    int status = (*fmi2EnterEventMode)((void*) c);
+    fmi2Status status = (*fmi2EnterEventMode)((void*) c);
     return status;
 }
 
 JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_enterContinuousTimeMode(JNIEnv *env, jobject obj, jlong c) {
-    int (*fmi2EnterContinuousTimeMode)(fmi2Component);
+    fmi2Status (*fmi2EnterContinuousTimeMode)(fmi2Component);
     fmi2EnterContinuousTimeMode = load_function("fmi2EnterContinuousTimeMode");
-    int status = (*fmi2EnterContinuousTimeMode)((void*) c);
+    fmi2Status status = (*fmi2EnterContinuousTimeMode)((void*) c);
     return status;
 }
 
 JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_setTime(JNIEnv *env, jobject obj, jlong c, jdouble time) {
-    int (*fmi2SetTime)(fmi2Component, fmi2Real);
+    fmi2Status (*fmi2SetTime)(fmi2Component, fmi2Real);
     fmi2SetTime = load_function("fmi2SetTime");
-    int status = (*fmi2SetTime)((void*) c, time);
+    fmi2Status status = (*fmi2SetTime)((void*) c, time);
     return status;
 }
 
 JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_setContinuousStates(JNIEnv *env, jobject obj, jlong c, jdoubleArray x) {
 
     const jsize size = (*env)->GetArrayLength(env, x);
-    const jdouble *_x = (*env)->GetDoubleArrayElements(env, x, 0);
+    const jdouble* _x = (*env)->GetDoubleArrayElements(env, x, 0);
 
-    int (*fmi2SetContinuousStates)(fmi2Component, fmi2Real[], size_t);
+    fmi2Status (*fmi2SetContinuousStates)(fmi2Component, const fmi2Real[], size_t);
     fmi2SetContinuousStates = load_function("fmi2SetContinuousStates");
-    int status = (*fmi2SetContinuousStates)((void*) c, _x, size);
+    fmi2Status status = (*fmi2SetContinuousStates)((void*) c, _x, size);
 
     (*env)->ReleaseDoubleArrayElements(env, x, _x, NULL);
 
@@ -493,9 +486,9 @@ JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_getDerivati
     const jsize size = (*env)->GetArrayLength(env, derivatives);
     fmi2Real* _derivatives = malloc(sizeof(fmi2Real) * size);
 
-    int (*fmi2GetDerivatives)(fmi2Component, fmi2Real[], size_t);
+    fmi2Status (*fmi2GetDerivatives)(fmi2Component, fmi2Real[], size_t);
     fmi2GetDerivatives = load_function("fmi2GetDerivatives");
-    int status = (*fmi2GetDerivatives)((void*) c, _derivatives, size);
+    fmi2Status status = (*fmi2GetDerivatives)((void*) c, _derivatives, size);
 
     (*env)->SetDoubleArrayRegion(env, derivatives, 0, size, _derivatives);
     free(_derivatives);
@@ -507,11 +500,11 @@ JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_getDerivati
 JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_getEventIndicators(JNIEnv *env, jobject obj, jlong c, jdoubleArray eventIndicators) {
 
     const jsize size = (*env)->GetArrayLength(env, eventIndicators);
-    fmi2Real *_eventIndicators = malloc(sizeof(fmi2Real) * size);
+    fmi2Real* _eventIndicators = malloc(sizeof(fmi2Real) * size);
 
-    int (*fmi2GetEventIndicators)(fmi2Component, fmi2Real[], size_t);
+    fmi2Status (*fmi2GetEventIndicators)(fmi2Component, fmi2Real[], size_t);
     fmi2GetEventIndicators = load_function("fmi2GetEventIndicators");
-    int status = (*fmi2GetEventIndicators)((void*) c, _eventIndicators, size);
+    fmi2Status status = (*fmi2GetEventIndicators)((void*) c, _eventIndicators, size);
 
     (*env)->SetDoubleArrayRegion(env, eventIndicators, 0, size, _eventIndicators);
     free(_eventIndicators);
@@ -522,11 +515,11 @@ JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_getEventInd
 JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_getContinuousStates(JNIEnv *env, jobject obj, jlong c, jdoubleArray x) {
 
     const jsize size = (*env)->GetArrayLength(env, x);
-    fmi2Real *_x = malloc(sizeof(fmi2Real) * size);
+    fmi2Real* _x = malloc(sizeof(fmi2Real) * size);
 
-    int (*fmi2GetContinuousStates)(fmi2Component, fmi2Real[], size_t);
+    fmi2Status (*fmi2GetContinuousStates)(fmi2Component, fmi2Real[], size_t);
     fmi2GetContinuousStates = load_function("fmi2GetContinuousStates");
-    int status = (*fmi2GetContinuousStates)((void*) c, _x, size);
+    fmi2Status status = (*fmi2GetContinuousStates)((void*) c, _x, size);
 
     (*env)->SetDoubleArrayRegion(env, x, 0, size, _x);
     free(_x);
@@ -539,9 +532,9 @@ JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_getNominals
     const jsize size = (*env)->GetArrayLength(env, x_nominal);
     fmi2Real *_x_nominal = malloc(sizeof(fmi2Real) * size);
 
-    int (*fmi2GetNominalsOfContinuousStates)(fmi2Component, fmi2Real[], size_t);
+    fmi2Status (*fmi2GetNominalsOfContinuousStates)(fmi2Component, fmi2Real[], size_t);
     fmi2GetNominalsOfContinuousStates = load_function("fmi2GetNominalsOfContinuousStates");
-    int status = (*fmi2GetNominalsOfContinuousStates)((void*) c, _x_nominal, size);
+    fmi2Status status = (*fmi2GetNominalsOfContinuousStates)((void*) c, _x_nominal, size);
 
     (*env)->SetDoubleArrayRegion(env, x_nominal, 0, size, _x_nominal);
     free(_x_nominal);
@@ -560,12 +553,12 @@ JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_completedIn
     cls = (*env)->FindClass(env, "no/mechatronics/sfi/fmi4j/jni/BooleanByReference");
     id = (*env)->GetFieldID(env, cls, "value", "Z");
 
-    int (*fmi2CompletedIntegratorStep)(fmi2Component, fmi2Boolean, fmi2Boolean*, fmi2Boolean*);
+    fmi2Status (*fmi2CompletedIntegratorStep)(fmi2Component, fmi2Boolean, fmi2Boolean*, fmi2Boolean*);
     fmi2CompletedIntegratorStep = load_function("fmi2CompletedIntegratorStep");
-    int status = (*fmi2CompletedIntegratorStep)((void*) c, noSetFMUStatePriorToCurrentPoint == JNI_FALSE ? 0 : 1, &_enterEventMode, &_terminateSimulation);
+    fmi2Status status = (*fmi2CompletedIntegratorStep)((void*) c, noSetFMUStatePriorToCurrentPoint, &_enterEventMode, &_terminateSimulation);
 
-    (*env)->SetBooleanField(env, enterEventMode, id, _enterEventMode == 0 ? JNI_FALSE : JNI_TRUE);
-    (*env)->SetBooleanField(env, terminateSimulation, id, _terminateSimulation == 0 ? JNI_FALSE : JNI_TRUE);
+    (*env)->SetBooleanField(env, enterEventMode, id, _enterEventMode);
+    (*env)->SetBooleanField(env, terminateSimulation, id, _terminateSimulation);
 
     return status;
 }
@@ -573,7 +566,7 @@ JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_completedIn
 JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_newDiscreteStates(JNIEnv *env, jobject obj, jlong c, jobject states) {
 
     jclass cls;
-    fmi2EventInfo info;
+
     jfieldID newDiscreteStatesNeeded_id;
     jfieldID terminateSimulation_id;
     jfieldID nominalsOfContinuousStatesChanged_id;
@@ -583,10 +576,6 @@ JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_newDiscrete
 
     cls = (*env)->FindClass(env, "no/mechatronics/sfi/fmi4j/jni/EventInfo");
 
-    int (*fmi2NewDiscreteStates)(fmi2Component, fmi2EventInfo*);
-    fmi2NewDiscreteStates = load_function("fmi2NewDiscreteStates");
-    int status = (*fmi2NewDiscreteStates)((void*) c, &info);
-
     newDiscreteStatesNeeded_id = (*env)->GetFieldID(env, cls, "newDiscreteStatesNeeded", "Z");
     terminateSimulation_id = (*env)->GetFieldID(env, cls, "terminateSimulation", "Z");
     nominalsOfContinuousStatesChanged_id = (*env)->GetFieldID(env, cls, "nominalsOfContinuousStatesChanged", "Z");
@@ -594,12 +583,43 @@ JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_newDiscrete
     nextEventTimeDefined_id = (*env)->GetFieldID(env, cls, "nextEventTimeDefined", "Z");
     nextEventTime_id = (*env)->GetFieldID(env, cls, "nextEventTime", "D");
 
-    (*env)->SetBooleanField(env, states, newDiscreteStatesNeeded_id, (jboolean) info.newDiscreteStatesNeeded);
-    (*env)->SetBooleanField(env, states, terminateSimulation_id, (jboolean) info.terminateSimulation);
-    (*env)->SetBooleanField(env, states, nominalsOfContinuousStatesChanged_id, (jboolean) info.nominalsOfContinuousStatesChanged);
-    (*env)->SetBooleanField(env, states, valuesOfContinuousStatesChanged_id, (jboolean) info.valuesOfContinuousStatesChanged);
-    (*env)->SetBooleanField(env, states, nextEventTimeDefined_id, (jboolean) info.nextEventTimeDefined);
-    (*env)->SetDoubleField(env, states, nextEventTime_id, info.nextEventTime);
+    fmi2EventInfo _states = {
+        .newDiscreteStatesNeeded = (*env)->GetBooleanField(env, states, newDiscreteStatesNeeded_id),
+        .terminateSimulation = (*env)->GetBooleanField(env, states, terminateSimulation_id),
+        .nominalsOfContinuousStatesChanged = (*env)->GetBooleanField(env, states, nominalsOfContinuousStatesChanged_id),
+        .valuesOfContinuousStatesChanged = (*env)->GetBooleanField(env, states, valuesOfContinuousStatesChanged_id),
+        .nextEventTimeDefined = (*env)->GetBooleanField(env, states, nextEventTimeDefined_id),
+        .nextEventTime = (*env)->GetDoubleField(env, states, nextEventTime_id),
+    };
+
+//    printf("%i, %i, %i, %i, %i, %d \n",
+//               _states.newDiscreteStatesNeeded,
+//               _states.terminateSimulation,
+//               _states.nominalsOfContinuousStatesChanged,
+//               _states.valuesOfContinuousStatesChanged,
+//               _states.nextEventTimeDefined,
+//               _states.nextEventTime
+//           );
+
+    fmi2Status (*fmi2NewDiscreteStates)(fmi2Component, fmi2EventInfo*);
+    fmi2NewDiscreteStates = load_function("fmi2NewDiscreteStates");
+    fmi2Status status = (*fmi2NewDiscreteStates)((void*) c, &_states);
+
+     printf("%i, %i, %i, %i, %i, %d \n",
+            _states.newDiscreteStatesNeeded,
+            _states.terminateSimulation,
+            _states.nominalsOfContinuousStatesChanged,
+            _states.valuesOfContinuousStatesChanged,
+            _states.nextEventTimeDefined,
+            _states.nextEventTime
+        );
+
+    (*env)->SetBooleanField(env, states, newDiscreteStatesNeeded_id, _states.newDiscreteStatesNeeded);
+    (*env)->SetBooleanField(env, states, terminateSimulation_id, _states.terminateSimulation);
+    (*env)->SetBooleanField(env, states, nominalsOfContinuousStatesChanged_id, _states.nominalsOfContinuousStatesChanged);
+    (*env)->SetBooleanField(env, states, valuesOfContinuousStatesChanged_id, _states.valuesOfContinuousStatesChanged);
+    (*env)->SetBooleanField(env, states, nextEventTimeDefined_id, _states.nextEventTimeDefined);
+    (*env)->SetDoubleField(env, states, nextEventTime_id, _states.nextEventTime);
 
     return status;
 }
