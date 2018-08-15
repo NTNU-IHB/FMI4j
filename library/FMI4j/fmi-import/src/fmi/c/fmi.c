@@ -592,27 +592,9 @@ JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_newDiscrete
         .nextEventTime = (*env)->GetDoubleField(env, states, nextEventTime_id),
     };
 
-//    printf("%i, %i, %i, %i, %i, %d \n",
-//               _states.newDiscreteStatesNeeded,
-//               _states.terminateSimulation,
-//               _states.nominalsOfContinuousStatesChanged,
-//               _states.valuesOfContinuousStatesChanged,
-//               _states.nextEventTimeDefined,
-//               _states.nextEventTime
-//           );
-
     fmi2Status (*fmi2NewDiscreteStates)(fmi2Component, fmi2EventInfo*);
     fmi2NewDiscreteStates = load_function("fmi2NewDiscreteStates");
     fmi2Status status = (*fmi2NewDiscreteStates)((void*) c, &_states);
-
-     printf("%i, %i, %i, %i, %i, %d \n",
-            _states.newDiscreteStatesNeeded,
-            _states.terminateSimulation,
-            _states.nominalsOfContinuousStatesChanged,
-            _states.valuesOfContinuousStatesChanged,
-            _states.nextEventTimeDefined,
-            _states.nextEventTime
-        );
 
     (*env)->SetBooleanField(env, states, newDiscreteStatesNeeded_id, _states.newDiscreteStatesNeeded);
     (*env)->SetBooleanField(env, states, terminateSimulation_id, _states.terminateSimulation);
