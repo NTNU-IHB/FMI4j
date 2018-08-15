@@ -35,19 +35,16 @@ public class FmiLibrary implements Closeable {
             long c, boolean loggingOn, int nCategories, String[] categories);
 
     public native int setupExperiment(
-            long c, boolean toleranceDefined, double tolerance, double startTime, double stopTime);
+            long c, boolean toleranceDefined,
+            double tolerance, double startTime, double stopTime);
 
     public native int enterInitializationMode(long c);
 
     public native int exitInitializationMode(long c);
 
     public native long instantiate(
-            String instanceName, int type, String guid, String resourceLocation, boolean visible, boolean loggingOn);
-
-    public native int step(long c,
-                           double currentCommunicationPoint, double communicationStepSize, boolean noSetFMUStatePriorToCurrentPoint);
-
-    public native int cancelStep(long c);
+            String instanceName, int type, String guid,
+            String resourceLocation, boolean visible, boolean loggingOn);
 
     public native int terminate(long c);
 
@@ -74,11 +71,43 @@ public class FmiLibrary implements Closeable {
     public native int setBoolean(long c, int[] vr, boolean[] values);
 
     public native int getDirectionalDerivative(
-            long c, int[] vUnknown_ref, int[] vKnownRef, double[] dvKnown, double[] dvUnknown);
+            long c, int[] vUnknown_ref,
+            int[] vKnownRef, double[] dvKnown, double[] dvUnknown);
 
 
-    public native long getFMUstate(long c, Pointer state);
+    public native long getFMUstate(long c, PointerByReference state);
 
     public native int setFMUstate(long c, long state);
+
+
+    /***************************************************
+     Functions for FMI2 for Co-simulation
+     ****************************************************/
+
+    private native int setRealInputDerivatives(
+            long c, int[] vr, int[] order, double[] values);
+
+
+    public native int step(
+            long c, double currentCommunicationPoint,
+            double communicationStepSize, boolean noSetFMUStatePriorToCurrentPoint);
+
+    public native int cancelStep(long c);
+
+    /***************************************************
+     Functions for FMI2 for Model Exchange
+     ****************************************************/
+
+    public native int enterEventMode(long c);
+
+    public native int enterContinuousTimeMode(long c);
+
+    public native int completedIntegratorStep(
+            long c, boolean noSetFMUStatePriorToCurrentPoint,
+            BooleanByReference enterEventMode, BooleanByReference terminateSimulation);
+
+    public native int setTime(double time);
+
+    public native int setContinuousStates(long c, double[] x);
 
 }
