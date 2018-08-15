@@ -44,9 +44,7 @@ import java.io.File
 @EnabledIfEnvironmentVariable(named = "TEST_FMUs", matches = ".*")
 class VanDerPolTest {
 
-    private companion object {
-        private val LOG = LoggerFactory.getLogger(VanDerPolTest::class.java)
-    }
+    private val LOG = LoggerFactory.getLogger(VanDerPolTest::class.java)
 
     private val fmu = Fmu.from(File(TestUtils.getTEST_FMUs(),
             "FMI_2.0/ModelExchange/win64/FMUSDK/2.0.4/vanDerPol/vanDerPol.fmu"))
@@ -54,11 +52,6 @@ class VanDerPolTest {
     @AfterAll
     fun tearDown() {
         fmu.close()
-    }
-
-    @Test
-    fun testVersion() {
-        Assertions.assertEquals("2.0", fmu.modelDescription.fmiVersion)
     }
 
     private fun runFmu(solver: Solver) {

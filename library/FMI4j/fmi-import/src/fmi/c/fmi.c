@@ -317,16 +317,15 @@ JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_getFMUstate
     jfieldID id;
 
     cls = (*env)->FindClass(env, "no/mechatronics/sfi/fmi4j/jni/PointerByReference");
-    id = (*env)->GetFieldID(env, cls, "value", "I");
+    id = (*env)->GetFieldID(env, cls, "value", "J");
 
     fmi2Status (*fmi2GetFMUstate)(fmi2Component, fmi2FMUstate*);
     fmi2GetFMUstate = load_function("fmi2GetFMUstate");
 
-    void* _state;
+    fmi2FMUstate _state;
+    int status = (*fmi2GetFMUstate)((void*) c, &_state);
 
-    int status = (*fmi2GetFMUstate)((void*) c, _state);
-
-    (*env)->SetIntField(env, state, id, (jint) _state);
+    (*env)->SetIntField(env, state, id, (jlong) _state);
 
     return status;
 
@@ -337,8 +336,8 @@ JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_setFMUstate
     jclass cls;
     jfieldID id;
 
-    cls = (*env)->FindClass(env, "no/mechatronics/sfi/fmi4j/jni/Pointer");
-    id = (*env)->GetFieldID(env, cls, "value", "I");
+    cls = (*env)->FindClass(env, "no/mechatronics/sfi/fmi4j/jni/PointerByReference");
+    id = (*env)->GetFieldID(env, cls, "value", "J");
 
     fmi2Status (*fmi2setFMUstate)(fmi2Component, fmi2FMUstate);
     fmi2setFMUstate = load_function("fmi2SetFMUstate");
@@ -390,7 +389,6 @@ JNIEXPORT jboolean JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_close(J
 Functions for FMI2 for Co-Simulation
 ****************************************************/
 
-
 JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_step(JNIEnv *env, jobject obj, jlong c, jdouble currentCommunicationPoint, jdouble communicationStepSize, jboolean noSetFMUStatePriorToCurrentPoint) {
     int (*fmi2DoStep)(fmi2Component, fmi2Real, fmi2Real, fmi2Boolean);
     fmi2DoStep = load_function("fmi2DoStep");
@@ -404,7 +402,6 @@ JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_cancelStep(
     int status = (*fmi2CancelStep)((void*) c);
     return status;
 }
-
 
 JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_setRealInputDerivatives(JNIEnv *env, jobject obj, jlong c, jintArray vr, jintArray order, jdoubleArray value) {
 
@@ -552,30 +549,57 @@ JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_getNominals
     return status;
 }
 
-void setBoolean(JNIEnv *env, jobject obj, jboolean value) {
+JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_completedIntegratorStep(JNIEnv *env, jobject obj, jlong c, jboolean noSetFMUStatePriorToCurrentPoint, jobject enterEventMode, jobject terminateSimulation) {
 
     jclass cls;
     jfieldID id;
 
-    cls = (*env)->FindClass(env, "no/mechatronics/sfi/fmi4j/jni/BooleanByReference");
-    id = (*env)->GetFieldID(env, cls, "value", "B");
-
-    (*env)->SetBooleanField(env, obj, id, value);
-
-}
-
-
-JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_completedIntegratorStep(JNIEnv *env, jobject obj, jlong c, jboolean noSetFMUStatePriorToCurrentPoint, jobject enterEventMode, jobject terminateSimulation) {
-
     fmi2Boolean _enterEventMode;
     fmi2Boolean _terminateSimulation;
 
+    cls = (*env)->FindClass(env, "no/mechatronics/sfi/fmi4j/jni/BooleanByReference");
+    id = (*env)->GetFieldID(env, cls, "value", "Z");
+
     int (*fmi2CompletedIntegratorStep)(fmi2Component, fmi2Boolean, fmi2Boolean*, fmi2Boolean*);
     fmi2CompletedIntegratorStep = load_function("fmi2CompletedIntegratorStep");
-    int status = (*fmi2CompletedIntegratorStep)((void*) c, noSetFMUStatePriorToCurrentPoint == JNI_FALSE ? 0 : 1, _enterEventMode, _terminateSimulation);
+    int status = (*fmi2CompletedIntegratorStep)((void*) c, noSetFMUStatePriorToCurrentPoint == JNI_FALSE ? 0 : 1, &_enterEventMode, &_terminateSimulation);
 
-    setBoolean(env, enterEventMode, _enterEventMode == 0 ? JNI_FALSE : JNI_TRUE);
-    setBoolean(env, terminateSimulation, (jboolean) _terminateSimulation == 0 ? JNI_FALSE : JNI_TRUE);
+    (*env)->SetBooleanField(env, enterEventMode, id, _enterEventMode == 0 ? JNI_FALSE : JNI_TRUE);
+    (*env)->SetBooleanField(env, terminateSimulation, id, _terminateSimulation == 0 ? JNI_FALSE : JNI_TRUE);
+
+    return status;
+}
+
+JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_newDiscreteStates(JNIEnv *env, jobject obj, jlong c, jobject states) {
+
+    jclass cls;
+    fmi2EventInfo info;
+    jfieldID newDiscreteStatesNeeded_id;
+    jfieldID terminateSimulation_id;
+    jfieldID nominalsOfContinuousStatesChanged_id;
+    jfieldID valuesOfContinuousStatesChanged_id;
+    jfieldID nextEventTimeDefined_id;
+    jfieldID nextEventTime_id;
+
+    cls = (*env)->FindClass(env, "no/mechatronics/sfi/fmi4j/jni/EventInfo");
+
+    int (*fmi2NewDiscreteStates)(fmi2Component, fmi2EventInfo*);
+    fmi2NewDiscreteStates = load_function("fmi2NewDiscreteStates");
+    int status = (*fmi2NewDiscreteStates)((void*) c, &info);
+
+    newDiscreteStatesNeeded_id = (*env)->GetFieldID(env, cls, "newDiscreteStatesNeeded", "Z");
+    terminateSimulation_id = (*env)->GetFieldID(env, cls, "terminateSimulation", "Z");
+    nominalsOfContinuousStatesChanged_id = (*env)->GetFieldID(env, cls, "nominalsOfContinuousStatesChanged", "Z");
+    valuesOfContinuousStatesChanged_id = (*env)->GetFieldID(env, cls, "valuesOfContinuousStatesChanged", "Z");
+    nextEventTimeDefined_id = (*env)->GetFieldID(env, cls, "nextEventTimeDefined", "Z");
+    nextEventTime_id = (*env)->GetFieldID(env, cls, "nextEventTime", "D");
+
+    (*env)->SetBooleanField(env, states, newDiscreteStatesNeeded_id, (jboolean) info.newDiscreteStatesNeeded);
+    (*env)->SetBooleanField(env, states, terminateSimulation_id, (jboolean) info.terminateSimulation);
+    (*env)->SetBooleanField(env, states, nominalsOfContinuousStatesChanged_id, (jboolean) info.nominalsOfContinuousStatesChanged);
+    (*env)->SetBooleanField(env, states, valuesOfContinuousStatesChanged_id, (jboolean) info.valuesOfContinuousStatesChanged);
+    (*env)->SetBooleanField(env, states, nextEventTimeDefined_id, (jboolean) info.nextEventTimeDefined);
+    (*env)->SetDoubleField(env, states, nextEventTime_id, info.nextEventTime);
 
     return status;
 }

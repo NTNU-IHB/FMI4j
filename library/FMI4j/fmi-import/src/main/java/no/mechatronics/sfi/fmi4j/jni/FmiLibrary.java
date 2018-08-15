@@ -76,7 +76,7 @@ public class FmiLibrary implements Closeable {
 
     public native void freeInstance(long c);
 
-    //red
+    //read
     public native int getInteger(long c, int vr[], int[] ref);
 
     public native int getReal(long c, int[] vr, double[] ref);

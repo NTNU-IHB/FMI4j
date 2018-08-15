@@ -26,7 +26,7 @@ package no.mechatronics.sfi.fmi4j.jni;
 
 public class EventInfo {
 
-    public boolean newDiscreteStatesNedeed;
+    public boolean newDiscreteStatesNeeded;
     public boolean terminateSimulation;
     public boolean nominalsOfContinuousStatesChanged;
     public boolean valuesOfContinuousStatesChanged;

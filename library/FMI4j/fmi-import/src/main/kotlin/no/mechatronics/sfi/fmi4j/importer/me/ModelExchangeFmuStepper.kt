@@ -81,16 +81,16 @@ class ModelExchangeFmuStepper internal constructor(
 
     private fun FmiStatus.warnOnStatusNotOK(functionName: String) {
         if (this != FmiStatus.OK) {
-            LOG.warn("$functionName return status $this")
+            LOG.warn("$functionName returned status: $this")
         }
     }
 
     private fun eventIteration(): Boolean {
 
-        fmuInstance.eventInfo.newDiscreteStatesNedeed = true
+        fmuInstance.eventInfo.newDiscreteStatesNeeded = true
         fmuInstance.eventInfo.terminateSimulation = false
 
-        while (fmuInstance.eventInfo.newDiscreteStatesNedeed) {
+        while (fmuInstance.eventInfo.newDiscreteStatesNeeded) {
             fmuInstance.newDiscreteStates().also {
                 it.warnOnStatusNotOK("fmuInstance.newDiscreteStates()")
             }
