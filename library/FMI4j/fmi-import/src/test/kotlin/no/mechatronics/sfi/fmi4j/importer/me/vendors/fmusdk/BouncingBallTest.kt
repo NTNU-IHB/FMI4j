@@ -32,23 +32,33 @@ class BouncingBallTest {
         fmu.close()
     }
 
+    @Test
+    fun test() {
+
+        val h = fmu.modelDescription.modelVariables
+                .getByName("h").asRealVariable()
+
+        Assertions.assertEquals(1.0, h.start)
+
+    }
+
     private fun runFmu(solver: Solver) {
 
         LOG.info("Using solver: '${solver.name}'")
 
-        fmu.asModelExchangeFmu().newInstance(solver).use { fmu ->
+        fmu.asModelExchangeFmu().newInstance(solver).use { instance ->
 
-            val h = fmu.modelVariables
+            val h = instance.modelVariables
                     .getByName("h").asRealVariable()
 
-            fmu.init()
+            instance.init()
 
             val macroStep = 1.0 / 10
-            while (fmu.currentTime < 1) {
+            while (instance.currentTime < 1) {
                 val read = h.read()
                 Assertions.assertTrue(read.status === FmiStatus.OK)
-                LOG.info("t=${fmu.currentTime}, h=${read.value}")
-                fmu.doStep(macroStep)
+                LOG.info("t=${instance.currentTime}, h=${read.value}")
+                instance.doStep(macroStep)
             }
 
         }
