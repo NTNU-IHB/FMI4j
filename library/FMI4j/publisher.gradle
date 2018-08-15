@@ -27,7 +27,7 @@ class PublishPlugin implements Plugin<Project>{
 
             def snapshot = true
             project.group = 'no.mechatronics.sfi.fmi4j'
-            project.version = '0.8.1'
+            project.version = '0.9'
             if (snapshot) {
                 project.version += '-SNAPSHOT'
             }
