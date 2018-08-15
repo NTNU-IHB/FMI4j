@@ -44,8 +44,10 @@ public class FmiLibrary implements Closeable {
     public native long instantiate(
             String instanceName, int type, String guid, String resourceLocation, boolean visible, boolean loggingOn);
 
-    public native int step(
-            long c, double currentCommunicationPoint, double communicationStepSize, boolean noSetFMUStatePriorToCurrentPoint);
+    public native int step(long c,
+                           double currentCommunicationPoint, double communicationStepSize, boolean noSetFMUStatePriorToCurrentPoint);
+
+    public native int cancelStep(long c);
 
     public native int terminate(long c);
 
@@ -78,7 +80,5 @@ public class FmiLibrary implements Closeable {
     public native long getFMUstate(long c, Pointer state);
 
     public native int setFMUstate(long c, long state);
-
-    public native int test(Pointer state);
 
 }

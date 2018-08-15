@@ -5,11 +5,11 @@
 #include "fmi2FunctionTypes.h"
 
 #if defined(_MSC_VER) || defined(WIN32) || defined(__MINGW32__)
-#include <windows.h> /* Microsoft Windows API */
+#include <windows.h>
 #define DLL_HANDLE HANDLE
 #else
 #define DLL_HANDLE void*
-#include <dlfcn.h>  /* Standard POSIX/UNIX API */
+#include <dlfcn.h>
 #endif
 
 #ifdef WIN32
@@ -110,7 +110,7 @@ JNIEXPORT jlong JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_instantiat
 
 JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_setupExperiment(JNIEnv *env, jobject obj, jlong c, jboolean toleranceDefined, jdouble tolerance, jdouble startTime, jdouble stopTime) {
 
-    fmi2Boolean stopTimeDefined = stopTime <= 0 ? 0 : 1;
+    fmi2Boolean stopTimeDefined = stopTime > startTime ? 0 : 1;
 
     int (*fmi2SetupExperiment)(fmi2Component, fmi2Boolean, fmi2Real, fmi2Real, fmi2Boolean, fmi2Real);
     fmi2SetupExperiment = load_function("fmi2SetupExperiment");
@@ -136,6 +136,13 @@ JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_step(JNIEnv
     int (*fmi2DoStep)(fmi2Component, fmi2Real, fmi2Real, fmi2Boolean);
     fmi2DoStep = load_function("fmi2DoStep");
     int status = (*fmi2DoStep)((void*) c, currentCommunicationPoint, communicationStepSize, noSetFMUStatePriorToCurrentPoint == JNI_FALSE ? 0 : 1);
+    return status;
+}
+
+JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_cancelStep(JNIEnv *env, jobject obj, jlong c) {
+    int (*fmi2CancelStep)(fmi2Component);
+    fmi2CancelStep = load_function("fmi2CancelStep");
+    int status = (*fmi2CancelStep)((void*) c);
     return status;
 }
 
@@ -356,20 +363,30 @@ JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_setFMUstate
 
 }
 
-JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_test(JNIEnv *env, jobject obj, jobject l) {
+JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_getDirectionalDerivative(JNIEnv *env, jobject obj, jlong c, jintArray vUnknown_ref, jintArray vKnown_ref, jdoubleArray dvKnown_ref, jdoubleArray dvUnknown_ref) {
 
-    jclass cls;
-    jfieldID id;
+    const jsize nUknown = (*env)->GetArrayLength(env, vUnknown_ref);
+    const jsize nKnown = (*env)->GetArrayLength(env, vUnknown_ref);
 
-    cls = (*env)->FindClass(env, "no/mechatronics/sfi/fmi4j/jni/Pointer");
-    id = (*env)->GetFieldID(env, cls, "value", "I");
+    const jint *_vUnknown_ref = (*env)->GetIntArrayElements(env, vUnknown_ref, 0);
+    const jint *_vKnown_ref = (*env)->GetIntArrayElements(env, vKnown_ref, 0);
+    const jdouble *_dvKnown_ref = (*env)->GetDoubleArrayElements(env, vKnown_ref, 0);
+    const jdouble *_dvUnknown_ref = (*env)->GetDoubleArrayElements(env, vUnknown_ref, 0);
 
-    (*env)->SetIntField(env, l, id, 10);
+    fmi2Status (*fmi2GetDirectionalDerivative)(fmi2Component, const fmi2ValueReference[], size_t, const fmi2ValueReference[], size_t, const fmi2Real[], fmi2Real[]);
+    fmi2GetDirectionalDerivative = load_function("fmi2GetDirectionalDerivative");
 
-    return 0;
+    int status = (*fmi2GetDirectionalDerivative)((void*) c, _vUnknown_ref, nUknown, _vKnown_ref, nKnown, _dvKnown_ref, _dvUnknown_ref);
+
+    (*env)->ReleaseIntArrayElements(env, vUnknown_ref, _vUnknown_ref, NULL);
+    (*env)->ReleaseIntArrayElements(env, vKnown_ref, _vKnown_ref, NULL);
+
+    (*env)->ReleaseDoubleArrayElements(env, dvKnown_ref, _dvKnown_ref, NULL);
+    (*env)->ReleaseDoubleArrayElements(env, dvUnknown_ref, _dvUnknown_ref, NULL);
+
+    return status;
 
 }
-
 
 JNIEXPORT jboolean JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_close(JNIEnv *env, jobject obj) {
     if (handle) {
