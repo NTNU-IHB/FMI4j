@@ -32,11 +32,6 @@ class BouncingBallTest {
         fmu.close()
     }
 
-    @Test
-    fun testVersion() {
-        Assertions.assertEquals("2.0", fmu.modelDescription.fmiVersion)
-    }
-
     private fun runFmu(solver: Solver) {
 
         LOG.info("Using solver: '${solver.name}'")

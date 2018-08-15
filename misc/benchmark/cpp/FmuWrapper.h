@@ -61,15 +61,7 @@ private:
 public:
     FmuInstance(fmi2_import_t* fmu);
 
-    void init() {
-        init(0);
-    }
-
-    void init(double start) {
-        init(start, -1);
-    }
-
-    void init(double start, double end);
+    void init(double start = 0, double end = 0);
 
     fmi2_status_t step(double step_size);
 

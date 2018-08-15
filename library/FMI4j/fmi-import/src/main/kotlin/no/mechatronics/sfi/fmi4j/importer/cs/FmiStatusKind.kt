@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package no.mechatronics.sfi.fmi4j.importer.proxy.v2.cs
+package no.mechatronics.sfi.fmi4j.importer.cs
 
 import java.util.*
 import kotlin.streams.toList

@@ -1,5 +1,8 @@
 
+import org.apache.tools.ant.taskdefs.condition.Os
+
 plugins {
+    id "c"
     id "com.github.johnrengelman.shadow" version "2.0.4"
 }
 
@@ -9,9 +12,6 @@ dependencies {
 
     api project(':fmi-import-solvers-api')
     api project(':fmi-modeldescription')
-
-    implementation group: 'net.java.dev.jna', name: 'jna', version: '4.5.2'
-    implementation group: 'net.java.dev.jna', name: 'jna-platform', version: '4.5.2'
 
     testImplementation project(':fmi-import-solvers-apache-math3')
     testImplementation group: 'org.siani.javafmi', name: 'fmu-wrapper', version: '2.24.4'
@@ -23,3 +23,94 @@ shadowJar {
     classifier = null
     version = null
 }
+
+model {
+
+    platforms {
+        if (Os.isFamily(Os.FAMILY_UNIX)) {
+            linux32 {
+                architecture "x86"
+                operatingSystem "linux"
+            }
+            linux64 {
+                architecture "x86_64"
+                operatingSystem "linux"
+            }
+        } else  if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+            win32 {
+                architecture "x86"
+                operatingSystem "windows"
+            }
+            win64 {
+                architecture "x86_64"
+                operatingSystem "windows"
+            }
+        }
+    }
+
+    toolChains {
+        gcc(Gcc) {
+            if (Os.isFamily(Os.FAMILY_UNIX)) {
+                target("linux32")
+                target("linux64")
+            }  else if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+                target("win32")
+                target("win64")
+            }
+        }
+    }
+
+
+    components {
+        fmi(NativeLibrarySpec) {
+
+            if (Os.isFamily(Os.FAMILY_UNIX)) {
+                targetPlatform "linux32"
+                targetPlatform "linux64"
+            } else if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+                targetPlatform "win32"
+                targetPlatform "win64"
+            }
+
+            binaries.all {
+
+                if (Os.isFamily(Os.FAMILY_UNIX)) {
+                    cCompiler.args '-I', "${org.gradle.internal.jvm.Jvm.current().javaHome}/include"
+                    cCompiler.args '-I', "${org.gradle.internal.jvm.Jvm.current().javaHome}/include/linux"
+                } else if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+                    cCompiler.args "-I${org.gradle.internal.jvm.Jvm.current().javaHome}/include"
+                    cCompiler.args "-I${org.gradle.internal.jvm.Jvm.current().javaHome}/include/win32"
+                }
+
+            }
+
+        }
+
+    }
+
+    buildTypes {
+        release
+    }
+
+    tasks {
+        buildAllExecutables(Task) {
+            dependsOn $.binaries.findAll { it.buildable }
+        }
+        copyNativeLibs(Copy) {
+            from "$buildDir/libs/fmi/shared"
+            into "$projectDir/src/main/resources/native/fmi"
+            dependsOn buildAllExecutables
+        }
+    }
+}
+
+//task generateJNI(type: Exec) {
+//    if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+//        commandLine 'cmd', '/c', 'javac'
+//    } else if (Os.isFamily(Os.FAMILY_UNIX)) {
+//        commandLine 'javac', "${workingDir}/src/main/java/no/mechatronics/sfi/fmi4j/jni/FmiLibrary.java", "-h", "src/fmi/c"
+//    } else {
+//    }
+//}
+//
+//generateJNI.dependsOn(compileJava)
