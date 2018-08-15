@@ -46,7 +46,7 @@ object Benchmark {
     @JvmStatic
     fun main(args: Array<String>) {
 
-        for (option in intArrayOf(2).map { options[it] }) {
+        for (option in intArrayOf(1).map { options[it] }) {
 
             LOG.info("Running FMU '${option.fmuName}'")
 

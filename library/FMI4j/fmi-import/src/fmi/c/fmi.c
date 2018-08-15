@@ -317,6 +317,60 @@ JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_setBoolean(
     return status;
 }
 
+
+JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_getFMUstate(JNIEnv *env, jobject obj, jlong c, jobject state) {
+
+    jclass cls;
+    jfieldID id;
+
+    cls = (*env)->FindClass(env, "no/mechatronics/sfi/fmi4j/jni/Pointer");
+    id = (*env)->GetFieldID(env, cls, "value", "I");
+
+    fmi2Status (*fmi2GetFMUstate)(fmi2Component, fmi2FMUstate*);
+    fmi2GetFMUstate = load_function("fmi2GetFMUstate");
+
+    void* _state;
+
+    int status = (*fmi2GetFMUstate)((void*) c, _state);
+
+    (*env)->SetIntField(env, state, id, (jint) _state);
+
+    return status;
+
+}
+
+JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_setFMUstate(JNIEnv *env, jobject obj, jlong c, jlong state) {
+
+    jclass cls;
+    jfieldID id;
+
+    cls = (*env)->FindClass(env, "no/mechatronics/sfi/fmi4j/jni/Pointer");
+    id = (*env)->GetFieldID(env, cls, "value", "I");
+
+    fmi2Status (*fmi2setFMUstate)(fmi2Component, fmi2FMUstate);
+    fmi2setFMUstate = load_function("fmi2SetFMUstate");
+
+    int status = (*fmi2setFMUstate)((void*) c, (void*) state);
+
+    return status;
+
+}
+
+JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_test(JNIEnv *env, jobject obj, jobject l) {
+
+    jclass cls;
+    jfieldID id;
+
+    cls = (*env)->FindClass(env, "no/mechatronics/sfi/fmi4j/jni/Pointer");
+    id = (*env)->GetFieldID(env, cls, "value", "I");
+
+    (*env)->SetIntField(env, l, id, 10);
+
+    return 0;
+
+}
+
+
 JNIEXPORT jboolean JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_close(JNIEnv *env, jobject obj) {
     if (handle) {
         #ifdef WIN32
