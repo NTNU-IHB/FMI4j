@@ -143,7 +143,7 @@ abstract class AbstractFmuInstance<out E : SpecificModelDescription, out T : Fmi
             stopDefined = (stop > start)
             if (stopDefined) stopTime = stop
             LOG.debug("setupExperiment params: start=$start, stopDefined=$stopDefined, stop=$stopTime")
-            wrapper.setupExperiment(true, 1E-4, start, stopDefined, stopTime).also {
+            wrapper.setupExperiment(true, 1E-4, start, stopTime).also {
                 if (it != FmiStatus.OK) {
                     throw IllegalStateException("setupExperiment returned status $it")
                 }

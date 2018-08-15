@@ -91,7 +91,7 @@ abstract class FmiLibraryWrapper(
     /**
      * @see FmiLibrary.fmi2SetupExperiment
      */
-    fun setupExperiment(toleranceDefined: Boolean, tolerance: Double, startTime: Double, stopTimeDefined: Boolean, stopTime: Double): FmiStatus {
+    fun setupExperiment(toleranceDefined: Boolean, tolerance: Double, startTime: Double, stopTime: Double): FmiStatus {
         return updateStatus(library.setupExperiment(c, toleranceDefined, tolerance, startTime, stopTime))
     }
 
