@@ -33,4 +33,15 @@ public class EventInfo {
     public boolean nextEventTimeDefined;
     public double nextEventTime;
 
+    @Override
+    public String toString() {
+        return "EventInfo{" +
+                "newDiscreteStatesNeeded=" + newDiscreteStatesNeeded +
+                ", terminateSimulation=" + terminateSimulation +
+                ", nominalsOfContinuousStatesChanged=" + nominalsOfContinuousStatesChanged +
+                ", valuesOfContinuousStatesChanged=" + valuesOfContinuousStatesChanged +
+                ", nextEventTimeDefined=" + nextEventTimeDefined +
+                ", nextEventTime=" + nextEventTime +
+                '}';
+    }
 }
