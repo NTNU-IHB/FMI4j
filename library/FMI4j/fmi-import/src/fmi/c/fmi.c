@@ -241,7 +241,7 @@ JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_setInteger(
 
     const jsize size = (*env)->GetArrayLength(env, vr);
     const jint *_vr = (*env)->GetIntArrayElements(env, vr, 0);
-    const jint *_values = (*env)->GetIntArrayElements(env, vr, 0);
+    const jint *_values = (*env)->GetIntArrayElements(env, values, 0);
 
     fmi2Status (*fmi2SetInteger)(fmi2Component, const fmi2ValueReference[], size_t, fmi2Integer[]);
     fmi2SetInteger = load_function("fmi2SetInteger");
@@ -258,7 +258,7 @@ JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_setReal(JNI
 
     const jsize size = (*env)->GetArrayLength(env, vr);
     const jint *_vr = (*env)->GetIntArrayElements(env, vr, 0);
-    const jdouble *_values = (*env)->GetDoubleArrayElements(env, vr, 0);
+    const jdouble *_values = (*env)->GetDoubleArrayElements(env, values, 0);
 
     fmi2Status (*fmi2SetReal)(fmi2Component, const fmi2ValueReference[], size_t, fmi2Real[]);
     fmi2SetReal = load_function("fmi2SetReal");
@@ -295,7 +295,7 @@ JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_setBoolean(
 
     const jsize size = (*env)->GetArrayLength(env, vr);
     const jint *_vr = (*env)->GetIntArrayElements(env, vr, 0);
-    const jboolean *_values = (*env)->GetBooleanArrayElements(env, vr, 0);
+    const jboolean *_values = (*env)->GetBooleanArrayElements(env, values, 0);
 
     fmi2Status (*fmi2SetBoolean)(fmi2Component, const fmi2ValueReference[], size_t, fmi2Boolean[]);
     fmi2SetBoolean = load_function("fmi2SetBoolean");
