@@ -52,11 +52,8 @@ jobject asJavaEnum(JNIEnv *env, fmi2Status status) {
 
     if (OK_STATUS == NULL) {
 
-        jclass cls;
-        jmethodID method;
-
-        cls = (*env)->FindClass(env, "no/mechatronics/sfi/fmi4j/common/FmiStatus");
-        method = (*env)->GetStaticMethodID(env, cls, "valueOf", "(I)Lno/mechatronics/sfi/fmi4j/common/FmiStatus;");
+        jclass cls = (*env)->FindClass(env, "no/mechatronics/sfi/fmi4j/common/FmiStatus");
+        jmethodID method = (*env)->GetStaticMethodID(env, cls, "valueOf", "(I)Lno/mechatronics/sfi/fmi4j/common/FmiStatus;");
 
         NONE_STATUS = (*env)->NewWeakGlobalRef(env, (*env)->CallStaticObjectMethod(env, cls, method, -1));
         OK_STATUS = (*env)->NewWeakGlobalRef(env, (*env)->CallStaticObjectMethod(env, cls, method, 0));
@@ -122,7 +119,7 @@ JNIEXPORT jlong JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_instantiat
 
     void* (*fmi2Instantiate)(fmi2String, fmi2Type, fmi2String, fmi2String, const fmi2CallbackFunctions*, fmi2Boolean, fmi2Boolean);
     fmi2Instantiate = load_function("fmi2Instantiate");
-    fmi2Component c = (*fmi2Instantiate)(_instanceName, type, _guid, _resourceLocation, &callback, visible == JNI_FALSE ? 0 : 1, loggingOn == JNI_FALSE ? 0 : 1);
+    fmi2Component c = (*fmi2Instantiate)(_instanceName, type, _guid, _resourceLocation, &callback, (fmi2Boolean) visible, (fmi2Boolean) loggingOn);
 
     (*env)->ReleaseStringUTFChars(env, instanceName, _instanceName);
     (*env)->ReleaseStringUTFChars(env, guid, _guid);
@@ -144,7 +141,7 @@ JNIEXPORT jobject JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_setDebug
 
     int (*fmi2SetDebugLogging)(void*, int, int, const char* []);
     fmi2SetDebugLogging = load_function("fmi2SetDebugLogging");
-    int status = (*fmi2SetDebugLogging)((void*) c, loggingOn == JNI_FALSE ? 0 : 1, nCategories, _categories);
+    int status = (*fmi2SetDebugLogging)((void*) c, (fmi2Boolean) loggingOn, nCategories, _categories);
 
     free(_categories);
 
@@ -157,7 +154,7 @@ JNIEXPORT jobject JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_setupExp
 
     int (*fmi2SetupExperiment)(fmi2Component, fmi2Boolean, fmi2Real, fmi2Real, fmi2Boolean, fmi2Real);
     fmi2SetupExperiment = load_function("fmi2SetupExperiment");
-    int status = (*fmi2SetupExperiment)((void*) c, toleranceDefined, tolerance, startTime, stopTimeDefined, stopTime);
+    int status = (*fmi2SetupExperiment)((void*) c, (fmi2Boolean) toleranceDefined, tolerance, startTime, stopTimeDefined, stopTime);
     return asJavaEnum(env, status);
 }
 
@@ -474,9 +471,9 @@ JNIEXPORT jobject JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_getDirec
 JNIEXPORT jboolean JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_close(JNIEnv *env, jobject obj) {
     if (handle) {
         #ifdef WIN32
-            return FreeLibrary(handle) == 0 ? JNI_FALSE : JNI_FALSE;
+            return FreeLibrary(handle);
         #else
-            return dlclose(handle)  == 0 ? JNI_FALSE : JNI_FALSE;
+            return dlclose(handle);
         #endif
         handle = NULL;
     }
@@ -491,7 +488,7 @@ Functions for FMI2 for Co-Simulation
 JNIEXPORT jobject JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_step(JNIEnv *env, jobject obj, jlong c, jdouble currentCommunicationPoint, jdouble communicationStepSize, jboolean noSetFMUStatePriorToCurrentPoint) {
     fmi2Status (*fmi2DoStep)(fmi2Component, fmi2Real, fmi2Real, fmi2Boolean);
     fmi2DoStep = load_function("fmi2DoStep");
-    fmi2Status status = (*fmi2DoStep)((void*) c, currentCommunicationPoint, communicationStepSize, noSetFMUStatePriorToCurrentPoint == JNI_FALSE ? 0 : 1);
+    fmi2Status status = (*fmi2DoStep)((void*) c, currentCommunicationPoint, communicationStepSize, noSetFMUStatePriorToCurrentPoint);
     return asJavaEnum(env, status);
 }
 
@@ -648,14 +645,11 @@ JNIEXPORT jobject JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_getNomin
 
 JNIEXPORT jobject JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_completedIntegratorStep(JNIEnv *env, jobject obj, jlong c, jboolean noSetFMUStatePriorToCurrentPoint, jobject enterEventMode, jobject terminateSimulation) {
 
-    jclass cls;
-    jfieldID id;
-
     fmi2Boolean _enterEventMode;
     fmi2Boolean _terminateSimulation;
 
-    cls = (*env)->FindClass(env, "no/mechatronics/sfi/fmi4j/jni/BooleanByReference");
-    id = (*env)->GetFieldID(env, cls, "value", "Z");
+    jclass cls = (*env)->FindClass(env, "no/mechatronics/sfi/fmi4j/jni/BooleanByReference");
+    jfieldID id = (*env)->GetFieldID(env, cls, "value", "Z");
 
     fmi2Status (*fmi2CompletedIntegratorStep)(fmi2Component, fmi2Boolean, fmi2Boolean*, fmi2Boolean*);
     fmi2CompletedIntegratorStep = load_function("fmi2CompletedIntegratorStep");
@@ -669,23 +663,14 @@ JNIEXPORT jobject JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_complete
 
 JNIEXPORT jobject JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_newDiscreteStates(JNIEnv *env, jobject obj, jlong c, jobject states) {
 
-    jclass cls;
+    jclass cls = (*env)->FindClass(env, "no/mechatronics/sfi/fmi4j/jni/EventInfo");
 
-    jfieldID newDiscreteStatesNeeded_id;
-    jfieldID terminateSimulation_id;
-    jfieldID nominalsOfContinuousStatesChanged_id;
-    jfieldID valuesOfContinuousStatesChanged_id;
-    jfieldID nextEventTimeDefined_id;
-    jfieldID nextEventTime_id;
-
-    cls = (*env)->FindClass(env, "no/mechatronics/sfi/fmi4j/jni/EventInfo");
-
-    newDiscreteStatesNeeded_id = (*env)->GetFieldID(env, cls, "newDiscreteStatesNeeded", "Z");
-    terminateSimulation_id = (*env)->GetFieldID(env, cls, "terminateSimulation", "Z");
-    nominalsOfContinuousStatesChanged_id = (*env)->GetFieldID(env, cls, "nominalsOfContinuousStatesChanged", "Z");
-    valuesOfContinuousStatesChanged_id = (*env)->GetFieldID(env, cls, "valuesOfContinuousStatesChanged", "Z");
-    nextEventTimeDefined_id = (*env)->GetFieldID(env, cls, "nextEventTimeDefined", "Z");
-    nextEventTime_id = (*env)->GetFieldID(env, cls, "nextEventTime", "D");
+    jfieldID newDiscreteStatesNeeded_id = (*env)->GetFieldID(env, cls, "newDiscreteStatesNeeded", "Z");
+    jfieldID terminateSimulation_id = (*env)->GetFieldID(env, cls, "terminateSimulation", "Z");
+    jfieldID nominalsOfContinuousStatesChanged_id = (*env)->GetFieldID(env, cls, "nominalsOfContinuousStatesChanged", "Z");
+    jfieldID valuesOfContinuousStatesChanged_id = (*env)->GetFieldID(env, cls, "valuesOfContinuousStatesChanged", "Z");
+    jfieldID nextEventTimeDefined_id = (*env)->GetFieldID(env, cls, "nextEventTimeDefined", "Z");
+    jfieldID nextEventTime_id = (*env)->GetFieldID(env, cls, "nextEventTime", "D");
 
     fmi2EventInfo _states = {
         .newDiscreteStatesNeeded = (*env)->GetBooleanField(env, states, newDiscreteStatesNeeded_id),
