@@ -24,6 +24,7 @@
 
 #include <iostream>
 #include <ctime>
+#include <memory>
 
 #include "FmuWrapper.h"
 
@@ -39,7 +40,7 @@ string getOs() {
 #endif
 }
 
-bool runInstance(shared_ptr<FmuInstance> instance, double stop, double step_size) {
+bool runInstance(shared_ptr<FmuInstance> instance, double stop, double step_size, int vr) {
     instance->init();
 
     clock_t begin = clock();
@@ -52,15 +53,14 @@ bool runInstance(shared_ptr<FmuInstance> instance, double stop, double step_size
             return false;
         }
 
-        instance->getReal("Temperature_Room", read);
-//        cout << "Time=" << instance->getCurrentTime()  <<  ", Temperature_Room=" << read.value << endl;
+        instance->getReal(vr, read);
 
     }
 
     clock_t end = clock();
 
-    double elapsed_secs = double(end-begin) / CLOCKS_PER_SEC;
-    cout << "elapsed=" << elapsed_secs << "s" << endl;
+    long elapsed_secs = (long) ((double(end-begin) / CLOCKS_PER_SEC) * 1000.0);
+    cout << "elapsed=" << elapsed_secs << "ms" << endl;
 
     instance->terminate();
 
@@ -76,15 +76,16 @@ int main() {
         return -1;
     }
 
-    string fmu_path = string(TEST_FMUs) + "/FMI_2.0/CoSimulation/" + getOs() + "/20sim/4.6.4.8004/ControlledTemperature/ControlledTemperature.fmu";
+    string fmu_path = string(TEST_FMUs) + "/FMI_2.0/CoSimulation/" + getOs()
+            + "/20sim/4.6.4.8004/TorsionBar/TorsionBar.fmu";
     cout << "fmu_path=" << fmu_path << endl;
 
     FmuWrapper fmu = FmuWrapper(fmu_path);
     shared_ptr<FmuInstance> instance = fmu.newInstance();
 
-    double stop = 10;
-    double step_size = 1.0/100;
-    runInstance(instance, stop, step_size);
+    double stop = 12;
+    double step_size = 1E-5;
+    runInstance(instance, stop, step_size, 2);
 
     return 0;
 }

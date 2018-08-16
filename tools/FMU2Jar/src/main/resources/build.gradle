@@ -13,9 +13,8 @@ repositories {
     mavenCentral()
 }
 
-def fmi4j_version = '0.8'
-
 dependencies {
+    def fmi4j_version = '0.9'
     api group: 'no.mechatronics.sfi.fmi4j', name: 'fmi-import', version: fmi4j_version
     api group: 'no.mechatronics.sfi.fmi4j', name: 'fmi-import-solvers-apache-math3', version: fmi4j_version
 }

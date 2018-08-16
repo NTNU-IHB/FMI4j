@@ -11,6 +11,7 @@ FMI4j is a software package for dealing with Functional Mock-up Units (FMUs) on 
 FMI4j supports [FMI](http://fmi-standard.org/) 2.0 for **Model Exchange** and **Co-simulation**.
 For Model Exchange, solvers from [Apache Commons Math](http://commons.apache.org/proper/commons-math/userguide/ode.html) can be used.
 
+Compared to other FMI libraries targeting the JVM, FMI4j is considerable faster due to the fact that we use JNI instead of JNA. A speedup of 2-5x should be excpected. 
 
 The package consists of:
 * [A software API for interacting with FMUs](#api)

@@ -1,3 +1,5 @@
+@file:JvmName("OSUtil")
+
 /*
  * The MIT License
  *
@@ -24,38 +26,55 @@
 
 package no.mechatronics.sfi.fmi4j.importer.misc
 
-import no.mechatronics.sfi.fmi4j.importer.proxy.v2.FmiLibrary
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
-import java.util.function.Supplier
+val osName: String = System.getProperty("os.name")
+val platformBitness: String = System.getProperty("sun.arch.data.model")
 
-/**
- * Wraps the native FMI library
- *
- * @author Lars Ivar Hatledal
- */
-class FmiLibraryProvider<E : FmiLibrary>(
-        private val librarySupplier: () -> E
-) : Supplier<E> {
+val is32Bit: Boolean
+    get() = platformBitness == "32"
 
-    private var library: E? = null
+val is64Bit: Boolean
+    get() = platformBitness == "64"
 
-    override fun get(): E {
-        if (library == null) {
-            library = librarySupplier.invoke()
-            LOG.debug("Library loaded")
+
+val isWindows: Boolean
+    get() = osName.startsWith("Windows")
+
+val isLinux: Boolean
+    get() = osName.startsWith("Linux")
+
+val isMac: Boolean
+    get() = osName.startsWith("Mac") || osName.startsWith("Darwin")
+
+
+val currentOS: String
+    get() {
+        return when {
+            isMac -> "darwin$platformBitness"
+            isLinux -> "linux$platformBitness"
+            isWindows -> "win$platformBitness"
+            else -> throw RuntimeException("Unsupported OS: $osName")
         }
-        return library!!
     }
 
-    internal fun disposeLibrary() {
-        library = null
-        System.gc()
-        LOG.debug("Library disposed")
+val libPrefix: String
+    get() {
+        return when {
+            isMac -> "" // NOT SURE IF THIS IS CORRECT!
+            isLinux -> "lib"
+            isWindows -> ""
+            else -> throw RuntimeException("Unsupported OS: $osName")
+        }
     }
 
-    private companion object {
-        val LOG: Logger = LoggerFactory.getLogger(FmiLibraryProvider::class.java)
+val libExtension: String
+    get() {
+        return when {
+            isMac -> "dylib"
+            isLinux -> "so"
+            isWindows -> "dll"
+            else -> throw RuntimeException("Unsupported OS: $osName")
+        }
     }
 
-}
+
+

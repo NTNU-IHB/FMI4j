@@ -105,9 +105,7 @@ class ModelStructureImpl(
         get() = _derivatives?.unknowns ?: emptyList()
 
     override val initialUnknowns: List<Unknown>
-        get() {
-            return _initialUnknowns?.unknowns ?: emptyList()
-        }
+        get() = _initialUnknowns?.unknowns ?: emptyList()
 
     override fun toString(): String {
         return "ModelStructureImpl(outputs=$outputs, derivatives=$derivatives, initialUnknowns=$initialUnknowns)"
@@ -115,22 +113,39 @@ class ModelStructureImpl(
 
 }
 
-
+/**
+ *
+ * @author Lars Ivar Hatledal
+ */
 class Outputs(
+
         @JacksonXmlProperty(localName = "Unknown")
         @JacksonXmlElementWrapper(useWrapping = false)
         val unknowns: List<UnknownImpl>? = null
+
 ) : Serializable
 
+/**
+ *
+ * @author Lars Ivar Hatledal
+ */
 class Derivatives(
+
         @JsonProperty("Unknown")
         @JacksonXmlElementWrapper(useWrapping = false)
         val unknowns: List<UnknownImpl>? = null
+
 ) : Serializable
 
+/**
+ *
+ * @author Lars Ivar Hatledal
+ */
 class InitialUnknowns(
+
         @JsonProperty("Unknown")
         @JacksonXmlElementWrapper(useWrapping = false)
         val unknowns: List<UnknownImpl>? = null
+
 ) : Serializable
 

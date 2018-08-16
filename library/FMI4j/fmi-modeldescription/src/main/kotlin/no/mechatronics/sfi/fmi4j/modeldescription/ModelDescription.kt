@@ -24,15 +24,9 @@
 
 package no.mechatronics.sfi.fmi4j.modeldescription
 
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement
 import no.mechatronics.sfi.fmi4j.modeldescription.misc.*
-import no.mechatronics.sfi.fmi4j.modeldescription.misc.Unit
 import no.mechatronics.sfi.fmi4j.modeldescription.structure.ModelStructure
-import no.mechatronics.sfi.fmi4j.modeldescription.structure.ModelStructureImpl
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.ModelVariables
-import no.mechatronics.sfi.fmi4j.modeldescription.variables.ModelVariablesImpl
-import java.io.Serializable
 
 
 /**
@@ -122,7 +116,8 @@ interface CommonModelDescription {
     val defaultExperiment: DefaultExperiment?
 
     /**
-     * List of defined ScalarVariables
+     * The central FMU data structure defining all variables of the FMU that
+     * are visible/accessible via the FMU functions.
      */
     val modelVariables: ModelVariables
 
@@ -138,17 +133,17 @@ interface CommonModelDescription {
      */
     val modelStructure: ModelStructure
 
-
     /**
      * A global list of unit and display unit definitions [for example to convert
-     * display units into the units used in the model equations].
+     * display units into the units used in the model equations]. These
+     * definitions are used in the XML element “ModelVariables”.
      */
-    val unitDefinitions: List<Unit>?
+    val unitDefinitions: UnitDefinitions?
 
     /**
-     * The type definitions
+     * A global list of type definitions that are utilized in “ModelVariables”.
      */
-    val typeDefinitions: List<SimpleType>?
+    val typeDefinitions: TypeDefinitions?
 
     /**
      * A global list of log categories that can be set to define the log
@@ -271,141 +266,3 @@ interface ModelDescriptionProvider : CommonModelDescription {
     fun asModelExchangeModelDescription(): ModelExchangeModelDescription
 
 }
-
-
-/**
- * @author Lars Ivar Hatledal
- */
-@JacksonXmlRootElement(localName = "fmiModelDescription")
-class ModelDescriptionImpl(
-
-        @JacksonXmlProperty()
-        override var fmiVersion: String,
-
-        @JacksonXmlProperty()
-        override val modelName: String,
-
-        @JacksonXmlProperty()
-        override val guid: String,
-
-        @JacksonXmlProperty()
-        override val license: String? = null,
-
-        @JacksonXmlProperty()
-        override val copyright: String? = null,
-
-        @JacksonXmlProperty()
-        override val author: String? = null,
-
-        @JacksonXmlProperty()
-        override val version: String? = null,
-
-        @JacksonXmlProperty()
-        override val description: String? = null,
-
-        @JacksonXmlProperty()
-        override val generationTool: String? = null,
-
-        @JacksonXmlProperty()
-        override val generationDateAndTime: String? = null,
-
-        @JacksonXmlProperty()
-        override val variableNamingConvention: VariableNamingConvention? = null,
-
-        @JacksonXmlProperty(localName = "DefaultExperiment")
-        override val defaultExperiment: DefaultExperiment? = null,
-
-        @JacksonXmlProperty(localName = "ModelVariables")
-        override var modelVariables: ModelVariablesImpl,
-
-        @JacksonXmlProperty(localName = "ModelStructure")
-        override var modelStructure: ModelStructureImpl,
-
-        @JacksonXmlProperty(localName = "LogCategories")
-        override val logCategories: LogCategories? = null,
-
-        @JacksonXmlProperty(localName = "UnitDefinitions")
-        override val unitDefinitions: List<Unit>? = null,
-
-        @JacksonXmlProperty(localName = "TypeDefinitions")
-        override val typeDefinitions: List<SimpleType>? = null,
-
-        @JacksonXmlProperty(localName = "CoSimulation")
-        private val cs: CoSimulationDataImpl? = null,
-
-        @JacksonXmlProperty(localName = "ModelExchange")
-        private val me: ModelExchangeDataImpl? = null,
-
-        /**
-         * The (fixed) number of event indicators for an FMU based on FMI for Model Exchange.
-         * For Co-Simulation, this value is ignored
-         */
-        val numberOfEventIndicators: Int = 0
-
-
-) : ModelDescriptionProvider, Serializable {
-
-    @Transient
-    private var _modelExchangeModelDescription: ModelExchangeModelDescription? = null
-
-    private val modelExchangeModelDescription: ModelExchangeModelDescription?
-        get() {
-            if (_modelExchangeModelDescription == null && supportsModelExchange) {
-                _modelExchangeModelDescription = ModelExchangeModelDescriptionImpl(this, me!!)
-            }
-            return _modelExchangeModelDescription
-        }
-
-    @Transient
-    private var _coSimulationModelDescription: CoSimulationModelDescription? = null
-
-    private val coSimulationModelDescription: CoSimulationModelDescription?
-        get() {
-            if (_coSimulationModelDescription == null && supportsCoSimulation) {
-                _coSimulationModelDescription = CoSimulationModelDescriptionImpl(this, cs!!)
-            }
-            return _coSimulationModelDescription
-        }
-
-    override val supportsModelExchange: Boolean
-        get() = me != null
-
-    override val supportsCoSimulation: Boolean
-        get() = cs != null
-
-    /**
-     * @throws IllegalStateException if FMU does not support Co-Simulation
-     */
-    override fun asCoSimulationModelDescription(): CoSimulationModelDescription = coSimulationModelDescription
-            ?: throw IllegalStateException("FMU does not support Co-Simulation: modelDescription.xml does not contain a <CoSimulation> tag!")
-
-    /**
-     * @throws IllegalStateException if FMU does not support Model Exchange
-     */
-    override fun asModelExchangeModelDescription(): ModelExchangeModelDescription = modelExchangeModelDescription
-            ?: throw IllegalStateException("FMU does not support Model Exchange: modelDescription.xml does not contain a <ModelExchange> tag!")
-
-    internal val stringContent: String
-        get() = listOfNotNull(
-                "fmiVersion=$fmiVersion",
-                "modelName=$modelName",
-                "guid=$guid",
-                license?.let { "license=$license" },
-                copyright?.let { "copyright=$copyright" },
-                author?.let { "author=$author" },
-                version?.let { "version=$version" },
-                description?.let { "description=$description" },
-                generationTool?.let { "generationTool=$generationTool" },
-                variableNamingConvention?.let { "variableNamingConvention=$variableNamingConvention" },
-                generationDateAndTime?.let { "generationDateAndTime=$generationDateAndTime" },
-                defaultExperiment?.let { "defaultExperiment=$defaultExperiment" }
-        ).joinToString("\n")
-
-
-    override fun toString(): String {
-        return "ModelDescriptionImpl(\n$stringContent\n)"
-    }
-
-}
-
-

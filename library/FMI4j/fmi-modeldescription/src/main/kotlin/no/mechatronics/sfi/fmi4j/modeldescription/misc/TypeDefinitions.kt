@@ -30,6 +30,7 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.*
 import java.io.Serializable
 
+typealias TypeDefinitions = List<SimpleType>
 
 /**
  * @author Lars Ivar Hatledal

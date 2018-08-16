@@ -1,6 +1,7 @@
 package no.mechatronics.sfi.fmi4j.importer.cs.vendors.fmusdk
 
 import no.mechatronics.sfi.fmi4j.TestUtils
+import no.mechatronics.sfi.fmi4j.common.FmiStatus
 import no.mechatronics.sfi.fmi4j.importer.Fmu
 import no.mechatronics.sfi.fmi4j.importer.me.vendors.fmusdk.VanDerPolTest
 import org.junit.jupiter.api.AfterAll
@@ -31,21 +32,24 @@ class VanDerPolTest {
     }
 
     @Test
-    fun testVersion() {
-        Assertions.assertEquals("2.0", fmu.modelDescription.fmiVersion)
-    }
-
-    @Test
     fun testInstance() {
 
         fmu.asCoSimulationFmu().newInstance().use { instance ->
 
             instance.init()
 
-            val stepSize = 1E-3
-            while (instance.currentTime < 5.0) {
-                val status = instance.doStep(stepSize)
-                Assertions.assertTrue(status)
+            val variableName = "x0"
+            val x0 = instance.modelVariables
+                    .getByName(variableName).asRealVariable()
+
+            instance.init()
+
+            val macroStep = 1E-2
+            while (instance.currentTime < 1) {
+                val read = x0.read()
+                Assertions.assertTrue(read.status === FmiStatus.OK)
+                LOG.info("t=${instance.currentTime}, $variableName=${read.value}")
+                instance.doStep(macroStep)
             }
 
         }
