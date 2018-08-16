@@ -26,9 +26,9 @@ package no.mechatronics.sfi.fmi4j.importer.me
 
 import no.mechatronics.sfi.fmi4j.common.FmiStatus
 import no.mechatronics.sfi.fmi4j.importer.FmiLibraryWrapper
-import no.mechatronics.sfi.fmi4j.jni.BooleanByReference
-import no.mechatronics.sfi.fmi4j.jni.EventInfo
-import no.mechatronics.sfi.fmi4j.jni.FmiLibrary
+import no.mechatronics.sfi.fmi4j.importer.jni.BooleanByReference
+import no.mechatronics.sfi.fmi4j.importer.jni.EventInfo
+import no.mechatronics.sfi.fmi4j.importer.jni.FmiLibrary
 
 /**
  *

@@ -22,19 +22,40 @@
  * THE SOFTWARE.
  */
 
-package no.mechatronics.sfi.fmi4j.jni;
+package no.mechatronics.sfi.fmi4j.importer.jni
 
-public class EventInfo {
+open class IntByReference {
+    var value: Int = 0
+}
 
-    public boolean newDiscreteStatesNeeded;
-    public boolean terminateSimulation;
-    public boolean nominalsOfContinuousStatesChanged;
-    public boolean valuesOfContinuousStatesChanged;
-    public boolean nextEventTimeDefined;
-    public double nextEventTime;
+open class DoubleByReference {
+    var value: Double = 0.0
+}
 
-    @Override
-    public String toString() {
+open class StringByReference {
+    var value: String = ""
+}
+
+open class BooleanByReference {
+    var value: Boolean = false
+}
+
+open class LongByReference {
+    var value: Long = 0
+}
+
+class FmuState : LongByReference()
+
+class EventInfo {
+
+    var newDiscreteStatesNeeded: Boolean = false
+    var terminateSimulation: Boolean = false
+    var nominalsOfContinuousStatesChanged: Boolean = false
+    var valuesOfContinuousStatesChanged: Boolean = false
+    var nextEventTimeDefined: Boolean = false
+    var nextEventTime: Double = 0.0
+
+    override fun toString(): String {
         return "EventInfo{" +
                 "newDiscreteStatesNeeded=" + newDiscreteStatesNeeded +
                 ", terminateSimulation=" + terminateSimulation +
@@ -42,6 +63,7 @@ public class EventInfo {
                 ", valuesOfContinuousStatesChanged=" + valuesOfContinuousStatesChanged +
                 ", nextEventTimeDefined=" + nextEventTimeDefined +
                 ", nextEventTime=" + nextEventTime +
-                '}';
+                '}'.toString()
     }
+
 }

@@ -25,7 +25,7 @@
 package no.mechatronics.sfi.fmi4j.importer.cs
 
 import no.mechatronics.sfi.fmi4j.importer.FmiLibraryWrapper
-import no.mechatronics.sfi.fmi4j.jni.*
+import no.mechatronics.sfi.fmi4j.importer.jni.*
 
 
 /**

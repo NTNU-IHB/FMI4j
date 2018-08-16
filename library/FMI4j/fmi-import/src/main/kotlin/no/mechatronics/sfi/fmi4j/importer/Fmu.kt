@@ -25,12 +25,12 @@
 package no.mechatronics.sfi.fmi4j.importer
 
 import no.mechatronics.sfi.fmi4j.importer.cs.CoSimulationFmuInstance
+import no.mechatronics.sfi.fmi4j.importer.cs.CoSimulationLibraryWrapper
+import no.mechatronics.sfi.fmi4j.importer.jni.FmiLibrary
 import no.mechatronics.sfi.fmi4j.importer.me.ModelExchangeFmuInstance
 import no.mechatronics.sfi.fmi4j.importer.me.ModelExchangeFmuStepper
-import no.mechatronics.sfi.fmi4j.importer.misc.*
-import no.mechatronics.sfi.fmi4j.importer.cs.CoSimulationLibraryWrapper
 import no.mechatronics.sfi.fmi4j.importer.me.ModelExchangeLibraryWrapper
-import no.mechatronics.sfi.fmi4j.jni.FmiLibrary
+import no.mechatronics.sfi.fmi4j.importer.misc.*
 import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescriptionParser
 import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescriptionProvider
 import no.mechatronics.sfi.fmi4j.modeldescription.SpecificModelDescription

@@ -24,14 +24,6 @@
 
 package no.mechatronics.sfi.fmi4j.importer.misc
 
-import no.mechatronics.sfi.fmi4j.jni.PointerByReference
-
-/**
- *
- * @author Lars Ivar Hatledal
- */
-class FmuState : PointerByReference()
-
 /**
  *
  * @author Lars Ivar Hatledal
@@ -60,18 +52,3 @@ class DirectionalDerivatives(
     val dvUnknown = DoubleArray(size)
 
 }
-
-///**
-// * https://stackoverflow.com/questions/29162569/jna-passing-string-by-reference-to-dll-but-non-return
-// */
-//class StringByReference : ByReference {
-//
-//    var value: String
-//        get() = pointer.getString(0)
-//        set(str) = pointer.setString(0, str)
-//
-//    @JvmOverloads constructor(size: Int = 0) : super(if (size < 4) 4 else size) {
-//        pointer.clear((if (size < 4) 4 else size).toLong())
-//    }
-//
-//}
