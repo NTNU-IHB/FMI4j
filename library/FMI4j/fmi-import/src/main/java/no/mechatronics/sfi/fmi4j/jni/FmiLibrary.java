@@ -114,9 +114,17 @@ public class FmiLibrary implements Closeable {
             int[] vKnownRef, double[] dvKnown, double[] dvUnknown);
 
 
-    public native long getFMUstate(long c, PointerByReference state);
+    public native FmiStatus getFMUstate(long c, FmuState state);
 
     public native FmiStatus setFMUstate(long c, long state);
+
+    public native FmiStatus freeFMUstate(long c, FmuState state);
+
+    public native FmiStatus serializedFMUstateSize(long c, long state, IntByReference size);
+
+    public native FmiStatus serializeFMUstate(long c, long state, IntByReference size);
+
+    public native FmiStatus deSerializeFMUs(long c, byte[] serializedState, FmuState state);
 
 
     /***************************************************

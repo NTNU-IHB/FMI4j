@@ -22,14 +22,14 @@ DLL_HANDLE handle;
 
 function_ptr* load_function(const char* function_name) {
 #ifdef WIN32
-	return  (function_ptr) GetProcAddress(handle, function_name);
+    return (function_ptr) GetProcAddress(handle, function_name);
 #else
-	return dlsym(handle, function_name);
+    return dlsym(handle, function_name);
 #endif
 }
 
 void logger(void* fmi2ComponentEnvironment, fmi2String instance_name, fmi2Status status, fmi2String category, fmi2String message, ...) {
-     printf("instanceName = %s, category = %s: %s\n", instance_name, category, message);
+    printf("instanceName = %s, category = %s: %s\n", instance_name, category, message);
 }
 
 fmi2CallbackFunctions callback = {
@@ -352,18 +352,16 @@ JNIEXPORT jobject JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_setBoole
 
 JNIEXPORT jobject JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_getFMUstate(JNIEnv *env, jobject obj, jlong c, jobject state) {
 
-    jclass cls;
-    jfieldID id;
-    fmi2FMUstate _state;
-
-    cls = (*env)->FindClass(env, "no/mechatronics/sfi/fmi4j/jni/PointerByReference");
-    id = (*env)->GetFieldID(env, cls, "value", "J");
+    jclass cls = (*env)->FindClass(env, "no/mechatronics/sfi/fmi4j/jni/FmuState");
+    jfieldID id = (*env)->GetFieldID(env, cls, "pointer", "J");
 
     fmi2Status (*fmi2GetFMUstate)(fmi2Component, fmi2FMUstate*);
     fmi2GetFMUstate = load_function("fmi2GetFMUstate");
+
+    fmi2FMUstate _state;
     fmi2Status status = (*fmi2GetFMUstate)((void*) c, &_state);
 
-    (*env)->SetIntField(env, state, id, (jlong) _state);
+    (*env)->SetLongField(env, state, id, (jlong) _state);
 
     return asJavaEnum(env, status);
 
@@ -371,18 +369,82 @@ JNIEXPORT jobject JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_getFMUst
 
 JNIEXPORT jobject JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_setFMUstate(JNIEnv *env, jobject obj, jlong c, jlong state) {
 
-    jclass cls;
-    jfieldID id;
-
-    cls = (*env)->FindClass(env, "no/mechatronics/sfi/fmi4j/jni/PointerByReference");
-    id = (*env)->GetFieldID(env, cls, "value", "J");
-
-    fmi2Status (*fmi2setFMUstate)(fmi2Component, fmi2FMUstate);
-    fmi2setFMUstate = load_function("fmi2SetFMUstate");
-    fmi2Status status = (*fmi2setFMUstate)((void*) c, (void*) state);
+    fmi2Status (*fmi2SetFMUstate)(fmi2Component, fmi2FMUstate);
+    fmi2SetFMUstate = load_function("fmi2SetFMUstate");
+    fmi2Status status = (*fmi2SetFMUstate)((void*) c, (fmi2FMUstate) state);
 
     return asJavaEnum(env, status);
 
+}
+
+JNIEXPORT jobject JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_freeFMUstate(JNIEnv *env, jobject obj, jlong c, jobject state) {
+
+    jclass cls = (*env)->FindClass(env, "no/mechatronics/sfi/fmi4j/jni/FmuState");
+    jfieldID id = (*env)->GetFieldID(env, cls, "pointer", "J");
+
+    fmi2Status (*fmi2FreeFMUstate)(fmi2Component, fmi2FMUstate*);
+    fmi2FreeFMUstate = load_function("fmi2FreeFMUstate");
+
+    fmi2FMUstate _state = (fmi2FMUstate) (*env)->GetLongField(env, state, id);
+    fmi2Status status = (*fmi2FreeFMUstate)((void*) c, &_state);
+
+    (*env)->SetLongField(env, state, id, (jlong) _state);
+
+    return asJavaEnum(env, status);
+
+}
+
+JNIEXPORT jobject JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_serializedFMUstateSize(JNIEnv *env, jobject obj, jlong c, jlong state, jobject size) {
+
+    jclass size_cls = (*env)->FindClass(env, "no/mechatronics/sfi/fmi4j/jni/IntByReference");
+    jfieldID size_id = (*env)->GetFieldID(env, size_cls, "value", "I");
+
+    fmi2Status (*fmi2SerializedFMUstateSize)(fmi2Component, fmi2FMUstate, size_t*);
+    fmi2SerializedFMUstateSize = load_function("fmi2SerializedFMUstateSize");
+
+    size_t _size;
+    fmi2Status status = (*fmi2SerializedFMUstateSize)((void*) c, (fmi2FMUstate) state, &_size);
+
+    (*env)->SetIntField(env, size, size_id, (jint) _size);
+
+    return asJavaEnum(env, status);
+}
+
+JNIEXPORT jobject JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_serializeFMUstate(JNIEnv *env, jobject obj, jlong c, jlong state, jbyteArray serializedState) {
+
+    const jsize size = (*env)->GetArrayLength(env, serializedState);
+    fmi2Byte *_serializedState = malloc( sizeof(fmi2Byte) * size );
+
+    fmi2Status (*fmi2SerializeFMUstate)(fmi2Component, fmi2FMUstate, fmi2Byte[], size_t);
+    fmi2SerializeFMUstate = load_function("fmi2SerializeFMUstate");
+
+    fmi2Status status = (*fmi2SerializeFMUstate)((void*) c, (fmi2FMUstate) state, _serializedState, size);
+
+    (*env)->SetByteArrayRegion(env, serializedState, 0, size, _serializedState);
+    free(_serializedState);
+
+    return asJavaEnum(env, status);
+}
+
+JNIEXPORT jobject JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_deSerializeFMUstate(JNIEnv *env, jobject obj, jlong c, const jbyteArray serializedState, jobject state) {
+
+    jclass cls = (*env)->FindClass(env, "no/mechatronics/sfi/fmi4j/jni/FmuState");
+    jfieldID id = (*env)->GetFieldID(env, cls, "pointer", "J");
+
+    const jsize size = (*env)->GetArrayLength(env, serializedState);
+    const jbyte *_serializedState = (*env)->GetByteArrayElements(env, serializedState, 0);
+
+    fmi2Status (*fmi2DeserializeFMUstate)(fmi2Component, const fmi2Byte[], size_t, fmi2FMUstate*);
+    fmi2DeserializeFMUstate = load_function("fmi2DeserializeFMUstate");
+
+    fmi2FMUstate _state = (fmi2FMUstate) (*env)->GetLongField(env, state, id);
+    fmi2Status status = (*fmi2DeserializeFMUstate)((void*) c, _serializedState, size, _state);
+
+    (*env)->SetLongField(env, state, id, (jlong) _state);
+
+    (*env)->ReleaseByteArrayElements(env, serializedState, _serializedState, NULL);
+
+    return asJavaEnum(env, status);
 }
 
 JNIEXPORT jobject JNICALL Java_no_mechatronics_sfi_fmi4j_jni_FmiLibrary_getDirectionalDerivative(JNIEnv *env, jobject obj, jlong c, jintArray vUnknown_ref, jintArray vKnown_ref, jdoubleArray dvKnown_ref, jdoubleArray dvUnknown_ref) {
