@@ -24,6 +24,7 @@
 
 package no.mechatronics.sfi.fmi4j.jni;
 
+import no.mechatronics.sfi.fmi4j.common.FmiStatus;
 import no.mechatronics.sfi.fmi4j.importer.misc.OSUtil;
 
 import java.io.Closeable;
@@ -69,104 +70,104 @@ public class FmiLibrary implements Closeable {
 
     public native String getTypesPlatform();
 
-    public native int setDebugLogging(
+    public native FmiStatus setDebugLogging(
             long c, boolean loggingOn, int nCategories, String[] categories);
 
-    public native int setupExperiment(
+    public native FmiStatus setupExperiment(
             long c, boolean toleranceDefined,
             double tolerance, double startTime, double stopTime);
 
-    public native int enterInitializationMode(long c);
+    public native FmiStatus enterInitializationMode(long c);
 
-    public native int exitInitializationMode(long c);
+    public native FmiStatus exitInitializationMode(long c);
 
     public native long instantiate(
             String instanceName, int type, String guid,
             String resourceLocation, boolean visible, boolean loggingOn);
 
-    public native int terminate(long c);
+    public native FmiStatus terminate(long c);
 
-    public native int reset(long c);
+    public native FmiStatus reset(long c);
 
     public native void freeInstance(long c);
 
     //read
-    public native int getInteger(long c, int vr[], int[] ref);
+    public native FmiStatus getInteger(long c, int vr[], int[] ref);
 
-    public native int getReal(long c, int[] vr, double[] ref);
+    public native FmiStatus getReal(long c, int[] vr, double[] ref);
 
-    public native int getString(long c, int[] vr, String[] ref);
+    public native FmiStatus getString(long c, int[] vr, String[] ref);
 
-    public native int getBoolean(long c, int[] vr, boolean[] ref);
+    public native FmiStatus getBoolean(long c, int[] vr, boolean[] ref);
 
     //write
-    public native int setInteger(long c, int vr[], int[] values);
+    public native FmiStatus setInteger(long c, int vr[], int[] values);
 
-    public native int setReal(long c, int[] vr, double[] values);
+    public native FmiStatus setReal(long c, int[] vr, double[] values);
 
-    public native int setString(long c, int[] vr, String[] values);
+    public native FmiStatus setString(long c, int[] vr, String[] values);
 
-    public native int setBoolean(long c, int[] vr, boolean[] values);
+    public native FmiStatus setBoolean(long c, int[] vr, boolean[] values);
 
-    public native int getDirectionalDerivative(
+    public native FmiStatus getDirectionalDerivative(
             long c, int[] vUnknown_ref,
             int[] vKnownRef, double[] dvKnown, double[] dvUnknown);
 
 
     public native long getFMUstate(long c, PointerByReference state);
 
-    public native int setFMUstate(long c, long state);
+    public native FmiStatus setFMUstate(long c, long state);
 
 
     /***************************************************
      Functions for FMI2 for Co-simulation
      ****************************************************/
 
-    public native int step(
+    public native FmiStatus step(
             long c, double currentCommunicationPoint,
             double communicationStepSize, boolean noSetFMUStatePriorToCurrentPoint);
 
-    public native int cancelStep(long c);
+    public native FmiStatus cancelStep(long c);
 
-    public native int setRealInputDerivatives(long c, int[] vr, int[] order, double[] value);
+    public native FmiStatus setRealInputDerivatives(long c, int[] vr, int[] order, double[] value);
 
-    public native int getRealOutputDerivatives(long c, int[] vr, int[] order, double[] value);
+    public native FmiStatus getRealOutputDerivatives(long c, int[] vr, int[] order, double[] value);
 
-    public native int getStatus(long c, int s, IntByReference value);
+    public native FmiStatus getStatus(long c, int s, IntByReference value);
 
-    public native int getRealStatus(long c, int s, DoubleByReference value);
+    public native FmiStatus getRealStatus(long c, int s, DoubleByReference value);
 
-    public native int getIntegerStatus(long c, int s, IntByReference value);
+    public native FmiStatus getIntegerStatus(long c, int s, IntByReference value);
 
-    public native int getStringStatus(long c, int s, StringByReference value);
+    public native FmiStatus getStringStatus(long c, int s, StringByReference value);
 
-    public native int getBooleanStatus(long c, int s, BooleanByReference value);
+    public native FmiStatus getBooleanStatus(long c, int s, BooleanByReference value);
 
-    public native int getMaxStepSize(long c, DoubleByReference stepSize);
+    public native FmiStatus getMaxStepSize(long c, DoubleByReference stepSize);
 
     /***************************************************
      Functions for FMI2 for Model Exchange
      ****************************************************/
 
-    public native int enterEventMode(long c);
+    public native FmiStatus enterEventMode(long c);
 
-    public native int newDiscreteStates(long c, EventInfo ev);
+    public native FmiStatus newDiscreteStates(long c, EventInfo ev);
 
-    public native int enterContinuousTimeMode(long c);
+    public native FmiStatus enterContinuousTimeMode(long c);
 
-    public native int setContinuousStates(long c, double[] x);
+    public native FmiStatus setContinuousStates(long c, double[] x);
 
-    public native int completedIntegratorStep(long c, boolean noSetFMUStatePriorToCurrentPoint,
+    public native FmiStatus completedIntegratorStep(long c, boolean noSetFMUStatePriorToCurrentPoint,
                                               BooleanByReference enterEventMode, BooleanByReference terminateSimulation);
 
-    public native int setTime(long c, double time);
+    public native FmiStatus setTime(long c, double time);
 
-    public native int getDerivatives(long c, double[] derivatives);
+    public native FmiStatus getDerivatives(long c, double[] derivatives);
 
-    public native int getEventIndicators(long c, double[] eventIndicators);
+    public native FmiStatus getEventIndicators(long c, double[] eventIndicators);
 
-    public native int getContinuousStates(long c, double[] x);
+    public native FmiStatus getContinuousStates(long c, double[] x);
 
-    public native int getNominalsOfContinuousStates(long c, double[] x_nominals);
+    public native FmiStatus getNominalsOfContinuousStates(long c, double[] x_nominals);
 
 }
