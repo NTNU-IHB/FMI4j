@@ -31,11 +31,10 @@ import java.io.Closeable
 import java.io.File
 import java.io.FileOutputStream
 
+/**
+ * @author Lars Ivar Hatledal
+ */
 class FmiLibrary(libName: String) : Closeable {
-
-    val version: String
-
-    val typesPlatform: String
 
     init {
         if (!load(libName)) {
@@ -46,6 +45,11 @@ class FmiLibrary(libName: String) : Closeable {
     private external fun load(libName: String): Boolean
 
     external override fun close()
+
+    external fun getVersion(): String
+
+    external fun getTypesPlatform(): String
+
 
     external fun setDebugLogging(
             c: Long, loggingOn: Boolean, nCategories: Int, categories: Array<String>): Int
