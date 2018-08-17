@@ -35,7 +35,6 @@ val is32Bit: Boolean
 val is64Bit: Boolean
     get() = platformBitness == "64"
 
-
 val isWindows: Boolean
     get() = osName.startsWith("Windows")
 
@@ -75,6 +74,3 @@ val libExtension: String
             else -> throw RuntimeException("Unsupported OS: $osName")
         }
     }
-
-
-

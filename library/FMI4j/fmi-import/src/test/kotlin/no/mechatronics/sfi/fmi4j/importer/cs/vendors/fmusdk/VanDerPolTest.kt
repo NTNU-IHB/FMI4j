@@ -42,8 +42,6 @@ class VanDerPolTest {
             val x0 = instance.modelVariables
                     .getByName(variableName).asRealVariable()
 
-            instance.init()
-
             val macroStep = 1E-2
             while (instance.currentTime < 1) {
                 val read = x0.read()

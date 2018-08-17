@@ -78,11 +78,13 @@ class FmuVariableAccessorImpl(
     override fun writeBoolean(vr: ValueReferences, value: BooleanArray) = wrapper.setBoolean(vr, value)
 
     private fun process(name: String): Int {
-        return map.getOrPut(name) { modelVariables.getValueReference(name) }
+        return map.getOrPut(name) {
+            modelVariables.getValueReference(name)
+        }
     }
 
     private companion object {
-        val map = mutableMapOf<String, Int>()
+        private val map = mutableMapOf<String, Int>()
     }
 
 }

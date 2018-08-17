@@ -402,7 +402,7 @@ JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_importer_jni_FmiLibrary_se
     return status;
 }
 
-JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_importer_jni_FmiLibrary_deSerializeFMUstate(JNIEnv *env, jobject obj, jlong c, const jbyteArray serializedState, jobject state) {
+JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_importer_jni_FmiLibrary_deSerializeFMUstate(JNIEnv *env, jobject obj, jlong c, jobject state, const jbyteArray serializedState) {
 
     jclass cls = (*env)->FindClass(env, "no/mechatronics/sfi/fmi4j/importer/jni/FmuState");
     jfieldID id = (*env)->GetFieldID(env, cls, "pointer", "J");
@@ -446,7 +446,7 @@ JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_importer_jni_FmiLibrary_ge
     return status;
 }
 
-JNIEXPORT jboolean JNICALL Java_no_mechatronics_sfi_fmi4j_importer_jni_FmiLibrary_close(JNIEnv *env, jobject obj) {
+JNIEXPORT jboolean JNICALL Java_no_mechatronics_sfi_fmi4j_importer_jni_FmiLibrary_free(JNIEnv *env, jobject obj) {
     if (handle) {
         #ifdef WIN32
             return FreeLibrary(handle);

@@ -22,46 +22,35 @@
  * THE SOFTWARE.
  */
 
-package no.mechatronics.sfi.fmi4j.importer.jni
+package no.mechatronics.sfi.fmi4j.importer.cs
 
-import java.io.IOException
-import java.util.HashMap
+import no.mechatronics.sfi.fmi4j.importer.CO_SIMULATION_TYPE
+import no.mechatronics.sfi.fmi4j.importer.Fmu
+import no.mechatronics.sfi.fmi4j.importer.jni.IFmiLibrary
 
-/**
- * A simple class loader
- */
-class SimpleClassLoader : ClassLoader() {
+class CoSimulationFmuBuilder internal constructor(
+        private val fmu: Fmu
+) {
 
-    private companion object {
-        private val classes = HashMap<String, Class<*>>()
+    private val modelDescription
+        get() = fmu.modelDescription.asCoSimulationModelDescription()
+
+    private val libraryCache: IFmiLibrary by lazy {
+        loadLibrary()
     }
 
-    @Throws(ClassNotFoundException::class)
-    public override fun findClass(name: String): Class<*>? {
-
-        if (classes.containsKey(name)) {
-            return classes[name]
-        }
-
-        val classData: ByteArray
-
-        try {
-            classData = loadClassData(name)
-        } catch (e: IOException) {
-            throw ClassNotFoundException("Class [$name] could not be found", e)
-        }
-
-        return defineClass(name, classData, 0, classData.size).also {
-            resolveClass(it)
-            classes[name] = it
-        }
-
+    private fun loadLibrary(): IFmiLibrary {
+        return fmu.loadLibrary(modelDescription)
     }
 
-    @Throws(IOException::class)
-    private fun loadClassData(name: String): ByteArray {
-        return ClassLoader.getSystemResourceAsStream(name.replace(".", "/") + ".class")
-                .buffered().use { `in` -> `in`.readBytes() }
+    @JvmOverloads
+    fun newInstance(visible: Boolean = false, loggingOn: Boolean = false): CoSimulationFmuInstance {
+        val lib = if (modelDescription.canBeInstantiatedOnlyOncePerProcess) loadLibrary() else libraryCache
+        val c = Fmu.instantiate(fmu, modelDescription, lib, CO_SIMULATION_TYPE, visible, loggingOn)
+        val wrapper = CoSimulationLibraryWrapper(c, lib)
+        return CoSimulationFmuInstance(fmu, wrapper).also {
+            fmu.instances.add(it)
+        }
     }
 
 }

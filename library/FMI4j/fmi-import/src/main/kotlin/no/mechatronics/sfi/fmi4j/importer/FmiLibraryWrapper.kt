@@ -26,7 +26,9 @@ package no.mechatronics.sfi.fmi4j.importer
 
 import no.mechatronics.sfi.fmi4j.common.*
 import no.mechatronics.sfi.fmi4j.importer.jni.FmiLibrary
+import no.mechatronics.sfi.fmi4j.importer.jni.FmuState
 import no.mechatronics.sfi.fmi4j.importer.jni.IFmiLibrary
+import no.mechatronics.sfi.fmi4j.importer.jni.IntByReference
 import no.mechatronics.sfi.fmi4j.importer.misc.ArrayBuffers
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -89,9 +91,8 @@ abstract class FmiLibraryWrapper(
     /**
      * @see FmiLibrary.fmi2SetDebugLogging
      */
-    fun setDebugLogging(loggingOn: Boolean, nCategories: Int, categories: StringArray): FmiStatus {
-        return updateStatus(library.setDebugLogging(c,
-                loggingOn, nCategories, categories))
+    fun setDebugLogging(loggingOn: Boolean, categories: StringArray): FmiStatus {
+        return updateStatus(library.setDebugLogging(c, loggingOn, categories))
     }
 
     /**
@@ -349,56 +350,58 @@ abstract class FmiLibraryWrapper(
                 vUnknown_ref, vKnown_ref, dvKnown, dvUnknown))
     }
 
-//    /**
-//     * @see FmiLibrary.fmi2GetFMUstate
-//     */
-//    fun getFMUState(fmuState: FmuState): FmuState {
-//        return fmuState.also {
-//            updateStatus(library.getFMUstate(c, fmuState))
-//        }
-//    }
-//
-//    /**
-//     * @see FmiLibrary.fmi2GetFMUstate
-//     */
-//    fun setFMUState(fmuState: FmuState): FmiStatus {
-//        return updateStatus(library.setFMUstate(c, fmuState.pointer))
-//    }
-//
-//    /**
-//     * @see FmiLibrary.fmi2FreeFMUstate
-//     */
-//    fun freeFMUState(fmuState: FmuState): FmiStatus {
-//        return updateStatus(library.freeFMUstate(c, fmuState))
-//    }
+    /**
+     * @see FmiLibrary.fmi2GetFMUstate
+     */
+    fun getFMUState(fmuState: FmuState): FmuState {
+        return fmuState.also {
+            updateStatus(library.getFMUstate(c, fmuState))
+        }
+    }
 
-//    /**
-//     * @see FmiLibrary.fmi2SerializedFMUstateSize
-//     */
-//    fun serializedFMUStateSize(fmuState: FmuState): Int {
-//        val memory = Memory(Pointer.SIZE.toLong())
-//        updateStatus(library.serializedFMUstateSize(c, fmuState.pointer, memory))
-//        return memory.getInt(0)
-//    }
-//
-//    /**
-//     * @see FmiLibrary.fmi2SerializeFMUstate
-//     */
-//    fun serializeFMUState(fmuState: FmuState): ByteArray {
-//        val size = serializedFMUStateSize(fmuState)
-//        return ByteArray(size).also {
-//            updateStatus(library.serializeFMUstate(c, fmuState.pointer, it, size))
-//        }
-//    }
+    /**
+     * @see FmiLibrary.fmi2GetFMUstate
+     */
+    fun setFMUState(fmuState: FmuState): FmiStatus {
+        return updateStatus(library.setFMUstate(c, fmuState.value))
+    }
 
-//    /**
-//     * @see FmiLibrary.fmi2DeSerializeFMUstate
-//     */
-//    fun deSerializeFMUState(serializedState: ByteArray): FmuState {
-//        return FmuState().also { state ->
-//            updateStatus(library.feSerializeFMUstate(c, serializedState, serializedState.size, state))
-//        }
-//    }
+    /**
+     * @see FmiLibrary.fmi2FreeFMUstate
+     */
+    fun freeFMUState(fmuState: FmuState): FmiStatus {
+        return updateStatus(library.freeFMUstate(c, fmuState))
+    }
+
+    /**
+     * @see FmiLibrary.fmi2SerializedFMUstateSize
+     */
+    fun serializedFMUStateSize(fmuState: FmuState): Int {
+        return IntByReference().let {
+            updateStatus(library.serializedFMUstateSize(c, fmuState.value, it))
+            it.value
+        }
+
+    }
+
+    /**
+     * @see FmiLibrary.fmi2SerializeFMUstate
+     */
+    fun serializeFMUState(fmuState: FmuState): ByteArray {
+        val size = serializedFMUStateSize(fmuState)
+        return ByteArray(size).also {
+            updateStatus(library.serializeFMUstate(c, fmuState.value, it))
+        }
+    }
+
+    /**
+     * @see FmiLibrary.fmi2DeSerializeFMUstate
+     */
+    fun deSerializeFMUState(serializedState: ByteArray): FmuState {
+        return FmuState().also { state ->
+            updateStatus(library.deSerializeFMUstate(c, state, serializedState))
+        }
+    }
 
 }
 

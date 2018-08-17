@@ -49,7 +49,8 @@ abstract class AbstractFmuInstance<out E : SpecificModelDescription, out T : Fmi
 
     abstract override val modelDescription: E
 
-    override val variableAccessor: FmuVariableAccessor = FmuVariableAccessorImpl(wrapper, modelVariables)
+    override val variableAccessor: FmuVariableAccessor
+            = FmuVariableAccessorImpl(wrapper, modelVariables)
 
     init {
         modelVariables.forEach { variable ->
@@ -102,7 +103,8 @@ abstract class AbstractFmuInstance<out E : SpecificModelDescription, out T : Fmi
     /**
      * @see FmiLibrary.fmi2SetDebugLogging
      */
-    fun setDebugLogging(loggingOn: Boolean, nCategories: Int, categories: Array<String>): FmiStatus = wrapper.setDebugLogging(loggingOn, nCategories, categories)
+    fun setDebugLogging(loggingOn: Boolean, categories: Array<String>): FmiStatus
+            = wrapper.setDebugLogging(loggingOn, categories)
 
     override fun init() {
         init(0.0)

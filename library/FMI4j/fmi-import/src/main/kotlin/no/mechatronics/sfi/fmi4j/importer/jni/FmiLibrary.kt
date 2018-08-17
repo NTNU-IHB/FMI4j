@@ -27,22 +27,24 @@ package no.mechatronics.sfi.fmi4j.importer.jni
 import no.mechatronics.sfi.fmi4j.importer.misc.currentOS
 import no.mechatronics.sfi.fmi4j.importer.misc.libExtension
 import no.mechatronics.sfi.fmi4j.importer.misc.libPrefix
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import java.io.Closeable
 import java.io.File
 import java.io.FileOutputStream
 
-
+/**
+ * @author Lars Ivar Hatledal
+ */
 interface IFmiLibrary : Closeable {
 
-    override fun close()
+    fun free(): Boolean
 
     fun getVersion(): String
 
     fun getTypesPlatform(): String
 
-
-    fun setDebugLogging(
-            c: Long, loggingOn: Boolean, nCategories: Int, categories: Array<String>): Int
+    fun setDebugLogging(c: Long, loggingOn: Boolean, categories: Array<String>): Int
 
     fun setupExperiment(
             c: Long, toleranceDefined: Boolean,
@@ -93,9 +95,9 @@ interface IFmiLibrary : Closeable {
 
     fun serializedFMUstateSize(c: Long, state: Long, size: IntByReference): Int
 
-    fun serializeFMUstate(c: Long, state: Long, size: IntByReference): Int
+    fun serializeFMUstate(c: Long, state: Long, serializedState: ByteArray): Int
 
-    fun deSerializeFMUs(c: Long, serializedState: ByteArray, state: FmuState): Int
+    fun deSerializeFMUstate(c: Long, state: FmuState, serializedState: ByteArray): Int
 
 
     /***************************************************
@@ -151,10 +153,8 @@ interface IFmiLibrary : Closeable {
 
     companion object {
 
-        fun newInstance(libName: String): IFmiLibrary {
-
+        internal fun newInstance(libName: String): IFmiLibrary {
             return SimpleClassLoader().let { cl ->
-
                 cl.findClass("no.mechatronics.sfi.fmi4j.importer.jni.FmiLibrary")!!.let { clazz ->
                     clazz.getDeclaredConstructor(String::class.java).let { constructor ->
                         constructor.isAccessible = true
@@ -172,7 +172,9 @@ interface IFmiLibrary : Closeable {
 /**
  * @author Lars Ivar Hatledal
  */
-class FmiLibrary private constructor(libName: String) : IFmiLibrary {
+class FmiLibrary private constructor(
+        private val libName: String
+) : IFmiLibrary {
 
     init {
         if (!load(libName)) {
@@ -180,9 +182,15 @@ class FmiLibrary private constructor(libName: String) : IFmiLibrary {
         }
     }
 
+    override fun close() {
+        free().also {
+            LOG.debug("Freed native library '${File(libName).name}' successfully: $it")
+        }
+    }
+
     private external fun load(libName: String): Boolean
 
-    external override fun close()
+    external override fun free(): Boolean
 
     external override fun getVersion(): String
 
@@ -190,7 +198,7 @@ class FmiLibrary private constructor(libName: String) : IFmiLibrary {
 
 
     external override fun setDebugLogging(
-            c: Long, loggingOn: Boolean, nCategories: Int, categories: Array<String>): Int
+            c: Long, loggingOn: Boolean, categories: Array<String>): Int
 
     external override fun setupExperiment(
             c: Long, toleranceDefined: Boolean,
@@ -241,10 +249,9 @@ class FmiLibrary private constructor(libName: String) : IFmiLibrary {
 
     external override fun serializedFMUstateSize(c: Long, state: Long, size: IntByReference): Int
 
-    external override fun serializeFMUstate(c: Long, state: Long, size: IntByReference): Int
+    external override fun serializeFMUstate(c: Long, state: Long, serializedState: ByteArray): Int
 
-    external override fun deSerializeFMUs(c: Long, serializedState: ByteArray, state: FmuState): Int
-
+    external override fun deSerializeFMUstate(c: Long, state: FmuState, serializedState: ByteArray): Int
 
     /***************************************************
      * Functions for FMI2 for Co-simulation
@@ -298,6 +305,8 @@ class FmiLibrary private constructor(libName: String) : IFmiLibrary {
     external override fun getNominalsOfContinuousStates(c: Long, x_nominals: DoubleArray): Int
 
     companion object {
+
+        private val LOG: Logger = LoggerFactory.getLogger(FmiLibrary::class.java)
 
         init {
 
