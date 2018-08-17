@@ -27,6 +27,7 @@ package no.mechatronics.sfi.fmi4j.importer
 import no.mechatronics.sfi.fmi4j.importer.cs.CoSimulationFmuInstance
 import no.mechatronics.sfi.fmi4j.importer.cs.CoSimulationLibraryWrapper
 import no.mechatronics.sfi.fmi4j.importer.jni.FmiLibrary
+import no.mechatronics.sfi.fmi4j.importer.jni.IFmiLibrary
 import no.mechatronics.sfi.fmi4j.importer.me.ModelExchangeFmuInstance
 import no.mechatronics.sfi.fmi4j.importer.me.ModelExchangeFmuStepper
 import no.mechatronics.sfi.fmi4j.importer.me.ModelExchangeLibraryWrapper
@@ -72,8 +73,8 @@ class Fmu private constructor(
         private val fmuFile: File
 ) : Closeable {
 
+    private val libraries = mutableListOf<IFmiLibrary>()
     private val instances = mutableListOf<AbstractFmuInstance<*, *>>()
-    private val libraries = mutableListOf<FmiLibrary>()
 
     var isClosed = false
         private set
@@ -171,6 +172,7 @@ class Fmu private constructor(
             it.close()
         }
         libraries.clear()
+        System.gc()
     }
 
     private fun terminateInstances() {
@@ -221,11 +223,11 @@ class Fmu private constructor(
         private val modelDescription
             get() = this@Fmu.modelDescription.asCoSimulationModelDescription()
 
-        private val libraryCache: FmiLibrary by lazy {
+        private val libraryCache: IFmiLibrary by lazy {
             loadLibrary()
         }
 
-        private fun loadLibrary(): FmiLibrary {
+        private fun loadLibrary(): IFmiLibrary {
             return loadLibrary(this@Fmu, modelDescription).also {
                 libraries.add(it)
             }
@@ -246,11 +248,11 @@ class Fmu private constructor(
         private val modelDescription
             get() = this@Fmu.modelDescription.asModelExchangeModelDescription()
 
-        private val libraryCache: FmiLibrary by lazy {
+        private val libraryCache: IFmiLibrary by lazy {
             loadLibrary()
         }
 
-        private fun loadLibrary(): FmiLibrary {
+        private fun loadLibrary(): IFmiLibrary {
             return loadLibrary(this@Fmu, modelDescription).also {
                 libraries.add(it)
             }
@@ -345,11 +347,11 @@ class Fmu private constructor(
 
         }
 
-        private fun loadLibrary(fmu: Fmu, modelDescription: SpecificModelDescription): FmiLibrary {
-            return FmiLibrary(fmu.getFullLibraryPath(modelDescription))
+        private fun loadLibrary(fmu: Fmu, modelDescription: SpecificModelDescription): IFmiLibrary {
+            return IFmiLibrary.newInstance(fmu.getFullLibraryPath(modelDescription)).also { }
         }
 
-        private fun instantiate(fmu: Fmu, modelDescription: SpecificModelDescription, library: FmiLibrary, fmiType: Int, visible: Boolean, loggingOn: Boolean): Long {
+        private fun instantiate(fmu: Fmu, modelDescription: SpecificModelDescription, library: IFmiLibrary, fmiType: Int, visible: Boolean, loggingOn: Boolean): Long {
             LOG.trace("Calling instantiate: visible=$visible, loggingOn=$loggingOn")
             return library.instantiate(modelDescription.modelIdentifier,
                     fmiType, modelDescription.guid, fmu.resourcesPath, visible, loggingOn)
