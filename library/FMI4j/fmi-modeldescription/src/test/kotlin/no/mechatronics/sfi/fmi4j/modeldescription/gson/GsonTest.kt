@@ -22,7 +22,8 @@ class GsonTest {
     fun test() {
 
         val fmu = File(TestUtils.getTEST_FMUs(),
-                "FMI_2.0/ModelExchange/${TestUtils.getOs()}/MapleSim/2017/ControlledTemperature/ControlledTemperature.fmu")
+                "FMI_2.0/ModelExchange/${TestUtils.getOs()}" +
+                        "/MapleSim/2017/ControlledTemperature/ControlledTemperature.fmu")
         Assertions.assertTrue(fmu.exists())
         val modelDescription = ModelDescriptionParser.parse(fmu).asModelExchangeModelDescription()
 
