@@ -448,12 +448,14 @@ JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_importer_jni_FmiLibrary_ge
 
 JNIEXPORT jboolean JNICALL Java_no_mechatronics_sfi_fmi4j_importer_jni_FmiLibrary_free(JNIEnv *env, jobject obj) {
     if (handle) {
+        jboolean status;
         #ifdef WIN32
-            return FreeLibrary(handle);
+            status = FreeLibrary(handle);
         #else
-            return dlclose(handle);
+            status = dlclose(handle) == 0;
         #endif
         handle = NULL;
+        return status;
     } else {
         return JNI_FALSE;
     }
