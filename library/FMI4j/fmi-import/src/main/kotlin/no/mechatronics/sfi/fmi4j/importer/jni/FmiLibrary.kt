@@ -33,148 +33,13 @@ import java.io.Closeable
 import java.io.File
 import java.io.FileOutputStream
 
-/**
- * @author Lars Ivar Hatledal
- */
-interface IFmiLibrary : Closeable {
-
-    fun free(): Boolean
-
-    fun getVersion(): String
-
-    fun getTypesPlatform(): String
-
-    fun setDebugLogging(c: Long, loggingOn: Boolean, categories: Array<String>): Int
-
-    fun setupExperiment(
-            c: Long, toleranceDefined: Boolean,
-            tolerance: Double, startTime: Double, stopTime: Double): Int
-
-    fun enterInitializationMode(c: Long): Int
-
-    fun exitInitializationMode(c: Long): Int
-
-    fun instantiate(
-            instanceName: String, type: Int, guid: String,
-            resourceLocation: String, visible: Boolean, loggingOn: Boolean): Long
-
-    fun terminate(c: Long): Int
-
-    fun reset(c: Long): Int
-
-    fun freeInstance(c: Long)
-
-    //read
-    fun getInteger(c: Long, vr: IntArray, ref: IntArray): Int
-
-    fun getReal(c: Long, vr: IntArray, ref: DoubleArray): Int
-
-    fun getString(c: Long, vr: IntArray, ref: Array<String>): Int
-
-    fun getBoolean(c: Long, vr: IntArray, ref: BooleanArray): Int
-
-    //write
-    fun setInteger(c: Long, vr: IntArray, values: IntArray): Int
-
-    fun setReal(c: Long, vr: IntArray, values: DoubleArray): Int
-
-    fun setString(c: Long, vr: IntArray, values: Array<String>): Int
-
-    fun setBoolean(c: Long, vr: IntArray, values: BooleanArray): Int
-
-    fun getDirectionalDerivative(
-            c: Long, vUnknown_ref: IntArray,
-            vKnownRef: IntArray, dvKnown: DoubleArray, dvUnknown: DoubleArray): Int
-
-
-    fun getFMUstate(c: Long, state: FmuState): Int
-
-    fun setFMUstate(c: Long, state: Long): Int
-
-    fun freeFMUstate(c: Long, state: FmuState): Int
-
-    fun serializedFMUstateSize(c: Long, state: Long, size: IntByReference): Int
-
-    fun serializeFMUstate(c: Long, state: Long, serializedState: ByteArray): Int
-
-    fun deSerializeFMUstate(c: Long, state: FmuState, serializedState: ByteArray): Int
-
-
-    /***************************************************
-     * Functions for FMI2 for Co-simulation
-     */
-
-    fun step(
-            c: Long, currentCommunicationPoint: Double,
-            communicationStepSize: Double, noSetFMUStatePriorToCurrentPoint: Boolean): Int
-
-    fun cancelStep(c: Long): Int
-
-    fun setRealInputDerivatives(c: Long, vr: IntArray, order: IntArray, value: DoubleArray): Int
-
-    fun getRealOutputDerivatives(c: Long, vr: IntArray, order: IntArray, value: DoubleArray): Int
-
-    fun getStatus(c: Long, s: Int, value: IntByReference): Int
-
-    fun getRealStatus(c: Long, s: Int, value: DoubleByReference): Int
-
-    fun getIntegerStatus(c: Long, s: Int, value: IntByReference): Int
-
-    fun getStringStatus(c: Long, s: Int, value: StringByReference): Int
-
-    fun getBooleanStatus(c: Long, s: Int, value: BooleanByReference): Int
-
-    fun getMaxStepSize(c: Long, stepSize: DoubleByReference): Int
-
-    /***************************************************
-     * Functions for FMI2 for Model Exchange
-     */
-
-    fun enterEventMode(c: Long): Int
-
-    fun newDiscreteStates(c: Long, ev: EventInfo): Int
-
-    fun enterContinuousTimeMode(c: Long): Int
-
-    fun setContinuousStates(c: Long, x: DoubleArray): Int
-
-    fun completedIntegratorStep(c: Long, noSetFMUStatePriorToCurrentPoint: Boolean,
-                                enterEventMode: BooleanByReference, terminateSimulation: BooleanByReference): Int
-
-    fun setTime(c: Long, time: Double): Int
-
-    fun getDerivatives(c: Long, derivatives: DoubleArray): Int
-
-    fun getEventIndicators(c: Long, eventIndicators: DoubleArray): Int
-
-    fun getContinuousStates(c: Long, x: DoubleArray): Int
-
-    fun getNominalsOfContinuousStates(c: Long, x_nominals: DoubleArray): Int
-
-//    companion object {
-//
-//        internal fun newInstance(libName: String): IFmiLibrary {
-//            return SimpleClassLoader().let { cl ->
-//                cl.findClass("no.mechatronics.sfi.fmi4j.importer.jni.FmiLibrary")!!.let { clazz ->
-//                    clazz.getDeclaredConstructor(String::class.java).let { constructor ->
-//                        constructor.isAccessible = true
-//                        constructor.newInstance(libName) as IFmiLibrary
-//                    }
-//                }
-//            }
-//
-//        }
-//
-//    }
-
-}
 
 /**
  * @author Lars Ivar Hatledal
  */
 class FmiLibrary(
         private val libName: String
-) : IFmiLibrary {
+) : Closeable {
 
     init {
         if (!load(libName)) {
@@ -198,119 +63,119 @@ class FmiLibrary(
 
     private external fun load(libName: String): Boolean
 
-    external override fun free(): Boolean
+    external fun free(): Boolean
 
-    external override fun getVersion(): String
+    external fun getVersion(): String
 
-    external override fun getTypesPlatform(): String
+    external fun getTypesPlatform(): String
 
 
-    external override fun setDebugLogging(
+    external fun setDebugLogging(
             c: Long, loggingOn: Boolean, categories: Array<String>): Int
 
-    external override fun setupExperiment(
+    external fun setupExperiment(
             c: Long, toleranceDefined: Boolean,
             tolerance: Double, startTime: Double, stopTime: Double): Int
 
-    external override fun enterInitializationMode(c: Long): Int
+    external fun enterInitializationMode(c: Long): Int
 
-    external override fun exitInitializationMode(c: Long): Int
+    external fun exitInitializationMode(c: Long): Int
 
-    external override fun instantiate(
+    external fun instantiate(
             instanceName: String, type: Int, guid: String,
             resourceLocation: String, visible: Boolean, loggingOn: Boolean): Long
 
-    external override fun terminate(c: Long): Int
+    external fun terminate(c: Long): Int
 
-    external override fun reset(c: Long): Int
+    external fun reset(c: Long): Int
 
-    external override fun freeInstance(c: Long)
+    external fun freeInstance(c: Long)
 
     //read
-    external override fun getInteger(c: Long, vr: IntArray, ref: IntArray): Int
+    external fun getInteger(c: Long, vr: IntArray, ref: IntArray): Int
 
-    external override fun getReal(c: Long, vr: IntArray, ref: DoubleArray): Int
+    external fun getReal(c: Long, vr: IntArray, ref: DoubleArray): Int
 
-    external override fun getString(c: Long, vr: IntArray, ref: Array<String>): Int
+    external fun getString(c: Long, vr: IntArray, ref: Array<String>): Int
 
-    external override fun getBoolean(c: Long, vr: IntArray, ref: BooleanArray): Int
+    external fun getBoolean(c: Long, vr: IntArray, ref: BooleanArray): Int
 
     //write
-    external override fun setInteger(c: Long, vr: IntArray, values: IntArray): Int
+    external fun setInteger(c: Long, vr: IntArray, values: IntArray): Int
 
-    external override fun setReal(c: Long, vr: IntArray, values: DoubleArray): Int
+    external fun setReal(c: Long, vr: IntArray, values: DoubleArray): Int
 
-    external override fun setString(c: Long, vr: IntArray, values: Array<String>): Int
+    external fun setString(c: Long, vr: IntArray, values: Array<String>): Int
 
-    external override fun setBoolean(c: Long, vr: IntArray, values: BooleanArray): Int
+    external fun setBoolean(c: Long, vr: IntArray, values: BooleanArray): Int
 
-    external override fun getDirectionalDerivative(
+    external fun getDirectionalDerivative(
             c: Long, vUnknown_ref: IntArray,
             vKnownRef: IntArray, dvKnown: DoubleArray, dvUnknown: DoubleArray): Int
 
 
-    external override fun getFMUstate(c: Long, state: FmuState): Int
+    external fun getFMUstate(c: Long, state: FmuState): Int
 
-    external override fun setFMUstate(c: Long, state: Long): Int
+    external fun setFMUstate(c: Long, state: Long): Int
 
-    external override fun freeFMUstate(c: Long, state: FmuState): Int
+    external fun freeFMUstate(c: Long, state: FmuState): Int
 
-    external override fun serializedFMUstateSize(c: Long, state: Long, size: IntByReference): Int
+    external fun serializedFMUstateSize(c: Long, state: Long, size: IntByReference): Int
 
-    external override fun serializeFMUstate(c: Long, state: Long, serializedState: ByteArray): Int
+    external fun serializeFMUstate(c: Long, state: Long, serializedState: ByteArray): Int
 
-    external override fun deSerializeFMUstate(c: Long, state: FmuState, serializedState: ByteArray): Int
+    external fun deSerializeFMUstate(c: Long, state: FmuState, serializedState: ByteArray): Int
 
     /***************************************************
      * Functions for FMI2 for Co-simulation
      */
 
-    external override fun step(
+    external fun step(
             c: Long, currentCommunicationPoint: Double,
             communicationStepSize: Double, noSetFMUStatePriorToCurrentPoint: Boolean): Int
 
-    external override fun cancelStep(c: Long): Int
+    external fun cancelStep(c: Long): Int
 
-    external override fun setRealInputDerivatives(c: Long, vr: IntArray, order: IntArray, value: DoubleArray): Int
+    external fun setRealInputDerivatives(c: Long, vr: IntArray, order: IntArray, value: DoubleArray): Int
 
-    external override fun getRealOutputDerivatives(c: Long, vr: IntArray, order: IntArray, value: DoubleArray): Int
+    external fun getRealOutputDerivatives(c: Long, vr: IntArray, order: IntArray, value: DoubleArray): Int
 
-    external override fun getStatus(c: Long, s: Int, value: IntByReference): Int
+    external fun getStatus(c: Long, s: Int, value: IntByReference): Int
 
-    external override fun getRealStatus(c: Long, s: Int, value: DoubleByReference): Int
+    external fun getRealStatus(c: Long, s: Int, value: DoubleByReference): Int
 
-    external override fun getIntegerStatus(c: Long, s: Int, value: IntByReference): Int
+    external fun getIntegerStatus(c: Long, s: Int, value: IntByReference): Int
 
-    external override fun getStringStatus(c: Long, s: Int, value: StringByReference): Int
+    external fun getStringStatus(c: Long, s: Int, value: StringByReference): Int
 
-    external override fun getBooleanStatus(c: Long, s: Int, value: BooleanByReference): Int
+    external fun getBooleanStatus(c: Long, s: Int, value: BooleanByReference): Int
 
-    external override fun getMaxStepSize(c: Long, stepSize: DoubleByReference): Int
+    external fun getMaxStepSize(c: Long, stepSize: DoubleByReference): Int
 
     /***************************************************
      * Functions for FMI2 for Model Exchange
      */
 
-    external override fun enterEventMode(c: Long): Int
+    external fun enterEventMode(c: Long): Int
 
-    external override fun newDiscreteStates(c: Long, ev: EventInfo): Int
+    external fun newDiscreteStates(c: Long, ev: EventInfo): Int
 
-    external override fun enterContinuousTimeMode(c: Long): Int
+    external fun enterContinuousTimeMode(c: Long): Int
 
-    external override fun setContinuousStates(c: Long, x: DoubleArray): Int
+    external fun setContinuousStates(c: Long, x: DoubleArray): Int
 
-    external override fun completedIntegratorStep(c: Long, noSetFMUStatePriorToCurrentPoint: Boolean,
+    external fun completedIntegratorStep(c: Long, noSetFMUStatePriorToCurrentPoint: Boolean,
                                          enterEventMode: BooleanByReference, terminateSimulation: BooleanByReference): Int
 
-    external override fun setTime(c: Long, time: Double): Int
+    external fun setTime(c: Long, time: Double): Int
 
-    external override fun getDerivatives(c: Long, derivatives: DoubleArray): Int
+    external fun getDerivatives(c: Long, derivatives: DoubleArray): Int
 
-    external override fun getEventIndicators(c: Long, eventIndicators: DoubleArray): Int
+    external fun getEventIndicators(c: Long, eventIndicators: DoubleArray): Int
 
-    external override fun getContinuousStates(c: Long, x: DoubleArray): Int
+    external fun getContinuousStates(c: Long, x: DoubleArray): Int
 
-    external override fun getNominalsOfContinuousStates(c: Long, x_nominals: DoubleArray): Int
+    external fun getNominalsOfContinuousStates(c: Long, x_nominals: DoubleArray): Int
 
     companion object {
 

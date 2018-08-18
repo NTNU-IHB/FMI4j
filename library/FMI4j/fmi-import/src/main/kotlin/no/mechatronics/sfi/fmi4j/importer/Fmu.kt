@@ -26,7 +26,6 @@ package no.mechatronics.sfi.fmi4j.importer
 
 import no.mechatronics.sfi.fmi4j.importer.cs.CoSimulationFmuBuilder
 import no.mechatronics.sfi.fmi4j.importer.jni.FmiLibrary
-import no.mechatronics.sfi.fmi4j.importer.jni.IFmiLibrary
 import no.mechatronics.sfi.fmi4j.importer.me.ModelExchangeFmuBuilder
 import no.mechatronics.sfi.fmi4j.importer.misc.*
 import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescriptionParser
@@ -69,7 +68,7 @@ class Fmu private constructor(
 ) : Closeable {
 
     private var isClosed = false
-    private val libraries = mutableListOf<IFmiLibrary>()
+    private val libraries = mutableListOf<FmiLibrary>()
     internal val instances = mutableListOf<AbstractFmuInstance<*, *>>()
 
     /**
@@ -195,10 +194,16 @@ class Fmu private constructor(
         return true
     }
 
-    internal fun loadLibrary(modelDescription: SpecificModelDescription): IFmiLibrary {
+    internal fun loadLibrary(modelDescription: SpecificModelDescription): FmiLibrary {
         return FmiLibrary(getFullLibraryPath(modelDescription)).also {
             libraries.add(it)
         }
+    }
+
+    internal fun instantiate(modelDescription: SpecificModelDescription, library: FmiLibrary, fmiType: Int, visible: Boolean, loggingOn: Boolean): Long {
+        LOG.trace("Calling instantiate: visible=$visible, loggingOn=$loggingOn")
+        return library.instantiate(modelDescription.modelIdentifier,
+                fmiType, modelDescription.guid, resourcesPath, visible, loggingOn)
     }
 
     @Throws(IllegalStateException::class)
@@ -286,11 +291,6 @@ class Fmu private constructor(
             }
         }
 
-        internal fun instantiate(fmu: Fmu, modelDescription: SpecificModelDescription, library: IFmiLibrary, fmiType: Int, visible: Boolean, loggingOn: Boolean): Long {
-            LOG.trace("Calling instantiate: visible=$visible, loggingOn=$loggingOn")
-            return library.instantiate(modelDescription.modelIdentifier,
-                    fmiType, modelDescription.guid, fmu.resourcesPath, visible, loggingOn)
-        }
 
     }
 

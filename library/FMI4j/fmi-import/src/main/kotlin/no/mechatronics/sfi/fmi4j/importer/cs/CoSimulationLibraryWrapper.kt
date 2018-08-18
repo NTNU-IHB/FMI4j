@@ -34,7 +34,7 @@ import no.mechatronics.sfi.fmi4j.importer.jni.*
  */
 class CoSimulationLibraryWrapper(
         c: Long,
-        library: IFmiLibrary
+        library: FmiLibrary
 ) : FmiLibraryWrapper(c, library) {
 
     /**

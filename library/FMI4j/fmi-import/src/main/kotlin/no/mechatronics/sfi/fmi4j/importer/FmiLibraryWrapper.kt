@@ -25,8 +25,8 @@
 package no.mechatronics.sfi.fmi4j.importer
 
 import no.mechatronics.sfi.fmi4j.common.*
+import no.mechatronics.sfi.fmi4j.importer.jni.FmiLibrary
 import no.mechatronics.sfi.fmi4j.importer.jni.FmuState
-import no.mechatronics.sfi.fmi4j.importer.jni.IFmiLibrary
 import no.mechatronics.sfi.fmi4j.importer.jni.IntByReference
 import no.mechatronics.sfi.fmi4j.importer.misc.ArrayBuffers
 import org.slf4j.Logger
@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory
  */
 abstract class FmiLibraryWrapper(
         protected var c: Long,
-        library: IFmiLibrary
+        library: FmiLibrary
 ) {
 
     private companion object {
@@ -46,9 +46,9 @@ abstract class FmiLibraryWrapper(
 
     private val buffers: ArrayBuffers = ArrayBuffers()
 
-    private var _library: IFmiLibrary? = library
+    private var _library: FmiLibrary? = library
 
-    protected val library: IFmiLibrary
+    protected val library: FmiLibrary
         get() = _library ?: throw IllegalAccessException("Library is no longer accessible!")
 
     val isInstanceFreed: Boolean
