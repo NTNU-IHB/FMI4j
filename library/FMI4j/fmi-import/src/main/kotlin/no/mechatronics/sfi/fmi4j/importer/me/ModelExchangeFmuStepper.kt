@@ -24,9 +24,9 @@
 
 package no.mechatronics.sfi.fmi4j.importer.me
 
-import no.mechatronics.sfi.fmi4j.common.FmiSimulation
 import no.mechatronics.sfi.fmi4j.common.FmiStatus
 import no.mechatronics.sfi.fmi4j.common.FmuInstance
+import no.mechatronics.sfi.fmi4j.common.FmuSlave
 import no.mechatronics.sfi.fmi4j.solvers.Equations
 import no.mechatronics.sfi.fmi4j.solvers.Solver
 import org.slf4j.Logger
@@ -35,18 +35,18 @@ import org.slf4j.LoggerFactory
 private const val EPS = 1E-13
 
 /**
- * Wraps a Model Exchange instance, turning it into a FmiSimulation
+ * Wraps a Model Exchange instance, turning it into a FmuSlave
  *
  * @author Lars Ivar Hatledal
  */
 class ModelExchangeFmuStepper internal constructor(
         private val fmuInstance: ModelExchangeFmuInstance,
         private val solver: Solver
-) : FmiSimulation, FmuInstance by fmuInstance {
+) : FmuSlave, FmuInstance by fmuInstance {
 
     private val x: DoubleArray
-    private val nominalStates: DoubleArray
     private val dx: DoubleArray
+    private val nominalStates: DoubleArray
 
     private val pz: DoubleArray
     private val z: DoubleArray
@@ -54,7 +54,8 @@ class ModelExchangeFmuStepper internal constructor(
     override var currentTime: Double = 0.0
         private set
 
-    override val modelDescription = fmuInstance.modelDescription
+    override val modelDescription
+        get() = fmuInstance.modelDescription
 
     init {
 
@@ -163,8 +164,9 @@ class ModelExchangeFmuStepper internal constructor(
                 val completedIntegratorStep = fmuInstance.completedIntegratorStep()
                 if (completedIntegratorStep.terminateSimulation) {
                     LOG.debug("completedIntegratorStep.terminateSimulation returned true. Terminating FMU...")
-                    terminate()
-                    return false
+                    return false.also {
+                        terminate()
+                    }
                 }
                 enterEventMode = completedIntegratorStep.enterEventMode
             }
@@ -183,8 +185,9 @@ class ModelExchangeFmuStepper internal constructor(
 
         }
 
-        currentTime = time
-        return true
+        return true.also {
+            currentTime = time
+        }
 
     }
 

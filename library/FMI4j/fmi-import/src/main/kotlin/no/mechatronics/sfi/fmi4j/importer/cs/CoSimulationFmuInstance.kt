@@ -24,8 +24,8 @@
 
 package no.mechatronics.sfi.fmi4j.importer.cs
 
-import no.mechatronics.sfi.fmi4j.common.FmiSimulation
 import no.mechatronics.sfi.fmi4j.common.FmiStatus
+import no.mechatronics.sfi.fmi4j.common.FmuSlave
 import no.mechatronics.sfi.fmi4j.importer.AbstractFmuInstance
 import no.mechatronics.sfi.fmi4j.importer.Fmu
 import no.mechatronics.sfi.fmi4j.modeldescription.CoSimulationModelDescription
@@ -34,13 +34,14 @@ import org.slf4j.LoggerFactory
 import java.lang.IllegalStateException
 
 /**
+ * Represent a FMI Co-simulation instance
  *
  * @author Lars Ivar Hatledal
  */
 class CoSimulationFmuInstance internal constructor(
         fmu: Fmu,
         wrapper: CoSimulationLibraryWrapper
-) : AbstractFmuInstance<CoSimulationModelDescription, CoSimulationLibraryWrapper>(fmu, wrapper), FmiSimulation {
+) : AbstractFmuInstance<CoSimulationModelDescription, CoSimulationLibraryWrapper>(fmu, wrapper), FmuSlave {
 
     private companion object {
         val LOG: Logger = LoggerFactory.getLogger(CoSimulationFmuInstance::class.java)
@@ -86,17 +87,17 @@ class CoSimulationFmuInstance internal constructor(
     }
 
     /**
+     * @see CoSimulationLibraryWrapper.cancelStep
+     */
+    fun cancelStep() = wrapper.cancelStep()
+
+    /**
      * Terminates and frees the FMU instance
      *
      * @see no.mechatronics.sfi.fmi4j.importer.proxy.v2.FmiLibrary.fmi2Terminate
      * @see no.mechatronics.sfi.fmi4j.importer.proxy.v2.FmiLibrary.fmi2FreeInstance
      */
     override fun terminate() = super.terminate(true)
-
-    /**
-     * @see CoSimulationLibraryWrapper.cancelStep
-     */
-    fun cancelStep() = wrapper.cancelStep()
 
     /**
      * @see CoSimulationLibraryWrapper.setRealInputDerivatives

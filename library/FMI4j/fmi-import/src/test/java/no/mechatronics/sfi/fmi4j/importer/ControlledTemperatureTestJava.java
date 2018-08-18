@@ -26,8 +26,8 @@ package no.mechatronics.sfi.fmi4j.importer;
 
 
 import no.mechatronics.sfi.fmi4j.TestUtils;
-import no.mechatronics.sfi.fmi4j.common.FmiSimulation;
 import no.mechatronics.sfi.fmi4j.common.FmiStatus;
+import no.mechatronics.sfi.fmi4j.common.FmuSlave;
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.RealVariable;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
@@ -69,7 +69,7 @@ public class ControlledTemperatureTestJava {
     @Test
     public void test() {
 
-        try (FmiSimulation instance = fmuFile.asCoSimulationFmu().newInstance()) {
+        try (FmuSlave instance = fmuFile.asCoSimulationFmu().newInstance()) {
 
             Assertions.assertEquals("2.0", instance.getModelDescription().getFmiVersion());
 

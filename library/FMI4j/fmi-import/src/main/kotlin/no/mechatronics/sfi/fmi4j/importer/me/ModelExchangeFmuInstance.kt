@@ -30,6 +30,7 @@ import no.mechatronics.sfi.fmi4j.importer.jni.EventInfo
 import no.mechatronics.sfi.fmi4j.modeldescription.ModelExchangeModelDescription
 
 /**
+ * Represent a FMI Model Exchange instance
  *
  * @author Lars Ivar Hatledal
  */

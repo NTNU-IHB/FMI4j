@@ -22,7 +22,6 @@
  * THE SOFTWARE.
  */
 
-
 package no.mechatronics.sfi.fmi4j.importer.misc
 
 import no.mechatronics.sfi.fmi4j.common.*
@@ -61,7 +60,6 @@ class FmuVariableAccessorImpl(
 
     //write
     override fun writeInteger(name: String, value: Int) = wrapper.setInteger(process(name), value)
-
     override fun writeInteger(vr: ValueReference, value: Int) = wrapper.setInteger(vr, value)
     override fun writeInteger(vr: ValueReferences, value: IntArray) = wrapper.setInteger(vr, value)
 

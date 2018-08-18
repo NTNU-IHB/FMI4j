@@ -151,28 +151,28 @@ interface IFmiLibrary : Closeable {
 
     fun getNominalsOfContinuousStates(c: Long, x_nominals: DoubleArray): Int
 
-    companion object {
-
-        internal fun newInstance(libName: String): IFmiLibrary {
-            return SimpleClassLoader().let { cl ->
-                cl.findClass("no.mechatronics.sfi.fmi4j.importer.jni.FmiLibrary")!!.let { clazz ->
-                    clazz.getDeclaredConstructor(String::class.java).let { constructor ->
-                        constructor.isAccessible = true
-                        constructor.newInstance(libName) as IFmiLibrary
-                    }
-                }
-            }
-
-        }
-
-    }
+//    companion object {
+//
+//        internal fun newInstance(libName: String): IFmiLibrary {
+//            return SimpleClassLoader().let { cl ->
+//                cl.findClass("no.mechatronics.sfi.fmi4j.importer.jni.FmiLibrary")!!.let { clazz ->
+//                    clazz.getDeclaredConstructor(String::class.java).let { constructor ->
+//                        constructor.isAccessible = true
+//                        constructor.newInstance(libName) as IFmiLibrary
+//                    }
+//                }
+//            }
+//
+//        }
+//
+//    }
 
 }
 
 /**
  * @author Lars Ivar Hatledal
  */
-class FmiLibrary private constructor(
+class FmiLibrary(
         private val libName: String
 ) : IFmiLibrary {
 
@@ -182,10 +182,18 @@ class FmiLibrary private constructor(
         }
     }
 
+    private var isFreed = false
+
     override fun close() {
-        free().also {
-            LOG.debug("Freed native library '${File(libName).name}' successfully: $it")
+        if (!isFreed.also { isFreed = true }) {
+            free().also {
+                LOG.debug("Freed native library '${File(libName).name}' successfully: $it")
+            }
         }
+    }
+
+    protected fun finalize() {
+        close()
     }
 
     private external fun load(libName: String): Boolean
@@ -315,7 +323,7 @@ class FmiLibrary private constructor(
                 deleteOnExit()
             }
             try {
-                IFmiLibrary::class.java.classLoader
+                FmiLibrary::class.java.classLoader
                         .getResourceAsStream("native/fmi/$currentOS/$fileName").use { `is` ->
                             FileOutputStream(copy).use { fos ->
                                 `is`.copyTo(fos)

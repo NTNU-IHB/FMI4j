@@ -25,9 +25,9 @@
 package no.mechatronics.sfi.fmi4j.importer;
 
 import no.mechatronics.sfi.fmi4j.TestUtils;
-import no.mechatronics.sfi.fmi4j.common.FmiSimulation;
 import no.mechatronics.sfi.fmi4j.common.FmiStatus;
 import no.mechatronics.sfi.fmi4j.common.FmuRead;
+import no.mechatronics.sfi.fmi4j.common.FmuSlave;
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.RealVariable;
 import no.mechatronics.sfi.fmi4j.solvers.Solver;
 import no.sfi.mechatronics.fmi4j.me.ApacheSolvers;
@@ -77,7 +77,7 @@ public class VanDerPolTestJava {
 
         LOG.info("Using solver: {}", solver.getName());
 
-        FmiSimulation instance = VanDerPolTestJava.fmu.asModelExchangeFmu()
+        FmuSlave instance = VanDerPolTestJava.fmu.asModelExchangeFmu()
                 .newInstance(solver, false, true);
 
         RealVariable x0 = instance.getModelVariables()

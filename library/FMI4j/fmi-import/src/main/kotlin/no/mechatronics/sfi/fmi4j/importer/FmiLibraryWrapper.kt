@@ -25,7 +25,6 @@
 package no.mechatronics.sfi.fmi4j.importer
 
 import no.mechatronics.sfi.fmi4j.common.*
-import no.mechatronics.sfi.fmi4j.importer.jni.FmiLibrary
 import no.mechatronics.sfi.fmi4j.importer.jni.FmuState
 import no.mechatronics.sfi.fmi4j.importer.jni.IFmiLibrary
 import no.mechatronics.sfi.fmi4j.importer.jni.IntByReference

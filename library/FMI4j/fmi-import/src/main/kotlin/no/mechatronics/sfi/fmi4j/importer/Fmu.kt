@@ -25,19 +25,13 @@
 package no.mechatronics.sfi.fmi4j.importer
 
 import no.mechatronics.sfi.fmi4j.importer.cs.CoSimulationFmuBuilder
-import no.mechatronics.sfi.fmi4j.importer.cs.CoSimulationFmuInstance
-import no.mechatronics.sfi.fmi4j.importer.cs.CoSimulationLibraryWrapper
 import no.mechatronics.sfi.fmi4j.importer.jni.FmiLibrary
 import no.mechatronics.sfi.fmi4j.importer.jni.IFmiLibrary
 import no.mechatronics.sfi.fmi4j.importer.me.ModelExchangeFmuBuilder
-import no.mechatronics.sfi.fmi4j.importer.me.ModelExchangeFmuInstance
-import no.mechatronics.sfi.fmi4j.importer.me.ModelExchangeFmuStepper
-import no.mechatronics.sfi.fmi4j.importer.me.ModelExchangeLibraryWrapper
 import no.mechatronics.sfi.fmi4j.importer.misc.*
 import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescriptionParser
 import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescriptionProvider
 import no.mechatronics.sfi.fmi4j.modeldescription.SpecificModelDescription
-import no.mechatronics.sfi.fmi4j.solvers.Solver
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.Closeable
@@ -202,7 +196,7 @@ class Fmu private constructor(
     }
 
     internal fun loadLibrary(modelDescription: SpecificModelDescription): IFmiLibrary {
-        return IFmiLibrary.newInstance(getFullLibraryPath(modelDescription)).also {
+        return FmiLibrary(getFullLibraryPath(modelDescription)).also {
             libraries.add(it)
         }
     }
@@ -214,6 +208,12 @@ class Fmu private constructor(
     @Throws(IllegalStateException::class)
     fun asModelExchangeFmu(): ModelExchangeFmuBuilder = modelExchangeBuilder
             ?: throw IllegalStateException("FMU does not support Model Exchange!")
+
+    protected fun finalize() {
+        if (!isClosed) {
+            close()
+        }
+    }
 
     override fun toString(): String {
         return "Fmu(fmu=${fmuFile.absolutePath})"

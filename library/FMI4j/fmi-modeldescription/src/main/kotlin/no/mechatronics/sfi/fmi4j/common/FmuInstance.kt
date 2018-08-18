@@ -35,7 +35,6 @@ import java.io.Closeable
  */
 interface FmuInstance : Closeable {
 
-
     val modelDescription: CommonModelDescription
 
     val variableAccessor: FmuVariableAccessor
@@ -97,7 +96,9 @@ interface FmuInstance : Closeable {
      */
     @JvmDefault
     override fun close() {
-        terminate()
+        if (!isTerminated) {
+            terminate()
+        }
     }
 
     /**

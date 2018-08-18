@@ -22,7 +22,6 @@
  * THE SOFTWARE.
  */
 
-
 package no.mechatronics.sfi.fmi4j.importer.misc
 
 import java.io.File
