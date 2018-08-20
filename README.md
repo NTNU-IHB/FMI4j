@@ -25,24 +25,25 @@ The package consists of:
 
 Fmu fmu = Fmu.from(new File("path/to/fmu.fmu")); //URLs are also supported
 
-FmiSimulation instance = fmu.asCoSimulationFmu().newInstance();
+FmuSlave slave = fmu.asCoSimulationFmu().newInstance();
 
 // Model Exchange is also supported:
 //
 // Solver solver = ApacheSolvers.euler(1E-3);
-// FmiSimulation instance = fmu.asModelExchangeFmu(solver).newInstance(); 
+// FmiSimulation slave = fmu.asModelExchangeFmu(solver).newInstance(); 
 
-instance.init(); //throws on error
+slave.init(); //throws on error
 
 double stop = 10;
 double stepSize = 1.0/100;
-while(instance.getCurrentTime() <= stop) {
-    instance.doStep(stepSize);
+while(slave.getCurrentTime() <= stop) {
+    if (!slave.doStep(stepSize)) {
+        break;
+    }
 }
-instance.terminate(); //or close, try with resources is also supported
+slave.terminate(); //or close, try with resources is also supported
 
 fmu.close() // <- also done automatically by the library if you forget to do it yourself
-
 ```
 
 ### <a name="plugin"></a> Gradle plugin
@@ -56,29 +57,29 @@ Example for an FMU named _ControlledTemperature_ given in Kotlin:
 
 ```kotlin
 
-ControlledTemperature.newInstance().use { instance -> //try with resources
+ControlledTemperature.newInstance().use { slave -> //try with resources
 
-        instance.init()
+        slave.init()
         
         //Variables are grouped by causality and have types!
         val tempRef: RealVariable 
-                = instance.outputs.temperature_Reference()
+                = slave.outputs.temperature_Reference()
 
         val stop = 10.0
         val stepSize = 1E-2
-        while (instance.currentTime <= stop) {
+        while (slave.currentTime <= stop) {
             
-            if (!instance.doStep(stepSize)) {
-                break;
+            if (!slave.doStep(stepSize)) {
+                break
             }
 
-            val read = tempRef.read()
-            println("t=${instance.currentTime}, ${tempRef.name}=${read.value}")
+            tempRef.read().also {
+                println("t=${instance.currentTime}, ${tempRef.name}=${it.value}")
+            }
             
         }
 
     }
-
 ```
 
 The plugin has been added to the [Gradle Plugin portal](https://plugins.gradle.org/plugin/no.mechatronics.sfi.fmi4j.FmuPlugin).
