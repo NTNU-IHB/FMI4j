@@ -12,8 +12,8 @@
 *.dll
 *.so
 
-!libfmi_jni.so
-!fmi_jni.dll
+!**/native/fmi/libfmi_jni.so
+!**/native/fmi/fmi_jni.dll
 
 !resources/**/
 
