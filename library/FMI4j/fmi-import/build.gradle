@@ -64,6 +64,8 @@ model {
     components {
         fmi(NativeLibrarySpec) {
 
+            baseName = "fmi_jni"
+
             if (Os.isFamily(Os.FAMILY_UNIX)) {
                 targetPlatform "linux32"
                 targetPlatform "linux64"
