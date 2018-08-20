@@ -22,7 +22,8 @@ class TestBouncingBall_ME_win64 {
     fun test() {
 
         val name = "bouncingBall"
-        val path = "$TEST_FMUs/FMI_2.0/ModelExchange/win64/FMUSDK/2.0.4/bouncingBall/$name.fmu"
+        val path = "$TEST_FMUs/FMI_2.0/ModelExchange/win64/" +
+                "FMUSDK/2.0.4/bouncingBall/$name.fmu"
         Assertions.assertTrue(File(path).exists())
 
         val args = arrayOf(

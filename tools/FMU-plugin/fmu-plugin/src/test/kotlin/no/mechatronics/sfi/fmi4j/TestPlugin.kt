@@ -12,11 +12,8 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.File
 
-
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class TestPlugin {
-
-    private val LOG: Logger = LoggerFactory.getLogger(TestPlugin::class.java)
 
     private var temp = createTempDir("fmi4j_plugin", "")
 
@@ -51,8 +48,9 @@ class TestPlugin {
     @Test
     fun test() {
         val task = "generateSources"
-        val result = gradle(task)
-        LOG.debug(result.output)
+        gradle(task).also {
+            println(it.output)
+        }
     }
 
     @AfterAll

@@ -14,18 +14,18 @@ subprojects { sub ->
 
     dependencies {
 
+        implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+
         def slf4j_version = '1.7.25'
-        def junit_version = '5.2.0'
-
-        compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
-
         implementation group: 'org.slf4j', name: 'slf4j-api', version: slf4j_version
         runtimeOnly group: 'org.slf4j', name: 'slf4j-log4j12', version: slf4j_version
 
-        testImplementation gradleTestKit()
+        def junit_version = '5.2.0'
         testImplementation("org.junit.jupiter:junit-jupiter-api:$junit_version")
         testImplementation("org.junit.jupiter:junit-jupiter-params:$junit_version")
         testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junit_version")
+
+        testImplementation gradleTestKit()
 
     }
 

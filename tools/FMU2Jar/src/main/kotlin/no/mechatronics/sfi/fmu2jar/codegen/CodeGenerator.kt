@@ -63,13 +63,13 @@ $solverImport
  *
  * @author Lars Ivar Hatledal
  */
-public class $modelName implements FmiSimulation {
+public class $modelName implements FmuSlave {
 
     private static Fmu fmu = null;
-    private final FmiSimulation instance;
+    private final FmuSlave slave;
 
-    private $modelName(FmiSimulation instance) {
-        this.instance = instance;
+    private $modelName(FmuSlave slave) {
+        this.slave = slave;
     }
 
     private static Fmu getOrCreateFmu() {
@@ -88,66 +88,66 @@ public class $modelName implements FmiSimulation {
 
     @Override
     public CommonModelDescription getModelDescription() {
-        return instance.getModelDescription();
+        return slave.getModelDescription();
     }
 
     @Override
     public ModelVariables getModelVariables() {
-        return instance.getModelVariables();
+        return slave.getModelVariables();
     }
 
     @Override
     public FmuVariableAccessor getVariableAccessor() {
-        return instance.getVariableAccessor();
+        return slave.getVariableAccessor();
     }
 
     @Override
     public FmiStatus getLastStatus() {
-        return instance.getLastStatus();
+        return slave.getLastStatus();
     }
 
     @Override
     public boolean isInitialized() {
-        return instance.isInitialized();
+        return slave.isInitialized();
     }
 
     @Override
     public boolean isTerminated() {
-        return instance.isTerminated();
+        return slave.isTerminated();
     }
 
     @Override
     public double getCurrentTime() {
-        return instance.getCurrentTime();
+        return slave.getCurrentTime();
     }
 
     @Override
     public void init() {
-        instance.init();
+        slave.init();
     }
 
     @Override
     public void init(double start) {
-        instance.init(start);
+        slave.init(start);
     }
 
     @Override
     public void init(double start, double stop) {
-        instance.init(start, stop);
+        slave.init(start, stop);
     }
 
     public boolean doStep(double stepSize) {
-        return instance.doStep(stepSize);
+        return slave.doStep(stepSize);
     }
 
     @Override
     public boolean terminate() {
-        return instance.terminate();
+        return slave.terminate();
     }
 
     @Override
     public boolean reset() {
-        return instance.reset();
+        return slave.reset();
     }
 
     private Locals locals;
@@ -287,8 +287,8 @@ public class $modelName implements FmiSimulation {
             result += """
 
             public static $modelName newInstance() {
-                FmiSimulation instance = getOrCreateFmu().asCoSimulationFmu().newInstance();
-                return new $modelName(Objects.requireNonNull(instance));
+                FmuSlave slave = getOrCreateFmu().asCoSimulationFmu().newInstance();
+                return new $modelName(Objects.requireNonNull(slave));
             }
             """
 
@@ -299,8 +299,8 @@ public class $modelName implements FmiSimulation {
             result += """
 
             public static $modelName newInstance(Solver solver) {
-                FmiSimulation instance = getOrCreateFmu().asModelExchangeFmu(solver).newInstance()
-                return new $modelName(Objects.requireNonNull(instance));
+                FmuSlave slave = getOrCreateFmu().asModelExchangeFmu(solver).newInstance()
+                return new $modelName(Objects.requireNonNull(slave));
             }
             """
 
@@ -325,7 +325,7 @@ public class $modelName implements FmiSimulation {
                     sb.append("""
                     |${generateJavaDoc(v)}
                     |public ${v.typeName}Variable $functionName() {
-                    |    return instance.getModelDescription().getModelVariables().getByName("${v.name}").as${v.typeName}Variable();
+                    |    return slave.getModelDescription().getModelVariables().getByName("${v.name}").as${v.typeName}Variable();
                     |}
                     |
                     """.trimMargin())

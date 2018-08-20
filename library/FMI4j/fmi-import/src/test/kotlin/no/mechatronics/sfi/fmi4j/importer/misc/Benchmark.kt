@@ -29,14 +29,14 @@ private val options = listOf(
                 vr = 0),
         TestOptions(
                 fmuPath = "${TestUtils.getTEST_FMUs()}" +
-                        "/FMI_2.0/CoSimulation/${TestUtils.getOs()}" +
+                        "/FMI_2.0/CoSimulation/$currentOS" +
                         "/20sim/4.6.4.8004/TorsionBar/TorsionBar.fmu",
                 stepSize = 1E-5,
                 stopTime = 12.0,
                 vr = 2),
         TestOptions(
                 fmuPath = "${TestUtils.getTEST_FMUs()}" +
-                        "/FMI_2.0/CoSimulation/${TestUtils.getOs()}" +
+                        "/FMI_2.0/CoSimulation/$currentOS" +
                         "/20sim/4.6.4.8004/ControlledTemperature/ControlledTemperature.fmu",
                 stepSize = 1E-4,
                 stopTime = 10.0,

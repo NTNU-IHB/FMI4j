@@ -1,6 +1,6 @@
 package no.mechatronics.sfi.fmu2jar
 
-import no.mechatronics.sfi.fmi4j.common.FmiSimulation
+import no.mechatronics.sfi.fmi4j.common.FmuSlave
 import no.mechatronics.sfi.fmu2jar.util.TEST_FMUs
 import no.mechatronics.sfi.fmu2jar.util.currentOS
 import org.junit.jupiter.api.AfterAll
@@ -57,15 +57,17 @@ class MainTest {
         val classToLoad = Class.forName("no.mechatronics.sfi.fmu2jar.$fmuName", true, child)
 
         val method = classToLoad.getDeclaredMethod("newInstance")
-        val instance = method.invoke(null) as FmiSimulation
+        (method.invoke(null) as FmuSlave).use { slave ->
 
-        instance.use { fmu ->
-            val dt = 1.0/100
-            fmu.init()
-            while (instance.currentTime < 5) {
-                Assertions.assertTrue(fmu.doStep(dt))
+            slave.init()
+            val stop = 5.0
+            val stepSize = 1.0/100
+            while (slave.currentTime < stop) {
+                Assertions.assertTrue(slave.doStep(stepSize))
             }
+
         }
+
 
     }
 }

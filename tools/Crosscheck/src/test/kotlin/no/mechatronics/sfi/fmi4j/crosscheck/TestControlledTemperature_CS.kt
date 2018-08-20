@@ -1,7 +1,7 @@
 package no.mechatronics.sfi.fmi4j.crosscheck
 
+import no.mechatronics.sfi.fmi4j.importer.misc.currentOS
 import no.mechatronics.sfi.fmu2jar.TEST_FMUs
-import no.mechatronics.sfi.fmu2jar.currentOS
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable
@@ -19,7 +19,8 @@ class TestControlledTemperature_CS {
     @Test
     fun test() {
 
-        val path = "$TEST_FMUs/FMI_2.0/CoSimulation/$currentOS/20sim/4.6.4.8004/ControlledTemperature/ControlledTemperature.fmu"
+        val path = "$TEST_FMUs/FMI_2.0/CoSimulation/$currentOS/" +
+                "20sim/4.6.4.8004/ControlledTemperature/ControlledTemperature.fmu"
         Assertions.assertTrue(File(path).exists())
 
         val args = arrayOf(

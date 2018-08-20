@@ -16,7 +16,8 @@ class TestIllegalFmuInstanceType {
     @Test
     fun testNewInstanceME() {
         val file = File(TestUtils.getTEST_FMUs(),
-                "FMI_2.0/CoSimulation/${TestUtils.getOs()}/20sim/4.6.4.8004/ControlledTemperature/ControlledTemperature.fmu")
+                "FMI_2.0/CoSimulation/$currentOS/" +
+                        "20sim/4.6.4.8004/ControlledTemperature/ControlledTemperature.fmu")
         Assertions.assertTrue(file.exists())
         Assertions.assertThrows(IllegalStateException::class.java) {
             Fmu.from(file).use {

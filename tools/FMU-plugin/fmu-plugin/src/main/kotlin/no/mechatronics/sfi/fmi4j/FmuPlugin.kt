@@ -29,7 +29,6 @@ import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescriptionParser
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
-import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.DependencyResolutionListener
 import org.gradle.api.artifacts.ResolvableDependencies
 import org.gradle.api.plugins.JavaPluginConvention
@@ -39,13 +38,12 @@ import org.gradle.kotlin.dsl.invoke
 import org.gradle.kotlin.dsl.the
 import java.io.File
 
-
 open class FmuPluginExtension(
         project: Project
 ) {
 
-    var configurationName: String = "compile"
-    var version: String = "0.8"
+    var configurationName: String = "implementation"
+    var version: String = "0.9.1"
 
 }
 
@@ -116,7 +114,6 @@ open class FmuPlugin : Plugin<Project> {
             }
 
         }
-
 
     }
 

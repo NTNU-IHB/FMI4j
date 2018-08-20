@@ -6,12 +6,12 @@ plugins {
     id "org.gradle.kotlin.kotlin-dsl" version '0.18.0'
 }
 
-version = "0.2.1"
+version = "0.3"
 group = "no.mechatronics.sfi.fmi4j"
 println("maven version for ${archivesBaseName} is: ${version}")
 
 dependencies {
-    implementation group: "no.mechatronics.sfi.fmi4j", name: 'fmi-modeldescription', version: '0.9'
+    implementation group: "no.mechatronics.sfi.fmi4j", name: 'fmi-modeldescription', version: '0.9.1'
 }
 
 gradlePlugin {

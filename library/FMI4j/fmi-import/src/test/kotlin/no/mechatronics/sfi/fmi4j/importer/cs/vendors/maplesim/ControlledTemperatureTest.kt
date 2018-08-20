@@ -3,6 +3,7 @@ package no.mechatronics.sfi.fmi4j.importer.cs.vendors.maplesim
 import no.mechatronics.sfi.fmi4j.TestUtils
 import no.mechatronics.sfi.fmi4j.common.FmiStatus
 import no.mechatronics.sfi.fmi4j.importer.Fmu
+import no.mechatronics.sfi.fmi4j.importer.misc.currentOS
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable
@@ -21,7 +22,7 @@ class ControlledTemperatureTest {
     fun test() {
 
         val file = File(TestUtils.getTEST_FMUs(),
-                "FMI_2.0/CoSimulation/${TestUtils.getOs()}" +
+                "FMI_2.0/CoSimulation/$currentOS" +
                         "/MapleSim/2017/ControlledTemperature/ControlledTemperature.fmu")
 
         Fmu.from(file).use { fmu ->

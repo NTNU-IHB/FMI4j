@@ -5,24 +5,25 @@ import no.mechatronics.sfi.fmi4j.modeldescription.variables.RealVariable
 
 fun main(args: Array<String>) {
 
-    ControlledTemperature.newInstance().use { instance ->
+    ControlledTemperature.newInstance().use { slave ->
 
-        instance.init()
+        slave.init()
 
         //Variables are grouped by causality and have types!
         val tempRef: RealVariable
-                = instance.outputs.temperature_Reference()
+                = slave.outputs.temperature_Reference()
 
         val stop = 10.0
         val stepSize = 1E-2
-        while (instance.currentTime <= stop) {
+        while (slave.currentTime <= stop) {
 
-            if (!instance.doStep(stepSize)) {
-                break;
+            if (!slave.doStep(stepSize)) {
+                break
             }
 
-            val read = tempRef.read()
-            println("t=${instance.currentTime}, ${tempRef.name}=${read.value}")
+            tempRef.read().also {
+                println("t=${slave.currentTime}, ${tempRef.name}=${it.value}")
+            }
 
         }
 

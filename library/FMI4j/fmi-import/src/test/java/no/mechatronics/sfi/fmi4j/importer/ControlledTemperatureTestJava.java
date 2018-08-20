@@ -28,6 +28,7 @@ package no.mechatronics.sfi.fmi4j.importer;
 import no.mechatronics.sfi.fmi4j.TestUtils;
 import no.mechatronics.sfi.fmi4j.common.FmiStatus;
 import no.mechatronics.sfi.fmi4j.common.FmuSlave;
+import no.mechatronics.sfi.fmi4j.importer.misc.OSUtil;
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.RealVariable;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
@@ -55,7 +56,7 @@ public class ControlledTemperatureTestJava {
     public static void setUp() throws IOException {
 
         final File file = new File(TestUtils.getTEST_FMUs(),
-                "FMI_2.0/CoSimulation/" + TestUtils.getOs()
+                "FMI_2.0/CoSimulation/" + OSUtil.getCurrentOS()
                         + "/20sim/4.6.4.8004/ControlledTemperature/ControlledTemperature.fmu");
         Assertions.assertTrue(file.exists());
         fmuFile = Fmu.from(file);
