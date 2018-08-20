@@ -142,9 +142,9 @@ class FmiLibrary(
 
     external fun getStatus(c: Long, s: Int, value: IntByReference): Int
 
-    external fun getRealStatus(c: Long, s: Int, value: DoubleByReference): Int
-
     external fun getIntegerStatus(c: Long, s: Int, value: IntByReference): Int
+
+    external fun getRealStatus(c: Long, s: Int, value: DoubleByReference): Int
 
     external fun getStringStatus(c: Long, s: Int, value: StringByReference): Int
 
@@ -183,7 +183,7 @@ class FmiLibrary(
 
         init {
 
-            val fileName = libPrefix + "fmi." + libExtension
+            val fileName = libPrefix + "fmi_jni." + libExtension
             val copy = File(fileName).apply {
                 deleteOnExit()
             }

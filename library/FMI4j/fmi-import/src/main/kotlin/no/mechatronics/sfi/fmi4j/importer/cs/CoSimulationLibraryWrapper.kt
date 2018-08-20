@@ -24,9 +24,9 @@
 
 package no.mechatronics.sfi.fmi4j.importer.cs
 
+import no.mechatronics.sfi.fmi4j.common.FmiStatus
 import no.mechatronics.sfi.fmi4j.importer.FmiLibraryWrapper
 import no.mechatronics.sfi.fmi4j.importer.jni.*
-
 
 /**
  *
@@ -50,50 +50,39 @@ class CoSimulationLibraryWrapper(
     /**
      * @see FmiCoSimulationLibrary.fmi2SetRealInputDerivatives
      */
-    fun setRealInputDerivatives(vr: IntArray, order: IntArray, value: DoubleArray): no.mechatronics.sfi.fmi4j.common.FmiStatus {
+    fun setRealInputDerivatives(vr: IntArray, order: IntArray, value: DoubleArray): FmiStatus {
         return updateStatus(library.setRealInputDerivatives(c, vr, order, value))
     }
 
     /**
      * @see FmiCoSimulationLibrary.fmi2GetRealOutputDerivatives
      */
-    fun getRealOutputDerivatives(vr: IntArray, order: IntArray, value: DoubleArray): no.mechatronics.sfi.fmi4j.common.FmiStatus {
+    fun getRealOutputDerivatives(vr: IntArray, order: IntArray, value: DoubleArray): FmiStatus {
         return updateStatus(library.getRealOutputDerivatives(c, vr, order, value))
     }
 
     /**
      * @see FmiCoSimulationLibrary.fmi2DoStep
      */
-    fun doStep(t: Double, dt: Double, noSetFMUStatePriorToCurrent: Boolean): no.mechatronics.sfi.fmi4j.common.FmiStatus {
+    fun doStep(t: Double, dt: Double, noSetFMUStatePriorToCurrent: Boolean): FmiStatus {
         return updateStatus(library.step(c, t, dt, noSetFMUStatePriorToCurrent))
     }
 
     /**
      * @see FmiCoSimulationLibrary.fmi2CancelStep
      */
-    fun cancelStep(): no.mechatronics.sfi.fmi4j.common.FmiStatus {
+    fun cancelStep(): FmiStatus {
         return (updateStatus(library.cancelStep(c)))
     }
 
     /**
      * @see FmiCoSimulationLibrary.fmi2GetStatus
      */
-    fun getStatus(s: FmiStatusKind): no.mechatronics.sfi.fmi4j.common.FmiStatus {
+    fun getStatus(s: FmiStatusKind): FmiStatus {
         return IntByReference().let {
-            updateStatus(library.getIntegerStatus(c, s.code, it))
-            no.mechatronics.sfi.fmi4j.common.FmiStatus.valueOf(it.value)
+            updateStatus(library.getStatus(c, s.code, it))
+            FmiStatus.valueOf(it.value)
         }
-    }
-
-    /**
-     * @see FmiCoSimulationLibrary.fmi2GetRealStatus
-     */
-    fun getRealStatus(s: FmiStatusKind): Double {
-        return DoubleByReference().let {
-            updateStatus(library.getRealStatus(c, s.code, it))
-            it.value
-        }
-
     }
 
     /**
@@ -102,6 +91,17 @@ class CoSimulationLibraryWrapper(
     fun getIntegerStatus(s: FmiStatusKind): Int {
         return IntByReference().let {
             updateStatus(library.getIntegerStatus(c, s.code, it))
+            it.value
+        }
+
+    }
+
+    /**
+     * @see FmiCoSimulationLibrary.fmi2GetRealStatus
+     */
+    fun getRealStatus(s: FmiStatusKind): Double {
+        return DoubleByReference().let {
+            updateStatus(library.getRealStatus(c, s.code, it))
             it.value
         }
 

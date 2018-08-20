@@ -52,8 +52,20 @@ function_ptr* load_function(const char* function_name) {
 #endif
 }
 
-void logger(void* fmi2ComponentEnvironment, fmi2String instance_name, fmi2Status status, fmi2String category, fmi2String message, ...) {
-    printf("instanceName = %s, category = %s: %s\n", instance_name, category, message);
+static const char* status_to_string(fmi2Status status) {
+    switch (status){
+        case 0: return "OK";
+        case 1: return "Warning";
+        case 2: return "Discard";
+        case 3: return "Error";
+        case 4: return "Fatal";
+        case 5: return "Pending";
+        default: return "Unknown";
+    }
+}
+
+static void logger(void* fmi2ComponentEnvironment, fmi2String instance_name, fmi2Status status, fmi2String category, fmi2String message, ...) {
+    printf("status = %s, instanceName = %s, category = %s: %s\n", status_to_string(status), instance_name, category, message);
 }
 
 fmi2CallbackFunctions callback = {
@@ -112,7 +124,6 @@ JNIEXPORT jlong JNICALL Java_no_mechatronics_sfi_fmi4j_importer_jni_FmiLibrary_i
 
     return (jlong) c;
 }
-
 
 JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_importer_jni_FmiLibrary_setDebugLogging(JNIEnv *env, jobject obj, jlong c, jboolean loggingOn, jobjectArray categories) {
 

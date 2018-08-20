@@ -26,8 +26,10 @@ shadowJar {
 
 model {
 
+
+
     platforms {
-        if (Os.isFamily(Os.FAMILY_UNIX)) {
+//        if (Os.isFamily(Os.FAMILY_UNIX)) {
             linux32 {
                 architecture "x86"
                 operatingSystem "linux"
@@ -36,7 +38,7 @@ model {
                 architecture "x86_64"
                 operatingSystem "linux"
             }
-        } else  if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+//        } else  if (Os.isFamily(Os.FAMILY_WINDOWS)) {
             win32 {
                 architecture "x86"
                 operatingSystem "windows"
@@ -45,7 +47,7 @@ model {
                 architecture "x86_64"
                 operatingSystem "windows"
             }
-        }
+//        }
     }
 
     toolChains {
@@ -54,6 +56,8 @@ model {
                 target("linux32")
                 target("linux64")
             }  else if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+                target("linux32")
+                target("linux64")
                 target("win32")
                 target("win64")
             }
@@ -64,13 +68,15 @@ model {
     components {
         fmi(NativeLibrarySpec) {
 
-            if (Os.isFamily(Os.FAMILY_UNIX)) {
+            baseName = "fmi_jni"
+
+//            if (Os.isFamily(Os.FAMILY_UNIX)) {
                 targetPlatform "linux32"
                 targetPlatform "linux64"
-            } else if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+//            } else if (Os.isFamily(Os.FAMILY_WINDOWS)) {
                 targetPlatform "win32"
                 targetPlatform "win64"
-            }
+//            }
 
             binaries.all {
 
