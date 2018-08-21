@@ -71,6 +71,12 @@ class Fmu private constructor(
     private val libraries = mutableListOf<FmiLibrary>()
     internal val instances = mutableListOf<AbstractFmuInstance<*, *>>()
 
+    val guid: String
+        get() = modelDescription.guid
+
+    val modelName: String
+        get() = modelDescription.modelName
+
     /**
      * Does the FMU support Co-simulation?
      */
