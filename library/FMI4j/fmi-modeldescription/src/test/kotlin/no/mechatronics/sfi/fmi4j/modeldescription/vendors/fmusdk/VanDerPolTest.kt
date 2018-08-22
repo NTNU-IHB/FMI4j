@@ -1,8 +1,8 @@
 package no.mechatronics.sfi.fmi4j.modeldescription.vendors.fmusdk
 
 import no.mechatronics.sfi.fmi4j.TestUtils
-import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescriptionParser
-import no.mechatronics.sfi.fmi4j.modeldescription.ModelExchangeModelDescription
+import no.mechatronics.sfi.fmi4j.modeldescription.me.ModelExchangeModelDescription
+import no.mechatronics.sfi.fmi4j.modeldescription.parser.ModelDescriptionParser
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
