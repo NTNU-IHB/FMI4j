@@ -50,7 +50,7 @@ class ControlledTemperatureTest {
 
                     tempInputValue.read().also {
                         Assertions.assertTrue(it.status == FmiStatus.OK)
-                        LOG.info("t=${instance.currentTime}, outputs[2]=${it.value}")
+                        LOG.info("t=${instance.simulationTime}, outputs[2]=${it.value}")
                     }
 
                 }

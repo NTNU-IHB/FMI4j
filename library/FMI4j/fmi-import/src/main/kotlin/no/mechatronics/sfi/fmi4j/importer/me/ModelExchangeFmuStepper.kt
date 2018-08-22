@@ -51,7 +51,7 @@ class ModelExchangeFmuStepper internal constructor(
     private val pz: DoubleArray
     private val z: DoubleArray
 
-    override var currentTime: Double = 0.0
+    override var simulationTime: Double = 0.0
         private set
 
     override val modelDescription
@@ -120,7 +120,7 @@ class ModelExchangeFmuStepper internal constructor(
     override fun init(start: Double, stop: Double) {
         if (!isInitialized) {
             fmuInstance.init(start, stop)
-            currentTime = start
+            simulationTime = start
             if (eventIteration()) {
                 throw IllegalArgumentException()
             }
@@ -133,7 +133,7 @@ class ModelExchangeFmuStepper internal constructor(
             throw IllegalArgumentException("stepSize must be positive and greater than 0! Was: $stepSize")
         }
 
-        var time: Double = currentTime
+        var time: Double = simulationTime
         val stopTime: Double = time + stepSize
 
         while (time < stopTime) {
@@ -186,7 +186,7 @@ class ModelExchangeFmuStepper internal constructor(
         }
 
         return true.also {
-            currentTime = time
+            simulationTime = time
         }
 
     }
@@ -197,7 +197,7 @@ class ModelExchangeFmuStepper internal constructor(
         fmuInstance.getDerivatives(dx)
 
         val dt = (tNext - t)
-        val integratedTime = solver.integrate(t, x, (currentTime + dt), x)
+        val integratedTime = solver.integrate(t, x, (simulationTime + dt), x)
 
         fmuInstance.setContinuousStates(x)
 

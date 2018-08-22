@@ -86,10 +86,10 @@ public class VanDerPolTestJava {
         instance.init();
 
         double macroStep = 1.0 / 10;
-        while (instance.getCurrentTime() < 1) {
+        while (instance.getSimulationTime() < 1) {
             FmuRead<Double> read = x0.read();
             Assertions.assertSame(read.getStatus(), FmiStatus.OK);
-            LOG.info("t={}, x0={}", instance.getCurrentTime(), read.getValue());
+            LOG.info("t={}, x0={}", instance.getSimulationTime(), read.getValue());
             instance.doStep(macroStep);
         }
 

@@ -26,6 +26,11 @@ package no.mechatronics.sfi.fmi4j.modeldescription
 
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement
+import no.mechatronics.sfi.fmi4j.modeldescription.cs.CoSimulationModelDescription
+import no.mechatronics.sfi.fmi4j.modeldescription.cs.CoSimulationModelDescriptionImpl
+import no.mechatronics.sfi.fmi4j.modeldescription.logging.LogCategories
+import no.mechatronics.sfi.fmi4j.modeldescription.me.ModelExchangeModelDescription
+import no.mechatronics.sfi.fmi4j.modeldescription.me.ModelExchangeModelDescriptionImpl
 import no.mechatronics.sfi.fmi4j.modeldescription.misc.*
 import no.mechatronics.sfi.fmi4j.modeldescription.structure.ModelStructureImpl
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.ModelVariablesImpl
@@ -33,6 +38,8 @@ import java.io.Serializable
 
 
 /**
+ * Default ModelDescription implementation
+ *
  * @author Lars Ivar Hatledal
  */
 @JacksonXmlRootElement(localName = "fmiModelDescription")
@@ -167,5 +174,3 @@ class ModelDescriptionImpl(
     }
 
 }
-
-

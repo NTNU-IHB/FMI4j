@@ -54,10 +54,10 @@ class BouncingBallTest {
             instance.init()
 
             val macroStep = 1.0 / 10
-            while (instance.currentTime < 1) {
+            while (instance.simulationTime < 1) {
                 val read = h.read()
                 Assertions.assertTrue(read.status === FmiStatus.OK)
-                LOG.info("t=${instance.currentTime}, h=${read.value}")
+                LOG.info("t=${instance.simulationTime}, h=${read.value}")
                 instance.doStep(macroStep)
             }
 

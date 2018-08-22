@@ -85,7 +85,7 @@ class CompareWithJavaFmi {
 
             val start = Instant.now()
             init(0.0)
-            while (currentTime < stop) {
+            while (simulationTime < stop) {
                 val status = doStep(stepSize)
                 modelVariables.forEach {
                     it.read()

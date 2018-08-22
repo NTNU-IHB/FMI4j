@@ -31,6 +31,8 @@ import no.mechatronics.sfi.fmi4j.modeldescription.variables.TypedScalarVariable
 import java.io.Closeable
 
 /**
+ * Represents a generic FMU instance
+ *
  * @author Lars Ivar Hatledal
  */
 interface FmuInstance : Closeable {

@@ -22,8 +22,11 @@
  * THE SOFTWARE.
  */
 
-package no.mechatronics.sfi.fmi4j.modeldescription
+package no.mechatronics.sfi.fmi4j.modeldescription.cs
 
+import no.mechatronics.sfi.fmi4j.modeldescription.CommonModelDescription
+import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescriptionImpl
+import no.mechatronics.sfi.fmi4j.modeldescription.SpecificModelDescription
 import no.mechatronics.sfi.fmi4j.modeldescription.misc.CoSimulationData
 import java.io.Serializable
 
@@ -35,7 +38,7 @@ interface CoSimulationModelDescription : SpecificModelDescription {
 
     /**
      * The slave is able to provide derivatives of outputs with maximum order.
-     * Calling of mi2GetRealOutputDerivatives(...) is allowed up to the order defined by
+     * Calling of fmi2GetRealOutputDerivatives(...) is allowed up to the order defined by
      * maxOutputDerivativeOrder.
      */
     val maxOutputDerivativeOrder: Int

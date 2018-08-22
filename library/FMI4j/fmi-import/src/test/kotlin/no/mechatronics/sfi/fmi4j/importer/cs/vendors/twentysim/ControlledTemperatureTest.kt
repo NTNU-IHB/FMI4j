@@ -56,7 +56,7 @@ class ControlledTemperatureTest {
                     Assertions.assertTrue(read.status == FmiStatus.OK)
                     val value = read.value
 
-                    LOG.info("t=${instance.currentTime}, Temperature_Room=$value")
+                    LOG.info("t=${instance.simulationTime}, Temperature_Room=$value")
                 }
 
             }

@@ -28,9 +28,9 @@ import no.mechatronics.sfi.fmi4j.importer.cs.CoSimulationFmuBuilder
 import no.mechatronics.sfi.fmi4j.importer.jni.FmiLibrary
 import no.mechatronics.sfi.fmi4j.importer.me.ModelExchangeFmuBuilder
 import no.mechatronics.sfi.fmi4j.importer.misc.*
-import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescriptionParser
 import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescriptionProvider
 import no.mechatronics.sfi.fmi4j.modeldescription.SpecificModelDescription
+import no.mechatronics.sfi.fmi4j.modeldescription.parser.ModelDescriptionParser
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.Closeable

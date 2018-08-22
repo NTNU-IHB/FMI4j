@@ -43,10 +43,10 @@ class VanDerPolTest {
                     .getByName(variableName).asRealVariable()
 
             val macroStep = 1E-2
-            while (instance.currentTime < 1) {
+            while (instance.simulationTime < 1) {
                 val read = x0.read()
                 Assertions.assertTrue(read.status === FmiStatus.OK)
-                LOG.info("t=${instance.currentTime}, $variableName=${read.value}")
+                LOG.info("t=${instance.simulationTime}, $variableName=${read.value}")
                 instance.doStep(macroStep)
             }
 

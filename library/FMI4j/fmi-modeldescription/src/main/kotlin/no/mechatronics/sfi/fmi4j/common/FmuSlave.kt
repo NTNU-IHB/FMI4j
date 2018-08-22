@@ -25,6 +25,7 @@
 package no.mechatronics.sfi.fmi4j.common
 
 /**
+ * Slave interface
  *
  * @author Lars Ivar Hatledal
  */
@@ -33,7 +34,7 @@ interface FmuSlave : FmuInstance {
     /**
      * Current simulation time
      */
-    val currentTime: Double
+    val simulationTime: Double
 
     /**
      * Step simulation forward in time
@@ -43,4 +44,3 @@ interface FmuSlave : FmuInstance {
     fun doStep(stepSize: Double): Boolean
 
 }
-

@@ -79,7 +79,7 @@ object Benchmark {
                     var j = 0
                     var sum = 0.0
                     measureTimeMillis {
-                        while (instance.currentTime < option.stopTime - option.stepSize) {
+                        while (instance.simulationTime < option.stopTime - option.stepSize) {
                             !instance.doStep(option.stepSize)
                             sum += h.read().value
                             j += 1

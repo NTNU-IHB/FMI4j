@@ -28,7 +28,7 @@ import no.mechatronics.sfi.fmi4j.common.FmiStatus
 import no.mechatronics.sfi.fmi4j.common.FmuSlave
 import no.mechatronics.sfi.fmi4j.importer.AbstractFmuInstance
 import no.mechatronics.sfi.fmi4j.importer.Fmu
-import no.mechatronics.sfi.fmi4j.modeldescription.CoSimulationModelDescription
+import no.mechatronics.sfi.fmi4j.modeldescription.cs.CoSimulationModelDescription
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.lang.IllegalStateException
@@ -47,7 +47,7 @@ class CoSimulationFmuInstance internal constructor(
         val LOG: Logger = LoggerFactory.getLogger(CoSimulationFmuInstance::class.java)
     }
 
-    override var currentTime: Double = 0.0
+    override var simulationTime: Double = 0.0
         private set
 
     override val modelDescription: CoSimulationModelDescription
@@ -55,7 +55,7 @@ class CoSimulationFmuInstance internal constructor(
 
     override fun init(start: Double, stop: Double) {
         super.init(start, stop)
-        currentTime = start
+        simulationTime = start
     }
 
     /**
@@ -68,16 +68,16 @@ class CoSimulationFmuInstance internal constructor(
                     "remember that you have to call init() again after a call to reset()!")
         }
 
-        val tNext = currentTime + stepSize
+        val tNext = simulationTime + stepSize
 
         if (stopDefined && tNext > stopTime) {
             LOG.warn("Cannot perform step! tNext=$tNext > stopTime=$stopTime")
             return false
         }
 
-        return wrapper.doStep(currentTime, stepSize, noSetFMUStatePriorToCurrent = true).let { status ->
+        return wrapper.doStep(simulationTime, stepSize, noSetFMUStatePriorToCurrent = true).let { status ->
             if (status == FmiStatus.OK) {
-                currentTime = tNext
+                simulationTime = tNext
                 true
             } else {
                 false

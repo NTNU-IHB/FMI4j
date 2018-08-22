@@ -24,10 +24,10 @@
 
 package no.mechatronics.sfi.fmi4j.modeldescription
 
+import no.mechatronics.sfi.fmi4j.modeldescription.logging.LogCategories
 import no.mechatronics.sfi.fmi4j.modeldescription.misc.*
 import no.mechatronics.sfi.fmi4j.modeldescription.structure.ModelStructure
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.ModelVariables
-
 
 /**
  * Static information related to an FMU
@@ -256,13 +256,5 @@ interface SpecificModelDescription : CommonModelDescription {
      * The source files
      */
     val sourceFiles: List<SourceFile>
-
-}
-
-interface ModelDescriptionProvider : CommonModelDescription {
-
-    fun asCoSimulationModelDescription(): CoSimulationModelDescription
-
-    fun asModelExchangeModelDescription(): ModelExchangeModelDescription
 
 }
