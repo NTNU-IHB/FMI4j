@@ -26,8 +26,8 @@ package no.mechatronics.sfi.fmi4j.importer
 
 import no.mechatronics.sfi.fmi4j.common.FmiStatus
 import no.mechatronics.sfi.fmi4j.common.FmuInstance
+import no.mechatronics.sfi.fmi4j.common.FmuState
 import no.mechatronics.sfi.fmi4j.common.FmuVariableAccessor
-import no.mechatronics.sfi.fmi4j.importer.jni.FmuState
 import no.mechatronics.sfi.fmi4j.importer.misc.*
 import no.mechatronics.sfi.fmi4j.modeldescription.SpecificModelDescription
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.*
@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory
  *
  * @author Lars Ivar Hatledal
  */
-abstract class AbstractFmuInstance<out E : SpecificModelDescription, out T : FmiLibraryWrapper> internal constructor(
+abstract class AbstractFmuInstance<out E : SpecificModelDescription, out T : FmiLibraryWrapper<*>> internal constructor(
         val fmu: Fmu,
         val wrapper: T
 ) : FmuInstance {
@@ -104,19 +104,6 @@ abstract class AbstractFmuInstance<out E : SpecificModelDescription, out T : Fmi
      */
     fun setDebugLogging(loggingOn: Boolean, categories: Array<String>): FmiStatus
             = wrapper.setDebugLogging(loggingOn, categories)
-
-    override fun init() {
-        init(0.0)
-    }
-
-    /**
-     * Call init with provided start
-     *
-     * @param start the start time
-     */
-    override fun init(start: Double) {
-        init(start, 0.0)
-    }
 
     /**
      * Call init with provided start and stop
@@ -226,40 +213,39 @@ abstract class AbstractFmuInstance<out E : SpecificModelDescription, out T : Fmi
     /**
      * @see FmiLibrary.fmi2GetFMUstate
      */
-    @JvmOverloads
-    fun getFMUState(state: FmuState = FmuState()): FmuState {
+    override fun getFMUstate(): FmuState {
         if (!modelDescription.canGetAndSetFMUstate) {
             throw UnsupportedOperationException("Method call not allowed, FMU cannot get and set FMU state!")
         }
-        return wrapper.getFMUState(state)
+        return wrapper.getFMUState()
     }
 
     /**
      * @see FmiLibrary.fmi2SetFMUstate
      */
-    fun setFMUState(fmuState: FmuState): FmiStatus {
+    override fun setFMUstate(state: FmuState): Boolean {
         if (!modelDescription.canGetAndSetFMUstate) {
             throw UnsupportedOperationException("Method call not allowed, FMU cannot get and set FMU state!")
         }
-        return wrapper.setFMUState(fmuState)
+        return wrapper.setFMUState(state) == FmiStatus.OK
     }
 
     /**
      * @see FmiLibrary.fmi2FreeFMUstate
      */
-    fun freeFMUState(fmuState: FmuState): FmiStatus {
+    override fun freeFMUstate(state: FmuState): Boolean {
         if (!modelDescription.canGetAndSetFMUstate) {
             throw UnsupportedOperationException("Method call not allowed, FMU cannot get and set FMU state!")
         }
-        return wrapper.freeFMUState(fmuState)
+        return wrapper.freeFMUState(state) == FmiStatus.OK
     }
 
     /**
      * @see FmiLibrary.fmi2SerializedFMUstateSize
      */
-    fun serializedFMUStateSize(fmuState: FmuState): Int {
+    fun serializedFMUstateSize(fmuState: FmuState): Int {
         if (!modelDescription.canSerializeFMUstate) {
-            throw UnsupportedOperationException("Method call not allowed, FMU cannot serialize FMU state!")
+            throw UnsupportedOperationException("Method call not allowed, FMU cannot serialize/deserialize FMU state!")
         }
         return wrapper.serializedFMUStateSize(fmuState)
     }
@@ -267,21 +253,21 @@ abstract class AbstractFmuInstance<out E : SpecificModelDescription, out T : Fmi
     /**
      * @see FmiLibrary.fmi2SerializeFMUstate
      */
-    fun serializeFMUState(fmuState: FmuState): ByteArray {
+    override fun serializeFMUstate(state: FmuState): ByteArray {
         if (!modelDescription.canSerializeFMUstate) {
-            throw UnsupportedOperationException("Method call not allowed, FMU cannot serialize FMU state!")
+            throw UnsupportedOperationException("Method call not allowed, FMU cannot serialize/deserialize FMU state!")
         }
-        return wrapper.serializeFMUState(fmuState)
+        return wrapper.serializeFMUState(state)
     }
 
     /**
      * @see FmiLibrary.fmi2DeSerializeFMUstate
      */
-    fun deSerializeFMUState(serializedState: ByteArray): FmuState {
+    override fun deSerializeFMUstate(state: ByteArray): FmuState {
         if (!modelDescription.canSerializeFMUstate) {
-            throw UnsupportedOperationException("Method call not allowed, FMU cannot serialize FMU state!")
+            throw UnsupportedOperationException("Method call not allowed, FMU cannot serialize/deserialize FMU state!")
         }
-        return wrapper.deSerializeFMUState(serializedState)
+        return wrapper.deSerializeFMUState(state)
     }
 
     fun getIntVector(name: String): IntegerVariableVector {

@@ -31,6 +31,7 @@ import no.mechatronics.sfi.fmi4j.solvers.Equations
 import no.mechatronics.sfi.fmi4j.solvers.Solver
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import java.lang.IllegalStateException
 
 private const val EPS = 1E-13
 
@@ -122,7 +123,7 @@ class ModelExchangeFmuStepper internal constructor(
             fmuInstance.init(start, stop)
             simulationTime = start
             if (eventIteration()) {
-                throw IllegalArgumentException()
+                throw IllegalStateException("EventIteration returned false during initialization!")
             }
         }
     }

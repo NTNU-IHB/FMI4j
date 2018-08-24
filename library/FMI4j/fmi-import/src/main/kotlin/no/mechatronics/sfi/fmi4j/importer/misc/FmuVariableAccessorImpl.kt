@@ -32,7 +32,7 @@ import no.mechatronics.sfi.fmi4j.modeldescription.variables.ModelVariables
  * @author Lars Ivar Hatledal
  */
 class FmuVariableAccessorImpl(
-        private val wrapper: FmiLibraryWrapper,
+        private val wrapper: FmiLibraryWrapper<*>,
         private val modelVariables: ModelVariables
 ) : FmuVariableAccessor {
 

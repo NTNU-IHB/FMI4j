@@ -365,18 +365,12 @@ JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_importer_jni_FmiLibrary_se
     return status;
 }
 
-JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_importer_jni_FmiLibrary_freeFMUstate(JNIEnv *env, jobject obj, jlong c, jobject state) {
-
-    jclass cls = (*env)->FindClass(env, "no/mechatronics/sfi/fmi4j/importer/jni/FmuState");
-    jfieldID id = (*env)->GetFieldID(env, cls, "pointer", "J");
+JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_importer_jni_FmiLibrary_freeFMUstate(JNIEnv *env, jobject obj, jlong c, jlong state) {
 
     fmi2Status (*fmi2FreeFMUstate)(fmi2Component, fmi2FMUstate*);
     fmi2FreeFMUstate = load_function("fmi2FreeFMUstate");
-
-    fmi2FMUstate _state = (fmi2FMUstate) (*env)->GetLongField(env, state, id);
+    fmi2FMUstate _state = (fmi2FMUstate) state;
     fmi2Status status = (*fmi2FreeFMUstate)((void*) c, &_state);
-
-    (*env)->SetLongField(env, state, id, (jlong) _state);
 
     return status;
 }
@@ -476,21 +470,21 @@ JNIEXPORT jboolean JNICALL Java_no_mechatronics_sfi_fmi4j_importer_jni_FmiLibrar
 Functions for FMI2 for Co-Simulation
 ****************************************************/
 
-JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_importer_jni_FmiLibrary_step(JNIEnv *env, jobject obj, jlong c, jdouble currentCommunicationPoint, jdouble communicationStepSize, jboolean noSetFMUStatePriorToCurrentPoint) {
+JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_importer_jni_FmiCoSimulationLibrary_step(JNIEnv *env, jobject obj, jlong c, jdouble currentCommunicationPoint, jdouble communicationStepSize, jboolean noSetFMUStatePriorToCurrentPoint) {
     fmi2Status (*fmi2DoStep)(fmi2Component, fmi2Real, fmi2Real, fmi2Boolean);
     fmi2DoStep = load_function("fmi2DoStep");
     fmi2Status status = (*fmi2DoStep)((void*) c, currentCommunicationPoint, communicationStepSize, noSetFMUStatePriorToCurrentPoint);
     return status;
 }
 
-JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_importer_jni_FmiLibrary_cancelStep(JNIEnv *env, jobject obj, jlong c) {
+JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_importer_jni_FmiCoSimulationLibrary_cancelStep(JNIEnv *env, jobject obj, jlong c) {
     fmi2Status (*fmi2CancelStep)(fmi2Component);
     fmi2CancelStep = load_function("fmi2CancelStep");
     fmi2Status status = (*fmi2CancelStep)((void*) c);
     return status;
 }
 
-JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_importer_jni_FmiLibrary_setRealInputDerivatives(JNIEnv *env, jobject obj, jlong c, jintArray vr, jintArray order, jdoubleArray value) {
+JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_importer_jni_FmiCoSimulationLibrary_setRealInputDerivatives(JNIEnv *env, jobject obj, jlong c, jintArray vr, jintArray order, jdoubleArray value) {
 
     const jsize nvr = (*env)->GetArrayLength(env, vr);
 
@@ -510,7 +504,7 @@ JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_importer_jni_FmiLibrary_se
     return status;
 }
 
-JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_importer_jni_FmiLibrary_getRealOutputDerivatives(JNIEnv *env, jobject obj, jlong c, jintArray vr, jintArray order, jdoubleArray value) {
+JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_importer_jni_FmiCoSimulationLibrary_getRealOutputDerivatives(JNIEnv *env, jobject obj, jlong c, jintArray vr, jintArray order, jdoubleArray value) {
 
     const jsize nvr = (*env)->GetArrayLength(env, vr);
 
@@ -535,28 +529,28 @@ JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_importer_jni_FmiLibrary_ge
 Functions for FMI2 for Model Exchange
 ****************************************************/
 
-JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_importer_jni_FmiLibrary_enterEventMode(JNIEnv *env, jobject obj, jlong c) {
+JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_importer_jni_FmiModelExchangeLibrary_enterEventMode(JNIEnv *env, jobject obj, jlong c) {
     fmi2Status (*fmi2EnterEventMode)(fmi2Component);
     fmi2EnterEventMode = load_function("fmi2EnterEventMode");
     fmi2Status status = (*fmi2EnterEventMode)((void*) c);
     return status;
 }
 
-JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_importer_jni_FmiLibrary_enterContinuousTimeMode(JNIEnv *env, jobject obj, jlong c) {
+JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_importer_jni_FmiModelExchangeLibrary_enterContinuousTimeMode(JNIEnv *env, jobject obj, jlong c) {
     fmi2Status (*fmi2EnterContinuousTimeMode)(fmi2Component);
     fmi2EnterContinuousTimeMode = load_function("fmi2EnterContinuousTimeMode");
     fmi2Status status = (*fmi2EnterContinuousTimeMode)((void*) c);
     return status;
 }
 
-JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_importer_jni_FmiLibrary_setTime(JNIEnv *env, jobject obj, jlong c, jdouble time) {
+JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_importer_jni_FmiModelExchangeLibrary_setTime(JNIEnv *env, jobject obj, jlong c, jdouble time) {
     fmi2Status (*fmi2SetTime)(fmi2Component, fmi2Real);
     fmi2SetTime = load_function("fmi2SetTime");
     fmi2Status status = (*fmi2SetTime)((void*) c, time);
     return status;
 }
 
-JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_importer_jni_FmiLibrary_setContinuousStates(JNIEnv *env, jobject obj, jlong c, jdoubleArray x) {
+JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_importer_jni_FmiModelExchangeLibrary_setContinuousStates(JNIEnv *env, jobject obj, jlong c, jdoubleArray x) {
 
     const jsize size = (*env)->GetArrayLength(env, x);
     const jdouble* _x = (*env)->GetDoubleArrayElements(env, x, 0);
@@ -570,7 +564,7 @@ JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_importer_jni_FmiLibrary_se
     return status;
 }
 
-JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_importer_jni_FmiLibrary_getDerivatives(JNIEnv *env, jobject obj, jlong c, jdoubleArray derivatives) {
+JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_importer_jni_FmiModelExchangeLibrary_getDerivatives(JNIEnv *env, jobject obj, jlong c, jdoubleArray derivatives) {
 
     const jsize size = (*env)->GetArrayLength(env, derivatives);
     fmi2Real* _derivatives = malloc(sizeof(fmi2Real) * size);
@@ -586,7 +580,7 @@ JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_importer_jni_FmiLibrary_ge
 }
 
 
-JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_importer_jni_FmiLibrary_getEventIndicators(JNIEnv *env, jobject obj, jlong c, jdoubleArray eventIndicators) {
+JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_importer_jni_FmiModelExchangeLibrary_getEventIndicators(JNIEnv *env, jobject obj, jlong c, jdoubleArray eventIndicators) {
 
     const jsize size = (*env)->GetArrayLength(env, eventIndicators);
     fmi2Real* _eventIndicators = malloc(sizeof(fmi2Real) * size);
@@ -601,7 +595,7 @@ JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_importer_jni_FmiLibrary_ge
     return status;
 }
 
-JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_importer_jni_FmiLibrary_getContinuousStates(JNIEnv *env, jobject obj, jlong c, jdoubleArray x) {
+JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_importer_jni_FmiModelExchangeLibrary_getContinuousStates(JNIEnv *env, jobject obj, jlong c, jdoubleArray x) {
 
     const jsize size = (*env)->GetArrayLength(env, x);
     fmi2Real* _x = malloc(sizeof(fmi2Real) * size);
@@ -616,7 +610,7 @@ JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_importer_jni_FmiLibrary_ge
     return status;
 }
 
-JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_importer_jni_FmiLibrary_getNominalsOfContinuousStates(JNIEnv *env, jobject obj, jlong c, jdoubleArray x_nominal) {
+JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_importer_jni_FmiModelExchangeLibrary_getNominalsOfContinuousStates(JNIEnv *env, jobject obj, jlong c, jdoubleArray x_nominal) {
 
     const jsize size = (*env)->GetArrayLength(env, x_nominal);
     fmi2Real *_x_nominal = malloc(sizeof(fmi2Real) * size);
@@ -631,7 +625,7 @@ JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_importer_jni_FmiLibrary_ge
     return status;
 }
 
-JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_importer_jni_FmiLibrary_completedIntegratorStep(JNIEnv *env, jobject obj, jlong c, jboolean noSetFMUStatePriorToCurrentPoint, jobject enterEventMode, jobject terminateSimulation) {
+JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_importer_jni_FmiModelExchangeLibrary_completedIntegratorStep(JNIEnv *env, jobject obj, jlong c, jboolean noSetFMUStatePriorToCurrentPoint, jobject enterEventMode, jobject terminateSimulation) {
 
     fmi2Boolean _enterEventMode;
     fmi2Boolean _terminateSimulation;
@@ -649,7 +643,7 @@ JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_importer_jni_FmiLibrary_co
     return status;
 }
 
-JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_importer_jni_FmiLibrary_newDiscreteStates(JNIEnv *env, jobject obj, jlong c, jobject states) {
+JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_importer_jni_FmiModelExchangeLibrary_newDiscreteStates(JNIEnv *env, jobject obj, jlong c, jobject states) {
 
     jclass cls = (*env)->FindClass(env, "no/mechatronics/sfi/fmi4j/importer/jni/EventInfo");
 

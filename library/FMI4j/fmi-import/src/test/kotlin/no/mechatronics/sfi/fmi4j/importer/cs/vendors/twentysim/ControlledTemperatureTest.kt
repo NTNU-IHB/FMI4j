@@ -3,7 +3,7 @@ package no.mechatronics.sfi.fmi4j.importer.cs.vendors.twentysim
 import no.mechatronics.sfi.fmi4j.TestUtils
 import no.mechatronics.sfi.fmi4j.common.FmiStatus
 import no.mechatronics.sfi.fmi4j.importer.Fmu
-import no.mechatronics.sfi.fmi4j.importer.misc.currentOS
+import no.mechatronics.sfi.fmi4j.common.currentOS
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable

@@ -2,6 +2,7 @@ package no.mechatronics.sfi.fmi4j.importer.misc
 
 
 import no.mechatronics.sfi.fmi4j.TestUtils
+import no.mechatronics.sfi.fmi4j.common.currentOS
 import no.mechatronics.sfi.fmi4j.importer.Fmu
 import org.javafmi.proxy.Status
 import org.javafmi.wrapper.Simulation

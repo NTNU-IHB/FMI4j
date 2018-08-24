@@ -26,6 +26,7 @@ package no.mechatronics.sfi.fmi4j.importer.cs
 
 import no.mechatronics.sfi.fmi4j.importer.CO_SIMULATION_TYPE
 import no.mechatronics.sfi.fmi4j.importer.Fmu
+import no.mechatronics.sfi.fmi4j.importer.jni.FmiCoSimulationLibrary
 import no.mechatronics.sfi.fmi4j.importer.jni.FmiLibrary
 
 class CoSimulationFmuBuilder internal constructor(
@@ -47,7 +48,7 @@ class CoSimulationFmuBuilder internal constructor(
     fun newInstance(visible: Boolean = false, loggingOn: Boolean = false): CoSimulationFmuInstance {
         val lib = if (modelDescription.canBeInstantiatedOnlyOncePerProcess) loadLibrary() else libraryCache
         val c = fmu.instantiate(modelDescription, lib, CO_SIMULATION_TYPE, visible, loggingOn)
-        val wrapper = CoSimulationLibraryWrapper(c, lib)
+        val wrapper = CoSimulationLibraryWrapper(c, lib as FmiCoSimulationLibrary)
         return CoSimulationFmuInstance(fmu, wrapper).also {
             fmu.instances.add(it)
         }

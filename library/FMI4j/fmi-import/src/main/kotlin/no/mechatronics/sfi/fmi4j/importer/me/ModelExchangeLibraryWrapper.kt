@@ -29,6 +29,7 @@ import no.mechatronics.sfi.fmi4j.importer.FmiLibraryWrapper
 import no.mechatronics.sfi.fmi4j.importer.jni.BooleanByReference
 import no.mechatronics.sfi.fmi4j.importer.jni.EventInfo
 import no.mechatronics.sfi.fmi4j.importer.jni.FmiLibrary
+import no.mechatronics.sfi.fmi4j.importer.jni.FmiModelExchangeLibrary
 
 /**
  *
@@ -45,8 +46,8 @@ data class CompletedIntegratorStep(
  */
 class ModelExchangeLibraryWrapper(
         c: Long,
-        library: FmiLibrary
-) : FmiLibraryWrapper(c, library) {
+        library: FmiModelExchangeLibrary
+) : FmiLibraryWrapper<FmiModelExchangeLibrary>(c, library) {
 
     private val enterEventMode = BooleanByReference()
     private val terminateSimulation = BooleanByReference()

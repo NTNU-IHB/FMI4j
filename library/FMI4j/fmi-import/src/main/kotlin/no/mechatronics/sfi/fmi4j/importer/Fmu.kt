@@ -24,12 +24,17 @@
 
 package no.mechatronics.sfi.fmi4j.importer
 
+import no.mechatronics.sfi.fmi4j.common.*
 import no.mechatronics.sfi.fmi4j.importer.cs.CoSimulationFmuBuilder
+import no.mechatronics.sfi.fmi4j.importer.jni.FmiCoSimulationLibrary
 import no.mechatronics.sfi.fmi4j.importer.jni.FmiLibrary
+import no.mechatronics.sfi.fmi4j.importer.jni.FmiModelExchangeLibrary
 import no.mechatronics.sfi.fmi4j.importer.me.ModelExchangeFmuBuilder
 import no.mechatronics.sfi.fmi4j.importer.misc.*
 import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescriptionProvider
 import no.mechatronics.sfi.fmi4j.modeldescription.SpecificModelDescription
+import no.mechatronics.sfi.fmi4j.modeldescription.cs.CoSimulationModelDescription
+import no.mechatronics.sfi.fmi4j.modeldescription.me.ModelExchangeModelDescription
 import no.mechatronics.sfi.fmi4j.modeldescription.parser.ModelDescriptionParser
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -201,7 +206,12 @@ class Fmu private constructor(
     }
 
     internal fun loadLibrary(modelDescription: SpecificModelDescription): FmiLibrary {
-        return FmiLibrary(getFullLibraryPath(modelDescription)).also {
+        val libName = getFullLibraryPath(modelDescription)
+        return when (modelDescription) {
+            is CoSimulationModelDescription -> FmiCoSimulationLibrary(libName)
+            is ModelExchangeModelDescription -> FmiModelExchangeLibrary(libName)
+            else -> throw java.lang.IllegalArgumentException("Unknown model description type: ${modelDescription.javaClass}")
+        }.also {
             libraries.add(it)
         }
     }

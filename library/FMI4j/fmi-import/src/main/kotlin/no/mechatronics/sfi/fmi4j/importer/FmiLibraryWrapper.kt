@@ -25,9 +25,10 @@
 package no.mechatronics.sfi.fmi4j.importer
 
 import no.mechatronics.sfi.fmi4j.common.*
+import no.mechatronics.sfi.fmi4j.common.FmuState
 import no.mechatronics.sfi.fmi4j.importer.jni.FmiLibrary
-import no.mechatronics.sfi.fmi4j.importer.jni.FmuState
 import no.mechatronics.sfi.fmi4j.importer.jni.IntByReference
+import no.mechatronics.sfi.fmi4j.importer.jni.LongByReference
 import no.mechatronics.sfi.fmi4j.importer.misc.ArrayBuffers
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -35,9 +36,9 @@ import org.slf4j.LoggerFactory
 /**
  * @author Lars Ivar Hatledal
  */
-abstract class FmiLibraryWrapper(
+abstract class FmiLibraryWrapper<E : FmiLibrary>(
         protected var c: Long,
-        library: FmiLibrary
+        library: E
 ) {
 
     private companion object {
@@ -46,9 +47,9 @@ abstract class FmiLibraryWrapper(
 
     private val buffers: ArrayBuffers = ArrayBuffers()
 
-    private var _library: FmiLibrary? = library
+    private var _library: E? = library
 
-    protected val library: FmiLibrary
+    protected val library: E
         get() = _library ?: throw IllegalAccessException("Library is no longer accessible!")
 
     val isInstanceFreed: Boolean
@@ -352,17 +353,17 @@ abstract class FmiLibraryWrapper(
     /**
      * @see FmiLibrary.fmi2GetFMUstate
      */
-    fun getFMUState(fmuState: FmuState): FmuState {
-        return fmuState.also {
-            updateStatus(library.getFMUstate(c, fmuState))
-        }
+    fun getFMUState(): FmuState {
+        return LongByReference().also {
+            updateStatus(library.getFMUstate(c, it))
+        }.value
     }
 
     /**
      * @see FmiLibrary.fmi2GetFMUstate
      */
     fun setFMUState(fmuState: FmuState): FmiStatus {
-        return updateStatus(library.setFMUstate(c, fmuState.value))
+        return updateStatus(library.setFMUstate(c, fmuState))
     }
 
     /**
@@ -377,7 +378,7 @@ abstract class FmiLibraryWrapper(
      */
     fun serializedFMUStateSize(fmuState: FmuState): Int {
         return IntByReference().let {
-            updateStatus(library.serializedFMUstateSize(c, fmuState.value, it))
+            updateStatus(library.serializedFMUstateSize(c, fmuState, it))
             it.value
         }
 
@@ -389,7 +390,7 @@ abstract class FmiLibraryWrapper(
     fun serializeFMUState(fmuState: FmuState): ByteArray {
         val size = serializedFMUStateSize(fmuState)
         return ByteArray(size).also {
-            updateStatus(library.serializeFMUstate(c, fmuState.value, it))
+            updateStatus(library.serializeFMUstate(c, fmuState, it))
         }
     }
 
@@ -397,10 +398,9 @@ abstract class FmiLibraryWrapper(
      * @see FmiLibrary.fmi2DeSerializeFMUstate
      */
     fun deSerializeFMUState(serializedState: ByteArray): FmuState {
-        return FmuState().also { state ->
+        return LongByReference().also { state ->
             updateStatus(library.deSerializeFMUstate(c, state, serializedState))
-        }
+        }.value
     }
 
 }
-

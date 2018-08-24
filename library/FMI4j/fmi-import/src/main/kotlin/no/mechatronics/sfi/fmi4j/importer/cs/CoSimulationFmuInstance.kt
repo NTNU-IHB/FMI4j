@@ -50,11 +50,17 @@ class CoSimulationFmuInstance internal constructor(
     override var simulationTime: Double = 0.0
         private set
 
+    override val canGetAndSetFMUstate: Boolean
+        get() = modelDescription.canGetAndSetFMUstate
+
+    override val canSerializeFMUstate: Boolean
+        get() = modelDescription.canSerializeFMUstate
+
     override val modelDescription: CoSimulationModelDescription
         get() = fmu.modelDescription.asCoSimulationModelDescription()
 
     override fun init(start: Double, stop: Double) {
-        super.init(start, stop)
+        super<AbstractFmuInstance>.init(start, stop)
         simulationTime = start
     }
 
@@ -97,7 +103,7 @@ class CoSimulationFmuInstance internal constructor(
      * @see no.mechatronics.sfi.fmi4j.importer.proxy.v2.FmiLibrary.fmi2Terminate
      * @see no.mechatronics.sfi.fmi4j.importer.proxy.v2.FmiLibrary.fmi2FreeInstance
      */
-    override fun terminate() = super.terminate(true)
+    override fun terminate() = super.terminate(freeInstance = true)
 
     /**
      * @see CoSimulationLibraryWrapper.setRealInputDerivatives

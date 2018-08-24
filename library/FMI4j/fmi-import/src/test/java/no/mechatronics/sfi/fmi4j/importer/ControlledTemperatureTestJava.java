@@ -28,7 +28,7 @@ package no.mechatronics.sfi.fmi4j.importer;
 import no.mechatronics.sfi.fmi4j.TestUtils;
 import no.mechatronics.sfi.fmi4j.common.FmiStatus;
 import no.mechatronics.sfi.fmi4j.common.FmuSlave;
-import no.mechatronics.sfi.fmi4j.importer.misc.OSUtil;
+import no.mechatronics.sfi.fmi4j.common.OSUtil;
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.RealVariable;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;

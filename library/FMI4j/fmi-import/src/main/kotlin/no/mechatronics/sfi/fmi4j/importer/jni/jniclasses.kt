@@ -24,27 +24,25 @@
 
 package no.mechatronics.sfi.fmi4j.importer.jni
 
-open class IntByReference {
-    var value: Int = 0
-}
+open class IntByReference(
+        var value: Int = 0
+)
 
-open class DoubleByReference {
-    var value: Double = 0.0
-}
+open class DoubleByReference(
+        var value: Double = 0.0
+)
 
-open class StringByReference {
-    var value: String = ""
-}
+open class StringByReference(
+        var value: String = ""
+)
 
-open class BooleanByReference {
-    var value: Boolean = false
-}
+open class BooleanByReference(
+        var value: Boolean = false
+)
 
-open class LongByReference {
-    var value: Long = 0
-}
-
-class FmuState : LongByReference()
+open class LongByReference(
+        var value: Long = 0
+)
 
 class EventInfo {
 

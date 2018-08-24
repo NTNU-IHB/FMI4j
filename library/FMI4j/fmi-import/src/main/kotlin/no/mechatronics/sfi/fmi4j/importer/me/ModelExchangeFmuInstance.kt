@@ -41,6 +41,12 @@ open class ModelExchangeFmuInstance internal constructor(
 
     val eventInfo = EventInfo()
 
+    override val canGetAndSetFMUstate: Boolean
+        get() = modelDescription.canGetAndSetFMUstate
+
+    override val canSerializeFMUstate: Boolean
+        get() = modelDescription.canSerializeFMUstate
+
     override val modelDescription: ModelExchangeModelDescription
         get() = fmu.modelDescription.asModelExchangeModelDescription()
 
