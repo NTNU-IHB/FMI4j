@@ -3,6 +3,7 @@ package no.mechatronics.sfi.fmi4j.modeldescription.vendors.openmodelica
 import no.mechatronics.sfi.fmi4j.TestUtils
 import no.mechatronics.sfi.fmi4j.modeldescription.CommonModelDescription
 import no.mechatronics.sfi.fmi4j.modeldescription.cs.CoSimulationModelDescription
+import no.mechatronics.sfi.fmi4j.modeldescription.currentOS
 import no.mechatronics.sfi.fmi4j.modeldescription.misc.VariableNamingConvention
 import no.mechatronics.sfi.fmi4j.modeldescription.parser.ModelDescriptionParser
 import no.mechatronics.sfi.fmi4j.modeldescription.structure.DependenciesKind
@@ -27,7 +28,8 @@ class FmuExportCrossCompileTest {
 
     init {
         val fmu = File(TestUtils.getTEST_FMUs(),
-                "FMI_2.0/CoSimulation/${TestUtils.getOs()}/OpenModelica/v1.11.0/FmuExportCrossCompile/FmuExportCrossCompile.fmu")
+                "FMI_2.0/CoSimulation/$currentOS/OpenModelica/v1.11.0/" +
+                        "FmuExportCrossCompile/FmuExportCrossCompile.fmu")
         Assertions.assertTrue(fmu.exists())
         modelDescription = ModelDescriptionParser.parse(fmu).asCoSimulationModelDescription()
 

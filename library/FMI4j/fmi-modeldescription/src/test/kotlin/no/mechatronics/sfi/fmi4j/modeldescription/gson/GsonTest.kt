@@ -2,6 +2,7 @@ package no.mechatronics.sfi.fmi4j.modeldescription.gson
 
 import com.google.gson.GsonBuilder
 import no.mechatronics.sfi.fmi4j.TestUtils
+import no.mechatronics.sfi.fmi4j.modeldescription.currentOS
 import no.mechatronics.sfi.fmi4j.modeldescription.me.ModelExchangeModelDescriptionImpl
 import no.mechatronics.sfi.fmi4j.modeldescription.parser.ModelDescriptionParser
 import org.junit.jupiter.api.Assertions
@@ -22,7 +23,7 @@ class GsonTest {
     fun test() {
 
         val fmu = File(TestUtils.getTEST_FMUs(),
-                "FMI_2.0/ModelExchange/${TestUtils.getOs()}" +
+                "FMI_2.0/ModelExchange/$currentOS" +
                         "/MapleSim/2017/ControlledTemperature/ControlledTemperature.fmu")
         Assertions.assertTrue(fmu.exists())
         val modelDescription = ModelDescriptionParser.parse(fmu).asModelExchangeModelDescription()
@@ -31,11 +32,13 @@ class GsonTest {
                 .setPrettyPrinting()
                 .create().also { gson ->
 
-                    val json = gson.toJson(modelDescription)
-                    LOG.info("$json")
+                    gson.toJson(modelDescription).also { json ->
+                        LOG.info("$json")
+                        gson.fromJson(json, ModelExchangeModelDescriptionImpl::class.java).also { md ->
+                            LOG.info("${md.modelVariables}")
+                        }
 
-                    val md = gson.fromJson(json, ModelExchangeModelDescriptionImpl::class.java)
-                    LOG.info("${md.modelVariables}")
+                    }
 
                 }
 

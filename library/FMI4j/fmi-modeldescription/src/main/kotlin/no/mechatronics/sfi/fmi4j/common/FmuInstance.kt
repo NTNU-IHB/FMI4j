@@ -41,6 +41,11 @@ interface FmuInstance : Closeable {
 
     val variableAccessor: FmuVariableAccessor
 
+    val canSetAndGetFMUstate: Boolean
+
+    val canSerializeFMUstate: Boolean
+
+
     /**
      * @see SpecificModelDescription.modelVariables
      */
@@ -66,12 +71,18 @@ interface FmuInstance : Closeable {
     /**
      * Call init with 0.0 as start.
      */
-    fun init()
+    @JvmDefault
+    fun init() {
+        init(0.0)
+    }
 
     /**
-     * Call init with start and default stop time
+     * Call init with start and default stop time (endless)
      */
-    fun init(start: Double)
+    @JvmDefault
+    fun init(start: Double) {
+        init(start, 0.0)
+    }
 
     /**
      * Initialise FMU with the provided start and stop value

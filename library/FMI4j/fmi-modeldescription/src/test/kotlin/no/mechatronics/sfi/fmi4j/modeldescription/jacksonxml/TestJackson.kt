@@ -10,6 +10,7 @@ import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.readValue
 import no.mechatronics.sfi.fmi4j.TestUtils
 import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescriptionImpl
+import no.mechatronics.sfi.fmi4j.modeldescription.currentOS
 import no.mechatronics.sfi.fmi4j.modeldescription.parser.ModelDescriptionParser
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
@@ -29,7 +30,7 @@ class TestJackson {
     fun test() {
 
         val file = File(TestUtils.getTEST_FMUs(),
-                "FMI_2.0/CoSimulation/${TestUtils.getOs()}" +
+                "FMI_2.0/CoSimulation/$currentOS" +
                         "/MapleSim/2017/ControlledTemperature/ControlledTemperature.fmu")
         Assertions.assertTrue(file.exists())
 
