@@ -26,7 +26,6 @@ package no.mechatronics.sfi.fmi4j.importer.me
 
 import no.mechatronics.sfi.fmi4j.importer.Fmu
 import no.mechatronics.sfi.fmi4j.importer.MODEL_EXCHANGE_TYPE
-import no.mechatronics.sfi.fmi4j.importer.jni.FmiLibrary
 import no.mechatronics.sfi.fmi4j.importer.jni.FmiModelExchangeLibrary
 import no.mechatronics.sfi.fmi4j.solvers.Solver
 
@@ -37,21 +36,24 @@ class ModelExchangeFmuBuilder internal constructor(
     private val modelDescription
         get() = fmu.modelDescription.asModelExchangeModelDescription()
 
-    private val libraryCache: FmiLibrary by lazy {
+    private val libraryCache: FmiModelExchangeLibrary by lazy {
         loadLibrary()
     }
 
-    private fun loadLibrary(): FmiLibrary {
-        return fmu.loadLibrary(modelDescription)
+    private fun loadLibrary(): FmiModelExchangeLibrary {
+        val libName = fmu.getFullLibraryPath(modelDescription.modelIdentifier)
+        return FmiModelExchangeLibrary(libName).also {
+            fmu.registerLibrary(it)
+        }
     }
 
     @JvmOverloads
     fun newInstance(visible: Boolean = false, loggingOn: Boolean = false): ModelExchangeFmuInstance {
         val lib = if (modelDescription.canBeInstantiatedOnlyOncePerProcess) loadLibrary() else libraryCache
         val c = fmu.instantiate(modelDescription, lib, MODEL_EXCHANGE_TYPE, visible, loggingOn)
-        val wrapper = ModelExchangeLibraryWrapper(c, lib as FmiModelExchangeLibrary)
+        val wrapper = ModelExchangeLibraryWrapper(c, lib)
         return ModelExchangeFmuInstance(fmu, wrapper).also {
-            fmu.instances.add(it)
+            fmu.registerInstance(it)
         }
     }
 

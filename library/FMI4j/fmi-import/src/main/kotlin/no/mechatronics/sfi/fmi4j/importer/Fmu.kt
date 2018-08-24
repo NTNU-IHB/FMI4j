@@ -26,15 +26,11 @@ package no.mechatronics.sfi.fmi4j.importer
 
 import no.mechatronics.sfi.fmi4j.common.*
 import no.mechatronics.sfi.fmi4j.importer.cs.CoSimulationFmuBuilder
-import no.mechatronics.sfi.fmi4j.importer.jni.FmiCoSimulationLibrary
 import no.mechatronics.sfi.fmi4j.importer.jni.FmiLibrary
-import no.mechatronics.sfi.fmi4j.importer.jni.FmiModelExchangeLibrary
 import no.mechatronics.sfi.fmi4j.importer.me.ModelExchangeFmuBuilder
-import no.mechatronics.sfi.fmi4j.importer.misc.*
+import no.mechatronics.sfi.fmi4j.importer.misc.extractTo
 import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescriptionProvider
 import no.mechatronics.sfi.fmi4j.modeldescription.SpecificModelDescription
-import no.mechatronics.sfi.fmi4j.modeldescription.cs.CoSimulationModelDescription
-import no.mechatronics.sfi.fmi4j.modeldescription.me.ModelExchangeModelDescription
 import no.mechatronics.sfi.fmi4j.modeldescription.parser.ModelDescriptionParser
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -74,7 +70,7 @@ class Fmu private constructor(
 
     private var isClosed = false
     private val libraries = mutableListOf<FmiLibrary>()
-    internal val instances = mutableListOf<AbstractFmuInstance<*, *>>()
+    private val instances = mutableListOf<AbstractFmuInstance<*, *>>()
 
     val guid: String
         get() = modelDescription.guid
@@ -136,13 +132,13 @@ class Fmu private constructor(
         get() = "file:///${File(fmuFile,
                 RESOURCES_FOLDER).absolutePath.replace("\\", "/")}"
 
-    fun getLibraryName(desc: SpecificModelDescription): String {
-        return "${desc.modelIdentifier}$libraryExtension"
+    fun getLibraryName(modelIdentifier: String): String {
+        return "$modelIdentifier$libraryExtension"
     }
 
-    fun getFullLibraryPath(desc: SpecificModelDescription): String {
+    fun getFullLibraryPath(modelIdentifier: String): String {
         return File(fmuFile, BINARIES_FOLDER + File.separator + libraryFolderName + platformBitness
-                + File.separator + desc.modelIdentifier + libraryExtension).absolutePath
+                + File.separator + modelIdentifier + libraryExtension).absolutePath
     }
 
     private val coSimulationBuilder: CoSimulationFmuBuilder? by lazy {
@@ -177,12 +173,12 @@ class Fmu private constructor(
     }
 
     private fun terminateInstances() {
-        instances.forEach {
-            if (!it.isTerminated) {
-                it.terminate()
+        instances.forEach { instance ->
+            if (!instance.isTerminated) {
+                instance.terminate()
             }
-            if (!it.wrapper.isInstanceFreed) {
-                it.wrapper.freeInstance()
+            if (!instance.wrapper.isInstanceFreed) {
+                instance.wrapper.freeInstance()
             }
         }
         instances.clear()
@@ -205,15 +201,12 @@ class Fmu private constructor(
         return true
     }
 
-    internal fun loadLibrary(modelDescription: SpecificModelDescription): FmiLibrary {
-        val libName = getFullLibraryPath(modelDescription)
-        return when (modelDescription) {
-            is CoSimulationModelDescription -> FmiCoSimulationLibrary(libName)
-            is ModelExchangeModelDescription -> FmiModelExchangeLibrary(libName)
-            else -> throw java.lang.IllegalArgumentException("Unknown model description type: ${modelDescription.javaClass}")
-        }.also {
-            libraries.add(it)
-        }
+    internal fun registerLibrary(library: FmiLibrary) {
+        libraries.add(library)
+    }
+
+    internal fun registerInstance(instance: AbstractFmuInstance<*, *>) {
+        instances.add(instance)
     }
 
     internal fun instantiate(modelDescription: SpecificModelDescription, library: FmiLibrary, fmiType: Int, visible: Boolean, loggingOn: Boolean): Long {
@@ -232,6 +225,7 @@ class Fmu private constructor(
 
     protected fun finalize() {
         if (!isClosed) {
+            LOG.warn("FMU has not been closed prior to garbage collection. Doing it for you..")
             close()
         }
     }
@@ -248,7 +242,10 @@ class Fmu private constructor(
 
         init {
             Runtime.getRuntime().addShutdownHook(Thread {
-                fmus.toMutableList().forEach { it.close() }
+                fmus.toMutableList().forEach {
+                    //mutableList because the list is modified during call
+                    it.close()
+                }
             })
         }
 

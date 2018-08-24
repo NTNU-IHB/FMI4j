@@ -72,16 +72,16 @@ object Benchmark {
             var elapsed = 0L
             for (i in 0..iter) {
 
-                fmu.asCoSimulationFmu().newInstance(loggingOn = false).use { instance ->
+                fmu.asCoSimulationFmu().newInstance(loggingOn = false).use { slave ->
 
-                    val h = instance.modelVariables.getByValueReference(option.vr)[0] as RealVariable
-                    instance.init(0.0, option.stopTime)
+                    val h = slave.modelVariables.getByValueReference(option.vr)[0] as RealVariable
+                    slave.init(0.0, option.stopTime)
 
                     var j = 0
                     var sum = 0.0
                     measureTimeMillis {
-                        while (instance.simulationTime < option.stopTime - option.stepSize) {
-                            !instance.doStep(option.stepSize)
+                        while (slave.simulationTime < option.stopTime - option.stepSize) {
+                            !slave.doStep(option.stepSize)
                             sum += h.read().value
                             j += 1
                         }

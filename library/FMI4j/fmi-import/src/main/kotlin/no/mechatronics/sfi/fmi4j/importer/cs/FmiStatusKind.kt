@@ -24,9 +24,6 @@
 
 package no.mechatronics.sfi.fmi4j.importer.cs
 
-import java.util.*
-import kotlin.streams.toList
-
 /**
  *
  * @author Lars Ivar Hatledal
@@ -73,7 +70,7 @@ enum class FmiStatusKind(
                     return kind
                 }
             }
-            throw IllegalArgumentException("$i not in range of ${Arrays.stream(values()).map { it.code }.toList()}")
+            throw IllegalArgumentException("$i not in range of ${values().map { it.code }.toList()}")
         }
     }
 

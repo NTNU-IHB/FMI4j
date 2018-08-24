@@ -24,7 +24,6 @@
 
 package no.mechatronics.sfi.fmi4j.common
 
-import com.sun.org.apache.xpath.internal.operations.Bool
 import no.mechatronics.sfi.fmi4j.modeldescription.CommonModelDescription
 import no.mechatronics.sfi.fmi4j.modeldescription.SpecificModelDescription
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.ModelVariables
@@ -40,10 +39,6 @@ typealias FmuState = Long
  */
 interface FmuInstance : Closeable {
 
-    val modelDescription: CommonModelDescription
-
-    val variableAccessor: FmuVariableAccessor
-
     /**
      * Does this FMU instance support getting and setting the FMU state?
      */
@@ -55,18 +50,6 @@ interface FmuInstance : Closeable {
     val canSerializeFMUstate: Boolean
 
     /**
-     * @see SpecificModelDescription.modelVariables
-     */
-    @JvmDefault
-    val modelVariables: ModelVariables
-        get() = modelDescription.modelVariables
-
-    /**
-     * The last status returned by the FMU
-     */
-    val lastStatus: FmiStatus
-
-    /**
      * Has init been called?
      */
     val isInitialized: Boolean
@@ -75,6 +58,27 @@ interface FmuInstance : Closeable {
      * Has terminate been called?
      */
     val isTerminated: Boolean
+
+    /**
+     * Current simulation time
+     */
+    val simulationTime: Double
+
+    /**
+     * The last status returned by the FMU
+     */
+    val lastStatus: FmiStatus
+
+    val modelDescription: CommonModelDescription
+
+    val variableAccessor: FmuVariableAccessor
+
+    /**
+     * @see SpecificModelDescription.modelVariables
+     */
+    @JvmDefault
+    val modelVariables: ModelVariables
+        get() = modelDescription.modelVariables
 
     /**
      * Call init with 0.0 as start.

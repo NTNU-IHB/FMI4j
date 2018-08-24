@@ -25,7 +25,6 @@
 package no.mechatronics.sfi.fmi4j.importer
 
 import no.mechatronics.sfi.fmi4j.common.*
-import no.mechatronics.sfi.fmi4j.common.FmuState
 import no.mechatronics.sfi.fmi4j.importer.jni.FmiLibrary
 import no.mechatronics.sfi.fmi4j.importer.jni.IntByReference
 import no.mechatronics.sfi.fmi4j.importer.jni.LongByReference
@@ -40,10 +39,6 @@ abstract class FmiLibraryWrapper<E : FmiLibrary>(
         protected var c: Long,
         library: E
 ) {
-
-    private companion object {
-        val LOG: Logger = LoggerFactory.getLogger(FmiLibraryWrapper::class.java)
-    }
 
     private val buffers: ArrayBuffers = ArrayBuffers()
 
@@ -401,6 +396,10 @@ abstract class FmiLibraryWrapper<E : FmiLibrary>(
         return LongByReference().also { state ->
             updateStatus(library.deSerializeFMUstate(c, state, serializedState))
         }.value
+    }
+
+    private companion object {
+        val LOG: Logger = LoggerFactory.getLogger(FmiLibraryWrapper::class.java)
     }
 
 }

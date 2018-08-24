@@ -22,25 +22,13 @@
  * THE SOFTWARE.
  */
 
-package no.mechatronics.sfi.fmi4j.common
+package no.mechatronics.sfi.fmi4j.importer.me
 
 /**
- * Slave interface
  *
  * @author Lars Ivar Hatledal
  */
-interface FmuSlave : FmuInstance {
-
-    /**
-     * Step simulation forward in time
-     *
-     * @param stepSize time to step simulation forward (in seconds)
-     */
-    fun doStep(stepSize: Double): Boolean
-
-    /**
-     * Cancel step
-     */
-    fun cancelStep(): Boolean
-
-}
+data class CompletedIntegratorStepResult(
+        val enterEventMode: Boolean,
+        val terminateSimulation: Boolean
+)

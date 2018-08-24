@@ -38,16 +38,6 @@ class CoSimulationLibraryWrapper(
 ) : FmiLibraryWrapper<FmiCoSimulationLibrary>(c, library) {
 
     /**
-     * Extension method
-     */
-    fun getMaxStepSize(): Double {
-        return DoubleByReference().let {
-            updateStatus(library.getMaxStepSize(c, it))
-            it.value
-        }
-    }
-
-    /**
      * @see FmiCoSimulationLibrary.fmi2SetRealInputDerivatives
      */
     fun setRealInputDerivatives(vr: IntArray, order: IntArray, value: DoubleArray): FmiStatus {
@@ -127,5 +117,17 @@ class CoSimulationLibraryWrapper(
         }
 
     }
+
+
+    /**
+     * Extension method
+     */
+    fun getMaxStepSize(): Double {
+        return DoubleByReference().let {
+            updateStatus(library.getMaxStepSize(c, it))
+            it.value
+        }
+    }
+
 
 }

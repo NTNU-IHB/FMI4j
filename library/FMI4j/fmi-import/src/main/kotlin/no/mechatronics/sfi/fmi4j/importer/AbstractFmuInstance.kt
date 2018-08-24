@@ -44,8 +44,6 @@ abstract class AbstractFmuInstance<out E : SpecificModelDescription, out T : Fmi
         val wrapper: T
 ) : FmuInstance {
 
-    private val LOG: Logger = LoggerFactory.getLogger(AbstractFmuInstance::class.java)
-
     abstract override val modelDescription: E
 
     override val variableAccessor: FmuVariableAccessor
@@ -92,6 +90,12 @@ abstract class AbstractFmuInstance<out E : SpecificModelDescription, out T : Fmi
 
     protected var stopTime: Double = 0.0
         private set
+
+    /**
+     * Current simulation time
+     */
+    override var simulationTime: Double = 0.0
+        internal set
 
     /**
      * @see FmiLibraryWrapper.lastStatus
@@ -156,6 +160,7 @@ abstract class AbstractFmuInstance<out E : SpecificModelDescription, out T : Fmi
                 }
             }
 
+            simulationTime = start
             isInitialized = true
 
         } else {
@@ -194,6 +199,7 @@ abstract class AbstractFmuInstance<out E : SpecificModelDescription, out T : Fmi
 
     protected fun finalize() {
         if (!isTerminated) {
+            LOG.warn("Instance ${modelDescription.modelName} was not terminated before garbage collection. Doing it for you..")
             close()
         }
     }
@@ -326,6 +332,10 @@ abstract class AbstractFmuInstance<out E : SpecificModelDescription, out T : Fmi
             }
         }
         return variables.size
+    }
+
+    private companion object {
+        private val LOG: Logger = LoggerFactory.getLogger(AbstractFmuInstance::class.java)
     }
 
 }

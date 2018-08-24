@@ -63,8 +63,8 @@ class CompareWithJavaFmi {
 
     private fun doTest(stepSize: Double, stop: Double): Pair<Long, Long> {
 
-        var duration1: Long? = null
-        var duration2: Long? = null
+        var duration1: Long = 0
+        var duration2: Long = 0
 
         Simulation(path).apply {
 
@@ -93,11 +93,11 @@ class CompareWithJavaFmi {
                 }
                 Assertions.assertTrue(status)
             }
-            terminate(true)
+            terminate()
             val end = Instant.now()
             duration2 = Duration.between(start, end).toMillis()
         }
-        return duration1!! to duration2!!
+        return duration1 to duration2
     }
 
 

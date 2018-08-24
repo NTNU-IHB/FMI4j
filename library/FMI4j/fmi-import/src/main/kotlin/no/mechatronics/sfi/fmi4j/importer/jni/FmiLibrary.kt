@@ -49,19 +49,22 @@ sealed class FmiLibrary(
         }
     }
 
-    private var isFreed = false
+    private var isClosed = false
 
     override fun close() {
-        if (!isFreed) {
+        if (!isClosed) {
             free().also {
                 LOG.debug("Freed native library '${File(libName).name}' successfully: $it")
             }
-            isFreed = true
+            isClosed = true
         }
     }
 
     protected fun finalize() {
-        close()
+        if (!isClosed) {
+            LOG.warn("FMU was not closed prior do garbage collection! Doing it for you..")
+            close()
+        }
     }
 
     private external fun load(libName: String): Boolean

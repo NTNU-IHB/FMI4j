@@ -28,17 +28,7 @@ import no.mechatronics.sfi.fmi4j.common.FmiStatus
 import no.mechatronics.sfi.fmi4j.importer.FmiLibraryWrapper
 import no.mechatronics.sfi.fmi4j.importer.jni.BooleanByReference
 import no.mechatronics.sfi.fmi4j.importer.jni.EventInfo
-import no.mechatronics.sfi.fmi4j.importer.jni.FmiLibrary
 import no.mechatronics.sfi.fmi4j.importer.jni.FmiModelExchangeLibrary
-
-/**
- *
- * @author Lars Ivar Hatledal
- */
-data class CompletedIntegratorStep(
-        val enterEventMode: Boolean,
-        val terminateSimulation: Boolean
-)
 
 /**
  *
@@ -87,10 +77,10 @@ class ModelExchangeLibraryWrapper(
         return updateStatus((library.newDiscreteStates(c, eventInfo)))
     }
 
-    fun completedIntegratorStep(): CompletedIntegratorStep {
+    fun completedIntegratorStep(): CompletedIntegratorStepResult {
         updateStatus((library.completedIntegratorStep(c,
                 true, enterEventMode, terminateSimulation)))
-        return CompletedIntegratorStep(
+        return CompletedIntegratorStepResult(
                 enterEventMode.value,
                 terminateSimulation.value)
     }

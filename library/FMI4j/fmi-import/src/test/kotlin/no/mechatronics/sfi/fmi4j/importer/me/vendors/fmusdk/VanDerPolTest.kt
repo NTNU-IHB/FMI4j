@@ -58,20 +58,20 @@ class VanDerPolTest {
 
         LOG.info("Using solver: '${solver.name}'")
 
-        fmu.asModelExchangeFmu().newInstance(solver).use { instance ->
+        fmu.asModelExchangeFmu().newInstance(solver).use { slave ->
 
             val variableName = "x0"
-            val x0 = instance.modelVariables
+            val x0 = slave.modelVariables
                     .getByName(variableName).asRealVariable()
 
-            instance.init()
+            slave.init()
 
             val macroStep = 1.0 / 10
-            while (instance.simulationTime < 1) {
+            while (slave.simulationTime < 1) {
                 val read = x0.read()
                 Assertions.assertTrue(read.status === FmiStatus.OK)
-                LOG.info("t=${instance.simulationTime}, $variableName=${read.value}")
-                instance.doStep(macroStep)
+                LOG.info("t=${slave.simulationTime}, $variableName=${read.value}")
+                slave.doStep(macroStep)
             }
 
         }

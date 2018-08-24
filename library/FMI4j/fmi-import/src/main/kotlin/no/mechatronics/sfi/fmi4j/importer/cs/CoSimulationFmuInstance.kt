@@ -43,13 +43,6 @@ class CoSimulationFmuInstance internal constructor(
         wrapper: CoSimulationLibraryWrapper
 ) : AbstractFmuInstance<CoSimulationModelDescription, CoSimulationLibraryWrapper>(fmu, wrapper), FmuSlave {
 
-    private companion object {
-        val LOG: Logger = LoggerFactory.getLogger(CoSimulationFmuInstance::class.java)
-    }
-
-    override var simulationTime: Double = 0.0
-        private set
-
     override val canGetAndSetFMUstate: Boolean
         get() = modelDescription.canGetAndSetFMUstate
 
@@ -58,11 +51,6 @@ class CoSimulationFmuInstance internal constructor(
 
     override val modelDescription: CoSimulationModelDescription
         get() = fmu.modelDescription.asCoSimulationModelDescription()
-
-    override fun init(start: Double, stop: Double) {
-        super<AbstractFmuInstance>.init(start, stop)
-        simulationTime = start
-    }
 
     /**
      * @see CoSimulationLibraryWrapper.doStep
@@ -74,7 +62,7 @@ class CoSimulationFmuInstance internal constructor(
                     "remember that you have to call init() again after a call to reset()!")
         }
 
-        val tNext = simulationTime + stepSize
+        val tNext = (simulationTime + stepSize)
 
         if (stopDefined && tNext > stopTime) {
             LOG.warn("Cannot perform step! tNext=$tNext > stopTime=$stopTime")
@@ -82,12 +70,11 @@ class CoSimulationFmuInstance internal constructor(
         }
 
         return wrapper.doStep(simulationTime, stepSize, noSetFMUStatePriorToCurrent = true).let { status ->
-            if (status == FmiStatus.OK) {
+            val success = status == FmiStatus.OK
+            if (success) {
                 simulationTime = tNext
-                true
-            } else {
-                false
             }
+            success
         }
 
     }
@@ -95,7 +82,9 @@ class CoSimulationFmuInstance internal constructor(
     /**
      * @see CoSimulationLibraryWrapper.cancelStep
      */
-    fun cancelStep() = wrapper.cancelStep()
+    override fun cancelStep(): Boolean {
+        return (wrapper.cancelStep() == FmiStatus.OK)
+    }
 
     /**
      * Terminates and frees the FMU instance
@@ -139,5 +128,9 @@ class CoSimulationFmuInstance internal constructor(
      * @see CoSimulationLibraryWrapper.getStringStatus
      */
     fun getStringStatus(s: FmiStatusKind) = wrapper.getStringStatus(s)
+
+    private companion object {
+        val LOG: Logger = LoggerFactory.getLogger(CoSimulationFmuInstance::class.java)
+    }
 
 }

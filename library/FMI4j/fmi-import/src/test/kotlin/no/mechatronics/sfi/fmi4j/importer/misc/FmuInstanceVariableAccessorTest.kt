@@ -37,15 +37,15 @@ class FmuInstanceVariableAccessorTest {
     @Test
     fun test1() {
 
-        fmu.asCoSimulationFmu().newInstance().use { instance ->
+        fmu.asCoSimulationFmu().newInstance().use { slave ->
 
-            instance.init()
-            instance.modelVariables.forEach { variable ->
+            slave.init()
+            slave.modelVariables.forEach { variable ->
                 when (variable) {
-                    is IntegerVariable -> Assertions.assertEquals(variable.read(), instance.variableAccessor.readInteger(variable.valueReference))
-                    is RealVariable -> Assertions.assertEquals(variable.read(), instance.variableAccessor.readReal(variable.valueReference))
-                    is StringVariable -> Assertions.assertEquals(variable.read(), instance.variableAccessor.readString(variable.valueReference))
-                    is BooleanVariable -> Assertions.assertEquals(variable.read(), instance.variableAccessor.readBoolean(variable.valueReference))
+                    is IntegerVariable -> Assertions.assertEquals(variable.read(), slave.variableAccessor.readInteger(variable.valueReference))
+                    is RealVariable -> Assertions.assertEquals(variable.read(), slave.variableAccessor.readReal(variable.valueReference))
+                    is StringVariable -> Assertions.assertEquals(variable.read(), slave.variableAccessor.readString(variable.valueReference))
+                    is BooleanVariable -> Assertions.assertEquals(variable.read(), slave.variableAccessor.readBoolean(variable.valueReference))
                 }
             }
 

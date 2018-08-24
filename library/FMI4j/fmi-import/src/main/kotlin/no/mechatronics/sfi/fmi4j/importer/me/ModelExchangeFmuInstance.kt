@@ -24,6 +24,7 @@
 
 package no.mechatronics.sfi.fmi4j.importer.me
 
+import no.mechatronics.sfi.fmi4j.common.FmiStatus
 import no.mechatronics.sfi.fmi4j.importer.AbstractFmuInstance
 import no.mechatronics.sfi.fmi4j.importer.Fmu
 import no.mechatronics.sfi.fmi4j.importer.jni.EventInfo
@@ -55,7 +56,11 @@ open class ModelExchangeFmuInstance internal constructor(
      *
      * @param time
      */
-    fun setTime(time: Double) = wrapper.setTime(time)
+    fun setTime(time: Double): FmiStatus {
+        return wrapper.setTime(time).also {
+            simulationTime = time
+        }
+    }
 
     /**
      * @see ModelExchangeLibraryWrapper.setContinuousStates

@@ -31,7 +31,7 @@ import no.mechatronics.sfi.fmi4j.solvers.Equations
 import no.mechatronics.sfi.fmi4j.solvers.Solver
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import java.lang.IllegalStateException
+import kotlin.math.min
 
 private const val EPS = 1E-13
 
@@ -49,11 +49,11 @@ class ModelExchangeFmuStepper internal constructor(
     private val dx: DoubleArray
     private val nominalStates: DoubleArray
 
-    private val pz: DoubleArray
     private val z: DoubleArray
+    private val pz: DoubleArray
 
-    override var simulationTime: Double = 0.0
-        private set
+    override val simulationTime: Double
+        get() = fmuInstance.simulationTime
 
     override val modelDescription
         get() = fmuInstance.modelDescription
@@ -121,25 +121,30 @@ class ModelExchangeFmuStepper internal constructor(
     override fun init(start: Double, stop: Double) {
         if (!isInitialized) {
             fmuInstance.init(start, stop)
-            simulationTime = start
             if (eventIteration()) {
                 throw IllegalStateException("EventIteration returned false during initialization!")
             }
+        } else {
+            LOG.warn("Init has already been invoked..")
         }
     }
 
     override fun doStep(stepSize: Double): Boolean {
 
+        if (!isInitialized) {
+            throw IllegalStateException("Init has not been invoked!")
+        }
+
         if (stepSize <= 0) {
             throw IllegalArgumentException("stepSize must be positive and greater than 0! Was: $stepSize")
         }
 
-        var time: Double = simulationTime
-        val stopTime: Double = time + stepSize
+        var time = simulationTime
+        val stopTime = time + stepSize
 
         while (time < stopTime) {
 
-            var tNext = Math.min(time + stepSize, stopTime)
+            var tNext = min(time + stepSize, stopTime)
 
             val timeEvent = fmuInstance.eventInfo.nextEventTimeDefined && fmuInstance.eventInfo.nextEventTime <= time
             if (timeEvent) {
@@ -186,10 +191,12 @@ class ModelExchangeFmuStepper internal constructor(
 
         }
 
-        return true.also {
-            simulationTime = time
-        }
+        return true
 
+    }
+
+    override fun cancelStep(): Boolean {
+        return false
     }
 
     private fun solve(t: Double, tNext: Double): Pair<Boolean, Double> {
@@ -197,8 +204,8 @@ class ModelExchangeFmuStepper internal constructor(
         fmuInstance.getContinuousStates(x)
         fmuInstance.getDerivatives(dx)
 
-        val dt = (tNext - t)
-        val integratedTime = solver.integrate(t, x, (simulationTime + dt), x)
+        val stepSize = (tNext - t)
+        val integratedTime = solver.integrate(t, x, (simulationTime + stepSize), x)
 
         fmuInstance.setContinuousStates(x)
 
@@ -209,14 +216,14 @@ class ModelExchangeFmuStepper internal constructor(
         fun stateEvent(): Boolean {
 
             for (i in pz.indices) {
-                if (pz[i] * z[i] < 0) {
+                if ((pz[i] * z[i]) < 0) {
                     return true
                 }
             }
             return false
         }
 
-        return stateEvent() to integratedTime
+        return (stateEvent() to integratedTime)
 
     }
 

@@ -2,8 +2,8 @@ package no.mechatronics.sfi.fmi4j.importer.cs.vendors.maplesim
 
 import no.mechatronics.sfi.fmi4j.TestUtils
 import no.mechatronics.sfi.fmi4j.common.FmiStatus
-import no.mechatronics.sfi.fmi4j.importer.Fmu
 import no.mechatronics.sfi.fmi4j.common.currentOS
+import no.mechatronics.sfi.fmi4j.importer.Fmu
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable
@@ -27,30 +27,30 @@ class ControlledTemperatureTest {
 
         Fmu.from(file).use { fmu ->
 
-            fmu.asCoSimulationFmu().newInstance().use { instance ->
+            fmu.asCoSimulationFmu().newInstance().use { slave ->
 
-                Assertions.assertEquals("2.0", instance.modelDescription.fmiVersion)
+                Assertions.assertEquals("2.0", slave.modelDescription.fmiVersion)
 
-                val heatCapacitor_T = instance
+                val heatCapacitor_T = slave
                         .getVariableByName("heatCapacitor.T").asRealVariable()
                 Assertions.assertEquals(2.93149999999999980e+02, heatCapacitor_T.start!!)
 
-                instance.init()
-                Assertions.assertTrue(instance.lastStatus === FmiStatus.OK)
+                slave.init()
+                Assertions.assertTrue(slave.lastStatus === FmiStatus.OK)
 
                 LOG.debug("heatCapacitor_T=${heatCapacitor_T.read().value}")
 
-                val tempInputValue = instance
+                val tempInputValue = slave
                         .getVariableByName("outputs[2]").asRealVariable()
 
                 val dt = 1.0 / 100
                 for (i in 0..4) {
-                    instance.doStep(dt)
-                    Assertions.assertTrue(instance.lastStatus === FmiStatus.OK)
+                    slave.doStep(dt)
+                    Assertions.assertTrue(slave.lastStatus === FmiStatus.OK)
 
                     tempInputValue.read().also {
                         Assertions.assertTrue(it.status == FmiStatus.OK)
-                        LOG.info("t=${instance.simulationTime}, outputs[2]=${it.value}")
+                        LOG.info("t=${slave.simulationTime}, outputs[2]=${it.value}")
                     }
 
                 }

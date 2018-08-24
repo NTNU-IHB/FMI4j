@@ -34,20 +34,20 @@ class VanDerPolTest {
     @Test
     fun testInstance() {
 
-        fmu.asCoSimulationFmu().newInstance().use { instance ->
+        fmu.asCoSimulationFmu().newInstance().use { slave ->
 
-            instance.init()
+            slave.init()
 
             val variableName = "x0"
-            val x0 = instance.modelVariables
+            val x0 = slave.modelVariables
                     .getByName(variableName).asRealVariable()
 
             val macroStep = 1E-2
-            while (instance.simulationTime < 1) {
+            while (slave.simulationTime < 1) {
                 val read = x0.read()
                 Assertions.assertTrue(read.status === FmiStatus.OK)
-                LOG.info("t=${instance.simulationTime}, $variableName=${read.value}")
-                instance.doStep(macroStep)
+                LOG.info("t=${slave.simulationTime}, $variableName=${read.value}")
+                slave.doStep(macroStep)
             }
 
         }
