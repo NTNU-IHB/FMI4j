@@ -24,7 +24,7 @@
  * THE SOFTWARE.
  */
 
-package no.mechatronics.sfi.fmi4j.importer.misc
+package no.mechatronics.sfi.fmi4j.common
 
 val osName: String = System.getProperty("os.name")
 val platformBitness: String = System.getProperty("sun.arch.data.model")

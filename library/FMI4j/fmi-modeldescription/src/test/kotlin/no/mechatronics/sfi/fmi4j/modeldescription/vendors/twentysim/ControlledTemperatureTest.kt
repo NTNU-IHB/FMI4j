@@ -25,8 +25,8 @@
 package no.mechatronics.sfi.fmi4j.modeldescription.vendors.twentysim
 
 import no.mechatronics.sfi.fmi4j.TestUtils
+import no.mechatronics.sfi.fmi4j.common.currentOS
 import no.mechatronics.sfi.fmi4j.modeldescription.cs.CoSimulationModelDescription
-import no.mechatronics.sfi.fmi4j.modeldescription.currentOS
 import no.mechatronics.sfi.fmi4j.modeldescription.misc.DefaultExperiment
 import no.mechatronics.sfi.fmi4j.modeldescription.parser.ModelDescriptionParser
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.ModelVariables
@@ -55,6 +55,7 @@ class ControlledTemperatureTest {
                 "FMI_2.0/CoSimulation/$currentOS" +
                         "/20sim/4.6.4.8004/ControlledTemperature/ControlledTemperature.fmu")
         modelDescription = ModelDescriptionParser.parse(fmu).asCoSimulationModelDescription()
+
     }
 
     @Test
@@ -103,6 +104,13 @@ class ControlledTemperatureTest {
         val license = modelDescription.license
         LOG.info("licence=$license")
         Assertions.assertEquals("-", license)
+    }
+
+    @Test
+    fun testState() {
+        val canGetAndSetFMUstate = modelDescription.canGetAndSetFMUstate
+        LOG.info("canGetAndSetFMUstate=$canGetAndSetFMUstate")
+        Assertions.assertEquals(false, canGetAndSetFMUstate)
     }
 
     @Test

@@ -24,11 +24,14 @@
 
 package no.mechatronics.sfi.fmi4j.common
 
+import com.sun.org.apache.xpath.internal.operations.Bool
 import no.mechatronics.sfi.fmi4j.modeldescription.CommonModelDescription
 import no.mechatronics.sfi.fmi4j.modeldescription.SpecificModelDescription
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.ModelVariables
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.TypedScalarVariable
 import java.io.Closeable
+
+typealias FmuState = Long
 
 /**
  * Represents a generic FMU instance
@@ -41,10 +44,15 @@ interface FmuInstance : Closeable {
 
     val variableAccessor: FmuVariableAccessor
 
-    val canSetAndGetFMUstate: Boolean
+    /**
+     * Does this FMU instance support getting and setting the FMU state?
+     */
+    val canGetAndSetFMUstate: Boolean
 
+    /**
+     * Is serialization supported by this FMU instance?
+     */
     val canSerializeFMUstate: Boolean
-
 
     /**
      * @see SpecificModelDescription.modelVariables
@@ -101,6 +109,16 @@ interface FmuInstance : Closeable {
      * @see no.mechatronics.sfi.fmi4j.importer.proxy.v2.FmiLibrary.fmi2Terminate
      */
     fun terminate(): Boolean
+
+    fun getFMUstate(): FmuState
+
+    fun setFMUstate(state: FmuState): Boolean
+
+    fun freeFMUstate(state: FmuState): Boolean
+
+    fun serializeFMUstate(state: FmuState): ByteArray
+
+    fun deSerializeFMUstate(state: ByteArray): FmuState
 
     /**
      * Calls terminate()

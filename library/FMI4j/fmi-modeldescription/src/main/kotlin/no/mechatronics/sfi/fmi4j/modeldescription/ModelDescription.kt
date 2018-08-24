@@ -155,6 +155,7 @@ interface CommonModelDescription {
      * The number of continuous states
      * @see ModelStructure.derivatives
      */
+    @JvmDefault
     val numberOfContinuousStates: Int
         get() = modelStructure.derivatives.size
 

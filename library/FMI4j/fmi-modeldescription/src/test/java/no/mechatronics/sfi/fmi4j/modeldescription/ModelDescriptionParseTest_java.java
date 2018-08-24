@@ -2,6 +2,7 @@ package no.mechatronics.sfi.fmi4j.modeldescription;
 
 
 import no.mechatronics.sfi.fmi4j.TestUtils;
+import no.mechatronics.sfi.fmi4j.common.OSUtil;
 import no.mechatronics.sfi.fmi4j.modeldescription.parser.ModelDescriptionParser;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
