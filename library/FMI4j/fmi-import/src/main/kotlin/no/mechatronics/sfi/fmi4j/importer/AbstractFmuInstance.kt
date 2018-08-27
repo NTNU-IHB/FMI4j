@@ -41,11 +41,6 @@ abstract class AbstractFmuInstance<out E : SpecificModelDescription, out T : Fmi
         val wrapper: T
 ) : FmuInstance {
 
-    abstract override val modelDescription: E
-
-    override val variableAccessor: FmuVariableAccessor
-            = FmuVariableAccessorImpl(wrapper, modelVariables)
-
     init {
         modelVariables.forEach { variable ->
             if (variable is AbstractTypedScalarVariable) {
@@ -56,6 +51,10 @@ abstract class AbstractFmuInstance<out E : SpecificModelDescription, out T : Fmi
         }
     }
 
+    abstract override val modelDescription: E
+
+    override val variableAccessor: FmuVariableAccessor
+            = FmuVariableAccessorImpl(wrapper, modelVariables)
     /**
      * @see FmiLibrary.fmi2GetTypesPlatform
      */
@@ -68,6 +67,11 @@ abstract class AbstractFmuInstance<out E : SpecificModelDescription, out T : Fmi
     val version
         get() = wrapper.version
 
+    override val canGetAndSetFMUstate: Boolean
+        get() = modelDescription.canGetAndSetFMUstate
+
+    override val canSerializeFMUstate: Boolean
+        get() = modelDescription.canSerializeFMUstate
 
     override val providesDirectionalDerivative: Boolean
         get() = modelDescription.providesDirectionalDerivative
@@ -212,19 +216,6 @@ abstract class AbstractFmuInstance<out E : SpecificModelDescription, out T : Fmi
             close()
         }
     }
-
-    /**
-     * @see FmiLibrary.fmi2GetDirectionalDerivative
-     */
-    fun getDirectionalDerivative(d: DirectionalDerivatives): FmiStatus {
-        return if (!modelDescription.providesDirectionalDerivative) {
-            LOG.warn("Method call not allowed, FMU does not provide directional derivatives!")
-            FmiStatus.Discard
-        } else {
-            wrapper.getDirectionalDerivative(d.vUnknownRef, d.vKnownRef, d.dvKnown, d.dvUnknown)
-        }
-    }
-
     /**
      * @see FmiLibrary.fmi2GetFMUstate
      */

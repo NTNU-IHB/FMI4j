@@ -43,12 +43,6 @@ class CoSimulationFmuInstance internal constructor(
         wrapper: CoSimulationLibraryWrapper
 ) : AbstractFmuInstance<CoSimulationModelDescription, CoSimulationLibraryWrapper>(fmu, wrapper), FmuSlave {
 
-    override val canGetAndSetFMUstate: Boolean
-        get() = modelDescription.canGetAndSetFMUstate
-
-    override val canSerializeFMUstate: Boolean
-        get() = modelDescription.canSerializeFMUstate
-
     override val modelDescription: CoSimulationModelDescription
         get() = fmu.modelDescription.asCoSimulationModelDescription()
 

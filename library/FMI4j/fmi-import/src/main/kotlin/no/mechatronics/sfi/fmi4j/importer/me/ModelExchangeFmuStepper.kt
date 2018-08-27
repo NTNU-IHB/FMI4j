@@ -52,9 +52,6 @@ class ModelExchangeFmuStepper internal constructor(
     private val z: DoubleArray
     private val pz: DoubleArray
 
-    override val simulationTime: Double
-        get() = fmuInstance.simulationTime
-
     override val modelDescription
         get() = fmuInstance.modelDescription
 

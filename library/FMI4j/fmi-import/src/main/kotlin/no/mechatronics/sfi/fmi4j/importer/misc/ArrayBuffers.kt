@@ -37,18 +37,3 @@ internal class ArrayBuffers {
     val sv = arrayOf("")
 
 }
-
-/**
- *
- * @author Lars Ivar Hatledal
- */
-class DirectionalDerivatives(
-        size: Int
-) {
-
-    val vUnknownRef = IntArray(size)
-    val vKnownRef = IntArray(size)
-    val dvKnown = DoubleArray(size)
-    val dvUnknown = DoubleArray(size)
-
-}
