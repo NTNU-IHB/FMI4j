@@ -90,6 +90,21 @@ public class $modelName implements FmuSlave {
     ${generateFactories()}
 
     @Override
+    public boolean getProvidesDirectionalDerivative() {
+        return slave.getProvidesDirectionalDerivative();
+    }
+
+    @Override
+    public boolean getCanGetAndSetFMUstate() {
+        return slave.getCanGetAndSetFMUstate();
+    }
+
+    @Override
+    public boolean getCanSerializeFMUstate() {
+        return slave.getCanSerializeFMUstate();
+    }
+
+    @Override
     public CommonModelDescription getModelDescription() {
         return slave.getModelDescription();
     }
@@ -120,8 +135,8 @@ public class $modelName implements FmuSlave {
     }
 
     @Override
-    public double getCurrentTime() {
-        return slave.getCurrentTime();
+    public double getSimulationTime() {
+        return slave.getSimulationTime();
     }
 
     @Override
@@ -139,8 +154,14 @@ public class $modelName implements FmuSlave {
         slave.init(start, stop);
     }
 
+    @Override
     public boolean doStep(double stepSize) {
         return slave.doStep(stepSize);
+    }
+
+    @Override
+    public boolean cancelStep() {
+        return slave.cancelStep();
     }
 
     @Override
@@ -151,6 +172,36 @@ public class $modelName implements FmuSlave {
     @Override
     public boolean reset() {
         return slave.reset();
+    }
+
+    @Override
+    public FmiStatus getDirectionalDerivative(int[] vUnknownRef, int[] vKnownRef, double[] dvKnown, double[] dvUnknown) {
+        return slave.getDirectionalDerivative(vUnknownRef, vKnownRef, dvKnown, dvUnknown);
+    }
+
+    @Override
+    public long getFMUstate() {
+        return slave.getFMUstate();
+    }
+
+    @Override
+    public boolean setFMUstate(long state) {
+        return slave.setFMUstate(state);
+    }
+
+    @Override
+    public boolean freeFMUstate(long state) {
+        return slave.freeFMUstate(state);
+    }
+
+    @Override
+    public byte[] serializeFMUstate(long state) {
+        return slave.serializeFMUstate(state);
+    }
+
+    @Override
+    public long deSerializeFMUstate(byte[] state) {
+        return slave.deSerializeFMUstate(state);
     }
 
     private Locals locals;

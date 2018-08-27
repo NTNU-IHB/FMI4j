@@ -25,7 +25,7 @@
 package no.mechatronics.sfi.fmi4j
 
 import no.mechatronics.sfi.fmi4j.codegen.CodeGenerator
-import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescriptionParser
+import no.mechatronics.sfi.fmi4j.modeldescription.parser.ModelDescriptionParser
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
@@ -43,7 +43,7 @@ open class FmuPluginExtension(
 ) {
 
     var configurationName: String = "implementation"
-    var version: String = "0.9.1"
+    var version: String = "0.9.2"
 
 }
 

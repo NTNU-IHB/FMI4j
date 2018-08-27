@@ -130,8 +130,7 @@ interface FmuInstance : Closeable {
 
     fun deSerializeFMUstate(state: ByteArray): FmuState
 
-    fun getDirectionalDerivative(vUnknownRef: IntArray, vKnownRef: IntArray,
-                                 dvKnown: RealArray, dvUnknown: RealArray): FmiStatus
+    fun getDirectionalDerivative(vUnknownRef: IntArray, vKnownRef: IntArray, dvKnown: RealArray): RealArray
 
     /**
      * Calls terminate()

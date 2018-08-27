@@ -83,14 +83,11 @@ class TestPlugin {
 
     private fun getOs(): String {
 
-        return if (OS.LINUX.isCurrentOs) {
-            "linux64"
-        } else if (OS.WINDOWS.isCurrentOs) {
-            "win64"
-        } else if (OS.MAC.isCurrentOs) {
-            "darwin64"
-        } else {
-            throw IllegalStateException("Unsupported OS")
+        return when {
+            OS.LINUX.isCurrentOs -> "linux64"
+            OS.WINDOWS.isCurrentOs -> "win64"
+            OS.MAC.isCurrentOs -> "darwin64"
+            else -> throw IllegalStateException("Unsupported OS")
         }
 
     }
