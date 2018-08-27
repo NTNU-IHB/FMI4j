@@ -24,10 +24,7 @@
 
 package no.mechatronics.sfi.fmi4j.importer
 
-import no.mechatronics.sfi.fmi4j.common.FmiStatus
-import no.mechatronics.sfi.fmi4j.common.FmuInstance
-import no.mechatronics.sfi.fmi4j.common.FmuState
-import no.mechatronics.sfi.fmi4j.common.FmuVariableAccessor
+import no.mechatronics.sfi.fmi4j.common.*
 import no.mechatronics.sfi.fmi4j.importer.misc.*
 import no.mechatronics.sfi.fmi4j.modeldescription.SpecificModelDescription
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.*
@@ -70,6 +67,18 @@ abstract class AbstractFmuInstance<out E : SpecificModelDescription, out T : Fmi
      */
     val version
         get() = wrapper.version
+
+
+    override val providesDirectionalDerivative: Boolean
+        get() = modelDescription.providesDirectionalDerivative
+
+    override fun getDirectionalDerivative(vUnknownRef: IntArray, vKnownRef: IntArray,
+                                          dvKnown: RealArray, dvUnknown: RealArray): FmiStatus {
+        if (!providesDirectionalDerivative) {
+            throw IllegalStateException("Illegal call. FMU does not provide directional derivatives!")
+        }
+        return wrapper.getDirectionalDerivative(vUnknownRef, vKnownRef, dvKnown, dvUnknown)
+    }
 
     /**
      * Has the FMU been initialized yet?

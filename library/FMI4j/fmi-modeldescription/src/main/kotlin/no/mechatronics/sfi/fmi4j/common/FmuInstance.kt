@@ -50,6 +50,12 @@ interface FmuInstance : Closeable {
     val canSerializeFMUstate: Boolean
 
     /**
+     * If true, the directional derivative of the equations
+     * can be computed with getDirectionalDerivative(..)
+     */
+    val providesDirectionalDerivative: Boolean
+
+    /**
      * Has init been called?
      */
     val isInitialized: Boolean
@@ -123,6 +129,9 @@ interface FmuInstance : Closeable {
     fun serializeFMUstate(state: FmuState): ByteArray
 
     fun deSerializeFMUstate(state: ByteArray): FmuState
+
+    fun getDirectionalDerivative(vUnknownRef: IntArray, vKnownRef: IntArray,
+                                 dvKnown: RealArray, dvUnknown: RealArray): FmiStatus
 
     /**
      * Calls terminate()
