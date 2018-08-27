@@ -15,14 +15,14 @@ fun main(args: Array<String>) {
 
         val stop = 10.0
         val stepSize = 1E-2
-        while (slave.currentTime <= stop) {
+        while (slave.simulationTime <= stop) {
 
             if (!slave.doStep(stepSize)) {
                 break
             }
 
             tempRef.read().also {
-                println("t=${slave.currentTime}, ${tempRef.name}=${it.value}")
+                println("t=${slave.simulationTime}, ${tempRef.name}=${it.value}")
             }
 
         }
