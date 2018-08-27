@@ -25,7 +25,7 @@
 package no.mechatronics.sfi.fmi4j.importer.cs
 
 import no.mechatronics.sfi.fmi4j.common.FmiStatus
-import no.mechatronics.sfi.fmi4j.importer.FmiLibraryWrapper
+import no.mechatronics.sfi.fmi4j.importer.Fmi2LibraryWrapper
 import no.mechatronics.sfi.fmi4j.importer.jni.*
 
 /**
@@ -34,39 +34,39 @@ import no.mechatronics.sfi.fmi4j.importer.jni.*
  */
 class CoSimulationLibraryWrapper(
         c: Long,
-        library: FmiCoSimulationLibrary
-) : FmiLibraryWrapper<FmiCoSimulationLibrary>(c, library) {
+        library: Fmi2CoSimulationLibrary
+) : Fmi2LibraryWrapper<Fmi2CoSimulationLibrary>(c, library) {
 
     /**
-     * @see FmiCoSimulationLibrary.fmi2SetRealInputDerivatives
+     * @see Fmi2CoSimulationLibrary.fmi2SetRealInputDerivatives
      */
     fun setRealInputDerivatives(vr: IntArray, order: IntArray, value: DoubleArray): FmiStatus {
         return updateStatus(library.setRealInputDerivatives(c, vr, order, value))
     }
 
     /**
-     * @see FmiCoSimulationLibrary.fmi2GetRealOutputDerivatives
+     * @see Fmi2CoSimulationLibrary.fmi2GetRealOutputDerivatives
      */
     fun getRealOutputDerivatives(vr: IntArray, order: IntArray, value: DoubleArray): FmiStatus {
         return updateStatus(library.getRealOutputDerivatives(c, vr, order, value))
     }
 
     /**
-     * @see FmiCoSimulationLibrary.fmi2DoStep
+     * @see Fmi2CoSimulationLibrary.fmi2DoStep
      */
     fun doStep(t: Double, dt: Double, noSetFMUStatePriorToCurrent: Boolean): FmiStatus {
         return updateStatus(library.step(c, t, dt, noSetFMUStatePriorToCurrent))
     }
 
     /**
-     * @see FmiCoSimulationLibrary.fmi2CancelStep
+     * @see Fmi2CoSimulationLibrary.fmi2CancelStep
      */
     fun cancelStep(): FmiStatus {
         return (updateStatus(library.cancelStep(c)))
     }
 
     /**
-     * @see FmiCoSimulationLibrary.fmi2GetStatus
+     * @see Fmi2CoSimulationLibrary.fmi2GetStatus
      */
     fun getStatus(s: FmiStatusKind): FmiStatus {
         return IntByReference().let {
@@ -76,7 +76,7 @@ class CoSimulationLibraryWrapper(
     }
 
     /**
-     * @see FmiCoSimulationLibrary.fmi2GetIntegerStatus
+     * @see Fmi2CoSimulationLibrary.fmi2GetIntegerStatus
      */
     fun getIntegerStatus(s: FmiStatusKind): Int {
         return IntByReference().let {
@@ -87,7 +87,7 @@ class CoSimulationLibraryWrapper(
     }
 
     /**
-     * @see FmiCoSimulationLibrary.fmi2GetRealStatus
+     * @see Fmi2CoSimulationLibrary.fmi2GetRealStatus
      */
     fun getRealStatus(s: FmiStatusKind): Double {
         return DoubleByReference().let {
@@ -98,7 +98,7 @@ class CoSimulationLibraryWrapper(
     }
 
     /**
-     * @see FmiCoSimulationLibrary.fmi2GetBooleanStatus
+     * @see Fmi2CoSimulationLibrary.fmi2GetBooleanStatus
      */
     fun getBooleanStatus(s: FmiStatusKind): Boolean {
         return BooleanByReference().let {
@@ -108,7 +108,7 @@ class CoSimulationLibraryWrapper(
     }
 
     /**
-     * @see FmiCoSimulationLibrary.fmi2GetStringStatus
+     * @see Fmi2CoSimulationLibrary.fmi2GetStringStatus
      */
     fun getStringStatus(s: FmiStatusKind): String {
         return StringByReference().let {

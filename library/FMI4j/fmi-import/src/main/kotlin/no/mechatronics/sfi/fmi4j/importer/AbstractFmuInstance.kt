@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory
  *
  * @author Lars Ivar Hatledal
  */
-abstract class AbstractFmuInstance<out E : SpecificModelDescription, out T : FmiLibraryWrapper<*>> internal constructor(
+abstract class AbstractFmuInstance<out E : SpecificModelDescription, out T : Fmi2LibraryWrapper<*>> internal constructor(
         val fmu: Fmu,
         val wrapper: T
 ) : FmuInstance {
@@ -88,7 +88,7 @@ abstract class AbstractFmuInstance<out E : SpecificModelDescription, out T : Fmi
         protected set
 
     /**
-     * @see FmiLibraryWrapper.isTerminated
+     * @see Fmi2LibraryWrapper.isTerminated
      */
     override val isTerminated
         get() = wrapper.isTerminated
@@ -107,7 +107,7 @@ abstract class AbstractFmuInstance<out E : SpecificModelDescription, out T : Fmi
         internal set
 
     /**
-     * @see FmiLibraryWrapper.lastStatus
+     * @see Fmi2LibraryWrapper.lastStatus
      */
     override val lastStatus: FmiStatus
         get() = wrapper.lastStatus
@@ -348,8 +348,3 @@ abstract class AbstractFmuInstance<out E : SpecificModelDescription, out T : Fmi
     }
 
 }
-
-
-
-
-

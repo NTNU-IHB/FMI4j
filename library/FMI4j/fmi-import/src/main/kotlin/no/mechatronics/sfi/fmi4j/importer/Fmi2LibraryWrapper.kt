@@ -25,7 +25,7 @@
 package no.mechatronics.sfi.fmi4j.importer
 
 import no.mechatronics.sfi.fmi4j.common.*
-import no.mechatronics.sfi.fmi4j.importer.jni.FmiLibrary
+import no.mechatronics.sfi.fmi4j.importer.jni.Fmi2Library
 import no.mechatronics.sfi.fmi4j.importer.jni.IntByReference
 import no.mechatronics.sfi.fmi4j.importer.jni.LongByReference
 import no.mechatronics.sfi.fmi4j.importer.misc.ArrayBuffers
@@ -35,12 +35,14 @@ import org.slf4j.LoggerFactory
 /**
  * @author Lars Ivar Hatledal
  */
-abstract class FmiLibraryWrapper<E : FmiLibrary>(
+abstract class Fmi2LibraryWrapper<E : Fmi2Library>(
         protected var c: Long,
         library: E
 ) {
 
-    private val buffers: ArrayBuffers = ArrayBuffers()
+    private val buffers: ArrayBuffers by lazy {
+        ArrayBuffers()
+    }
 
     private var _library: E? = library
 
@@ -72,47 +74,47 @@ abstract class FmiLibraryWrapper<E : FmiLibrary>(
     }
 
     /**
-     * @see FmiLibrary.fmi2GetTypesPlatform
+     * @see Fmi2Library.fmi2GetTypesPlatform
      */
     val typesPlatform: String = library.getTypesPlatform()
 
     /**
      *
-     * @see FmiLibrary.fmi2GetVersion()
+     * @see Fmi2Library.fmi2GetVersion()
      */
     val version: String = library.getVersion()
 
 
     /**
-     * @see FmiLibrary.fmi2SetDebugLogging
+     * @see Fmi2Library.fmi2SetDebugLogging
      */
     fun setDebugLogging(loggingOn: Boolean, categories: StringArray): FmiStatus {
         return updateStatus(library.setDebugLogging(c, loggingOn, categories))
     }
 
     /**
-     * @see FmiLibrary.fmi2SetupExperiment
+     * @see Fmi2Library.fmi2SetupExperiment
      */
     fun setupExperiment(toleranceDefined: Boolean, tolerance: Double, startTime: Double, stopTime: Double): FmiStatus {
         return updateStatus(library.setupExperiment(c, toleranceDefined, tolerance, startTime, stopTime))
     }
 
     /**
-     * @see FmiLibrary.fmi2EnterInitializationMode
+     * @see Fmi2Library.fmi2EnterInitializationMode
      */
     fun enterInitializationMode(): FmiStatus {
         return updateStatus(library.enterInitializationMode(c))
     }
 
     /**
-     * @see FmiLibrary.fmi2ExitInitializationMode
+     * @see Fmi2Library.fmi2ExitInitializationMode
      */
     fun exitInitializationMode(): FmiStatus {
         return updateStatus(library.exitInitializationMode(c))
     }
 
     /**
-     * @see FmiLibrary.fmi2Terminate
+     * @see Fmi2Library.fmi2Terminate
      */
     @JvmOverloads
     fun terminate(freeInstance: Boolean = true): FmiStatus {
@@ -138,7 +140,7 @@ abstract class FmiLibraryWrapper<E : FmiLibrary>(
     }
 
     /**
-     * @see FmiLibrary.fmi2FreeInstance
+     * @see Fmi2Library.fmi2FreeInstance
      */
     internal fun freeInstance() {
         if (!isInstanceFreed) {
@@ -158,7 +160,7 @@ abstract class FmiLibraryWrapper<E : FmiLibrary>(
     }
 
     /**
-     * @see FmiLibrary.fmi2Reset
+     * @see Fmi2Library.fmi2Reset
      */
     fun reset(): FmiStatus {
         return updateStatus(library.reset(c)).also { status ->
@@ -169,7 +171,7 @@ abstract class FmiLibraryWrapper<E : FmiLibrary>(
     }
 
     /**
-     * @see FmiLibrary.fmi2GetInteger
+     * @see Fmi2Library.fmi2GetInteger
      */
     @Synchronized
     fun getInteger(valueReference: Int): FmuIntegerRead {
@@ -182,7 +184,7 @@ abstract class FmiLibraryWrapper<E : FmiLibrary>(
     }
 
     /**
-     * @see FmiLibrary.fmi2GetInteger
+     * @see Fmi2Library.fmi2GetInteger
      */
     @JvmOverloads
     fun getInteger(vr: IntArray, value: IntArray = IntArray(vr.size)): FmuIntegerArrayRead {
@@ -192,7 +194,7 @@ abstract class FmiLibraryWrapper<E : FmiLibrary>(
     }
 
     /**
-     * @see FmiLibrary.fmi2GetReal
+     * @see Fmi2Library.fmi2GetReal
      */
     @Synchronized
     fun getReal(valueReference: Int): FmuRealRead {
@@ -205,7 +207,7 @@ abstract class FmiLibraryWrapper<E : FmiLibrary>(
     }
 
     /**
-     * @see FmiLibrary.fmi2GetReal
+     * @see Fmi2Library.fmi2GetReal
      */
     @JvmOverloads
     fun getReal(vr: IntArray, value: DoubleArray = DoubleArray(vr.size)): FmuRealArrayRead {
@@ -215,7 +217,7 @@ abstract class FmiLibraryWrapper<E : FmiLibrary>(
     }
 
     /**
-     * @see FmiLibrary.fmi2GetString
+     * @see Fmi2Library.fmi2GetString
      */
     @Synchronized
     fun getString(valueReference: Int): FmuStringRead {
@@ -228,7 +230,7 @@ abstract class FmiLibraryWrapper<E : FmiLibrary>(
     }
 
     /**
-     * @see FmiLibrary.fmi2GetString
+     * @see Fmi2Library.fmi2GetString
      */
     @JvmOverloads
     fun getString(vr: IntArray, value: StringArray = StringArray(vr.size, { "" })): FmuStringArrayRead {
@@ -238,7 +240,7 @@ abstract class FmiLibraryWrapper<E : FmiLibrary>(
     }
 
     /**
-     * @see FmiLibrary.fmi2GetBoolean
+     * @see Fmi2Library.fmi2GetBoolean
      */
     @Synchronized
     fun getBoolean(valueReference: Int): FmuBooleanRead {
@@ -251,7 +253,7 @@ abstract class FmiLibraryWrapper<E : FmiLibrary>(
     }
 
     /**
-     * @see FmiLibrary.fmi2GetBoolean
+     * @see Fmi2Library.fmi2GetBoolean
      */
     @JvmOverloads
     fun getBoolean(vr: IntArray, value: BooleanArray = BooleanArray(vr.size)): FmuBooleanArrayRead {
@@ -261,7 +263,7 @@ abstract class FmiLibraryWrapper<E : FmiLibrary>(
     }
 
     /**
-     * @see FmiLibrary.fmi2SetInteger
+     * @see Fmi2Library.fmi2SetInteger
      */
     @Synchronized
     fun setInteger(valueReference: Int, value: Int): FmiStatus {
@@ -273,14 +275,14 @@ abstract class FmiLibraryWrapper<E : FmiLibrary>(
     }
 
     /**
-     * @see FmiLibrary.fmi2SetInteger
+     * @see Fmi2Library.fmi2SetInteger
      */
     fun setInteger(vr: IntArray, value: IntArray): FmiStatus {
         return updateStatus((library.setInteger(c, vr, value)))
     }
 
     /**
-     * @see FmiLibrary.fmi2SetReal
+     * @see Fmi2Library.fmi2SetReal
      */
     @Synchronized
     fun setReal(valueReference: Int, value: Double): FmiStatus {
@@ -292,14 +294,14 @@ abstract class FmiLibraryWrapper<E : FmiLibrary>(
     }
 
     /**
-     * @see FmiLibrary.fmi2SetReal
+     * @see Fmi2Library.fmi2SetReal
      */
     fun setReal(vr: IntArray, value: DoubleArray): FmiStatus {
         return updateStatus((library.setReal(c, vr, value)))
     }
 
     /**
-     * @see FmiLibrary.fmi2SetString
+     * @see Fmi2Library.fmi2SetString
      */
     @Synchronized
     fun setString(valueReference: Int, value: String): FmiStatus {
@@ -311,14 +313,14 @@ abstract class FmiLibraryWrapper<E : FmiLibrary>(
     }
 
     /**
-     * @see FmiLibrary.fmi2SetString
+     * @see Fmi2Library.fmi2SetString
      */
     fun setString(vr: IntArray, value: StringArray): FmiStatus {
         return updateStatus((library.setString(c, vr, value)))
     }
 
     /**
-     * @see FmiLibrary.fmi2SetBoolean
+     * @see Fmi2Library.fmi2SetBoolean
      */
     @Synchronized
     fun setBoolean(valueReference: Int, value: Boolean): FmiStatus {
@@ -330,15 +332,14 @@ abstract class FmiLibraryWrapper<E : FmiLibrary>(
     }
 
     /**
-     * @see FmiLibrary.fmi2SetBoolean
+     * @see Fmi2Library.fmi2SetBoolean
      */
     fun setBoolean(vr: IntArray, value: BooleanArray): FmiStatus {
         return updateStatus(library.setBoolean(c, vr, value))
     }
 
-
     /**
-     * @see FmiLibrary.fmi2GetDirectionalDerivative
+     * @see Fmi2Library.fmi2GetDirectionalDerivative
      */
     fun getDirectionalDerivative(vUnknown_ref: IntArray, vKnown_ref: IntArray, dvKnown: DoubleArray, dvUnknown: DoubleArray): FmiStatus {
         return updateStatus(library.getDirectionalDerivative(c,
@@ -346,7 +347,7 @@ abstract class FmiLibraryWrapper<E : FmiLibrary>(
     }
 
     /**
-     * @see FmiLibrary.fmi2GetFMUstate
+     * @see Fmi2Library.fmi2GetFMUstate
      */
     fun getFMUState(): FmuState {
         return LongByReference().also {
@@ -355,21 +356,21 @@ abstract class FmiLibraryWrapper<E : FmiLibrary>(
     }
 
     /**
-     * @see FmiLibrary.fmi2GetFMUstate
+     * @see Fmi2Library.fmi2GetFMUstate
      */
     fun setFMUState(fmuState: FmuState): FmiStatus {
         return updateStatus(library.setFMUstate(c, fmuState))
     }
 
     /**
-     * @see FmiLibrary.fmi2FreeFMUstate
+     * @see Fmi2Library.fmi2FreeFMUstate
      */
     fun freeFMUState(fmuState: FmuState): FmiStatus {
         return updateStatus(library.freeFMUstate(c, fmuState))
     }
 
     /**
-     * @see FmiLibrary.fmi2SerializedFMUstateSize
+     * @see Fmi2Library.fmi2SerializedFMUstateSize
      */
     fun serializedFMUStateSize(fmuState: FmuState): Int {
         return IntByReference().let {
@@ -380,7 +381,7 @@ abstract class FmiLibraryWrapper<E : FmiLibrary>(
     }
 
     /**
-     * @see FmiLibrary.fmi2SerializeFMUstate
+     * @see Fmi2Library.fmi2SerializeFMUstate
      */
     fun serializeFMUState(fmuState: FmuState): ByteArray {
         val size = serializedFMUStateSize(fmuState)
@@ -390,7 +391,7 @@ abstract class FmiLibraryWrapper<E : FmiLibrary>(
     }
 
     /**
-     * @see FmiLibrary.fmi2DeSerializeFMUstate
+     * @see Fmi2Library.fmi2DeSerializeFMUstate
      */
     fun deSerializeFMUState(serializedState: ByteArray): FmuState {
         return LongByReference().also { state ->
@@ -399,7 +400,7 @@ abstract class FmiLibraryWrapper<E : FmiLibrary>(
     }
 
     private companion object {
-        val LOG: Logger = LoggerFactory.getLogger(FmiLibraryWrapper::class.java)
+        val LOG: Logger = LoggerFactory.getLogger(Fmi2LibraryWrapper::class.java)
     }
 
 }

@@ -26,7 +26,7 @@ package no.mechatronics.sfi.fmi4j.importer.cs
 
 import no.mechatronics.sfi.fmi4j.importer.CO_SIMULATION_TYPE
 import no.mechatronics.sfi.fmi4j.importer.Fmu
-import no.mechatronics.sfi.fmi4j.importer.jni.FmiCoSimulationLibrary
+import no.mechatronics.sfi.fmi4j.importer.jni.Fmi2CoSimulationLibrary
 
 class CoSimulationFmuBuilder internal constructor(
         private val fmu: Fmu
@@ -35,13 +35,13 @@ class CoSimulationFmuBuilder internal constructor(
     private val modelDescription
         get() = fmu.modelDescription.asCoSimulationModelDescription()
 
-    private val libraryCache: FmiCoSimulationLibrary by lazy {
+    private val libraryCache: Fmi2CoSimulationLibrary by lazy {
         loadLibrary()
     }
 
-    private fun loadLibrary(): FmiCoSimulationLibrary {
-        val libName = fmu.getFullLibraryPath(modelDescription.modelIdentifier)
-        return FmiCoSimulationLibrary(libName).also {
+    private fun loadLibrary(): Fmi2CoSimulationLibrary {
+        val libName = fmu.getAbsoluteLibraryPath(modelDescription.modelIdentifier)
+        return Fmi2CoSimulationLibrary(libName).also {
             fmu.registerLibrary(it)
         }
     }

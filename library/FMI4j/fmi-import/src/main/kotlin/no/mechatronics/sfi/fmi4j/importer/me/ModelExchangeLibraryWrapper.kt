@@ -25,10 +25,10 @@
 package no.mechatronics.sfi.fmi4j.importer.me
 
 import no.mechatronics.sfi.fmi4j.common.FmiStatus
-import no.mechatronics.sfi.fmi4j.importer.FmiLibraryWrapper
+import no.mechatronics.sfi.fmi4j.importer.Fmi2LibraryWrapper
 import no.mechatronics.sfi.fmi4j.importer.jni.BooleanByReference
 import no.mechatronics.sfi.fmi4j.importer.jni.EventInfo
-import no.mechatronics.sfi.fmi4j.importer.jni.FmiModelExchangeLibrary
+import no.mechatronics.sfi.fmi4j.importer.jni.Fmi2ModelExchangeLibrary
 
 /**
  *
@@ -36,14 +36,14 @@ import no.mechatronics.sfi.fmi4j.importer.jni.FmiModelExchangeLibrary
  */
 class ModelExchangeLibraryWrapper(
         c: Long,
-        library: FmiModelExchangeLibrary
-) : FmiLibraryWrapper<FmiModelExchangeLibrary>(c, library) {
+        library: Fmi2ModelExchangeLibrary
+) : Fmi2LibraryWrapper<Fmi2ModelExchangeLibrary>(c, library) {
 
     private val enterEventMode = BooleanByReference()
     private val terminateSimulation = BooleanByReference()
 
     /**
-     * @see FmiModelExchangeLibrary.fmi2SetTime
+     * @see Fmi2ModelExchangeLibrary.fmi2SetTime
      * @param time
      */
     fun setTime(time: Double): FmiStatus {
@@ -52,7 +52,7 @@ class ModelExchangeLibraryWrapper(
 
     /**
      *
-     * @see FmiModelExchangeLibrary.fmi2SetContinuousStates
+     * @see Fmi2ModelExchangeLibrary.fmi2SetContinuousStates
      * @param x state
      */
     fun setContinuousStates(x: DoubleArray): FmiStatus {
@@ -60,14 +60,14 @@ class ModelExchangeLibraryWrapper(
     }
 
     /**
-     * @see FmiModelExchangeLibrary.fmi2EnterEventMode
+     * @see Fmi2ModelExchangeLibrary.fmi2EnterEventMode
      */
     fun enterEventMode(): FmiStatus {
         return updateStatus((library.enterEventMode(c)))
     }
 
     /**
-     * @see FmiModelExchangeLibrary.fmi2EnterContinuousTimeMode
+     * @see Fmi2ModelExchangeLibrary.fmi2EnterContinuousTimeMode
      */
     fun enterContinuousTimeMode(): FmiStatus {
         return updateStatus((library.enterContinuousTimeMode(c)))
@@ -86,7 +86,7 @@ class ModelExchangeLibraryWrapper(
     }
 
     /**
-     * @see FmiModelExchangeLibrary.fmi2GetDerivatives
+     * @see Fmi2ModelExchangeLibrary.fmi2GetDerivatives
      * @param derivatives
      */
     fun getDerivatives(derivatives: DoubleArray): FmiStatus {

@@ -26,7 +26,7 @@ package no.mechatronics.sfi.fmi4j.importer.me
 
 import no.mechatronics.sfi.fmi4j.importer.Fmu
 import no.mechatronics.sfi.fmi4j.importer.MODEL_EXCHANGE_TYPE
-import no.mechatronics.sfi.fmi4j.importer.jni.FmiModelExchangeLibrary
+import no.mechatronics.sfi.fmi4j.importer.jni.Fmi2ModelExchangeLibrary
 import no.mechatronics.sfi.fmi4j.solvers.Solver
 
 class ModelExchangeFmuBuilder internal constructor(
@@ -36,13 +36,13 @@ class ModelExchangeFmuBuilder internal constructor(
     private val modelDescription
         get() = fmu.modelDescription.asModelExchangeModelDescription()
 
-    private val libraryCache: FmiModelExchangeLibrary by lazy {
+    private val libraryCache: Fmi2ModelExchangeLibrary by lazy {
         loadLibrary()
     }
 
-    private fun loadLibrary(): FmiModelExchangeLibrary {
-        val libName = fmu.getFullLibraryPath(modelDescription.modelIdentifier)
-        return FmiModelExchangeLibrary(libName).also {
+    private fun loadLibrary(): Fmi2ModelExchangeLibrary {
+        val libName = fmu.getAbsoluteLibraryPath(modelDescription.modelIdentifier)
+        return Fmi2ModelExchangeLibrary(libName).also {
             fmu.registerLibrary(it)
         }
     }

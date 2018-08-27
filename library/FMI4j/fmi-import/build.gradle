@@ -3,7 +3,7 @@ import org.apache.tools.ant.taskdefs.condition.Os
 
 plugins {
     id "c"
-    id "com.github.johnrengelman.shadow" version "2.0.4"
+    id "com.github.johnrengelman.shadow" version "2.0.3"
 }
 
 apply from: rootProject.file('publisher.gradle')
@@ -25,6 +25,10 @@ shadowJar {
 }
 
 model {
+
+    buildTypes {
+        release
+    }
 
     platforms {
         if (Os.isFamily(Os.FAMILY_UNIX)) {
@@ -60,11 +64,10 @@ model {
         }
     }
 
-
     components {
         fmi(NativeLibrarySpec) {
 
-            baseName = "fmi_jni"
+            baseName = "fmi2_jni"
 
             if (Os.isFamily(Os.FAMILY_UNIX)) {
                 targetPlatform "linux32"
@@ -90,17 +93,13 @@ model {
 
     }
 
-    buildTypes {
-        release
-    }
-
     tasks {
         buildAllExecutables(Task) {
             dependsOn $.binaries.findAll { it.buildable }
         }
         copyNativeLibs(Copy) {
             from "$buildDir/libs/fmi/shared"
-            into "$projectDir/src/main/resources/native/fmi"
+            into "$projectDir/src/main/resources/native/fmi2"
             dependsOn buildAllExecutables
         }
     }

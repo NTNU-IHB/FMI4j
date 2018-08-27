@@ -26,7 +26,7 @@ package no.mechatronics.sfi.fmi4j.importer
 
 import no.mechatronics.sfi.fmi4j.common.*
 import no.mechatronics.sfi.fmi4j.importer.cs.CoSimulationFmuBuilder
-import no.mechatronics.sfi.fmi4j.importer.jni.FmiLibrary
+import no.mechatronics.sfi.fmi4j.importer.jni.Fmi2Library
 import no.mechatronics.sfi.fmi4j.importer.me.ModelExchangeFmuBuilder
 import no.mechatronics.sfi.fmi4j.importer.misc.extractTo
 import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescriptionProvider
@@ -69,7 +69,7 @@ class Fmu private constructor(
 ) : Closeable {
 
     private var isClosed = false
-    private val libraries = mutableListOf<FmiLibrary>()
+    private val libraries = mutableListOf<Fmi2Library>()
     private val instances = mutableListOf<AbstractFmuInstance<*, *>>()
 
     val guid: String
@@ -108,35 +108,24 @@ class Fmu private constructor(
     private val modelDescriptionFile: File
         get() = File(fmuFile, MODEL_DESC)
 
-    private val libraryFolderName: String
-        get() = when {
-            isWindows -> WINDOWS_FOLDER
-            isLinux -> LINUX_FOLDER
-            isMac -> MAC_OS_FOLDER
-            else -> throw UnsupportedOperationException("OS '$osName' is unsupported!")
-        }
-
-    private val libraryExtension: String
-        get() = when {
-            isWindows -> WINDOWS_LIBRARY_EXTENSION
-            isLinux -> LINUX_LIBRARY_EXTENSION
-            isMac -> MAC_OS_LIBRARY_EXTENSION
-            else -> throw UnsupportedOperationException("OS '$osName' is unsupported!")
-        }
-
     val libraryFolderPath: String
         get() = File(fmuFile, BINARIES_FOLDER + File.separator
                 + libraryFolderName + platformBitness).absolutePath
 
-    val resourcesPath: String
-        get() = "file:///${File(fmuFile,
-                RESOURCES_FOLDER).absolutePath.replace("\\", "/")}"
+    private val resourcesPath: String
+        get() = "file:///${File(fmuFile, RESOURCES_FOLDER).absolutePath.replace("\\", "/")}"
 
+    /**
+     * Get the name of the native library on the form "name.extension"
+     */
     fun getLibraryName(modelIdentifier: String): String {
         return "$modelIdentifier$libraryExtension"
     }
 
-    fun getFullLibraryPath(modelIdentifier: String): String {
+    /**
+     * Get the absolute name of the native library on the form "C://folder/name.extension"
+     */
+    fun getAbsoluteLibraryPath(modelIdentifier: String): String {
         return File(fmuFile, BINARIES_FOLDER + File.separator + libraryFolderName + platformBitness
                 + File.separator + modelIdentifier + libraryExtension).absolutePath
     }
@@ -148,6 +137,22 @@ class Fmu private constructor(
     private val modelExchangeBuilder: ModelExchangeFmuBuilder? by lazy {
         if (supportsModelExchange) ModelExchangeFmuBuilder(this) else null
     }
+
+    internal fun registerLibrary(library: Fmi2Library) {
+        libraries.add(library)
+    }
+
+    internal fun registerInstance(instance: AbstractFmuInstance<*, *>) {
+        instances.add(instance)
+    }
+
+    internal fun instantiate(modelDescription: SpecificModelDescription, library: Fmi2Library,
+                             fmiType: Int, visible: Boolean, loggingOn: Boolean): Long {
+        LOG.trace("Calling instantiate: visible=$visible, loggingOn=$loggingOn")
+        return library.instantiate(modelDescription.modelIdentifier,
+                fmiType, modelDescription.guid, resourcesPath, visible, loggingOn)
+    }
+
 
     override fun close() {
         if (!isClosed) {
@@ -201,20 +206,6 @@ class Fmu private constructor(
         return true
     }
 
-    internal fun registerLibrary(library: FmiLibrary) {
-        libraries.add(library)
-    }
-
-    internal fun registerInstance(instance: AbstractFmuInstance<*, *>) {
-        instances.add(instance)
-    }
-
-    internal fun instantiate(modelDescription: SpecificModelDescription, library: FmiLibrary, fmiType: Int, visible: Boolean, loggingOn: Boolean): Long {
-        LOG.trace("Calling instantiate: visible=$visible, loggingOn=$loggingOn")
-        return library.instantiate(modelDescription.modelIdentifier,
-                fmiType, modelDescription.guid, resourcesPath, visible, loggingOn)
-    }
-
     @Throws(IllegalStateException::class)
     fun asCoSimulationFmu(): CoSimulationFmuBuilder = coSimulationBuilder
             ?: throw IllegalStateException("FMU does not support Co-Simulation!")
@@ -248,6 +239,22 @@ class Fmu private constructor(
                 }
             })
         }
+
+        private val libraryFolderName: String
+            get() = when {
+                isWindows -> WINDOWS_FOLDER
+                isLinux -> LINUX_FOLDER
+                isMac -> MAC_OS_FOLDER
+                else -> throw UnsupportedOperationException("OS '$osName' is unsupported!")
+            }
+
+        private val libraryExtension: String
+            get() = when {
+                isWindows -> WINDOWS_LIBRARY_EXTENSION
+                isLinux -> LINUX_LIBRARY_EXTENSION
+                isMac -> MAC_OS_LIBRARY_EXTENSION
+                else -> throw UnsupportedOperationException("OS '$osName' is unsupported!")
+            }
 
         private fun createTempDir(fmuName: String): File {
             return Files.createTempDirectory(FMI4J_FILE_PREFIX + fmuName).toFile().also {
@@ -303,7 +310,6 @@ class Fmu private constructor(
                 }
             }
         }
-
 
     }
 
