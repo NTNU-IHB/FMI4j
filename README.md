@@ -36,7 +36,7 @@ slave.init(); //throws on error
 
 double stop = 10;
 double stepSize = 1.0/100;
-while(slave.getCurrentTime() <= stop) {
+while(slave.getSimulationTime() <= stop) {
     if (!slave.doStep(stepSize)) {
         break;
     }
@@ -67,7 +67,7 @@ ControlledTemperature.newInstance().use { slave -> //try with resources
 
         val stop = 10.0
         val stepSize = 1E-2
-        while (slave.currentTime <= stop) {
+        while (slave.simulationTime <= stop) {
             
             if (!slave.doStep(stepSize)) {
                 break
