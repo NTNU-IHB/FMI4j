@@ -41,6 +41,10 @@ abstract class AbstractFmuInstance<out E : SpecificModelDescription, out T : Fmi
         val wrapper: T
 ) : FmuInstance {
 
+    abstract override val modelDescription: E
+
+    override val variableAccessor: FmuVariableAccessor = FmuVariableAccessorImpl(wrapper, modelVariables)
+
     init {
         modelVariables.forEach { variable ->
             if (variable is AbstractTypedScalarVariable) {
@@ -51,10 +55,6 @@ abstract class AbstractFmuInstance<out E : SpecificModelDescription, out T : Fmi
         }
     }
 
-    abstract override val modelDescription: E
-
-    override val variableAccessor: FmuVariableAccessor
-            = FmuVariableAccessorImpl(wrapper, modelVariables)
     /**
      * @see FmiLibrary.fmi2GetTypesPlatform
      */
