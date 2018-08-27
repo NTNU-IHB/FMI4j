@@ -76,14 +76,6 @@ abstract class AbstractFmuInstance<out E : SpecificModelDescription, out T : Fmi
     override val providesDirectionalDerivative: Boolean
         get() = modelDescription.providesDirectionalDerivative
 
-    override fun getDirectionalDerivative(vUnknownRef: IntArray, vKnownRef: IntArray,
-                                          dvKnown: RealArray, dvUnknown: RealArray): FmiStatus {
-        if (!providesDirectionalDerivative) {
-            throw IllegalStateException("Illegal call. FMU does not provide directional derivatives!")
-        }
-        return wrapper.getDirectionalDerivative(vUnknownRef, vKnownRef, dvKnown, dvUnknown)
-    }
-
     /**
      * Has the FMU been initialized yet?
      * That is, has init() been called?
@@ -216,6 +208,16 @@ abstract class AbstractFmuInstance<out E : SpecificModelDescription, out T : Fmi
             close()
         }
     }
+
+    override fun getDirectionalDerivative(vUnknownRef: IntArray, vKnownRef: IntArray, dvKnown: RealArray): RealArray {
+        if (!providesDirectionalDerivative) {
+            throw IllegalStateException("Illegal call. FMU does not provide directional derivatives!")
+        }
+        return RealArray(vUnknownRef.size).also {
+            wrapper.getDirectionalDerivative(vUnknownRef, vKnownRef, dvKnown, it)
+        }
+    }
+
     /**
      * @see FmiLibrary.fmi2GetFMUstate
      */
