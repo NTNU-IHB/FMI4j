@@ -88,7 +88,7 @@ To use it, simply add the following to your build.gradle
 
 ```gradle
 plugins {
-    id "no.mechatronics.sfi.fmi4j.FmuPlugin" version "0.3"
+    id "no.mechatronics.sfi.fmi4j.FmuPlugin" version "0.4.1"
 }
 
 ```
