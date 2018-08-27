@@ -53,7 +53,7 @@ object FmuDriver {
         private var outputFolder: String? = null
 
         @CommandLine.Option(names = ["-dt", "--stepSize"], description = ["Step-size."], required = false)
-        private var dt: Double = 1E-3
+        private var stepSize: Double = 1E-3
 
         @CommandLine.Option(names = ["-start", "--startTime"], description = ["Start time."], required = false)
         private var startTime: Double = 0.0
@@ -87,9 +87,9 @@ object FmuDriver {
                     slave.modelVariables.getByName(it)
                 }
 
-                while (slave.currentTime <= stopTime) {
-                    printer.printRecord(slave.currentTime, *outputVariables.map { it.read().value }.toTypedArray())
-                    if (!slave.doStep(dt)) {
+                while (slave.simulationTime <= stopTime) {
+                    printer.printRecord(slave.simulationTime, *outputVariables.map { it.read().value }.toTypedArray())
+                    if (!slave.doStep(stepSize)) {
                         break
                     }
                 }

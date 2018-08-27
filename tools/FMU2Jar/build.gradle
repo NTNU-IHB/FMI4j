@@ -1,7 +1,7 @@
 
 plugins {
     id "application"
-    id "org.jetbrains.kotlin.jvm" version "1.2.60"
+    id "org.jetbrains.kotlin.jvm" version "1.2.61"
     id "com.github.johnrengelman.shadow" version "2.0.4"
 }
 
@@ -11,7 +11,7 @@ def group = "no.mechatronics.sfi.fmu2jar"
 mainClassName = "${group}.Fmu2Jar"
 
 def fmi4j_snapshot = false
-def fmi4j_version = !fmi4j_snapshot ? '0.9.1' : '0.9.2-SNAPSHOT'
+def fmi4j_version = !fmi4j_snapshot ? '0.9.2' : '0.9.3-SNAPSHOT'
 
 repositories {
     mavenCentral()
@@ -28,9 +28,6 @@ if (fmi4j_snapshot) {
     }
 }
 
-def slf4j_version = '1.7.25'
-def junit_version = '5.2.0'
-
 dependencies {
 
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
@@ -38,9 +35,11 @@ dependencies {
     compile group: 'info.picocli', name: 'picocli', version: '3.1.0'
     compile group: 'no.mechatronics.sfi.fmi4j', name: 'fmi-modeldescription', version: fmi4j_version, changing: fmi4j_snapshot
 
+    def slf4j_version = '1.7.25'
     compile group: 'org.slf4j', name: 'slf4j-api', version: slf4j_version
     runtime group: 'org.slf4j', name: 'slf4j-log4j12', version: slf4j_version
 
+    def junit_version = '5.2.0'
     testCompile("org.junit.jupiter:junit-jupiter-api:$junit_version")
     testCompile("org.junit.jupiter:junit-jupiter-params:$junit_version")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junit_version")
