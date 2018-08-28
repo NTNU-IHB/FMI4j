@@ -141,6 +141,7 @@ sealed class AbstractTypedScalarVariable<E>(
 ) : ScalarVariable by v, TypedScalarVariable<E>, Serializable {
 
     @JvmField
+    @Transient
     internal var accessor: FmuVariableAccessor? = null
 
 }
