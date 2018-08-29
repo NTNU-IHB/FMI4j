@@ -38,7 +38,7 @@ import java.lang.IllegalStateException
  *
  * @author Lars Ivar Hatledal
  */
-class CoSimulationFmuInstance internal constructor(
+class CoSimulationSlave internal constructor(
         fmu: Fmu,
         wrapper: CoSimulationLibraryWrapper
 ) : AbstractFmuInstance<CoSimulationModelDescription, CoSimulationLibraryWrapper>(fmu, wrapper), FmuSlave {
@@ -124,7 +124,7 @@ class CoSimulationFmuInstance internal constructor(
     fun getStringStatus(s: FmiStatusKind) = wrapper.getStringStatus(s)
 
     private companion object {
-        val LOG: Logger = LoggerFactory.getLogger(CoSimulationFmuInstance::class.java)
+        val LOG: Logger = LoggerFactory.getLogger(CoSimulationSlave::class.java)
     }
 
 }

@@ -25,7 +25,7 @@
 package no.mechatronics.sfi.fmi4j.importer
 
 import no.mechatronics.sfi.fmi4j.common.*
-import no.mechatronics.sfi.fmi4j.importer.misc.*
+import no.mechatronics.sfi.fmi4j.importer.misc.FmuVariableAccessorImpl
 import no.mechatronics.sfi.fmi4j.modeldescription.SpecificModelDescription
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.*
 import org.slf4j.Logger
@@ -276,47 +276,6 @@ abstract class AbstractFmuInstance<out E : SpecificModelDescription, out T : Fmi
             throw UnsupportedOperationException("Method call not allowed, FMU cannot serialize/deserialize FMU state!")
         }
         return wrapper.deSerializeFMUState(state)
-    }
-
-    fun getIntVector(name: String): IntegerVariableVector {
-        val variables = modelVariables.filter {
-            it is IntegerVariable && it.name.startsWith(name)
-                    && it.name.contains("[") && it.name.contains("]")
-        }.map { it.asIntegerVariable() }
-        if (variables.isEmpty()) {
-            throw IllegalArgumentException("$name does not match a vector")
-        }
-        return IntegerVariableVector(variableAccessor, variables)
-    }
-
-    fun getRealVector(name: String): RealVariableVector {
-        val variables = modelVariables.filter {
-            (it is RealVariable) && it.name.startsWith(name) && it.name.contains("[") && it.name.contains("]")
-        }.map { it.asRealVariable() }
-        if (variables.isEmpty()) {
-            throw IllegalArgumentException("$name does not match a vector")
-        }
-        return RealVariableVector(variableAccessor, variables)
-    }
-
-    fun getStringVector(name: String): StringVariableVector {
-        val variables = modelVariables.filter {
-            (it is StringVariable) && it.name.startsWith(name) && it.name.contains("[") && it.name.contains("]")
-        }.map { it.asStringVariable() }
-        if (variables.isEmpty()) {
-            throw IllegalArgumentException("$name does not match a vector")
-        }
-        return StringVariableVector(variableAccessor, variables)
-    }
-
-    fun getBooleanVector(name: String): BooleanVariableVector {
-        val variables = modelVariables.filter {
-            (it is BooleanVariable) && it.name.startsWith(name) && it.name.contains("[") && it.name.contains("]")
-        }.map { it.asBooleanVariable() }
-        if (variables.isEmpty()) {
-            throw IllegalArgumentException("$name does not match a vector")
-        }
-        return BooleanVariableVector(variableAccessor, variables)
     }
 
     private fun assignStartValues(predicate: (TypedScalarVariable<*>) -> Boolean): Int {

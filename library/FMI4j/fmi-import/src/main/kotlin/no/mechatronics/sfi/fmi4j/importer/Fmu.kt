@@ -25,9 +25,10 @@
 package no.mechatronics.sfi.fmi4j.importer
 
 import no.mechatronics.sfi.fmi4j.common.*
-import no.mechatronics.sfi.fmi4j.importer.cs.CoSimulationFmuBuilder
+import no.mechatronics.sfi.fmi4j.importer.cs.CoSimulationSlaveBuilder
 import no.mechatronics.sfi.fmi4j.importer.jni.Fmi2Library
-import no.mechatronics.sfi.fmi4j.importer.me.ModelExchangeFmuBuilder
+import no.mechatronics.sfi.fmi4j.importer.me.ModelExchangeInstanceBuilder
+import no.mechatronics.sfi.fmi4j.importer.misc.FmiType
 import no.mechatronics.sfi.fmi4j.importer.misc.extractTo
 import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescriptionProvider
 import no.mechatronics.sfi.fmi4j.modeldescription.SpecificModelDescription
@@ -54,9 +55,6 @@ private const val FMU_EXTENSION = "fmu"
 private const val FMI4J_FILE_PREFIX = "fmi4j_"
 
 private const val MODEL_DESC = "modelDescription.xml"
-
-internal const val MODEL_EXCHANGE_TYPE = 0
-internal const val CO_SIMULATION_TYPE = 1
 
 /**
  *
@@ -90,7 +88,6 @@ class Fmu private constructor(
     val supportsModelExchange: Boolean
         get() = modelDescription.supportsModelExchange
 
-
     /**
      * Get the content of the modelDescription.xml file as a String
      */
@@ -113,7 +110,8 @@ class Fmu private constructor(
                 + libraryFolderName + platformBitness).absolutePath
 
     private val resourcesPath: String
-        get() = "file:///${File(fmuFile, RESOURCES_FOLDER).absolutePath.replace("\\", "/")}"
+        get() = "file:///${File(fmuFile, RESOURCES_FOLDER)
+                .absolutePath.replace("\\", "/")}"
 
     /**
      * Get the name of the native library on the form "name.extension"
@@ -130,12 +128,12 @@ class Fmu private constructor(
                 + File.separator + modelIdentifier + libraryExtension).absolutePath
     }
 
-    private val coSimulationBuilder: CoSimulationFmuBuilder? by lazy {
-        if (supportsCoSimulation) CoSimulationFmuBuilder(this) else null
+    private val coSimulationBuilder: CoSimulationSlaveBuilder? by lazy {
+        if (supportsCoSimulation) CoSimulationSlaveBuilder(this) else null
     }
 
-    private val modelExchangeBuilder: ModelExchangeFmuBuilder? by lazy {
-        if (supportsModelExchange) ModelExchangeFmuBuilder(this) else null
+    private val modelExchangeBuilder: ModelExchangeInstanceBuilder? by lazy {
+        if (supportsModelExchange) ModelExchangeInstanceBuilder(this) else null
     }
 
     internal fun registerLibrary(library: Fmi2Library) {
@@ -147,12 +145,11 @@ class Fmu private constructor(
     }
 
     internal fun instantiate(modelDescription: SpecificModelDescription, library: Fmi2Library,
-                             fmiType: Int, visible: Boolean, loggingOn: Boolean): Long {
+                             fmiType: FmiType, visible: Boolean, loggingOn: Boolean): Long {
         LOG.trace("Calling instantiate: visible=$visible, loggingOn=$loggingOn")
         return library.instantiate(modelDescription.modelIdentifier,
-                fmiType, modelDescription.guid, resourcesPath, visible, loggingOn)
+                fmiType.code, modelDescription.guid, resourcesPath, visible, loggingOn)
     }
-
 
     override fun close() {
         if (!isClosed) {
@@ -207,11 +204,11 @@ class Fmu private constructor(
     }
 
     @Throws(IllegalStateException::class)
-    fun asCoSimulationFmu(): CoSimulationFmuBuilder = coSimulationBuilder
+    fun asCoSimulationFmu(): CoSimulationSlaveBuilder = coSimulationBuilder
             ?: throw IllegalStateException("FMU does not support Co-Simulation!")
 
     @Throws(IllegalStateException::class)
-    fun asModelExchangeFmu(): ModelExchangeFmuBuilder = modelExchangeBuilder
+    fun asModelExchangeFmu(): ModelExchangeInstanceBuilder = modelExchangeBuilder
             ?: throw IllegalStateException("FMU does not support Model Exchange!")
 
     protected fun finalize() {
@@ -314,7 +311,3 @@ class Fmu private constructor(
     }
 
 }
-
-
-
-

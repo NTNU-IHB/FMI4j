@@ -33,7 +33,7 @@ import java.io.Closeable
 import java.io.File
 import java.io.FileOutputStream
 
-typealias NativeStatus = Int
+private typealias NativeStatus = Int
 private typealias Fmi2Component = Long
 
 /**

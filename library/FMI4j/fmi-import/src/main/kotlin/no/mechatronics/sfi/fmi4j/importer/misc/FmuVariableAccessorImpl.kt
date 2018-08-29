@@ -27,6 +27,7 @@ package no.mechatronics.sfi.fmi4j.importer.misc
 import no.mechatronics.sfi.fmi4j.common.*
 import no.mechatronics.sfi.fmi4j.importer.Fmi2LibraryWrapper
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.ModelVariables
+import java.util.*
 
 /**
  * @author Lars Ivar Hatledal
@@ -76,13 +77,15 @@ class FmuVariableAccessorImpl(
     override fun writeBoolean(vr: ValueReferences, value: BooleanArray) = wrapper.setBoolean(vr, value)
 
     private fun process(name: String): Int {
-        return map.getOrPut(name) {
+        return VR_CACHE.getOrPut(name) {
             modelVariables.getValueReference(name)
         }
     }
 
     private companion object {
-        private val map = mutableMapOf<String, Int>()
+
+        private val VR_CACHE = Collections.synchronizedMap(mutableMapOf<String, Int>())
+            @Synchronized get
     }
 
 }

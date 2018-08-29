@@ -35,7 +35,7 @@ import no.mechatronics.sfi.fmi4j.modeldescription.me.ModelExchangeModelDescripti
  *
  * @author Lars Ivar Hatledal
  */
-open class ModelExchangeFmuInstance internal constructor(
+open class ModelExchangeInstance internal constructor(
         fmu: Fmu,
         wrapper: ModelExchangeLibraryWrapper
 ) : AbstractFmuInstance<ModelExchangeModelDescription, ModelExchangeLibraryWrapper>(fmu, wrapper) {

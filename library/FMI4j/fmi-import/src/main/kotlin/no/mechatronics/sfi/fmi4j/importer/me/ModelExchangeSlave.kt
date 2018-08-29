@@ -41,7 +41,7 @@ private const val EPS = 1E-13
  * @author Lars Ivar Hatledal
  */
 class ModelExchangeFmuStepper internal constructor(
-        private val fmuInstance: ModelExchangeFmuInstance,
+        private val fmuInstance: ModelExchangeInstance,
         private val solver: Solver
 ) : FmuSlave, FmuInstance by fmuInstance {
 
