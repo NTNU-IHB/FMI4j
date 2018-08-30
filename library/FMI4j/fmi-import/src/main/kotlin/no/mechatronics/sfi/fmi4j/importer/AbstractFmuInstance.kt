@@ -37,11 +37,9 @@ import org.slf4j.LoggerFactory
  * @author Lars Ivar Hatledal
  */
 abstract class AbstractFmuInstance<out E : SpecificModelDescription, out T : Fmi2LibraryWrapper<*>> internal constructor(
-        val fmu: Fmu,
+        override val modelDescription: E,
         val wrapper: T
 ) : FmuInstance {
-
-    abstract override val modelDescription: E
 
     override val variableAccessor: FmuVariableAccessor = FmuVariableAccessorImpl(wrapper, modelVariables)
 

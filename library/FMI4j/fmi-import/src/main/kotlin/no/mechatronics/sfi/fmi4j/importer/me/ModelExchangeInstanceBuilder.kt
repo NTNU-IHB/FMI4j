@@ -52,7 +52,7 @@ class ModelExchangeInstanceBuilder internal constructor(
         val lib = if (modelDescription.canBeInstantiatedOnlyOncePerProcess) loadLibrary() else libraryCache
         val c = fmu.instantiate(modelDescription, lib, FmiType.MODEL_EXCHANGE, visible, loggingOn)
         val wrapper = ModelExchangeLibraryWrapper(c, lib)
-        return ModelExchangeInstance(fmu, wrapper).also {
+        return ModelExchangeInstance(fmu.modelDescription.asModelExchangeModelDescription(), wrapper).also {
             fmu.registerInstance(it)
         }
     }
