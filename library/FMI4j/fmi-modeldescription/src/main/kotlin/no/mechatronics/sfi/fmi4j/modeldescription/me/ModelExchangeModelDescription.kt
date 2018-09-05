@@ -24,11 +24,7 @@
 
 package no.mechatronics.sfi.fmi4j.modeldescription.me
 
-import no.mechatronics.sfi.fmi4j.modeldescription.CommonModelDescription
-import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescriptionImpl
 import no.mechatronics.sfi.fmi4j.modeldescription.SpecificModelDescription
-import no.mechatronics.sfi.fmi4j.modeldescription.misc.ModelExchangeData
-import java.io.Serializable
 
 
 /**
@@ -52,22 +48,4 @@ interface ModelExchangeModelDescription : SpecificModelDescription {
      * section 3.2.2.
      */
     val completedIntegratorStepNotNeeded: Boolean
-}
-
-/**
- *
- * @author Lars Ivar Hatledal laht@ntnu.no.
- */
-class ModelExchangeModelDescriptionImpl internal constructor(
-        private val modelDescription: ModelDescriptionImpl,
-        me: ModelExchangeData
-) : CommonModelDescription by modelDescription, ModelExchangeModelDescription, ModelExchangeData by me, Serializable {
-
-    override val numberOfEventIndicators: Int
-        get() = modelDescription.numberOfEventIndicators
-
-    override fun toString(): String {
-        return "ModelExchangeModelDescriptionImpl(\n${modelDescription.stringContent}\nnumberOfEventIndicators=$numberOfEventIndicators\n)"
-    }
-
 }

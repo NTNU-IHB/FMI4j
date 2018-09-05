@@ -142,7 +142,7 @@ sealed class AbstractTypedScalarVariable<E>(
 
     @JvmField
     @Transient
-    internal var accessor: FmuVariableAccessor? = null
+    internal var accessor: FmuInstance? = null
 
 }
 

@@ -22,15 +22,27 @@
  * THE SOFTWARE.
  */
 
-package no.mechatronics.sfi.fmi4j.modeldescription
+package no.mechatronics.sfi.fmi4j.modeldescription.me
 
-import no.mechatronics.sfi.fmi4j.modeldescription.cs.CoSimulationModelDescription
-import no.mechatronics.sfi.fmi4j.modeldescription.me.ModelExchangeModelDescription
+import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescription
+import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescriptionImpl
+import no.mechatronics.sfi.fmi4j.modeldescription.misc.ModelExchangeData
+import java.io.Serializable
 
-interface ModelDescriptionProvider : CommonModelDescription {
+/**
+ *
+ * @author Lars Ivar Hatledal laht@ntnu.no.
+ */
+class ModelExchangeModelDescriptionImpl internal constructor(
+        private val modelDescription: ModelDescriptionImpl,
+        me: ModelExchangeData
+) : ModelDescription by modelDescription, ModelExchangeModelDescription, ModelExchangeData by me, Serializable {
 
-    fun asCoSimulationModelDescription(): CoSimulationModelDescription
+    override val numberOfEventIndicators: Int
+        get() = modelDescription.numberOfEventIndicators
 
-    fun asModelExchangeModelDescription(): ModelExchangeModelDescription
+    override fun toString(): String {
+        return "ModelExchangeModelDescriptionImpl(\n${modelDescription.stringContent}\nnumberOfEventIndicators=$numberOfEventIndicators\n)"
+    }
 
 }

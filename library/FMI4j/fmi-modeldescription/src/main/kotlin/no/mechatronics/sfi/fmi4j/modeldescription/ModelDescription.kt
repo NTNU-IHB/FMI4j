@@ -24,7 +24,9 @@
 
 package no.mechatronics.sfi.fmi4j.modeldescription
 
+import no.mechatronics.sfi.fmi4j.modeldescription.cs.CoSimulationModelDescription
 import no.mechatronics.sfi.fmi4j.modeldescription.logging.LogCategories
+import no.mechatronics.sfi.fmi4j.modeldescription.me.ModelExchangeModelDescription
 import no.mechatronics.sfi.fmi4j.modeldescription.misc.*
 import no.mechatronics.sfi.fmi4j.modeldescription.structure.ModelStructure
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.ModelVariables
@@ -34,7 +36,7 @@ import no.mechatronics.sfi.fmi4j.modeldescription.variables.ModelVariables
  *
  * @author Lars Ivar Hatledal
  */
-interface CommonModelDescription {
+interface ModelDescription {
 
     /**
      * Version of “FMI for Model Exchange or Co-Simulation” that was used to
@@ -165,11 +167,15 @@ interface CommonModelDescription {
      */
     val supportsModelExchange: Boolean
 
+    fun asModelExchangeModelDescription(): ModelExchangeModelDescription
+
     /**
      * Does this FMU implement Co-Simulation.
      * That is, does the modelDescription.xml contain the <CoSimulation></CoSimulation> xml node?
      */
     val supportsCoSimulation: Boolean
+
+    fun asCoSimulationModelDescription(): CoSimulationModelDescription
 
 }
 
@@ -177,7 +183,7 @@ interface CommonModelDescription {
 /**
  * @author Lars Ivar Hatledal
  */
-interface SpecificModelDescription : CommonModelDescription {
+interface SpecificModelDescription : ModelDescription {
 
     /**
      * Short class name according to C syntax, for
@@ -251,7 +257,6 @@ interface SpecificModelDescription : CommonModelDescription {
      * fmi2GetDirectionalDerivative(..)
      */
     val providesDirectionalDerivative: Boolean
-
 
     /**
      * The source files

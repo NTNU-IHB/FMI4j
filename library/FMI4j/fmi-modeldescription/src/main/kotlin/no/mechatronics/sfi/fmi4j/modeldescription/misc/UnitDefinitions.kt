@@ -57,7 +57,6 @@ class Unit(
         return "Unit(name='$name', baseUnit=$baseUnit, displayUnits=$displayUnits)"
     }
 
-
 }
 
 data class BaseUnit(

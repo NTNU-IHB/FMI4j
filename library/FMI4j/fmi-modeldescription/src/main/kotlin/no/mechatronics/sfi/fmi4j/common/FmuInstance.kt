@@ -24,7 +24,7 @@
 
 package no.mechatronics.sfi.fmi4j.common
 
-import no.mechatronics.sfi.fmi4j.modeldescription.CommonModelDescription
+import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescription
 import no.mechatronics.sfi.fmi4j.modeldescription.SpecificModelDescription
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.ModelVariables
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.TypedScalarVariable
@@ -37,23 +37,7 @@ typealias FmuState = Long
  *
  * @author Lars Ivar Hatledal
  */
-interface FmuInstance : Closeable {
-
-    /**
-     * Does this FMU instance support getting and setting the FMU state?
-     */
-    val canGetAndSetFMUstate: Boolean
-
-    /**
-     * Is serialization supported by this FMU instance?
-     */
-    val canSerializeFMUstate: Boolean
-
-    /**
-     * If true, the directional derivative of the equations
-     * can be computed with getDirectionalDerivative(..)
-     */
-    val providesDirectionalDerivative: Boolean
+interface FmuInstance : FmuVariableAccessor, Closeable {
 
     /**
      * Has init been called?
@@ -75,9 +59,14 @@ interface FmuInstance : Closeable {
      */
     val lastStatus: FmiStatus
 
-    val modelDescription: CommonModelDescription
+    /**
+     * If true, the directional derivative of the equations
+     * can be computed with getDirectionalDerivative(..)
+     */
+    val providesDirectionalDerivative: Boolean
 
-    val variableAccessor: FmuVariableAccessor
+
+    val modelDescription: ModelDescription
 
     /**
      * @see SpecificModelDescription.modelVariables
@@ -120,16 +109,22 @@ interface FmuInstance : Closeable {
      */
     fun terminate(): Boolean
 
+    /**
+     * Does this FMU instance support getting and setting the FMU state?
+     */
+    val canGetAndSetFMUstate: Boolean
+
     fun getFMUstate(): FmuState
-
     fun setFMUstate(state: FmuState): Boolean
-
     fun freeFMUstate(state: FmuState): Boolean
 
+    /**
+     * Is serialization supported by this FMU instance?
+     */
+    val canSerializeFMUstate: Boolean
+
     fun serializeFMUstate(state: FmuState): ByteArray
-
     fun deSerializeFMUstate(state: ByteArray): FmuState
-
     fun getDirectionalDerivative(vUnknownRef: IntArray, vKnownRef: IntArray, dvKnown: RealArray): RealArray
 
     /**
@@ -148,7 +143,7 @@ interface FmuInstance : Closeable {
      * @see ModelVariables.getByName
      */
     @JvmDefault
-    fun getVariableByName(name: String): TypedScalarVariable<*> {
+    override fun getVariableByName(name: String): TypedScalarVariable<*> {
         return modelVariables.getByName(name)
     }
 

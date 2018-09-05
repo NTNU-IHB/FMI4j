@@ -22,6 +22,23 @@
  * THE SOFTWARE.
  */
 
-package no.mechatronics.sfi.fmi4j.importer.misc
+package no.mechatronics.sfi.fmi4j.modeldescription.cs
 
+import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescription
+import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescriptionImpl
+import no.mechatronics.sfi.fmi4j.modeldescription.misc.CoSimulationData
+import java.io.Serializable
 
+/**
+ * @author Lars Ivar Hatledal
+ */
+class CoSimulationModelDescriptionImpl internal constructor(
+        private val modelDescription: ModelDescriptionImpl,
+        cs: CoSimulationData
+) : ModelDescription by modelDescription, CoSimulationModelDescription, CoSimulationData by cs, Serializable {
+
+    override fun toString(): String {
+        return "CoSimulationModelDescriptionImpl(\n${modelDescription.stringContent}\n)"
+    }
+
+}

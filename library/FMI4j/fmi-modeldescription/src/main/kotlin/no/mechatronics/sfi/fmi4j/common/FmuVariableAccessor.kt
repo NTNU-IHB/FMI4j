@@ -24,47 +24,65 @@
 
 package no.mechatronics.sfi.fmi4j.common
 
+import no.mechatronics.sfi.fmi4j.modeldescription.variables.TypedScalarVariable
+import java.util.*
 
 /**
- *
  * @author Lars Ivar Hatledal
  */
 interface FmuVariableAccessor {
 
-    fun readInteger(name: String): FmuIntegerRead
+    fun getVariableByName(name: String): TypedScalarVariable<*>
+
+    @JvmDefault
+    fun readInteger(name: String) = readInteger(getOrFindValueReference(name))
     fun readInteger(vr: ValueReference): FmuIntegerRead
-    fun readInteger(vr: ValueReferences): FmuIntegerArrayRead
-    fun readInteger(vr: ValueReferences, value: IntArray): FmuIntegerArrayRead
+    fun readInteger(vr: ValueReferences, value: IntArray): FmiStatus
 
-    fun readReal(name: String): FmuRealRead
+    @JvmDefault
+    fun readReal(name: String) = readReal(getOrFindValueReference(name))
     fun readReal(vr: ValueReference): FmuRealRead
-    fun readReal(vr: ValueReferences): FmuRealArrayRead
-    fun readReal(vr: ValueReferences, value: RealArray): FmuRealArrayRead
+    fun readReal(vr: ValueReferences, value: RealArray): FmiStatus
 
-    fun readString(name: String): FmuStringRead
+    @JvmDefault
+    fun readString(name: String) = readString(getOrFindValueReference(name))
     fun readString(vr: ValueReference): FmuStringRead
-    fun readString(vr: ValueReferences): FmuStringArrayRead
-    fun readString(vr: ValueReferences, value: StringArray): FmuStringArrayRead
+    fun readString(vr: ValueReferences, value: StringArray): FmiStatus
 
-    fun readBoolean(name: String): FmuBooleanRead
+    @JvmDefault
+    fun readBoolean(name: String) = readBoolean(getOrFindValueReference(name))
     fun readBoolean(vr: ValueReference): FmuBooleanRead
-    fun readBoolean(vr: ValueReferences): FmuBooleanArrayRead
-    fun readBoolean(vr: ValueReferences, value: BooleanArray): FmuBooleanArrayRead
+    fun readBoolean(vr: ValueReferences, value: BooleanArray): FmiStatus
 
-    fun writeInteger(name: String, value: Int): FmiStatus
+    @JvmDefault
+    fun writeInteger(name: String, value: Int) = writeInteger(getOrFindValueReference(name), value)
     fun writeInteger(vr: ValueReference, value: Int): FmiStatus
     fun writeInteger(vr: ValueReferences, value: IntArray): FmiStatus
 
-    fun writeReal(name: String, value: Real): FmiStatus
+    @JvmDefault
+    fun writeReal(name: String, value: Real) = writeReal(getOrFindValueReference(name), value)
     fun writeReal(vr: ValueReference, value: Real): FmiStatus
     fun writeReal(vr: ValueReferences, value: RealArray): FmiStatus
 
-    fun writeString(name: String, value: String): FmiStatus
+    @JvmDefault
+    fun writeString(name: String, value: String) = writeString(getOrFindValueReference(name), value)
     fun writeString(vr: ValueReference, value: String): FmiStatus
     fun writeString(vr: ValueReferences, value: StringArray): FmiStatus
 
-    fun writeBoolean(name: String, value: Boolean): FmiStatus
+    @JvmDefault
+    fun writeBoolean(name: String, value: Boolean) = writeBoolean(getOrFindValueReference(name), value)
     fun writeBoolean(vr: ValueReference, value: Boolean): FmiStatus
     fun writeBoolean(vr: ValueReferences, value: BooleanArray): FmiStatus
+
+    private fun getOrFindValueReference(name: String): ValueReference {
+        return cache.getOrPut(name) {
+            getVariableByName(name).valueReference
+        }
+    }
+
+    private companion object {
+        val cache: MutableMap<String, ValueReference> = Collections.synchronizedMap(mutableMapOf<String, ValueReference>())
+            @Synchronized get
+    }
 
 }

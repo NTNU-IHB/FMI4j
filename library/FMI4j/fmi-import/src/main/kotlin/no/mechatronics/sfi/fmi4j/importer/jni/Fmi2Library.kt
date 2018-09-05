@@ -33,13 +33,13 @@ import java.io.Closeable
 import java.io.File
 import java.io.FileOutputStream
 
-private typealias NativeStatus = Int
-private typealias Fmi2Component = Long
+internal typealias NativeStatus = Int
+internal typealias Fmi2Component = Long
 
 /**
  * @author Lars Ivar Hatledal
  */
-sealed class Fmi2Library(
+open class Fmi2Library(
         private val libName: String
 ) : Closeable {
 
@@ -102,39 +102,29 @@ sealed class Fmi2Library(
 
 
     external fun getInteger(c: Fmi2Component, vr: IntArray, ref: IntArray): NativeStatus
-
     external fun getReal(c: Fmi2Component, vr: IntArray, ref: DoubleArray): NativeStatus
-
     external fun getString(c: Fmi2Component, vr: IntArray, ref: Array<String>): NativeStatus
-
     external fun getBoolean(c: Fmi2Component, vr: IntArray, ref: BooleanArray): NativeStatus
 
 
     external fun setInteger(c: Fmi2Component, vr: IntArray, values: IntArray): NativeStatus
-
     external fun setReal(c: Fmi2Component, vr: IntArray, values: DoubleArray): NativeStatus
-
     external fun setString(c: Fmi2Component, vr: IntArray, values: Array<String>): NativeStatus
-
     external fun setBoolean(c: Fmi2Component, vr: IntArray, values: BooleanArray): NativeStatus
 
 
     external fun getFMUstate(c: Fmi2Component, state: LongByReference): NativeStatus
-
     external fun setFMUstate(c: Fmi2Component, state: Long): NativeStatus
-
     external fun freeFMUstate(c: Fmi2Component, state: Long): NativeStatus
 
 
     external fun serializedFMUstateSize(c: Fmi2Component, state: Long, size: IntByReference): NativeStatus
-
     external fun serializeFMUstate(c: Fmi2Component, state: Long, serializedState: ByteArray): NativeStatus
-
     external fun deSerializeFMUstate(
             c: Fmi2Component, state: LongByReference, serializedState: ByteArray): NativeStatus
 
 
-    companion object {
+    private companion object {
 
         private val LOG: Logger = LoggerFactory.getLogger(Fmi2Library::class.java)
 
@@ -160,62 +150,5 @@ sealed class Fmi2Library(
         }
 
     }
-
-}
-
-class Fmi2CoSimulationLibrary(
-        libName: String
-) : Fmi2Library(libName) {
-
-    external fun step(c: Fmi2Component, currentCommunicationPoint: Double,
-                      communicationStepSize: Double, noSetFMUStatePriorToCurrentPoint: Boolean): NativeStatus
-
-    external fun cancelStep(c: Fmi2Component): NativeStatus
-
-    external fun setRealInputDerivatives(c: Fmi2Component, vr: IntArray, order: IntArray,
-                                         value: DoubleArray): NativeStatus
-
-    external fun getRealOutputDerivatives(c: Fmi2Component, vr: IntArray, order: IntArray,
-                                          value: DoubleArray): NativeStatus
-
-    external fun getStatus(c: Fmi2Component, s: Int, value: IntByReference): NativeStatus
-
-    external fun getIntegerStatus(c: Fmi2Component, s: Int, value: IntByReference): NativeStatus
-
-    external fun getRealStatus(c: Fmi2Component, s: Int, value: DoubleByReference): NativeStatus
-
-    external fun getStringStatus(c: Fmi2Component, s: Int, value: StringByReference): NativeStatus
-
-    external fun getBooleanStatus(c: Fmi2Component, s: Int, value: BooleanByReference): NativeStatus
-
-    external fun getMaxStepSize(c: Fmi2Component, stepSize: DoubleByReference): NativeStatus
-}
-
-
-class Fmi2ModelExchangeLibrary(
-        libName: String
-) : Fmi2Library(libName) {
-
-    external fun enterEventMode(c: Fmi2Component): NativeStatus
-
-    external fun newDiscreteStates(c: Fmi2Component, ev: EventInfo): NativeStatus
-
-    external fun enterContinuousTimeMode(c: Fmi2Component): NativeStatus
-
-    external fun setContinuousStates(c: Fmi2Component, x: DoubleArray): NativeStatus
-
-    external fun completedIntegratorStep(
-            c: Fmi2Component, noSetFMUStatePriorToCurrentPoint: Boolean,
-            enterEventMode: BooleanByReference, terminateSimulation: BooleanByReference): NativeStatus
-
-    external fun setTime(c: Fmi2Component, time: Double): NativeStatus
-
-    external fun getDerivatives(c: Fmi2Component, derivatives: DoubleArray): NativeStatus
-
-    external fun getEventIndicators(c: Fmi2Component, eventIndicators: DoubleArray): NativeStatus
-
-    external fun getContinuousStates(c: Fmi2Component, x: DoubleArray): NativeStatus
-
-    external fun getNominalsOfContinuousStates(c: Fmi2Component, x_nominals: DoubleArray): NativeStatus
 
 }

@@ -45,7 +45,6 @@ interface FmuData {
 
 }
 
-
 /**
  * Represents the content within the <CoSimulation></> XML element
  *
@@ -103,7 +102,12 @@ sealed class FmuDataImpl : FmuData, Serializable {
     override val sourceFiles: List<SourceFile> = emptyList()
 
     override fun toString(): String {
-        return "FmuDataImpl{modelIdentifier=$modelIdentifier, needsExecutionTool=$needsExecutionTool, canNotUseMemoryManagementFunctions=$canNotUseMemoryManagementFunctions, canGetAndSetFMUstate=$canGetAndSetFMUstate, canSerializeFMUstate=$canSerializeFMUstate, providesDirectionalDerivative=$providesDirectionalDerivative}"
+        return "FmuDataImpl{modelIdentifier=$modelIdentifier, " +
+                "needsExecutionTool=$needsExecutionTool, " +
+                "canNotUseMemoryManagementFunctions=$canNotUseMemoryManagementFunctions, " +
+                "canGetAndSetFMUstate=$canGetAndSetFMUstate, " +
+                "canSerializeFMUstate=$canSerializeFMUstate, " +
+                "providesDirectionalDerivative=$providesDirectionalDerivative}"
     }
 
 }

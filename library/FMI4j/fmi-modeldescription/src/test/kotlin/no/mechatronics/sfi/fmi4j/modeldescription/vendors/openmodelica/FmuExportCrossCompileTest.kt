@@ -1,9 +1,9 @@
 package no.mechatronics.sfi.fmi4j.modeldescription.vendors.openmodelica
 
 import no.mechatronics.sfi.fmi4j.TestUtils
-import no.mechatronics.sfi.fmi4j.modeldescription.CommonModelDescription
-import no.mechatronics.sfi.fmi4j.modeldescription.cs.CoSimulationModelDescription
 import no.mechatronics.sfi.fmi4j.common.currentOS
+import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescription
+import no.mechatronics.sfi.fmi4j.modeldescription.cs.CoSimulationModelDescription
 import no.mechatronics.sfi.fmi4j.modeldescription.misc.VariableNamingConvention
 import no.mechatronics.sfi.fmi4j.modeldescription.parser.ModelDescriptionParser
 import no.mechatronics.sfi.fmi4j.modeldescription.structure.DependenciesKind
@@ -69,7 +69,7 @@ class FmuExportCrossCompileTest {
         }
 
         ObjectInputStream(ByteArrayInputStream(bos.toByteArray())).use {
-            val md: CommonModelDescription = it.readObject() as CoSimulationModelDescription
+            val md: ModelDescription = it.readObject() as CoSimulationModelDescription
             Assertions.assertEquals(modelDescription.modelVariables.size, md.modelVariables.size)
             md.modelVariables.forEach { LOG.info("$it") }
             LOG.info("${md.modelStructure}")

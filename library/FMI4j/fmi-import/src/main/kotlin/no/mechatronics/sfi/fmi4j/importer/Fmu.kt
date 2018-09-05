@@ -30,7 +30,7 @@ import no.mechatronics.sfi.fmi4j.importer.jni.Fmi2Library
 import no.mechatronics.sfi.fmi4j.importer.me.ModelExchangeInstanceBuilder
 import no.mechatronics.sfi.fmi4j.importer.misc.FmiType
 import no.mechatronics.sfi.fmi4j.importer.misc.extractTo
-import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescriptionProvider
+import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescription
 import no.mechatronics.sfi.fmi4j.modeldescription.SpecificModelDescription
 import no.mechatronics.sfi.fmi4j.modeldescription.parser.ModelDescriptionParser
 import org.slf4j.Logger
@@ -95,7 +95,7 @@ class Fmu private constructor(
         modelDescriptionFile.readText()
     }
 
-    val modelDescription: ModelDescriptionProvider by lazy {
+    val modelDescription: ModelDescription by lazy {
         ModelDescriptionParser.parse(modelDescriptionXml)
     }
 

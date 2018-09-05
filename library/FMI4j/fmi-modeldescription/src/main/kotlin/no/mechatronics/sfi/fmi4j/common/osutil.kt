@@ -44,7 +44,6 @@ val isLinux: Boolean
 val isMac: Boolean
     get() = osName.startsWith("Mac") || osName.startsWith("Darwin")
 
-
 val currentOS: String
     get() {
         return when {

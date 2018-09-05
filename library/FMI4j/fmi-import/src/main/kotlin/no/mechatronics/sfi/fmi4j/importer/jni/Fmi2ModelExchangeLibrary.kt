@@ -22,16 +22,32 @@
  * THE SOFTWARE.
  */
 
-package no.mechatronics.sfi.fmi4j.importer.misc
+package no.mechatronics.sfi.fmi4j.importer.jni
 
-/**
- * @author Lars Ivar Hatledal
- */
-enum class FmiType(
-        val code: Int
-) {
+class Fmi2ModelExchangeLibrary(
+        libName: String
+) : Fmi2Library(libName) {
 
-    MODEL_EXCHANGE(0),
-    CO_SIMULATION(1)
+    external fun enterEventMode(c: Fmi2Component): NativeStatus
+
+    external fun newDiscreteStates(c: Fmi2Component, ev: EventInfo): NativeStatus
+
+    external fun enterContinuousTimeMode(c: Fmi2Component): NativeStatus
+
+    external fun setContinuousStates(c: Fmi2Component, x: DoubleArray): NativeStatus
+
+    external fun completedIntegratorStep(
+            c: Fmi2Component, noSetFMUStatePriorToCurrentPoint: Boolean,
+            enterEventMode: BooleanByReference, terminateSimulation: BooleanByReference): NativeStatus
+
+    external fun setTime(c: Fmi2Component, time: Double): NativeStatus
+
+    external fun getDerivatives(c: Fmi2Component, derivatives: DoubleArray): NativeStatus
+
+    external fun getEventIndicators(c: Fmi2Component, eventIndicators: DoubleArray): NativeStatus
+
+    external fun getContinuousStates(c: Fmi2Component, x: DoubleArray): NativeStatus
+
+    external fun getNominalsOfContinuousStates(c: Fmi2Component, x_nominals: DoubleArray): NativeStatus
 
 }

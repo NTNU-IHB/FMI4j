@@ -118,7 +118,6 @@ class CoSimulationLibraryWrapper(
 
     }
 
-
     /**
      * Extension method
      */
@@ -128,6 +127,5 @@ class CoSimulationLibraryWrapper(
             it.value
         }
     }
-
 
 }

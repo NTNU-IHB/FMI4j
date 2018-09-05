@@ -25,7 +25,6 @@
 package no.mechatronics.sfi.fmi4j.importer
 
 import no.mechatronics.sfi.fmi4j.common.*
-import no.mechatronics.sfi.fmi4j.importer.misc.FmuVariableAccessorImpl
 import no.mechatronics.sfi.fmi4j.modeldescription.SpecificModelDescription
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.*
 import org.slf4j.Logger
@@ -41,13 +40,11 @@ abstract class AbstractFmuInstance<out E : SpecificModelDescription, out T : Fmi
         val wrapper: T
 ) : FmuInstance {
 
-    override val variableAccessor: FmuVariableAccessor = FmuVariableAccessorImpl(wrapper, modelVariables)
-
     init {
         modelVariables.forEach { variable ->
             if (variable is AbstractTypedScalarVariable) {
                 variable::class.java.getField("accessor").also { field ->
-                    field.set(variable, variableAccessor)
+                    field.set(variable, this)
                 }
             }
         }
@@ -274,6 +271,70 @@ abstract class AbstractFmuInstance<out E : SpecificModelDescription, out T : Fmi
             throw UnsupportedOperationException("Method call not allowed, FMU cannot serialize/deserialize FMU state!")
         }
         return wrapper.deSerializeFMUState(state)
+    }
+
+    override fun readInteger(vr: ValueReference): FmuIntegerRead {
+        return wrapper.readInteger(vr)
+    }
+
+    override fun readInteger(vr: ValueReferences, value: IntArray): FmiStatus {
+        return wrapper.readInteger(vr, value)
+    }
+
+    override fun readReal(vr: ValueReference): FmuRealRead {
+        return wrapper.readReal(vr)
+    }
+
+    override fun readReal(vr: ValueReferences, value: RealArray): FmiStatus {
+        return wrapper.readReal(vr, value)
+    }
+
+    override fun readString(vr: ValueReference): FmuStringRead {
+        return wrapper.readString(vr)
+    }
+
+    override fun readString(vr: ValueReferences, value: StringArray): FmiStatus {
+        return wrapper.readString(vr, value)
+    }
+
+    override fun readBoolean(vr: ValueReference): FmuBooleanRead {
+        return wrapper.readBoolean(vr)
+    }
+
+    override fun readBoolean(vr: ValueReferences, value: BooleanArray): FmiStatus {
+        return wrapper.readBoolean(vr, value)
+    }
+
+    override fun writeInteger(vr: ValueReference, value: Int): FmiStatus {
+        return wrapper.writeInteger(vr, value)
+    }
+
+    override fun writeInteger(vr: ValueReferences, value: IntArray): FmiStatus {
+        return wrapper.writeInteger(vr, value)
+    }
+
+    override fun writeReal(vr: ValueReference, value: Real): FmiStatus {
+        return wrapper.writeReal(vr, value)
+    }
+
+    override fun writeReal(vr: ValueReferences, value: RealArray): FmiStatus {
+        return wrapper.writeReal(vr, value)
+    }
+
+    override fun writeString(vr: ValueReference, value: String): FmiStatus {
+        return wrapper.writeString(vr, value)
+    }
+
+    override fun writeString(vr: ValueReferences, value: StringArray): FmiStatus {
+        return wrapper.writeString(vr, value)
+    }
+
+    override fun writeBoolean(vr: ValueReference, value: Boolean): FmiStatus {
+        return wrapper.writeBoolean(vr, value)
+    }
+
+    override fun writeBoolean(vr: ValueReferences, value: BooleanArray): FmiStatus {
+        return wrapper.writeBoolean(vr, value)
     }
 
     private fun assignStartValues(predicate: (TypedScalarVariable<*>) -> Boolean): Int {

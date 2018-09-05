@@ -24,11 +24,7 @@
 
 package no.mechatronics.sfi.fmi4j.modeldescription.cs
 
-import no.mechatronics.sfi.fmi4j.modeldescription.CommonModelDescription
-import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescriptionImpl
 import no.mechatronics.sfi.fmi4j.modeldescription.SpecificModelDescription
-import no.mechatronics.sfi.fmi4j.modeldescription.misc.CoSimulationData
-import java.io.Serializable
 
 
 /**
@@ -62,19 +58,5 @@ interface CoSimulationModelDescription : SpecificModelDescription {
      * fmi2DoStep(...) call asynchronously.
      */
     val canRunAsynchronuously: Boolean
-
-}
-
-/**
- * @author Lars Ivar Hatledal
- */
-class CoSimulationModelDescriptionImpl internal constructor(
-        private val modelDescription: ModelDescriptionImpl,
-        cs: CoSimulationData
-) : CommonModelDescription by modelDescription, CoSimulationModelDescription, CoSimulationData by cs, Serializable {
-
-    override fun toString(): String {
-        return "CoSimulationModelDescriptionImpl(\n${modelDescription.stringContent}\n)"
-    }
 
 }

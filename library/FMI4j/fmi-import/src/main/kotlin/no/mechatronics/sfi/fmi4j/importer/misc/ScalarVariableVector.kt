@@ -32,16 +32,16 @@ import no.mechatronics.sfi.fmi4j.modeldescription.variables.*
  */
 sealed class ScalarVariableVector<out E : TypedScalarVariable<*>> constructor(
         protected val accessor: FmuVariableAccessor,
-        protected val variables: List<E>
+        private val variables: List<E>
 ) {
 
     val size: Int = variables.size
 
     operator fun get(index: Int) = variables[index]
 
-    protected val vr: IntArray by lazy {
-        variables.map { it.valueReference }.toIntArray()
-    }
+    protected val vr: IntArray = variables.map {
+        it.valueReference
+    }.toIntArray()
 
 }
 
@@ -53,6 +53,8 @@ class IntegerVariableVector internal constructor(
         variables: List<IntegerVariable>
 ) : ScalarVariableVector<IntegerVariable>(accessor, variables) {
 
+    private val values = IntArray(variables.size)
+
     fun write(value: IntArray): FmiStatus {
         if (value.size != vr.size) {
             throw IllegalArgumentException("value.size != vector.size")
@@ -60,7 +62,9 @@ class IntegerVariableVector internal constructor(
         return accessor.writeInteger(vr, value)
     }
 
-    fun read(): FmuIntegerArrayRead = accessor.readInteger(vr)
+    fun read(): FmuIntegerArrayRead = accessor.readInteger(vr, values).let {
+        FmuIntegerArrayRead(values, it)
+    }
 
 }
 
@@ -72,14 +76,18 @@ class RealVariableVector internal constructor(
         variables: List<RealVariable>
 ) : ScalarVariableVector<RealVariable>(accessor, variables) {
 
-    fun write(value: RealArray): FmiStatus {
-        if (value.size != vr.size) {
+    private val values = RealArray(variables.size)
+
+    fun write(values: RealArray): FmiStatus {
+        if (values.size != vr.size) {
             throw IllegalArgumentException("value.size != vector.size")
         }
-        return accessor.writeReal(vr, value)
+        return accessor.writeReal(vr, values)
     }
 
-    fun read(): FmuRealArrayRead = accessor.readReal(vr)
+    fun read(): FmuRealArrayRead = accessor.readReal(vr, values).let {
+        FmuRealArrayRead(values, it)
+    }
 
 }
 
@@ -91,14 +99,18 @@ class StringVariableVector internal constructor(
         variables: List<StringVariable>
 ) : ScalarVariableVector<StringVariable>(accessor, variables) {
 
-    fun write(value: StringArray): FmiStatus {
-        if (value.size != vr.size) {
+    private val values = StringArray(variables.size) { "" }
+
+    fun write(values: StringArray): FmiStatus {
+        if (values.size != vr.size) {
             throw IllegalArgumentException("value.size != vector.size")
         }
-        return accessor.writeString(vr, value)
+        return accessor.writeString(vr, values)
     }
 
-    fun read(): FmuStringArrayRead = accessor.readString(vr)
+    fun read(): FmuStringArrayRead = accessor.readString(vr, values).let {
+        FmuStringArrayRead(values, it)
+    }
 
 }
 
@@ -110,13 +122,17 @@ class BooleanVariableVector internal constructor(
         variables: List<BooleanVariable>
 ) : ScalarVariableVector<BooleanVariable>(accessor, variables) {
 
-    fun write(value: BooleanArray): FmiStatus {
-        if (value.size != vr.size) {
+    private val values = BooleanArray(variables.size)
+
+    fun write(values: BooleanArray): FmiStatus {
+        if (values.size != vr.size) {
             throw IllegalArgumentException("value.size != vector.size")
         }
-        return accessor.writeBoolean(vr, value)
+        return accessor.writeBoolean(vr, values)
     }
 
-    fun read(): FmuBooleanArrayRead = accessor.readBoolean(vr)
+    fun read(): FmuBooleanArrayRead = accessor.readBoolean(vr, values).let {
+        FmuBooleanArrayRead(values, it)
+    }
 
 }
