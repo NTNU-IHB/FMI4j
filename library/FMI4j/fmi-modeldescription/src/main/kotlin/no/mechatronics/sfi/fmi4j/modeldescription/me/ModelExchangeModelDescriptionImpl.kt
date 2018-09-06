@@ -26,7 +26,7 @@ package no.mechatronics.sfi.fmi4j.modeldescription.me
 
 import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescription
 import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescriptionImpl
-import no.mechatronics.sfi.fmi4j.modeldescription.misc.ModelExchangeData
+import no.mechatronics.sfi.fmi4j.modeldescription.misc.ModelExchangeAttributes
 import java.io.Serializable
 
 /**
@@ -35,8 +35,8 @@ import java.io.Serializable
  */
 class ModelExchangeModelDescriptionImpl internal constructor(
         private val modelDescription: ModelDescriptionImpl,
-        me: ModelExchangeData
-) : ModelDescription by modelDescription, ModelExchangeModelDescription, ModelExchangeData by me, Serializable {
+        me: ModelExchangeAttributes
+) : ModelDescription by modelDescription, ModelExchangeModelDescription, ModelExchangeAttributes by me, Serializable {
 
     override val numberOfEventIndicators: Int
         get() = modelDescription.numberOfEventIndicators

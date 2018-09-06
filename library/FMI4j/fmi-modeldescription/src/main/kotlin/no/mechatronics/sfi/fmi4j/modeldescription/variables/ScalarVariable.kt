@@ -30,7 +30,6 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty
 import java.io.Serializable
 
 
-
 /**
  * @author Lars Ivar Hatledal
  */

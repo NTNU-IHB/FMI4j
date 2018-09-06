@@ -97,10 +97,10 @@ class ModelDescriptionImpl(
         override val typeDefinitions: TypeDefinitions? = null,
 
         @JacksonXmlProperty(localName = "CoSimulation")
-        private val cs: CoSimulationDataImpl? = null,
+        private val cs: CoSimulationAttributesImpl? = null,
 
         @JacksonXmlProperty(localName = "ModelExchange")
-        private val me: ModelExchangeDataImpl? = null,
+        private val me: ModelExchangeAttributesImpl? = null,
 
         /**
          * The (fixed) number of event indicators for an FMU based on FMI for Model Exchange.
@@ -167,7 +167,6 @@ class ModelDescriptionImpl(
                 defaultExperiment?.let { "defaultExperiment=$defaultExperiment" },
                 unitDefinitions?.let { "unitDefinitions=$unitDefinitions" }
         ).joinToString("\n")
-
 
     override fun toString(): String {
         return "ModelDescriptionImpl(\n$stringContent\n)"

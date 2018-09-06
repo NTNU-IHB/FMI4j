@@ -26,7 +26,7 @@ package no.mechatronics.sfi.fmi4j.modeldescription.cs
 
 import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescription
 import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescriptionImpl
-import no.mechatronics.sfi.fmi4j.modeldescription.misc.CoSimulationData
+import no.mechatronics.sfi.fmi4j.modeldescription.misc.CoSimulationAttributes
 import java.io.Serializable
 
 /**
@@ -34,8 +34,8 @@ import java.io.Serializable
  */
 class CoSimulationModelDescriptionImpl internal constructor(
         private val modelDescription: ModelDescriptionImpl,
-        cs: CoSimulationData
-) : ModelDescription by modelDescription, CoSimulationModelDescription, CoSimulationData by cs, Serializable {
+        cs: CoSimulationAttributes
+) : ModelDescription by modelDescription, CoSimulationModelDescription, CoSimulationAttributes by cs, Serializable {
 
     override fun toString(): String {
         return "CoSimulationModelDescriptionImpl(\n${modelDescription.stringContent}\n)"

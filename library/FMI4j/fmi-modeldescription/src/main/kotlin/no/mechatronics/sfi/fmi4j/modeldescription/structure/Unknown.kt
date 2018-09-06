@@ -24,6 +24,9 @@
 
 package no.mechatronics.sfi.fmi4j.modeldescription.structure
 
+import com.fasterxml.jackson.annotation.JsonGetter
+import com.fasterxml.jackson.annotation.JsonSetter
+import com.fasterxml.jackson.annotation.Nulls
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty
 import java.io.Serializable
 
@@ -51,7 +54,7 @@ interface Unknown {
      * If present, it must be assumed that the Unknown depends on the Knowns
      * without a particular structure.
      */
-    val dependenciesKind: DependenciesKind?
+    val dependenciesKind: String?
 
 }
 
@@ -67,7 +70,7 @@ class UnknownImpl(
         private var _dependencies: String? = null,
 
         @JacksonXmlProperty
-        override val dependenciesKind: DependenciesKind? = null
+        override val dependenciesKind: String? = null
 
 ) : Unknown, Serializable {
 

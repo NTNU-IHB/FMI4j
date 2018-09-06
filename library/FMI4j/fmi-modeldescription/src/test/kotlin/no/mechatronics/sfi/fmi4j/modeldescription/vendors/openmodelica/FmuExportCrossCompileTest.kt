@@ -6,7 +6,6 @@ import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescription
 import no.mechatronics.sfi.fmi4j.modeldescription.cs.CoSimulationModelDescription
 import no.mechatronics.sfi.fmi4j.modeldescription.misc.VariableNamingConvention
 import no.mechatronics.sfi.fmi4j.modeldescription.parser.ModelDescriptionParser
-import no.mechatronics.sfi.fmi4j.modeldescription.structure.DependenciesKind
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
@@ -44,12 +43,12 @@ class FmuExportCrossCompileTest {
         val d1 = der[0]
         Assertions.assertEquals(d1.index, 3)
         Assertions.assertEquals(d1.dependencies.size, 1)
-        Assertions.assertEquals(DependenciesKind.DEPENDENT, d1.dependenciesKind)
+        Assertions.assertEquals("dependent", d1.dependenciesKind)
 
         val d2 = der[1]
         Assertions.assertEquals(d2.index, 4)
         Assertions.assertTrue(d2.dependencies.isEmpty())
-        Assertions.assertNull(d2.dependenciesKind)
+        Assertions.assertEquals("", d2.dependenciesKind)
     }
 
     @Test

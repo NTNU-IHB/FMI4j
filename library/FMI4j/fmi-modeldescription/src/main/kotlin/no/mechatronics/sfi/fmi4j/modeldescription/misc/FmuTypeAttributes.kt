@@ -32,7 +32,7 @@ import java.io.Serializable
  *
  * @author Lars Ivar Hatledal
  */
-interface FmuData {
+interface FmuTypeAttributes {
 
     val modelIdentifier: String
     val needsExecutionTool: Boolean
@@ -50,7 +50,7 @@ interface FmuData {
  *
  * @author Lars Ivar Hatledal
  */
-interface CoSimulationData : FmuData {
+interface CoSimulationAttributes : FmuTypeAttributes {
 
     val canHandleVariableCommunicationStepSize: Boolean
     val canInterpolateInputs: Boolean
@@ -64,7 +64,7 @@ interface CoSimulationData : FmuData {
  *
  * @author Lars Ivar Hatledal
  */
-interface ModelExchangeData : FmuData {
+interface ModelExchangeAttributes : FmuTypeAttributes {
 
     val completedIntegratorStepNotNeeded: Boolean
 
@@ -74,7 +74,7 @@ interface ModelExchangeData : FmuData {
 /**
  * @author Lars Ivar Hatledal
  */
-sealed class FmuDataImpl : FmuData, Serializable {
+sealed class FmuTypeAttributesImpl : FmuTypeAttributes, Serializable {
 
     @JacksonXmlProperty
     override lateinit var modelIdentifier: String
@@ -101,21 +101,12 @@ sealed class FmuDataImpl : FmuData, Serializable {
     @JacksonXmlProperty(localName = "File")
     override val sourceFiles: List<SourceFile> = emptyList()
 
-    override fun toString(): String {
-        return "FmuDataImpl{modelIdentifier=$modelIdentifier, " +
-                "needsExecutionTool=$needsExecutionTool, " +
-                "canNotUseMemoryManagementFunctions=$canNotUseMemoryManagementFunctions, " +
-                "canGetAndSetFMUstate=$canGetAndSetFMUstate, " +
-                "canSerializeFMUstate=$canSerializeFMUstate, " +
-                "providesDirectionalDerivative=$providesDirectionalDerivative}"
-    }
-
 }
 
 /**
  * @author Lars Ivar Hatledal
  */
-data class CoSimulationDataImpl(
+data class CoSimulationAttributesImpl(
 
         @JacksonXmlProperty
         override val canHandleVariableCommunicationStepSize: Boolean = false,
@@ -129,14 +120,14 @@ data class CoSimulationDataImpl(
         @JacksonXmlProperty
         override val canRunAsynchronuously: Boolean = false
 
-) : FmuDataImpl(), CoSimulationData
+) : FmuTypeAttributesImpl(), CoSimulationAttributes
 
 /**
  * @author Lars Ivar Hatledal
  */
-data class ModelExchangeDataImpl(
+data class ModelExchangeAttributesImpl(
 
         @JacksonXmlProperty
         override val completedIntegratorStepNotNeeded: Boolean = false
 
-) : FmuDataImpl(), ModelExchangeData
+) : FmuTypeAttributesImpl(), ModelExchangeAttributes
