@@ -24,14 +24,14 @@
 
 package no.mechatronics.sfi.fmu2jar.codegen
 
-import no.mechatronics.sfi.fmi4j.modeldescription.CommonModelDescription
+import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescription
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.*
 
 /**
  * @author Lars Ivar Hatledal
  */
 class CodeGenerator(
-        private val md: CommonModelDescription
+        private val md: ModelDescription
 ) {
 
     private val modelName = md.modelName

@@ -24,7 +24,7 @@
 
 package no.mechatronics.sfi.fmu2jar
 
-import no.mechatronics.sfi.fmi4j.modeldescription.CommonModelDescription
+import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescription
 import no.mechatronics.sfi.fmi4j.modeldescription.parser.ModelDescriptionParser
 import no.mechatronics.sfi.fmu2jar.cli.Args
 import no.mechatronics.sfi.fmu2jar.cli.GenerateOptions
@@ -55,7 +55,7 @@ class Fmu2Jar(
 
     }
 
-    private val modelDescription: CommonModelDescription
+    private val modelDescription: ModelDescription
 
     init {
         if (!file.name.endsWith(".fmu", true)) {
