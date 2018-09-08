@@ -22,6 +22,8 @@
  * THE SOFTWARE.
  */
 
+@file:Suppress("NAME_SHADOWING")
+
 package no.mechatronics.sfi.fmi4j.common
 
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.TypedScalarVariable
@@ -36,42 +38,82 @@ interface FmuVariableAccessor {
 
     @JvmDefault
     fun readInteger(name: String) = readInteger(getOrFindValueReference(name))
-    fun readInteger(vr: ValueReference): FmuIntegerRead
+    @JvmDefault
+    fun readInteger(vr: ValueReference): FmuIntegerRead {
+        val vr = intArrayOf(vr)
+        val values = IntArray(1)
+        return readInteger(vr, values).let {
+            FmuIntegerRead(values[0], it)
+        }
+    }
     fun readInteger(vr: ValueReferences, value: IntArray): FmiStatus
 
     @JvmDefault
     fun readReal(name: String) = readReal(getOrFindValueReference(name))
-    fun readReal(vr: ValueReference): FmuRealRead
+    @JvmDefault
+    fun readReal(vr: ValueReference): FmuRealRead {
+        val vr = intArrayOf(vr)
+        val values = RealArray(1)
+        return readReal(vr, values).let {
+            FmuRealRead(values[0], it)
+        }
+    }
     fun readReal(vr: ValueReferences, value: RealArray): FmiStatus
 
     @JvmDefault
     fun readString(name: String) = readString(getOrFindValueReference(name))
-    fun readString(vr: ValueReference): FmuStringRead
+    @JvmDefault
+    fun readString(vr: ValueReference): FmuStringRead {
+        val vr = intArrayOf(vr)
+        val values = StringArray(1) {""}
+        return readString(vr, values).let {
+            FmuStringRead(values[0], it)
+        }
+    }
     fun readString(vr: ValueReferences, value: StringArray): FmiStatus
 
     @JvmDefault
     fun readBoolean(name: String) = readBoolean(getOrFindValueReference(name))
-    fun readBoolean(vr: ValueReference): FmuBooleanRead
+    @JvmDefault
+    fun readBoolean(vr: ValueReference): FmuBooleanRead {
+        val vr = intArrayOf(vr)
+        val values = BooleanArray(1)
+        return readBoolean(vr, values).let {
+            FmuBooleanRead(values[0], it)
+        }
+    }
     fun readBoolean(vr: ValueReferences, value: BooleanArray): FmiStatus
 
     @JvmDefault
     fun writeInteger(name: String, value: Int) = writeInteger(getOrFindValueReference(name), value)
-    fun writeInteger(vr: ValueReference, value: Int): FmiStatus
+    @JvmDefault
+    fun writeInteger(vr: ValueReference, value: Int): FmiStatus {
+        return writeInteger(intArrayOf(vr), intArrayOf(value))
+    }
     fun writeInteger(vr: ValueReferences, value: IntArray): FmiStatus
 
     @JvmDefault
     fun writeReal(name: String, value: Real) = writeReal(getOrFindValueReference(name), value)
-    fun writeReal(vr: ValueReference, value: Real): FmiStatus
+    @JvmDefault
+    fun writeReal(vr: ValueReference, value: Real): FmiStatus {
+        return writeReal(intArrayOf(vr), doubleArrayOf(value))
+    }
     fun writeReal(vr: ValueReferences, value: RealArray): FmiStatus
 
     @JvmDefault
     fun writeString(name: String, value: String) = writeString(getOrFindValueReference(name), value)
-    fun writeString(vr: ValueReference, value: String): FmiStatus
+    @JvmDefault
+    fun writeString(vr: ValueReference, value: String): FmiStatus {
+        return writeString(intArrayOf(vr), StringArray(1) {value})
+    }
     fun writeString(vr: ValueReferences, value: StringArray): FmiStatus
 
     @JvmDefault
     fun writeBoolean(name: String, value: Boolean) = writeBoolean(getOrFindValueReference(name), value)
-    fun writeBoolean(vr: ValueReference, value: Boolean): FmiStatus
+    @JvmDefault
+    fun writeBoolean(vr: ValueReference, value: Boolean): FmiStatus {
+        return writeBoolean(intArrayOf(vr), booleanArrayOf(value))
+    }
     fun writeBoolean(vr: ValueReferences, value: BooleanArray): FmiStatus
 
     private fun getOrFindValueReference(name: String): ValueReference {
@@ -83,6 +125,7 @@ interface FmuVariableAccessor {
     private companion object {
         val cache: MutableMap<String, ValueReference> = Collections.synchronizedMap(mutableMapOf<String, ValueReference>())
             @Synchronized get
+
     }
 
 }

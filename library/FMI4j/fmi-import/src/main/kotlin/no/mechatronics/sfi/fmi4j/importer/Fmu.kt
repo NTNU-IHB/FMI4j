@@ -91,9 +91,9 @@ class Fmu private constructor(
     /**
      * Get the content of the modelDescription.xml file as a String
      */
-    val modelDescriptionXml: String by lazy {
-        modelDescriptionFile.readText()
-    }
+    val modelDescriptionXml: String
+        get() = modelDescriptionFile.readText()
+
 
     val modelDescription: ModelDescription by lazy {
         ModelDescriptionParser.parse(modelDescriptionXml)

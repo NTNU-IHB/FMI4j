@@ -27,7 +27,6 @@ package no.mechatronics.sfi.fmi4j.modeldescription.misc
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty
 import java.io.Serializable
 
-
 /**
  * Provides default settings for the integrator, such as stop time and
  * relative tolerance.

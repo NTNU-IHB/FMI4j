@@ -22,12 +22,9 @@
  * THE SOFTWARE.
  */
 
-package no.mechatronics.sfi.fmi4j.importer
+package no.mechatronics.sfi.fmi4j.importer.jni
 
 import no.mechatronics.sfi.fmi4j.common.*
-import no.mechatronics.sfi.fmi4j.importer.jni.Fmi2Library
-import no.mechatronics.sfi.fmi4j.importer.jni.IntByReference
-import no.mechatronics.sfi.fmi4j.importer.jni.LongByReference
 import no.mechatronics.sfi.fmi4j.importer.misc.ArrayBuffers
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
