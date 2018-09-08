@@ -30,7 +30,7 @@ FmuSlave slave = fmu.asCoSimulationFmu().newInstance();
 // Model Exchange is also supported:
 //
 // Solver solver = ApacheSolvers.euler(1E-3);
-// FmiSimulation slave = fmu.asModelExchangeFmu(solver).newInstance(); 
+// FmuSlave slave = fmu.asModelExchangeFmu(solver).newInstance(); 
 
 slave.init(); //throws on error
 
