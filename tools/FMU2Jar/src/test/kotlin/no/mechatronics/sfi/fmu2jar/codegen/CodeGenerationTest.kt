@@ -24,8 +24,9 @@ class CodeGenerationTest {
                 "FMI_2.0/CoSimulation/$currentOS/20sim/4.6.4.8004/" +
                         "ControlledTemperature/ControlledTemperature.fmu")
         Assertions.assertTrue(file.exists())
-        val md = ModelDescriptionParser.parse(file)
-        LOG.info( CodeGenerator(md).generateBody() )
+        ModelDescriptionParser.parse(file).also {
+            LOG.info( CodeGenerator(it).generateBody() )
+        }
 
     }
 
