@@ -14,7 +14,7 @@ import java.io.File
 @EnabledIfEnvironmentVariable(named = "TEST_FMUs", matches = ".*")
 class TestBouncingBall_ME_win64 {
 
-    companion object {
+    private companion object {
         val LOG: Logger = LoggerFactory.getLogger(TestBouncingBall_ME_win64::class.java)
     }
 

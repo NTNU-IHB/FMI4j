@@ -43,7 +43,7 @@ open class FmuPluginExtension(
 ) {
 
     var configurationName: String = "implementation"
-    var version: String = "0.9.2"
+    var version: String = "0.10.0"
 
 }
 

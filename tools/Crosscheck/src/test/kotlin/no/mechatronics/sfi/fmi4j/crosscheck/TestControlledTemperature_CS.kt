@@ -1,6 +1,6 @@
 package no.mechatronics.sfi.fmi4j.crosscheck
 
-import no.mechatronics.sfi.fmi4j.importer.misc.currentOS
+import no.mechatronics.sfi.fmi4j.common.currentOS
 import no.mechatronics.sfi.fmu2jar.TEST_FMUs
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
@@ -12,7 +12,7 @@ import java.io.File
 @EnabledIfEnvironmentVariable(named = "TEST_FMUs", matches = ".*")
 class TestControlledTemperature_CS {
 
-    companion object {
+    private companion object {
         val LOG: Logger = LoggerFactory.getLogger(TestControlledTemperature_CS::class.java)
     }
 

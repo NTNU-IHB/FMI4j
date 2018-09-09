@@ -24,18 +24,15 @@
 
 package no.mechatronics.sfi.fmi4j.codegen
 
-import no.mechatronics.sfi.fmi4j.modeldescription.CommonModelDescription
+import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescription
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.*
-import org.slf4j.LoggerFactory
 
 /**
  * @author Lars Ivar Hatledal
  */
 class CodeGenerator(
-        private val md: CommonModelDescription
+        private val md: ModelDescription
 ) {
-
-    private val LOG = LoggerFactory.getLogger(CodeGenerator::class.java)
 
     private val modelName = md.modelName
 
@@ -105,18 +102,13 @@ public class $modelName implements FmuSlave {
     }
 
     @Override
-    public CommonModelDescription getModelDescription() {
+    public ModelDescription getModelDescription() {
         return slave.getModelDescription();
     }
 
     @Override
     public ModelVariables getModelVariables() {
         return slave.getModelVariables();
-    }
-
-    @Override
-    public FmuVariableAccessor getVariableAccessor() {
-        return slave.getVariableAccessor();
     }
 
     @Override
@@ -175,8 +167,8 @@ public class $modelName implements FmuSlave {
     }
 
     @Override
-    public FmiStatus getDirectionalDerivative(int[] vUnknownRef, int[] vKnownRef, double[] dvKnown, double[] dvUnknown) {
-        return slave.getDirectionalDerivative(vUnknownRef, vKnownRef, dvKnown, dvUnknown);
+    public double[] getDirectionalDerivative(int[] vUnknownRef, int[] vKnownRef, double[] dvKnown) {
+        return slave.getDirectionalDerivative(vUnknownRef, vKnownRef, dvKnown);
     }
 
     @Override
@@ -202,6 +194,46 @@ public class $modelName implements FmuSlave {
     @Override
     public long deSerializeFMUstate(byte[] state) {
         return slave.deSerializeFMUstate(state);
+    }
+
+    @Override
+    public FmiStatus readInteger(int[] vr, int[] values) {
+        return slave.readInteger(vr, values);
+    }
+
+    @Override
+    public FmiStatus readReal(int[] vr, double[] values) {
+        return slave.readReal(vr, values);
+    }
+
+    @Override
+    public FmiStatus readString(int[] vr, String[] values) {
+        return slave.readString(vr, values);
+    }
+
+    @Override
+    public FmiStatus readBoolean(int[] vr, boolean[] values) {
+        return slave.readBoolean(vr, values);
+    }
+
+    @Override
+    public FmiStatus writeInteger(int[] vr, int[] values) {
+        return slave.writeInteger(vr, values);
+    }
+
+    @Override
+    public FmiStatus writeReal(int[] vr, double[] values) {
+        return slave.writeReal(vr, values);
+    }
+
+    @Override
+    public FmiStatus writeString(int[] vr, String[] values) {
+        return slave.writeString(vr, values);
+    }
+
+    @Override
+    public FmiStatus writeBoolean(int[] vr, boolean[] values) {
+        return slave.writeBoolean(vr, values);
     }
 
     private Locals locals;
