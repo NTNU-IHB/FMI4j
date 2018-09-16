@@ -16,7 +16,7 @@ A significant speedup compared to other FMI implementations for the JVM, such as
 
 The package consists of:
 * [A software API for interacting with FMUs](#api)
-* [A Gradle Plugin that makes it easier to progamatically work with FMUs](#plugin)
+* [A Gradle Plugin that makes it easier to programmatically work with FMUs](#plugin)
 * [A tool for wrapping an FMU as a JAR - batteries included](#fmu2jar).
 
 
