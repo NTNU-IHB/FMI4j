@@ -78,7 +78,7 @@ struct fmu_t {
 //
 //    fmi2GetDirectionalDerivativeTYPE* fmi2GetDirectionalDerivative;
 //
-    fmi2DoStepTYPE* fmi2DoStep;
+//    fmi2DoStepTYPE* fmi2DoStep;
 //    fmi2CancelStepTYPE* fmi2CancelStep;
 //    fmi2GetRealOutputDerivativesTYPE* fmi2GetRealOutputDerivatives;
 //    fmi2SetRealInputDerivativesTYPE* fmi2SetRealInputDerivatives;
@@ -512,7 +512,6 @@ JNIEXPORT jboolean JNICALL Java_no_mechatronics_sfi_fmi4j_importer_jni_Fmi2Libra
             status = dlclose(fmu->handle) == 0;
         #endif
         fmu->handle = NULL;
-        fmu->fmi2DoStep = NULL;
     }
     free(fmu);
 
