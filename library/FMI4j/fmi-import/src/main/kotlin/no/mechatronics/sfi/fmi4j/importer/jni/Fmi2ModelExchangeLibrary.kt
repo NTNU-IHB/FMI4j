@@ -28,26 +28,48 @@ class Fmi2ModelExchangeLibrary(
         libName: String
 ) : Fmi2Library(libName) {
 
-    external fun enterEventMode(c: Fmi2Component): NativeStatus
+    private external fun enterEventMode(p: Long, c: Fmi2Component): NativeStatus
 
-    external fun newDiscreteStates(c: Fmi2Component, ev: EventInfo): NativeStatus
+    private external fun newDiscreteStates(p: Long, c: Fmi2Component, ev: EventInfo): NativeStatus
 
-    external fun enterContinuousTimeMode(c: Fmi2Component): NativeStatus
+    private external fun enterContinuousTimeMode(p: Long, c: Fmi2Component): NativeStatus
 
-    external fun setContinuousStates(c: Fmi2Component, x: DoubleArray): NativeStatus
+    private external fun setContinuousStates(p: Long, c: Fmi2Component, x: DoubleArray): NativeStatus
 
-    external fun completedIntegratorStep(
-            c: Fmi2Component, noSetFMUStatePriorToCurrentPoint: Boolean,
+    private external fun completedIntegratorStep(
+            p: Long, c: Fmi2Component, noSetFMUStatePriorToCurrentPoint: Boolean,
             enterEventMode: BooleanByReference, terminateSimulation: BooleanByReference): NativeStatus
 
-    external fun setTime(c: Fmi2Component, time: Double): NativeStatus
+    private external fun setTime(p: Long, c: Fmi2Component, time: Double): NativeStatus
 
-    external fun getDerivatives(c: Fmi2Component, derivatives: DoubleArray): NativeStatus
+    private external fun getDerivatives(p: Long, c: Fmi2Component, derivatives: DoubleArray): NativeStatus
 
-    external fun getEventIndicators(c: Fmi2Component, eventIndicators: DoubleArray): NativeStatus
+    private external fun getEventIndicators(p: Long, c: Fmi2Component, eventIndicators: DoubleArray): NativeStatus
 
-    external fun getContinuousStates(c: Fmi2Component, x: DoubleArray): NativeStatus
+    private external fun getContinuousStates(p: Long, c: Fmi2Component, x: DoubleArray): NativeStatus
 
-    external fun getNominalsOfContinuousStates(c: Fmi2Component, x_nominals: DoubleArray): NativeStatus
+    private external fun getNominalsOfContinuousStates(p: Long, c: Fmi2Component, x_nominals: DoubleArray): NativeStatus
+
+    fun enterEventMode(c: Fmi2Component) = enterEventMode(p, c)
+
+    fun newDiscreteStates(c: Fmi2Component, ev: EventInfo) = newDiscreteStates(p, c, ev)
+
+    fun enterContinuousTimeMode(c: Fmi2Component) = enterContinuousTimeMode(p, c)
+
+    fun setContinuousStates(c: Fmi2Component, x: DoubleArray) = setContinuousStates(p, c, x)
+
+    fun completedIntegratorStep(
+            c: Fmi2Component, noSetFMUStatePriorToCurrentPoint: Boolean,
+            enterEventMode: BooleanByReference, terminateSimulation: BooleanByReference) = completedIntegratorStep(p, c, noSetFMUStatePriorToCurrentPoint, enterEventMode, terminateSimulation)
+
+    fun setTime(c: Fmi2Component, time: Double) = setTime(p, c, time)
+
+    fun getDerivatives(c: Fmi2Component, derivatives: DoubleArray) = getDerivatives(p, c, derivatives)
+
+    fun getEventIndicators(c: Fmi2Component, eventIndicators: DoubleArray) = getEventIndicators(p, c, eventIndicators)
+
+    fun getContinuousStates(c: Fmi2Component, x: DoubleArray) = getContinuousStates(p, c, x)
+
+    fun getNominalsOfContinuousStates(c: Fmi2Component, x_nominals: DoubleArray) = getNominalsOfContinuousStates(p, c, x_nominals)
 
 }

@@ -28,26 +28,55 @@ class Fmi2CoSimulationLibrary(
         libName: String
 ) : Fmi2Library(libName) {
 
-    external fun step(c: Fmi2Component, currentCommunicationPoint: Double,
-                      communicationStepSize: Double, noSetFMUStatePriorToCurrentPoint: Boolean): NativeStatus
+    private external fun step(p: Long, c: Fmi2Component, currentCommunicationPoint: Double,
+                              communicationStepSize: Double, noSetFMUStatePriorToCurrentPoint: Boolean): NativeStatus
 
-    external fun cancelStep(c: Fmi2Component): NativeStatus
+    private external fun cancelStep(p: Long, c: Fmi2Component): NativeStatus
 
-    external fun setRealInputDerivatives(c: Fmi2Component, vr: IntArray, order: IntArray,
-                                         value: DoubleArray): NativeStatus
+    private external fun setRealInputDerivatives(p: Long, c: Fmi2Component, vr: IntArray, order: IntArray,
+                                                 value: DoubleArray): NativeStatus
 
-    external fun getRealOutputDerivatives(c: Fmi2Component, vr: IntArray, order: IntArray,
-                                          value: DoubleArray): NativeStatus
+    private external fun getRealOutputDerivatives(p: Long, c: Fmi2Component, vr: IntArray, order: IntArray,
+                                                  value: DoubleArray): NativeStatus
 
-    external fun getStatus(c: Fmi2Component, s: Int, value: IntByReference): NativeStatus
+    private external fun getStatus(p: Long, c: Fmi2Component, s: Int, value: IntByReference): NativeStatus
 
-    external fun getIntegerStatus(c: Fmi2Component, s: Int, value: IntByReference): NativeStatus
+    private external fun getIntegerStatus(p: Long, c: Fmi2Component, s: Int, value: IntByReference): NativeStatus
 
-    external fun getRealStatus(c: Fmi2Component, s: Int, value: DoubleByReference): NativeStatus
+    private external fun getRealStatus(p: Long, c: Fmi2Component, s: Int, value: DoubleByReference): NativeStatus
 
-    external fun getStringStatus(c: Fmi2Component, s: Int, value: StringByReference): NativeStatus
+    private external fun getStringStatus(p: Long, c: Fmi2Component, s: Int, value: StringByReference): NativeStatus
 
-    external fun getBooleanStatus(c: Fmi2Component, s: Int, value: BooleanByReference): NativeStatus
+    private external fun getBooleanStatus(p: Long, c: Fmi2Component, s: Int, value: BooleanByReference): NativeStatus
 
-    external fun getMaxStepSize(c: Fmi2Component, stepSize: DoubleByReference): NativeStatus
+    private external fun getMaxStepSize(p: Long, c: Fmi2Component, stepSize: DoubleByReference): NativeStatus
+
+
+    fun step(c: Fmi2Component,
+             currentCommunicationPoint: Double,
+             communicationStepSize: Double,
+             noSetFMUStatePriorToCurrentPoint: Boolean) = step(p, c, currentCommunicationPoint, communicationStepSize, noSetFMUStatePriorToCurrentPoint)
+
+    fun cancelStep(c: Fmi2Component) = cancelStep(p, c)
+
+    fun setRealInputDerivatives(c: Fmi2Component,
+                                vr: IntArray, order: IntArray,
+                                value: DoubleArray) = setRealInputDerivatives(p, c, vr, order, value)
+
+    fun getRealOutputDerivatives(c: Fmi2Component,
+                                 vr: IntArray, order: IntArray,
+                                 value: DoubleArray) = getRealOutputDerivatives(p, c, vr, order, value)
+
+    fun getStatus(c: Fmi2Component, s: Int, value: IntByReference) = getStatus(p, c, s, value)
+
+    fun getIntegerStatus(c: Fmi2Component, s: Int, value: IntByReference) = getStatus(p, c, s, value)
+
+    fun getRealStatus(c: Fmi2Component, s: Int, value: DoubleByReference) = getRealStatus(p, c, s, value)
+
+    fun getStringStatus(c: Fmi2Component, s: Int, value: StringByReference) = getStringStatus(p, c, s, value)
+
+    fun getBooleanStatus(c: Fmi2Component, s: Int, value: BooleanByReference) = getBooleanStatus(p, c, s, value)
+
+    fun getMaxStepSize(c: Fmi2Component, stepSize: DoubleByReference) = getMaxStepSize(p, c, stepSize)
+
 }

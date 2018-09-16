@@ -73,13 +73,15 @@ abstract class Fmi2LibraryWrapper<E : Fmi2Library>(
     /**
      * @see Fmi2Library.fmi2GetTypesPlatform
      */
-    val typesPlatform: String = library.getTypesPlatform()
+    val typesPlatform: String
+        get() = library.getTypesPlatform()
 
     /**
      *
      * @see Fmi2Library.fmi2GetVersion()
      */
-    val version: String = library.getVersion()
+    val version: String
+        get() = library.getVersion()
 
 
     /**
