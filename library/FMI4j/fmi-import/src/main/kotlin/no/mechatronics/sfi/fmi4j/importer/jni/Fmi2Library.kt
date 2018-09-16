@@ -43,9 +43,7 @@ open class Fmi2Library(
         libName: String
 ) : Closeable {
 
-    protected val p = load(libName).also {
-        println("p=$it")
-    }
+    protected val p = load(libName)
     private var isClosed = false
 
     override fun close() {
