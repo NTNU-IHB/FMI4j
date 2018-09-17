@@ -25,8 +25,9 @@
 #ifndef FMU_PROXY_FMUWRAPPER_H
 #define FMU_PROXY_FMUWRAPPER_H
 
+#include <string>
+#include <memory>
 #include <fmilib.h>
-#include <JM/jm_portability.h>
 
 #ifdef __has_include
 #if __has_include(<filesystem>)
@@ -41,7 +42,6 @@ namespace fs = boost::filesystem;
 #endif
 
 using namespace std;
-
 
 struct RealRead {
     fmi2_status_t status;

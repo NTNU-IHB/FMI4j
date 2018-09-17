@@ -22,43 +22,30 @@
  * THE SOFTWARE.
  */
 
-#ifndef CPP_FMIHELPER_H
-#define CPP_FMIHELPER_H
-
 #include <iostream>
-#include <fmilib.h>
+#include <fmi/FmuWrapper.hpp>
 
+#include "benchmark_util.hpp"
 
-void import_logger(jm_callbacks *c, jm_string module, jm_log_level_enu_t log_level, jm_string message) {
-    printf("module = %s, log level = %s: %s\n", module, jm_log_level_to_string(log_level), message);
-}
+using namespace std;
 
-jm_callbacks create_callbacks(jm_log_level_enu_t log_level = jm_log_level_debug) {
-    jm_callbacks callbacks;
-    callbacks.malloc = std::malloc;
-    callbacks.calloc = std::calloc;
-    callbacks.realloc = std::realloc;
-    callbacks.free = std::free;
-    callbacks.logger = import_logger;
-    callbacks.log_level = log_level;
-    callbacks.context = nullptr;
-    return callbacks;
-}
+int main() {
 
-fmi2_import_t *load_model_description(string tmp_path, fmi_xml_context_t *ctx, jm_callbacks callbacks) {
-
-    fmi2_import_t *xml = fmi2_import_parse_xml(ctx, tmp_path.c_str(), nullptr);
-
-    if (!xml) {
-        throw std::runtime_error("Error parsing XML, exiting");
+    const char* TEST_FMUs = getenv("TEST_FMUs");
+    if (!TEST_FMUs) {
+        cout << "No env variable 'TEST_FMUs' pointing to the location of the FMI test FMUs" << endl;
+        return -1;
     }
 
-    if (fmi2_import_get_fmu_kind(xml) == fmi2_fmu_kind_me) {
-        throw std::runtime_error("Only CS 2.0 is supported by this code");
-    }
+    string fmu_path = string(TEST_FMUs) + "/FMI_2.0/CoSimulation/" + getOs()
+                      + "/20sim/4.6.4.8004/ControlledTemperature/ControlledTemperature.fmu";
 
-    return xml;
+    FmuWrapper fmu = FmuWrapper(fmu_path);
+    shared_ptr<FmuInstance> instance = fmu.newInstance();
 
+    double stop = 10;
+    double step_size = 1E-4;
+    runInstance(instance, stop, step_size, 46);
+
+    return 0;
 }
-
-#endif //CPP_FMIHELPER_H

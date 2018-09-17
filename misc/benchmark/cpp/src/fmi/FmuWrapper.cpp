@@ -24,8 +24,8 @@
 
 #include <iostream>
 
-#include "FmuWrapper.h"
-#include "FmiHelper.h"
+#include <fmi/FmiHelper.hpp>
+#include <fmi/FmuWrapper.hpp>
 
 #define RELTOL 1E-4
 

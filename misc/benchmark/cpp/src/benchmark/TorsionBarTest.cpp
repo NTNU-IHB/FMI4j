@@ -23,50 +23,11 @@
  */
 
 #include <iostream>
-#include <ctime>
-#include <memory>
+#include <fmi/FmuWrapper.hpp>
 
-#include "FmuWrapper.h"
+#include "benchmark_util.hpp"
 
 using namespace std;
-
-string getOs() {
-#ifdef _WIN32
-    return "win32";
-#elif _WIN64
-    return "win64";
-#elif __linux__
-    return "linux64";
-#endif
-}
-
-bool runInstance(shared_ptr<FmuInstance> instance, double stop, double step_size, int vr) {
-    instance->init();
-
-    clock_t begin = clock();
-
-    RealRead read;
-    while (instance->getCurrentTime() <= stop - step_size) {
-        fmi2_status_t status = instance->step(step_size);
-
-        if (status != fmi2_status_ok) {
-            return false;
-        }
-
-        instance->getReal(vr, read);
-
-    }
-
-    clock_t end = clock();
-
-    long elapsed_secs = (long) ((double(end-begin) / CLOCKS_PER_SEC) * 1000.0);
-    cout << "elapsed=" << elapsed_secs << "ms" << endl;
-
-    instance->terminate();
-
-    return true;
-
-}
 
 int main() {
 
@@ -77,8 +38,7 @@ int main() {
     }
 
     string fmu_path = string(TEST_FMUs) + "/FMI_2.0/CoSimulation/" + getOs()
-            + "/20sim/4.6.4.8004/TorsionBar/TorsionBar.fmu";
-    cout << "fmu_path=" << fmu_path << endl;
+                      + "/20sim/4.6.4.8004/TorsionBar/TorsionBar.fmu";
 
     FmuWrapper fmu = FmuWrapper(fmu_path);
     shared_ptr<FmuInstance> instance = fmu.newInstance();
