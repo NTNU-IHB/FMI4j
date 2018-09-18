@@ -28,20 +28,11 @@
 #include <string>
 #include <memory>
 #include <fmilib.h>
+#include <experimental/filesystem>
 
-#ifdef __has_include
-#if __has_include(<filesystem>)
-#include <filesystem>
-namespace fs = std::filesystem;
-#elif __has_include(<boost/filesystem.hpp>)
-#include <boost/filesystem.hpp>
-namespace fs = boost::filesystem;
-#else
-#error "missing filesystem"
-#endif
-#endif
 
 using namespace std;
+namespace fs = std::experimental::filesystem;
 
 struct RealRead {
     fmi2_status_t status;

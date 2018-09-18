@@ -6,9 +6,9 @@ add_library(fmi
         ../include/fmi/FmiHelper.hpp
         ../include/fmi/FmuWrapper.hpp)
 target_include_directories(fmi PUBLIC ${FMILIB_INCLUDE_DIRS})
-target_link_libraries(fmi Boost::system Boost::filesystem ${FMILIB_LIBRARIES})
+target_link_libraries(fmi ${FMILIB_LIBRARIES})
 if (UNIX)
-    target_link_libraries(fmi dl)
+    target_link_libraries(fmi dl stdc++fs)
 endif()
 
 add_executable(TorsionBarTest

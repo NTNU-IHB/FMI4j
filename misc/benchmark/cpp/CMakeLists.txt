@@ -18,7 +18,4 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
 find_package(FMILIB REQUIRED)
 
-find_package(Boost 1.65 COMPONENTS filesystem system REQUIRED)
-include_directories(${Boost_INCLUDE_DIRS})
-
 add_subdirectory(src)
