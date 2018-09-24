@@ -69,7 +69,7 @@ class Fmi2CoSimulationLibrary(
 
     fun getStatus(c: Fmi2Component, s: Int, value: IntByReference) = getStatus(p, c, s, value)
 
-    fun getIntegerStatus(c: Fmi2Component, s: Int, value: IntByReference) = getStatus(p, c, s, value)
+    fun getIntegerStatus(c: Fmi2Component, s: Int, value: IntByReference) = getIntegerStatus(p, c, s, value)
 
     fun getRealStatus(c: Fmi2Component, s: Int, value: DoubleByReference) = getRealStatus(p, c, s, value)
 
