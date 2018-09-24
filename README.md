@@ -8,11 +8,11 @@
 
 FMI4j is a software package for dealing with Functional Mock-up Units (FMUs) on the Java Virtual Machine (JVM), written in [Kotlin](https://kotlinlang.org/). 
 
-FMI4j supports [FMI](http://fmi-standard.org/) 2.0 for **Model Exchange** and **Co-simulation**.
+FMI4j supports [FMI](http://fmi-standard.org/) 2.0 for **Model Exchange** and **Co-simulation**. <br/>
 For Model Exchange, solvers from [Apache Commons Math](http://commons.apache.org/proper/commons-math/userguide/ode.html) can be used.
 
-Compared to other FMI libraries targeting the JVM, FMI4j is considerable faster due to the fact that we use JNI with manually optimized C-code instead of JNA or SWIG generated bindings. 
-A significant speedup compared to other FMI implementations for the JVM, such as JFMI and JavaFMI, should be expected. 
+Compared to other FMI libraries targeting the JVM, FMI4j is **considerably faster** due to the fact that we use JNI with manually optimized C-code instead of JNA or SWIG generated bindings. 
+A significant speedup (2-5x) compared to other FMI implementations for the JVM, such as JFMI and JavaFMI, should be expected. 
 
 The package consists of:
 * [A software API for interacting with FMUs](#api)
