@@ -83,11 +83,10 @@ model {
 
             binaries.all {
 
+                cppCompiler.args "-I${org.gradle.internal.jvm.Jvm.current().javaHome}/include"
                 if (Os.isFamily(Os.FAMILY_UNIX)) {
-                    cppCompiler.args '-I', "${org.gradle.internal.jvm.Jvm.current().javaHome}/include"
-                    cppCompiler.args '-I', "${org.gradle.internal.jvm.Jvm.current().javaHome}/include/linux"
+                    cppCompiler.args "-I${org.gradle.internal.jvm.Jvm.current().javaHome}/include/linux"
                 } else if (Os.isFamily(Os.FAMILY_WINDOWS)) {
-                    cppCompiler.args "-I${org.gradle.internal.jvm.Jvm.current().javaHome}/include"
                     cppCompiler.args "-I${org.gradle.internal.jvm.Jvm.current().javaHome}/include/win32"
                 }
                 cppCompiler.args "-fpermissive"
