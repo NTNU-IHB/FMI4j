@@ -57,6 +57,7 @@ model {
     }
 
     toolChains {
+        visualCpp(VisualCpp) {}
         gcc(Gcc) {
             if (Os.isFamily(Os.FAMILY_UNIX)) {
                 target("linux32")
@@ -66,10 +67,11 @@ model {
                 target("win64")
             }
         }
+
     }
 
     components {
-        fmi(NativeLibrarySpec) {
+        fmi2(NativeLibrarySpec) {
 
             baseName = "fmi2_jni"
 
@@ -89,7 +91,6 @@ model {
                 } else if (Os.isFamily(Os.FAMILY_WINDOWS)) {
                     cppCompiler.args "-I${org.gradle.internal.jvm.Jvm.current().javaHome}/include/win32"
                 }
-                cppCompiler.args "-fpermissive"
 
             }
 
@@ -102,7 +103,8 @@ model {
             dependsOn $.binaries.findAll { it.buildable }
         }
         copyNativeLibs(Copy) {
-            from "$buildDir/libs/fmi/shared"
+            from "$buildDir/libs/fmi2/shared"
+            include "**/*.dll", "**/*.so"
             into "$projectDir/src/main/resources/native/fmi2"
             dependsOn buildAllExecutables
         }
