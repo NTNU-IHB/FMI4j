@@ -11,7 +11,7 @@ def group = "no.mechatronics.sfi.fmu2jar"
 mainClassName = "${group}.Fmu2Jar"
 
 def fmi4j_snapshot = false
-def fmi4j_version = !fmi4j_snapshot ? '0.10.0' : '0.10.0-SNAPSHOT'
+def fmi4j_version = !fmi4j_snapshot ? '0.10.1' : 'dev-SNAPSHOT'
 
 repositories {
     mavenCentral()
