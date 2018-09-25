@@ -39,7 +39,7 @@ dependencies {
     compile group: 'org.slf4j', name: 'slf4j-api', version: slf4j_version
     runtime group: 'org.slf4j', name: 'slf4j-log4j12', version: slf4j_version
 
-    def junit_version = '5.2.0'
+    def junit_version = '5.3.1'
     testCompile("org.junit.jupiter:junit-jupiter-api:$junit_version")
     testCompile("org.junit.jupiter:junit-jupiter-params:$junit_version")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junit_version")
