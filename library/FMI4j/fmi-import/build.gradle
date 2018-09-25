@@ -2,7 +2,7 @@
 import org.apache.tools.ant.taskdefs.condition.Os
 
 plugins {
-    id "c"
+    id "cpp"
     id "com.github.johnrengelman.shadow" version "2.0.3"
 }
 
@@ -83,13 +83,13 @@ model {
 
             binaries.all {
 
+                cppCompiler.args "-I${org.gradle.internal.jvm.Jvm.current().javaHome}/include"
                 if (Os.isFamily(Os.FAMILY_UNIX)) {
-                    cCompiler.args '-I', "${org.gradle.internal.jvm.Jvm.current().javaHome}/include"
-                    cCompiler.args '-I', "${org.gradle.internal.jvm.Jvm.current().javaHome}/include/linux"
+                    cppCompiler.args "-I${org.gradle.internal.jvm.Jvm.current().javaHome}/include/linux"
                 } else if (Os.isFamily(Os.FAMILY_WINDOWS)) {
-                    cCompiler.args "-I${org.gradle.internal.jvm.Jvm.current().javaHome}/include"
-                    cCompiler.args "-I${org.gradle.internal.jvm.Jvm.current().javaHome}/include/win32"
+                    cppCompiler.args "-I${org.gradle.internal.jvm.Jvm.current().javaHome}/include/win32"
                 }
+                cppCompiler.args "-fpermissive"
 
             }
 
