@@ -62,14 +62,6 @@ namespace {
 #endif
     }
 
-//    const fmi2Integer* convert(jint* data, int size) {
-//        fmi2Integer* result = ;
-//        for (int i = 0; i < size; i++) {
-//            result[i] = data[i];
-//        }
-//        return const_cast<fmi2Integer>(result);
-//    }
-    
     const char* status_to_string(fmi2Status status) {
         switch (status){
             case 0: return "OK";
