@@ -167,13 +167,17 @@ interface ModelDescription {
      */
     val supportsModelExchange: Boolean
 
-    fun asModelExchangeModelDescription(): ModelExchangeModelDescription
-
     /**
      * Does this FMU implement Co-Simulation.
      * That is, does the modelDescription.xml contain the <CoSimulation></CoSimulation> xml node?
      */
     val supportsCoSimulation: Boolean
+
+}
+
+interface ModelDescriptionProvider: ModelDescription {
+
+    fun asModelExchangeModelDescription(): ModelExchangeModelDescription
 
     fun asCoSimulationModelDescription(): CoSimulationModelDescription
 

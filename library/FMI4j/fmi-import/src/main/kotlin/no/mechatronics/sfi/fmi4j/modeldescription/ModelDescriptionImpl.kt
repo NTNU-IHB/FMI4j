@@ -109,7 +109,7 @@ class ModelDescriptionImpl(
         val numberOfEventIndicators: Int = 0
 
 
-) : ModelDescription, Serializable {
+) : ModelDescriptionProvider, Serializable {
 
     @Transient
     private var _modelExchangeModelDescription: ModelExchangeModelDescription? = null

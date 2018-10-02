@@ -24,12 +24,14 @@
 
 package no.mechatronics.sfi.fmi4j.common
 
+import no.mechatronics.sfi.fmi4j.modeldescription.cs.CoSimulationModelDescription
+
 /**
  * Slave interface
  *
  * @author Lars Ivar Hatledal
  */
-interface FmuSlave : FmuInstance {
+interface FmuSlave<out E: CoSimulationModelDescription> : FmuInstance<E> {
 
     /**
      * Step simulation forward in time

@@ -29,8 +29,8 @@ import com.fasterxml.jackson.dataformat.xml.JacksonXmlModule
 import com.fasterxml.jackson.dataformat.xml.XmlMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.readValue
-import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescription
 import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescriptionImpl
+import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescriptionProvider
 import java.io.File
 import java.io.FileInputStream
 import java.io.InputStream
@@ -55,22 +55,22 @@ object ModelDescriptionParser {
     }
 
     @JvmStatic
-    fun parse(url: URL): ModelDescription {
+    fun parse(url: URL): ModelDescriptionProvider {
         return parse(url.openStream())
     }
 
     @JvmStatic
-    fun parse(file: File): ModelDescription {
+    fun parse(file: File): ModelDescriptionProvider {
         return parse(FileInputStream(file))
     }
 
     @JvmStatic
-    fun parse(xml: String): ModelDescription {
+    fun parse(xml: String): ModelDescriptionProvider {
         return mapper.readValue<ModelDescriptionImpl>(xml)
     }
 
     @JvmStatic
-    private fun parse(stream: InputStream): ModelDescription {
+    private fun parse(stream: InputStream): ModelDescriptionProvider {
         return parse(extractModelDescriptionXml(stream))
     }
 

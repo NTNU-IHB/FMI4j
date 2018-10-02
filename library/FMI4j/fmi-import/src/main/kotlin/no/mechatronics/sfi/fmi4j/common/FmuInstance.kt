@@ -24,7 +24,6 @@
 
 package no.mechatronics.sfi.fmi4j.common
 
-import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescription
 import no.mechatronics.sfi.fmi4j.modeldescription.SpecificModelDescription
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.ModelVariables
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.TypedScalarVariable
@@ -32,12 +31,8 @@ import java.io.Closeable
 
 typealias FmuState = Long
 
-/**
- * Represents a generic FMU instance
- *
- * @author Lars Ivar Hatledal
- */
-interface FmuInstance : FmuVariableAccessor, Closeable {
+interface SimpleFmuInstance : FmuVariableAccessor, Closeable {
+
 
     /**
      * Has init been called?
@@ -66,7 +61,7 @@ interface FmuInstance : FmuVariableAccessor, Closeable {
     val providesDirectionalDerivative: Boolean
 
 
-    val modelDescription: ModelDescription
+    val modelDescription: SpecificModelDescription
 
     /**
      * @see SpecificModelDescription.modelVariables
@@ -146,5 +141,16 @@ interface FmuInstance : FmuVariableAccessor, Closeable {
     override fun getVariableByName(name: String): TypedScalarVariable<*> {
         return modelVariables.getByName(name)
     }
+
+}
+
+/**
+ * Represents a generic FMU instance
+ *
+ * @author Lars Ivar Hatledal
+ */
+interface FmuInstance<out E: SpecificModelDescription> : SimpleFmuInstance {
+
+    override val modelDescription: E
 
 }

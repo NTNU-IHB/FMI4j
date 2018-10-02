@@ -25,8 +25,11 @@
 package no.mechatronics.sfi.fmi4j.importer.me
 
 import no.mechatronics.sfi.fmi4j.common.FmiStatus
-import no.mechatronics.sfi.fmi4j.common.FmuInstance
 import no.mechatronics.sfi.fmi4j.common.FmuSlave
+import no.mechatronics.sfi.fmi4j.common.SimpleFmuInstance
+import no.mechatronics.sfi.fmi4j.modeldescription.SpecificModelDescription
+import no.mechatronics.sfi.fmi4j.modeldescription.cs.CoSimulationModelDescription
+import no.mechatronics.sfi.fmi4j.modeldescription.me.ModelExchangeModelDescription
 import no.mechatronics.sfi.fmi4j.solvers.Equations
 import no.mechatronics.sfi.fmi4j.solvers.Solver
 import org.slf4j.Logger
@@ -43,7 +46,7 @@ private const val EPS = 1E-13
 class ModelExchangeFmuStepper internal constructor(
         private val fmuInstance: ModelExchangeInstance,
         private val solver: Solver
-) : FmuSlave, FmuInstance by fmuInstance {
+) : FmuSlave<CoSimulationModelDescription>, SimpleFmuInstance by fmuInstance {
 
     private val x: DoubleArray
     private val dx: DoubleArray
@@ -52,13 +55,14 @@ class ModelExchangeFmuStepper internal constructor(
     private val z: DoubleArray
     private val pz: DoubleArray
 
-    override val modelDescription
-        get() = fmuInstance.modelDescription
+    override val modelDescription: CoSimulationModelDescription by lazy {
+        CoSimulationModelDescriptionWrapper(fmuInstance.modelDescription)
+    }
 
     init {
 
         val numberOfContinuousStates = modelDescription.numberOfContinuousStates
-        val numberOfEventIndicators = modelDescription.numberOfEventIndicators
+        val numberOfEventIndicators = fmuInstance.modelDescription.numberOfEventIndicators
 
         this.x = DoubleArray(numberOfContinuousStates)
         this.nominalStates = DoubleArray(numberOfContinuousStates)
@@ -163,7 +167,7 @@ class ModelExchangeFmuStepper internal constructor(
             }
 
             var enterEventMode = false
-            if (!modelDescription.completedIntegratorStepNotNeeded) {
+            if (!fmuInstance.modelDescription.completedIntegratorStepNotNeeded) {
                 val completedIntegratorStep = fmuInstance.completedIntegratorStep()
                 if (completedIntegratorStep.terminateSimulation) {
                     LOG.debug("completedIntegratorStep.terminateSimulation returned true. Terminating FMU...")
@@ -228,4 +232,18 @@ class ModelExchangeFmuStepper internal constructor(
         val LOG: Logger = LoggerFactory.getLogger(ModelExchangeFmuStepper::class.java)
     }
 
+}
+
+class CoSimulationModelDescriptionWrapper(
+        md: ModelExchangeModelDescription
+): SpecificModelDescription by md, CoSimulationModelDescription {
+
+    override val maxOutputDerivativeOrder: Int
+        get() = 0
+    override val canHandleVariableCommunicationStepSize: Boolean
+        get() = true
+    override val canInterpolateInputs: Boolean
+        get() = false
+    override val canRunAsynchronuously: Boolean
+        get() = false
 }

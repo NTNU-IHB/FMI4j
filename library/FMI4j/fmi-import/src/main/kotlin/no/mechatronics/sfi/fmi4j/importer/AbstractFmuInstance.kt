@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory
 abstract class AbstractFmuInstance<out E : SpecificModelDescription, out T : Fmi2LibraryWrapper<*>> internal constructor(
         override val modelDescription: E,
         val wrapper: T
-) : FmuInstance {
+) : FmuInstance<E> {
 
     init {
         modelVariables.forEach { variable ->

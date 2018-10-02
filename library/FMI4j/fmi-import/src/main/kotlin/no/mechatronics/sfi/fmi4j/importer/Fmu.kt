@@ -31,6 +31,7 @@ import no.mechatronics.sfi.fmi4j.importer.me.ModelExchangeInstanceBuilder
 import no.mechatronics.sfi.fmi4j.importer.misc.FmiType
 import no.mechatronics.sfi.fmi4j.importer.misc.extractTo
 import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescription
+import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescriptionProvider
 import no.mechatronics.sfi.fmi4j.modeldescription.SpecificModelDescription
 import no.mechatronics.sfi.fmi4j.modeldescription.parser.ModelDescriptionParser
 import org.slf4j.Logger
@@ -94,8 +95,7 @@ class Fmu private constructor(
     val modelDescriptionXml: String
         get() = modelDescriptionFile.readText()
 
-
-    val modelDescription: ModelDescription by lazy {
+    val modelDescription: ModelDescriptionProvider by lazy {
         ModelDescriptionParser.parse(modelDescriptionXml)
     }
 
@@ -105,20 +105,9 @@ class Fmu private constructor(
     private val modelDescriptionFile: File
         get() = File(fmuFile, MODEL_DESC)
 
-    val libraryFolderPath: String
-        get() = File(fmuFile, BINARIES_FOLDER + File.separator
-                + libraryFolderName + platformBitness).absolutePath
-
     private val resourcesPath: String
         get() = "file:///${File(fmuFile, RESOURCES_FOLDER)
                 .absolutePath.replace("\\", "/")}"
-
-    /**
-     * Get the name of the native library on the form "name.extension"
-     */
-    fun getLibraryName(modelIdentifier: String): String {
-        return "$modelIdentifier$libraryExtension"
-    }
 
     /**
      * Get the absolute name of the native library on the form "C://folder/name.extension"
