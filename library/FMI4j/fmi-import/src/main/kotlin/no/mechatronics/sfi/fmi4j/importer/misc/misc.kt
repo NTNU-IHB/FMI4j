@@ -24,6 +24,8 @@
 
 package no.mechatronics.sfi.fmi4j.importer.misc
 
+import no.mechatronics.sfi.fmi4j.common.ValueReferences
+
 /**
  * @author Lars Ivar Hatledal
  */
@@ -42,7 +44,7 @@ internal enum class FmiType(
  */
 internal class ArrayBuffers {
 
-    val vr = IntArray(1)
+    val vr = ValueReferences(1)
     val iv = IntArray(1)
     val rv = DoubleArray(1)
     val bv = BooleanArray(1)

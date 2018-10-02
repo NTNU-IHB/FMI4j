@@ -24,6 +24,7 @@
 
 package no.mechatronics.sfi.fmi4j.importer.jni
 
+import no.mechatronics.sfi.fmi4j.common.ValueReferences
 import no.mechatronics.sfi.fmi4j.common.currentOS
 import no.mechatronics.sfi.fmi4j.common.libExtension
 import no.mechatronics.sfi.fmi4j.common.libPrefix
@@ -96,16 +97,16 @@ open class Fmi2Library(
                                                   dvKnown: DoubleArray, dvUnknown: DoubleArray): NativeStatus
 
 
-    private external fun getInteger(p: Long, c: Fmi2Component, vr: IntArray, ref: IntArray): NativeStatus
-    private external fun getReal(p: Long, c: Fmi2Component, vr: IntArray, ref: DoubleArray): NativeStatus
-    private external fun getString(p: Long, c: Fmi2Component, vr: IntArray, ref: Array<String>): NativeStatus
-    private external fun getBoolean(p: Long, c: Fmi2Component, vr: IntArray, ref: BooleanArray): NativeStatus
+    private external fun getInteger(p: Long, c: Fmi2Component, vr: ValueReferences, ref: IntArray): NativeStatus
+    private external fun getReal(p: Long, c: Fmi2Component, vr: ValueReferences, ref: DoubleArray): NativeStatus
+    private external fun getString(p: Long, c: Fmi2Component, vr: ValueReferences, ref: Array<String>): NativeStatus
+    private external fun getBoolean(p: Long, c: Fmi2Component, vr: ValueReferences, ref: BooleanArray): NativeStatus
 
 
-    private external fun setInteger(p: Long, c: Fmi2Component, vr: IntArray, values: IntArray): NativeStatus
-    private external fun setReal(p: Long, c: Fmi2Component, vr: IntArray, values: DoubleArray): NativeStatus
-    private external fun setString(p: Long, c: Fmi2Component, vr: IntArray, values: Array<String>): NativeStatus
-    private external fun setBoolean(p: Long, c: Fmi2Component, vr: IntArray, values: BooleanArray): NativeStatus
+    private external fun setInteger(p: Long, c: Fmi2Component, vr: ValueReferences, values: IntArray): NativeStatus
+    private external fun setReal(p: Long, c: Fmi2Component, vr: ValueReferences, values: DoubleArray): NativeStatus
+    private external fun setString(p: Long, c: Fmi2Component, vr: ValueReferences, values: Array<String>): NativeStatus
+    private external fun setBoolean(p: Long, c: Fmi2Component, vr: ValueReferences, values: BooleanArray): NativeStatus
 
 
     private external fun getFMUstate(p: Long, c: Fmi2Component, state: LongByReference): NativeStatus
@@ -153,16 +154,16 @@ open class Fmi2Library(
                                  vKnownRef: IntArray, dvKnown: DoubleArray, dvUnknown: DoubleArray) = getDirectionalDerivative(p, c, vUnknown_ref, vKnownRef, dvKnown, dvUnknown)
 
 
-    fun getInteger(c: Fmi2Component, vr: IntArray, ref: IntArray) = getInteger(p, c, vr, ref)
-    fun getReal(c: Fmi2Component, vr: IntArray, ref: DoubleArray) = getReal(p, c, vr, ref)
-    fun getString(c: Fmi2Component, vr: IntArray, ref: Array<String>) = getString(p, c, vr, ref)
-    fun getBoolean(c: Fmi2Component, vr: IntArray, ref: BooleanArray) = getBoolean(p, c, vr, ref)
+    fun getInteger(c: Fmi2Component, vr: ValueReferences, ref: IntArray) = getInteger(p, c, vr, ref)
+    fun getReal(c: Fmi2Component, vr: ValueReferences, ref: DoubleArray) = getReal(p, c, vr, ref)
+    fun getString(c: Fmi2Component, vr: ValueReferences, ref: Array<String>) = getString(p, c, vr, ref)
+    fun getBoolean(c: Fmi2Component, vr: ValueReferences, ref: BooleanArray) = getBoolean(p, c, vr, ref)
 
 
-    fun setInteger(c: Fmi2Component, vr: IntArray, values: IntArray) = setInteger(p, c, vr, values)
-    fun setReal(c: Fmi2Component, vr: IntArray, values: DoubleArray) = setReal(p, c, vr, values)
-    fun setString(c: Fmi2Component, vr: IntArray, values: Array<String>) = setString(p, c, vr, values)
-    fun setBoolean(c: Fmi2Component, vr: IntArray, values: BooleanArray) = setBoolean(p, c, vr, values)
+    fun setInteger(c: Fmi2Component, vr: ValueReferences, values: IntArray) = setInteger(p, c, vr, values)
+    fun setReal(c: Fmi2Component, vr: ValueReferences, values: DoubleArray) = setReal(p, c, vr, values)
+    fun setString(c: Fmi2Component, vr: ValueReferences, values: Array<String>) = setString(p, c, vr, values)
+    fun setBoolean(c: Fmi2Component, vr: ValueReferences, values: BooleanArray) = setBoolean(p, c, vr, values)
 
 
     fun getFMUstate(c: Fmi2Component, state: LongByReference) = getFMUstate(p, c, state)

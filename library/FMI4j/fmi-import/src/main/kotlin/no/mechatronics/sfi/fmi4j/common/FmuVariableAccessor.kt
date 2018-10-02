@@ -40,7 +40,7 @@ interface FmuVariableAccessor {
     fun readInteger(name: String) = readInteger(getOrFindValueReference(name))
     @JvmDefault
     fun readInteger(vr: ValueReference): FmuIntegerRead {
-        val vr = intArrayOf(vr)
+        val vr = longArrayOf(vr)
         val values = IntArray(1)
         return readInteger(vr, values).let {
             FmuIntegerRead(values[0], it)
@@ -52,7 +52,7 @@ interface FmuVariableAccessor {
     fun readReal(name: String) = readReal(getOrFindValueReference(name))
     @JvmDefault
     fun readReal(vr: ValueReference): FmuRealRead {
-        val vr = intArrayOf(vr)
+        val vr = longArrayOf(vr)
         val values = RealArray(1)
         return readReal(vr, values).let {
             FmuRealRead(values[0], it)
@@ -64,7 +64,7 @@ interface FmuVariableAccessor {
     fun readString(name: String) = readString(getOrFindValueReference(name))
     @JvmDefault
     fun readString(vr: ValueReference): FmuStringRead {
-        val vr = intArrayOf(vr)
+        val vr = longArrayOf(vr)
         val values = StringArray(1) {""}
         return readString(vr, values).let {
             FmuStringRead(values[0], it)
@@ -76,7 +76,7 @@ interface FmuVariableAccessor {
     fun readBoolean(name: String) = readBoolean(getOrFindValueReference(name))
     @JvmDefault
     fun readBoolean(vr: ValueReference): FmuBooleanRead {
-        val vr = intArrayOf(vr)
+        val vr = longArrayOf(vr)
         val values = BooleanArray(1)
         return readBoolean(vr, values).let {
             FmuBooleanRead(values[0], it)
@@ -88,7 +88,7 @@ interface FmuVariableAccessor {
     fun writeInteger(name: String, value: Int) = writeInteger(getOrFindValueReference(name), value)
     @JvmDefault
     fun writeInteger(vr: ValueReference, value: Int): FmiStatus {
-        return writeInteger(intArrayOf(vr), intArrayOf(value))
+        return writeInteger(longArrayOf(vr), intArrayOf(value))
     }
     fun writeInteger(vr: ValueReferences, value: IntArray): FmiStatus
 
@@ -96,7 +96,7 @@ interface FmuVariableAccessor {
     fun writeReal(name: String, value: Real) = writeReal(getOrFindValueReference(name), value)
     @JvmDefault
     fun writeReal(vr: ValueReference, value: Real): FmiStatus {
-        return writeReal(intArrayOf(vr), doubleArrayOf(value))
+        return writeReal(longArrayOf(vr), doubleArrayOf(value))
     }
     fun writeReal(vr: ValueReferences, value: RealArray): FmiStatus
 
@@ -104,7 +104,7 @@ interface FmuVariableAccessor {
     fun writeString(name: String, value: String) = writeString(getOrFindValueReference(name), value)
     @JvmDefault
     fun writeString(vr: ValueReference, value: String): FmiStatus {
-        return writeString(intArrayOf(vr), StringArray(1) {value})
+        return writeString(longArrayOf(vr), StringArray(1) {value})
     }
     fun writeString(vr: ValueReferences, value: StringArray): FmiStatus
 
@@ -112,7 +112,7 @@ interface FmuVariableAccessor {
     fun writeBoolean(name: String, value: Boolean) = writeBoolean(getOrFindValueReference(name), value)
     @JvmDefault
     fun writeBoolean(vr: ValueReference, value: Boolean): FmiStatus {
-        return writeBoolean(intArrayOf(vr), booleanArrayOf(value))
+        return writeBoolean(longArrayOf(vr), booleanArrayOf(value))
     }
     fun writeBoolean(vr: ValueReferences, value: BooleanArray): FmiStatus
 

@@ -14,7 +14,7 @@ data class TestOptions(
         val fmuPath: String,
         val stepSize: Double,
         val stopTime: Double,
-        val vr: Int
+        val vr: Long
 ) {
 
     val fmuName = File(fmuPath).nameWithoutExtension
@@ -108,7 +108,7 @@ object Benchmark {
 
             Simulation(option.fmuPath).apply {
 
-                val h = read(modelDescription.getModelVariable(option.vr).name)
+                val h = read(modelDescription.getModelVariable(option.vr.toInt()).name)
                 init(0.0, option.stopTime)
 
                 var j = 0

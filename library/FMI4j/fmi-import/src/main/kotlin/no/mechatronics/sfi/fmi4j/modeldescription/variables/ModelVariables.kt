@@ -28,6 +28,8 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement
 import no.mechatronics.sfi.fmi4j.common.StringArray
+import no.mechatronics.sfi.fmi4j.common.ValueReference
+import no.mechatronics.sfi.fmi4j.common.ValueReferences
 import java.io.Serializable
 
 /**
@@ -67,7 +69,7 @@ interface ModelVariables : Iterable<TypedScalarVariable<*>> {
      *
      * @param valueReference
      */
-    fun isValidValueReference(valueReference: Int): Boolean {
+    fun isValidValueReference(valueReference: ValueReference): Boolean {
         return valueReference in map { it.valueReference }
     }
 
@@ -77,7 +79,7 @@ interface ModelVariables : Iterable<TypedScalarVariable<*>> {
      * @name name
      * @throws IllegalArgumentException if there is no variable with the provided name
      */
-    fun getValueReference(name: String): Int {
+    fun getValueReference(name: String): ValueReference {
         return firstOrNull { it.name == name }?.valueReference
                 ?: throw IllegalArgumentException("No variable with name '$name'")
     }
@@ -86,8 +88,8 @@ interface ModelVariables : Iterable<TypedScalarVariable<*>> {
      * Get a list of value references matching the provided names
      * @throws IllegalArgumentException if a name is provided that does not match a variable
      */
-    fun getValueReferences(names: StringArray): List<Int> {
-        return names.map { getValueReference(it) }
+    fun getValueReferences(names: StringArray): ValueReferences {
+        return names.map { getValueReference(it) }.toLongArray()
     }
 
     /**
@@ -96,7 +98,7 @@ interface ModelVariables : Iterable<TypedScalarVariable<*>> {
      * @vr valueReference
      * @throws IllegalArgumentException if there are no variables with the provided value reference
      */
-    fun getByValueReference(vr: Int): List<TypedScalarVariable<*>> {
+    fun getByValueReference(vr: ValueReference): List<TypedScalarVariable<*>> {
         return filter { it.valueReference == vr }
     }
 

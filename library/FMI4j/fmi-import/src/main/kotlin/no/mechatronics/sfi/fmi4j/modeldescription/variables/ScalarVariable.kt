@@ -50,7 +50,7 @@ interface ScalarVariable {
      * exception of categories that have identical values (such categories are also called “alias”
      * categories). This attribute is “required”.
      */
-    val valueReference: Int
+    val valueReference: Long
 
     /**
      * If present, name of type defined with TypeDefinitions / SimpleType. The value
@@ -102,7 +102,7 @@ class ScalarVariableImpl(
         override val name: String,
 
         @JacksonXmlProperty
-        override val valueReference: Int,
+        override val valueReference: Long,
 
         @JacksonXmlProperty
         override val declaredType: String? = null,

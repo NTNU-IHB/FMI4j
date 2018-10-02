@@ -39,9 +39,9 @@ sealed class ScalarVariableVector<out E : TypedScalarVariable<*>> constructor(
 
     operator fun get(index: Int) = variables[index]
 
-    protected val vr: IntArray = variables.map {
+    protected val vr: ValueReferences = variables.map {
         it.valueReference
-    }.toIntArray()
+    }.toLongArray()
 
 }
 
