@@ -30,7 +30,6 @@ import no.mechatronics.sfi.fmi4j.importer.jni.Fmi2Library
 import no.mechatronics.sfi.fmi4j.importer.me.ModelExchangeInstanceBuilder
 import no.mechatronics.sfi.fmi4j.importer.misc.FmiType
 import no.mechatronics.sfi.fmi4j.importer.misc.extractTo
-import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescription
 import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescriptionProvider
 import no.mechatronics.sfi.fmi4j.modeldescription.SpecificModelDescription
 import no.mechatronics.sfi.fmi4j.modeldescription.parser.ModelDescriptionParser
@@ -42,20 +41,6 @@ import java.io.FileNotFoundException
 import java.io.IOException
 import java.net.URL
 import java.nio.file.Files
-
-private const val RESOURCES_FOLDER = "resources"
-private const val BINARIES_FOLDER = "binaries"
-private const val MAC_OS_FOLDER = "darwin"
-private const val WINDOWS_FOLDER = "win"
-private const val LINUX_FOLDER = "linux"
-private const val MAC_OS_LIBRARY_EXTENSION = ".dylib"
-private const val WINDOWS_LIBRARY_EXTENSION = ".dll"
-private const val LINUX_LIBRARY_EXTENSION = ".so"
-
-private const val FMU_EXTENSION = "fmu"
-private const val FMI4J_FILE_PREFIX = "fmi4j_"
-
-private const val MODEL_DESC = "modelDescription.xml"
 
 /**
  *
@@ -214,6 +199,21 @@ class Fmu private constructor(
     companion object {
 
         private val LOG: Logger = LoggerFactory.getLogger(Fmu::class.java)
+
+        private const val RESOURCES_FOLDER = "resources"
+        private const val BINARIES_FOLDER = "binaries"
+        private const val MAC_OS_FOLDER = "darwin"
+        private const val WINDOWS_FOLDER = "win"
+        private const val LINUX_FOLDER = "linux"
+        private const val MAC_OS_LIBRARY_EXTENSION = ".dylib"
+        private const val WINDOWS_LIBRARY_EXTENSION = ".dll"
+        private const val LINUX_LIBRARY_EXTENSION = ".so"
+
+        private const val FMU_EXTENSION = "fmu"
+        private const val FMI4J_FILE_PREFIX = "fmi4j_"
+
+        private const val MODEL_DESC = "modelDescription.xml"
+
 
         private val fmus = mutableListOf<Fmu>()
 
