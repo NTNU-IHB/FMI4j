@@ -46,7 +46,7 @@ private const val EPS = 1E-13
 class ModelExchangeFmuStepper internal constructor(
         private val fmuInstance: ModelExchangeInstance,
         private val solver: Solver
-) : FmuSlave<CoSimulationModelDescription>, SimpleFmuInstance by fmuInstance {
+) : FmuSlave, SimpleFmuInstance by fmuInstance {
 
     private val x: DoubleArray
     private val dx: DoubleArray

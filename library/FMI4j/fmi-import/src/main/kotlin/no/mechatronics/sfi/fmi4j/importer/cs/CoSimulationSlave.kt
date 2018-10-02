@@ -27,7 +27,6 @@ package no.mechatronics.sfi.fmi4j.importer.cs
 import no.mechatronics.sfi.fmi4j.common.FmiStatus
 import no.mechatronics.sfi.fmi4j.common.FmuSlave
 import no.mechatronics.sfi.fmi4j.importer.AbstractFmuInstance
-import no.mechatronics.sfi.fmi4j.importer.Fmu
 import no.mechatronics.sfi.fmi4j.modeldescription.cs.CoSimulationModelDescription
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -41,7 +40,7 @@ import java.lang.IllegalStateException
 class CoSimulationSlave internal constructor(
         modelDescription: CoSimulationModelDescription,
         wrapper: CoSimulationLibraryWrapper
-) : AbstractFmuInstance<CoSimulationModelDescription, CoSimulationLibraryWrapper>(modelDescription, wrapper), FmuSlave<CoSimulationModelDescription> {
+) : FmuSlave, AbstractFmuInstance<CoSimulationModelDescription, CoSimulationLibraryWrapper>(modelDescription, wrapper) {
 
     /**
      * @see CoSimulationLibraryWrapper.doStep
@@ -61,11 +60,11 @@ class CoSimulationSlave internal constructor(
         }
 
         return wrapper.doStep(simulationTime, stepSize, noSetFMUStatePriorToCurrent = true).let { status ->
-            val success = status == FmiStatus.OK
-            if (success) {
-                simulationTime = tNext
+            (status == FmiStatus.OK).also {success ->
+                if (success) {
+                    simulationTime = tNext
+                }
             }
-            success
         }
 
     }

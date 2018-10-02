@@ -31,7 +31,7 @@ import no.mechatronics.sfi.fmi4j.modeldescription.cs.CoSimulationModelDescriptio
  *
  * @author Lars Ivar Hatledal
  */
-interface FmuSlave<out E: CoSimulationModelDescription> : FmuInstance<E> {
+interface FmuSlave: FmuInstance<CoSimulationModelDescription> {
 
     /**
      * Step simulation forward in time
