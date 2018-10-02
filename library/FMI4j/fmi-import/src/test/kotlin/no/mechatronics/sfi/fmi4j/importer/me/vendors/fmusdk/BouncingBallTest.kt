@@ -35,10 +35,9 @@ class BouncingBallTest {
     @Test
     fun test() {
 
-        val h = fmu.modelDescription.modelVariables
-                .getByName("h").asRealVariable()
-
-        Assertions.assertEquals(1.0, h.start)
+        fmu.modelDescription.modelVariables.getByName("h").asRealVariable().also {
+            Assertions.assertEquals(1.0, it.start)
+        }
 
     }
 
@@ -55,10 +54,11 @@ class BouncingBallTest {
 
             val macroStep = 1.0 / 10
             while (slave.simulationTime < 1) {
-                val read = h.read()
-                Assertions.assertTrue(read.status === FmiStatus.OK)
-                LOG.info("t=${slave.simulationTime}, h=${read.value}")
                 slave.doStep(macroStep)
+                h.read().also {
+                    Assertions.assertEquals(FmiStatus.OK, it.status)
+                    LOG.info("t=${slave.simulationTime}, h=${it.value}")
+                }
             }
 
         }
