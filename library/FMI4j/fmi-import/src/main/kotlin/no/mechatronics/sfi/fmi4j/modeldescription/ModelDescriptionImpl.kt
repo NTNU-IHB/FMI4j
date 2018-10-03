@@ -26,11 +26,7 @@ package no.mechatronics.sfi.fmi4j.modeldescription
 
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement
-import no.mechatronics.sfi.fmi4j.modeldescription.cs.CoSimulationModelDescription
-import no.mechatronics.sfi.fmi4j.modeldescription.cs.CoSimulationModelDescriptionImpl
 import no.mechatronics.sfi.fmi4j.modeldescription.logging.LogCategories
-import no.mechatronics.sfi.fmi4j.modeldescription.me.ModelExchangeModelDescription
-import no.mechatronics.sfi.fmi4j.modeldescription.me.ModelExchangeModelDescriptionImpl
 import no.mechatronics.sfi.fmi4j.modeldescription.misc.*
 import no.mechatronics.sfi.fmi4j.modeldescription.structure.ModelStructureImpl
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.ModelVariablesImpl
@@ -45,37 +41,37 @@ import java.io.Serializable
 @JacksonXmlRootElement(localName = "fmiModelDescription")
 class ModelDescriptionImpl(
 
-        @JacksonXmlProperty()
+        @JacksonXmlProperty
         override var fmiVersion: String,
 
-        @JacksonXmlProperty()
+        @JacksonXmlProperty
         override val modelName: String,
 
-        @JacksonXmlProperty()
+        @JacksonXmlProperty
         override val guid: String,
 
-        @JacksonXmlProperty()
+        @JacksonXmlProperty
         override val license: String? = null,
 
-        @JacksonXmlProperty()
+        @JacksonXmlProperty
         override val copyright: String? = null,
 
-        @JacksonXmlProperty()
+        @JacksonXmlProperty
         override val author: String? = null,
 
-        @JacksonXmlProperty()
+        @JacksonXmlProperty
         override val version: String? = null,
 
-        @JacksonXmlProperty()
+        @JacksonXmlProperty
         override val description: String? = null,
 
-        @JacksonXmlProperty()
+        @JacksonXmlProperty
         override val generationTool: String? = null,
 
-        @JacksonXmlProperty()
+        @JacksonXmlProperty
         override val generationDateAndTime: String? = null,
 
-        @JacksonXmlProperty()
+        @JacksonXmlProperty
         override val variableNamingConvention: VariableNamingConvention? = null,
 
         @JacksonXmlProperty(localName = "DefaultExperiment")
@@ -97,61 +93,35 @@ class ModelDescriptionImpl(
         override val typeDefinitions: TypeDefinitions? = null,
 
         @JacksonXmlProperty(localName = "CoSimulation")
-        private val cs: CoSimulationAttributesImpl? = null,
+        private val coSimulationAttributes: CoSimulationAttributesImpl? = null,
 
         @JacksonXmlProperty(localName = "ModelExchange")
-        private val me: ModelExchangeAttributesImpl? = null,
+        private val modelExchangeAttributes: ModelExchangeAttributesImpl? = null,
 
-        /**
-         * The (fixed) number of event indicators for an FMU based on FMI for Model Exchange.
-         * For Co-Simulation, this value is ignored
-         */
-        val numberOfEventIndicators: Int = 0
+        @JacksonXmlProperty
+        private val numberOfEventIndicators: Int = 0
 
 
 ) : ModelDescriptionProvider, Serializable {
 
-    @Transient
-    private var _modelExchangeModelDescription: ModelExchangeModelDescription? = null
-
-    private val modelExchangeModelDescription: ModelExchangeModelDescription?
-        get() {
-            if (_modelExchangeModelDescription == null && supportsModelExchange) {
-                _modelExchangeModelDescription = ModelExchangeModelDescriptionImpl(this, me!!)
-            }
-            return _modelExchangeModelDescription
-        }
-
-    @Transient
-    private var _coSimulationModelDescription: CoSimulationModelDescription? = null
-
-    private val coSimulationModelDescription: CoSimulationModelDescription?
-        get() {
-            if (_coSimulationModelDescription == null && supportsCoSimulation) {
-                _coSimulationModelDescription = CoSimulationModelDescriptionImpl(this, cs!!)
-            }
-            return _coSimulationModelDescription
-        }
-
-    override val supportsModelExchange: Boolean
-        get() = me != null
-
     override val supportsCoSimulation: Boolean
-        get() = cs != null
+        get() = coSimulationAttributes != null
 
-    /**
-     * @throws IllegalStateException if FMU does not support Co-Simulation
-     */
-    override fun asCoSimulationModelDescription(): CoSimulationModelDescription = coSimulationModelDescription
-            ?: throw IllegalStateException("FMU does not support Co-Simulation: modelDescription.xml does not contain a <CoSimulation> tag!")
+    override val supportModelExchange: Boolean
+        get() = modelExchangeAttributes != null
 
-    /**
-     * @throws IllegalStateException if FMU does not support Model Exchange
-     */
-    override fun asModelExchangeModelDescription(): ModelExchangeModelDescription = modelExchangeModelDescription
-            ?: throw IllegalStateException("FMU does not support Model Exchange: modelDescription.xml does not contain a <ModelExchange> tag!")
+    override fun asCoSimulationModelDescription(): CoSimulationModelDescription {
+        return CoSimulationModelDescriptionImpl(this, coSimulationAttributes
+                ?: throw IllegalStateException("No CoSimulation attributes present in ModelDescription!"))
+    }
 
-    internal val stringContent: String
+    override fun asModelExchangeModelDescription(): ModelExchangeModelDescription {
+        return ModelExchangeModelDescriptionImpl(this, modelExchangeAttributes
+                ?: throw IllegalStateException("No ModelExchange attributes in ModelDescription!"),
+                numberOfEventIndicators)
+    }
+
+    private val stringContent: String
         get() = listOfNotNull(
                 "fmiVersion=$fmiVersion",
                 "modelName=$modelName",
@@ -173,3 +143,16 @@ class ModelDescriptionImpl(
     }
 
 }
+
+class CoSimulationModelDescriptionImpl(
+        md: ModelDescription,
+        cs: CoSimulationAttributes
+): CoSimulationModelDescription, ModelDescription by md, CoSimulationAttributes by cs
+
+
+class ModelExchangeModelDescriptionImpl(
+        md: ModelDescription,
+        me: ModelExchangeAttributes,
+        override val numberOfEventIndicators: Int = 0
+
+): ModelExchangeModelDescription, ModelDescription by md, ModelExchangeAttributes by me

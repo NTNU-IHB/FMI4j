@@ -25,7 +25,8 @@ class BouncingBallTest {
     }
 
     private val fmu = Fmu.from(File(TestUtils.getTEST_FMUs(),
-            "FMI_2.0/ModelExchange/win64/FMUSDK/2.0.4/bouncingBall/bouncingBall.fmu"))
+            "FMI_2.0/ModelExchange/win64/FMUSDK/" +
+                    "2.0.4/bouncingBall/bouncingBall.fmu")).asModelExchangeFmu()
 
     @AfterAll
     fun tearDown() {
@@ -34,18 +35,16 @@ class BouncingBallTest {
 
     @Test
     fun test() {
-
         fmu.modelDescription.modelVariables.getByName("h").asRealVariable().also {
             Assertions.assertEquals(1.0, it.start)
         }
-
     }
 
     private fun runFmu(solver: Solver) {
 
         LOG.info("Using solver: '${solver.name}'")
 
-        fmu.asModelExchangeFmu().newInstance(solver).use { slave ->
+        fmu.newInstance(solver).use { slave ->
 
             val h = slave.modelVariables
                     .getByName("h").asRealVariable()

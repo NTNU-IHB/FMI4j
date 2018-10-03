@@ -3,7 +3,7 @@ package no.mechatronics.sfi.fmi4j.modeldescription.gson
 import com.google.gson.GsonBuilder
 import no.mechatronics.sfi.fmi4j.TestUtils
 import no.mechatronics.sfi.fmi4j.common.currentOS
-import no.mechatronics.sfi.fmi4j.modeldescription.me.ModelExchangeModelDescriptionImpl
+import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescriptionImpl
 import no.mechatronics.sfi.fmi4j.modeldescription.parser.ModelDescriptionParser
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
@@ -26,7 +26,7 @@ class GsonTest {
                 "FMI_2.0/ModelExchange/$currentOS" +
                         "/MapleSim/2017/ControlledTemperature/ControlledTemperature.fmu")
         Assertions.assertTrue(fmu.exists())
-        val modelDescription = ModelDescriptionParser.parse(fmu).asModelExchangeModelDescription()
+        val modelDescription = ModelDescriptionParser.parse(fmu)
 
         GsonBuilder()
                 .setPrettyPrinting()
@@ -34,7 +34,7 @@ class GsonTest {
 
                     gson.toJson(modelDescription).also { json ->
                         LOG.info("$json")
-                        gson.fromJson(json, ModelExchangeModelDescriptionImpl::class.java).also { md ->
+                        gson.fromJson(json, ModelDescriptionImpl::class.java).also { md ->
                             LOG.info("${md.modelVariables}")
                         }
 

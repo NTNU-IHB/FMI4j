@@ -25,22 +25,155 @@
 package no.mechatronics.sfi.fmi4j.importer
 
 import no.mechatronics.sfi.fmi4j.common.*
-import no.mechatronics.sfi.fmi4j.importer.cs.CoSimulationSlaveBuilder
+import no.mechatronics.sfi.fmi4j.importer.cs.CoSimulationLibraryWrapper
+import no.mechatronics.sfi.fmi4j.importer.cs.CoSimulationSlave
+import no.mechatronics.sfi.fmi4j.importer.jni.Fmi2CoSimulationLibrary
 import no.mechatronics.sfi.fmi4j.importer.jni.Fmi2Library
-import no.mechatronics.sfi.fmi4j.importer.me.ModelExchangeInstanceBuilder
+import no.mechatronics.sfi.fmi4j.importer.jni.Fmi2ModelExchangeLibrary
+import no.mechatronics.sfi.fmi4j.importer.me.ModelExchangeFmuStepper
+import no.mechatronics.sfi.fmi4j.importer.me.ModelExchangeInstance
+import no.mechatronics.sfi.fmi4j.importer.me.ModelExchangeLibraryWrapper
 import no.mechatronics.sfi.fmi4j.importer.misc.FmiType
 import no.mechatronics.sfi.fmi4j.importer.misc.extractTo
-import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescriptionProvider
-import no.mechatronics.sfi.fmi4j.modeldescription.SpecificModelDescription
+import no.mechatronics.sfi.fmi4j.modeldescription.*
 import no.mechatronics.sfi.fmi4j.modeldescription.parser.ModelDescriptionParser
+import no.mechatronics.sfi.fmi4j.solvers.Solver
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.Closeable
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.IOException
+import java.lang.IllegalStateException
 import java.net.URL
 import java.nio.file.Files
+
+interface IFmu: Closeable {
+
+    val guid: String
+        get() = modelDescription.guid
+
+    val modelName: String
+        get() = modelDescription.modelName
+
+    val modelDescription: ModelDescription
+
+}
+
+interface FmuProvider: IFmu {
+
+    /**
+     * Does the FMU support Co-simulation?
+     */
+    val supportsCoSimulation: Boolean
+
+    /**
+     * Does the FMU support Model Exchange?
+     */
+    val supportsModelExchange: Boolean
+
+    /**
+     * Treat this FMU as a CoSimulation FMU
+     */
+    fun asCoSimulationFmu(): CoSimulationFmu
+
+    /**
+     * Threat this FMU as a ModelExchange FMU
+     */
+    fun asModelExchangeFmu(): ModelExchangeFmu
+
+}
+
+//interface CoSimulationFmu: IFmu {
+//
+//    override val modelDescription: CoSimulationModelDescription
+//
+//    fun newInstance(): FmuSlave
+//    fun newInstance(visible: Boolean = false, loggingOn: Boolean = false): FmuSlave
+//    fun newInstance(visible: Boolean = false, loggingOn: Boolean = false): FmuSlave
+//
+//}
+
+//interface ModelExchangeFmu: IFmu {
+//
+//    override val modelDescription: ModelExchangeModelDescription
+//
+//    fun newInstance(visible: Boolean = false, loggingOn: Boolean = false): ModelExchangeInstance
+//
+//    fun newInstance(solver: Solver, visible: Boolean = false, loggingOn: Boolean = false): FmuSlave
+//
+//}
+
+class CoSimulationFmu(
+        private val fmu: Fmu
+): IFmu by fmu {
+
+    override val modelDescription: CoSimulationModelDescription by lazy {
+        fmu.modelDescription.asCoSimulationModelDescription()
+    }
+
+    private val libraryCache: Fmi2CoSimulationLibrary by lazy {
+        loadLibrary()
+    }
+
+    private fun loadLibrary(): Fmi2CoSimulationLibrary {
+        val modelIdentifier = modelDescription.modelIdentifier
+        val libName = fmu.getAbsoluteLibraryPath(modelIdentifier)
+        return Fmi2CoSimulationLibrary(libName).also {
+            fmu.registerLibrary(it)
+        }
+    }
+
+    @JvmOverloads
+    fun newInstance(visible: Boolean = false, loggingOn: Boolean = false): CoSimulationSlave {
+        val lib = if (modelDescription.canBeInstantiatedOnlyOncePerProcess) loadLibrary() else libraryCache
+        val c = fmu.instantiate(modelDescription, lib, FmiType.CO_SIMULATION, visible, loggingOn)
+        val wrapper = CoSimulationLibraryWrapper(c, lib)
+        return CoSimulationSlave(wrapper, modelDescription).also {
+            fmu.registerInstance(it)
+        }
+    }
+
+}
+
+class ModelExchangeFmu(
+        private val fmu: Fmu
+): IFmu by fmu {
+
+    override val modelDescription: ModelExchangeModelDescription by lazy {
+        fmu.modelDescription.asModelExchangeModelDescription()
+    }
+
+    private val libraryCache: Fmi2ModelExchangeLibrary by lazy {
+        loadLibrary()
+    }
+
+    private fun loadLibrary(): Fmi2ModelExchangeLibrary {
+        val modelIdentifier = modelDescription.modelIdentifier
+        val libName = fmu.getAbsoluteLibraryPath(modelIdentifier)
+        return Fmi2ModelExchangeLibrary(libName).also {
+            fmu.registerLibrary(it)
+        }
+    }
+
+    @JvmOverloads
+    fun newInstance(visible: Boolean = false, loggingOn: Boolean = false): ModelExchangeInstance {
+        val lib = if (modelDescription.canBeInstantiatedOnlyOncePerProcess) loadLibrary() else libraryCache
+        val c = fmu.instantiate(modelDescription, lib, FmiType.MODEL_EXCHANGE, visible, loggingOn)
+        val wrapper = ModelExchangeLibraryWrapper(c, lib)
+        return ModelExchangeInstance(wrapper, modelDescription).also {
+            fmu.registerInstance(it)
+        }
+    }
+
+    @JvmOverloads
+    fun newInstance(solver: Solver, visible: Boolean = false, loggingOn: Boolean = false): ModelExchangeFmuStepper {
+        return newInstance(visible, loggingOn).let {
+            ModelExchangeFmuStepper(it, solver)
+        }
+    }
+
+}
 
 /**
  *
@@ -50,29 +183,19 @@ import java.nio.file.Files
  */
 class Fmu private constructor(
         private val fmuFile: File
-) : Closeable {
+) : FmuProvider {
 
     private var isClosed = false
     private val libraries = mutableListOf<Fmi2Library>()
     private val instances = mutableListOf<AbstractFmuInstance<*, *>>()
 
-    val guid: String
-        get() = modelDescription.guid
+    private val coSimulationFmu by lazy {
+        CoSimulationFmu(this)
+    }
 
-    val modelName: String
-        get() = modelDescription.modelName
-
-    /**
-     * Does the FMU support Co-simulation?
-     */
-    val supportsCoSimulation: Boolean
-        get() = modelDescription.supportsCoSimulation
-
-    /**
-     * Does the FMU support Model Exchange?
-     */
-    val supportsModelExchange: Boolean
-        get() = modelDescription.supportsModelExchange
+    private val modelExchangeFmu by lazy {
+        ModelExchangeFmu(this)
+    }
 
     /**
      * Get the content of the modelDescription.xml file as a String
@@ -80,8 +203,34 @@ class Fmu private constructor(
     val modelDescriptionXml: String
         get() = modelDescriptionFile.readText()
 
-    val modelDescription: ModelDescriptionProvider by lazy {
+    override val modelDescription: ModelDescriptionProvider by lazy {
         ModelDescriptionParser.parse(modelDescriptionXml)
+    }
+
+    /**
+     * Does the FMU support Co-simulation?
+     */
+    override val supportsCoSimulation: Boolean
+        get() = modelDescription.supportsCoSimulation
+
+    /**
+     * Does the FMU support Model Exchange?
+     */
+    override val supportsModelExchange: Boolean
+        get() = modelDescription.supportModelExchange
+
+    override fun asCoSimulationFmu(): CoSimulationFmu {
+        if (!supportsCoSimulation) {
+            throw IllegalStateException("FMU does not support Co-simulation!")
+        }
+        return coSimulationFmu
+    }
+
+    override fun asModelExchangeFmu(): ModelExchangeFmu {
+        if (!supportsModelExchange) {
+            throw IllegalStateException("FMU does not support Model Exchange!")
+        }
+        return modelExchangeFmu
     }
 
     /**
@@ -102,13 +251,13 @@ class Fmu private constructor(
                 + File.separator + modelIdentifier + libraryExtension).absolutePath
     }
 
-    private val coSimulationBuilder: CoSimulationSlaveBuilder? by lazy {
-        if (supportsCoSimulation) CoSimulationSlaveBuilder(this) else null
-    }
-
-    private val modelExchangeBuilder: ModelExchangeInstanceBuilder? by lazy {
-        if (supportsModelExchange) ModelExchangeInstanceBuilder(this) else null
-    }
+//    private val coSimulationBuilder: CoSimulationSlaveBuilder? by lazy {
+//        if (supportsCoSimulation) CoSimulationSlaveBuilder(this) else null
+//    }
+//
+//    private val modelExchangeBuilder: ModelExchangeInstanceBuilder? by lazy {
+//        if (supportsModelExchange) ModelExchangeInstanceBuilder(this) else null
+//    }
 
     internal fun registerLibrary(library: Fmi2Library) {
         libraries.add(library)
@@ -118,9 +267,10 @@ class Fmu private constructor(
         instances.add(instance)
     }
 
-    internal fun instantiate(modelDescription: SpecificModelDescription, library: Fmi2Library,
+    internal fun instantiate(modelDescription: CommonModelDescription, library: Fmi2Library,
                              fmiType: FmiType, visible: Boolean, loggingOn: Boolean): Long {
         LOG.trace("Calling instantiate: visible=$visible, loggingOn=$loggingOn")
+
         return library.instantiate(modelDescription.modelIdentifier,
                 fmiType.code, modelDescription.guid, resourcesPath, visible, loggingOn)
     }
@@ -176,14 +326,6 @@ class Fmu private constructor(
         }
         return true
     }
-
-    @Throws(IllegalStateException::class)
-    fun asCoSimulationFmu(): CoSimulationSlaveBuilder = coSimulationBuilder
-            ?: throw IllegalStateException("FMU does not support Co-Simulation!")
-
-    @Throws(IllegalStateException::class)
-    fun asModelExchangeFmu(): ModelExchangeInstanceBuilder = modelExchangeBuilder
-            ?: throw IllegalStateException("FMU does not support Model Exchange!")
 
     protected fun finalize() {
         if (!isClosed) {

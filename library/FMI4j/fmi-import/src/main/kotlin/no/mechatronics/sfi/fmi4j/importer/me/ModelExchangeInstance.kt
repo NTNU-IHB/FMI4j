@@ -26,9 +26,9 @@ package no.mechatronics.sfi.fmi4j.importer.me
 
 import no.mechatronics.sfi.fmi4j.common.FmiStatus
 import no.mechatronics.sfi.fmi4j.importer.AbstractFmuInstance
-import no.mechatronics.sfi.fmi4j.importer.Fmu
 import no.mechatronics.sfi.fmi4j.importer.jni.EventInfo
-import no.mechatronics.sfi.fmi4j.modeldescription.me.ModelExchangeModelDescription
+import no.mechatronics.sfi.fmi4j.modeldescription.ModelExchangeAttributes
+import no.mechatronics.sfi.fmi4j.modeldescription.ModelExchangeModelDescription
 
 /**
  * Represent a FMI Model Exchange instance

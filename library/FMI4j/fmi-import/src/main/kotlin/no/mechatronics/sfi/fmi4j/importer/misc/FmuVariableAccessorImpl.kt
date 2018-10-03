@@ -27,7 +27,9 @@ package no.mechatronics.sfi.fmi4j.importer.misc
 import no.mechatronics.sfi.fmi4j.common.*
 import java.util.*
 
-
+/**
+ * @author Lars Ivar Hatledal
+ */
 class FmuVariableAccessorImpl(
         private val accessor: FmuVariableAccessorLite,
         private val valueReferenceLocator: (String) -> ValueReference

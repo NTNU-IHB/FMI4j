@@ -28,7 +28,7 @@ class CompareWithJavaFmi {
     private val path = "${TestUtils.getTEST_FMUs()}/FMI_2.0/CoSimulation/$currentOS" +
             "/20sim/4.6.4.8004/ControlledTemperature/ControlledTemperature.fmu"
 
-    private val fmu = Fmu.from(File(path))
+    private val fmu = Fmu.from(File(path)).asCoSimulationFmu()
 
     @AfterAll
     fun tearDown() {
@@ -82,7 +82,7 @@ class CompareWithJavaFmi {
             duration1 = Duration.between(start, end).toMillis()
         }
 
-        fmu.asCoSimulationFmu().newInstance().also { slave ->
+        fmu.newInstance().also { slave ->
 
             val start = Instant.now()
             slave.init(0.0)

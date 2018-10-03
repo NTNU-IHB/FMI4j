@@ -26,8 +26,8 @@ class FmuInstanceVariableAccessorTest {
 
     private val fmu = Fmu.from(File(TestUtils.getTEST_FMUs(),
             "FMI_2.0/CoSimulation/$currentOS" +
-                    "/20sim/4.6.4.8004/ControlledTemperature/ControlledTemperature.fmu"))
-
+                    "/20sim/4.6.4.8004/ControlledTemperature/" +
+                    "ControlledTemperature.fmu")).asCoSimulationFmu()
 
     @AfterAll
     fun tearDown() {
@@ -37,7 +37,7 @@ class FmuInstanceVariableAccessorTest {
     @Test
     fun test1() {
 
-        fmu.asCoSimulationFmu().newInstance().use { slave ->
+        fmu.newInstance().use { slave ->
 
             slave.init()
             slave.modelVariables.forEach { variable ->
@@ -60,7 +60,7 @@ class FmuInstanceVariableAccessorTest {
     @Test
     fun test2() {
 
-        fmu.asCoSimulationFmu().newInstance().use { slave ->
+        fmu.newInstance().use { slave ->
 
             slave.init()
             slave.modelVariables.forEach { variable ->

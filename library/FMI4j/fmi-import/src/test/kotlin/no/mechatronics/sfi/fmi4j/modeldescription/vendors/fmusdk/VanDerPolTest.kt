@@ -1,7 +1,6 @@
 package no.mechatronics.sfi.fmi4j.modeldescription.vendors.fmusdk
 
 import no.mechatronics.sfi.fmi4j.TestUtils
-import no.mechatronics.sfi.fmi4j.modeldescription.me.ModelExchangeModelDescription
 import no.mechatronics.sfi.fmi4j.modeldescription.parser.ModelDescriptionParser
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
@@ -18,20 +17,13 @@ import java.io.File
 @EnabledIfEnvironmentVariable(named = "TEST_FMUs", matches = ".*")
 class VanDerPolTest {
 
-    companion object {
-        private val LOG: Logger = LoggerFactory.getLogger(VanDerPolTest::class.java)
-    }
+    private companion object {
 
-    private val modelDescription: ModelExchangeModelDescription
+        val LOG: Logger = LoggerFactory.getLogger(VanDerPolTest::class.java)
 
-    init {
-
-        val fmu = File(TestUtils.getTEST_FMUs(),
+        val fmuFile = File(TestUtils.getTEST_FMUs(),
                 "FMI_2.0/ModelExchange/win64/FMUSDK/2.0.4/vanDerPol/vanDerPol.fmu")
-
-        Assertions.assertTrue(fmu.exists())
-        modelDescription = ModelDescriptionParser.parse(fmu).asModelExchangeModelDescription()
-
+        val modelDescription = ModelDescriptionParser.parse(fmuFile).asModelExchangeModelDescription()
     }
 
     @Test

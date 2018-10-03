@@ -22,10 +22,11 @@
  * THE SOFTWARE.
  */
 
-package no.mechatronics.sfi.fmi4j.modeldescription.misc
+package no.mechatronics.sfi.fmi4j.modeldescription
 
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty
+import no.mechatronics.sfi.fmi4j.modeldescription.misc.SourceFile
 import java.io.Serializable
 
 /**
@@ -77,7 +78,7 @@ interface ModelExchangeAttributes : CommonFmuAttributes {
 sealed class CommonFmuAttributesImpl : CommonFmuAttributes, Serializable {
 
     @JacksonXmlProperty
-    override lateinit var modelIdentifier: String
+    override val modelIdentifier: String = ""
 
     @JacksonXmlProperty
     override val needsExecutionTool: Boolean = false

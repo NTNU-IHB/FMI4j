@@ -1,6 +1,5 @@
 package no.mechatronics.sfi.fmi4j.modeldescription;
 
-
 import no.mechatronics.sfi.fmi4j.TestUtils;
 import no.mechatronics.sfi.fmi4j.common.OSUtil;
 import no.mechatronics.sfi.fmi4j.modeldescription.parser.ModelDescriptionParser;
@@ -16,14 +15,15 @@ public class ModelDescriptionParseTest_java {
     @Test
     public void test() {
 
-        File fmu = new File(TestUtils.getTEST_FMUs(),
+        File fmuFile = new File(TestUtils.getTEST_FMUs(),
                 "FMI_2.0/CoSimulation/" + OSUtil.getCurrentOS() +
                         "/20sim/4.6.4.8004/ControlledTemperature/ControlledTemperature.fmu");
-        Assertions.assertTrue(fmu.exists());
-        ModelDescriptionParser.parse(fmu).asCoSimulationModelDescription();
+        Assertions.assertTrue(fmuFile.exists());
 
-        String xml = ModelDescriptionParser.extractModelDescriptionXml(fmu);
-        ModelDescriptionParser.parse(xml).asCoSimulationModelDescription();
+        Assertions.assertNotNull(ModelDescriptionParser.parse(fmuFile).asCoSimulationModelDescription());
+
+        String xml = ModelDescriptionParser.extractModelDescriptionXml(fmuFile);
+        Assertions.assertNotNull(ModelDescriptionParser.parse(xml).asCoSimulationModelDescription());
 
     }
 

@@ -24,12 +24,11 @@
 
 package no.mechatronics.sfi.fmi4j.modeldescription
 
-import no.mechatronics.sfi.fmi4j.modeldescription.cs.CoSimulationModelDescription
 import no.mechatronics.sfi.fmi4j.modeldescription.logging.LogCategories
-import no.mechatronics.sfi.fmi4j.modeldescription.me.ModelExchangeModelDescription
 import no.mechatronics.sfi.fmi4j.modeldescription.misc.*
 import no.mechatronics.sfi.fmi4j.modeldescription.structure.ModelStructure
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.ModelVariables
+import no.mechatronics.sfi.fmi4j.modeldescription.variables.TypedScalarVariable
 
 /**
  * Static information related to an FMU
@@ -161,24 +160,60 @@ interface ModelDescription {
     val numberOfContinuousStates: Int
         get() = modelStructure.derivatives.size
 
+    @JvmDefault
+    fun getVariableByName(name: String): TypedScalarVariable<*> {
+        return modelVariables.getByName(name)
+    }
+
 }
 
 interface ModelDescriptionProvider: ModelDescription {
 
-    /**
-     * Does this FMU implement Model Exchange.
-     * That is, does the modelDescription.xml contain the <ModelExchange></ModelExchange> xml node?
-     */
-    val supportsModelExchange: Boolean
-
-    /**
-     * Does this FMU implement Co-Simulation.
-     * That is, does the modelDescription.xml contain the <CoSimulation></CoSimulation> xml node?
-     */
     val supportsCoSimulation: Boolean
-
-    fun asModelExchangeModelDescription(): ModelExchangeModelDescription
+    val supportModelExchange: Boolean
 
     fun asCoSimulationModelDescription(): CoSimulationModelDescription
+    fun asModelExchangeModelDescription(): ModelExchangeModelDescription
 
 }
+
+interface CommonModelDescription: ModelDescription, CommonFmuAttributes {
+
+    val attributes: CommonFmuAttributes
+        get() = CommonFmuAttributesLite(this)
+
+}
+
+interface CoSimulationModelDescription: CommonModelDescription, CoSimulationAttributes {
+
+    override val attributes: CoSimulationAttributes
+        get() = CoSimulationAttributesLite(this)
+
+}
+
+interface ModelExchangeModelDescription: CommonModelDescription, ModelExchangeAttributes {
+
+    /**
+     * The (fixed) number of event indicators for an FMU based on FMI for Model Exchange.
+     * For Co-Simulation, this value is ignored
+     */
+    val numberOfEventIndicators: Int
+
+    override val attributes: ModelExchangeAttributes
+        get() = ModelExchangeAttributesLite(this)
+
+}
+
+private class CommonFmuAttributesLite(
+        attributes: CommonFmuAttributes
+): CommonFmuAttributes by attributes
+
+private class CoSimulationAttributesLite(
+        attributes: CoSimulationAttributes
+): CoSimulationAttributes by attributes
+
+
+private class ModelExchangeAttributesLite(
+        attributes: ModelExchangeAttributes
+): ModelExchangeAttributes by attributes
+

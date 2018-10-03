@@ -27,16 +27,13 @@ package no.mechatronics.sfi.fmi4j.importer.me
 import no.mechatronics.sfi.fmi4j.common.FmiStatus
 import no.mechatronics.sfi.fmi4j.common.FmuSlave
 import no.mechatronics.sfi.fmi4j.common.SimpleFmuInstance
-import no.mechatronics.sfi.fmi4j.modeldescription.SpecificModelDescription
-import no.mechatronics.sfi.fmi4j.modeldescription.cs.CoSimulationModelDescription
-import no.mechatronics.sfi.fmi4j.modeldescription.me.ModelExchangeModelDescription
+import no.mechatronics.sfi.fmi4j.modeldescription.*
 import no.mechatronics.sfi.fmi4j.solvers.Equations
 import no.mechatronics.sfi.fmi4j.solvers.Solver
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import kotlin.math.min
 
-private const val EPS = 1E-13
 
 /**
  * Wraps a Model Exchange instance, turning it into a FmuSlave
@@ -55,24 +52,21 @@ class ModelExchangeFmuStepper internal constructor(
     private val z: DoubleArray
     private val pz: DoubleArray
 
-    override val modelDescription: CoSimulationModelDescription by lazy {
-        CoSimulationModelDescriptionWrapper(fmuInstance.modelDescription)
-    }
-
     init {
 
-        val numberOfContinuousStates = modelDescription.numberOfContinuousStates
+        val numberOfContinuousStates = fmuInstance.modelDescription.numberOfContinuousStates
         val numberOfEventIndicators = fmuInstance.modelDescription.numberOfEventIndicators
 
         this.x = DoubleArray(numberOfContinuousStates)
         this.nominalStates = DoubleArray(numberOfContinuousStates)
         this.dx = DoubleArray(numberOfContinuousStates)
 
-        this.pz = DoubleArray(numberOfEventIndicators)
         this.z = DoubleArray(numberOfEventIndicators)
+        this.pz = DoubleArray(numberOfEventIndicators)
+
 
         this.solver.setEquations(object : Equations {
-            override val dimension: Int = modelDescription.numberOfContinuousStates
+            override val dimension: Int = numberOfContinuousStates
             override fun computeDerivatives(time: Double, y: DoubleArray, yDot: DoubleArray) {
                 for ((index, value) in dx.withIndex()) {
                     yDot[index] = value
@@ -82,10 +76,8 @@ class ModelExchangeFmuStepper internal constructor(
 
     }
 
-    private fun FmiStatus.warnOnStatusNotOK(functionName: String) {
-        if (this != FmiStatus.OK) {
-            LOG.warn("$functionName returned status: $this")
-        }
+    override val modelDescription: CoSimulationModelDescription by lazy {
+        CoSimulationModelDescriptionWrapper(fmuInstance.modelDescription)
     }
 
     private fun eventIteration(): Boolean {
@@ -229,14 +221,24 @@ class ModelExchangeFmuStepper internal constructor(
     }
 
     private companion object {
+
+        const val EPS = 1E-13
+
         val LOG: Logger = LoggerFactory.getLogger(ModelExchangeFmuStepper::class.java)
+
+        fun FmiStatus.warnOnStatusNotOK(functionName: String) {
+            if (this != FmiStatus.OK) {
+                LOG.warn("$functionName returned status: $this")
+            }
+        }
+
     }
 
 }
 
 class CoSimulationModelDescriptionWrapper(
         md: ModelExchangeModelDescription
-): SpecificModelDescription by md, CoSimulationModelDescription {
+): CommonModelDescription by md, CoSimulationModelDescription {
 
     override val maxOutputDerivativeOrder: Int
         get() = 0
@@ -246,4 +248,7 @@ class CoSimulationModelDescriptionWrapper(
         get() = false
     override val canRunAsynchronuously: Boolean
         get() = false
+
+    override val attributes: CoSimulationAttributes
+        get() = super<CoSimulationModelDescription>.attributes
 }

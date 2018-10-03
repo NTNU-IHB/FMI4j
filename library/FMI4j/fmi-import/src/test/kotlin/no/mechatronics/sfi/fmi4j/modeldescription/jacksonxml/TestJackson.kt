@@ -24,15 +24,15 @@ class TestJackson {
 
     companion object {
         val LOG: Logger = LoggerFactory.getLogger(TestJackson::class.java)
+
+        val fmuFile = File(TestUtils.getTEST_FMUs(),
+                "FMI_2.0/CoSimulation/$currentOS" +
+                        "/MapleSim/2017/ControlledTemperature/ControlledTemperature.fmu")
+
     }
 
     @Test
     fun test() {
-
-        val file = File(TestUtils.getTEST_FMUs(),
-                "FMI_2.0/CoSimulation/$currentOS" +
-                        "/MapleSim/2017/ControlledTemperature/ControlledTemperature.fmu")
-        Assertions.assertTrue(file.exists())
 
         val mapper = XmlMapper().apply {
             registerModule(KotlinModule())
@@ -40,7 +40,7 @@ class TestJackson {
             enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS)
         }
 
-        val md = ModelDescriptionParser.extractModelDescriptionXml(file).let {
+        val md = ModelDescriptionParser.extractModelDescriptionXml(fmuFile).let {
             LOG.info(it)
             mapper.readValue<ModelDescriptionImpl>(it)
         }
@@ -75,9 +75,9 @@ class TestJackson {
         val mapper = XmlMapper().apply {
             registerModule(KotlinModule())
         }
-        val variable = mapper.readValue<ScalarVariable>(xml)
-
-        Assertions.assertNotNull(variable.real)
+        mapper.readValue<ScalarVariable>(xml).also {
+            Assertions.assertNotNull(it.real)
+        }
 
     }
 

@@ -3,7 +3,6 @@ package no.mechatronics.sfi.fmi4j.modeldescription.vendors.openmodelica
 import no.mechatronics.sfi.fmi4j.TestUtils
 import no.mechatronics.sfi.fmi4j.common.currentOS
 import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescription
-import no.mechatronics.sfi.fmi4j.modeldescription.cs.CoSimulationModelDescription
 import no.mechatronics.sfi.fmi4j.modeldescription.misc.VariableNamingConvention
 import no.mechatronics.sfi.fmi4j.modeldescription.parser.ModelDescriptionParser
 import org.junit.jupiter.api.Assertions
@@ -18,19 +17,14 @@ import java.io.*
 @EnabledIfEnvironmentVariable(named = "TEST_FMUs", matches = ".*")
 class FmuExportCrossCompileTest {
 
-    companion object {
+    private companion object {
 
-        private val LOG: Logger = LoggerFactory.getLogger(FmuExportCrossCompileTest::class.java)
-    }
+        val LOG: Logger = LoggerFactory.getLogger(FmuExportCrossCompileTest::class.java)
 
-    private val modelDescription: CoSimulationModelDescription
-
-    init {
-        val fmu = File(TestUtils.getTEST_FMUs(),
+        val fmuFile = File(TestUtils.getTEST_FMUs(),
                 "FMI_2.0/CoSimulation/$currentOS/OpenModelica/v1.11.0/" +
                         "FmuExportCrossCompile/FmuExportCrossCompile.fmu")
-        Assertions.assertTrue(fmu.exists())
-        modelDescription = ModelDescriptionParser.parse(fmu).asCoSimulationModelDescription()
+        val modelDescription = ModelDescriptionParser.parse(fmuFile)
 
     }
 
@@ -68,7 +62,7 @@ class FmuExportCrossCompileTest {
         }
 
         ObjectInputStream(ByteArrayInputStream(bos.toByteArray())).use {
-            val md: ModelDescription = it.readObject() as CoSimulationModelDescription
+            val md: ModelDescription = it.readObject() as ModelDescription
             Assertions.assertEquals(modelDescription.modelVariables.size, md.modelVariables.size)
             md.modelVariables.forEach { LOG.info("$it") }
             LOG.info("${md.modelStructure}")

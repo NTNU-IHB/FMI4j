@@ -26,7 +26,6 @@ package no.mechatronics.sfi.fmi4j.modeldescription.vendors.twentysim
 
 import no.mechatronics.sfi.fmi4j.TestUtils
 import no.mechatronics.sfi.fmi4j.common.currentOS
-import no.mechatronics.sfi.fmi4j.modeldescription.cs.CoSimulationModelDescription
 import no.mechatronics.sfi.fmi4j.modeldescription.misc.DefaultExperiment
 import no.mechatronics.sfi.fmi4j.modeldescription.parser.ModelDescriptionParser
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.ModelVariables
@@ -45,17 +44,14 @@ import java.util.*
 class ControlledTemperatureTest {
 
     companion object {
+
         private val LOG: Logger = LoggerFactory.getLogger(ControlledTemperatureTest::class.java)
-    }
 
-    private val modelDescription: CoSimulationModelDescription
-
-    init {
-        val fmu = File(TestUtils.getTEST_FMUs(),
+        private val fmuFile = File(TestUtils.getTEST_FMUs(),
                 "FMI_2.0/CoSimulation/$currentOS" +
                         "/20sim/4.6.4.8004/ControlledTemperature/ControlledTemperature.fmu")
-        modelDescription = ModelDescriptionParser.parse(fmu).asCoSimulationModelDescription()
 
+        private val modelDescription = ModelDescriptionParser.parse(fmuFile).asCoSimulationModelDescription()
     }
 
     @Test

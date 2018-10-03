@@ -27,8 +27,8 @@ package no.mechatronics.sfi.fmi4j.importer
 import no.mechatronics.sfi.fmi4j.common.*
 import no.mechatronics.sfi.fmi4j.importer.jni.Fmi2LibraryWrapper
 import no.mechatronics.sfi.fmi4j.importer.misc.FmuVariableAccessorImpl
-import no.mechatronics.sfi.fmi4j.modeldescription.SpecificModelDescription
-import no.mechatronics.sfi.fmi4j.modeldescription.variables.*
+import no.mechatronics.sfi.fmi4j.modeldescription.CommonModelDescription
+import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescription
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory
  *
  * @author Lars Ivar Hatledal
  */
-abstract class AbstractFmuInstance<out E : SpecificModelDescription, out T : Fmi2LibraryWrapper<*>> internal constructor(
+abstract class AbstractFmuInstance<out E : CommonModelDescription, out T : Fmi2LibraryWrapper<*>> internal constructor(
         val wrapper: T,
         override val modelDescription: E
 ) : FmuInstance<E> {
@@ -259,23 +259,6 @@ abstract class AbstractFmuInstance<out E : SpecificModelDescription, out T : Fmi
         }
         return wrapper.deSerializeFMUState(state)
     }
-
-//    private fun assignStartValues(predicate: (TypedScalarVariable<*>) -> Boolean): Int {
-//        val variables = modelVariables.filter {
-//            it.start != null && predicate.invoke(it)
-//        }
-//
-//        variables.forEach { variable ->
-//            when (variable) {
-//                is IntegerVariable -> variable.write(this, variable.start!!)
-//                is RealVariable -> variable.write(this, variable.start!!)
-//                is StringVariable -> variable.write(this, variable.start!!)
-//                is BooleanVariable -> variable.write(this, variable.start!!)
-//                is EnumerationVariable -> variable.write(this, variable.start!!)
-//            }
-//        }
-//        return variables.size
-//    }
 
     private companion object {
         private val LOG: Logger = LoggerFactory.getLogger(AbstractFmuInstance::class.java)

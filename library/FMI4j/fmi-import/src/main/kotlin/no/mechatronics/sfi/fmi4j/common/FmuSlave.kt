@@ -24,7 +24,7 @@
 
 package no.mechatronics.sfi.fmi4j.common
 
-import no.mechatronics.sfi.fmi4j.modeldescription.cs.CoSimulationModelDescription
+import no.mechatronics.sfi.fmi4j.modeldescription.CoSimulationModelDescription
 
 /**
  * Slave interface

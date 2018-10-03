@@ -119,3 +119,11 @@ class ModelExchangeLibraryWrapper(
 
 }
 
+/**
+ *
+ * @author Lars Ivar Hatledal
+ */
+data class CompletedIntegratorStepResult(
+        val enterEventMode: Boolean,
+        val terminateSimulation: Boolean
+)

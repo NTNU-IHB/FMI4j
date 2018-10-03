@@ -50,7 +50,7 @@ public class ControlledTemperatureTestJava {
 
     private final static Logger LOG = LoggerFactory.getLogger(ControlledTemperatureTestJava.class);
 
-    private static Fmu fmuFile;
+    private static CoSimulationFmu fmu;
 
     @BeforeAll
     public static void setUp() throws IOException {
@@ -59,18 +59,18 @@ public class ControlledTemperatureTestJava {
                 "FMI_2.0/CoSimulation/" + OSUtil.getCurrentOS()
                         + "/20sim/4.6.4.8004/ControlledTemperature/ControlledTemperature.fmu");
         Assertions.assertTrue(file.exists());
-        fmuFile = Fmu.from(file);
+        fmu = Fmu.from(file).asCoSimulationFmu();
     }
 
     @AfterAll
-    public static void tearDown() {
-        fmuFile.close();
+    public static void tearDown() throws IOException {
+        fmu.close();
     }
 
     @Test
     public void test() {
 
-        try (FmuSlave slave = fmuFile.asCoSimulationFmu().newInstance()) {
+        try (FmuSlave slave = fmu.newInstance()) {
 
             Assertions.assertEquals("2.0", slave.getModelDescription().getFmiVersion());
 
