@@ -70,35 +70,35 @@ public class ControlledTemperatureTestJava {
     @Test
     public void test() {
 
-        try (FmuSlave instance = fmuFile.asCoSimulationFmu().newInstance()) {
+        try (FmuSlave slave = fmuFile.asCoSimulationFmu().newInstance()) {
 
-            Assertions.assertEquals("2.0", instance.getModelDescription().getFmiVersion());
+            Assertions.assertEquals("2.0", slave.getModelDescription().getFmiVersion());
 
-            final double startTemp = instance.getVariableByName("HeatCapacity1.T0")
+            final double startTemp = slave.getVariableByName("HeatCapacity1.T0")
                     .asRealVariable().getStart();
             Assertions.assertEquals(298.0, startTemp);
 
-            instance.init();
-            Assertions.assertSame(instance.getLastStatus(), FmiStatus.OK);
+            slave.init();
+            Assertions.assertSame(slave.getLastStatus(), FmiStatus.OK);
 
             final RealVariable heatCapacity1_C
-                    = instance.getVariableByName("HeatCapacity1.C").asRealVariable();
+                    = slave.getVariableByName("HeatCapacity1.C").asRealVariable();
             Assertions.assertEquals(0.1, (double) heatCapacity1_C.getStart());
-            LOG.info("heatCapacity1_C={}", heatCapacity1_C.read().getValue());
+            LOG.info("heatCapacity1_C={}", heatCapacity1_C.read(slave).getValue());
 
             final RealVariable temperature_room
-                    = instance.getVariableByName("Temperature_Room").asRealVariable();
+                    = slave.getVariableByName("Temperature_Room").asRealVariable();
 
             double dt = 1d / 100;
             for (int i = 0; i < 5; i++) {
-                instance.doStep(dt);
-                Assertions.assertSame(instance.getLastStatus(), FmiStatus.OK);
-                double value = temperature_room.read().getValue();
-                Assertions.assertSame(instance.getLastStatus(), FmiStatus.OK);
+                slave.doStep(dt);
+                Assertions.assertSame(slave.getLastStatus(), FmiStatus.OK);
+                double value = temperature_room.read(slave).getValue();
+                Assertions.assertSame(slave.getLastStatus(), FmiStatus.OK);
 
                 LOG.info("temperature_room={}", value);
 
-                Assertions.assertEquals(value, (double) instance
+                Assertions.assertEquals(value, (double) slave
                         .readReal("Temperature_Room").getValue());
 
             }

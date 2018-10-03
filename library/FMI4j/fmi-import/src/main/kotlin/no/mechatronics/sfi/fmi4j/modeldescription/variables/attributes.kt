@@ -33,7 +33,13 @@ import java.io.Serializable
 interface TypedAttribute<out E> : Serializable {
 
     /**
-     * If present, name of the type defined with TypeDefinitions / SimpleType providing defaults
+     * If present, name of type defined with TypeDefinitions / SimpleType. The value
+     * defined in the corresponding TypeDefinition (see section 2.2.3) is used as
+     * default. [If, for example “min” is present both in Real (of TypeDefinition) and in
+     * “Real” (of ScalarVariable), then the “min” of ScalarVariable is actually
+     * used.] For Real, Integer, Boolean, String, this attribute is optional. For
+     * Enumeration it is required, because the Enumeration items are defined in
+     * TypeDefinitions / SimpleType.
      */
     val declaredType: String?
 
@@ -80,10 +86,12 @@ interface BoundedTypedAttribute<out E> : TypedAttribute<E> {
 }
 
 
+interface IntegerAttribute: BoundedTypedAttribute<Int>
+
 /**
  * @author Lars Ivar Hatledal
  */
-data class IntegerAttribute(
+data class IntegerAttributeImpl(
 
         @JacksonXmlProperty
         override val min: Int? = null,
@@ -97,12 +105,86 @@ data class IntegerAttribute(
         @JacksonXmlProperty
         override val declaredType: String? = null
 
-) : BoundedTypedAttribute<Int>
+) : IntegerAttribute {
+
+    override fun toString(): String {
+        return "IntegerAttribute(min=$min, max=$max, start=$start, declaredType=$declaredType)"
+    }
+}
+
+interface RealAttribute: BoundedTypedAttribute<Double> {
+
+    /**
+     * Nominal value of variable. If not defined and no other information about the
+     * nominal value is available, then nominal = 1 is assumed.
+     * [The nominal value of a variable can be, for example used to determine the
+     * absolute tolerance for this variable as needed by numerical algorithms:
+     * absoluteTolerance = nominal*tolerance*0.01
+     * where tolerance is, e.g., the relative tolerance defined in
+     * <DefaultExperiment>, see section 2.2.5.]
+     */
+    val nominal: Double?
+
+    /**
+     * If present, this variable is the derivative of variable with ScalarVariable index "derivative",
+     */
+    val derivative: Int?
+
+    /**
+     * If true, indicates that the variable gets during time integration much larger
+     * than its nominal value nominal. [Typical examples are the monotonically
+     * increasing rotation angles of crank shafts and the longitudinal position of a
+     * vehicle along the track in long distance simulations. This information can, for
+     * example, be used to increase numerical stability and accuracy by setting the
+     * corresponding bound for the relative error to zero (relative tolerance = 0.0), if
+     * the corresponding variable or an alias of it is a continuous state variable.]
+     */
+    val unbounded: Boolean?
+
+    /**
+     * Only for Model exchange
+     *
+     * If true, state can be reinitialized at an event by the FMU.
+     * If false, state will never be reinitialized at an event by the FMU
+     */
+    val reinit: Boolean
+
+    /**
+     * Physical quantity of the variable, for example “Angle”, or “Energy”.
+     * The quantity names are not standardized.
+     */
+    val quantity: String?
+
+    /**
+     * Unit of the variable defined with UnitDefinitions.Unit.name that is used
+     * for the model equations [, for example “N.m”: in this case a Unit.name =
+     * "N.m" must be present under UnitDefinitions].
+     */
+    val unit: String?
+
+    /**
+     * Default display unit. The conversion to the “unit” is defined with the element
+     * “<fmiModelDescription><UnitDefinitions>”. If the corresponding
+     * “displayUnit” is not defined under <UnitDefinitions> <Unit>
+     * <DisplayUnit>, then displayUnit is ignored. It is an error if
+     * displayUnit is defined in element Real, but unit is not, or unit is not
+     * defined under <UnitDefinitions><Unit>.
+     */
+    val displayUnit: String?
+
+    /**
+     * If this attribute is true, then the “offset” of “displayUnit” must be ignored
+     * (for example 10 degree Celsius = 10 Kelvin if “relativeQuantity = true”
+     * and not 283,15 Kelvin).
+     */
+    val relativeQuantity: String?
+
+}
 
 /**
  * @author Lars Ivar Hatledal
  */
-data class RealAttribute(
+data class RealAttributeImpl(
 
         @JacksonXmlProperty
         override val min: Double? = null,
@@ -116,94 +198,50 @@ data class RealAttribute(
         @JacksonXmlProperty
         override val declaredType: String? = null,
 
-        /**
-         * Nominal value of variable. If not defined and no other information about the
-         * nominal value is available, then nominal = 1 is assumed.
-         * [The nominal value of a variable can be, for example used to determine the
-         * absolute tolerance for this variable as needed by numerical algorithms:
-         * absoluteTolerance = nominal*tolerance*0.01
-         * where tolerance is, e.g., the relative tolerance defined in
-         * <DefaultExperiment>, see section 2.2.5.]
-         */
         @JacksonXmlProperty
-        val nominal: Double? = null,
+        override val nominal: Double? = null,
 
-        /**
-         * If present, this variable is the derivative of variable with ScalarVariable index "derivative",
-         */
         @JacksonXmlProperty
-        val derivative: Int? = null,
+        override val derivative: Int? = null,
 
-        /**
-         * If true, indicates that the variable gets during time integration much larger
-         * than its nominal value nominal. [Typical examples are the monotonically
-         * increasing rotation angles of crank shafts and the longitudinal position of a
-         * vehicle along the track in long distance simulations. This information can, for
-         * example, be used to increase numerical stability and accuracy by setting the
-         * corresponding bound for the relative error to zero (relative tolerance = 0.0), if
-         * the corresponding variable or an alias of it is a continuous state variable.]
-         */
         @JacksonXmlProperty
-        val unbounded: Boolean? = null,
+        override val unbounded: Boolean? = null,
 
-        /**
-         * Only for Model exchange
-         *
-         * If true, state can be reinitialized at an event by the FMU.
-         * If false, state will never be reinitialized at an event by the FMU
-         */
         @JacksonXmlProperty
-        val reinit: Boolean = false,
+        override val reinit: Boolean = false,
 
-        /**
-         * Physical quantity of the variable, for example “Angle”, or “Energy”.
-         * The quantity names are not standardized.
-         */
         @JacksonXmlProperty
-        val quantity: String? = null,
+        override val quantity: String? = null,
 
-        /**
-         * Unit of the variable defined with UnitDefinitions.Unit.name that is used
-         * for the model equations [, for example “N.m”: in this case a Unit.name =
-         * "N.m" must be present under UnitDefinitions].
-         */
         @JacksonXmlProperty
-        val unit: String? = null,
+        override val unit: String? = null,
 
-        /**
-         * Default display unit. The conversion to the “unit” is defined with the element
-         * “<fmiModelDescription><UnitDefinitions>”. If the corresponding
-         * “displayUnit” is not defined under <UnitDefinitions> <Unit>
-         * <DisplayUnit>, then displayUnit is ignored. It is an error if
-         * displayUnit is defined in element Real, but unit is not, or unit is not
-         * defined under <UnitDefinitions><Unit>.
-         */
         @JacksonXmlProperty
-        val displayUnit: String? = null,
+        override val displayUnit: String? = null,
 
-        /**
-         * If this attribute is true, then the “offset” of “displayUnit” must be ignored
-         * (for example 10 degree Celsius = 10 Kelvin if “relativeQuantity = true”
-         * and not 283,15 Kelvin).
-         */
         @JacksonXmlProperty
-        val relativeQuantity: String? = null
+        override val relativeQuantity: String? = null
 
-) : BoundedTypedAttribute<Double>
+) : RealAttribute {
 
+    override fun toString(): String {
+        return "RealAttribute(min=$min, max=$max, start=$start, declaredType=$declaredType, nominal=$nominal, derivative=$derivative, unbounded=$unbounded, reinit=$reinit, quantity=$quantity, unit=$unit, displayUnit=$displayUnit, relativeQuantity=$relativeQuantity)"
+    }
+}
 
+interface StringAttribute: TypedAttribute<String>
 /**
  * @author Lars Ivar Hatledal
  */
-class StringAttribute(
+data class StringAttributeImpl(
 
         @JacksonXmlProperty
-        override var start: String? = null,
+        override val start: String? = null,
 
         @JacksonXmlProperty
         override val declaredType: String? = null
 
-) : TypedAttribute<String> {
+) : StringAttribute {
 
     override fun toString(): String {
         return "StringAttribute(start=$start, declaredType=$declaredType)"
@@ -211,23 +249,34 @@ class StringAttribute(
 
 }
 
+interface BooleanAttribute: TypedAttribute<Boolean>
+
 /**
  * @author Lars Ivar Hatledal
  */
-data class BooleanAttribute(
+data class BooleanAttributeImpl(
 
         @JacksonXmlProperty
-        override var start: Boolean? = null,
+        override val start: Boolean? = null,
 
         @JacksonXmlProperty
         override val declaredType: String? = null
 
-) : TypedAttribute<Boolean>
+) : BooleanAttribute {
+
+    override fun toString(): String {
+        return "BooleanAttribute(start=$start, declaredType=$declaredType)"
+    }
+}
+
+interface EnumerationAttribute: BoundedTypedAttribute<Int> {
+    val quantity: String?
+}
 
 /**
  * @author Lars Ivar Hatledal
  */
-data class EnumerationAttribute(
+data class EnumerationAttributeImpl(
 
         @JacksonXmlProperty
         override val min: Int? = null,
@@ -236,12 +285,17 @@ data class EnumerationAttribute(
         override val max: Int? = null,
 
         @JacksonXmlProperty
-        val quantity: String? = null,
+        override val quantity: String? = null,
 
         @JacksonXmlProperty
-        override var start: Int? = null,
+        override val start: Int? = null,
 
         @JacksonXmlProperty
         override val declaredType: String? = null
 
-) : BoundedTypedAttribute<Int>
+) : EnumerationAttribute {
+
+    override fun toString(): String {
+        return "EnumerationAttribute(min=$min, max=$max, quantity=$quantity, start=$start, declaredType=$declaredType)"
+    }
+}

@@ -68,7 +68,7 @@ class VanDerPolTest {
 
             val macroStep = 1.0 / 10
             while (slave.simulationTime < 1) {
-                val read = x0.read()
+                val read = x0.read(slave)
                 Assertions.assertTrue(read.status === FmiStatus.OK)
                 LOG.info("t=${slave.simulationTime}, $variableName=${read.value}")
                 slave.doStep(macroStep)

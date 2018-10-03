@@ -77,23 +77,23 @@ public class VanDerPolTestJava {
 
         LOG.info("Using solver: {}", solver.getName());
 
-        FmuSlave instance = VanDerPolTestJava.fmu.asModelExchangeFmu()
+        FmuSlave slave = VanDerPolTestJava.fmu.asModelExchangeFmu()
                 .newInstance(solver, false, true);
 
-        RealVariable x0 = instance.getModelVariables()
+        RealVariable x0 = slave.getModelVariables()
                 .getByName("x0").asRealVariable();
 
-        instance.init();
+        slave.init();
 
         double macroStep = 1.0 / 10;
-        while (instance.getSimulationTime() < 1) {
-            FmuRead<Double> read = x0.read();
+        while (slave.getSimulationTime() < 1) {
+            FmuRead<Double> read = x0.read(slave);
             Assertions.assertSame(read.getStatus(), FmiStatus.OK);
-            LOG.info("t={}, x0={}", instance.getSimulationTime(), read.getValue());
-            instance.doStep(macroStep);
+            LOG.info("t={}, x0={}", slave.getSimulationTime(), read.getValue());
+            slave.doStep(macroStep);
         }
 
-        instance.terminate();
+        slave.terminate();
     }
 
     @Test

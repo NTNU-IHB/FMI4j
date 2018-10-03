@@ -53,17 +53,6 @@ interface ScalarVariable {
     val valueReference: Long
 
     /**
-     * If present, name of type defined with TypeDefinitions / SimpleType. The value
-     * defined in the corresponding TypeDefinition (see section 2.2.3) is used as
-     * default. [If, for example “min” is present both in Real (of TypeDefinition) and in
-     * “Real” (of ScalarVariable), then the “min” of ScalarVariable is actually
-     * used.] For Real, Integer, Boolean, String, this attribute is optional. For
-     * Enumeration it is required, because the Enumeration items are defined in
-     * TypeDefinitions / SimpleType.
-     */
-    val declaredType: String?
-
-    /**
      * An optional description string describing the meaning of the variable
      */
     val description: String?
@@ -105,9 +94,6 @@ class ScalarVariableImpl(
         override val valueReference: Long,
 
         @JacksonXmlProperty
-        override val declaredType: String? = null,
-
-        @JacksonXmlProperty
         override val description: String? = null,
 
         @JacksonXmlProperty
@@ -124,23 +110,23 @@ class ScalarVariableImpl(
 
     @JacksonXmlProperty(localName = ScalarVariable.INTEGER_TYPE)
     @JsonSetter(nulls = Nulls.AS_EMPTY)
-    var integerAttribute: IntegerAttribute? = null
+    internal var integerAttribute: IntegerAttributeImpl? = null
 
     @JacksonXmlProperty(localName = ScalarVariable.REAL_TYPE)
     @JsonSetter(nulls = Nulls.AS_EMPTY)
-    var realAttribute: RealAttribute? = null
+    internal var realAttribute: RealAttributeImpl? = null
 
     @JacksonXmlProperty(localName = ScalarVariable.STRING_TYPE)
     @JsonSetter(nulls = Nulls.AS_EMPTY)
-    var stringAttribute: StringAttribute? = null
+    internal var stringAttribute: StringAttributeImpl? = null
 
     @JacksonXmlProperty(localName = ScalarVariable.BOOLEAN_TYPE)
     @JsonSetter(nulls = Nulls.AS_EMPTY)
-    var booleanAttribute: BooleanAttribute? = null
+    internal var booleanAttribute: BooleanAttributeImpl? = null
 
     @JacksonXmlProperty(localName = ScalarVariable.ENUMERATION_TYPE)
     @JsonSetter(nulls = Nulls.AS_EMPTY)
-    var enumerationAttribute: EnumerationAttribute? = null
+    internal var enumerationAttribute: EnumerationAttributeImpl? = null
 
     /**
      * Return a typed version of this variable.
@@ -148,10 +134,10 @@ class ScalarVariableImpl(
     fun toTyped(): TypedScalarVariable<*> {
 
         return when {
-            integerAttribute != null -> IntegerVariableImpl(this)
-            realAttribute != null -> RealVariableImpl(this)
-            stringAttribute != null -> StringVariableImpl(this)
-            booleanAttribute != null -> BooleanVariableImpl(this)
+            integerAttribute != null -> IntegerVariable(this)
+            realAttribute != null -> RealVariable(this)
+            stringAttribute != null -> StringVariable(this)
+            booleanAttribute != null -> BooleanVariable(this)
             enumerationAttribute != null -> EnumerationVariableImpl(this)
             else -> throw IllegalStateException("All attributes are null!")
         }
@@ -176,7 +162,6 @@ class ScalarVariableImpl(
             variability?.also { add("variability=$variability") }
             initial?.also { add("initial=$initial") }
             description?.also { add("description=$description") }
-            declaredType?.also { add("declaredType=$declaredType") }
             add("attribute=$attribute")
         }.joinToString(", ")
 

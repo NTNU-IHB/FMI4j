@@ -42,7 +42,7 @@ class ControlledTemperatureTest {
                 val heatCapacity1_C = slave.getVariableByName("HeatCapacity1.C")
                         .asRealVariable()
                 Assertions.assertEquals(0.1, heatCapacity1_C.start!!)
-                LOG.debug("heatCapacity1_C=${heatCapacity1_C.read().value}")
+                LOG.debug("heatCapacity1_C=${heatCapacity1_C.read(slave).value}")
 
                 val temperatureRoom = slave.getVariableByName("Temperature_Room")
                         .asRealVariable()
@@ -52,7 +52,7 @@ class ControlledTemperatureTest {
                     Assertions.assertTrue(slave.doStep(dt))
                     Assertions.assertTrue(slave.lastStatus === FmiStatus.OK)
 
-                    val read = temperatureRoom.read()
+                    val read = temperatureRoom.read(slave)
                     Assertions.assertTrue(read.status == FmiStatus.OK)
                     val value = read.value
 

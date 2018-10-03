@@ -60,7 +60,6 @@ interface SimpleFmuInstance : FmuVariableAccessor, Closeable {
      */
     val providesDirectionalDerivative: Boolean
 
-
     val modelDescription: SpecificModelDescription
 
     /**
@@ -138,7 +137,7 @@ interface SimpleFmuInstance : FmuVariableAccessor, Closeable {
      * @see ModelVariables.getByName
      */
     @JvmDefault
-    override fun getVariableByName(name: String): TypedScalarVariable<*> {
+    fun getVariableByName(name: String): TypedScalarVariable<*> {
         return modelVariables.getByName(name)
     }
 

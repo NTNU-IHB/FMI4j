@@ -82,7 +82,7 @@ object Benchmark {
                     measureTimeMillis {
                         while (slave.simulationTime < option.stopTime - option.stepSize) {
                             !slave.doStep(option.stepSize)
-                            sum += h.read().value
+                            sum += h.read(slave).value
                             j += 1
                         }
                     }.also { elapsed = it }

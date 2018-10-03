@@ -82,18 +82,18 @@ class CompareWithJavaFmi {
             duration1 = Duration.between(start, end).toMillis()
         }
 
-        fmu.asCoSimulationFmu().newInstance().apply {
+        fmu.asCoSimulationFmu().newInstance().also { slave ->
 
             val start = Instant.now()
-            init(0.0)
-            while (simulationTime < stop) {
-                val status = doStep(stepSize)
-                modelVariables.forEach {
-                    it.read()
+            slave.init(0.0)
+            while (slave.simulationTime < stop) {
+                val status = slave.doStep(stepSize)
+                slave.modelVariables.forEach {
+                    it.read(slave)
                 }
                 Assertions.assertTrue(status)
             }
-            terminate()
+            slave.terminate()
             val end = Instant.now()
             duration2 = Duration.between(start, end).toMillis()
         }

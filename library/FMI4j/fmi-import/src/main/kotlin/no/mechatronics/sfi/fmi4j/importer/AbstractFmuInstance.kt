@@ -26,6 +26,7 @@ package no.mechatronics.sfi.fmi4j.importer
 
 import no.mechatronics.sfi.fmi4j.common.*
 import no.mechatronics.sfi.fmi4j.importer.jni.Fmi2LibraryWrapper
+import no.mechatronics.sfi.fmi4j.importer.misc.FmuVariableAccessorImpl
 import no.mechatronics.sfi.fmi4j.modeldescription.SpecificModelDescription
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.*
 import org.slf4j.Logger
@@ -39,17 +40,7 @@ import org.slf4j.LoggerFactory
 abstract class AbstractFmuInstance<out E : SpecificModelDescription, out T : Fmi2LibraryWrapper<*>> internal constructor(
         override val modelDescription: E,
         val wrapper: T
-) : FmuInstance<E> {
-
-    init {
-        modelVariables.forEach { variable ->
-            if (variable is AbstractTypedScalarVariable) {
-                variable::class.java.getField("accessor").also { field ->
-                    field.set(variable, this)
-                }
-            }
-        }
-    }
+) : FmuInstance<E>, FmuVariableAccessor by FmuVariableAccessorImpl(wrapper, modelDescription) {
 
     /**
      * @see FmiLibrary.fmi2GetTypesPlatform
@@ -126,12 +117,12 @@ abstract class AbstractFmuInstance<out E : SpecificModelDescription, out T : Fmi
                 throw IllegalArgumentException("Start must be a positive value")
             }
 
-            assignStartValues {
-                it.variability != Variability.CONSTANT &&
-                        (it.initial == Initial.EXACT || it.initial == Initial.APPROX)
-            }.also {
-                LOG.debug("Applied start values to $it variables with variability != CONSTANT and initial == EXACT or APPROX ")
-            }
+//            assignStartValues {
+//                it.variability != Variability.CONSTANT &&
+//                        (it.initial == Initial.EXACT || it.initial == Initial.APPROX)
+//            }.also {
+//                LOG.debug("Applied start values to $it variables with variability != CONSTANT and initial == EXACT or APPROX ")
+//            }
 
             stopDefined = (stop > start)
             if (stopDefined) stopTime = stop
@@ -148,12 +139,12 @@ abstract class AbstractFmuInstance<out E : SpecificModelDescription, out T : Fmi
                 }
             }
 
-            assignStartValues {
-                it.variability != Variability.CONSTANT &&
-                        (it.initial == Initial.EXACT || it.causality == Causality.INPUT)
-            }.also {
-                LOG.debug("Applied start values to $it variables with variability != CONSTANT and initial == EXACT or causality == INPUT ")
-            }
+//            assignStartValues {
+//                it.variability != Variability.CONSTANT &&
+//                        (it.initial == Initial.EXACT || it.causality == Causality.INPUT)
+//            }.also {
+//                LOG.debug("Applied start values to $it variables with variability != CONSTANT and initial == EXACT or causality == INPUT ")
+//            }
 
             wrapper.exitInitializationMode().also {
                 if (it != FmiStatus.OK) {
@@ -274,86 +265,22 @@ abstract class AbstractFmuInstance<out E : SpecificModelDescription, out T : Fmi
         return wrapper.deSerializeFMUState(state)
     }
 
-    override fun readInteger(vr: ValueReference): FmuIntegerRead {
-        return wrapper.readInteger(vr)
-    }
-
-    override fun readInteger(vr: ValueReferences, value: IntArray): FmiStatus {
-        return wrapper.readInteger(vr, value)
-    }
-
-    override fun readReal(vr: ValueReference): FmuRealRead {
-        return wrapper.readReal(vr)
-    }
-
-    override fun readReal(vr: ValueReferences, value: RealArray): FmiStatus {
-        return wrapper.readReal(vr, value)
-    }
-
-    override fun readString(vr: ValueReference): FmuStringRead {
-        return wrapper.readString(vr)
-    }
-
-    override fun readString(vr: ValueReferences, value: StringArray): FmiStatus {
-        return wrapper.readString(vr, value)
-    }
-
-    override fun readBoolean(vr: ValueReference): FmuBooleanRead {
-        return wrapper.readBoolean(vr)
-    }
-
-    override fun readBoolean(vr: ValueReferences, value: BooleanArray): FmiStatus {
-        return wrapper.readBoolean(vr, value)
-    }
-
-    override fun writeInteger(vr: ValueReference, value: Int): FmiStatus {
-        return wrapper.writeInteger(vr, value)
-    }
-
-    override fun writeInteger(vr: ValueReferences, value: IntArray): FmiStatus {
-        return wrapper.writeInteger(vr, value)
-    }
-
-    override fun writeReal(vr: ValueReference, value: Real): FmiStatus {
-        return wrapper.writeReal(vr, value)
-    }
-
-    override fun writeReal(vr: ValueReferences, value: RealArray): FmiStatus {
-        return wrapper.writeReal(vr, value)
-    }
-
-    override fun writeString(vr: ValueReference, value: String): FmiStatus {
-        return wrapper.writeString(vr, value)
-    }
-
-    override fun writeString(vr: ValueReferences, value: StringArray): FmiStatus {
-        return wrapper.writeString(vr, value)
-    }
-
-    override fun writeBoolean(vr: ValueReference, value: Boolean): FmiStatus {
-        return wrapper.writeBoolean(vr, value)
-    }
-
-    override fun writeBoolean(vr: ValueReferences, value: BooleanArray): FmiStatus {
-        return wrapper.writeBoolean(vr, value)
-    }
-
-    private fun assignStartValues(predicate: (TypedScalarVariable<*>) -> Boolean): Int {
-        val variables = modelVariables.filter {
-            it.start != null && predicate.invoke(it)
-        }
-
-        variables.forEach { variable ->
-            when (variable) {
-                is IntegerVariable -> variable.write(variable.start!!)
-                is RealVariable -> variable.write(variable.start!!)
-                is StringVariable -> variable.write(variable.start!!)
-                is BooleanVariable -> variable.write(variable.start!!)
-                is EnumerationVariable -> variable.write(variable.start!!)
-            }
-        }
-        return variables.size
-    }
+//    private fun assignStartValues(predicate: (TypedScalarVariable<*>) -> Boolean): Int {
+//        val variables = modelVariables.filter {
+//            it.start != null && predicate.invoke(it)
+//        }
+//
+//        variables.forEach { variable ->
+//            when (variable) {
+//                is IntegerVariable -> variable.write(this, variable.start!!)
+//                is RealVariable -> variable.write(this, variable.start!!)
+//                is StringVariable -> variable.write(this, variable.start!!)
+//                is BooleanVariable -> variable.write(this, variable.start!!)
+//                is EnumerationVariable -> variable.write(this, variable.start!!)
+//            }
+//        }
+//        return variables.size
+//    }
 
     private companion object {
         private val LOG: Logger = LoggerFactory.getLogger(AbstractFmuInstance::class.java)

@@ -38,7 +38,7 @@ class ControlledTemperatureTest {
                 slave.init()
                 Assertions.assertTrue(slave.lastStatus === FmiStatus.OK)
 
-                LOG.debug("heatCapacitor_T=${heatCapacitor_T.read().value}")
+                LOG.debug("heatCapacitor_T=${heatCapacitor_T.read(slave).value}")
 
                 val tempInputValue = slave
                         .getVariableByName("outputs[2]").asRealVariable()
@@ -48,7 +48,7 @@ class ControlledTemperatureTest {
                     slave.doStep(dt)
                     Assertions.assertTrue(slave.lastStatus === FmiStatus.OK)
 
-                    tempInputValue.read().also {
+                    tempInputValue.read(slave).also {
                         Assertions.assertTrue(it.status == FmiStatus.OK)
                         LOG.info("t=${slave.simulationTime}, outputs[2]=${it.value}")
                     }

@@ -55,7 +55,7 @@ class BouncingBallTest {
             val macroStep = 1.0 / 10
             while (slave.simulationTime < 1) {
                 slave.doStep(macroStep)
-                h.read().also {
+                h.read(slave).also {
                     Assertions.assertEquals(FmiStatus.OK, it.status)
                     LOG.info("t=${slave.simulationTime}, h=${it.value}")
                 }

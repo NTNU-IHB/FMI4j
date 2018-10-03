@@ -42,10 +42,10 @@ class FmuInstanceVariableAccessorTest {
             slave.init()
             slave.modelVariables.forEach { variable ->
                 when (variable) {
-                    is IntegerVariable -> Assertions.assertEquals(variable.read(), slave.readInteger(variable.valueReference))
-                    is RealVariable -> Assertions.assertEquals(variable.read(), slave.readReal(variable.valueReference))
-                    is StringVariable -> Assertions.assertEquals(variable.read(), slave.readString(variable.valueReference))
-                    is BooleanVariable -> Assertions.assertEquals(variable.read(), slave.readBoolean(variable.valueReference))
+                    is IntegerVariable -> Assertions.assertEquals(variable.read(slave), slave.readInteger(variable.valueReference))
+                    is RealVariable -> Assertions.assertEquals(variable.read(slave), slave.readReal(variable.valueReference))
+                    is StringVariable -> Assertions.assertEquals(variable.read(slave), slave.readString(variable.valueReference))
+                    is BooleanVariable -> Assertions.assertEquals(variable.read(slave), slave.readBoolean(variable.valueReference))
                 }
             }
 
