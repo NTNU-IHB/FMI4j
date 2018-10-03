@@ -74,7 +74,7 @@ ControlledTemperature.newInstance().use { slave -> //try with resources
                 break
             }
 
-            tempRef.read().also {
+            tempRef.read(slave).also {
                 println("t=${instance.currentTime}, ${tempRef.name}=${it.value}")
             }
             
