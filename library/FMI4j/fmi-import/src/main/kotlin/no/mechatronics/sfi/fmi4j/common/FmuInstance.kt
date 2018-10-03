@@ -54,12 +54,6 @@ interface SimpleFmuInstance : FmuVariableAccessorProvider, Closeable {
     val lastStatus: FmiStatus
 
     /**
-     * If true, the directional derivative of the equations
-     * can be computed with getDirectionalDerivative(..)
-     */
-    val providesDirectionalDerivative: Boolean
-
-    /**
      * The parsed modelDescription with instance specific attributes
      */
     val modelDescription: SpecificModelDescription
@@ -110,19 +104,10 @@ interface SimpleFmuInstance : FmuVariableAccessorProvider, Closeable {
      */
     fun terminate(): Boolean
 
-    /**
-     * Does this FMU instance support getting and setting the FMU state?
-     */
-    val canGetAndSetFMUstate: Boolean
 
     fun getFMUstate(): FmuState
     fun setFMUstate(state: FmuState): Boolean
     fun freeFMUstate(state: FmuState): Boolean
-
-    /**
-     * Is serialization supported by this FMU instance?
-     */
-    val canSerializeFMUstate: Boolean
 
     fun serializeFMUstate(state: FmuState): ByteArray
     fun deSerializeFMUstate(state: ByteArray): FmuState

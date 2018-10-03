@@ -51,7 +51,7 @@ class CoSimulationSlaveBuilder internal constructor(
         val lib = if (modelDescription.canBeInstantiatedOnlyOncePerProcess) loadLibrary() else libraryCache
         val c = fmu.instantiate(modelDescription, lib, FmiType.CO_SIMULATION, visible, loggingOn)
         val wrapper = CoSimulationLibraryWrapper(c, lib)
-        return CoSimulationSlave(fmu.modelDescription.asCoSimulationModelDescription(), wrapper).also {
+        return CoSimulationSlave(wrapper, modelDescription).also {
             fmu.registerInstance(it)
         }
     }

@@ -36,9 +36,9 @@ import no.mechatronics.sfi.fmi4j.modeldescription.me.ModelExchangeModelDescripti
  * @author Lars Ivar Hatledal
  */
 open class ModelExchangeInstance internal constructor(
-        modelDescription: ModelExchangeModelDescription,
-        wrapper: ModelExchangeLibraryWrapper
-) : AbstractFmuInstance<ModelExchangeModelDescription, ModelExchangeLibraryWrapper>(modelDescription, wrapper) {
+        wrapper: ModelExchangeLibraryWrapper,
+        modelDescription: ModelExchangeModelDescription
+) : AbstractFmuInstance<ModelExchangeModelDescription, ModelExchangeLibraryWrapper>(wrapper, modelDescription) {
 
     val eventInfo = EventInfo()
 

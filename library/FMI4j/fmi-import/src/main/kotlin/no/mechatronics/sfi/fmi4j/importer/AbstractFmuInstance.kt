@@ -38,8 +38,8 @@ import org.slf4j.LoggerFactory
  * @author Lars Ivar Hatledal
  */
 abstract class AbstractFmuInstance<out E : SpecificModelDescription, out T : Fmi2LibraryWrapper<*>> internal constructor(
-        override val modelDescription: E,
-        val wrapper: T
+        val wrapper: T,
+        override val modelDescription: E
 ) : FmuInstance<E> {
 
     /**
@@ -53,15 +53,6 @@ abstract class AbstractFmuInstance<out E : SpecificModelDescription, out T : Fmi
      */
     val version
         get() = wrapper.version
-
-    override val canGetAndSetFMUstate: Boolean
-        get() = modelDescription.canGetAndSetFMUstate
-
-    override val canSerializeFMUstate: Boolean
-        get() = modelDescription.canSerializeFMUstate
-
-    override val providesDirectionalDerivative: Boolean
-        get() = modelDescription.providesDirectionalDerivative
 
     /**
      * Has the FMU been initialized yet?
@@ -201,11 +192,11 @@ abstract class AbstractFmuInstance<out E : SpecificModelDescription, out T : Fmi
     }
 
     override fun getDirectionalDerivative(vUnknownRef: IntArray, vKnownRef: IntArray, dvKnown: RealArray): RealArray {
-        if (!providesDirectionalDerivative) {
+        if (!modelDescription.providesDirectionalDerivative) {
             throw IllegalStateException("Illegal call. FMU does not provide directional derivatives!")
         }
-        return RealArray(vUnknownRef.size).also {
-            wrapper.getDirectionalDerivative(vUnknownRef, vKnownRef, dvKnown, it)
+        return RealArray(vUnknownRef.size).also { dvUnknown ->
+            wrapper.getDirectionalDerivative(vUnknownRef, vKnownRef, dvKnown, dvUnknown)
         }
     }
 

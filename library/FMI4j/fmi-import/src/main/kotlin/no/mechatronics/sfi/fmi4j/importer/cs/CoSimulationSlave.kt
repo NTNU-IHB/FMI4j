@@ -38,9 +38,9 @@ import java.lang.IllegalStateException
  * @author Lars Ivar Hatledal
  */
 class CoSimulationSlave internal constructor(
-        modelDescription: CoSimulationModelDescription,
-        wrapper: CoSimulationLibraryWrapper
-) : FmuSlave, AbstractFmuInstance<CoSimulationModelDescription, CoSimulationLibraryWrapper>(modelDescription, wrapper) {
+        wrapper: CoSimulationLibraryWrapper,
+        modelDescription: CoSimulationModelDescription
+) : FmuSlave, AbstractFmuInstance<CoSimulationModelDescription, CoSimulationLibraryWrapper>(wrapper, modelDescription) {
 
     /**
      * @see CoSimulationLibraryWrapper.doStep
