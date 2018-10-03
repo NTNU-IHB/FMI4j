@@ -98,7 +98,7 @@ public class ControlledTemperatureTestJava {
 
                 LOG.info("temperature_room={}", value);
 
-                Assertions.assertEquals(value, (double) slave
+                Assertions.assertEquals(value, (double) slave.getVariableAccessor()
                         .readReal("Temperature_Room").getValue());
 
             }

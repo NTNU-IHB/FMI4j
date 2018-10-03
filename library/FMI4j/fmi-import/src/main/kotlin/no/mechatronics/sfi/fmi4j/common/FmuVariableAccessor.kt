@@ -24,50 +24,82 @@
 
 package no.mechatronics.sfi.fmi4j.common
 
+
 /**
  * @author Lars Ivar Hatledal
  */
-interface FmuVariableReader {
-    fun readInteger(name: String): FmuIntegerRead
-    fun readInteger(vr: ValueReference): FmuIntegerRead
+interface FmuVariableReaderLite {
     fun readInteger(vr: ValueReferences, value: IntArray): FmiStatus
-
-    fun readReal(name: String): FmuRealRead
-    fun readReal(vr: ValueReference): FmuRealRead
     fun readReal(vr: ValueReferences, value: RealArray): FmiStatus
-
-    fun readString(name: String): FmuStringRead
-    fun readString(vr: ValueReference): FmuStringRead
     fun readString(vr: ValueReferences, value: StringArray): FmiStatus
-
-
-    fun readBoolean(name: String): FmuBooleanRead
-    fun readBoolean(vr: ValueReference): FmuBooleanRead
     fun readBoolean(vr: ValueReferences, value: BooleanArray): FmiStatus
 }
 
 /**
  * @author Lars Ivar Hatledal
  */
-interface FmuVariableWriter {
-    fun writeInteger(name: String, value: Int): FmiStatus
-    fun writeInteger(vr: ValueReference, value: Int): FmiStatus
+interface FmuVariableReader: FmuVariableReaderLite {
+
+    fun readInteger(name: String): FmuIntegerRead
+    fun readInteger(vr: ValueReference): FmuIntegerRead
+
+    fun readReal(name: String): FmuRealRead
+    fun readReal(vr: ValueReference): FmuRealRead
+
+    fun readString(name: String): FmuStringRead
+    fun readString(vr: ValueReference): FmuStringRead
+
+    fun readBoolean(name: String): FmuBooleanRead
+    fun readBoolean(vr: ValueReference): FmuBooleanRead
+
+}
+
+/**
+ * @author Lars Ivar Hatledal
+ */
+interface FmuVariableWriterLite {
     fun writeInteger(vr: ValueReferences, value: IntArray): FmiStatus
-
-    fun writeReal(name: String, value: Real): FmiStatus
-    fun writeReal(vr: ValueReference, value: Real): FmiStatus
     fun writeReal(vr: ValueReferences, value: RealArray): FmiStatus
-
-    fun writeString(name: String, value: String): FmiStatus
-    fun writeString(vr: ValueReference, value: String): FmiStatus
     fun writeString(vr: ValueReferences, value: StringArray): FmiStatus
-
-    fun writeBoolean(name: String, value: Boolean): FmiStatus
-    fun writeBoolean(vr: ValueReference, value: Boolean): FmiStatus
     fun writeBoolean(vr: ValueReferences, value: BooleanArray): FmiStatus
 }
 
 /**
  * @author Lars Ivar Hatledal
  */
-interface FmuVariableAccessor: FmuVariableReader, FmuVariableWriter
+interface FmuVariableWriter: FmuVariableWriterLite {
+
+    fun writeInteger(name: String, value: Int): FmiStatus
+    fun writeInteger(vr: ValueReference, value: Int): FmiStatus
+
+    fun writeReal(name: String, value: Real): FmiStatus
+    fun writeReal(vr: ValueReference, value: Real): FmiStatus
+
+    fun writeString(name: String, value: String): FmiStatus
+    fun writeString(vr: ValueReference, value: String): FmiStatus
+
+    fun writeBoolean(name: String, value: Boolean): FmiStatus
+    fun writeBoolean(vr: ValueReference, value: Boolean): FmiStatus
+
+}
+
+/**
+ * @author Lars Ivar Hatledal
+ */
+interface FmuVariableAccessorLite: FmuVariableReaderLite, FmuVariableWriterLite
+
+/**
+ * Provides read and write access to FMU variables
+ *
+ *  @author Lars Ivar Hatledal
+ */
+interface FmuVariableAccessorProvider {
+
+    val variableAccessor: FmuVariableAccessor
+
+}
+
+/**
+ * @author Lars Ivar Hatledal
+ */
+interface FmuVariableAccessor: FmuVariableAccessorLite, FmuVariableReader, FmuVariableWriter

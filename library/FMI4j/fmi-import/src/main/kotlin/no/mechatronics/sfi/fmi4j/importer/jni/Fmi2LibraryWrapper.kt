@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory
 abstract class Fmi2LibraryWrapper<E : Fmi2Library>(
         protected var c: Long,
         library: E
-) {
+): FmuVariableAccessorLite {
 
     private val buffers: ArrayBuffers by lazy {
         ArrayBuffers()
@@ -185,8 +185,7 @@ abstract class Fmi2LibraryWrapper<E : Fmi2Library>(
     /**
      * @see Fmi2Library.fmi2GetInteger
      */
-    @JvmOverloads
-    fun readInteger(vr: ValueReferences, value: IntArray = IntArray(vr.size)): FmiStatus {
+    override fun readInteger(vr: ValueReferences, value: IntArray): FmiStatus {
         return library.getInteger(c, vr, value).let { updateStatus(it) }
     }
 
@@ -206,8 +205,7 @@ abstract class Fmi2LibraryWrapper<E : Fmi2Library>(
     /**
      * @see Fmi2Library.fmi2GetReal
      */
-    @JvmOverloads
-    fun readReal(vr: ValueReferences, value: DoubleArray = DoubleArray(vr.size)): FmiStatus {
+    override fun readReal(vr: ValueReferences, value: DoubleArray): FmiStatus {
         return library.getReal(c, vr, value).let { updateStatus(it) }
     }
 
@@ -227,8 +225,7 @@ abstract class Fmi2LibraryWrapper<E : Fmi2Library>(
     /**
      * @see Fmi2Library.fmi2GetString
      */
-    @JvmOverloads
-    fun readString(vr: ValueReferences, value: StringArray = StringArray(vr.size) { "" }): FmiStatus {
+    override fun readString(vr: ValueReferences, value: StringArray): FmiStatus {
         return library.getString(c, vr, value).let { updateStatus(it) }
     }
 
@@ -248,8 +245,7 @@ abstract class Fmi2LibraryWrapper<E : Fmi2Library>(
     /**
      * @see Fmi2Library.fmi2GetBoolean
      */
-    @JvmOverloads
-    fun readBoolean(vr: ValueReferences, value: BooleanArray = BooleanArray(vr.size)): FmiStatus {
+    override fun readBoolean(vr: ValueReferences, value: BooleanArray): FmiStatus {
         return library.getBoolean(c, vr, value).let { updateStatus(it) }
     }
 
@@ -268,7 +264,7 @@ abstract class Fmi2LibraryWrapper<E : Fmi2Library>(
     /**
      * @see Fmi2Library.fmi2SetInteger
      */
-    fun writeInteger(vr: ValueReferences, value: IntArray): FmiStatus {
+    override fun writeInteger(vr: ValueReferences, value: IntArray): FmiStatus {
         return updateStatus((library.setInteger(c, vr, value)))
     }
 
@@ -287,7 +283,7 @@ abstract class Fmi2LibraryWrapper<E : Fmi2Library>(
     /**
      * @see Fmi2Library.fmi2SetReal
      */
-    fun writeReal(vr: ValueReferences, value: DoubleArray): FmiStatus {
+    override fun writeReal(vr: ValueReferences, value: DoubleArray): FmiStatus {
         return updateStatus((library.setReal(c, vr, value)))
     }
 
@@ -306,7 +302,7 @@ abstract class Fmi2LibraryWrapper<E : Fmi2Library>(
     /**
      * @see Fmi2Library.fmi2SetString
      */
-    fun writeString(vr: ValueReferences, value: StringArray): FmiStatus {
+    override fun writeString(vr: ValueReferences, value: StringArray): FmiStatus {
         return updateStatus((library.setString(c, vr, value)))
     }
 
@@ -325,7 +321,7 @@ abstract class Fmi2LibraryWrapper<E : Fmi2Library>(
     /**
      * @see Fmi2Library.fmi2SetBoolean
      */
-    fun writeBoolean(vr: ValueReferences, value: BooleanArray): FmiStatus {
+    override fun writeBoolean(vr: ValueReferences, value: BooleanArray): FmiStatus {
         return updateStatus(library.setBoolean(c, vr, value))
     }
 

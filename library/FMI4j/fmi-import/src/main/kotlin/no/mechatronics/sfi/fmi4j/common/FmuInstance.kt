@@ -31,8 +31,7 @@ import java.io.Closeable
 
 typealias FmuState = Long
 
-interface SimpleFmuInstance : FmuVariableAccessor, Closeable {
-
+interface SimpleFmuInstance : FmuVariableAccessorProvider, Closeable {
 
     /**
      * Has init been called?
@@ -60,7 +59,15 @@ interface SimpleFmuInstance : FmuVariableAccessor, Closeable {
      */
     val providesDirectionalDerivative: Boolean
 
+    /**
+     * The parsed modelDescription with instance specific attributes
+     */
     val modelDescription: SpecificModelDescription
+
+    /**
+     * Provides read and write access to FMU variables
+     */
+    override val variableAccessor: FmuVariableAccessor
 
     /**
      * @see SpecificModelDescription.modelVariables

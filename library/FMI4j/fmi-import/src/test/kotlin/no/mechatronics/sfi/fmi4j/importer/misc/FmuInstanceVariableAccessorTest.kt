@@ -42,10 +42,14 @@ class FmuInstanceVariableAccessorTest {
             slave.init()
             slave.modelVariables.forEach { variable ->
                 when (variable) {
-                    is IntegerVariable -> Assertions.assertEquals(variable.read(slave), slave.readInteger(variable.valueReference))
-                    is RealVariable -> Assertions.assertEquals(variable.read(slave), slave.readReal(variable.valueReference))
-                    is StringVariable -> Assertions.assertEquals(variable.read(slave), slave.readString(variable.valueReference))
-                    is BooleanVariable -> Assertions.assertEquals(variable.read(slave), slave.readBoolean(variable.valueReference))
+                    is IntegerVariable -> Assertions.assertEquals(
+                            variable.read(slave), slave.variableAccessor.readInteger(variable.valueReference))
+                    is RealVariable -> Assertions.assertEquals(
+                            variable.read(slave), slave.variableAccessor.readReal(variable.valueReference))
+                    is StringVariable -> Assertions.assertEquals(
+                            variable.read(slave), slave.variableAccessor.readString(variable.valueReference))
+                    is BooleanVariable -> Assertions.assertEquals(
+                            variable.read(slave), slave.variableAccessor.readBoolean(variable.valueReference))
                 }
             }
 
@@ -56,15 +60,23 @@ class FmuInstanceVariableAccessorTest {
     @Test
     fun test2() {
 
-        fmu.asCoSimulationFmu().newInstance().use { instance ->
+        fmu.asCoSimulationFmu().newInstance().use { slave ->
 
-            instance.init()
-            instance.modelVariables.forEach { variable ->
+            slave.init()
+            slave.modelVariables.forEach { variable ->
                 when (variable) {
-                    is IntegerVariable -> Assertions.assertEquals(instance.readInteger(variable.valueReference), instance.readInteger(variable.name))
-                    is RealVariable -> Assertions.assertEquals(instance.readReal(variable.valueReference), instance.readReal(variable.name))
-                    is StringVariable -> Assertions.assertEquals(instance.readString(variable.valueReference), instance.readString(variable.name))
-                    is BooleanVariable -> Assertions.assertEquals(instance.readBoolean(variable.valueReference), instance.readBoolean(variable.name))
+                    is IntegerVariable -> Assertions.assertEquals(
+                            slave.variableAccessor.readInteger(variable.valueReference),
+                            slave.variableAccessor.readInteger(variable.name))
+                    is RealVariable -> Assertions.assertEquals(
+                            slave.variableAccessor.readReal(variable.valueReference),
+                            slave.variableAccessor.readReal(variable.name))
+                    is StringVariable -> Assertions.assertEquals(
+                            slave.variableAccessor.readString(variable.valueReference),
+                            slave.variableAccessor.readString(variable.name))
+                    is BooleanVariable -> Assertions.assertEquals(
+                            slave.variableAccessor.readBoolean(variable.valueReference),
+                            slave.variableAccessor.readBoolean(variable.name))
                 }
             }
 

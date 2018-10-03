@@ -31,11 +31,21 @@ import no.mechatronics.sfi.fmi4j.common.*
  */
 interface TypedScalarVariable<E> : ScalarVariable {
 
+    @JvmDefault
+    fun read(variableAccessorProvider: FmuVariableAccessorProvider): FmuRead<E> {
+        return read(variableAccessorProvider.variableAccessor)
+    }
+
     /**
      * Accesses the FMU and returns the current value of the variable
      * represented by this valueReference, as well as the status
      */
     fun read(reader: FmuVariableReader): FmuRead<E>
+
+    @JvmDefault
+    fun write(variableAccessorProvider: FmuVariableAccessorProvider, value: E): FmiStatus {
+        return write(variableAccessorProvider.variableAccessor, value)
+    }
 
     /**
      * Accesses the FMU and writes the provided value to the FMU
@@ -66,27 +76,32 @@ interface TypedScalarVariable<E> : ScalarVariable {
 
     fun asIntegerVariable(): IntegerVariable = when {
         this is IntegerVariable -> this
-        else -> throw IllegalAccessException("Variable is not an ${IntegerVariable::class.java.simpleName}, but an ${this::class.java.simpleName}")
+        else -> throw IllegalAccessException(
+                "Variable is not an ${IntegerVariable::class.java.simpleName}, but an ${this::class.java.simpleName}")
     }
 
     fun asRealVariable(): RealVariable = when {
         this is RealVariable -> this
-        else -> throw throw IllegalAccessException("Variable is not an ${RealVariable::class.java.simpleName}, but an ${this::class.java.simpleName}")
+        else -> throw throw IllegalAccessException(
+                "Variable is not an ${RealVariable::class.java.simpleName}, but an ${this::class.java.simpleName}")
     }
 
     fun asStringVariable(): StringVariable = when {
         this is StringVariable -> this
-        else -> throw IllegalAccessException("Variable is not an ${StringVariable::class.java.simpleName}, but an ${this::class.java.simpleName}")
+        else -> throw IllegalAccessException(
+                "Variable is not an ${StringVariable::class.java.simpleName}, but an ${this::class.java.simpleName}")
     }
 
     fun asBooleanVariable(): BooleanVariable = when {
         this is BooleanVariable -> this
-        else -> throw IllegalAccessException("Variable is not an ${BooleanVariable::class.java.simpleName}, but an ${this::class.java.simpleName}")
+        else -> throw IllegalAccessException(
+                "Variable is not an ${BooleanVariable::class.java.simpleName}, but an ${this::class.java.simpleName}")
     }
 
     fun asEnumerationVariable(): EnumerationVariable = when {
         this is EnumerationVariable -> this
-        else -> throw IllegalAccessException("Variable is not an ${EnumerationVariable::class.java.simpleName}, but an ${this::class.java.simpleName}")
+        else -> throw IllegalAccessException(
+                "Variable is not an ${EnumerationVariable::class.java.simpleName}, but an ${this::class.java.simpleName}")
     }
 
 }
@@ -95,9 +110,9 @@ interface TypedScalarVariable<E> : ScalarVariable {
  * @author Lars Ivar Hatledal
  */
 class IntegerVariable internal constructor(
-        v: ScalarVariableImpl
-) : TypedScalarVariable<Int>, ScalarVariable by v, IntegerAttribute by v.integerAttribute
-        ?: throw IllegalStateException("Variable is not an Integer!") {
+        v: ScalarVariable,
+        a: IntegerAttribute
+) : TypedScalarVariable<Int>, ScalarVariable by v, IntegerAttribute by a {
 
 
     override fun read(reader: FmuVariableReader): FmuIntegerRead {
@@ -131,9 +146,9 @@ class IntegerVariable internal constructor(
  * @author Lars Ivar Hatledal
  */
 class RealVariable internal constructor(
-        v: ScalarVariableImpl
-) : TypedScalarVariable<Real>, ScalarVariable by v, RealAttribute by v.realAttribute
-        ?: throw IllegalStateException("Variable is not an Real!") {
+        v: ScalarVariableImpl,
+        a: RealAttribute
+) : TypedScalarVariable<Real>, ScalarVariable by v, RealAttribute by a {
 
     override fun read(reader: FmuVariableReader): FmuRealRead {
         return reader.readReal(valueReference)
@@ -175,9 +190,9 @@ class RealVariable internal constructor(
  * @author Lars Ivar Hatledal
  */
 class StringVariable internal constructor(
-        v: ScalarVariableImpl
-) : TypedScalarVariable<String>, ScalarVariable by v, StringAttribute by v.stringAttribute
-        ?: throw IllegalStateException("Variable is not an String!") {
+        v: ScalarVariableImpl,
+        a: StringAttribute
+) : TypedScalarVariable<String>, ScalarVariable by v, StringAttribute by a {
 
     override fun read(reader: FmuVariableReader): FmuStringRead {
         return reader.readString(valueReference)
@@ -210,9 +225,9 @@ class StringVariable internal constructor(
  * @author Lars Ivar Hatledal
  */
 class BooleanVariable internal constructor(
-        v: ScalarVariableImpl
-) : TypedScalarVariable<Boolean>, ScalarVariable by v, BooleanAttribute by v.booleanAttribute
-        ?: throw IllegalStateException("Variable is not an Boolean!") {
+        v: ScalarVariableImpl,
+        a: BooleanAttribute
+) : TypedScalarVariable<Boolean>, ScalarVariable by v, BooleanAttribute by a {
 
     override fun read(reader: FmuVariableReader): FmuBooleanRead {
         return reader.readBoolean(valueReference)
@@ -250,9 +265,9 @@ interface EnumerationVariable : TypedScalarVariable<Int>, EnumerationAttribute
  * @author Lars Ivar Hatledal
  */
 class EnumerationVariableImpl internal constructor(
-        v: ScalarVariableImpl
-) : EnumerationVariable, ScalarVariable by v, EnumerationAttribute by v.enumerationAttribute
-        ?: throw IllegalStateException("Variable is not an Enumeration!") {
+        v: ScalarVariableImpl,
+        a: EnumerationAttribute
+) : EnumerationVariable, ScalarVariable by v, EnumerationAttribute by a {
 
     override fun read(reader: FmuVariableReader): FmuRead<Int> {
         return reader.readInteger(valueReference)
@@ -283,4 +298,3 @@ class EnumerationVariableImpl internal constructor(
     }
 
 }
-

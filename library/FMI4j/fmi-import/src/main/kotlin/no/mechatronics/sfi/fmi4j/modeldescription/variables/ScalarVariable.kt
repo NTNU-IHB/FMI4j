@@ -110,23 +110,23 @@ class ScalarVariableImpl(
 
     @JacksonXmlProperty(localName = ScalarVariable.INTEGER_TYPE)
     @JsonSetter(nulls = Nulls.AS_EMPTY)
-    internal var integerAttribute: IntegerAttributeImpl? = null
+    var integerAttribute: IntegerAttributeImpl? = null
 
     @JacksonXmlProperty(localName = ScalarVariable.REAL_TYPE)
     @JsonSetter(nulls = Nulls.AS_EMPTY)
-    internal var realAttribute: RealAttributeImpl? = null
+    var realAttribute: RealAttributeImpl? = null
 
     @JacksonXmlProperty(localName = ScalarVariable.STRING_TYPE)
     @JsonSetter(nulls = Nulls.AS_EMPTY)
-    internal var stringAttribute: StringAttributeImpl? = null
+    var stringAttribute: StringAttributeImpl? = null
 
     @JacksonXmlProperty(localName = ScalarVariable.BOOLEAN_TYPE)
     @JsonSetter(nulls = Nulls.AS_EMPTY)
-    internal var booleanAttribute: BooleanAttributeImpl? = null
+    var booleanAttribute: BooleanAttributeImpl? = null
 
     @JacksonXmlProperty(localName = ScalarVariable.ENUMERATION_TYPE)
     @JsonSetter(nulls = Nulls.AS_EMPTY)
-    internal var enumerationAttribute: EnumerationAttributeImpl? = null
+    var enumerationAttribute: EnumerationAttributeImpl? = null
 
     /**
      * Return a typed version of this variable.
@@ -134,11 +134,11 @@ class ScalarVariableImpl(
     fun toTyped(): TypedScalarVariable<*> {
 
         return when {
-            integerAttribute != null -> IntegerVariable(this)
-            realAttribute != null -> RealVariable(this)
-            stringAttribute != null -> StringVariable(this)
-            booleanAttribute != null -> BooleanVariable(this)
-            enumerationAttribute != null -> EnumerationVariableImpl(this)
+            integerAttribute != null -> IntegerVariable(this, integerAttribute!!)
+            realAttribute != null -> RealVariable(this, realAttribute!!)
+            stringAttribute != null -> StringVariable(this, stringAttribute!!)
+            booleanAttribute != null -> BooleanVariable(this, booleanAttribute!!)
+            enumerationAttribute != null -> EnumerationVariableImpl(this, enumerationAttribute!!)
             else -> throw IllegalStateException("All attributes are null!")
         }
 

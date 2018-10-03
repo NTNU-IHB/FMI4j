@@ -25,14 +25,12 @@
 package no.mechatronics.sfi.fmi4j.importer.misc
 
 import no.mechatronics.sfi.fmi4j.common.*
-import no.mechatronics.sfi.fmi4j.importer.jni.Fmi2LibraryWrapper
-import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescription
 import java.util.*
 
 
 class FmuVariableAccessorImpl(
-        private val wrapper: Fmi2LibraryWrapper<*>,
-        private val modelDescription: ModelDescription
+        private val accessor: FmuVariableAccessorLite,
+        private val valueReferenceLocator: (String) -> ValueReference
 ): FmuVariableAccessor {
 
     override fun readInteger(name: String): FmuIntegerRead {
@@ -47,7 +45,7 @@ class FmuVariableAccessorImpl(
     }
 
     override fun readInteger(vr: ValueReferences, value: IntArray): FmiStatus {
-        return wrapper.readInteger(vr, value)
+        return accessor.readInteger(vr, value)
     }
 
     override fun readReal(name: String): FmuRealRead {
@@ -62,7 +60,7 @@ class FmuVariableAccessorImpl(
     }
 
     override fun readReal(vr: ValueReferences, value: RealArray): FmiStatus {
-        return wrapper.readReal(vr, value)
+        return accessor.readReal(vr, value)
     }
 
     override fun readString(name: String): FmuStringRead {
@@ -77,7 +75,7 @@ class FmuVariableAccessorImpl(
     }
 
     override fun readString(vr: ValueReferences, value: StringArray): FmiStatus {
-        return wrapper.readString(vr, value)
+        return accessor.readString(vr, value)
     }
 
     override fun readBoolean(name: String): FmuBooleanRead {
@@ -92,7 +90,7 @@ class FmuVariableAccessorImpl(
     }
 
     override fun readBoolean(vr: ValueReferences, value: BooleanArray): FmiStatus {
-        return wrapper.readBoolean(vr, value)
+        return accessor.readBoolean(vr, value)
     }
 
     override fun writeInteger(name: String, value: Int): FmiStatus {
@@ -104,7 +102,7 @@ class FmuVariableAccessorImpl(
     }
 
     override fun writeInteger(vr: ValueReferences, value: IntArray): FmiStatus {
-        return wrapper.writeInteger(vr, value)
+        return accessor.writeInteger(vr, value)
     }
 
     override fun writeReal(name: String, value: Real): FmiStatus {
@@ -116,7 +114,7 @@ class FmuVariableAccessorImpl(
     }
 
     override fun writeReal(vr: ValueReferences, value: RealArray): FmiStatus {
-        return wrapper.writeReal(vr, value)
+        return accessor.writeReal(vr, value)
     }
 
     override fun writeString(name: String, value: String): FmiStatus {
@@ -128,7 +126,7 @@ class FmuVariableAccessorImpl(
     }
 
     override fun writeString(vr: ValueReferences, value: StringArray): FmiStatus {
-        return wrapper.writeString(vr, value)
+        return accessor.writeString(vr, value)
     }
 
     override fun writeBoolean(name: String, value: Boolean): FmiStatus {
@@ -140,12 +138,12 @@ class FmuVariableAccessorImpl(
     }
 
     override fun writeBoolean(vr: ValueReferences, value: BooleanArray): FmiStatus {
-        return wrapper.writeBoolean(vr, value)
+        return accessor.writeBoolean(vr, value)
     }
 
     private fun getOrFindValueReference(name: String): ValueReference {
         return cache.getOrPut(name) {
-            modelDescription.modelVariables.getByName(name).valueReference
+           valueReferenceLocator(name)
         }
     }
 
