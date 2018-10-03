@@ -29,10 +29,11 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty
 import java.io.Serializable
 
 /**
+ * Represents the common content within the <CoSimulation> and <ModelExchange> XML elements
  *
  * @author Lars Ivar Hatledal
  */
-interface FmuTypeAttributes {
+interface CommonFmuAttributes {
 
     val modelIdentifier: String
     val needsExecutionTool: Boolean
@@ -50,7 +51,7 @@ interface FmuTypeAttributes {
  *
  * @author Lars Ivar Hatledal
  */
-interface CoSimulationAttributes : FmuTypeAttributes {
+interface CoSimulationAttributes : CommonFmuAttributes {
 
     val canHandleVariableCommunicationStepSize: Boolean
     val canInterpolateInputs: Boolean
@@ -64,17 +65,16 @@ interface CoSimulationAttributes : FmuTypeAttributes {
  *
  * @author Lars Ivar Hatledal
  */
-interface ModelExchangeAttributes : FmuTypeAttributes {
+interface ModelExchangeAttributes : CommonFmuAttributes {
 
     val completedIntegratorStepNotNeeded: Boolean
 
 }
 
-
 /**
  * @author Lars Ivar Hatledal
  */
-sealed class FmuTypeAttributesImpl : FmuTypeAttributes, Serializable {
+sealed class CommonFmuAttributesImpl : CommonFmuAttributes, Serializable {
 
     @JacksonXmlProperty
     override lateinit var modelIdentifier: String
@@ -120,7 +120,7 @@ data class CoSimulationAttributesImpl(
         @JacksonXmlProperty
         override val canRunAsynchronuously: Boolean = false
 
-) : FmuTypeAttributesImpl(), CoSimulationAttributes
+) : CommonFmuAttributesImpl(), CoSimulationAttributes
 
 /**
  * @author Lars Ivar Hatledal
@@ -130,4 +130,4 @@ data class ModelExchangeAttributesImpl(
         @JacksonXmlProperty
         override val completedIntegratorStepNotNeeded: Boolean = false
 
-) : FmuTypeAttributesImpl(), ModelExchangeAttributes
+) : CommonFmuAttributesImpl(), ModelExchangeAttributes
