@@ -84,26 +84,6 @@ interface FmuProvider: IFmu {
 
 }
 
-//interface CoSimulationFmu: IFmu {
-//
-//    override val modelDescription: CoSimulationModelDescription
-//
-//    fun newInstance(): FmuSlave
-//    fun newInstance(visible: Boolean = false, loggingOn: Boolean = false): FmuSlave
-//    fun newInstance(visible: Boolean = false, loggingOn: Boolean = false): FmuSlave
-//
-//}
-
-//interface ModelExchangeFmu: IFmu {
-//
-//    override val modelDescription: ModelExchangeModelDescription
-//
-//    fun newInstance(visible: Boolean = false, loggingOn: Boolean = false): ModelExchangeInstance
-//
-//    fun newInstance(solver: Solver, visible: Boolean = false, loggingOn: Boolean = false): FmuSlave
-//
-//}
-
 class CoSimulationFmu(
         private val fmu: Fmu
 ): IFmu by fmu {
