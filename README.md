@@ -98,7 +98,7 @@ The plugin will automatically add a dependency to the FMI4j artifact ```fmi-impo
 
 ```gradle
 fmi4j {
-    version = "0.10.1"
+    version = "0.11.0"
     configurationName = "compile"
 }
 ```
