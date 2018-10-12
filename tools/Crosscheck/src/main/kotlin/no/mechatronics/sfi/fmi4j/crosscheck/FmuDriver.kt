@@ -88,7 +88,7 @@ object FmuDriver {
                 }
 
                 while (slave.simulationTime <= stopTime) {
-                    printer.printRecord(slave.simulationTime, *outputVariables.map { it.read().value }.toTypedArray())
+                    printer.printRecord(slave.simulationTime, *outputVariables.map { it.read(slave).value }.toTypedArray())
                     if (!slave.doStep(stepSize)) {
                         break
                     }
