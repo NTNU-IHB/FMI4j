@@ -24,14 +24,14 @@
 
 package no.mechatronics.sfi.fmi4j.codegen
 
-import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescription
+import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescriptionProvider
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.*
 
 /**
  * @author Lars Ivar Hatledal
  */
 class CodeGenerator(
-        private val md: ModelDescription
+        private val md: ModelDescriptionProvider
 ) {
 
     private val modelName = md.modelName
@@ -86,23 +86,8 @@ public class $modelName implements FmuSlave {
 
     ${generateFactories()}
 
-    @Override
-    public boolean getProvidesDirectionalDerivative() {
-        return slave.getProvidesDirectionalDerivative();
-    }
-
-    @Override
-    public boolean getCanGetAndSetFMUstate() {
-        return slave.getCanGetAndSetFMUstate();
-    }
-
-    @Override
-    public boolean getCanSerializeFMUstate() {
-        return slave.getCanSerializeFMUstate();
-    }
-
-    @Override
-    public ModelDescription getModelDescription() {
+@Override
+    public CoSimulationModelDescription getModelDescription() {
         return slave.getModelDescription();
     }
 
@@ -197,43 +182,8 @@ public class $modelName implements FmuSlave {
     }
 
     @Override
-    public FmiStatus readInteger(int[] vr, int[] values) {
-        return slave.readInteger(vr, values);
-    }
-
-    @Override
-    public FmiStatus readReal(int[] vr, double[] values) {
-        return slave.readReal(vr, values);
-    }
-
-    @Override
-    public FmiStatus readString(int[] vr, String[] values) {
-        return slave.readString(vr, values);
-    }
-
-    @Override
-    public FmiStatus readBoolean(int[] vr, boolean[] values) {
-        return slave.readBoolean(vr, values);
-    }
-
-    @Override
-    public FmiStatus writeInteger(int[] vr, int[] values) {
-        return slave.writeInteger(vr, values);
-    }
-
-    @Override
-    public FmiStatus writeReal(int[] vr, double[] values) {
-        return slave.writeReal(vr, values);
-    }
-
-    @Override
-    public FmiStatus writeString(int[] vr, String[] values) {
-        return slave.writeString(vr, values);
-    }
-
-    @Override
-    public FmiStatus writeBoolean(int[] vr, boolean[] values) {
-        return slave.writeBoolean(vr, values);
+    public FmuVariableAccessor getVariableAccessor() {
+        return slave.getVariableAccessor();
     }
 
     private Locals locals;
