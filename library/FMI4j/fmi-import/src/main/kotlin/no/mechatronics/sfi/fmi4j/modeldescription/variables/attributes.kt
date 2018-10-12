@@ -83,6 +83,12 @@ interface BoundedTypedAttribute<out E> : TypedAttribute<E> {
      * also comment after this table.
      */
     val max: E?
+
+    /**
+     * Physical quantity of the variable, for example “Angle”, or “Energy”.
+     * The quantity names are not standardized.
+     */
+    val quantity: String?
 }
 
 
@@ -98,6 +104,9 @@ data class IntegerAttributeImpl(
 
         @JacksonXmlProperty
         override val max: Int? = null,
+
+        @JacksonXmlProperty
+        override val quantity: String? = null,
 
         @JacksonXmlProperty
         override val start: Int? = null,
@@ -148,12 +157,6 @@ interface RealAttribute: BoundedTypedAttribute<Double> {
      * If false, state will never be reinitialized at an event by the FMU
      */
     val reinit: Boolean
-
-    /**
-     * Physical quantity of the variable, for example “Angle”, or “Energy”.
-     * The quantity names are not standardized.
-     */
-    val quantity: String?
 
     /**
      * Unit of the variable defined with UnitDefinitions.Unit.name that is used
@@ -269,9 +272,7 @@ data class BooleanAttributeImpl(
     }
 }
 
-interface EnumerationAttribute: BoundedTypedAttribute<Int> {
-    val quantity: String?
-}
+interface EnumerationAttribute: BoundedTypedAttribute<Int>
 
 /**
  * @author Lars Ivar Hatledal
@@ -298,4 +299,5 @@ data class EnumerationAttributeImpl(
     override fun toString(): String {
         return "EnumerationAttribute(min=$min, max=$max, quantity=$quantity, start=$start, declaredType=$declaredType)"
     }
+
 }
