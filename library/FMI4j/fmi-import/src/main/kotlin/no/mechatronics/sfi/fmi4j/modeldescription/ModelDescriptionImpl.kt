@@ -107,7 +107,7 @@ class ModelDescriptionImpl(
     override val supportsCoSimulation: Boolean
         get() = coSimulationAttributes != null
 
-    override val supportModelExchange: Boolean
+    override val supportsModelExchange: Boolean
         get() = modelExchangeAttributes != null
 
     override fun asCoSimulationModelDescription(): CoSimulationModelDescription {

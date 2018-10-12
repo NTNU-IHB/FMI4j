@@ -197,7 +197,7 @@ class Fmu private constructor(
      * Does the FMU support Model Exchange?
      */
     override val supportsModelExchange: Boolean
-        get() = modelDescription.supportModelExchange
+        get() = modelDescription.supportsModelExchange
 
     override fun asCoSimulationFmu(): CoSimulationFmu {
         if (!supportsCoSimulation) {
