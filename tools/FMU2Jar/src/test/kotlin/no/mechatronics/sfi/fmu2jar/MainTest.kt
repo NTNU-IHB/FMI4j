@@ -64,7 +64,7 @@ class MainTest {
             slave.init()
             val stop = 5.0
             val stepSize = 1.0/100
-            while (slave.simulationTime < stop) {
+            while (slave.simulationTime <= stop) {
                 Assertions.assertTrue(slave.doStep(stepSize))
             }
 
