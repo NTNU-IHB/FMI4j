@@ -170,7 +170,7 @@ interface ModelDescription {
 interface ModelDescriptionProvider: ModelDescription {
 
     val supportsCoSimulation: Boolean
-    val supportModelExchange: Boolean
+    val supportsModelExchange: Boolean
 
     fun asCoSimulationModelDescription(): CoSimulationModelDescription
     fun asModelExchangeModelDescription(): ModelExchangeModelDescription
