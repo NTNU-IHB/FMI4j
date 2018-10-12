@@ -31,6 +31,10 @@ import no.mechatronics.sfi.fmi4j.common.*
  */
 interface TypedScalarVariable<E> : ScalarVariable {
 
+    val start: E?
+
+    val declaredType: String?
+
     @JvmDefault
     fun read(variableAccessorProvider: FmuVariableAccessorProvider): FmuRead<E> {
         return read(variableAccessorProvider.variableAccessor)
@@ -113,7 +117,6 @@ class IntegerVariable internal constructor(
         v: ScalarVariable,
         a: IntegerAttribute
 ) : TypedScalarVariable<Int>, ScalarVariable by v, IntegerAttribute by a {
-
 
     override fun read(reader: FmuVariableReader): FmuIntegerRead {
         return reader.readInteger(valueReference)
