@@ -31,7 +31,8 @@ class ControlledTemperatureTest {
 
                 Assertions.assertEquals("2.0", slave.modelDescription.fmiVersion)
 
-                val startTemp = slave.getVariableByName("HeatCapacity1.T0")
+                val startTemp = slave.modelDescription
+                        .getVariableByName("HeatCapacity1.T0")
                         .asRealVariable().start
                 Assertions.assertNotNull(startTemp)
                 Assertions.assertEquals(298.0, startTemp!!)
@@ -39,13 +40,13 @@ class ControlledTemperatureTest {
                 slave.init()
                 Assertions.assertTrue(slave.lastStatus === FmiStatus.OK)
 
-                val heatCapacity1_C = slave.getVariableByName("HeatCapacity1.C")
-                        .asRealVariable()
+                val heatCapacity1_C = slave.modelDescription
+                        .getVariableByName("HeatCapacity1.C").asRealVariable()
                 Assertions.assertEquals(0.1, heatCapacity1_C.start!!)
                 LOG.debug("heatCapacity1_C=${heatCapacity1_C.read(slave).value}")
 
-                val temperatureRoom = slave.getVariableByName("Temperature_Room")
-                        .asRealVariable()
+                val temperatureRoom = slave.modelDescription
+                        .getVariableByName("Temperature_Room").asRealVariable()
 
                 val dt = 1.0 / 100
                 for (i in 0..4) {

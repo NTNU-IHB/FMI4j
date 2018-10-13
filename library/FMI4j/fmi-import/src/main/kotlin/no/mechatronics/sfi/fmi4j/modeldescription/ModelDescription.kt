@@ -24,6 +24,7 @@
 
 package no.mechatronics.sfi.fmi4j.modeldescription
 
+import no.mechatronics.sfi.fmi4j.common.ValueReference
 import no.mechatronics.sfi.fmi4j.modeldescription.logging.LogCategories
 import no.mechatronics.sfi.fmi4j.modeldescription.misc.*
 import no.mechatronics.sfi.fmi4j.modeldescription.structure.ModelStructure
@@ -156,13 +157,15 @@ interface ModelDescription {
      * The number of continuous states
      * @see ModelStructure.derivatives
      */
-    @JvmDefault
     val numberOfContinuousStates: Int
         get() = modelStructure.derivatives.size
 
-    @JvmDefault
     fun getVariableByName(name: String): TypedScalarVariable<*> {
         return modelVariables.getByName(name)
+    }
+
+    fun getValueReference(name: String): ValueReference {
+        return getVariableByName(name).valueReference;
     }
 
 }

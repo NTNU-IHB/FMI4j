@@ -31,7 +31,7 @@ class ControlledTemperatureTest {
 
                 Assertions.assertEquals("2.0", slave.modelDescription.fmiVersion)
 
-                val heatCapacitor_T = slave
+                val heatCapacitor_T = slave.modelDescription
                         .getVariableByName("heatCapacitor.T").asRealVariable()
                 Assertions.assertEquals(2.93149999999999980e+02, heatCapacitor_T.start!!)
 
@@ -40,7 +40,7 @@ class ControlledTemperatureTest {
 
                 LOG.debug("heatCapacitor_T=${heatCapacitor_T.read(slave).value}")
 
-                val tempInputValue = slave
+                val tempInputValue = slave.modelDescription
                         .getVariableByName("outputs[2]").asRealVariable()
 
                 val dt = 1.0 / 100

@@ -29,13 +29,8 @@ import no.mechatronics.sfi.fmi4j.common.*
 /**
  * @author Lars Ivar Hatledal
  */
-interface TypedScalarVariable<E> : ScalarVariable {
+interface TypedScalarVariable<E> : ScalarVariable, TypedAttribute<E> {
 
-    val start: E?
-
-    val declaredType: String?
-
-    @JvmDefault
     fun read(variableAccessorProvider: FmuVariableAccessorProvider): FmuRead<E> {
         return read(variableAccessorProvider.variableAccessor)
     }
@@ -46,7 +41,6 @@ interface TypedScalarVariable<E> : ScalarVariable {
      */
     fun read(reader: FmuVariableReader): FmuRead<E>
 
-    @JvmDefault
     fun write(variableAccessorProvider: FmuVariableAccessorProvider, value: E): FmiStatus {
         return write(variableAccessorProvider.variableAccessor, value)
     }
@@ -110,13 +104,15 @@ interface TypedScalarVariable<E> : ScalarVariable {
 
 }
 
+interface BoundedScalarVariable<E>: TypedScalarVariable<E>, BoundedTypedAttribute<E>
+
 /**
  * @author Lars Ivar Hatledal
  */
 class IntegerVariable internal constructor(
         v: ScalarVariable,
         a: IntegerAttribute
-) : TypedScalarVariable<Int>, ScalarVariable by v, IntegerAttribute by a {
+) : BoundedScalarVariable<Int>, ScalarVariable by v, IntegerAttribute by a {
 
     override fun read(reader: FmuVariableReader): FmuIntegerRead {
         return reader.readInteger(valueReference)
@@ -151,7 +147,7 @@ class IntegerVariable internal constructor(
 class RealVariable internal constructor(
         v: ScalarVariableImpl,
         a: RealAttribute
-) : TypedScalarVariable<Real>, ScalarVariable by v, RealAttribute by a {
+) : BoundedScalarVariable<Real>, ScalarVariable by v, RealAttribute by a {
 
     override fun read(reader: FmuVariableReader): FmuRealRead {
         return reader.readReal(valueReference)
@@ -262,15 +258,10 @@ class BooleanVariable internal constructor(
 /**
  * @author Lars Ivar Hatledal
  */
-interface EnumerationVariable : TypedScalarVariable<Int>, EnumerationAttribute
-
-/**
- * @author Lars Ivar Hatledal
- */
-class EnumerationVariableImpl internal constructor(
+class EnumerationVariable internal constructor(
         v: ScalarVariableImpl,
         a: EnumerationAttribute
-) : EnumerationVariable, ScalarVariable by v, EnumerationAttribute by a {
+) : BoundedScalarVariable<Int>, ScalarVariable by v, EnumerationAttribute by a {
 
     override fun read(reader: FmuVariableReader): FmuRead<Int> {
         return reader.readInteger(valueReference)
@@ -296,7 +287,7 @@ class EnumerationVariableImpl internal constructor(
             declaredType?.also { add("declaredType=$declaredType") }
         }.joinToString(", ")
 
-        return "${EnumerationVariableImpl::class.java.simpleName}($entries)"
+        return "${EnumerationVariable::class.java.simpleName}($entries)"
 
     }
 

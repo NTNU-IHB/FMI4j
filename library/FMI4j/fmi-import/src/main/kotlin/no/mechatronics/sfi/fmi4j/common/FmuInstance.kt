@@ -65,16 +65,14 @@ interface SimpleFmuInstance : FmuVariableAccessorProvider, Closeable {
     override val variableAccessor: FmuVariableAccessor
 
     /**
-     * @see SpecificModelDescription.modelVariables
+     * @see ModelDescription.modelVariables
      */
-    @JvmDefault
     val modelVariables: ModelVariables
         get() = modelDescription.modelVariables
 
     /**
      * Call init with 0.0 as start.
      */
-    @JvmDefault
     fun init() {
         init(0.0)
     }
@@ -82,7 +80,6 @@ interface SimpleFmuInstance : FmuVariableAccessorProvider, Closeable {
     /**
      * Call init with start and default stop time (endless)
      */
-    @JvmDefault
     fun init(start: Double) {
         init(start, 0.0)
     }
@@ -96,12 +93,12 @@ interface SimpleFmuInstance : FmuVariableAccessorProvider, Closeable {
     fun init(start: Double, stop: Double)
 
     /**
-     * @see no.mechatronics.sfi.fmi4j.importer.proxy.v2.FmiLibrary.fmi2Reset
+     * @see no.mechatronics.sfi.fmi4j.importer.jni.Fmi2Library.reset
      */
     fun reset(): Boolean
 
     /**
-     * @see no.mechatronics.sfi.fmi4j.importer.proxy.v2.FmiLibrary.fmi2Terminate
+     * @see no.mechatronics.sfi.fmi4j.importer.jni.Fmi2Library.terminate
      */
     fun terminate(): Boolean
 
@@ -119,19 +116,10 @@ interface SimpleFmuInstance : FmuVariableAccessorProvider, Closeable {
      *
      * @see Closeable
      */
-    @JvmDefault
     override fun close() {
         if (!isTerminated) {
             terminate()
         }
-    }
-
-    /**
-     * @see ModelVariables.getByName
-     */
-    @JvmDefault
-    fun getVariableByName(name: String): TypedScalarVariable<*> {
-        return modelVariables.getByName(name)
     }
 
 }

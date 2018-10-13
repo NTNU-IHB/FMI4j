@@ -74,20 +74,20 @@ public class ControlledTemperatureTestJava {
 
             Assertions.assertEquals("2.0", slave.getModelDescription().getFmiVersion());
 
-            final double startTemp = slave.getVariableByName("HeatCapacity1.T0")
-                    .asRealVariable().getStart();
+            final double startTemp = slave.getModelDescription()
+                    .getVariableByName("HeatCapacity1.T0").asRealVariable().getStart();
             Assertions.assertEquals(298.0, startTemp);
 
             slave.init();
             Assertions.assertSame(slave.getLastStatus(), FmiStatus.OK);
 
-            final RealVariable heatCapacity1_C
-                    = slave.getVariableByName("HeatCapacity1.C").asRealVariable();
+            final RealVariable heatCapacity1_C = slave.getModelDescription()
+                    .getVariableByName("HeatCapacity1.C").asRealVariable();
             Assertions.assertEquals(0.1, (double) heatCapacity1_C.getStart());
             LOG.info("heatCapacity1_C={}", heatCapacity1_C.read(slave).getValue());
 
-            final RealVariable temperature_room
-                    = slave.getVariableByName("Temperature_Room").asRealVariable();
+            final RealVariable temperature_room = slave.getModelDescription()
+                    .getVariableByName("Temperature_Room").asRealVariable();
 
             double dt = 1d / 100;
             for (int i = 0; i < 5; i++) {

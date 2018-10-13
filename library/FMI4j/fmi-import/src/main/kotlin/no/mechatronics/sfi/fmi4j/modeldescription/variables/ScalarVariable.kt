@@ -138,7 +138,7 @@ class ScalarVariableImpl(
             realAttribute != null -> RealVariable(this, realAttribute!!)
             stringAttribute != null -> StringVariable(this, stringAttribute!!)
             booleanAttribute != null -> BooleanVariable(this, booleanAttribute!!)
-            enumerationAttribute != null -> EnumerationVariableImpl(this, enumerationAttribute!!)
+            enumerationAttribute != null -> EnumerationVariable(this, enumerationAttribute!!)
             else -> throw IllegalStateException("All attributes are null!")
         }
 
