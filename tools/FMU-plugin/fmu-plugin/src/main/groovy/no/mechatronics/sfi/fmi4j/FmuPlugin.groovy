@@ -1,44 +1,112 @@
-/*
- * The MIT License
- *
- * Copyright 2017-2018 Norwegian University of Technology
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING  FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
-
-package no.mechatronics.sfi.fmi4j.codegen
+package no.mechatronics.sfi.fmi4j
 
 import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescriptionProvider
-import no.mechatronics.sfi.fmi4j.modeldescription.variables.*
+import no.mechatronics.sfi.fmi4j.modeldescription.parser.ModelDescriptionParser
+import no.mechatronics.sfi.fmi4j.modeldescription.variables.Causality
+import no.mechatronics.sfi.fmi4j.modeldescription.variables.EnumerationVariable
+import no.mechatronics.sfi.fmi4j.modeldescription.variables.IntegerVariable
+import no.mechatronics.sfi.fmi4j.modeldescription.variables.RealVariable
+import no.mechatronics.sfi.fmi4j.modeldescription.variables.TypedScalarVariable
+import org.gradle.api.Plugin
+import org.gradle.api.Project
+import org.gradle.api.artifacts.DependencyResolutionListener
+import org.gradle.api.artifacts.ResolvableDependencies
+import org.gradle.api.provider.Property
+import org.gradle.api.tasks.compile.JavaCompile
+
+class FmuPluginExtension {
+
+    final Property<String> version
+    final Property<String> configurationName
+
+    FmuPluginExtension(Project project) {
+        version = project.objects.property(String)
+        version.set("0.11.1")
+        configurationName = project.objects.property(String)
+        configurationName.set("implementation")
+    }
+
+}
+
+class FmuPlugin implements Plugin<Project> {
+
+    void apply(Project target) {
+        def sourceDir = new File(target.projectDir, "src/main/resources/fmus")
+        def outputDir = new File(target.buildDir, "generated/fmus")
+
+        target.sourceSets {
+            main {
+                java {
+                    srcDirs += outputDir
+                }
+            }
+        }
+
+        def fmi4j = target.extensions.create('fmi4j', FmuPluginExtension, target)
+
+        target.gradle.addListener(new DependencyResolutionListener(){
+
+            @Override
+            void beforeResolve(ResolvableDependencies resolvableDependencies) {
+                target.dependencies.add(fmi4j.configurationName.get(), "no.mechatronics.sfi.fmi4j:fmi-import:${fmi4j.version.get()}")
+                target.gradle.removeListener(this)
+            }
+
+            @Override
+            void afterResolve(ResolvableDependencies dependencies) {}
+
+        })
+
+        def myTask = target.task("generateFMUWrappers") {
+            doLast {
+                compileSources(sourceDir, outputDir)
+            }
+        }
+
+        target.afterEvaluate {
+            target.tasks['compileJava'].dependsOn myTask
+        }
+
+    }
+
+    private void compileSources(File srcDir, File outputDir) {
+
+        if (!srcDir.exists()) {
+            throw java.lang.IllegalArgumentException("No such file: '$srcDir'")
+        }
+
+        srcDir.listFiles().each { file ->
+
+            if (file.name.toLowerCase().endsWith(".fmu")) {
+
+                def md = ModelDescriptionParser.parse(file)
+                def out = new File(outputDir, "no/mechatronics/sfi/fmi4j/${md.modelName}.java")
+                out.parentFile.mkdirs()
+                out.write(new CodeGenerator(md).generateBody())
+            }
+
+        }
+
+    }
+
+}
 
 /**
  * @author Lars Ivar Hatledal
  */
-class CodeGenerator(
-        private val md: ModelDescriptionProvider
-) {
+class CodeGenerator {
 
-    private val modelName = md.modelName
+    private String modelName
+    private ModelDescriptionProvider md
 
-    fun generateBody(): String {
+    CodeGenerator(ModelDescriptionProvider md) {
+        this.md = md
+        this.modelName = md.modelName
+    }
 
-        var solverImport = ""
+    String generateBody() {
+
+        def solverImport = ""
         if (md.supportsModelExchange) {
             solverImport = "import no.mechatronics.sfi.fmi4j.solvers.Solver"
         }
@@ -59,23 +127,23 @@ import no.mechatronics.sfi.fmi4j.modeldescription.variables.*;
 $solverImport
 
 /***
- * Class wrapping FMU named '$modelName' auto-generated by FmuPlugin
+ * Class wrapping FMU named '${modelName}' auto-generated by FmuPlugin
  *
  * @author Lars Ivar Hatledal
  */
-public class $modelName implements FmuSlave {
+public class ${modelName} implements FmuSlave {
 
     private static Fmu fmu = null;
     private final FmuSlave slave;
 
-    private $modelName(FmuSlave slave) {
+    private ${modelName}(FmuSlave slave) {
         this.slave = slave;
     }
 
     private static Fmu getOrCreateFmu() {
         if (fmu == null) {
             try {
-                URL url = $modelName.class.getClassLoader().getResource("fmus/$modelName.fmu");
+                URL url = ${modelName}.class.getClassLoader().getResource("fmus/${modelName}.fmu");
                 fmu = Fmu.from(new File(url.getFile()));
             } catch (IOException ex) {
                 throw new RuntimeException();
@@ -316,15 +384,15 @@ public class $modelName implements FmuSlave {
 
     }
 
-    private fun generateFactories(): String {
+    private String generateFactories() {
 
-        var result = ""
+        def result = ""
         if (md.supportsCoSimulation) {
             result += """
 
-            public static $modelName newInstance() {
+            public static ${modelName} newInstance() {
                 FmuSlave slave = getOrCreateFmu().asCoSimulationFmu().newInstance();
-                return new $modelName(Objects.requireNonNull(slave));
+                return new ${modelName}(Objects.requireNonNull(slave));
             }
             """
 
@@ -334,9 +402,9 @@ public class $modelName implements FmuSlave {
 
             result += """
 
-            public static $modelName newInstance(Solver solver) {
+            public static ${modelName} newInstance(Solver solver) {
                 FmuSlave slave = getOrCreateFmu().asModelExchangeFmu(solver).newInstance()
-                return new $modelName(Objects.requireNonNull(slave));
+                return new ${modelName}(Objects.requireNonNull(slave));
             }
             """
 
@@ -346,74 +414,103 @@ public class $modelName implements FmuSlave {
 
     }
 
-    private fun generateAccessors(causality: Causality): String {
+    private String generateAccessors(Causality causality) {
 
-        return StringBuilder().also { sb ->
+        def sb = new StringBuilder()
 
             sb.append("\n")
 
-            md.modelVariables.getByCausality(causality).forEach { v ->
+            md.modelVariables.getByCausality(causality).each { v ->
 
                 if (!v.name.contains("[")) {
 
-                    val functionName = v.name.replace(".", "_").decapitalize()
+                    def functionName = v.name.replace(".", "_").uncapitalize()
 
                     sb.append("""
-                    |${generateJavaDoc(v)}
-                    |public ${v.typeName}Variable $functionName() {
-                    |    return slave.getModelDescription().getModelVariables().getByName("${v.name}").as${v.typeName}Variable();
-                    |}
-                    |
-                    """.trimMargin())
+                    ${generateJavaDoc(v)}
+                    public ${v.typeName}Variable $functionName() {
+                        return slave.getModelDescription().getModelVariables().getByName("${v.name}").as${v.typeName}Variable();
+                    }
+                    
+                    """)
 
                 }
 
 
             }
 
-        }.toString()
+        return sb.toString()
 
     }
 
-    private fun generateJavaDoc(v: TypedScalarVariable<*>) : String {
+    private String generateJavaDoc(TypedScalarVariable v) {
 
-        val star = " *"
-        val newLine = "\n$star\n"
-        return StringBuilder().apply {
+        def star = " *"
+        def newLine = "\n$star\n"
+        def sb = new StringBuilder()
 
-            append("\n")
-            append("/**\n")
-            append("$star ").append("Name:").append(v.name)
+        sb.append("\n")
+        sb.append("/**\n")
+        sb.append("$star ").append("Name:").append(v.name)
 
-            v.start?.also { append(newLine).append("$star Start=$it") }
-            v.causality?.also { append(newLine).append("$star Causality=$it") }
-            v.variability?.also { append(newLine).append("$star Variability=$it") }
-            v.initial?.also { append(newLine).append("$star Initial=$it") }
+        if (v.declaredType != null) {
+            sb.append(newLine).append("$star DeclaredType=$v.declaredType")
+        }
+        if (v.start != null) {
+            sb.append(newLine).append("$star Start=$v.start")
+        }
+        if (v.causality != null) {
+            sb.append(newLine).append("$star Causality=$v.causality")
+        }
+        if (v.variability != null) {
+            sb.append(newLine).append("$star Variability=$v.variability")
+        }
+        if (v.initial != null) {
+            sb.append(newLine).append("$star Initial=$v.initial")
+        }
 
-            when (v) {
-                is IntegerVariable -> {
-                    v.min?.also { append(newLine).append("$star min=$it") }
-                    v.max?.also { append(newLine).append("$star max=$it") }
-                }
-                is RealVariable -> {
-                    v.min?.also { append(newLine).append("$star min=$it") }
-                    v.max?.also { append(newLine).append("$star max=$it") }
-                    v.nominal?.also { append(newLine).append("$star nominal=$it") }
-                    v.unbounded?.also { append(newLine).append("$star unbounded=$it") }
-                }
-                is EnumerationVariable -> {
-                    v.min?.also { append("$star min=") }
-                    v.max?.also { append("$star max=") }
-                    v.quantity?.also { append("$star quantity=") }
-                }
+        if (v instanceof IntegerVariable) {
+            if (v.min != null) {
+                sb.append(newLine).append("$star min=$v.min")
             }
+            if (v.max != null) {
+                sb.append(newLine).append("$star max=$v.max")
+            }
+            if (v.quantity != null) {
+                sb.append(newLine).append("$star quantity=$v.quantity")
+            }
+        } else if (v instanceof RealVariable) {
+            if (v.min != null) {
+                sb.append(newLine).append("$star min=$v.min")
+            }
+            if (v.max != null) {
+                sb.append(newLine).append("$star max=$v.max")
+            }
+            if (v.quantity != null) {
+                sb.append(newLine).append("$star quantity=$v.quantity")
+            }
+        } else if (v instanceof EnumerationVariable) {
+             if (v.min != null) {
+                 sb.append(newLine).append("$star min=$v.min")
+             }
+             if (v.max != null) {
+                 sb.append(newLine).append("$star max=$v.max")
+             }
+             if (v.quantity != null) {
+                 sb.append(newLine).append("$star quantity=$v.quantity")
+             }
+        }
 
-            v.description?.also { append(newLine).append("$star ").append("Description: $it") }
 
-            append("\n */")
+        if (v.description != null) {
+            sb.append(newLine).append("$star Description=$v.description")
+        }
 
-        }.toString()
+        sb.append("\n */")
+
+        return sb.toString()
 
     }
 
 }
+

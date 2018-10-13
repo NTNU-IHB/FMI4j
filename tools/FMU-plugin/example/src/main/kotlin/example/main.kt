@@ -21,7 +21,7 @@ fun main(args: Array<String>) {
                 break
             }
 
-            tempRef.read().also {
+            tempRef.read(slave).also {
                 println("t=${slave.simulationTime}, ${tempRef.name}=${it.value}")
             }
 
