@@ -49,6 +49,7 @@ package no.mechatronics.sfi.fmi4j.modeldescription.variables
  * @author Lars Ivar Hatledal
  */
 enum class Initial {
+
     /**
      * The variable is initialized with the start value (provided under Real,
      * Integer, Boolean, String or Enumeration).
@@ -65,6 +66,11 @@ enum class Initial {
      * The variable is calculated from other categories during initialization. It
      * is not allowed to provide a “start” value.
      */
-    CALCULATED;
+    CALCULATED,
+
+    /**
+     * Unknown initial
+     */
+    UNKNOWN;
 }
 
