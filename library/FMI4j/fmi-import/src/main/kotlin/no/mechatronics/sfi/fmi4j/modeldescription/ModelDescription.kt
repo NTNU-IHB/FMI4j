@@ -100,7 +100,7 @@ interface ModelDescription {
      * “STRUCTURED“: Hierarchical names with “.” as hierarchy separator,
      * and with array elements and derivative characterization.
      */
-    val variableNamingConvention: VariableNamingConvention?
+    val variableNamingConvention: String?
 
     /**
      * Optional date and time when the XML file was generated. The format is

@@ -72,7 +72,7 @@ class ModelDescriptionImpl(
         override val generationDateAndTime: String? = null,
 
         @JacksonXmlProperty
-        override val variableNamingConvention: VariableNamingConvention? = null,
+        override val variableNamingConvention: String? = null,
 
         @JacksonXmlProperty(localName = "DefaultExperiment")
         override val defaultExperiment: DefaultExperiment? = null,

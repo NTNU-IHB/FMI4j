@@ -3,7 +3,6 @@ package no.mechatronics.sfi.fmi4j.modeldescription.vendors.openmodelica
 import no.mechatronics.sfi.fmi4j.TestUtils
 import no.mechatronics.sfi.fmi4j.common.currentOS
 import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescription
-import no.mechatronics.sfi.fmi4j.modeldescription.misc.VariableNamingConvention
 import no.mechatronics.sfi.fmi4j.modeldescription.parser.ModelDescriptionParser
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
@@ -49,7 +48,7 @@ class FmuExportCrossCompileTest {
     fun testVariableNamingConvention() {
         val variableNamingConvention = modelDescription.variableNamingConvention
         LOG.info("variableNamingConvention=$variableNamingConvention")
-        Assertions.assertTrue(modelDescription.variableNamingConvention == VariableNamingConvention.STRUCTURED)
+        Assertions.assertTrue(modelDescription.variableNamingConvention == "structured")
     }
 
     @Test
