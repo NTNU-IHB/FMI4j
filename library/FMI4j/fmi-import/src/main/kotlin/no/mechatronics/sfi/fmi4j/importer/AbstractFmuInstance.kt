@@ -43,13 +43,13 @@ abstract class AbstractFmuInstance<out E : CommonModelDescription, out T : Fmi2L
 ) : FmuInstance<E> {
 
     /**
-     * @see Fmi2Library.fmi2GetTypesPlatform
+     * @see Fmi2Library.getTypesPlatform
      */
     val typesPlatform
         get() = wrapper.typesPlatform
 
     /**
-     * @see Fmi2Library.fmi2GetVersion
+     * @see Fmi2Library.getVersion
      */
     val version
         get() = wrapper.version
@@ -91,7 +91,7 @@ abstract class AbstractFmuInstance<out E : CommonModelDescription, out T : Fmi2L
     }
 
     /**
-     * @see Fmi2Library.fmi2SetDebugLogging
+     * @see Fmi2Library.setDebugLogging
      */
     fun setDebugLogging(loggingOn: Boolean, categories: Array<String>): FmiStatus
             = wrapper.setDebugLogging(loggingOn, categories)
@@ -165,8 +165,8 @@ abstract class AbstractFmuInstance<out E : CommonModelDescription, out T : Fmi2L
      *
      * @param freeInstance true if you are completely finished with the fmuInstance
      *
-     * @see Fmi2Library.fmi2Terminate
-     * @see Fmi2Library.fmi2FreeInstance
+     * @see Fmi2Library.terminate
+     * @see Fmi2Library.freeInstance
      */
     fun terminate(freeInstance: Boolean): Boolean {
         return wrapper.terminate(freeInstance).let { status ->
@@ -176,7 +176,7 @@ abstract class AbstractFmuInstance<out E : CommonModelDescription, out T : Fmi2L
     }
 
     /**
-     * @see Fmi2Library.fmi2Reset
+     * @see Fmi2Library.reset
      */
     override fun reset(): Boolean {
         return (wrapper.reset() == FmiStatus.OK).also {
@@ -201,7 +201,7 @@ abstract class AbstractFmuInstance<out E : CommonModelDescription, out T : Fmi2L
     }
 
     /**
-     * @see Fmi2Library.fmi2GetFMUstate
+     * @see Fmi2Library.getFMUstate
      */
     override fun getFMUstate(): FmuState {
         if (!modelDescription.canGetAndSetFMUstate) {
@@ -211,7 +211,7 @@ abstract class AbstractFmuInstance<out E : CommonModelDescription, out T : Fmi2L
     }
 
     /**
-     * @see Fmi2Library.fmi2SetFMUstate
+     * @see Fmi2Library.setFMUstate
      */
     override fun setFMUstate(state: FmuState): Boolean {
         if (!modelDescription.canGetAndSetFMUstate) {
@@ -221,7 +221,7 @@ abstract class AbstractFmuInstance<out E : CommonModelDescription, out T : Fmi2L
     }
 
     /**
-     * @see Fmi2Library.fmi2FreeFMUstate
+     * @see Fmi2Library.freeFMUstate
      */
     override fun freeFMUstate(state: FmuState): Boolean {
         if (!modelDescription.canGetAndSetFMUstate) {
@@ -231,7 +231,7 @@ abstract class AbstractFmuInstance<out E : CommonModelDescription, out T : Fmi2L
     }
 
     /**
-     * @see Fmi2Library.fmi2SerializedFMUstateSize
+     * @see Fmi2Library.serializedFMUstateSize
      */
     fun serializedFMUstateSize(fmuState: FmuState): Int {
         if (!modelDescription.canSerializeFMUstate) {
@@ -241,7 +241,7 @@ abstract class AbstractFmuInstance<out E : CommonModelDescription, out T : Fmi2L
     }
 
     /**
-     * @see Fmi2Library.fmi2SerializeFMUstate
+     * @see Fmi2Library.sserializeFMUstate
      */
     override fun serializeFMUstate(state: FmuState): ByteArray {
         if (!modelDescription.canSerializeFMUstate) {
@@ -251,7 +251,7 @@ abstract class AbstractFmuInstance<out E : CommonModelDescription, out T : Fmi2L
     }
 
     /**
-     * @see Fmi2Library.fmi2DeSerializeFMUstate
+     * @see Fmi2Library.deSerializeFMUstate
      */
     override fun deSerializeFMUstate(state: ByteArray): FmuState {
         if (!modelDescription.canSerializeFMUstate) {
