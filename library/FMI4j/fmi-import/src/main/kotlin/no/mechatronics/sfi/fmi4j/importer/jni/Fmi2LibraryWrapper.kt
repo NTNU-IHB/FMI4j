@@ -328,7 +328,7 @@ abstract class Fmi2LibraryWrapper<E : Fmi2Library>(
     /**
      * @see Fmi2Library.getDirectionalDerivative
      */
-    fun getDirectionalDerivative(vUnknown_ref: IntArray, vKnown_ref: IntArray, dvKnown: DoubleArray, dvUnknown: DoubleArray): FmiStatus {
+    fun getDirectionalDerivative(vUnknown_ref: ValueReferences, vKnown_ref: ValueReferences, dvKnown: DoubleArray, dvUnknown: DoubleArray): FmiStatus {
         return updateStatus(library.getDirectionalDerivative(c,
                 vUnknown_ref, vKnown_ref, dvKnown, dvUnknown))
     }

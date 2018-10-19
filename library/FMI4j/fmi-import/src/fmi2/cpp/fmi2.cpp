@@ -562,23 +562,23 @@ JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_importer_jni_Fmi2Library_d
     return status;
 }
 
-JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_importer_jni_Fmi2Library_getDirectionalDerivative(JNIEnv *env, jobject obj, jlong p, jlong c, jintArray vUnknown_ref, jintArray vKnown_ref, jdoubleArray dvKnown_ref, jdoubleArray dvUnknown_ref) {
+JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_importer_jni_Fmi2Library_getDirectionalDerivative(JNIEnv *env, jobject obj, jlong p, jlong c, jlongArray vUnknown_ref, jlongArray vKnown_ref, jdoubleArray dvKnown_ref, jdoubleArray dvUnknown_ref) {
 
     FmuInstance* fmu = (FmuInstance*) p;
 
-    const jsize nUknown = env->GetArrayLength(vUnknown_ref);
+    const jsize nUnknown = env->GetArrayLength(vUnknown_ref);
     const jsize nKnown = env->GetArrayLength(vUnknown_ref);
 
-    jint* _vUnknown_ref = env->GetIntArrayElements(vUnknown_ref, 0);
-    jint* _vKnown_ref = env->GetIntArrayElements(vKnown_ref, 0);
+    jlong* _vUnknown_ref = env->GetLongArrayElements(vUnknown_ref, 0);
+    jlong* _vKnown_ref = env->GetLongArrayElements(vKnown_ref, 0);
     jdouble* _dvKnown_ref = env->GetDoubleArrayElements(dvKnown_ref, 0);
     jdouble* _dvUnknown_ref = env->GetDoubleArrayElements(dvUnknown_ref, 0);
 
     fmi2GetDirectionalDerivativeTYPE* fmi2GetDirectionalDerivative = fmu->fmi2GetDirectionalDerivative_;
-    fmi2Status status = (*fmi2GetDirectionalDerivative)((void*) c, (fmi2ValueReference*)_vUnknown_ref, nUknown, (fmi2ValueReference*)_vKnown_ref, nKnown, _dvKnown_ref, _dvUnknown_ref);
+    fmi2Status status = (*fmi2GetDirectionalDerivative)((void*) c, (fmi2ValueReference*)_vUnknown_ref, nUnknown, (fmi2ValueReference*)_vKnown_ref, nKnown, _dvKnown_ref, _dvUnknown_ref);
 
-    env->ReleaseIntArrayElements(vUnknown_ref, _vUnknown_ref, 0);
-    env->ReleaseIntArrayElements(vKnown_ref, _vKnown_ref, 0);
+    env->ReleaseLongArrayElements(vUnknown_ref, _vUnknown_ref, 0);
+    env->ReleaseLongArrayElements(vKnown_ref, _vKnown_ref, 0);
 
     env->ReleaseDoubleArrayElements(dvKnown_ref, _dvKnown_ref, 0);
     env->ReleaseDoubleArrayElements(dvUnknown_ref, _dvUnknown_ref, 0);

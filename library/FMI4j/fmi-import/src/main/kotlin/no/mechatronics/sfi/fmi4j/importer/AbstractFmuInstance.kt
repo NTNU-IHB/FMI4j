@@ -191,7 +191,7 @@ abstract class AbstractFmuInstance<out E : CommonModelDescription, out T : Fmi2L
         }
     }
 
-    override fun getDirectionalDerivative(vUnknownRef: IntArray, vKnownRef: IntArray, dvKnown: RealArray): RealArray {
+    override fun getDirectionalDerivative(vUnknownRef: ValueReferences, vKnownRef: ValueReferences, dvKnown: RealArray): RealArray {
         if (!modelDescription.providesDirectionalDerivative) {
             throw IllegalStateException("Illegal call. FMU does not provide directional derivatives!")
         }

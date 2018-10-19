@@ -93,7 +93,7 @@ open class Fmi2Library(
     private external fun freeInstance(p: Long, c: Fmi2Component)
 
     private external fun getDirectionalDerivative(p: Long, c: Fmi2Component,
-                                                  vUnknown_ref: IntArray, vKnownRef: IntArray,
+                                                  vUnknown_ref: ValueReferences, vKnownRef: ValueReferences,
                                                   dvKnown: DoubleArray, dvUnknown: DoubleArray): NativeStatus
 
 
@@ -150,8 +150,8 @@ open class Fmi2Library(
 
     fun freeInstance(c: Fmi2Component) = freeInstance(p, c)
 
-    fun getDirectionalDerivative(c: Fmi2Component, vUnknown_ref: IntArray,
-                                 vKnownRef: IntArray, dvKnown: DoubleArray, dvUnknown: DoubleArray) = getDirectionalDerivative(p, c, vUnknown_ref, vKnownRef, dvKnown, dvUnknown)
+    fun getDirectionalDerivative(c: Fmi2Component, vUnknown_ref: ValueReferences,
+                                 vKnownRef: ValueReferences, dvKnown: DoubleArray, dvUnknown: DoubleArray) = getDirectionalDerivative(p, c, vUnknown_ref, vKnownRef, dvKnown, dvUnknown)
 
 
     fun getInteger(c: Fmi2Component, vr: ValueReferences, ref: IntArray) = getInteger(p, c, vr, ref)

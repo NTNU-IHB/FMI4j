@@ -109,7 +109,7 @@ interface SimpleFmuInstance : FmuVariableAccessorProvider, Closeable {
 
     fun serializeFMUstate(state: FmuState): ByteArray
     fun deSerializeFMUstate(state: ByteArray): FmuState
-    fun getDirectionalDerivative(vUnknownRef: IntArray, vKnownRef: IntArray, dvKnown: RealArray): RealArray
+    fun getDirectionalDerivative(vUnknownRef: ValueReferences, vKnownRef: ValueReferences, dvKnown: RealArray): RealArray
 
     /**
      * Calls terminate()
