@@ -86,8 +86,9 @@ class ModelExchangeFmuStepper internal constructor(
         fmuInstance.eventInfo.terminateSimulation = false
 
         while (fmuInstance.eventInfo.newDiscreteStatesNeeded) {
-            fmuInstance.newDiscreteStates().also {
-                it.warnOnStatusNotOK("fmuInstance.newDiscreteStates()")
+            if (!fmuInstance.newDiscreteStates().isOK()) {
+                LOG.warn("fmuInstance.newDiscreteStates() returned status $lastStatus")
+                return true
             }
             if (fmuInstance.eventInfo.terminateSimulation) {
                 LOG.debug("eventInfo.getTerminateSimulation() returned true. Terminating FMU...")
@@ -104,22 +105,27 @@ class ModelExchangeFmuStepper internal constructor(
     }
 
     override fun init() {
-        init(0.0)
+        init(0.0, 0.0, 0.0)
     }
 
-    override fun init(start: Double) {
-        init(start, 0.0)
-    }
-
-    override fun init(start: Double, stop: Double) {
-        if (!isInitialized) {
-            fmuInstance.init(start, stop)
-            if (eventIteration()) {
-                throw IllegalStateException("EventIteration returned false during initialization!")
-            }
-        } else {
-            LOG.warn("Init has already been invoked..")
+    override fun init(start: Double, stop: Double, tolerance: Double) {
+        fmuInstance.init(start, stop, tolerance)
+        if (eventIteration()) {
+            throw IllegalStateException("EventIteration returned false during initialization!")
         }
+    }
+
+    override fun exitInitializationMode(): Boolean {
+
+        if (!fmuInstance.exitInitializationMode()) {
+            return false
+        }
+
+        if (eventIteration()) {
+            LOG.error("EventIteration returned false during initialization!")
+            return false
+        }
+        return true
     }
 
     override fun doStep(stepSize: Double): Boolean {
@@ -139,7 +145,7 @@ class ModelExchangeFmuStepper internal constructor(
 
             var tNext = min(time + stepSize, stopTime)
 
-            val timeEvent = fmuInstance.eventInfo.nextEventTimeDefined && fmuInstance.eventInfo.nextEventTime <= time
+            val timeEvent = fmuInstance.eventInfo.nextEventTimeDefined && (fmuInstance.eventInfo.nextEventTime <= time)
             if (timeEvent) {
                 tNext = fmuInstance.eventInfo.nextEventTime
             }

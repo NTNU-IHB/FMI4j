@@ -67,12 +67,14 @@ abstract class AbstractFmuInstance<out E : CommonModelDescription, out T : Fmi2L
     override val isTerminated
         get() = wrapper.isTerminated
 
-
-    protected var stopDefined = false
+    protected var startTime: Double = 0.0
         private set
 
     protected var stopTime: Double = 0.0
         private set
+
+    protected val stopDefined
+        get() = stopTime > startTime
 
     /**
      * Current simulation time
@@ -102,58 +104,42 @@ abstract class AbstractFmuInstance<out E : CommonModelDescription, out T : Fmi2L
      * @param stop the stop time
      *
      * @throws IllegalArgumentException if start < 0
-     * @throws IllegalStateException if a necessary FMU call does not return OK
      */
-    override fun init(start: Double, stop: Double) {
+    override fun setupExperiment(start: Double, stop: Double, tolerance: Double): Boolean {
 
+        LOG.debug("setupExperiment")
         if (!isInitialized) {
 
             if (start < 0) {
-                throw IllegalArgumentException("Start must be a positive value")
+                LOG.error("Start must be a positive value, was $start!")
+                return false
+            }
+            startTime = start
+            if (stop > startTime) {
+                stopTime = stop
             }
 
-//            assignStartValues {
-//                it.variability != Variability.CONSTANT &&
-//                        (it.initial == Initial.EXACT || it.initial == Initial.APPROX)
-//            }.also {
-//                LOG.debug("Applied start values to $it variables with variability != CONSTANT and initial == EXACT or APPROX ")
-//            }
-
-            stopDefined = (stop > start)
-            if (stopDefined) stopTime = stop
-            LOG.debug("setupExperiment params: start=$start, stopDefined=$stopDefined, stop=$stopTime")
-            wrapper.setupExperiment(true, 1E-4, start, stopTime).also {
-                if (it != FmiStatus.OK) {
-                    throw IllegalStateException("setupExperiment returned status $it")
-                }
+            return (wrapper.setupExperiment(tolerance, startTime, stopTime) == FmiStatus.OK).also {
+                simulationTime = start
             }
-
-            wrapper.enterInitializationMode().also {
-                if (it != FmiStatus.OK) {
-                    throw IllegalStateException("enterInitializationMode returned status $it")
-                }
-            }
-
-//            assignStartValues {
-//                it.variability != Variability.CONSTANT &&
-//                        (it.initial == Initial.EXACT || it.causality == Causality.INPUT)
-//            }.also {
-//                LOG.debug("Applied start values to $it variables with variability != CONSTANT and initial == EXACT or causality == INPUT ")
-//            }
-
-            wrapper.exitInitializationMode().also {
-                if (it != FmiStatus.OK) {
-                    throw IllegalArgumentException("exitInitializationMode returned status $it")
-                }
-            }
-
-            simulationTime = start
-            isInitialized = true
 
         } else {
-            LOG.warn("Trying to call init, but FMU has already been initialized, and has not been reset!")
+            LOG.warn("Trying to call setupExperiment, but FMU has already been initialized, and has not been reset!")
+            return false
         }
 
+    }
+
+    override fun enterInitializationMode(): Boolean {
+        LOG.debug("enterInitializationMode")
+        return wrapper.enterInitializationMode() == FmiStatus.OK
+    }
+
+    override fun exitInitializationMode(): Boolean {
+        LOG.debug("exitInitializationMode")
+        return (wrapper.exitInitializationMode() == FmiStatus.OK).also {
+            isInitialized = true
+        }
     }
 
     override fun terminate(): Boolean {

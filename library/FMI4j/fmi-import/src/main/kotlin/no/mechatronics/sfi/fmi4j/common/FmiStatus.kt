@@ -101,6 +101,10 @@ enum class FmiStatus(
      */
     Pending(5);
 
+    fun isOK(): Boolean {
+        return this == OK;
+    }
+
     companion object {
 
         @JvmStatic

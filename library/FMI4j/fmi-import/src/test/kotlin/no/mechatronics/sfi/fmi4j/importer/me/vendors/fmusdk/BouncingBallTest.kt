@@ -49,11 +49,13 @@ class BouncingBallTest {
             val h = slave.modelVariables
                     .getByName("h").asRealVariable()
 
-            slave.init()
+            slave.setupExperiment()
+            slave.enterInitializationMode()
+            slave.exitInitializationMode()
 
             val macroStep = 1.0 / 10
             while (slave.simulationTime < 1) {
-                slave.doStep(macroStep)
+                Assertions.assertTrue(slave.doStep(macroStep))
                 h.read(slave).also {
                     Assertions.assertEquals(FmiStatus.OK, it.status)
                     LOG.info("t=${slave.simulationTime}, h=${it.value}")

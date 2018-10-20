@@ -281,11 +281,12 @@ JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_importer_jni_Fmi2Library_s
     return status;
 }
 
-JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_importer_jni_Fmi2Library_setupExperiment(JNIEnv *env, jobject obj, jlong p, jlong c, jboolean toleranceDefined, jdouble tolerance, jdouble startTime, jdouble stopTime) {
+JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_importer_jni_Fmi2Library_setupExperiment(JNIEnv *env, jobject obj, jlong p, jlong c, jdouble tolerance, jdouble startTime, jdouble stopTime) {
     FmuInstance* fmu = (FmuInstance*) p;
-    fmi2Boolean stopTimeDefined = stopTime > startTime ? 1 : 0;
+    fmi2Boolean toleranceDefined = tolerance > 0;
+    fmi2Boolean stopTimeDefined = stopTime > startTime;
     fmi2SetupExperimentTYPE* fmi2SetupExperiment = fmu->fmi2SetupExperiment_;
-    return (*fmi2SetupExperiment)((void*) c, (fmi2Boolean) toleranceDefined, tolerance, startTime, stopTimeDefined, stopTime);
+    return (*fmi2SetupExperiment)((void*) c, toleranceDefined, tolerance, startTime, stopTimeDefined, stopTime);
 }
 
 JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_importer_jni_Fmi2Library_enterInitializationMode(JNIEnv *env, jobject obj, jlong p, jlong c) {

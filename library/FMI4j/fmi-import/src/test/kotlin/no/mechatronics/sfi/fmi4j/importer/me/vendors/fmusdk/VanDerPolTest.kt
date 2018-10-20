@@ -72,7 +72,7 @@ class VanDerPolTest {
                 val read = x0.read(slave)
                 Assertions.assertTrue(read.status === FmiStatus.OK)
                 LOG.info("t=${slave.simulationTime}, $variableName=${read.value}")
-                slave.doStep(macroStep)
+                Assertions.assertTrue(slave.doStep(macroStep))
             }
 
         }

@@ -76,7 +76,7 @@ open class Fmi2Library(
     private external fun setDebugLogging(p: Long, c: Fmi2Component,
                                          loggingOn: Boolean, categories: Array<String>): NativeStatus
 
-    private external fun setupExperiment(p: Long, c: Fmi2Component, toleranceDefined: Boolean,
+    private external fun setupExperiment(p: Long, c: Fmi2Component,
                                          tolerance: Double, startTime: Double, stopTime: Double): NativeStatus
 
     private external fun enterInitializationMode(p: Long, c: Fmi2Component): NativeStatus
@@ -134,8 +134,8 @@ open class Fmi2Library(
 
     fun setDebugLogging(c: Fmi2Component, loggingOn: Boolean, categories: Array<String>) = setDebugLogging(p, c, loggingOn, categories)
 
-    fun setupExperiment(c: Fmi2Component, toleranceDefined: Boolean,
-                        tolerance: Double, startTime: Double, stopTime: Double) = setupExperiment(p, c, toleranceDefined, tolerance, startTime, stopTime)
+    fun setupExperiment(c: Fmi2Component,
+                        tolerance: Double, startTime: Double, stopTime: Double) = setupExperiment(p, c, tolerance, startTime, stopTime)
 
     fun enterInitializationMode(c: Fmi2Component) = enterInitializationMode(p, c)
 

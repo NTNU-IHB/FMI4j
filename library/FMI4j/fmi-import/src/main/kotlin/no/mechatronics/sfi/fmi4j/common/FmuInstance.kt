@@ -70,27 +70,25 @@ interface SimpleFmuInstance : FmuVariableAccessorProvider, Closeable {
     val modelVariables: ModelVariables
         get() = modelDescription.modelVariables
 
-    /**
-     * Call init with 0.0 as start.
-     */
+    fun setupExperiment() {
+        setupExperiment(0.0, 0.0, 0.0)
+    }
+
+    fun setupExperiment(start: Double = 0.0, stop: Double = 0.0, tolerance: Double = 0.0): Boolean
+
+    fun enterInitializationMode(): Boolean
+
+    fun exitInitializationMode(): Boolean
+
     fun init() {
-        init(0.0)
+        init(0.0, 0.0, 0.0)
     }
 
-    /**
-     * Call init with start and default stop time (endless)
-     */
-    fun init(start: Double) {
-        init(start, 0.0)
+    fun init(start: Double = 0.0, stop: Double = 0.0, tolerance: Double = 0.0) {
+        setupExperiment(start, stop)
+        enterInitializationMode()
+        exitInitializationMode()
     }
-
-    /**
-     * Initialise FMU with the provided start and stop value
-     *
-     * @param start FMU start time
-     * @param stop FMU stop time. If start > stop then stop is ignored
-     */
-    fun init(start: Double, stop: Double)
 
     /**
      * @see no.mechatronics.sfi.fmi4j.importer.jni.Fmi2Library.reset

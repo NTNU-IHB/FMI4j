@@ -45,10 +45,11 @@ class VanDerPolTest {
             val stop = 1.0
             val macroStep = 1E-2
             while (slave.simulationTime <= stop) {
-                val read = x0.read(slave.variableAccessor)
-                Assertions.assertTrue(read.status === FmiStatus.OK)
-                LOG.info("t=${slave.simulationTime}, $variableName=${read.value}")
-                slave.doStep(macroStep)
+                x0.read(slave.variableAccessor).also { read ->
+                    Assertions.assertTrue(read.status === FmiStatus.OK)
+                    LOG.info("t=${slave.simulationTime}, $variableName=${read.value}")
+                }
+                Assertions.assertTrue(slave.doStep(macroStep))
             }
 
         }

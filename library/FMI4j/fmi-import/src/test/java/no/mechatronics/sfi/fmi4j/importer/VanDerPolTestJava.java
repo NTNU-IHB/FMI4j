@@ -55,7 +55,6 @@ public class VanDerPolTestJava {
 
     @BeforeAll
     public static void setup() throws IOException {
-        LOG.debug("setup");
         final File file = new File(TestUtils.getTEST_FMUs(),
                 "FMI_2.0/ModelExchange/win64/FMUSDK/2.0.4/vanDerPol/vanDerPol.fmu");
         Assertions.assertTrue(file.exists());
@@ -64,7 +63,6 @@ public class VanDerPolTestJava {
 
     @AfterAll
     public static void tearDown() {
-        LOG.debug("tearDown");
         fmu.close();
     }
 
@@ -83,14 +81,16 @@ public class VanDerPolTestJava {
         RealVariable x0 = slave.getModelVariables()
                 .getByName("x0").asRealVariable();
 
-        slave.init();
+        slave.setupExperiment(0.0, 0.0, 0.0);
+        slave.enterInitializationMode();
+        slave.exitInitializationMode();
 
         double macroStep = 1.0 / 10;
         while (slave.getSimulationTime() < 1) {
             FmuRead<Double> read = x0.read(slave);
             Assertions.assertSame(read.getStatus(), FmiStatus.OK);
             LOG.info("t={}, x0={}", slave.getSimulationTime(), read.getValue());
-            slave.doStep(macroStep);
+            Assertions.assertTrue(slave.doStep(macroStep));
         }
 
         slave.terminate();
