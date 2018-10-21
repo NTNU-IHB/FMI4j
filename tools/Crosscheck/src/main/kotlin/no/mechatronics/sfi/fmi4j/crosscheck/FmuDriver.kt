@@ -77,7 +77,9 @@ object FmuDriver {
                 }
             }.use { slave ->
 
-                slave.init(startTime, stopTime)
+                slave.setupExperiment(startTime, stopTime)
+                slave.enterInitializationMode()
+                slave.exitInitializationMode()
 
                 val sb = StringBuilder()
                 val format = CSVFormat.DEFAULT.withHeader("Time", *outputVariables)
