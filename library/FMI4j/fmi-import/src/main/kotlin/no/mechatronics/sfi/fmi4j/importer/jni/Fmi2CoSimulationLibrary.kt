@@ -24,6 +24,9 @@
 
 package no.mechatronics.sfi.fmi4j.importer.jni
 
+import no.mechatronics.sfi.fmi4j.common.FmiStatus
+import no.mechatronics.sfi.fmi4j.common.ValueReferences
+
 class Fmi2CoSimulationLibrary(
         libName: String
 ) : Fmi2Library(libName) {
@@ -33,10 +36,10 @@ class Fmi2CoSimulationLibrary(
 
     private external fun cancelStep(p: Long, c: Fmi2Component): NativeStatus
 
-    private external fun setRealInputDerivatives(p: Long, c: Fmi2Component, vr: IntArray, order: IntArray,
+    private external fun setRealInputDerivatives(p: Long, c: Fmi2Component, vr: ValueReferences, order: IntArray,
                                                  value: DoubleArray): NativeStatus
 
-    private external fun getRealOutputDerivatives(p: Long, c: Fmi2Component, vr: IntArray, order: IntArray,
+    private external fun getRealOutputDerivatives(p: Long, c: Fmi2Component, vr: ValueReferences, order: IntArray,
                                                   value: DoubleArray): NativeStatus
 
     private external fun getStatus(p: Long, c: Fmi2Component, s: Int, value: IntByReference): NativeStatus
@@ -55,28 +58,48 @@ class Fmi2CoSimulationLibrary(
     fun step(c: Fmi2Component,
              currentCommunicationPoint: Double,
              communicationStepSize: Double,
-             noSetFMUStatePriorToCurrentPoint: Boolean) = step(p, c, currentCommunicationPoint, communicationStepSize, noSetFMUStatePriorToCurrentPoint)
+             noSetFMUStatePriorToCurrentPoint: Boolean): FmiStatus {
+        return step(p, c, currentCommunicationPoint, communicationStepSize, noSetFMUStatePriorToCurrentPoint).transform()
+    }
 
-    fun cancelStep(c: Fmi2Component) = cancelStep(p, c)
+    fun cancelStep(c: Fmi2Component): FmiStatus {
+        return cancelStep(p, c).transform()
+    }
 
     fun setRealInputDerivatives(c: Fmi2Component,
-                                vr: IntArray, order: IntArray,
-                                value: DoubleArray) = setRealInputDerivatives(p, c, vr, order, value)
+                                vr: ValueReferences, order: IntArray,
+                                value: DoubleArray): FmiStatus {
+        return setRealInputDerivatives(p, c, vr, order, value).transform()
+    }
 
     fun getRealOutputDerivatives(c: Fmi2Component,
-                                 vr: IntArray, order: IntArray,
-                                 value: DoubleArray) = getRealOutputDerivatives(p, c, vr, order, value)
+                                 vr: ValueReferences, order: IntArray,
+                                 value: DoubleArray): FmiStatus {
+        return getRealOutputDerivatives(p, c, vr, order, value).transform()
+    }
 
-    fun getStatus(c: Fmi2Component, s: Int, value: IntByReference) = getStatus(p, c, s, value)
+    fun getStatus(c: Fmi2Component, s: Int, value: IntByReference): FmiStatus {
+        return getStatus(p, c, s, value).transform()
+    }
 
-    fun getIntegerStatus(c: Fmi2Component, s: Int, value: IntByReference) = getIntegerStatus(p, c, s, value)
+    fun getIntegerStatus(c: Fmi2Component, s: Int, value: IntByReference): FmiStatus {
+        return getIntegerStatus(p, c, s, value).transform()
+    }
 
-    fun getRealStatus(c: Fmi2Component, s: Int, value: DoubleByReference) = getRealStatus(p, c, s, value)
+    fun getRealStatus(c: Fmi2Component, s: Int, value: DoubleByReference): FmiStatus {
+        return getRealStatus(p, c, s, value).transform()
+    }
 
-    fun getStringStatus(c: Fmi2Component, s: Int, value: StringByReference) = getStringStatus(p, c, s, value)
+    fun getStringStatus(c: Fmi2Component, s: Int, value: StringByReference): FmiStatus {
+        return getStringStatus(p, c, s, value).transform()
+    }
 
-    fun getBooleanStatus(c: Fmi2Component, s: Int, value: BooleanByReference) = getBooleanStatus(p, c, s, value)
+    fun getBooleanStatus(c: Fmi2Component, s: Int, value: BooleanByReference): FmiStatus {
+        return getBooleanStatus(p, c, s, value).transform()
+    }
 
-    fun getMaxStepSize(c: Fmi2Component, stepSize: DoubleByReference) = getMaxStepSize(p, c, stepSize)
+    fun getMaxStepSize(c: Fmi2Component, stepSize: DoubleByReference): FmiStatus {
+        return getMaxStepSize(p, c, stepSize).transform()
+    }
 
 }

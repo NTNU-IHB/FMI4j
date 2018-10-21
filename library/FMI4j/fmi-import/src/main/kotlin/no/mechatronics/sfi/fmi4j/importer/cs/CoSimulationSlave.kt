@@ -26,6 +26,7 @@ package no.mechatronics.sfi.fmi4j.importer.cs
 
 import no.mechatronics.sfi.fmi4j.common.FmiStatus
 import no.mechatronics.sfi.fmi4j.common.FmuSlave
+import no.mechatronics.sfi.fmi4j.common.ValueReferences
 import no.mechatronics.sfi.fmi4j.importer.AbstractFmuInstance
 import no.mechatronics.sfi.fmi4j.modeldescription.CoSimulationModelDescription
 import org.slf4j.Logger
@@ -82,42 +83,58 @@ class CoSimulationSlave internal constructor(
      * @see no.mechatronics.sfi.fmi4j.importer.proxy.v2.FmiLibrary.fmi2Terminate
      * @see no.mechatronics.sfi.fmi4j.importer.proxy.v2.FmiLibrary.fmi2FreeInstance
      */
-    override fun terminate() = super.terminate(freeInstance = true)
+    override fun terminate(): Boolean {
+        return super.terminate(freeInstance = true)
+    }
 
     /**
      * @see CoSimulationLibraryWrapper.setRealInputDerivatives
      */
-    fun setRealInputDerivatives(vr: IntArray, order: IntArray, value: DoubleArray) = wrapper.setRealInputDerivatives(vr, order, value)
+    fun setRealInputDerivatives(vr: ValueReferences, order: IntArray, value: DoubleArray): FmiStatus {
+        return wrapper.setRealInputDerivatives(vr, order, value)
+    }
 
     /**
      * @see CoSimulationLibraryWrapper.getRealOutputDerivatives
      */
-    fun getRealOutputDerivatives(vr: IntArray, order: IntArray, value: DoubleArray) = wrapper.getRealOutputDerivatives(vr, order, value)
+    fun getRealOutputDerivatives(vr: ValueReferences, order: IntArray, value: DoubleArray): FmiStatus {
+        return wrapper.getRealOutputDerivatives(vr, order, value)
+    }
 
     /**
      * @see CoSimulationLibraryWrapper.getStatus
      */
-    fun getStatus(s: FmiStatusKind) = wrapper.getStatus(s)
+    fun getStatus(s: FmiStatusKind): FmiStatus {
+        return wrapper.getStatus(s)
+    }
 
     /**
      * @see CoSimulationLibraryWrapper.getRealStatus
      */
-    fun getRealStatus(s: FmiStatusKind) = wrapper.getRealStatus(s)
+    fun getRealStatus(s: FmiStatusKind): Double {
+        return wrapper.getRealStatus(s)
+    }
 
     /**
      * @see CoSimulationLibraryWrapper.getIntegerStatus
      */
-    fun getIntegerStatus(s: FmiStatusKind) = wrapper.getIntegerStatus(s)
+    fun getIntegerStatus(s: FmiStatusKind): Int {
+        return wrapper.getIntegerStatus(s)
+    }
 
     /**
      * @see CoSimulationLibraryWrapper.getBooleanStatus
      */
-    fun getBooleanStatus(s: FmiStatusKind) = wrapper.getBooleanStatus(s)
+    fun getBooleanStatus(s: FmiStatusKind): Boolean {
+        return wrapper.getBooleanStatus(s)
+    }
 
     /**
      * @see CoSimulationLibraryWrapper.getStringStatus
      */
-    fun getStringStatus(s: FmiStatusKind) = wrapper.getStringStatus(s)
+    fun getStringStatus(s: FmiStatusKind): String {
+        return wrapper.getStringStatus(s)
+    }
 
     private companion object {
         val LOG: Logger = LoggerFactory.getLogger(CoSimulationSlave::class.java)

@@ -24,6 +24,8 @@
 
 package no.mechatronics.sfi.fmi4j.importer.jni
 
+import no.mechatronics.sfi.fmi4j.common.FmiStatus
+
 class Fmi2ModelExchangeLibrary(
         libName: String
 ) : Fmi2Library(libName) {
@@ -50,26 +52,46 @@ class Fmi2ModelExchangeLibrary(
 
     private external fun getNominalsOfContinuousStates(p: Long, c: Fmi2Component, x_nominals: DoubleArray): NativeStatus
 
-    fun enterEventMode(c: Fmi2Component) = enterEventMode(p, c)
+    fun enterEventMode(c: Fmi2Component): FmiStatus {
+        return enterEventMode(p, c).transform()
+    }
 
-    fun newDiscreteStates(c: Fmi2Component, ev: EventInfo) = newDiscreteStates(p, c, ev)
+    fun newDiscreteStates(c: Fmi2Component, ev: EventInfo): FmiStatus {
+        return newDiscreteStates(p, c, ev).transform()
+    }
 
-    fun enterContinuousTimeMode(c: Fmi2Component) = enterContinuousTimeMode(p, c)
+    fun enterContinuousTimeMode(c: Fmi2Component): FmiStatus {
+        return enterContinuousTimeMode(p, c).transform()
+    }
 
-    fun setContinuousStates(c: Fmi2Component, x: DoubleArray) = setContinuousStates(p, c, x)
+    fun setContinuousStates(c: Fmi2Component, x: DoubleArray): FmiStatus {
+        return setContinuousStates(p, c, x).transform()
+    }
 
     fun completedIntegratorStep(
             c: Fmi2Component, noSetFMUStatePriorToCurrentPoint: Boolean,
-            enterEventMode: BooleanByReference, terminateSimulation: BooleanByReference) = completedIntegratorStep(p, c, noSetFMUStatePriorToCurrentPoint, enterEventMode, terminateSimulation)
+            enterEventMode: BooleanByReference, terminateSimulation: BooleanByReference): FmiStatus {
+        return completedIntegratorStep(p, c, noSetFMUStatePriorToCurrentPoint, enterEventMode, terminateSimulation).transform()
+    }
 
-    fun setTime(c: Fmi2Component, time: Double) = setTime(p, c, time)
+    fun setTime(c: Fmi2Component, time: Double): FmiStatus {
+        return setTime(p, c, time).transform()
+    }
 
-    fun getDerivatives(c: Fmi2Component, derivatives: DoubleArray) = getDerivatives(p, c, derivatives)
+    fun getDerivatives(c: Fmi2Component, derivatives: DoubleArray): FmiStatus {
+        return getDerivatives(p, c, derivatives).transform()
+    }
 
-    fun getEventIndicators(c: Fmi2Component, eventIndicators: DoubleArray) = getEventIndicators(p, c, eventIndicators)
+    fun getEventIndicators(c: Fmi2Component, eventIndicators: DoubleArray): FmiStatus {
+        return getEventIndicators(p, c, eventIndicators).transform()
+    }
 
-    fun getContinuousStates(c: Fmi2Component, x: DoubleArray) = getContinuousStates(p, c, x)
+    fun getContinuousStates(c: Fmi2Component, x: DoubleArray): FmiStatus {
+        return getContinuousStates(p, c, x).transform()
+    }
 
-    fun getNominalsOfContinuousStates(c: Fmi2Component, x_nominals: DoubleArray) = getNominalsOfContinuousStates(p, c, x_nominals)
+    fun getNominalsOfContinuousStates(c: Fmi2Component, x_nominals: DoubleArray): FmiStatus {
+        return getNominalsOfContinuousStates(p, c, x_nominals).transform()
+    }
 
 }

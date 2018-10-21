@@ -104,17 +104,6 @@ class ModelExchangeFmuStepper internal constructor(
         return false
     }
 
-    override fun init() {
-        init(0.0, 0.0, 0.0)
-    }
-
-    override fun init(start: Double, stop: Double, tolerance: Double) {
-        fmuInstance.init(start, stop, tolerance)
-        if (eventIteration()) {
-            throw IllegalStateException("EventIteration returned false during initialization!")
-        }
-    }
-
     override fun exitInitializationMode(): Boolean {
 
         if (!fmuInstance.exitInitializationMode()) {
@@ -254,7 +243,8 @@ class CoSimulationModelDescriptionWrapper(
         get() = false
     override val canRunAsynchronuously: Boolean
         get() = false
-
+    override val canProvideMaxStepSize: Boolean
+        get() = false
     override val attributes: CoSimulationAttributes
         get() = super<CoSimulationModelDescription>.attributes
 }

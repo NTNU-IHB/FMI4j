@@ -25,6 +25,7 @@
 package no.mechatronics.sfi.fmi4j.importer.cs
 
 import no.mechatronics.sfi.fmi4j.common.FmiStatus
+import no.mechatronics.sfi.fmi4j.common.ValueReferences
 import no.mechatronics.sfi.fmi4j.importer.jni.Fmi2LibraryWrapper
 import no.mechatronics.sfi.fmi4j.importer.jni.*
 
@@ -40,14 +41,14 @@ class CoSimulationLibraryWrapper(
     /**
      * @see Fmi2CoSimulationLibrary.fmi2SetRealInputDerivatives
      */
-    fun setRealInputDerivatives(vr: IntArray, order: IntArray, value: DoubleArray): FmiStatus {
+    fun setRealInputDerivatives(vr: ValueReferences, order: IntArray, value: DoubleArray): FmiStatus {
         return updateStatus(library.setRealInputDerivatives(c, vr, order, value))
     }
 
     /**
      * @see Fmi2CoSimulationLibrary.fmi2GetRealOutputDerivatives
      */
-    fun getRealOutputDerivatives(vr: IntArray, order: IntArray, value: DoubleArray): FmiStatus {
+    fun getRealOutputDerivatives(vr: ValueReferences, order: IntArray, value: DoubleArray): FmiStatus {
         return updateStatus(library.getRealOutputDerivatives(c, vr, order, value))
     }
 

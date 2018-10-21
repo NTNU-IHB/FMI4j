@@ -620,20 +620,20 @@ JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_importer_jni_Fmi2CoSimulat
     return (*fmi2CancelStep)((void*) c);
 }
 
-JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_importer_jni_Fmi2CoSimulationLibrary_setRealInputDerivatives(JNIEnv *env, jobject obj, jlong p, jlong c, jintArray vr, jintArray order, jdoubleArray value) {
+JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_importer_jni_Fmi2CoSimulationLibrary_setRealInputDerivatives(JNIEnv *env, jobject obj, jlong p, jlong c, jlongArray vr, jintArray order, jdoubleArray value) {
 
     FmuInstance* fmu = (FmuInstance*) p;
 
     const jsize size = env->GetArrayLength(vr);
 
-    jint* _vr = env->GetIntArrayElements(vr, 0);
+    jlong* _vr = env->GetLongArrayElements(vr, 0);
     jint* _order = env->GetIntArrayElements(order, 0);
     jdouble* _value = env->GetDoubleArrayElements(value, 0);
 
     fmi2SetRealInputDerivativesTYPE* fmi2SetRealInputDerivatives = fmu->fmi2SetRealInputDerivatives_;
     fmi2Status status = (*fmi2SetRealInputDerivatives)((void*) c, (fmi2ValueReference*)_vr, size, (fmi2Integer*)_order, _value);
 
-    env->ReleaseIntArrayElements(vr, _vr, 0);
+    env->ReleaseLongArrayElements(vr, _vr, 0);
     env->ReleaseIntArrayElements(order, _order, 0);
 
     env->ReleaseDoubleArrayElements(value, _value, 0);
@@ -642,20 +642,20 @@ JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_importer_jni_Fmi2CoSimulat
 }
 
 
-JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_importer_jni_Fmi2CoSimulationLibrary_getRealOutputDerivatives(JNIEnv *env, jobject obj, jlong p, jlong c, jintArray vr, jintArray order, jdoubleArray value) {
+JNIEXPORT jint JNICALL Java_no_mechatronics_sfi_fmi4j_importer_jni_Fmi2CoSimulationLibrary_getRealOutputDerivatives(JNIEnv *env, jobject obj, jlong p, jlong c, jlongArray vr, jintArray order, jdoubleArray value) {
 
     FmuInstance* fmu = (FmuInstance*) p;
 
     const jsize size = env->GetArrayLength(vr);
 
-    jint* _vr = env->GetIntArrayElements(vr, 0);
+    jlong* _vr = env->GetLongArrayElements(vr, 0);
     jint* _order = env->GetIntArrayElements(order, 0);
     fmi2Real* _value = (fmi2Real*) malloc(sizeof(fmi2Real) * size);
 
     fmi2GetRealOutputDerivativesTYPE* fmi2GetRealOutputDerivatives = fmu->fmi2GetRealOutputDerivatives_;
     fmi2Status status = (*fmi2GetRealOutputDerivatives)((void*) c, (fmi2ValueReference*)_vr, size, (fmi2Integer*)_order, _value);
 
-    env->ReleaseIntArrayElements(vr, _vr, 0);
+    env->ReleaseLongArrayElements(vr, _vr, 0);
     env->ReleaseIntArrayElements(order, _order, 0);
 
     env->SetDoubleArrayRegion(value, 0, size, _value);

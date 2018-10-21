@@ -24,10 +24,7 @@
 
 package no.mechatronics.sfi.fmi4j.importer.jni
 
-import no.mechatronics.sfi.fmi4j.common.ValueReferences
-import no.mechatronics.sfi.fmi4j.common.currentOS
-import no.mechatronics.sfi.fmi4j.common.libExtension
-import no.mechatronics.sfi.fmi4j.common.libPrefix
+import no.mechatronics.sfi.fmi4j.common.*
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.Closeable
@@ -44,7 +41,7 @@ open class Fmi2Library(
         libName: String
 ) : Closeable {
 
-    protected val p = load(libName)
+    protected val p: Long = load(libName)
     private var isClosed = false
 
     override fun close() {
@@ -127,55 +124,117 @@ open class Fmi2Library(
             state: LongByReference, serializedState: ByteArray): NativeStatus
 
 
-    fun getVersion() = getVersion(p)
+    protected fun NativeStatus.transform(): FmiStatus {
+        return FmiStatus.valueOf(this)
+    }
 
-    fun getTypesPlatform() = getTypesPlatform(p)
+    fun getVersion(): String {
+        return getVersion(p)
+    }
+
+    fun getTypesPlatform(): String {
+        return getTypesPlatform(p)
+    }
 
 
-    fun setDebugLogging(c: Fmi2Component, loggingOn: Boolean, categories: Array<String>) = setDebugLogging(p, c, loggingOn, categories)
+    fun setDebugLogging(c: Fmi2Component, loggingOn: Boolean, categories: Array<String>): FmiStatus {
+        return setDebugLogging(p, c, loggingOn, categories).transform()
+    }
 
     fun setupExperiment(c: Fmi2Component,
-                        tolerance: Double, startTime: Double, stopTime: Double) = setupExperiment(p, c, tolerance, startTime, stopTime)
+                        tolerance: Double, startTime: Double, stopTime: Double): FmiStatus {
+        return setupExperiment(p, c, tolerance, startTime, stopTime).transform()
+    }
 
-    fun enterInitializationMode(c: Fmi2Component) = enterInitializationMode(p, c)
+    fun enterInitializationMode(c: Fmi2Component): FmiStatus {
+        return enterInitializationMode(p, c).transform()
+    }
 
-    fun exitInitializationMode(c: Fmi2Component) = exitInitializationMode(p, c)
+    fun exitInitializationMode(c: Fmi2Component): FmiStatus {
+        return exitInitializationMode(p, c).transform()
+    }
 
     fun instantiate(instanceName: String, type: Int, guid: String,
-                    resourceLocation: String, visible: Boolean, loggingOn: Boolean) = instantiate(p, instanceName, type, guid, resourceLocation, visible, loggingOn)
+                    resourceLocation: String, visible: Boolean, loggingOn: Boolean): Long {
+        return instantiate(p, instanceName, type, guid, resourceLocation, visible, loggingOn)
+    }
 
-    fun terminate(c: Fmi2Component) = terminate(p, c)
+    fun terminate(c: Fmi2Component): FmiStatus {
+        return terminate(p, c).transform()
+    }
 
-    fun reset(c: Fmi2Component) = reset(p, c)
+    fun reset(c: Fmi2Component): FmiStatus {
+        return reset(p, c).transform()
+    }
 
-    fun freeInstance(c: Fmi2Component) = freeInstance(p, c)
+    fun freeInstance(c: Fmi2Component) {
+        freeInstance(p, c)
+    }
 
     fun getDirectionalDerivative(c: Fmi2Component, vUnknown_ref: ValueReferences,
-                                 vKnownRef: ValueReferences, dvKnown: DoubleArray, dvUnknown: DoubleArray) = getDirectionalDerivative(p, c, vUnknown_ref, vKnownRef, dvKnown, dvUnknown)
+                                 vKnownRef: ValueReferences, dvKnown: DoubleArray, dvUnknown: DoubleArray): FmiStatus {
+        return getDirectionalDerivative(p, c, vUnknown_ref, vKnownRef, dvKnown, dvUnknown).transform()
+    }
 
 
-    fun getInteger(c: Fmi2Component, vr: ValueReferences, ref: IntArray) = getInteger(p, c, vr, ref)
-    fun getReal(c: Fmi2Component, vr: ValueReferences, ref: DoubleArray) = getReal(p, c, vr, ref)
-    fun getString(c: Fmi2Component, vr: ValueReferences, ref: Array<String>) = getString(p, c, vr, ref)
-    fun getBoolean(c: Fmi2Component, vr: ValueReferences, ref: BooleanArray) = getBoolean(p, c, vr, ref)
+    fun getInteger(c: Fmi2Component, vr: ValueReferences, ref: IntArray): FmiStatus {
+        return getInteger(p, c, vr, ref).transform()
+    }
+
+    fun getReal(c: Fmi2Component, vr: ValueReferences, ref: DoubleArray): FmiStatus {
+        return getReal(p, c, vr, ref).transform()
+    }
+
+    fun getString(c: Fmi2Component, vr: ValueReferences, ref: Array<String>): FmiStatus {
+        return getString(p, c, vr, ref).transform()
+    }
+
+    fun getBoolean(c: Fmi2Component, vr: ValueReferences, ref: BooleanArray): FmiStatus {
+        return getBoolean(p, c, vr, ref).transform()
+    }
 
 
-    fun setInteger(c: Fmi2Component, vr: ValueReferences, values: IntArray) = setInteger(p, c, vr, values)
-    fun setReal(c: Fmi2Component, vr: ValueReferences, values: DoubleArray) = setReal(p, c, vr, values)
-    fun setString(c: Fmi2Component, vr: ValueReferences, values: Array<String>) = setString(p, c, vr, values)
-    fun setBoolean(c: Fmi2Component, vr: ValueReferences, values: BooleanArray) = setBoolean(p, c, vr, values)
+    fun setInteger(c: Fmi2Component, vr: ValueReferences, values: IntArray): FmiStatus {
+        return setInteger(p, c, vr, values).transform()
+    }
+
+    fun setReal(c: Fmi2Component, vr: ValueReferences, values: DoubleArray): FmiStatus {
+        return setReal(p, c, vr, values).transform()
+    }
+
+    fun setString(c: Fmi2Component, vr: ValueReferences, values: Array<String>): FmiStatus {
+        return setString(p, c, vr, values).transform()
+    }
+
+    fun setBoolean(c: Fmi2Component, vr: ValueReferences, values: BooleanArray): FmiStatus {
+        return setBoolean(p, c, vr, values).transform()
+    }
 
 
-    fun getFMUstate(c: Fmi2Component, state: LongByReference) = getFMUstate(p, c, state)
-    fun setFMUstate(c: Fmi2Component, state: Long) = setFMUstate(p, c, state)
-    fun freeFMUstate(c: Fmi2Component, state: Long) = freeFMUstate(p, c, state)
+    fun getFMUstate(c: Fmi2Component, state: LongByReference): FmiStatus {
+        return getFMUstate(p, c, state).transform()
+    }
+
+    fun setFMUstate(c: Fmi2Component, state: Long): FmiStatus {
+        return setFMUstate(p, c, state).transform()
+    }
+
+    fun freeFMUstate(c: Fmi2Component, state: Long): FmiStatus {
+        return freeFMUstate(p, c, state).transform()
+    }
 
 
-    fun serializedFMUstateSize(c: Fmi2Component, state: Long, size: IntByReference) = serializedFMUstateSize(p, c, state, size)
+    fun serializedFMUstateSize(c: Fmi2Component, state: Long, size: IntByReference): FmiStatus {
+        return serializedFMUstateSize(p, c, state, size).transform()
+    }
 
-    fun serializeFMUstate(c: Fmi2Component, state: Long, serializedState: ByteArray) = serializeFMUstate(p, c, state, serializedState)
+    fun serializeFMUstate(c: Fmi2Component, state: Long, serializedState: ByteArray): FmiStatus {
+        return serializeFMUstate(p, c, state, serializedState).transform()
+    }
 
-    fun deSerializeFMUstate(c: Fmi2Component, state: LongByReference, serializedState: ByteArray) = deSerializeFMUstate(p, c, state, serializedState)
+    fun deSerializeFMUstate(c: Fmi2Component, state: LongByReference, serializedState: ByteArray): FmiStatus {
+        return deSerializeFMUstate(p, c, state, serializedState).transform()
+    }
 
 
     private companion object {

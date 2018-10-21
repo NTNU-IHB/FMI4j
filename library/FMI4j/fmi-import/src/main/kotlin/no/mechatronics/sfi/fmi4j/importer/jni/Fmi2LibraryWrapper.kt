@@ -62,10 +62,6 @@ abstract class Fmi2LibraryWrapper<E : Fmi2Library>(
         private set
 
 
-    protected fun updateStatus(status: Int): FmiStatus {
-        return updateStatus(FmiStatus.valueOf(status))
-    }
-
     protected fun updateStatus(status: FmiStatus): FmiStatus {
         return status.also { lastStatus = it }
     }
