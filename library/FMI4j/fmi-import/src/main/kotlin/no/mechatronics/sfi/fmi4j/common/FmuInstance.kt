@@ -35,11 +35,6 @@ typealias FmuState = Long
 interface SimpleFmuInstance : FmuVariableAccessorProvider, Closeable {
 
     /**
-     * Has init been called?
-     */
-    val isInitialized: Boolean
-
-    /**
      * Has terminate been called?
      */
     val isTerminated: Boolean

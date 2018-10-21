@@ -55,13 +55,6 @@ abstract class AbstractFmuInstance<out E : CommonModelDescription, out T : Fmi2L
         get() = wrapper.version
 
     /**
-     * Has the FMU been initialized yet?
-     * That is, has init() been called?
-     */
-    override var isInitialized = false
-        protected set
-
-    /**
      * @see Fmi2LibraryWrapper.isTerminated
      */
     override val isTerminated
@@ -108,24 +101,18 @@ abstract class AbstractFmuInstance<out E : CommonModelDescription, out T : Fmi2L
     override fun setupExperiment(start: Double, stop: Double, tolerance: Double): Boolean {
 
         LOG.debug("setupExperiment")
-        if (!isInitialized) {
 
-            if (start < 0) {
-                LOG.error("Start must be a positive value, was $start!")
-                return false
-            }
-            startTime = start
-            if (stop > startTime) {
-                stopTime = stop
-            }
-
-            return (wrapper.setupExperiment(tolerance, startTime, stopTime) == FmiStatus.OK).also {
-                simulationTime = start
-            }
-
-        } else {
-            LOG.warn("Trying to call setupExperiment, but FMU has already been initialized, and has not been reset!")
+        if (start < 0) {
+            LOG.error("Start must be a positive value, was $start!")
             return false
+        }
+        startTime = start
+        if (stop > startTime) {
+            stopTime = stop
+        }
+
+        return (wrapper.setupExperiment(tolerance, startTime, stopTime) == FmiStatus.OK).also {
+            simulationTime = start
         }
 
     }
@@ -137,9 +124,7 @@ abstract class AbstractFmuInstance<out E : CommonModelDescription, out T : Fmi2L
 
     override fun exitInitializationMode(): Boolean {
         LOG.debug("exitInitializationMode")
-        return (wrapper.exitInitializationMode() == FmiStatus.OK).also {
-            isInitialized = true
-        }
+        return (wrapper.exitInitializationMode() == FmiStatus.OK)
     }
 
     override fun terminate(): Boolean {
@@ -165,9 +150,7 @@ abstract class AbstractFmuInstance<out E : CommonModelDescription, out T : Fmi2L
      * @see Fmi2Library.reset
      */
     override fun reset(): Boolean {
-        return (wrapper.reset() == FmiStatus.OK).also {
-            isInitialized = false
-        }
+        return (wrapper.reset() == FmiStatus.OK)
     }
 
     protected fun finalize() {

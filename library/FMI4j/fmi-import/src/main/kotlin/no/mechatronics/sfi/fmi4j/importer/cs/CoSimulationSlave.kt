@@ -48,11 +48,6 @@ class CoSimulationSlave internal constructor(
      */
     override fun doStep(stepSize: Double): Boolean {
 
-        if (!isInitialized) {
-            throw IllegalStateException("Calling doStep without having called init(), " +
-                    "remember that you have to call init() again after a call to reset()!")
-        }
-
         val tNext = (simulationTime + stepSize)
 
         if (stopDefined && tNext > stopTime) {

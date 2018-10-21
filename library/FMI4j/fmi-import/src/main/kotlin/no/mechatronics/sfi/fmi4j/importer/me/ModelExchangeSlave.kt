@@ -119,10 +119,6 @@ class ModelExchangeFmuStepper internal constructor(
 
     override fun doStep(stepSize: Double): Boolean {
 
-        if (!isInitialized) {
-            throw IllegalStateException("Init has not been invoked!")
-        }
-
         if (stepSize <= 0) {
             throw IllegalArgumentException("stepSize must be positive and greater than 0! Was: $stepSize")
         }
