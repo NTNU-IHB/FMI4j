@@ -113,8 +113,8 @@ public class $modelName implements FmuSlave {
     }
 
     @Override
-    public void setupExperiment() {
-        setupExperiment(0.0);
+    public boolean setupExperiment() {
+        return setupExperiment(0.0);
     }
 
     public boolean setupExperiment(double start) {
