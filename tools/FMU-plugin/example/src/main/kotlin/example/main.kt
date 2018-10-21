@@ -7,14 +7,16 @@ fun main(args: Array<String>) {
 
     ControlledTemperature.newInstance().use { slave ->
 
-        slave.init()
+        slave.setupExperiment()
+        slave.enterInitializationMode()
+        slave.exitInitializationMode()
 
         //Variables are grouped by causality and have types!
         val tempRef: RealVariable
                 = slave.outputs.temperature_Reference()
 
-        val stop = 10.0
-        val stepSize = 1E-2
+        val stop = 0.1
+        val stepSize = 1E-4
         while (slave.simulationTime <= stop) {
 
             if (!slave.doStep(stepSize)) {
