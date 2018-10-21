@@ -82,7 +82,9 @@ abstract class AbstractFmuInstance<out E : CommonModelDescription, out T : Fmi2L
         get() = wrapper.lastStatus
 
     override val variableAccessor: FmuVariableAccessor by lazy {
-        FmuVariableAccessorImpl(wrapper) {modelDescription.modelVariables.getByName(it).valueReference}
+        FmuVariableAccessorImpl(wrapper) {
+            modelDescription.modelVariables.getByName(it).valueReference
+        }
     }
 
     /**
@@ -111,7 +113,7 @@ abstract class AbstractFmuInstance<out E : CommonModelDescription, out T : Fmi2L
             stopTime = stop
         }
 
-        return (wrapper.setupExperiment(tolerance, startTime, stopTime) == FmiStatus.OK).also {
+        return (wrapper.setupExperiment(tolerance, startTime, stopTime).isOK()).also {
             simulationTime = start
         }
 
@@ -119,12 +121,12 @@ abstract class AbstractFmuInstance<out E : CommonModelDescription, out T : Fmi2L
 
     override fun enterInitializationMode(): Boolean {
         LOG.debug("enterInitializationMode")
-        return wrapper.enterInitializationMode() == FmiStatus.OK
+        return wrapper.enterInitializationMode().isOK()
     }
 
     override fun exitInitializationMode(): Boolean {
         LOG.debug("exitInitializationMode")
-        return (wrapper.exitInitializationMode() == FmiStatus.OK)
+        return wrapper.exitInitializationMode().isOK()
     }
 
     override fun terminate(): Boolean {
@@ -142,7 +144,7 @@ abstract class AbstractFmuInstance<out E : CommonModelDescription, out T : Fmi2L
     fun terminate(freeInstance: Boolean): Boolean {
         return wrapper.terminate(freeInstance).let { status ->
             LOG.debug("FMU '${modelDescription.modelName}' terminated with status $status! #${hashCode()}")
-            status == FmiStatus.OK
+            status.isOK()
         }
     }
 
@@ -150,7 +152,7 @@ abstract class AbstractFmuInstance<out E : CommonModelDescription, out T : Fmi2L
      * @see Fmi2Library.reset
      */
     override fun reset(): Boolean {
-        return (wrapper.reset() == FmiStatus.OK)
+        return wrapper.reset().isOK()
     }
 
     protected fun finalize() {
@@ -186,7 +188,7 @@ abstract class AbstractFmuInstance<out E : CommonModelDescription, out T : Fmi2L
         if (!modelDescription.canGetAndSetFMUstate) {
             throw UnsupportedOperationException("Method call not allowed, FMU cannot get and set FMU state!")
         }
-        return wrapper.setFMUState(state) == FmiStatus.OK
+        return wrapper.setFMUState(state).isOK()
     }
 
     /**
@@ -196,7 +198,7 @@ abstract class AbstractFmuInstance<out E : CommonModelDescription, out T : Fmi2L
         if (!modelDescription.canGetAndSetFMUstate) {
             throw UnsupportedOperationException("Method call not allowed, FMU cannot get and set FMU state!")
         }
-        return wrapper.freeFMUState(state) == FmiStatus.OK
+        return wrapper.freeFMUState(state).isOK()
     }
 
     /**
@@ -210,7 +212,7 @@ abstract class AbstractFmuInstance<out E : CommonModelDescription, out T : Fmi2L
     }
 
     /**
-     * @see Fmi2Library.sserializeFMUstate
+     * @see Fmi2Library.serializeFMUstate
      */
     override fun serializeFMUstate(state: FmuState): ByteArray {
         if (!modelDescription.canSerializeFMUstate) {
