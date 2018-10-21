@@ -24,27 +24,36 @@ The package consists of:
 
 ```java
 
-Fmu fmu = Fmu.from(new File("path/to/fmu.fmu")); //URLs are also supported
-
-FmuSlave slave = fmu.asCoSimulationFmu().newInstance();
-
-// Model Exchange is also supported:
-//
-// Solver solver = ApacheSolvers.euler(1E-3);
-// FmuSlave slave = fmu.asModelExchangeFmu(solver).newInstance(); 
-
-slave.init(); //throws on error
-
-double stop = 10;
-double stepSize = 1.0/100;
-while(slave.getSimulationTime() <= stop) {
-    if (!slave.doStep(stepSize)) {
-        break;
+class Demo {
+    
+    void main(String[] args) {
+        
+        Fmu fmu = Fmu.from(new File("path/to/fmu.fmu")); //URLs are also supported
+        FmuSlave slave = fmu.asCoSimulationFmu().newInstance();
+        
+        // Model Exchange is also supported:
+        //
+        // Solver solver = ApacheSolvers.euler(1E-3);
+        // FmuSlave slave = fmu.asModelExchangeFmu(solver).newInstance(); 
+        
+        slave.setupExperiment();
+        slave.enterInitializationMode();
+        slave.exitInitializationMode();
+        
+        double stop = 10;
+        double stepSize = 1.0/100;
+        while(slave.getSimulationTime() <= stop) {
+            if (!slave.doStep(stepSize)) {
+                break;
+            }
+        }
+        slave.terminate(); //or close, try with resources is also supported
+        fmu.close(); // <- also done automatically by the library if you forget to do it yourself
+        
     }
+    
 }
-slave.terminate(); //or close, try with resources is also supported
 
-fmu.close() // <- also done automatically by the library if you forget to do it yourself
 ```
 
 ### <a name="plugin"></a> Gradle plugin
@@ -60,7 +69,9 @@ Example for an FMU named _ControlledTemperature_ given in Kotlin:
 
 ControlledTemperature.newInstance().use { slave -> //try with resources
 
-        slave.init()
+        slave.setupExperiment()
+        slave.enterInitializationMode()
+        slave.exitInitializationMode()
         
         //Variables are grouped by causality and have types!
         val tempRef: RealVariable 
@@ -98,7 +109,7 @@ The plugin will automatically add a dependency to the FMI4j artifact ```fmi-impo
 
 ```gradle
 fmi4j {
-    version = "0.11.1"
+    version = "0.12.0"
     configurationName = "compile"
 }
 ```
