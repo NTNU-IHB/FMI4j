@@ -103,11 +103,6 @@ public class $modelName implements FmuSlave {
     }
 
     @Override
-    public boolean isInitialized() {
-        return slave.isInitialized();
-    }
-
-    @Override
     public boolean isTerminated() {
         return slave.isTerminated();
     }
@@ -118,18 +113,31 @@ public class $modelName implements FmuSlave {
     }
 
     @Override
-    public void init() {
-        slave.init();
+    public void setupExperiment() {
+        setupExperiment(0.0);
+    }
+
+    public boolean setupExperiment(double start) {
+        return setupExperiment(start, 0.0);
+    }
+
+    public boolean setupExperiment(double start, double stop) {
+        return setupExperiment(start, stop, 0.0);
     }
 
     @Override
-    public void init(double start) {
-        slave.init(start);
+    public boolean setupExperiment(double start, double stop, double tolerance) {
+        return slave.setupExperiment(start, stop, tolerance);
     }
 
     @Override
-    public void init(double start, double stop) {
-        slave.init(start, stop);
+    public boolean enterInitializationMode() {
+        return slave.enterInitializationMode();
+    }
+
+    @Override
+    public boolean exitInitializationMode() {
+        return slave.exitInitializationMode();
     }
 
     @Override
@@ -153,7 +161,7 @@ public class $modelName implements FmuSlave {
     }
 
     @Override
-    public double[] getDirectionalDerivative(int[] vUnknownRef, int[] vKnownRef, double[] dvKnown) {
+    public double[] getDirectionalDerivative(long[] vUnknownRef, long[] vKnownRef, double[] dvKnown) {
         return slave.getDirectionalDerivative(vUnknownRef, vKnownRef, dvKnown);
     }
 
@@ -185,6 +193,11 @@ public class $modelName implements FmuSlave {
     @Override
     public FmuVariableAccessor getVariableAccessor() {
         return slave.getVariableAccessor();
+    }
+
+    @Override
+    public void close() {
+        slave.close();
     }
 
     private Locals locals;
