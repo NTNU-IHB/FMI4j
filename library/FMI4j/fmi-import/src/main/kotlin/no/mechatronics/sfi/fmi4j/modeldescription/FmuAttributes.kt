@@ -58,6 +58,7 @@ interface CoSimulationAttributes : CommonFmuAttributes {
     val canInterpolateInputs: Boolean
     val maxOutputDerivativeOrder: Int
     val canRunAsynchronuously: Boolean
+    val canProvideMaxStepSize: Boolean
 
 }
 
@@ -119,7 +120,11 @@ data class CoSimulationAttributesImpl(
         override val maxOutputDerivativeOrder: Int = 0,
 
         @JacksonXmlProperty
-        override val canRunAsynchronuously: Boolean = false
+        override val canRunAsynchronuously: Boolean = false,
+
+        @JacksonXmlProperty
+        override val canProvideMaxStepSize: Boolean = false
+
 
 ) : CommonFmuAttributesImpl(), CoSimulationAttributes
 
