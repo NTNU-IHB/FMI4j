@@ -37,8 +37,9 @@ class ControlledTemperatureTest {
                 Assertions.assertNotNull(startTemp)
                 Assertions.assertEquals(298.0, startTemp!!)
 
-                slave.init()
-                Assertions.assertTrue(slave.lastStatus === FmiStatus.OK)
+                slave.setupExperiment()
+                slave.enterInitializationMode()
+                slave.exitInitializationMode()
 
                 val heatCapacity1_C = slave.modelDescription
                         .getVariableByName("HeatCapacity1.C").asRealVariable()

@@ -36,7 +36,9 @@ class VanDerPolTest {
 
         fmu.asCoSimulationFmu().newInstance().use { slave ->
 
-            slave.init()
+            slave.setupExperiment()
+            slave.enterInitializationMode()
+            slave.exitInitializationMode()
 
             val variableName = "x0"
             val x0 = slave.modelVariables

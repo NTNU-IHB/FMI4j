@@ -81,7 +81,7 @@ public class VanDerPolTestJava {
         RealVariable x0 = slave.getModelVariables()
                 .getByName("x0").asRealVariable();
 
-        slave.setupExperiment(0.0, 0.0, 0.0);
+        slave.setupExperiment();
         slave.enterInitializationMode();
         slave.exitInitializationMode();
 

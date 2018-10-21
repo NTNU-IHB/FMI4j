@@ -65,7 +65,9 @@ class VanDerPolTest {
             val x0 = slave.modelVariables
                     .getByName(variableName).asRealVariable()
 
-            slave.init()
+            slave.setupExperiment()
+            slave.enterInitializationMode()
+            slave.exitInitializationMode()
 
             val macroStep = 1.0 / 10
             while (slave.simulationTime < 1) {
