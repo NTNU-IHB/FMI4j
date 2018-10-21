@@ -100,7 +100,7 @@ To use it, simply add the following to your build.gradle
 
 ```gradle
 plugins {
-    id "no.mechatronics.sfi.fmi4j.FmuPlugin" version "0.5.2"
+    id "no.mechatronics.sfi.fmi4j.FmuPlugin" version "0.6.0"
 }
 
 ```
@@ -109,7 +109,7 @@ The plugin will automatically add a dependency to the FMI4j artifact ```fmi-impo
 
 ```gradle
 fmi4j {
-    version = "0.12.0"
+    version = "0.12.1"
     configurationName = "compile"
 }
 ```
