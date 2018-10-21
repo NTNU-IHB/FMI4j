@@ -80,16 +80,6 @@ interface SimpleFmuInstance : FmuVariableAccessorProvider, Closeable {
 
     fun exitInitializationMode(): Boolean
 
-    fun init() {
-        init(0.0, 0.0, 0.0)
-    }
-
-    fun init(start: Double = 0.0, stop: Double = 0.0, tolerance: Double = 0.0) {
-        setupExperiment(start, stop)
-        enterInitializationMode()
-        exitInitializationMode()
-    }
-
     /**
      * @see no.mechatronics.sfi.fmi4j.importer.jni.Fmi2Library.reset
      */
