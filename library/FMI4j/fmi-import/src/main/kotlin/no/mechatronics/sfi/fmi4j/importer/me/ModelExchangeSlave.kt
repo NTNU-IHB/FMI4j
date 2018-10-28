@@ -46,7 +46,7 @@ class ModelExchangeFmuStepper internal constructor(
 ) : FmuSlave, SimpleFmuInstance by fmuInstance {
 
     private val x: DoubleArray
-    private val dx: DoubleArray
+//    private val dx: DoubleArray
     private val nominalStates: DoubleArray
 
     private val z: DoubleArray
@@ -59,7 +59,7 @@ class ModelExchangeFmuStepper internal constructor(
 
         this.x = DoubleArray(numberOfContinuousStates)
         this.nominalStates = DoubleArray(numberOfContinuousStates)
-        this.dx = DoubleArray(numberOfContinuousStates)
+//        this.dx = DoubleArray(numberOfContinuousStates)
 
         this.z = DoubleArray(numberOfEventIndicators)
         this.pz = DoubleArray(numberOfEventIndicators)
@@ -68,9 +68,12 @@ class ModelExchangeFmuStepper internal constructor(
         this.solver.setEquations(object : Equations {
             override val dimension: Int = numberOfContinuousStates
             override fun computeDerivatives(time: Double, y: DoubleArray, yDot: DoubleArray) {
-                for ((index, value) in dx.withIndex()) {
-                    yDot[index] = value
-                }
+                fmuInstance.setTime(time)
+                fmuInstance.setContinuousStates(y)
+                fmuInstance.getDerivatives(yDot)
+//                for ((index, value) in dx.withIndex()) {
+//                    yDot[index] = value
+//                }
             }
         })
 
@@ -186,15 +189,11 @@ class ModelExchangeFmuStepper internal constructor(
     private fun solve(t: Double, tNext: Double): Pair<Boolean, Double> {
 
         fmuInstance.getContinuousStates(x)
-        fmuInstance.getDerivatives(dx)
 
         val stepSize = (tNext - t)
         val integratedTime = solver.integrate(t, x, (simulationTime + stepSize), x)
 
-        fmuInstance.setContinuousStates(x)
-
         System.arraycopy(z, 0, pz, 0, z.size)
-
         fmuInstance.getEventIndicators(z)
 
         fun stateEvent(): Boolean {

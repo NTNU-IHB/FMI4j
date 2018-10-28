@@ -4,7 +4,9 @@ import no.mechatronics.sfi.fmi4j.TestUtils
 import no.mechatronics.sfi.fmi4j.common.FmiStatus
 import no.mechatronics.sfi.fmi4j.importer.Fmu
 import no.mechatronics.sfi.fmi4j.solvers.Solver
+import no.sfi.mechatronics.fmi4j.me.ApacheSolver
 import no.sfi.mechatronics.fmi4j.me.ApacheSolvers
+import org.apache.commons.math3.ode.nonstiff.DormandPrince853Integrator
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
@@ -84,6 +86,11 @@ class BouncingBallTest {
     @Test
     fun testMidpoint() {
         runFmu(ApacheSolvers.midpoint(1E-3))
+    }
+
+    @Test
+    fun testDp() {
+        runFmu(ApacheSolver(DormandPrince853Integrator(0.0, 1E-3, 1E-4, 1E-4)))
     }
 
 }
