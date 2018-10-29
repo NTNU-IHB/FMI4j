@@ -46,8 +46,6 @@ class ModelExchangeFmuStepper internal constructor(
 ) : FmuSlave, SimpleFmuInstance by fmuInstance {
 
     private val x: DoubleArray
-//    private val dx: DoubleArray
-    private val nominalStates: DoubleArray
 
     private val z: DoubleArray
     private val pz: DoubleArray
@@ -58,8 +56,6 @@ class ModelExchangeFmuStepper internal constructor(
         val numberOfEventIndicators = fmuInstance.modelDescription.numberOfEventIndicators
 
         this.x = DoubleArray(numberOfContinuousStates)
-        this.nominalStates = DoubleArray(numberOfContinuousStates)
-//        this.dx = DoubleArray(numberOfContinuousStates)
 
         this.z = DoubleArray(numberOfEventIndicators)
         this.pz = DoubleArray(numberOfEventIndicators)
@@ -71,9 +67,6 @@ class ModelExchangeFmuStepper internal constructor(
                 fmuInstance.setTime(time)
                 fmuInstance.setContinuousStates(y)
                 fmuInstance.getDerivatives(yDot)
-//                for ((index, value) in dx.withIndex()) {
-//                    yDot[index] = value
-//                }
             }
         })
 
