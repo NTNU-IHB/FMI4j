@@ -1,7 +1,7 @@
 
 plugins {
     id "application"
-    id "org.jetbrains.kotlin.jvm" version "1.2.71"
+    id "org.jetbrains.kotlin.jvm" version "1.3.0"
     id "com.github.johnrengelman.shadow" version "2.0.4"
 }
 
@@ -11,7 +11,7 @@ def group = "no.mechatronics.sfi.fmu2jar"
 mainClassName = "${group}.Fmu2Jar"
 
 def fmi4j_snapshot = false
-def fmi4j_version = !fmi4j_snapshot ? '0.12.1' : 'dev-SNAPSHOT'
+def fmi4j_version = !fmi4j_snapshot ? '0.12.2' : 'dev-SNAPSHOT'
 
 repositories {
     mavenCentral()
