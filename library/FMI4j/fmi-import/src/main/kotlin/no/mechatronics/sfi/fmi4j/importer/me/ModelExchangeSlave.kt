@@ -183,8 +183,7 @@ class ModelExchangeFmuStepper internal constructor(
 
         fmuInstance.getContinuousStates(x)
 
-        val stepSize = (tNext - t)
-        val integratedTime = solver.integrate(t, x, (simulationTime + stepSize), x)
+        val integratedTime = solver.integrate(t, x, tNext, x)
 
         System.arraycopy(z, 0, pz, 0, z.size)
         fmuInstance.getEventIndicators(z)
