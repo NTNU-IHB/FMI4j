@@ -24,6 +24,11 @@ class FmuExportCrossCompile {
 
     private companion object {
         private val LOG = LoggerFactory.getLogger(FmuExportCrossCompile::class.java)
+
+        val stop = 1.0
+        val macroStep = 1.0 / 10
+        val microStep = 1E-3
+
     }
 
     private val fmu = Fmu.from(File(TestUtils.getTEST_FMUs(),
@@ -55,8 +60,7 @@ class FmuExportCrossCompile {
             slave.enterInitializationMode()
             slave.exitInitializationMode()
 
-            val macroStep = 1.0 / 10
-            while (slave.simulationTime < 1) {
+            while (slave.simulationTime <= stop) {
                 Assertions.assertTrue(slave.doStep(macroStep))
                 h.read(slave).also {
                     Assertions.assertEquals(FmiStatus.OK, it.status)
@@ -70,27 +74,27 @@ class FmuExportCrossCompile {
 
     @Test
     fun testEuler() {
-        runFmu(ApacheSolvers.euler(1E-3))
+        runFmu(ApacheSolvers.euler(microStep))
     }
 
     @Test
     fun testRungeKutta() {
-        runFmu(ApacheSolvers.rk4(1E-3))
+        runFmu(ApacheSolvers.rk4(microStep))
     }
 
     @Test
     fun testLuther() {
-        runFmu(ApacheSolvers.luther(1E-3))
+        runFmu(ApacheSolvers.luther(microStep))
     }
 
     @Test
     fun testMidpoint() {
-        runFmu(ApacheSolvers.midpoint(1E-3))
+        runFmu(ApacheSolvers.midpoint(microStep))
     }
 
     @Test
     fun testDp() {
-        runFmu(ApacheSolver(DormandPrince853Integrator(0.0, 1E-3, 1E-4, 1E-4)))
+        runFmu(ApacheSolver(DormandPrince853Integrator(0.0, microStep, 1E-4, 1E-4)))
     }
 
 }
