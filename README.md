@@ -18,6 +18,7 @@ The package consists of:
 * [A software API for interacting with FMUs](#api)
 * [A Gradle Plugin that makes it easier to programmatically work with FMUs](#plugin)
 * [A tool for wrapping an FMU as a JAR - batteries included](#fmu2jar).
+* [A tool for running FMUs from the command line](#fmudriver).
 
 
 ### <a name="api"></a> Software API 
@@ -122,6 +123,16 @@ It's a command line application which takes an FMU in and produces a Jar file.
 You can also tell the application to install the Jar into your local maven repository (``.m2``),
 The jar file contains code that makes it easier to work with the FMU progamatically just as the Gradle plugin does. 
 
+
+### <a name="fmudriver"></a> FmuDriver
+
+FmuDriver is a command line tool for running FMUs. Run: 
+
+```
+java -jar FmuDriver -h
+```
+
+to see available options.
 
 #### Running tests
 
