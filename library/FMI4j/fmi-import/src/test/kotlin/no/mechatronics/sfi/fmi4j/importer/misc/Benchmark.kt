@@ -69,7 +69,7 @@ object Benchmark {
         Fmu.from(File(option.fmuPath)).use { fmu ->
 
             val iter = 1
-            var elapsed = 0L
+            var elapsed: Long
             for (i in 0..iter) {
 
                 fmu.asCoSimulationFmu().newInstance(loggingOn = false).use { slave ->

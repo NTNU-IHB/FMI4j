@@ -25,9 +25,9 @@ class FmuExportCrossCompile {
     private companion object {
         private val LOG = LoggerFactory.getLogger(FmuExportCrossCompile::class.java)
 
-        val stop = 1.0
-        val macroStep = 1.0 / 10
-        val microStep = 1E-3
+        const val stop = 1.0
+        const val macroStep = 1.0 / 10
+        const val microStep = 1E-3
 
     }
 
