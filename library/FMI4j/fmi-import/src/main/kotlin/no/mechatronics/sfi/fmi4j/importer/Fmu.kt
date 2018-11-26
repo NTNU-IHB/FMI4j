@@ -231,14 +231,6 @@ class Fmu private constructor(
                 + File.separator + modelIdentifier + libraryExtension).absolutePath
     }
 
-//    private val coSimulationBuilder: CoSimulationSlaveBuilder? by lazy {
-//        if (supportsCoSimulation) CoSimulationSlaveBuilder(this) else null
-//    }
-//
-//    private val modelExchangeBuilder: ModelExchangeInstanceBuilder? by lazy {
-//        if (supportsModelExchange) ModelExchangeInstanceBuilder(this) else null
-//    }
-
     internal fun registerLibrary(library: Fmi2Library) {
         libraries.add(library)
     }
