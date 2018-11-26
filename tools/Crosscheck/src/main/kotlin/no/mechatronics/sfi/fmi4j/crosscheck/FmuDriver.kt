@@ -65,11 +65,14 @@ object FmuDriver {
         @CommandLine.Option(names = ["-stop", "--stopTime"], description = ["Stop time."], required = false)
         private var stopTime: Double = 10.0
 
+        @CommandLine.Option(names = ["-reltol", "--relativeTolerance"], description = ["Relative tolerance."], required = false)
+        private var relTol: Double = 0.0
+
         @CommandLine.Option(names = ["-me"], description = ["Stop time."], required = false)
         private var modelExchange: Boolean = false
 
-        @CommandLine.Option(names = ["-vars", "--variables"], description = ["Variables to print"], split = ", ")
-        private var outputVariables: Array<String> = arrayOf()
+        @CommandLine.Parameters(arity = "1..*", paramLabel = "variables", description = ["Variables to print."])
+        private lateinit var outputVariables: Array<String>
 
         override fun run() {
 
@@ -81,7 +84,7 @@ object FmuDriver {
                 }
             }.use { slave ->
 
-                slave.setupExperiment(startTime, stopTime)
+                slave.setupExperiment(startTime, -1.0, relTol)
                 slave.enterInitializationMode()
                 slave.exitInitializationMode()
 
@@ -94,7 +97,7 @@ object FmuDriver {
 
                 LOG.info("Running crosscheck on FMU '${slave.modelDescription.modelName}', with startTime=$startTime, stopTime=$stopTime, stepSize=$stepSize")
 
-                while (slave.simulationTime <= (stopTime-stepSize)) {
+                while (slave.simulationTime <= stopTime) {
                     printer.printRecord(slave.simulationTime, *outputVariables.map { it.read(slave).value }.toTypedArray())
                     if (!slave.doStep(stepSize)) {
                         break
@@ -117,7 +120,7 @@ object FmuDriver {
                     LOG.info("Wrote results to file $absoluteFile")
                 }
 
-                File(outputFolder, "readme.txt").apply {
+                File(outputFolder, "README.md").apply {
                    writeText(getReadme())
                 }
 
@@ -156,10 +159,10 @@ object FmuDriver {
 
             return """
 
-The cross-check results have been generated with the fmi4j-crosscheck tool.
-To get more information download the fmudriver tool from https://github.com/SFI-Mechatronics/FMI4j/releases and run
+            The cross-check results have been generated with FMI4j's FmuDriver.
+            To get more information download the 'fmudriver' tool from https://github.com/SFI-Mechatronics/FMI4j/releases and run
 
-java -jar FmuDriver -h
+            java -jar fmudriver.jar -h
 
             """.trimIndent()
 
