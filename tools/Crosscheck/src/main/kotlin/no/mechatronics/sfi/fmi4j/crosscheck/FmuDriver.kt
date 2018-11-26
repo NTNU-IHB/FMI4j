@@ -118,7 +118,7 @@ object FmuDriver {
                 }
 
                 File(outputFolder, "readme.txt").apply {
-                    FmuDriver.javaClass.classLoader.getResourceAsStream("readme.txt").copyTo(FileOutputStream(this))
+                   writeText(getReadme())
                 }
 
                 File(outputFolder, "passed").apply {
@@ -150,6 +150,19 @@ object FmuDriver {
                 file = file.parentFile
             }
             return names.reverse().let{ names.joinToString("/") }
+        }
+
+        private fun getReadme(): String {
+
+            return """
+
+The cross-check results have been generated with the fmi4j-crosscheck tool.
+To get more information download the fmudriver tool from https://github.com/SFI-Mechatronics/FMI4j/releases and run
+
+java -jar FmuDriver -h
+
+            """.trimIndent()
+
         }
 
     }

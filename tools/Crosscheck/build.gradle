@@ -48,7 +48,7 @@ compileTestKotlin {
 }
 
 shadowJar {
-    baseName = "fmi4j-crosscheck"
+    baseName = "fmudriver"
     classifier = null
     version = null
 }
