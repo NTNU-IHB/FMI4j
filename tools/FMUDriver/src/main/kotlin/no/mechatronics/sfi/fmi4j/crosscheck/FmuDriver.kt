@@ -32,15 +32,14 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import picocli.CommandLine
 import java.io.File
-import java.io.FileOutputStream
+import java.text.DecimalFormat
+import java.text.NumberFormat
 
 /**
  * @author Lars Ivar Hatledal
  */
 object FmuDriver {
 
-
-    private const val FMI_VERSION = "2.0"
     private const val FMI4j_VERSION = "0.12.2"
     private val LOG: Logger = LoggerFactory.getLogger(FmuDriver::class.java)
 
@@ -74,6 +73,12 @@ object FmuDriver {
         @CommandLine.Parameters(arity = "1..*", paramLabel = "variables", description = ["Variables to print."])
         private lateinit var outputVariables: Array<String>
 
+        private fun toFixed(len: Int, number: Double): Double {
+            return DecimalFormat("#.###").let {
+                NumberFormat.getInstance().parse(it.format(number)).toDouble()
+            }
+        }
+
         override fun run() {
 
             Fmu.from(fmuPath).let {
@@ -84,7 +89,7 @@ object FmuDriver {
                 }
             }.use { slave ->
 
-                slave.setupExperiment(startTime, -1.0, relTol)
+                slave.setupExperiment(startTime, stopTime, relTol)
                 slave.enterInitializationMode()
                 slave.exitInitializationMode()
 
@@ -97,11 +102,16 @@ object FmuDriver {
 
                 LOG.info("Running crosscheck on FMU '${slave.modelDescription.modelName}', with startTime=$startTime, stopTime=$stopTime, stepSize=$stepSize")
 
-                while (slave.simulationTime <= stopTime) {
-                    printer.printRecord(String.format("%.4f", slave.simulationTime), *outputVariables.map { it.read(slave).value }.toTypedArray())
+                fun record() {
+                    printer.printRecord(toFixed(4, slave.simulationTime), *outputVariables.map { it.read(slave).value }.toTypedArray())
+                }
+
+                record()
+                while (slave.simulationTime <= (stopTime - stepSize)) {
                     if (!slave.doStep(stepSize)) {
                         break
                     }
+                    record()
                 }
 
                 if (outputFolder.isEmpty()) {
@@ -113,7 +123,6 @@ object FmuDriver {
                         mkdirs()
                     }
                 }
-
 
                 File(outputFolder, "${slave.modelDescription.modelName}_out.csv").apply {
                     writeText(sb.toString())

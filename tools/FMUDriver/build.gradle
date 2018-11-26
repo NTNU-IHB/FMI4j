@@ -52,3 +52,13 @@ shadowJar {
     classifier = null
     version = null
 }
+
+distributions {
+    main {
+        baseName = 'fmudriver'
+    }
+}
+
+startScripts {
+    applicationName = 'fmudriver'
+}

@@ -19,15 +19,15 @@ class TestControlledTemperature_CS {
     @Test
     fun test() {
 
-        val path = "$TEST_FMUs/FMI_2.0/CoSimulation/$currentOS/" +
+        val path = "$TEST_FMUs/2.0/cs/$currentOS/" +
                 "20sim/4.6.4.8004/ControlledTemperature/ControlledTemperature.fmu"
         Assertions.assertTrue(File(path).exists())
 
         val args = arrayOf(
-                "-fmu", "\"$path\"",
+                "-f", "\"$path\"",
                 "-dt", "1E-4",
                 "-stop", "5",
-                "-vars", "Temperature_Reference, Temperature_Room"
+                "Temperature_Reference", "Temperature_Room"
         )
 
         FmuDriver.main(args)
