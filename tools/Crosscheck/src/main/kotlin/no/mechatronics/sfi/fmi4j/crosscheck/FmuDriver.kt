@@ -98,7 +98,7 @@ object FmuDriver {
                 LOG.info("Running crosscheck on FMU '${slave.modelDescription.modelName}', with startTime=$startTime, stopTime=$stopTime, stepSize=$stepSize")
 
                 while (slave.simulationTime <= stopTime) {
-                    printer.printRecord(slave.simulationTime, *outputVariables.map { it.read(slave).value }.toTypedArray())
+                    printer.printRecord(String.format("%.4f", slave.simulationTime), *outputVariables.map { it.read(slave).value }.toTypedArray())
                     if (!slave.doStep(stepSize)) {
                         break
                     }
