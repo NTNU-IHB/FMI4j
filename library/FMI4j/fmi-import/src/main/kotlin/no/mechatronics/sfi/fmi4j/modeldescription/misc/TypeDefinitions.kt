@@ -24,10 +24,11 @@
 
 package no.mechatronics.sfi.fmi4j.modeldescription.misc
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonSetter
 import com.fasterxml.jackson.annotation.Nulls
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty
-import no.mechatronics.sfi.fmi4j.modeldescription.variables.*
+import no.mechatronics.sfi.fmi4j.modeldescription.variables.ScalarVariable
 import java.io.Serializable
 
 typealias TypeDefinitions = List<SimpleType>
@@ -35,7 +36,8 @@ typealias TypeDefinitions = List<SimpleType>
 /**
  * @author Lars Ivar Hatledal
  */
-data class SimpleType(
+@JsonIgnoreProperties(ignoreUnknown = true)
+data class SimpleType (
 
         /**
          * Name of SimpleType element.
@@ -50,28 +52,28 @@ data class SimpleType(
          * Description of the SimpleType
          */
         @JacksonXmlProperty
-        val description: String
+        val description: String? = null
 
 ) : Serializable {
 
-    @JacksonXmlProperty(localName = ScalarVariable.INTEGER_TYPE)
-    @JsonSetter(nulls = Nulls.AS_EMPTY)
-    var integerAttribute: IntegerAttribute? = null
-
-    @JacksonXmlProperty(localName = ScalarVariable.REAL_TYPE)
-    @JsonSetter(nulls = Nulls.AS_EMPTY)
-    var realAttribute: RealAttribute? = null
-
-    @JacksonXmlProperty(localName = ScalarVariable.STRING_TYPE)
-    @JsonSetter(nulls = Nulls.AS_EMPTY)
-    var stringAttribute: StringAttribute? = null
-
-    @JacksonXmlProperty(localName = ScalarVariable.BOOLEAN_TYPE)
-    @JsonSetter(nulls = Nulls.AS_EMPTY)
-    var booleanAttribute: BooleanAttribute? = null
-
-    @JacksonXmlProperty(localName = ScalarVariable.ENUMERATION_TYPE)
-    @JsonSetter(nulls = Nulls.AS_EMPTY)
-    var enumerationAttribute: EnumerationAttribute? = null
+//    @JacksonXmlProperty(localName = ScalarVariable.INTEGER_TYPE)
+//    @JsonSetter(nulls = Nulls.AS_EMPTY)
+//    var integerAttribute: IntegerAttributeImpl? = null
+//
+//    @JacksonXmlProperty(localName = ScalarVariable.REAL_TYPE)
+//    @JsonSetter(nulls = Nulls.AS_EMPTY)
+//    var realAttribute: RealAttributeImpl? = null
+//
+//    @JacksonXmlProperty(localName = ScalarVariable.STRING_TYPE)
+//    @JsonSetter(nulls = Nulls.AS_EMPTY)
+//    var stringAttribute: StringAttributeImpl? = null
+//
+//    @JacksonXmlProperty(localName = ScalarVariable.BOOLEAN_TYPE)
+//    @JsonSetter(nulls = Nulls.AS_EMPTY)
+//    var booleanAttribute: BooleanAttributeImpl? = null
+//
+//    @JacksonXmlProperty(localName = ScalarVariable.ENUMERATION_TYPE)
+//    @JsonSetter(nulls = Nulls.AS_EMPTY)
+//    var enumerationAttribute: EnumerationAttributeImpl? = null
 
 }

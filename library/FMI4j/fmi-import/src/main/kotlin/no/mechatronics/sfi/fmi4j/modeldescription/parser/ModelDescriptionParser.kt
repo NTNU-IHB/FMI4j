@@ -52,6 +52,7 @@ object ModelDescriptionParser {
             registerModule(KotlinModule())
             registerModule(JacksonXmlModule())
             enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS)
+
         }
     }
 
@@ -67,7 +68,9 @@ object ModelDescriptionParser {
 
     @JvmStatic
     fun parse(xml: String): ModelDescriptionProvider {
-        return mapper.readValue<ModelDescriptionImpl>(xml)
+        return xml.replace("calculatedParameter", "CALCULATED_PARAMETER").let {
+            mapper.readValue<ModelDescriptionImpl>(it)
+        }
     }
 
     @JvmStatic

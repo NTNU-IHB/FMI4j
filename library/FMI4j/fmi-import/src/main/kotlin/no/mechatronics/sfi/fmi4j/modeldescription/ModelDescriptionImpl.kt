@@ -24,6 +24,7 @@
 
 package no.mechatronics.sfi.fmi4j.modeldescription
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement
 import no.mechatronics.sfi.fmi4j.modeldescription.logging.LogCategories
@@ -39,6 +40,7 @@ import java.io.Serializable
  * @author Lars Ivar Hatledal
  */
 @JacksonXmlRootElement(localName = "fmiModelDescription")
+@JsonIgnoreProperties(ignoreUnknown = true)
 class ModelDescriptionImpl(
 
         @JacksonXmlProperty
