@@ -32,12 +32,16 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import picocli.CommandLine
 import java.io.File
+import java.io.FileOutputStream
 
 /**
  * @author Lars Ivar Hatledal
  */
 object FmuDriver {
 
+
+    private const val FMI_VERSION = "2.0"
+    private const val FMI4j_VERSION = "0.12.2"
     private val LOG: Logger = LoggerFactory.getLogger(FmuDriver::class.java)
 
     @CommandLine.Command(name = "fmudriver")
@@ -46,11 +50,11 @@ object FmuDriver {
         @CommandLine.Option(names = ["-h", "--help"], description = ["Print this message and quits."], usageHelp = true)
         private var showHelp = false
 
-        @CommandLine.Option(names = ["-fmu", "--fmuPath"], description = ["Path to the FMU."], required = true)
+        @CommandLine.Option(names = ["-f", "--fmu"], description = ["Path to the FMU."], required = true)
         private lateinit var fmuPath: File
 
-        @CommandLine.Option(names = ["-out", "--outputFolder"], description = ["Folder to store .csv result."], required = false)
-        private var outputFolder: String? = null
+        @CommandLine.Option(names = ["-out", "--outputFolder"], description = ["Folder to store xc result."], required = false)
+        private var outputFolder: String = ""
 
         @CommandLine.Option(names = ["-dt", "--stepSize"], description = ["Step-size."], required = false)
         private var stepSize: Double = 1E-3
@@ -82,27 +86,70 @@ object FmuDriver {
                 slave.exitInitializationMode()
 
                 val sb = StringBuilder()
-                val format = CSVFormat.DEFAULT.withHeader("Time", *outputVariables)
-                val printer = CSVPrinter(sb, format)
+                val printer = CSVPrinter(sb, CSVFormat.DEFAULT.withHeader("Time", *outputVariables))
 
                 val outputVariables = outputVariables.map {
                     slave.modelVariables.getByName(it)
                 }
 
-                while (slave.simulationTime <= stopTime) {
+                LOG.info("Running crosscheck on FMU '${slave.modelDescription.modelName}', with startTime=$startTime, stopTime=$stopTime, stepSize=$stepSize")
+
+                while (slave.simulationTime <= (stopTime-stepSize)) {
                     printer.printRecord(slave.simulationTime, *outputVariables.map { it.read(slave).value }.toTypedArray())
                     if (!slave.doStep(stepSize)) {
                         break
                     }
                 }
 
+                if (outputFolder.isEmpty()) {
+                    outputFolder = getDefaultOutputDir()
+                }
+
+                File(outputFolder).apply {
+                    if (!exists()) {
+                        mkdirs()
+                    }
+                }
+
+
                 File(outputFolder, "${slave.modelDescription.modelName}_out.csv").apply {
                     writeText(sb.toString())
                     LOG.info("Wrote results to file $absoluteFile")
                 }
 
+                File(outputFolder, "readme.txt").apply {
+                    FmuDriver.javaClass.classLoader.getResourceAsStream("readme.txt").copyTo(FileOutputStream(this))
+                }
+
+                File(outputFolder, "passed").apply {
+                    createNewFile()
+                }
+
             }
 
+        }
+
+        private fun getDefaultOutputDir(): String {
+            var file = fmuPath.parentFile
+            var names = mutableListOf<String>()
+            for (i in 0 .. 2) {
+                names.add(file.name)
+                file = file.parentFile
+            }
+
+            names.addAll(listOf(FMI4j_VERSION, "FMI4j"))
+
+            for (i in 0 .. 2) {
+                val name = when(file.name) {
+                    "CoSimulation" -> "cs"
+                    "ModelExchange" -> "me"
+                    "FMI_2.0" -> "2.0"
+                    else -> file.name
+                }
+                names.add(name)
+                file = file.parentFile
+            }
+            return names.reverse().let{ names.joinToString("/") }
         }
 
     }

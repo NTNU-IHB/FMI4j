@@ -1,13 +1,16 @@
 
 plugins {
-    id "application"
-    id "org.jetbrains.kotlin.jvm" version "1.3.0"
+    id 'application'
+    id "org.jetbrains.kotlin.jvm" version "1.3.10"
     id "com.github.johnrengelman.shadow" version "2.0.4"
 }
 
 println "Gradle version is ${GradleVersion.current().version}"
 
-mainClassName = "no.mechatronics.sfi.fmi4j.crosscheck.FmuDriver"
+
+def group = "no.mechatronics.sfi.fmi4j.crosscheck"
+mainClassName = "${group}.FmuDriver"
+
 
 repositories {
     mavenCentral()
