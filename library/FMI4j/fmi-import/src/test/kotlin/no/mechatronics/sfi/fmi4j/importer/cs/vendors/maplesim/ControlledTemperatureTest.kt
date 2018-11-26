@@ -22,7 +22,7 @@ class ControlledTemperatureTest {
     fun test() {
 
         val file = File(TestUtils.getTEST_FMUs(),
-                "FMI_2.0/CoSimulation/$currentOS" +
+                "2.0/cs/$currentOS" +
                         "/MapleSim/2017/ControlledTemperature/ControlledTemperature.fmu")
 
         Fmu.from(file).use { fmu ->

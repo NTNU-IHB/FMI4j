@@ -27,7 +27,7 @@ class BouncingBallTest {
     }
 
     private val fmu = Fmu.from(File(TestUtils.getTEST_FMUs(),
-            "FMI_2.0/ModelExchange/win64/FMUSDK/" +
+            "2.0/me/win64/FMUSDK/" +
                     "2.0.4/bouncingBall/bouncingBall.fmu")).asModelExchangeFmu()
 
     @AfterAll

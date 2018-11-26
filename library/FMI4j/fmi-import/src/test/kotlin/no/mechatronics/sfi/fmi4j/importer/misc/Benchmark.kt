@@ -24,20 +24,20 @@ data class TestOptions(
 private val options = listOf(
         TestOptions(
                 fmuPath = "${TestUtils.getTEST_FMUs()}" +
-                        "/FMI_2.0/CoSimulation/win64/FMUSDK/2.0.4/BouncingBall/bouncingBall.fmu",
+                        "/2.0/cs/win64/FMUSDK/2.0.4/BouncingBall/bouncingBall.fmu",
                 stepSize = 1E-2,
                 stopTime = 100.0,
                 vr = 0),
         TestOptions(
                 fmuPath = "${TestUtils.getTEST_FMUs()}" +
-                        "/FMI_2.0/CoSimulation/$currentOS" +
+                        "/2.0/cs/$currentOS" +
                         "/20sim/4.6.4.8004/TorsionBar/TorsionBar.fmu",
                 stepSize = 1E-5,
                 stopTime = 12.0,
                 vr = 2),
         TestOptions(
                 fmuPath = "${TestUtils.getTEST_FMUs()}" +
-                        "/FMI_2.0/CoSimulation/$currentOS" +
+                        "/2.0/cs/$currentOS" +
                         "/20sim/4.6.4.8004/ControlledTemperature/ControlledTemperature.fmu",
                 stepSize = 1E-4,
                 stopTime = 10.0,
@@ -105,7 +105,7 @@ object Benchmark {
     fun runJavaFMI(option: TestOptions) {
 
         val iter = 1
-        var elapsed = 0L
+        var elapsed: Long
         for (i in 0..iter) {
 
             Simulation(option.fmuPath).apply {

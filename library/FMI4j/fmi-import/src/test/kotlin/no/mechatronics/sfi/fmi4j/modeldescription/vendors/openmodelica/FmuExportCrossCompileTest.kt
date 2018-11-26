@@ -21,7 +21,7 @@ class FmuExportCrossCompileTest {
         val LOG: Logger = LoggerFactory.getLogger(FmuExportCrossCompileTest::class.java)
 
         val fmuFile = File(TestUtils.getTEST_FMUs(),
-                "FMI_2.0/CoSimulation/$currentOS/OpenModelica/v1.11.0/" +
+                "2.0/cs/$currentOS/OpenModelica/v1.11.0/" +
                         "FmuExportCrossCompile/FmuExportCrossCompile.fmu")
         val modelDescription = ModelDescriptionParser.parse(fmuFile)
 

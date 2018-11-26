@@ -26,7 +26,7 @@ class TestJackson {
         val LOG: Logger = LoggerFactory.getLogger(TestJackson::class.java)
 
         val fmuFile = File(TestUtils.getTEST_FMUs(),
-                "FMI_2.0/CoSimulation/$currentOS" +
+                "2.0/cs/$currentOS" +
                         "/MapleSim/2017/ControlledTemperature/ControlledTemperature.fmu")
 
     }

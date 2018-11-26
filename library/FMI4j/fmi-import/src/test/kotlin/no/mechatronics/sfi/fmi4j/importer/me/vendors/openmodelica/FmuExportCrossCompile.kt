@@ -4,20 +4,19 @@ import no.mechatronics.sfi.fmi4j.TestUtils
 import no.mechatronics.sfi.fmi4j.common.FmiStatus
 import no.mechatronics.sfi.fmi4j.common.currentOS
 import no.mechatronics.sfi.fmi4j.importer.Fmu
+import no.mechatronics.sfi.fmi4j.importer.ModelExchangeFmu
 import no.mechatronics.sfi.fmi4j.solvers.Solver
 import no.sfi.mechatronics.fmi4j.me.ApacheSolver
 import no.sfi.mechatronics.fmi4j.me.ApacheSolvers
 import org.apache.commons.math3.ode.nonstiff.DormandPrince853Integrator
-import org.junit.jupiter.api.AfterAll
-import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInstance
+import org.junit.jupiter.api.*
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable
 import org.junit.jupiter.api.condition.EnabledOnOs
 import org.junit.jupiter.api.condition.OS
 import org.slf4j.LoggerFactory
 import java.io.File
 
+@Disabled
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @EnabledIfEnvironmentVariable(named = "TEST_FMUs", matches = ".*")
 class FmuExportCrossCompile {
@@ -29,11 +28,12 @@ class FmuExportCrossCompile {
         const val macroStep = 1.0 / 10
         const val microStep = 1E-3
 
+        val fmu = Fmu.from(File(TestUtils.getTEST_FMUs(),
+                "2.0/me/$currentOS/OpenModelica/v1.11.0/" +
+                        "FmuExportCrossCompile/FmuExportCrossCompile.fmu")).asModelExchangeFmu()
+
     }
 
-    private val fmu = Fmu.from(File(TestUtils.getTEST_FMUs(),
-            "FMI_2.0/ModelExchange/$currentOS/OpenModelica/v1.11.0/" +
-                    "FmuExportCrossCompile/FmuExportCrossCompile.fmu")).asModelExchangeFmu()
 
     @AfterAll
     fun tearDown() {
@@ -76,7 +76,7 @@ class FmuExportCrossCompile {
     fun testEuler() {
         runFmu(ApacheSolvers.euler(microStep))
     }
-
+//
     @Test
     fun testRungeKutta() {
         runFmu(ApacheSolvers.rk4(microStep))

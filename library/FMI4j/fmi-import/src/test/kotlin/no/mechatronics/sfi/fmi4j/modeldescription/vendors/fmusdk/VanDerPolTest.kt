@@ -22,7 +22,7 @@ class VanDerPolTest {
         val LOG: Logger = LoggerFactory.getLogger(VanDerPolTest::class.java)
 
         val fmuFile = File(TestUtils.getTEST_FMUs(),
-                "FMI_2.0/ModelExchange/win64/FMUSDK/2.0.4/vanDerPol/vanDerPol.fmu")
+                "2.0/me/win64/FMUSDK/2.0.4/vanDerPol/vanDerPol.fmu")
         val modelDescription = ModelDescriptionParser.parse(fmuFile).asModelExchangeModelDescription()
     }
 

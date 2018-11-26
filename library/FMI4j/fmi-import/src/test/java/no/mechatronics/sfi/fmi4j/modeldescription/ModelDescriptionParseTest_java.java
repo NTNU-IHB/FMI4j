@@ -13,11 +13,26 @@ import java.io.File;
 public class ModelDescriptionParseTest_java {
 
     @Test
-    public void test() {
+    public void test1() {
 
         File fmuFile = new File(TestUtils.getTEST_FMUs(),
-                "FMI_2.0/CoSimulation/" + OSUtil.getCurrentOS() +
+                "2.0/cs/" + OSUtil.getCurrentOS() +
                         "/20sim/4.6.4.8004/ControlledTemperature/ControlledTemperature.fmu");
+        Assertions.assertTrue(fmuFile.exists());
+
+        Assertions.assertNotNull(ModelDescriptionParser.parse(fmuFile).asCoSimulationModelDescription());
+
+        String xml = ModelDescriptionParser.extractModelDescriptionXml(fmuFile);
+        Assertions.assertNotNull(ModelDescriptionParser.parse(xml).asCoSimulationModelDescription());
+
+    }
+
+    @Test
+    public void test2() {
+
+        File fmuFile = new File(TestUtils.getTEST_FMUs(),
+                "2.0/cs/" + OSUtil.getCurrentOS() +
+                        "/JModelica.org/1.15/PID_Controller/PID_Controller.fmu");
         Assertions.assertTrue(fmuFile.exists());
 
         Assertions.assertNotNull(ModelDescriptionParser.parse(fmuFile).asCoSimulationModelDescription());

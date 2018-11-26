@@ -24,7 +24,7 @@ class VanDerPolTest {
     }
 
     private val fmu = Fmu.from(File(TestUtils.getTEST_FMUs(),
-            "FMI_2.0/CoSimulation/win64/FMUSDK/2.0.4/vanDerPol/vanDerPol.fmu"))
+            "2.0/cs/win64/FMUSDK/2.0.4/vanDerPol/vanDerPol.fmu"))
 
     @AfterAll
     fun tearDown() {
