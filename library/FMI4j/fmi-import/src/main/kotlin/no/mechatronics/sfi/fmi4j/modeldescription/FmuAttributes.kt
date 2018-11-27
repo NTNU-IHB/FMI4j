@@ -27,6 +27,7 @@ package no.mechatronics.sfi.fmi4j.modeldescription
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty
 import no.mechatronics.sfi.fmi4j.modeldescription.misc.SourceFile
+import no.mechatronics.sfi.fmi4j.modeldescription.misc.SourceFileImpl
 import java.io.Serializable
 
 /**
@@ -101,7 +102,7 @@ sealed class CommonFmuAttributesImpl : CommonFmuAttributes, Serializable {
 
     @JacksonXmlElementWrapper(localName = "SourceFiles")
     @JacksonXmlProperty(localName = "File")
-    override val sourceFiles: List<SourceFile> = emptyList()
+    override val sourceFiles: List<SourceFileImpl> = emptyList()
 
 }
 

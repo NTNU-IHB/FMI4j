@@ -38,31 +38,44 @@ import java.io.Serializable
  *
  * @author Lars Ivar Hatledal
  */
-data class DefaultExperiment(
-
+interface DefaultExperiment {
         /**
          * Default start time of simulation
          */
-        @JacksonXmlProperty
-        val startTime: Double = 0.0,
+        val startTime: Double
 
         /**
          * Default stop time of simulation
          */
-        @JacksonXmlProperty
-        val stopTime: Double = 0.0,
+        val stopTime: Double
 
         /**
          * Default relative integration tolerance
          */
-        @JacksonXmlProperty
-        val tolerance: Double = 1E-4,
+        val tolerance: Double
 
         /***
          * ModelExchange: Default step size for fixed step integrators
          * CoSimulation: Preferred communicationStepSize
          */
-        @JacksonXmlProperty
-        val stepSize: Double = 1E-3
+        val stepSize: Double
+}
 
-) : Serializable
+/**
+ * @author Lars Ivar Hatledal
+ */
+data class DefaultExperimentImpl(
+
+        @JacksonXmlProperty
+        override val startTime: Double = 0.0,
+
+        @JacksonXmlProperty
+        override val stopTime: Double = 0.0,
+
+        @JacksonXmlProperty
+        override val tolerance: Double = 1E-4,
+
+        @JacksonXmlProperty
+        override val stepSize: Double = 1E-3
+
+) : DefaultExperiment, Serializable

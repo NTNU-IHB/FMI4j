@@ -24,6 +24,7 @@
 
 package no.mechatronics.sfi.fmi4j.modeldescription.variables
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonSetter
 import com.fasterxml.jackson.annotation.Nulls
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty
@@ -85,6 +86,7 @@ interface ScalarVariable {
 /**
  * @author Lars Ivar Hatledal
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 class ScalarVariableImpl(
 
         @JacksonXmlProperty

@@ -6,6 +6,8 @@ import no.mechatronics.sfi.fmi4j.modeldescription.parser.ModelDescriptionParser;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
+import org.junit.jupiter.api.condition.EnabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import java.io.File;
 
@@ -41,5 +43,39 @@ public class ModelDescriptionParseTest_java {
         Assertions.assertNotNull(ModelDescriptionParser.parse(xml).asCoSimulationModelDescription());
 
     }
+
+    @Test
+    @EnabledOnOs(OS.LINUX)
+    public void test3() {
+
+        File fmuFile = new File(TestUtils.getTEST_FMUs(),
+                "2.0/cs/" + OSUtil.getCurrentOS() +
+                        "/EDALab_HIFSuite/2017.05_antlia/uart/uart.fmu");
+
+        Assertions.assertTrue(fmuFile.exists());
+
+        Assertions.assertNotNull(ModelDescriptionParser.parse(fmuFile).asCoSimulationModelDescription());
+
+        String xml = ModelDescriptionParser.extractModelDescriptionXml(fmuFile);
+        Assertions.assertNotNull(ModelDescriptionParser.parse(xml).asCoSimulationModelDescription());
+
+    }
+
+//    @Test
+//    @EnabledOnOs(OS.LINUX)
+//    public void test4() {
+//
+//        File fmuFile = new File(TestUtils.getTEST_FMUs(),
+//                "2.0/cs/" + OSUtil.getCurrentOS() +
+//                        "/AMESim/15/fuelrail_cs/fuelrail_cs.fmu");
+//
+//        Assertions.assertTrue(fmuFile.exists());
+//
+//        Assertions.assertNotNull(ModelDescriptionParser.parse(fmuFile).asCoSimulationModelDescription());
+//
+//        String xml = ModelDescriptionParser.extractModelDescriptionXml(fmuFile);
+//        Assertions.assertNotNull(ModelDescriptionParser.parse(xml).asCoSimulationModelDescription());
+//
+//    }
 
 }

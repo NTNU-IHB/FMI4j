@@ -24,7 +24,10 @@
 
 package no.mechatronics.sfi.fmi4j.modeldescription.structure
 
+import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.annotation.JsonSetter
+import com.fasterxml.jackson.annotation.Nulls
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty
 import java.io.Serializable
@@ -85,18 +88,17 @@ interface ModelStructure {
  *
  * @author Lars Ivar Hatledal
  */
-class ModelStructureImpl(
 
-        @JacksonXmlProperty(localName = "Outputs")
-        private val _outputs: Outputs? = null,
+class ModelStructureImpl: ModelStructure, Serializable {
 
-        @JacksonXmlProperty(localName = "Derivatives")
-        private val _derivatives: Derivatives? = null,
+    @JacksonXmlProperty(localName = "Outputs")
+    private val _outputs: Outputs? = null
 
-        @JacksonXmlProperty(localName = "InitialUnknowns")
-        private val _initialUnknowns: InitialUnknowns? = null
+    @JacksonXmlProperty(localName = "Derivatives")
+    private val _derivatives: Derivatives? = null
 
-) : ModelStructure, Serializable {
+    @JacksonXmlProperty(localName = "InitialUnknowns")
+    private val _initialUnknowns: InitialUnknowns? = null
 
     override val outputs: List<Unknown>
         get() = _outputs?.unknowns ?: emptyList()

@@ -59,6 +59,9 @@ class Unit(
 
 }
 
+/**
+ * @author Lars Ivar Hatledal
+ */
 data class BaseUnit(
         /**
          * Exponent of SI base unit "kg"
@@ -115,6 +118,9 @@ data class BaseUnit(
         val offset: Double = 0.0
 )
 
+/**
+ * @author Lars Ivar Hatledal
+ */
 data class DisplayUnit(
 
         /**

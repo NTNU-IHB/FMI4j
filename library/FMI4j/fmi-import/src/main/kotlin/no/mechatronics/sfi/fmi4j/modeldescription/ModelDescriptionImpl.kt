@@ -25,10 +25,14 @@
 package no.mechatronics.sfi.fmi4j.modeldescription
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+import com.fasterxml.jackson.annotation.JsonSetter
+import com.fasterxml.jackson.annotation.Nulls
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement
 import no.mechatronics.sfi.fmi4j.modeldescription.logging.LogCategories
 import no.mechatronics.sfi.fmi4j.modeldescription.misc.*
+import no.mechatronics.sfi.fmi4j.modeldescription.structure.ModelStructure
 import no.mechatronics.sfi.fmi4j.modeldescription.structure.ModelStructureImpl
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.ModelVariablesImpl
 import java.io.Serializable
@@ -44,7 +48,7 @@ import java.io.Serializable
 class ModelDescriptionImpl(
 
         @JacksonXmlProperty
-        override var fmiVersion: String,
+        override val fmiVersion: String,
 
         @JacksonXmlProperty
         override val modelName: String,
@@ -77,13 +81,10 @@ class ModelDescriptionImpl(
         override val variableNamingConvention: String? = null,
 
         @JacksonXmlProperty(localName = "DefaultExperiment")
-        override val defaultExperiment: DefaultExperiment? = null,
+        override val defaultExperiment: DefaultExperimentImpl? = null,
 
         @JacksonXmlProperty(localName = "ModelVariables")
-        override var modelVariables: ModelVariablesImpl,
-
-        @JacksonXmlProperty(localName = "ModelStructure")
-        override var modelStructure: ModelStructureImpl,
+        override val modelVariables: ModelVariablesImpl,
 
         @JacksonXmlProperty(localName = "LogCategories")
         override val logCategories: LogCategories? = null,
@@ -105,6 +106,13 @@ class ModelDescriptionImpl(
 
 
 ) : ModelDescriptionProvider, Serializable {
+
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
+    @JacksonXmlProperty(localName = "ModelStructure")
+    private val _modelStructure: ModelStructureImpl? = null
+
+    override val modelStructure: ModelStructure
+        get() =_modelStructure!!
 
     override val supportsCoSimulation: Boolean
         get() = coSimulationAttributes != null
@@ -136,8 +144,7 @@ class ModelDescriptionImpl(
                 generationTool?.let { "generationTool=$generationTool" },
                 variableNamingConvention?.let { "variableNamingConvention=$variableNamingConvention" },
                 generationDateAndTime?.let { "generationDateAndTime=$generationDateAndTime" },
-                defaultExperiment?.let { "defaultExperiment=$defaultExperiment" },
-                unitDefinitions?.let { "unitDefinitions=$unitDefinitions" }
+                defaultExperiment?.let { "defaultExperiment=$defaultExperiment" }
         ).joinToString("\n")
 
     override fun toString(): String {

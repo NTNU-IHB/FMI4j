@@ -27,16 +27,26 @@ package no.mechatronics.sfi.fmi4j.modeldescription.misc
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty
 import java.io.Serializable
 
+
 /**
  * @author Lars Ivar Hatledal
  */
-data class SourceFile(
+interface SourceFile {
 
         /**
          * Name of the file including the path to the sources
          * directory, using forward slash as separator
          */
-        @JacksonXmlProperty
         val name: String
 
-) : Serializable
+}
+
+/**
+ * @author Lars Ivar Hatledal
+ */
+data class SourceFileImpl(
+
+        @JacksonXmlProperty
+        override val name: String
+
+) : SourceFile, Serializable

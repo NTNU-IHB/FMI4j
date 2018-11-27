@@ -31,13 +31,9 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.ScalarVariable
 import java.io.Serializable
 
-typealias TypeDefinitions = List<SimpleType>
+typealias TypeDefinitions = List<SimpleTypeImpl>
 
-/**
- * @author Lars Ivar Hatledal
- */
-@JsonIgnoreProperties(ignoreUnknown = true)
-data class SimpleType (
+interface SimpleType {
 
         /**
          * Name of SimpleType element.
@@ -45,16 +41,28 @@ data class SimpleType (
          * of the TypeDefinitions list. Furthermore, "name" of a SimpleType
          * must bee different to all "name"s of ScalarVariable
          */
-        @JacksonXmlProperty
-        val name: String,
+        val name: String
 
         /**
          * Description of the SimpleType
          */
-        @JacksonXmlProperty
-        val description: String? = null
+        val description: String?
 
-) : Serializable {
+}
+
+/**
+ * @author Lars Ivar Hatledal
+ */
+@JsonIgnoreProperties(ignoreUnknown = true)
+data class SimpleTypeImpl (
+
+        @JacksonXmlProperty
+        override val name: String,
+
+        @JacksonXmlProperty
+        override val description: String? = null
+
+) : SimpleType, Serializable {
 
 //    @JacksonXmlProperty(localName = ScalarVariable.INTEGER_TYPE)
 //    @JsonSetter(nulls = Nulls.AS_EMPTY)
