@@ -35,155 +35,77 @@ import java.io.File
 import java.text.DecimalFormat
 import java.text.NumberFormat
 
+
+
 /**
  * @author Lars Ivar Hatledal
  */
-object FmuDriver {
+class FmuDriver(
+        private val fmuPath: File,
+        private val outputVariables: Array<String>,
+        private var outputFolder: String = ""
+) {
 
-    private const val FMI4j_VERSION = "0.12.2"
     private val LOG: Logger = LoggerFactory.getLogger(FmuDriver::class.java)
 
-    @CommandLine.Command(name = "fmudriver")
-    class Args : Runnable {
+    var startTime: Double = 0.0
+    var stopTime: Double = 10.0
+    var stepSize: Double = 1E-3
+    var relTol: Double = 0.0
 
-        @CommandLine.Option(names = ["-h", "--help"], description = ["Print this message and quits."], usageHelp = true)
-        private var showHelp = false
+    var modelExchange: Boolean = false
 
-        @CommandLine.Option(names = ["-f", "--fmu"], description = ["Path to the FMU."], required = true)
-        private lateinit var fmuPath: File
+    fun run() {
 
-        @CommandLine.Option(names = ["-out", "--outputFolder"], description = ["Folder to store xc result."], required = false)
-        private var outputFolder: String = ""
-
-        @CommandLine.Option(names = ["-dt", "--stepSize"], description = ["Step-size."], required = false)
-        private var stepSize: Double = 1E-3
-
-        @CommandLine.Option(names = ["-start", "--startTime"], description = ["Start time."], required = false)
-        private var startTime: Double = 0.0
-
-        @CommandLine.Option(names = ["-stop", "--stopTime"], description = ["Stop time."], required = false)
-        private var stopTime: Double = 10.0
-
-        @CommandLine.Option(names = ["-reltol", "--relativeTolerance"], description = ["Relative tolerance."], required = false)
-        private var relTol: Double = 0.0
-
-        @CommandLine.Option(names = ["-me"], description = ["Stop time."], required = false)
-        private var modelExchange: Boolean = false
-
-        @CommandLine.Parameters(arity = "1..*", paramLabel = "variables", description = ["Variables to print."])
-        private lateinit var outputVariables: Array<String>
-
-        private fun toFixed(len: Int, number: Double): Double {
-            return DecimalFormat("#.###").let {
-                NumberFormat.getInstance().parse(it.format(number)).toDouble()
+        Fmu.from(fmuPath).let {
+            if (modelExchange) {
+                it.asModelExchangeFmu().newInstance( ApacheSolvers.euler(1E-3))
+            } else {
+                it.asCoSimulationFmu().newInstance()
             }
-        }
+        }.use { slave ->
 
-        override fun run() {
+            slave.setupExperiment(startTime, stopTime, relTol)
+            slave.enterInitializationMode()
+            slave.exitInitializationMode()
 
-            Fmu.from(fmuPath).let {
-                if (modelExchange) {
-                    it.asModelExchangeFmu().newInstance( ApacheSolvers.euler(1E-3))
-                } else {
-                    it.asCoSimulationFmu().newInstance()
-                }
-            }.use { slave ->
+            val sb = StringBuilder()
+            val printer = CSVPrinter(sb, CSVFormat.DEFAULT.withHeader("Time", *outputVariables))
 
-                slave.setupExperiment(startTime, stopTime, relTol)
-                slave.enterInitializationMode()
-                slave.exitInitializationMode()
+            val outputVariables = outputVariables.map {
+                slave.modelVariables.getByName(it)
+            }
 
-                val sb = StringBuilder()
-                val printer = CSVPrinter(sb, CSVFormat.DEFAULT.withHeader("Time", *outputVariables))
+            LOG.info("Simulating FMU '$fmuPath', with startTime=$startTime, stopTime=$stopTime, stepSize=$stepSize")
 
-                val outputVariables = outputVariables.map {
-                    slave.modelVariables.getByName(it)
-                }
+            fun record() {
+                printer.printRecord(slave.simulationTime, *outputVariables.map { it.read(slave).value }.toTypedArray())
+            }
 
-                LOG.info("Running crosscheck on FMU '${slave.modelDescription.modelName}', with startTime=$startTime, stopTime=$stopTime, stepSize=$stepSize")
-
-                fun record() {
-                    printer.printRecord(toFixed(4, slave.simulationTime), *outputVariables.map { it.read(slave).value }.toTypedArray())
-                }
-
+            while (slave.simulationTime <= (stopTime - stepSize)) {
                 record()
-                while (slave.simulationTime <= (stopTime - stepSize)) {
-                    if (!slave.doStep(stepSize)) {
-                        break
-                    }
-                    record()
+                if (!slave.doStep(stepSize)) {
+                    break
                 }
-
-                if (outputFolder.isEmpty()) {
-                    outputFolder = getDefaultOutputDir()
-                }
-
-                File(outputFolder).apply {
-                    if (!exists()) {
-                        mkdirs()
-                    }
-                }
-
-                File(outputFolder, "${slave.modelDescription.modelName}_out.csv").apply {
-                    writeText(sb.toString())
-                    LOG.info("Wrote results to file $absoluteFile")
-                }
-
-                File(outputFolder, "README.md").apply {
-                   writeText(getReadme())
-                }
-
-                File(outputFolder, "passed").apply {
-                    createNewFile()
-                }
-
             }
 
-        }
-
-        private fun getDefaultOutputDir(): String {
-            var file = fmuPath.parentFile
-            var names = mutableListOf<String>()
-            for (i in 0 .. 2) {
-                names.add(file.name)
-                file = file.parentFile
-            }
-
-            names.addAll(listOf(FMI4j_VERSION, "FMI4j"))
-
-            for (i in 0 .. 2) {
-                val name = when(file.name) {
-                    "CoSimulation" -> "cs"
-                    "ModelExchange" -> "me"
-                    "FMI_2.0" -> "2.0"
-                    else -> file.name
+            File(outputFolder).apply {
+                if (!exists()) {
+                    mkdirs()
                 }
-                names.add(name)
-                file = file.parentFile
             }
-            return names.reverse().let{ names.joinToString("/") }
+
+            File(outputFolder, "${slave.modelDescription.modelName}_out.csv").apply {
+                writeText(sb.toString())
+                LOG.info("Wrote results to file $absoluteFile")
+            }
+
+
+            File(outputFolder, "passed").apply {
+                createNewFile()
+            }
         }
 
-        private fun getReadme(): String {
-
-            return """
-
-            The cross-check results have been generated with FMI4j's FmuDriver.
-            To get more information download the 'fmudriver' tool from https://github.com/SFI-Mechatronics/FMI4j/releases and run:
-
-            ```
-            java -jar fmudriver.jar -h
-            ```
-
-            """.trimIndent()
-
-        }
-
-    }
-
-    @JvmStatic
-    fun main(args: Array<String>) {
-        CommandLine.run(Args(), System.out, *args)
     }
 
 }

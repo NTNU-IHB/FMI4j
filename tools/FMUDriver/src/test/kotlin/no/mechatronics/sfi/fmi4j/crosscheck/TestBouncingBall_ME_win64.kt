@@ -34,7 +34,7 @@ class TestBouncingBall_ME_win64 {
                 "h", "der(h)", "v", "der(v)", "g", "e"
         )
 
-        FmuDriver.main(args)
+        Cmd.main(args)
 
         val fileName = "${name}_out.csv"
         File(fileName).apply {

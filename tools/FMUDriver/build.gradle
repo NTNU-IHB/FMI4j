@@ -12,8 +12,22 @@ def group = "no.mechatronics.sfi.fmi4j.crosscheck"
 mainClassName = "${group}.FmuDriver"
 
 
+def fmi4j_snapshot = true
+def fmi4j_version = fmi4j_snapshot ? 'dev-SNAPSHOT' : '0.12.2'
+
 repositories {
     mavenCentral()
+    if (fmi4j_snapshot) {
+        maven {
+            url "https://oss.sonatype.org/content/repositories/snapshots/"
+        }
+    }
+}
+
+if (fmi4j_snapshot) {
+    configurations.all {
+        resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+    }
 }
 
 dependencies {
@@ -21,9 +35,8 @@ dependencies {
     compile group: 'info.picocli', name: 'picocli', version: '3.1.0'
     compile group: 'org.apache.commons', name: 'commons-csv', version: '1.5'
 
-    def fmi4j_version = '0.12.2'
-    compile group: 'no.mechatronics.sfi.fmi4j', name: 'fmi-import', version: fmi4j_version
-    compile group: 'no.mechatronics.sfi.fmi4j', name: 'fmi-import-solvers-apache-math3', version: fmi4j_version
+    compile group: 'no.mechatronics.sfi.fmi4j', name: 'fmi-import', version: fmi4j_version, changing: fmi4j_snapshot
+    compile group: 'no.mechatronics.sfi.fmi4j', name: 'fmi-import-solvers-apache-math3', version: fmi4j_version, changing: fmi4j_snapshot
 
     def slf4j_version = '1.7.25'
     compile group: 'org.slf4j', name: 'slf4j-api', version: slf4j_version

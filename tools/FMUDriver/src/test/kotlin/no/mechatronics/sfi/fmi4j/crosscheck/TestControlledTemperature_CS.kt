@@ -30,7 +30,7 @@ class TestControlledTemperature_CS {
                 "Temperature_Reference", "Temperature_Room"
         )
 
-        FmuDriver.main(args)
+        Cmd.main(args)
 
         File("ControlledTemperature_out.csv").apply {
             if (exists()) {
