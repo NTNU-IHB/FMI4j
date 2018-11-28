@@ -38,6 +38,14 @@ import java.text.DecimalFormat
 import java.text.NumberFormat
 
 
+class Rejection(
+        val reason: String
+): Exception(reason)
+
+class Failure(
+        val reason: String
+): Exception(reason)
+
 /**
  * @author Lars Ivar Hatledal
  */
@@ -56,7 +64,9 @@ class FmuDriver(
     var modelExchange: Boolean = false
     var solver: Solver = ApacheSolvers.rk4(1E-3)
 
-    fun run(): Boolean {
+    var failOnLargeSize = false
+
+    fun run() {
 
         Fmu.from(fmuPath).let {
             if (modelExchange) {
@@ -81,16 +91,14 @@ class FmuDriver(
                 printer.printRecord(slave.simulationTime, *outputVariables.map { it.read(slave).value }.toTypedArray())
             }
 
-            var success = true
-            while (slave.simulationTime <= (stopTime - stepSize) && success) {
+            while (slave.simulationTime <= (stopTime - stepSize)) {
                 record()
                 if (!slave.doStep(stepSize)) {
-                    success = false
-                    LOG.warn("doStep returned false, breaking..")
+                    throw Failure("Simulation terminated prematurely")
                 }
             }
 
-            if (success && outputFolder != null) {
+            if (outputFolder != null) {
 
                File(outputFolder).apply {
                    if (!exists()) {
@@ -98,13 +106,16 @@ class FmuDriver(
                    }
                }
 
+                val data = sb.toString()
+                if (data.toByteArray().size > 2.5e7) {
+                    throw Rejection("Generated csv to large.")
+                }
+
                File(outputFolder, "${fmuPath.nameWithoutExtension}_out.csv").apply {
-                   writeText(sb.toString())
+                   writeText(data)
                    LOG.info("Wrote results to file $absoluteFile")
                }
             }
-
-            return success
 
         }
 

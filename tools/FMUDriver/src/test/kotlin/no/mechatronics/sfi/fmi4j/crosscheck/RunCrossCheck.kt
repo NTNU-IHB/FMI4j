@@ -138,22 +138,28 @@ object CrossChecker {
                     stopTime = defaults.stopTime
                     stepSize = defaults.stepSize
 
+                    failOnLargeSize = true
 
-                }.run().also { success ->
-                    if (success) {
-                        pass()
-                    } else {
-                        fail("Unknown reason")
-                    }
-                }
 
+                }.run()
 
             }
 
+            pass()
+
         } catch (ex: Exception) {
 
-            fail("Program error: $ex")
+            when (ex) {
+                is Rejection -> reject(ex.reason)
+                is Failure -> fail(ex.reason)
+                else -> fail("Program error: $ex")
+            }
+        }
 
+        if (!failedOrRejected) {
+            val refData = fmuDir.listFiles().find {
+                it.name.endsWith("ref.csv")
+            }!!
         }
 
         File(outputDir, "README.md").apply {
