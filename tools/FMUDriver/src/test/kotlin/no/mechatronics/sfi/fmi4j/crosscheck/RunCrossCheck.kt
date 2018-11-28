@@ -1,15 +1,13 @@
 package no.mechatronics.sfi.fmi4j.crosscheck
 
-import no.mechatronics.sfi.fmi4j.modeldescription.misc.DefaultExperiment
 import no.mechatronics.sfi.fmi4j.modeldescription.parser.ModelDescriptionParser
-import no.sfi.mechatronics.fmi4j.me.ApacheSolvers
 import org.junit.jupiter.api.condition.OS
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.File
 import java.lang.Exception
 
-private const val FMI4j_VERSION = "0.12.2"
+private const val FMI4j_VERSION = "0.13.0"
 
 private const val README = """
         The cross-check results have been generated with FMI4j's FmuDriver.
