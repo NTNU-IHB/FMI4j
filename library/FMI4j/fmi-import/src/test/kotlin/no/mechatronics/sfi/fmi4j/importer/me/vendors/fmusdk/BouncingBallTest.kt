@@ -51,9 +51,7 @@ class BouncingBallTest {
             val h = slave.modelVariables
                     .getByName("h").asRealVariable()
 
-            slave.setupExperiment()
-            slave.enterInitializationMode()
-            slave.exitInitializationMode()
+            slave.simpleSetup()
 
             val macroStep = 1.0 / 10
             while (slave.simulationTime < 1) {

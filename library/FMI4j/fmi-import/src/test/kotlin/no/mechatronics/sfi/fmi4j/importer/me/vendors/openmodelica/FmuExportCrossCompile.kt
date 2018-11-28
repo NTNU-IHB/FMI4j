@@ -4,15 +4,12 @@ import no.mechatronics.sfi.fmi4j.TestUtils
 import no.mechatronics.sfi.fmi4j.common.FmiStatus
 import no.mechatronics.sfi.fmi4j.common.currentOS
 import no.mechatronics.sfi.fmi4j.importer.Fmu
-import no.mechatronics.sfi.fmi4j.importer.ModelExchangeFmu
 import no.mechatronics.sfi.fmi4j.solvers.Solver
 import no.sfi.mechatronics.fmi4j.me.ApacheSolver
 import no.sfi.mechatronics.fmi4j.me.ApacheSolvers
 import org.apache.commons.math3.ode.nonstiff.DormandPrince853Integrator
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable
-import org.junit.jupiter.api.condition.EnabledOnOs
-import org.junit.jupiter.api.condition.OS
 import org.slf4j.LoggerFactory
 import java.io.File
 
@@ -56,9 +53,7 @@ class FmuExportCrossCompile {
             val h = slave.modelVariables
                     .getByName("h").asRealVariable()
 
-            slave.setupExperiment()
-            slave.enterInitializationMode()
-            slave.exitInitializationMode()
+            slave.simpleSetup()
 
             while (slave.simulationTime <= stop) {
                 Assertions.assertTrue(slave.doStep(macroStep))

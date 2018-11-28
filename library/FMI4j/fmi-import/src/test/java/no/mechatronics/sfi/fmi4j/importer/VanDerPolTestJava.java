@@ -81,9 +81,7 @@ public class VanDerPolTestJava {
         RealVariable x0 = slave.getModelVariables()
                 .getByName("x0").asRealVariable();
 
-        slave.setupExperiment();
-        slave.enterInitializationMode();
-        slave.exitInitializationMode();
+        slave.simpleSetup();
 
         double macroStep = 1.0 / 10;
         while (slave.getSimulationTime() < 1) {

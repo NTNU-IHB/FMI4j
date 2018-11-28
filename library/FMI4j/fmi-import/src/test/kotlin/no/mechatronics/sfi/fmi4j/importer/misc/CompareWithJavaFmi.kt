@@ -85,9 +85,7 @@ class CompareWithJavaFmi {
         fmu.newInstance().also { slave ->
 
             val start = Instant.now()
-            slave.setupExperiment()
-            slave.enterInitializationMode()
-            slave.exitInitializationMode()
+            slave.simpleSetup()
             while (slave.simulationTime < stop) {
                 val status = slave.doStep(stepSize)
                 slave.modelVariables.forEach {

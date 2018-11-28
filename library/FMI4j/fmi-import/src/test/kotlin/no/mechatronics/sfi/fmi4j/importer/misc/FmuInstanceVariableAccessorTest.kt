@@ -39,9 +39,8 @@ class FmuInstanceVariableAccessorTest {
 
         fmu.newInstance().use { slave ->
 
-            slave.setupExperiment()
-            slave.enterInitializationMode()
-            slave.exitInitializationMode()
+            slave.simpleSetup()
+
             slave.modelVariables.forEach { variable ->
                 when (variable) {
                     is IntegerVariable -> Assertions.assertEquals(
@@ -64,7 +63,7 @@ class FmuInstanceVariableAccessorTest {
 
         fmu.newInstance().use { slave ->
 
-            slave.setupExperiment()
+            slave.setup()
             slave.enterInitializationMode()
             slave.exitInitializationMode()
 

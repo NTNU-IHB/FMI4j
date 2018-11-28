@@ -35,9 +35,7 @@ class ControlledTemperatureTest {
                         .getVariableByName("heatCapacitor.T").asRealVariable()
                 Assertions.assertEquals(2.93149999999999980e+02, heatCapacitor_T.start!!)
 
-                slave.setupExperiment()
-                slave.enterInitializationMode()
-                slave.exitInitializationMode()
+                slave.simpleSetup()
                 Assertions.assertTrue(slave.lastStatus === FmiStatus.OK)
 
                 LOG.debug("heatCapacitor_T=${heatCapacitor_T.read(slave).value}")

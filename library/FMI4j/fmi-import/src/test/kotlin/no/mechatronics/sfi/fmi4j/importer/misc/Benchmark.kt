@@ -75,9 +75,7 @@ object Benchmark {
                 fmu.asCoSimulationFmu().newInstance(loggingOn = false).use { slave ->
 
                     val h = slave.modelVariables.getByValueReference(option.vr)[0] as RealVariable
-                    slave.setupExperiment(0.0, option.stopTime)
-                    slave.enterInitializationMode()
-                    slave.exitInitializationMode()
+                    slave.simpleSetup(0.0, option.stopTime)
 
                     var j = 0
                     var sum = 0.0

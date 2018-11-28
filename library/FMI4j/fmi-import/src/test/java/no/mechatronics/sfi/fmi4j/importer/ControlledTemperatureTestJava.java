@@ -78,9 +78,7 @@ public class ControlledTemperatureTestJava {
                     .getVariableByName("HeatCapacity1.T0").asRealVariable().getStart();
             Assertions.assertEquals(298.0, startTemp);
 
-            slave.setupExperiment();
-            slave.enterInitializationMode();
-            slave.exitInitializationMode();
+            slave.simpleSetup();
 
             final RealVariable heatCapacity1_C = slave.getModelDescription()
                     .getVariableByName("HeatCapacity1.C").asRealVariable();
