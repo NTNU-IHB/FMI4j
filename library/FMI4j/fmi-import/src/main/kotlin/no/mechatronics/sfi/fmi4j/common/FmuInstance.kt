@@ -32,6 +32,9 @@ import java.io.Closeable
 
 typealias FmuState = Long
 
+/**
+ * @author Lars Ivar Hatledal
+ */
 interface SimpleFmuInstance : FmuVariableAccessorProvider, Closeable {
 
     /**
