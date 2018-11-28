@@ -12,7 +12,7 @@ def group = "no.mechatronics.sfi.fmi4j.crosscheck"
 mainClassName = "${group}.FmuDriver"
 
 
-def fmi4j_snapshot = true
+def fmi4j_snapshot = false
 def fmi4j_version = fmi4j_snapshot ? 'dev-SNAPSHOT' : '0.13.1'
 
 repositories {
