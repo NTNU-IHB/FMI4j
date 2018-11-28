@@ -27,7 +27,6 @@ package no.mechatronics.sfi.fmi4j.common
 import no.mechatronics.sfi.fmi4j.modeldescription.CommonModelDescription
 import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescription
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.ModelVariables
-import no.mechatronics.sfi.fmi4j.modeldescription.variables.TypedScalarVariable
 import java.io.Closeable
 
 typealias FmuState = Long
@@ -68,11 +67,19 @@ interface SimpleFmuInstance : FmuVariableAccessorProvider, Closeable {
     val modelVariables: ModelVariables
         get() = modelDescription.modelVariables
 
-    fun setupExperiment(): Boolean {
-        return setupExperiment(0.0, 0.0, 0.0)
+    fun simpleSetup() {
+        simpleSetup(0.0, 0.0, 0.0)
     }
 
-    fun setupExperiment(start: Double = 0.0, stop: Double = 0.0, tolerance: Double = 0.0): Boolean
+    fun simpleSetup(start: Double = 0.0, stop: Double = 0.0, tolerance: Double = 0.0): Boolean {
+        return setup(start, stop, tolerance) && enterInitializationMode() && exitInitializationMode()
+    }
+
+    fun setup(): Boolean {
+        return setup(0.0, 0.0, 0.0)
+    }
+
+    fun setup(start: Double = 0.0, stop: Double = 0.0, tolerance: Double = 0.0): Boolean
 
     fun enterInitializationMode(): Boolean
 

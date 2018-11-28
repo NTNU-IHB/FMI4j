@@ -100,9 +100,9 @@ abstract class AbstractFmuInstance<out E : CommonModelDescription, out T : Fmi2L
      *
      * @throws IllegalArgumentException if start < 0
      */
-    override fun setupExperiment(start: Double, stop: Double, tolerance: Double): Boolean {
+    override fun setup(start: Double, stop: Double, tolerance: Double): Boolean {
 
-        LOG.debug("FMU '${modelDescription.modelName}' setupExperiment with start=$start, stop=$stop, tolerance=$tolerance")
+        LOG.debug("FMU '${modelDescription.modelName}' setup with start=$start, stop=$stop, tolerance=$tolerance")
 
         if (start < 0) {
             LOG.error("Start must be a positive value, was $start!")
