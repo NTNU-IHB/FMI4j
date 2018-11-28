@@ -46,7 +46,7 @@ class Unit(
 
 ) : Serializable {
 
-    @JacksonXmlProperty
+    @JacksonXmlProperty(localName = "BaseUnit")
     val baseUnit: BaseUnit? = null
 
     @JacksonXmlProperty(localName = "DisplayUnit")
