@@ -102,7 +102,7 @@ abstract class AbstractFmuInstance<out E : CommonModelDescription, out T : Fmi2L
      */
     override fun setupExperiment(start: Double, stop: Double, tolerance: Double): Boolean {
 
-        LOG.debug("setupExperiment")
+        LOG.debug("FMU '${modelDescription.modelName}' setupExperiment with start=$start, stop=$stop, tolerance=$tolerance")
 
         if (start < 0) {
             LOG.error("Start must be a positive value, was $start!")
@@ -120,12 +120,12 @@ abstract class AbstractFmuInstance<out E : CommonModelDescription, out T : Fmi2L
     }
 
     override fun enterInitializationMode(): Boolean {
-        LOG.debug("enterInitializationMode")
+        LOG.trace("FMU '${modelDescription.modelName}' enterInitializationMode")
         return wrapper.enterInitializationMode().isOK()
     }
 
     override fun exitInitializationMode(): Boolean {
-        LOG.debug("exitInitializationMode")
+        LOG.trace("FMU '${modelDescription.modelName}' exitInitializationMode")
         return wrapper.exitInitializationMode().isOK()
     }
 
@@ -186,7 +186,7 @@ abstract class AbstractFmuInstance<out E : CommonModelDescription, out T : Fmi2L
      */
     override fun setFMUstate(state: FmuState): Boolean {
         if (!modelDescription.canGetAndSetFMUstate) {
-            throw UnsupportedOperationException("Method call not allowed, FMU cannot get and set FMU state!")
+            throw UnsupportedOperationException("Method call not allowed, FMU '${modelDescription.modelName}' cannot get and set FMU state!")
         }
         return wrapper.setFMUState(state).isOK()
     }
@@ -196,7 +196,7 @@ abstract class AbstractFmuInstance<out E : CommonModelDescription, out T : Fmi2L
      */
     override fun freeFMUstate(state: FmuState): Boolean {
         if (!modelDescription.canGetAndSetFMUstate) {
-            throw UnsupportedOperationException("Method call not allowed, FMU cannot get and set FMU state!")
+            throw UnsupportedOperationException("Method call not allowed, FMU '${modelDescription.modelName}' cannot get and set FMU state!")
         }
         return wrapper.freeFMUState(state).isOK()
     }
@@ -206,7 +206,7 @@ abstract class AbstractFmuInstance<out E : CommonModelDescription, out T : Fmi2L
      */
     fun serializedFMUstateSize(fmuState: FmuState): Int {
         if (!modelDescription.canSerializeFMUstate) {
-            throw UnsupportedOperationException("Method call not allowed, FMU cannot serialize/deserialize FMU state!")
+            throw UnsupportedOperationException("Method call not allowed, FMU '${modelDescription.modelName}' cannot serialize/deserialize FMU state!")
         }
         return wrapper.serializedFMUStateSize(fmuState)
     }
@@ -216,7 +216,7 @@ abstract class AbstractFmuInstance<out E : CommonModelDescription, out T : Fmi2L
      */
     override fun serializeFMUstate(state: FmuState): ByteArray {
         if (!modelDescription.canSerializeFMUstate) {
-            throw UnsupportedOperationException("Method call not allowed, FMU cannot serialize/deserialize FMU state!")
+            throw UnsupportedOperationException("Method call not allowed, FMU '${modelDescription.modelName}' cannot serialize/deserialize FMU state!")
         }
         return wrapper.serializeFMUState(state)
     }
@@ -226,7 +226,7 @@ abstract class AbstractFmuInstance<out E : CommonModelDescription, out T : Fmi2L
      */
     override fun deSerializeFMUstate(state: ByteArray): FmuState {
         if (!modelDescription.canSerializeFMUstate) {
-            throw UnsupportedOperationException("Method call not allowed, FMU cannot serialize/deserialize FMU state!")
+            throw UnsupportedOperationException("Method call not allowed, FMU '${modelDescription.modelName}' cannot serialize/deserialize FMU state!")
         }
         return wrapper.deSerializeFMUState(state)
     }
