@@ -22,10 +22,10 @@ class TestPlugin {
                 throw RuntimeException("Unable to create directories")
             }
 
-            val fmuName = "ControlledTemperature.fmu"
+            val fmuName = "ControlledTemperature"
             val fmu = File(getTEST_FMUs(),
                     "2.0/cs/$currentOS" +
-                            "/20sim/4.6.4.8004/$fmuName/$fmuName")
+                            "/20sim/4.6.4.8004/$fmuName/$fmuName.fmu")
 
             fmu.copyTo(File(this, fmuName))
         }
