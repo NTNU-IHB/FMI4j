@@ -42,11 +42,21 @@ object CrossChecker {
             if (split.isNotEmpty()) {
                 val (fst, snd) = split
                 when (fst) {
-                    "StartTime" -> { opt.startTime = snd.toDouble() }
-                    "StopTime" -> { opt.stopTime = snd.toDouble() }
-                    "StepSize" -> { opt.stepSize = snd.toDouble() }
-                    "RelTol" -> { opt.relTol = snd.toDouble() }
-                    "AbsTol" -> { opt.absTol = snd.toDouble() }
+                    "StartTime" -> {
+                        opt.startTime = snd.toDouble()
+                    }
+                    "StopTime" -> {
+                        opt.stopTime = snd.toDouble()
+                    }
+                    "StepSize" -> {
+                        opt.stepSize = snd.toDouble()
+                    }
+                    "RelTol" -> {
+                        opt.relTol = snd.toDouble()
+                    }
+                    "AbsTol" -> {
+                        opt.absTol = snd.toDouble()
+                    }
                 }
 
             }
@@ -159,15 +169,15 @@ object CrossChecker {
     private fun getDefaultOutputDir(fmuFile: File): String {
         var fmuFile = fmuFile
         var names = mutableListOf<String>()
-        for (i in 0 .. 2) {
+        for (i in 0..2) {
             names.add(fmuFile.name)
             fmuFile = fmuFile.parentFile
         }
 
         names.addAll(listOf(FMI4j_VERSION, "FMI4j"))
 
-        for (i in 0 .. 2) {
-            val name = when(fmuFile.name) {
+        for (i in 0..2) {
+            val name = when (fmuFile.name) {
                 "CoSimulation" -> "cs"
                 "ModelExchange" -> "me"
                 "FMI_2.0" -> "2.0"
@@ -176,12 +186,16 @@ object CrossChecker {
             names.add(name)
             fmuFile = fmuFile.parentFile
         }
-        return names.reverse().let{ names.joinToString("/") }
+        return names.reverse().let { names.joinToString("/") }
     }
 
 }
 
 fun main(args: Array<String>) {
+
+    if (args.size != 1) {
+        return
+    }
 
     val platform = when {
         OS.LINUX.isCurrentOs -> "linux64"
