@@ -18,7 +18,7 @@ object Cmd {
         lateinit var fmuPath: File
 
         @CommandLine.Option(names = ["-out", "--outputFolder"], description = ["Folder to store xc result."], required = false)
-        var outputFolder: String = ""
+        var outputFolder: String = "."
 
         @CommandLine.Option(names = ["-dt", "--stepSize"], description = ["Step-size."], required = false)
         var stepSize: Double = 1E-3

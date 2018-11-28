@@ -44,7 +44,7 @@ import java.text.NumberFormat
 class FmuDriver(
         private val fmuPath: File,
         private val outputVariables: Array<String>,
-        private var outputFolder: String = ""
+        private var outputFolder: String? = null
 ) {
 
     private val LOG: Logger = LoggerFactory.getLogger(FmuDriver::class.java)
@@ -66,9 +66,7 @@ class FmuDriver(
             }
         }.use { slave ->
 
-            slave.setupExperiment(startTime, stopTime)
-            slave.enterInitializationMode()
-            slave.exitInitializationMode()
+            slave.simpleSetup(startTime, stopTime)
 
             val sb = StringBuilder()
             val printer = CSVPrinter(sb, CSVFormat.DEFAULT.withQuote('"').withHeader("Time", *outputVariables))
@@ -92,7 +90,8 @@ class FmuDriver(
                 }
             }
 
-            if (success) {
+            if (success && outputFolder != null) {
+
                File(outputFolder).apply {
                    if (!exists()) {
                        mkdirs()

@@ -30,6 +30,8 @@ if (fmi4j_snapshot) {
 
 dependencies {
 
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+
     compile group: 'info.picocli', name: 'picocli', version: '3.1.0'
     compile group: 'org.apache.commons', name: 'commons-csv', version: '1.5'
 
