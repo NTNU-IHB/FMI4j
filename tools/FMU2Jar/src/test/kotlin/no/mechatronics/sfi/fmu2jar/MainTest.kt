@@ -38,8 +38,8 @@ class MainTest {
 
         val fmuName = "ControlledTemperature"
         val file = File(TEST_FMUs +
-                "/FMI_2.0/CoSimulation/$currentOS/20sim/" +
-                "4.6.4.8004/ControlledTemperature/$fmuName.fmu")
+                "/2.0/cs/$currentOS/20sim/" +
+                "4.6.4.8004/$fmuName/$fmuName.fmu")
         Assertions.assertTrue(file.exists())
 
         val args = arrayOf<String>(
@@ -61,9 +61,7 @@ class MainTest {
         val method = classToLoad.getDeclaredMethod("newInstance")
         (method.invoke(null) as FmuSlave).use { slave ->
 
-            slave.setupExperiment()
-            slave.enterInitializationMode()
-            slave.exitInitializationMode()
+            slave.simpleSetup()
 
             val stop = 1.0
             val stepSize = 1.0/100

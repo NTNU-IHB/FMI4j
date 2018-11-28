@@ -67,8 +67,8 @@ interface SimpleFmuInstance : FmuVariableAccessorProvider, Closeable {
     val modelVariables: ModelVariables
         get() = modelDescription.modelVariables
 
-    fun simpleSetup() {
-        simpleSetup(0.0, 0.0, 0.0)
+    fun simpleSetup(): Boolean{
+        return simpleSetup(0.0, 0.0, 0.0)
     }
 
     fun simpleSetup(start: Double = 0.0, stop: Double = 0.0, tolerance: Double = 0.0): Boolean {

@@ -21,7 +21,7 @@ class FmuPluginExtension {
 
     FmuPluginExtension(Project project) {
         version = project.objects.property(String)
-        version.set("0.11.1")
+        version.set("0.13.1")
         configurationName = project.objects.property(String)
         configurationName.set("implementation")
     }
@@ -180,21 +180,39 @@ public class ${modelName} implements FmuSlave {
     }
 
     @Override
-    public boolean setupExperiment() {
-        return setupExperiment(0.0);
+    public boolean simpleSetup() {
+        return simpleSetup(0.0);
     }
 
-    public boolean setupExperiment(double start) {
-        return setupExperiment(start, 0.0);
+    public boolean simpleSetup(double start) {
+        return simpleSetup(start, 0.0);
     }
 
-    public boolean setupExperiment(double start, double stop) {
-        return setupExperiment(start, stop, 0.0);
+    public boolean simpleSetup(double start, double stop) {
+        return simpleSetup(start, stop, 0.0);
     }
 
     @Override
-    public boolean setupExperiment(double start, double stop, double tolerance) {
-        return slave.setupExperiment(start, stop, tolerance);
+    public boolean simpleSetup(double start, double stop, double tolerance) {
+        return slave.setup(start, stop, tolerance) && slave.enterInitializationMode() && slave.exitInitializationMode();
+    }
+
+    @Override
+    public boolean setup() {
+        return setup(0.0);
+    }
+
+    public boolean setup(double start) {
+        return setup(start, 0.0);
+    }
+
+    public boolean setup(double start, double stop) {
+        return setup(start, stop, 0.0);
+    }
+
+    @Override
+    public boolean setup(double start, double stop, double tolerance) {
+        return slave.setup(start, stop, tolerance);
     }
 
     @Override

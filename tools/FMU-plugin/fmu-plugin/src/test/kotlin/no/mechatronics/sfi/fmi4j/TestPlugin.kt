@@ -1,5 +1,6 @@
 package no.mechatronics.sfi.fmi4j
 
+import no.mechatronics.sfi.fmi4j.common.currentOS
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
 import org.junit.jupiter.api.AfterAll
@@ -23,8 +24,8 @@ class TestPlugin {
 
             val fmuName = "ControlledTemperature.fmu"
             val fmu = File(getTEST_FMUs(),
-                    "FMI_2.0/CoSimulation/${getOs()}" +
-                            "/20sim/4.6.4.8004/ControlledTemperature/$fmuName")
+                    "2.0/cs/$currentOS" +
+                            "/20sim/4.6.4.8004/$fmuName/$fmuName")
 
             fmu.copyTo(File(this, fmuName))
         }
@@ -75,17 +76,6 @@ class TestPlugin {
 
     private fun getTEST_FMUs(): String {
         return System.getenv("TEST_FMUs") ?: throw IllegalStateException("TEST_FMUs not found on PATH!")
-    }
-
-    private fun getOs(): String {
-
-        return when {
-            OS.LINUX.isCurrentOs -> "linux64"
-            OS.WINDOWS.isCurrentOs -> "win64"
-            OS.MAC.isCurrentOs -> "darwin64"
-            else -> throw IllegalStateException("Unsupported OS")
-        }
-
     }
 
 }

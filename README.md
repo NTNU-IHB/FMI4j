@@ -37,9 +37,7 @@ class Demo {
         // Solver solver = ApacheSolvers.euler(1E-3);
         // FmuSlave slave = fmu.asModelExchangeFmu(solver).newInstance(); 
         
-        slave.setupExperiment();
-        slave.enterInitializationMode();
-        slave.exitInitializationMode();
+        slave.simpleSetup();
         
         double stop = 10;
         double stepSize = 1.0/100;
@@ -70,9 +68,7 @@ Example for an FMU named _ControlledTemperature_ given in Kotlin:
 
 ControlledTemperature.newInstance().use { slave -> //try with resources
 
-        slave.setupExperiment()
-        slave.enterInitializationMode()
-        slave.exitInitializationMode()
+        slave.simpleSetup()
         
         //Variables are grouped by causality and have types!
         val tempRef: RealVariable 
@@ -101,7 +97,7 @@ To use it, simply add the following to your build.gradle
 
 ```gradle
 plugins {
-    id "no.mechatronics.sfi.fmi4j.FmuPlugin" version "0.6.0"
+    id "no.mechatronics.sfi.fmi4j.FmuPlugin" version "0.8.0"
 }
 
 ```
@@ -110,7 +106,7 @@ The plugin will automatically add a dependency to the FMI4j artifact ```fmi-impo
 
 ```gradle
 fmi4j {
-    version = "0.12.1"
+    version = "0.13.1"
     configurationName = "compile"
 }
 ```

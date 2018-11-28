@@ -24,6 +24,9 @@
 
 package no.mechatronics.sfi.fmu2jar
 
+import no.mechatronics.sfi.fmi4j.common.currentOS
+import no.mechatronics.sfi.fmi4j.common.isLinux
+import no.mechatronics.sfi.fmi4j.common.isWindows
 import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescription
 import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescriptionProvider
 import no.mechatronics.sfi.fmi4j.modeldescription.parser.ModelDescriptionParser
@@ -144,7 +147,16 @@ class Fmu2Jar(
 
         try {
 
-            val cmd = mutableListOf("${parentDir.absolutePath}/gradlew.bat", "clean", "build")
+            val gradlewName = when {
+                isWindows -> "gradlew.bat"
+                else -> "gradlew"
+            }
+
+            val gradlew = File(parentDir, gradlewName).apply {
+                setExecutable(true)
+            }
+
+            val cmd = mutableListOf(gradlew.absolutePath, "clean", "build")
             if (options.mavenLocal) {
                 cmd.add("publishToMavenLocal")
             }

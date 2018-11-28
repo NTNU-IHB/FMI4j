@@ -7,9 +7,7 @@ fun main(args: Array<String>) {
 
     ControlledTemperature.newInstance().use { slave ->
 
-        slave.setupExperiment()
-        slave.enterInitializationMode()
-        slave.exitInitializationMode()
+        slave.simpleSetup()
 
         //Variables are grouped by causality and have types!
         val tempRef: RealVariable
