@@ -2,6 +2,7 @@ package no.mechatronics.sfi.fmi4j.crosscheck
 
 import no.mechatronics.sfi.fmi4j.modeldescription.misc.DefaultExperiment
 import no.mechatronics.sfi.fmi4j.modeldescription.parser.ModelDescriptionParser
+import no.sfi.mechatronics.fmi4j.me.ApacheSolvers
 import org.junit.jupiter.api.condition.OS
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -19,17 +20,21 @@ private const val README = """
         ```
         """
 
+data class opt(
+        var startTime: Double = 0.0,
+        var stopTime: Double = 10.0,
+        var stepSize: Double = 1e-3,
+        var relTol: Double = 1e-3,
+        var absTol: Double = 1e-3
+)
+
 object CrossChecker {
 
     private val LOG: Logger = LoggerFactory.getLogger(CrossChecker::class.java)
 
-    fun parseDefaults(txt: String): DefaultExperiment {
+    fun parseDefaults(txt: String): opt {
 
-        var start = 0.0
-        var stop = 0.0
-        var stepSize = 0.0
-        var reltol = 0.0
-
+        val opt = opt()
 
         txt.trim().split("\n").forEach { line ->
 
@@ -37,22 +42,18 @@ object CrossChecker {
             if (split.isNotEmpty()) {
                 val (fst, snd) = split
                 when (fst) {
-                    "StartTime" -> { start = snd.toDouble() }
-                    "StopTime" -> { stop = snd.toDouble() }
-                    "StepSize" -> { stepSize = snd.toDouble() }
-                    "RelTol" -> { reltol = snd.toDouble() }
+                    "StartTime" -> { opt.startTime = snd.toDouble() }
+                    "StopTime" -> { opt.stopTime = snd.toDouble() }
+                    "StepSize" -> { opt.stepSize = snd.toDouble() }
+                    "RelTol" -> { opt.relTol = snd.toDouble() }
+                    "AbsTol" -> { opt.absTol = snd.toDouble() }
                 }
 
             }
 
         }
 
-        return object: DefaultExperiment {
-            override val startTime = start
-            override val stepSize = stepSize
-            override val stopTime = stop
-            override val tolerance = reltol
-        }
+        return opt
     }
 
     fun parseVariables(txt: String): Array<String> {
@@ -62,7 +63,7 @@ object CrossChecker {
     }
 
 
-    fun crossCheck(fmuDir: File, resultDir: File) {
+    fun crossCheck(fmuDir: File, resultDir: File): Boolean {
 
         val outputDir = File(resultDir, getDefaultOutputDir(fmuDir)).apply {
             if (!exists()) {
@@ -70,55 +71,74 @@ object CrossChecker {
             }
         }.absolutePath
 
-
         val fmuPath = fmuDir.listFiles().find {
             it.name.endsWith(".fmu")
         }!!
 
-        val variables = parseVariables(fmuDir.listFiles().find {
-            it.name.endsWith(".csv")
-        }!!.reader().buffered().readLine())
+        val inputData = fmuDir.listFiles().find {
+            it.name.endsWith("in.csv")
+        }
+
+        val refData = fmuDir.listFiles().find {
+            it.name.endsWith("ref.csv")
+        }!!
+
+        val variables = parseVariables(refData.reader().buffered().readLine())
 
         val defaults = parseDefaults(fmuDir.listFiles().find {
             it.name.endsWith(".opt")
         }!!.readText())
 
+        var failedOrRejected = false
 
         fun reject(reason: String) {
             File(outputDir, "rejected").apply {
                 createNewFile()
+                writeText(reason)
             }
             LOG.warn("Rejected FMU '$fmuPath'. Reason: $reason")
+            failedOrRejected = true
         }
 
         fun fail(reason: String) {
             File(outputDir, "failed").apply {
                 createNewFile()
+                writeText(reason)
             }
             LOG.warn("Failed to handle FMU '$fmuPath'. Reason: $reason")
+            failedOrRejected = true
+        }
+
+        fun pass() {
+            File(outputDir, "passsed").apply {
+                createNewFile()
+            }
         }
 
         try {
             val md = ModelDescriptionParser.parse(fmuPath)
 
-            if (defaults.stepSize <= 0) {
-
-                reject("invalid stepsize")
-
-            } else if (md.asCoSimulationModelDescription().needsExecutionTool) {
-
-                reject("requires execution tool")
-
-            } else {
-
-                FmuDriver(fmuPath, variables, outputDir).apply {
+            when {
+                OS.LINUX.isCurrentOs && "JModelica.org" in fmuDir.absolutePath -> reject("System crashes")
+                defaults.stepSize < 0 -> reject("Invalid stepSize")
+                defaults.stepSize == 0.0 -> fail("Unable to handle variable step solver")
+                inputData != null -> fail("Unable to handle input files")
+                md.asCoSimulationModelDescription().needsExecutionTool -> reject("Requires execution tool")
+                else -> FmuDriver(fmuPath, variables, outputDir).apply {
 
                     startTime = defaults.startTime
                     stopTime = defaults.stopTime
                     stepSize = defaults.stepSize
-                    relTol = defaults.tolerance
 
-                }.run()
+
+                }.run().also { success ->
+                    if (success) {
+                        pass()
+                    } else {
+                        fail("Unknown reason")
+                    }
+                }
+
 
             }
 
@@ -131,6 +151,8 @@ object CrossChecker {
         File(outputDir, "README.md").apply {
             writeText(README)
         }
+
+        return !failedOrRejected
 
     }
 
@@ -159,7 +181,6 @@ object CrossChecker {
 
 }
 
-
 fun main(args: Array<String>) {
 
     val platform = when {
@@ -169,20 +190,36 @@ fun main(args: Array<String>) {
     }
 
     val crossCheckDir = "${args[0]}"
-    val path = "$crossCheckDir/fmus/2.0/cs/$platform"
-    File(path).listFiles().forEach { vendor ->
+    val csPath = File("$crossCheckDir/fmus/2.0/cs/$platform")
 
-        if (vendor.name !in listOf("JModelica.org")) {
+    File("$crossCheckDir/results/2.0/cs/$platform/FMI4j/$FMI4j_VERSION").apply {
+        if (exists()) deleteRecursively()
+    }
+
+    File("$crossCheckDir/results/2.0/me/$platform/FMI4j/$FMI4j_VERSION").apply {
+        if (exists()) deleteRecursively()
+    }
+
+
+    fun crosscheck(dir: File): Int {
+
+        var passed = 0
+        dir.listFiles().forEach { vendor ->
 
             vendor.listFiles().forEach { version ->
                 version.listFiles().forEach { fmu ->
-                    CrossChecker.crossCheck(fmu, File(crossCheckDir, "results"))
+                    if (CrossChecker.crossCheck(fmu, File(crossCheckDir, "results"))) {
+                        passed++
+                    }
+
                 }
+
             }
 
         }
-
+        return passed
     }
 
+    println("${crosscheck(csPath)} Co-simulation FMUs passed cross-check")
 
 }

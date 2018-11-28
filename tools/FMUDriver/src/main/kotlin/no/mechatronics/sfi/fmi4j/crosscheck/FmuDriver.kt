@@ -25,6 +25,7 @@
 package no.mechatronics.sfi.fmi4j.crosscheck
 
 import no.mechatronics.sfi.fmi4j.importer.Fmu
+import no.mechatronics.sfi.fmi4j.solvers.Solver
 import no.sfi.mechatronics.fmi4j.me.ApacheSolvers
 import org.apache.commons.csv.CSVFormat
 import org.apache.commons.csv.CSVPrinter
@@ -32,9 +33,9 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import picocli.CommandLine
 import java.io.File
+import java.lang.RuntimeException
 import java.text.DecimalFormat
 import java.text.NumberFormat
-
 
 
 /**
@@ -51,26 +52,26 @@ class FmuDriver(
     var startTime: Double = 0.0
     var stopTime: Double = 10.0
     var stepSize: Double = 1E-3
-    var relTol: Double = 0.0
 
     var modelExchange: Boolean = false
+    var solver: Solver = ApacheSolvers.rk4(1E-3)
 
-    fun run() {
+    fun run(): Boolean {
 
         Fmu.from(fmuPath).let {
             if (modelExchange) {
-                it.asModelExchangeFmu().newInstance( ApacheSolvers.euler(1E-3))
+                it.asModelExchangeFmu().newInstance( solver )
             } else {
                 it.asCoSimulationFmu().newInstance()
             }
         }.use { slave ->
 
-            slave.setupExperiment(startTime, stopTime, relTol)
+            slave.setupExperiment(startTime, stopTime)
             slave.enterInitializationMode()
             slave.exitInitializationMode()
 
             val sb = StringBuilder()
-            val printer = CSVPrinter(sb, CSVFormat.DEFAULT.withHeader("Time", *outputVariables))
+            val printer = CSVPrinter(sb, CSVFormat.DEFAULT.withQuote('"').withHeader("Time", *outputVariables))
 
             val outputVariables = outputVariables.map {
                 slave.modelVariables.getByName(it)
@@ -82,28 +83,30 @@ class FmuDriver(
                 printer.printRecord(slave.simulationTime, *outputVariables.map { it.read(slave).value }.toTypedArray())
             }
 
-            while (slave.simulationTime <= (stopTime - stepSize)) {
+            var success = true
+            while (slave.simulationTime <= (stopTime - stepSize) && success) {
                 record()
                 if (!slave.doStep(stepSize)) {
-                    break
+                    success = false
+                    LOG.warn("doStep returned false, breaking..")
                 }
             }
 
-            File(outputFolder).apply {
-                if (!exists()) {
-                    mkdirs()
-                }
+            if (success) {
+               File(outputFolder).apply {
+                   if (!exists()) {
+                       mkdirs()
+                   }
+               }
+
+               File(outputFolder, "${fmuPath.nameWithoutExtension}_out.csv").apply {
+                   writeText(sb.toString())
+                   LOG.info("Wrote results to file $absoluteFile")
+               }
             }
 
-            File(outputFolder, "${slave.modelDescription.modelName}_out.csv").apply {
-                writeText(sb.toString())
-                LOG.info("Wrote results to file $absoluteFile")
-            }
+            return success
 
-
-            File(outputFolder, "passed").apply {
-                createNewFile()
-            }
         }
 
     }
