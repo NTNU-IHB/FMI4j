@@ -28,7 +28,7 @@ class PublishPlugin implements Plugin<Project>{
             project.apply(plugin: MavenPublishPlugin)
             project.apply(plugin: SigningPlugin)
 
-            def snapshot = false
+            def snapshot = true
             project.group = 'no.mechatronics.sfi.fmi4j'
             project.version = snapshot? 'dev-SNAPSHOT' : '0.13.1'
 
