@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory
 import java.io.File
 import java.lang.Exception
 
-private const val FMI4j_VERSION = "0.13.0"
+private const val FMI4j_VERSION = "0.13.1"
 
 private const val README = """
         The cross-check results have been generated with FMI4j's FmuDriver.
