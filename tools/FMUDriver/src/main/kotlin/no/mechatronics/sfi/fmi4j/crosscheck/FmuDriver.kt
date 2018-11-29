@@ -24,6 +24,7 @@
 
 package no.mechatronics.sfi.fmi4j.crosscheck
 
+import no.mechatronics.sfi.fmi4j.common.FmuSlave
 import no.mechatronics.sfi.fmi4j.importer.Fmu
 import no.mechatronics.sfi.fmi4j.solvers.Solver
 import no.sfi.mechatronics.fmi4j.me.ApacheSolvers
@@ -66,15 +67,32 @@ class FmuDriver(
 
     var failOnLargeSize = false
 
+
     fun run() {
 
-        Fmu.from(fmuPath).let {
+        Fmu.from(fmuPath).also { fmu ->
             if (modelExchange) {
-                it.asModelExchangeFmu().newInstance( solver )
+
+                if (modelExchange && !fmu.supportsModelExchange) {
+                    throw Failure("FMU does not support Model Exchange!")
+                }
+
+                simulate(fmu.asModelExchangeFmu().newInstance( solver ))
             } else {
-                it.asCoSimulationFmu().newInstance()
+
+                if (!modelExchange && !fmu.supportsCoSimulation) {
+                    throw Failure("FMU does not support Co-simulation!")
+                }
+
+                simulate(fmu.asCoSimulationFmu().newInstance())
             }
-        }.use { slave ->
+        }
+
+    }
+
+    fun simulate(slave: FmuSlave) {
+
+        slave.use {
 
             slave.simpleSetup(startTime, stopTime)
 
@@ -100,25 +118,26 @@ class FmuDriver(
 
             if (outputFolder != null) {
 
-               File(outputFolder).apply {
-                   if (!exists()) {
-                       mkdirs()
-                   }
-               }
+                File(outputFolder).apply {
+                    if (!exists()) {
+                        mkdirs()
+                    }
+                }
 
                 val data = sb.toString()
                 if (data.toByteArray().size > 2.5e7) {
                     throw Rejection("Generated csv to large.")
                 }
 
-               File(outputFolder, "${fmuPath.nameWithoutExtension}_out.csv").apply {
-                   writeText(data)
-                   LOG.info("Wrote results to file $absoluteFile")
-               }
+                File(outputFolder, "${fmuPath.nameWithoutExtension}_out.csv").apply {
+                    writeText(data)
+                    LOG.info("Wrote results to file $absoluteFile")
+                }
             }
 
         }
 
     }
+
 
 }
