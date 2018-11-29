@@ -84,77 +84,6 @@ interface FmuProvider: IFmu {
 
 }
 
-class CoSimulationFmu(
-        private val fmu: Fmu
-): IFmu by fmu {
-
-    override val modelDescription: CoSimulationModelDescription by lazy {
-        fmu.modelDescription.asCoSimulationModelDescription()
-    }
-
-    private val libraryCache: Fmi2CoSimulationLibrary by lazy {
-        loadLibrary()
-    }
-
-    private fun loadLibrary(): Fmi2CoSimulationLibrary {
-        val modelIdentifier = modelDescription.modelIdentifier
-        val libName = fmu.getAbsoluteLibraryPath(modelIdentifier)
-        return Fmi2CoSimulationLibrary(libName).also {
-            fmu.registerLibrary(it)
-        }
-    }
-
-    @JvmOverloads
-    fun newInstance(visible: Boolean = false, loggingOn: Boolean = false): CoSimulationSlave {
-        val lib = if (modelDescription.canBeInstantiatedOnlyOncePerProcess) loadLibrary() else libraryCache
-        val c = fmu.instantiate(modelDescription, lib, FmiType.CO_SIMULATION, visible, loggingOn)
-        val wrapper = CoSimulationLibraryWrapper(c, lib)
-        return CoSimulationSlave(wrapper, modelDescription).also {
-            fmu.registerInstance(it)
-        }
-    }
-
-}
-
-class ModelExchangeFmu(
-        private val fmu: Fmu
-): IFmu by fmu {
-
-    override val modelDescription: ModelExchangeModelDescription by lazy {
-        fmu.modelDescription.asModelExchangeModelDescription()
-    }
-
-    private val libraryCache: Fmi2ModelExchangeLibrary by lazy {
-        loadLibrary()
-    }
-
-    private fun loadLibrary(): Fmi2ModelExchangeLibrary {
-        val modelIdentifier = modelDescription.modelIdentifier
-        val libName = fmu.getAbsoluteLibraryPath(modelIdentifier)
-        return Fmi2ModelExchangeLibrary(libName).also {
-            fmu.registerLibrary(it)
-        }
-    }
-
-    @JvmOverloads
-    fun newInstance(visible: Boolean = false, loggingOn: Boolean = false): ModelExchangeInstance {
-        val lib = if (modelDescription.canBeInstantiatedOnlyOncePerProcess) loadLibrary() else libraryCache
-        val c = fmu.instantiate(modelDescription, lib, FmiType.MODEL_EXCHANGE, visible, loggingOn)
-        val wrapper = ModelExchangeLibraryWrapper(c, lib)
-        return ModelExchangeInstance(wrapper, modelDescription).also {
-            fmu.registerInstance(it)
-        }
-    }
-
-    @JvmOverloads
-    fun newInstance(solver: Solver, visible: Boolean = false, loggingOn: Boolean = false): ModelExchangeFmuStepper {
-        return newInstance(visible, loggingOn).let {
-            ModelExchangeFmuStepper(it, solver)
-        }
-    }
-
-}
-
 /**
  *
  * Represents an FMU
@@ -162,7 +91,7 @@ class ModelExchangeFmu(
  * @author Lars Ivar Hatledal
  */
 class Fmu private constructor(
-        private val fmuFile: File
+        val fmuFile: File
 ) : FmuProvider {
 
     private var isClosed = false
@@ -250,7 +179,7 @@ class Fmu private constructor(
     override fun close() {
         if (!isClosed) {
 
-            LOG.debug("Closing FMU '${modelDescription.modelName}'..")
+            LOG.debug("Closing FMU '$fmuFile'..")
 
             terminateInstances()
             disposeNativeLibraries()
