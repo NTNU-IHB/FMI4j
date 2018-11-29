@@ -90,7 +90,7 @@ class FmuDriver(
 
     }
 
-    fun simulate(slave: FmuSlave) {
+    private fun simulate(slave: FmuSlave) {
 
         slave.use {
 
