@@ -130,8 +130,10 @@ class FmuDriver(
                 }
 
                 val data = sb.toString()
-                if (data.toByteArray().size > 2.5e7) {
-                    throw Rejection("Generated csv to large.")
+                data.toByteArray().size.also { size ->
+                    if (size > 1e6) {
+                        throw Rejection("Generated CSV larger than 1MB. Was: ${size/1e6}MB")
+                    }
                 }
 
                 File(options.outputFolder, "${fmuPath.nameWithoutExtension}_out.csv").apply {

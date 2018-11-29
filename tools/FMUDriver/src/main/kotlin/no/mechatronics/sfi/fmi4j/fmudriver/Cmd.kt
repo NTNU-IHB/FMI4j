@@ -39,15 +39,17 @@ object Cmd {
         lateinit var outputVariables: Array<String>
 
         override fun run() {
-            FmuDriver(fmuPath, outputVariables, outputFolder).apply {
 
-                startTime = this@Args.startTime
-                stopTime = this@Args.stopTime
-                stepSize = this@Args.stepSize
-                relTol = this@Args.relTol
+            val options = DriverOptions(
+                    startTime = this@Args.startTime,
+                    stopTime = this@Args.stopTime,
+                    stepSize = this@Args.stepSize,
 
-                modelExchange = this@Args.modelExchange
-            }.run()
+                    outputVariables = outputVariables,
+                    outputFolder = outputFolder
+            )
+
+            FmuDriver(fmuPath, options).run()
         }
 
     }
