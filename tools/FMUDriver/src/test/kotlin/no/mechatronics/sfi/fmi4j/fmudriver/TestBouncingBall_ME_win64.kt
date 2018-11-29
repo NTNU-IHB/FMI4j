@@ -1,4 +1,4 @@
-package no.mechatronics.sfi.fmi4j.crosscheck
+package no.mechatronics.sfi.fmi4j.fmudriver
 
 import no.mechatronics.sfi.fmu2jar.TEST_FMUs
 import org.junit.jupiter.api.Assertions

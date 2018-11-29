@@ -1,4 +1,4 @@
-package no.mechatronics.sfi.fmi4j.crosscheck
+package no.mechatronics.sfi.fmi4j.fmudriver
 
 import no.mechatronics.sfi.fmi4j.modeldescription.parser.ModelDescriptionParser
 import org.junit.jupiter.api.condition.OS
@@ -73,7 +73,7 @@ object CrossChecker {
 
     fun crossCheck(fmuDir: File, resultDir: File): Boolean {
 
-        val outputDir = File(resultDir, getDefaultOutputDir(fmuDir)).apply {
+        val outputFolder = File(resultDir, getDefaultOutputDir(fmuDir)).apply {
             if (!exists()) {
                 mkdirs()
             }
@@ -100,7 +100,7 @@ object CrossChecker {
         var failedOrRejected = false
 
         fun reject(reason: String) {
-            File(outputDir, "rejected").apply {
+            File(outputFolder, "rejected").apply {
                 createNewFile()
                 writeText(reason)
             }
@@ -109,7 +109,7 @@ object CrossChecker {
         }
 
         fun fail(reason: String) {
-            File(outputDir, "failed").apply {
+            File(outputFolder, "failed").apply {
                 createNewFile()
                 writeText(reason)
             }
@@ -118,7 +118,7 @@ object CrossChecker {
         }
 
         fun pass() {
-            File(outputDir, "passsed").apply {
+            File(outputFolder, "passsed").apply {
                 createNewFile()
             }
         }
@@ -126,23 +126,24 @@ object CrossChecker {
         try {
             val md = ModelDescriptionParser.parse(fmuPath)
 
+            val options = DriverOptions(
+                    startTime = defaults.startTime,
+                    stopTime = defaults.stopTime,
+                    stepSize = defaults.stepSize,
+
+                    outputVariables = variables,
+                    outputFolder = outputFolder,
+
+                    failOnLargeSize = true
+            )
+
             when {
                 OS.LINUX.isCurrentOs && "JModelica.org" in fmuDir.absolutePath -> reject("System crashes")
                 defaults.stepSize < 0 -> reject("Invalid stepSize")
                 defaults.stepSize == 0.0 -> fail("Unable to handle variable step solver")
                 inputData != null -> fail("Unable to handle input files")
                 md.asCoSimulationModelDescription().needsExecutionTool -> reject("Requires execution tool")
-                else -> FmuDriver(fmuPath, variables, outputDir).apply {
-
-                    startTime = defaults.startTime
-                    stopTime = defaults.stopTime
-                    stepSize = defaults.stepSize
-
-                    failOnLargeSize = true
-
-
-                }.run()
-
+                else -> FmuDriver(fmuPath, options).run()
             }
 
             pass()
@@ -162,7 +163,7 @@ object CrossChecker {
             }!!
         }
 
-        File(outputDir, "README.md").apply {
+        File(outputFolder, "README.md").apply {
             writeText(README)
         }
 

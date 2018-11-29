@@ -1,4 +1,4 @@
-package no.mechatronics.sfi.fmi4j.crosscheck
+package no.mechatronics.sfi.fmi4j.fmudriver
 
 import no.mechatronics.sfi.fmi4j.common.currentOS
 import no.mechatronics.sfi.fmu2jar.TEST_FMUs

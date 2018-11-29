@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package no.mechatronics.sfi.fmi4j.crosscheck
+package no.mechatronics.sfi.fmi4j.fmudriver
 
 import no.mechatronics.sfi.fmi4j.common.FmuSlave
 import no.mechatronics.sfi.fmi4j.importer.Fmu
@@ -32,11 +32,7 @@ import org.apache.commons.csv.CSVFormat
 import org.apache.commons.csv.CSVPrinter
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import picocli.CommandLine
 import java.io.File
-import java.lang.RuntimeException
-import java.text.DecimalFormat
-import java.text.NumberFormat
 
 
 class Rejection(
@@ -47,40 +43,45 @@ class Failure(
         val reason: String
 ): Exception(reason)
 
+data class DriverOptions(
+
+        val startTime: Double = 0.0,
+        val stopTime: Double = 0.0,
+        val stepSize: Double = 1E-3,
+
+        val modelExchange: Boolean = false,
+        val solver: Solver = ApacheSolvers.rk4(1E-3),
+
+        val failOnLargeSize: Boolean = false,
+
+        val outputFolder: String? = null,
+        val outputVariables: Array<String>
+)
+
 /**
  * @author Lars Ivar Hatledal
  */
 class FmuDriver(
         private val fmuPath: File,
-        private val outputVariables: Array<String>,
-        private var outputFolder: String? = null
+        private val options: DriverOptions
 ) {
 
     private val LOG: Logger = LoggerFactory.getLogger(FmuDriver::class.java)
-
-    var startTime: Double = 0.0
-    var stopTime: Double = 10.0
-    var stepSize: Double = 1E-3
-
-    var modelExchange: Boolean = false
-    var solver: Solver = ApacheSolvers.rk4(1E-3)
-
-    var failOnLargeSize = false
 
 
     fun run() {
 
         Fmu.from(fmuPath).also { fmu ->
-            if (modelExchange) {
+            if (options.modelExchange) {
 
-                if (modelExchange && !fmu.supportsModelExchange) {
+                if (options.modelExchange && !fmu.supportsModelExchange) {
                     throw Failure("FMU does not support Model Exchange!")
                 }
 
-                simulate(fmu.asModelExchangeFmu().newInstance( solver ))
+                simulate(fmu.asModelExchangeFmu().newInstance( options.solver ))
             } else {
 
-                if (!modelExchange && !fmu.supportsCoSimulation) {
+                if (!options.modelExchange && !fmu.supportsCoSimulation) {
                     throw Failure("FMU does not support Co-simulation!")
                 }
 
@@ -94,12 +95,16 @@ class FmuDriver(
 
         slave.use {
 
-            slave.simpleSetup(startTime, stopTime)
+            val startTime = options.startTime
+            val stopTime = options.stopTime
+            val stepSize = options.stepSize
+
+            slave.simpleSetup(options.startTime, options.stopTime)
 
             val sb = StringBuilder()
-            val printer = CSVPrinter(sb, CSVFormat.DEFAULT.withQuote('"').withHeader("Time", *outputVariables))
+            val printer = CSVPrinter(sb, CSVFormat.DEFAULT.withQuote('"').withHeader("Time", *options.outputVariables))
 
-            val outputVariables = outputVariables.map {
+            val outputVariables = options.outputVariables.map {
                 slave.modelVariables.getByName(it)
             }
 
@@ -116,9 +121,9 @@ class FmuDriver(
                 }
             }
 
-            if (outputFolder != null) {
+            if (options.outputFolder != null) {
 
-                File(outputFolder).apply {
+                File(options.outputFolder).apply {
                     if (!exists()) {
                         mkdirs()
                     }
@@ -129,7 +134,7 @@ class FmuDriver(
                     throw Rejection("Generated csv to large.")
                 }
 
-                File(outputFolder, "${fmuPath.nameWithoutExtension}_out.csv").apply {
+                File(options.outputFolder, "${fmuPath.nameWithoutExtension}_out.csv").apply {
                     writeText(data)
                     LOG.info("Wrote results to file $absoluteFile")
                 }

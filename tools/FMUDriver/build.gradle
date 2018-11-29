@@ -7,7 +7,7 @@ plugins {
 
 println "Gradle version is ${gradle.getGradleVersion()}"
 
-def group = "no.mechatronics.sfi.fmi4j.crosscheck"
+def group = "no.mechatronics.sfi.fmi4j.fmudriver"
 mainClassName = "${group}.FmuDriver"
 
 def fmi4j_snapshot = false

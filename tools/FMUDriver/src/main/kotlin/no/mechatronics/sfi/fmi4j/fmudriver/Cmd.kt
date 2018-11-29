@@ -1,4 +1,4 @@
-package no.mechatronics.sfi.fmi4j.crosscheck
+package no.mechatronics.sfi.fmi4j.fmudriver
 
 import picocli.CommandLine
 import java.io.File
