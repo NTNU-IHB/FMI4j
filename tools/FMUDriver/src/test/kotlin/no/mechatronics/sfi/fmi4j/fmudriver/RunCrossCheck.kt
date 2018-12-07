@@ -6,6 +6,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.File
 import java.lang.Exception
+import java.util.concurrent.atomic.AtomicInteger
 
 private const val FMI4j_VERSION = "0.13.1"
 
@@ -212,21 +213,26 @@ object CrossChecker {
 
         fun crosscheck(dir: File): Int {
 
-            var numPassed = 0
-            dir.listFiles().forEach { vendor ->
+            var numPassed = AtomicInteger(0)
 
+            val fmus = mutableListOf<File>();
+            dir.listFiles().forEach { vendor ->
                 vendor.listFiles().forEach { version ->
                     version.listFiles().forEach { fmu ->
-                        if (CrossChecker.crossCheck(fmu, File(crossCheckDir, "results"))) {
-                            numPassed++
-                        }
+                        fmus.add(fmu)
 
                     }
-
                 }
 
             }
-            return numPassed
+
+            fmus.parallelStream().forEach { fmu ->
+                if (CrossChecker.crossCheck(fmu, File(crossCheckDir, "results"))) {
+                    numPassed.incrementAndGet()
+                }
+            }
+
+            return numPassed.get()
         }
 
         LOG.info("${crosscheck(csPath)} Co-simulation FMUs passed cross-check")
