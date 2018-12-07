@@ -18,7 +18,7 @@ private const val README = """
         ```
         """
 
-data class opt(
+data class XCOptions(
         var startTime: Double = 0.0,
         var stopTime: Double = 10.0,
         var stepSize: Double = 1e-3,
@@ -28,9 +28,9 @@ data class opt(
 
     companion object {
 
-        fun parse(txt: String): opt {
+        fun parse(txt: String): XCOptions {
 
-            return opt().apply {
+            return XCOptions().apply {
 
                 txt.trim().split("\n").forEach { line ->
 
@@ -99,7 +99,7 @@ object CrossChecker {
 
         val variables = parseVariables(refData.reader().buffered().readLine())
 
-        val defaults = opt.parse(fmuDir.listFiles().find {
+        val defaults = XCOptions.parse(fmuDir.listFiles().find {
             it.name.endsWith(".opt")
         }!!.readText())
 
@@ -176,24 +176,18 @@ object CrossChecker {
     }
 
     private fun getDefaultOutputDir(fmuFile: File): String {
-        var fmuFile = fmuFile
+        var currentFile = fmuFile
         var names = mutableListOf<String>()
         for (i in 0..2) {
-            names.add(fmuFile.name)
-            fmuFile = fmuFile.parentFile
+            names.add(currentFile.name)
+            currentFile = currentFile.parentFile
         }
 
         names.addAll(listOf(FMI4j_VERSION, "FMI4j"))
 
         for (i in 0..2) {
-            val name = when (fmuFile.name) {
-                "CoSimulation" -> "cs"
-                "ModelExchange" -> "me"
-                "FMI_2.0" -> "2.0"
-                else -> fmuFile.name
-            }
-            names.add(name)
-            fmuFile = fmuFile.parentFile
+            names.add(currentFile.name)
+            currentFile = currentFile.parentFile
         }
         return names.reverse().let { names.joinToString("/") }
     }
@@ -216,16 +210,15 @@ object CrossChecker {
             if (exists()) deleteRecursively()
         }
 
-
         fun crosscheck(dir: File): Int {
 
-            var passed = 0
+            var numPassed = 0
             dir.listFiles().forEach { vendor ->
 
                 vendor.listFiles().forEach { version ->
                     version.listFiles().forEach { fmu ->
                         if (CrossChecker.crossCheck(fmu, File(crossCheckDir, "results"))) {
-                            passed++
+                            numPassed++
                         }
 
                     }
@@ -233,7 +226,7 @@ object CrossChecker {
                 }
 
             }
-            return passed
+            return numPassed
         }
 
         LOG.info("${crosscheck(csPath)} Co-simulation FMUs passed cross-check")
