@@ -120,7 +120,7 @@ class FmuDriver(
                 printer.printRecord(slave.simulationTime, *outputVariables.map { it.read(slave).value }.toTypedArray())
             }
 
-            while (slave.simulationTime <= (stopTime - stepSize)) {
+            while (slave.simulationTime <= stopTime) {
                 record()
                 if (!slave.doStep(stepSize)) {
                     throw Failure("Simulation terminated prematurely!")
