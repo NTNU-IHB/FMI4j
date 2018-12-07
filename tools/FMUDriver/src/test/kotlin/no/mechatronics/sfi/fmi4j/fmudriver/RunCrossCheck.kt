@@ -127,6 +127,7 @@ object CrossChecker {
             File(outputFolder, "passed").apply {
                 createNewFile()
             }
+            LOG.info("FMU '$fmuPath' passed crosscheck")
         }
 
         try {
