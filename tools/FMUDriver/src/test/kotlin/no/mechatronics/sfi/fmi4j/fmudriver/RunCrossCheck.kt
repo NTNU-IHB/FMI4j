@@ -70,9 +70,9 @@ object CrossChecker {
 
     private val LOG: Logger = LoggerFactory.getLogger(CrossChecker::class.java)
 
-    private fun parseVariables(txt: String): Array<String> {
+    private fun parseVariables(txt: String): List<String>{
         return txt.split(",").let {
-            it.subList(1, it.size).map { it.replace("^\"|\"$".toRegex(), "").trim() }.toTypedArray()
+            it.subList(1, it.size).map { it.replace("^\"|\"$".toRegex(), "").trim() }
         }
     }
 
@@ -146,7 +146,7 @@ object CrossChecker {
 
             when {
                 OS.LINUX.isCurrentOs && "JModelica.org" in fmuDir.absolutePath -> reject("System crashes.")
-                defaults.stepSize < 0 -> reject("Invalid stepSize (stepsize < 0).")
+                defaults.stepSize < 0 -> reject("Invalid stepSize (stepSize < 0).")
                 defaults.startTime >= defaults.stopTime -> reject("Invalid start and or stop time (startTime >= stopTime).")
                 defaults.stepSize == 0.0 -> fail("Don't know how to handle variable step solver (stepsize=0.0).")
                 inputData != null -> fail("Unable to handle input files yet.")
@@ -154,7 +154,9 @@ object CrossChecker {
                 else -> FmuDriver(fmuPath, options).run()
             }
 
-            pass()
+            if (!failedOrRejected) {
+                pass()
+            }
 
         } catch (ex: Exception) {
 
