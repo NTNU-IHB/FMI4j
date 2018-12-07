@@ -30,6 +30,7 @@ import no.mechatronics.sfi.fmi4j.solvers.Solver
 import no.sfi.mechatronics.fmi4j.me.ApacheSolvers
 import org.apache.commons.csv.CSVFormat
 import org.apache.commons.csv.CSVPrinter
+import org.apache.commons.csv.QuoteMode
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.File
@@ -55,7 +56,7 @@ data class DriverOptions(
         val failOnLargeSize: Boolean = false,
 
         val outputFolder: String? = null,
-        val outputVariables: Array<String>
+        val outputVariables: List<String>
 )
 
 /**
@@ -93,7 +94,7 @@ class FmuDriver(
 
     private fun simulate(slave: FmuSlave) {
 
-        slave.use {
+        slave.use { slave ->
 
             val startTime = options.startTime
             val stopTime = options.stopTime
@@ -102,7 +103,12 @@ class FmuDriver(
             slave.simpleSetup(options.startTime, options.stopTime)
 
             val sb = StringBuilder()
-            val printer = CSVPrinter(sb, CSVFormat.DEFAULT.withQuote('"').withHeader("Time", *options.outputVariables))
+            val header = arrayOf("\"Time\"", *options.outputVariables.map { '"' + it + '"' }.toTypedArray())
+            val csvFormat = CSVFormat.DEFAULT
+                    .withHeader(*header)
+                    .withEscape('\\')
+                    .withQuoteMode(QuoteMode.NONE)
+            val printer = CSVPrinter(sb, csvFormat)
 
             val outputVariables = options.outputVariables.map {
                 slave.modelVariables.getByName(it)
@@ -117,7 +123,7 @@ class FmuDriver(
             while (slave.simulationTime <= (stopTime - stepSize)) {
                 record()
                 if (!slave.doStep(stepSize)) {
-                    throw Failure("Simulation terminated prematurely")
+                    throw Failure("Simulation terminated prematurely!")
                 }
             }
 
@@ -132,13 +138,13 @@ class FmuDriver(
                 val data = sb.toString()
                 data.toByteArray().size.also { size ->
                     if (size > 1e6) {
-                        throw Rejection("Generated CSV larger than 1MB. Was: ${size/1e6}MB")
+                        throw Rejection("Generated CSV larger than 1MB. Was: ${size/1e6}MB!")
                     }
                 }
 
                 File(options.outputFolder, "${fmuPath.nameWithoutExtension}_out.csv").apply {
                     writeText(data)
-                    LOG.info("Wrote results to file $absoluteFile")
+                    LOG.info("Wrote results to file $absoluteFile..")
                 }
             }
 

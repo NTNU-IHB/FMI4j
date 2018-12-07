@@ -36,7 +36,7 @@ object Cmd {
         var modelExchange: Boolean = false
 
         @CommandLine.Parameters(arity = "1..*", paramLabel = "variables", description = ["Variables to print."])
-        lateinit var outputVariables: Array<String>
+        lateinit var outputVariables: List<String>
 
         override fun run() {
 
@@ -54,6 +54,7 @@ object Cmd {
 
     }
 
+    @JvmStatic
     fun main(args: Array<String>) {
         CommandLine.run(Args(), System.out, *args)
     }
