@@ -100,7 +100,7 @@ class FmuDriver(
             val stopTime = options.stopTime
             val stepSize = options.stepSize
 
-            slave.simpleSetup(options.startTime, options.stopTime)
+            slave.simpleSetup(options.startTime)
 
             val sb = StringBuilder()
             val header = arrayOf("\"Time\"", *options.outputVariables.map { '"' + it + '"' }.toTypedArray())
