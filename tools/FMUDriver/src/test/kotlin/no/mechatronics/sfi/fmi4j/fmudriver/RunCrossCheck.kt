@@ -144,11 +144,12 @@ object CrossChecker {
             )
 
             when {
-                OS.LINUX.isCurrentOs && "JModelica.org" in fmuDir.absolutePath -> reject("System crashes")
-                defaults.stepSize < 0 -> reject("Invalid stepSize")
-                defaults.stepSize == 0.0 -> fail("Unable to handle variable step solver")
-                inputData != null -> fail("Unable to handle input files")
-                md.asCoSimulationModelDescription().needsExecutionTool -> reject("Requires execution tool")
+                OS.LINUX.isCurrentOs && "JModelica.org" in fmuDir.absolutePath -> reject("System crashes.")
+                defaults.stepSize < 0 -> reject("Invalid stepSize (stepsize < 0).")
+                defaults.startTime >= defaults.stopTime -> reject("Invalid start and or stop time (startTime >= stopTime).")
+                defaults.stepSize == 0.0 -> fail("Don't know how to handle variable step solver (stepsize=0.0).")
+                inputData != null -> fail("Unable to handle input files yet.")
+                md.asCoSimulationModelDescription().needsExecutionTool -> reject("FMU requires execution tool.")
                 else -> FmuDriver(fmuPath, options).run()
             }
 
@@ -161,12 +162,6 @@ object CrossChecker {
                 is Failure -> fail(ex.reason)
                 else -> fail("Program error: $ex")
             }
-        }
-
-        if (!failedOrRejected) {
-            val refData = fmuDir.listFiles().find {
-                it.name.endsWith("ref.csv")
-            }!!
         }
 
         File(outputFolder, "README.md").apply {
