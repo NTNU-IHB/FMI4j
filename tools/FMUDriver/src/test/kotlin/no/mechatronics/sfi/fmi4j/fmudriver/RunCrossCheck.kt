@@ -24,54 +24,60 @@ data class opt(
         var stepSize: Double = 1e-3,
         var relTol: Double = 1e-3,
         var absTol: Double = 1e-3
-)
+) {
 
-object CrossChecker {
+    companion object {
 
-    private val LOG: Logger = LoggerFactory.getLogger(CrossChecker::class.java)
+        fun parse(txt: String): opt {
 
-    fun parseDefaults(txt: String): opt {
+            return opt().apply {
 
-        val opt = opt()
+                txt.trim().split("\n").forEach { line ->
 
-        txt.trim().split("\n").forEach { line ->
+                    val split = line.split(",")
+                    if (split.isNotEmpty()) {
+                        val (fst, snd) = split
+                        when (fst) {
+                            "StartTime" -> {
+                                startTime = snd.toDouble()
+                            }
+                            "StopTime" -> {
+                                stopTime = snd.toDouble()
+                            }
+                            "StepSize" -> {
+                                stepSize = snd.toDouble()
+                            }
+                            "RelTol" -> {
+                                relTol = snd.toDouble()
+                            }
+                            "AbsTol" -> {
+                                absTol = snd.toDouble()
+                            }
+                        }
 
-            val split = line.split(",")
-            if (split.isNotEmpty()) {
-                val (fst, snd) = split
-                when (fst) {
-                    "StartTime" -> {
-                        opt.startTime = snd.toDouble()
                     }
-                    "StopTime" -> {
-                        opt.stopTime = snd.toDouble()
-                    }
-                    "StepSize" -> {
-                        opt.stepSize = snd.toDouble()
-                    }
-                    "RelTol" -> {
-                        opt.relTol = snd.toDouble()
-                    }
-                    "AbsTol" -> {
-                        opt.absTol = snd.toDouble()
-                    }
+
                 }
 
             }
 
         }
 
-        return opt
     }
+}
 
-    fun parseVariables(txt: String): Array<String> {
+object CrossChecker {
+
+    private val LOG: Logger = LoggerFactory.getLogger(CrossChecker::class.java)
+
+    private fun parseVariables(txt: String): Array<String> {
         return txt.split(",").let {
             it.subList(1, it.size).map { it.replace("^\"|\"$".toRegex(), "").trim() }.toTypedArray()
         }
     }
 
 
-    fun crossCheck(fmuDir: File, resultDir: File): Boolean {
+    private fun crossCheck(fmuDir: File, resultDir: File): Boolean {
 
         val outputFolder = File(resultDir, getDefaultOutputDir(fmuDir)).apply {
             if (!exists()) {
@@ -93,7 +99,7 @@ object CrossChecker {
 
         val variables = parseVariables(refData.reader().buffered().readLine())
 
-        val defaults = parseDefaults(fmuDir.listFiles().find {
+        val defaults = opt.parse(fmuDir.listFiles().find {
             it.name.endsWith(".opt")
         }!!.readText())
 
@@ -118,7 +124,7 @@ object CrossChecker {
         }
 
         fun pass() {
-            File(outputFolder, "passsed").apply {
+            File(outputFolder, "passed").apply {
                 createNewFile()
             }
         }
@@ -194,6 +200,47 @@ object CrossChecker {
         return names.reverse().let { names.joinToString("/") }
     }
 
+    fun run(crossCheckDir: String) {
+
+        val platform = when {
+            OS.LINUX.isCurrentOs -> "linux64"
+            OS.WINDOWS.isCurrentOs -> "win64"
+            else -> throw AssertionError("Invalid platform..")
+        }
+
+        val csPath = File("$crossCheckDir/fmus/2.0/cs/$platform")
+
+        File("$crossCheckDir/results/2.0/cs/$platform/FMI4j/$FMI4j_VERSION").apply {
+            if (exists()) deleteRecursively()
+        }
+
+        File("$crossCheckDir/results/2.0/me/$platform/FMI4j/$FMI4j_VERSION").apply {
+            if (exists()) deleteRecursively()
+        }
+
+
+        fun crosscheck(dir: File): Int {
+
+            var passed = 0
+            dir.listFiles().forEach { vendor ->
+
+                vendor.listFiles().forEach { version ->
+                    version.listFiles().forEach { fmu ->
+                        if (CrossChecker.crossCheck(fmu, File(crossCheckDir, "results"))) {
+                            passed++
+                        }
+
+                    }
+
+                }
+
+            }
+            return passed
+        }
+
+        LOG.info("${crosscheck(csPath)} Co-simulation FMUs passed cross-check")
+    }
+
 }
 
 fun main(args: Array<String>) {
@@ -202,43 +249,6 @@ fun main(args: Array<String>) {
         return
     }
 
-    val platform = when {
-        OS.LINUX.isCurrentOs -> "linux64"
-        OS.WINDOWS.isCurrentOs -> "win64"
-        else -> throw AssertionError("Invalid platform..")
-    }
-
-    val crossCheckDir = "${args[0]}"
-    val csPath = File("$crossCheckDir/fmus/2.0/cs/$platform")
-
-    File("$crossCheckDir/results/2.0/cs/$platform/FMI4j/$FMI4j_VERSION").apply {
-        if (exists()) deleteRecursively()
-    }
-
-    File("$crossCheckDir/results/2.0/me/$platform/FMI4j/$FMI4j_VERSION").apply {
-        if (exists()) deleteRecursively()
-    }
-
-
-    fun crosscheck(dir: File): Int {
-
-        var passed = 0
-        dir.listFiles().forEach { vendor ->
-
-            vendor.listFiles().forEach { version ->
-                version.listFiles().forEach { fmu ->
-                    if (CrossChecker.crossCheck(fmu, File(crossCheckDir, "results"))) {
-                        passed++
-                    }
-
-                }
-
-            }
-
-        }
-        return passed
-    }
-
-    println("${crosscheck(csPath)} Co-simulation FMUs passed cross-check")
+    CrossChecker.run(args[0])
 
 }
