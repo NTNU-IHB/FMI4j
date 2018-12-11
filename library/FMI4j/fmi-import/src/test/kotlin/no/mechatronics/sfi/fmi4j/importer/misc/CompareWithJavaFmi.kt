@@ -1,8 +1,6 @@
 package no.mechatronics.sfi.fmi4j.importer.misc
 
-
-import no.mechatronics.sfi.fmi4j.TestUtils
-import no.mechatronics.sfi.fmi4j.common.currentOS
+import no.mechatronics.sfi.fmi4j.TestFMUs
 import no.mechatronics.sfi.fmi4j.importer.Fmu
 import org.javafmi.proxy.Status
 import org.javafmi.wrapper.Simulation
@@ -13,7 +11,6 @@ import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import java.io.File
 import java.time.Duration
 import java.time.Instant
 
@@ -23,17 +20,19 @@ class CompareWithJavaFmi {
 
     companion object {
         private val LOG: Logger = LoggerFactory.getLogger(CompareWithJavaFmi::class.java)
+
+        private val file = TestFMUs.fmi20().cs()
+                .vendor("20sim").version("4.6.4.8004").file("ControlledTemperature")
+
+        private val fmu = Fmu.from(file).asCoSimulationFmu()
+
+
     }
-
-    private val path = "${TestUtils.getTEST_FMUs()}/2.0/cs/$currentOS" +
-            "/20sim/4.6.4.8004/ControlledTemperature/ControlledTemperature.fmu"
-
-    private val fmu = Fmu.from(File(path)).asCoSimulationFmu()
 
     @AfterAll
     fun tearDown() {
         fmu.close()
-        Simulation(path).apply {
+        Simulation(file.absolutePath).apply {
             fmuFile.deleteTemporalFolder()
         }
     }
@@ -66,7 +65,7 @@ class CompareWithJavaFmi {
         var duration1: Long = 0
         var duration2: Long = 0
 
-        Simulation(path).apply {
+        Simulation(file.absolutePath).apply {
 
             val start = Instant.now()
             init(0.0)

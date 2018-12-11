@@ -1,9 +1,7 @@
 package no.mechatronics.sfi.fmi4j.modeldescription.vendors.openmodelica
 
-import no.mechatronics.sfi.fmi4j.TestUtils
-import no.mechatronics.sfi.fmi4j.common.currentOS
+import no.mechatronics.sfi.fmi4j.TestFMUs
 import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescription
-import no.mechatronics.sfi.fmi4j.modeldescription.parser.ModelDescriptionParser
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
@@ -20,10 +18,9 @@ class FmuExportCrossCompileTest {
 
         val LOG: Logger = LoggerFactory.getLogger(FmuExportCrossCompileTest::class.java)
 
-        val fmuFile = File(TestUtils.getTEST_FMUs(),
-                "2.0/cs/$currentOS/OpenModelica/v1.11.0/" +
-                        "FmuExportCrossCompile/FmuExportCrossCompile.fmu")
-        val modelDescription = ModelDescriptionParser.parse(fmuFile)
+        val modelDescription = TestFMUs.fmi20().cs()
+                .vendor("OpenModelica").version("v1.11.0")
+                .modelDescription("FmuExportCrossCompile")
 
     }
 

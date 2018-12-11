@@ -1,7 +1,6 @@
 package no.mechatronics.sfi.fmi4j.modeldescription.vendors.fmusdk
 
-import no.mechatronics.sfi.fmi4j.TestUtils
-import no.mechatronics.sfi.fmi4j.modeldescription.parser.ModelDescriptionParser
+import no.mechatronics.sfi.fmi4j.TestFMUs
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
@@ -10,7 +9,6 @@ import org.junit.jupiter.api.condition.EnabledOnOs
 import org.junit.jupiter.api.condition.OS
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import java.io.File
 
 @EnabledOnOs(OS.WINDOWS)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -21,9 +19,9 @@ class VanDerPolTest {
 
         val LOG: Logger = LoggerFactory.getLogger(VanDerPolTest::class.java)
 
-        val fmuFile = File(TestUtils.getTEST_FMUs(),
-                "2.0/me/win64/FMUSDK/2.0.4/vanDerPol/vanDerPol.fmu")
-        val modelDescription = ModelDescriptionParser.parse(fmuFile).asModelExchangeModelDescription()
+        val modelDescription = TestFMUs.fmi20().cs()
+                .vendor("FMUSDK").version("2.0.4").modelDescription("vanDerPol")
+                .asModelExchangeModelDescription()
     }
 
     @Test

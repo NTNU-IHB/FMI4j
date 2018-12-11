@@ -1,7 +1,6 @@
 package no.mechatronics.sfi.fmi4j.importer.misc
 
-import no.mechatronics.sfi.fmi4j.TestUtils
-import no.mechatronics.sfi.fmi4j.common.currentOS
+import no.mechatronics.sfi.fmi4j.TestFMUs
 import no.mechatronics.sfi.fmi4j.importer.Fmu
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
@@ -16,9 +15,8 @@ class TestIllegalFmuInstanceType {
 
     @Test
     fun testNewInstanceME() {
-        val file = File(TestUtils.getTEST_FMUs(),
-                "2.0/cs/$currentOS/" +
-                        "20sim/4.6.4.8004/ControlledTemperature/ControlledTemperature.fmu")
+        val file = TestFMUs.fmi20().cs()
+                .vendor("20sim").version("4.6.4.8004").file("ControlledTemperature")
         Assertions.assertTrue(file.exists())
         Assertions.assertThrows(IllegalStateException::class.java) {
             Fmu.from(file).use {
@@ -30,8 +28,8 @@ class TestIllegalFmuInstanceType {
     @Test
     @EnabledOnOs(OS.WINDOWS)
     fun testNewInstanceCS() {
-        val file = File(TestUtils.getTEST_FMUs(),
-                "2.0/me/win64/FMUSDK/2.0.4/vanDerPol/vanDerPol.fmu")
+        val file = TestFMUs.fmi20().cs()
+                .vendor("FMUSDK").version("2.0.4").file("vanDerPol")
         Assertions.assertTrue(file.exists())
         Assertions.assertThrows(IllegalStateException::class.java) {
             Fmu.from(file).use {

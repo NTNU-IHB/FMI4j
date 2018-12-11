@@ -1,15 +1,12 @@
 package no.mechatronics.sfi.fmi4j.importer.cs.vendors.twentysim
 
-import no.mechatronics.sfi.fmi4j.TestUtils
+import no.mechatronics.sfi.fmi4j.TestFMUs
 import no.mechatronics.sfi.fmi4j.common.FmiStatus
-import no.mechatronics.sfi.fmi4j.common.currentOS
-import no.mechatronics.sfi.fmi4j.importer.Fmu
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import java.io.File
 
 @EnabledIfEnvironmentVariable(named = "TEST_FMUs", matches = ".*")
 class ControlledTemperatureTest {
@@ -21,11 +18,9 @@ class ControlledTemperatureTest {
     @Test
     fun test() {
 
-        val file = File(TestUtils.getTEST_FMUs(),
-                "2.0/cs/$currentOS" +
-                        "/20sim/4.6.4.8004/ControlledTemperature/ControlledTemperature.fmu")
-
-        Fmu.from(file).use { fmu ->
+        TestFMUs.fmi20().cs()
+                .vendor("20sim").version("4.6.4.8004")
+                .fmu("ControlledTemperature").use { fmu ->
 
             fmu.asCoSimulationFmu().newInstance(loggingOn = true).use { slave ->
 

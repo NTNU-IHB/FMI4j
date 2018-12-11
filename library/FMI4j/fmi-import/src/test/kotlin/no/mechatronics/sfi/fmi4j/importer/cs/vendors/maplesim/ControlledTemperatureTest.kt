@@ -1,15 +1,12 @@
 package no.mechatronics.sfi.fmi4j.importer.cs.vendors.maplesim
 
-import no.mechatronics.sfi.fmi4j.TestUtils
+import no.mechatronics.sfi.fmi4j.TestFMUs
 import no.mechatronics.sfi.fmi4j.common.FmiStatus
-import no.mechatronics.sfi.fmi4j.common.currentOS
-import no.mechatronics.sfi.fmi4j.importer.Fmu
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import java.io.File
 
 @EnabledIfEnvironmentVariable(named = "TEST_FMUs", matches = ".*")
 class ControlledTemperatureTest {
@@ -21,43 +18,41 @@ class ControlledTemperatureTest {
     @Test
     fun test() {
 
-        val file = File(TestUtils.getTEST_FMUs(),
-                "2.0/cs/$currentOS" +
-                        "/MapleSim/2017/ControlledTemperature/ControlledTemperature.fmu")
+        TestFMUs.fmi20().cs()
+                .vendor("MapleSim").version("2017")
+                .fmu("ControlledTemperature").use { fmu ->
 
-        Fmu.from(file).use { fmu ->
+                    fmu.asCoSimulationFmu().newInstance().use { slave ->
 
-            fmu.asCoSimulationFmu().newInstance().use { slave ->
+                        Assertions.assertEquals("2.0", slave.modelDescription.fmiVersion)
 
-                Assertions.assertEquals("2.0", slave.modelDescription.fmiVersion)
+                        val heatCapacitorT = slave.modelDescription
+                                .getVariableByName("heatCapacitor.T").asRealVariable()
+                        Assertions.assertEquals(2.93149999999999980e+02, heatCapacitorT.start!!)
 
-                val heatCapacitor_T = slave.modelDescription
-                        .getVariableByName("heatCapacitor.T").asRealVariable()
-                Assertions.assertEquals(2.93149999999999980e+02, heatCapacitor_T.start!!)
+                        slave.simpleSetup()
+                        Assertions.assertTrue(slave.lastStatus === FmiStatus.OK)
 
-                slave.simpleSetup()
-                Assertions.assertTrue(slave.lastStatus === FmiStatus.OK)
+                        LOG.debug("heatCapacitor_T=${heatCapacitorT.read(slave).value}")
 
-                LOG.debug("heatCapacitor_T=${heatCapacitor_T.read(slave).value}")
+                        val tempInputValue = slave.modelDescription
+                                .getVariableByName("outputs[2]").asRealVariable()
 
-                val tempInputValue = slave.modelDescription
-                        .getVariableByName("outputs[2]").asRealVariable()
+                        val dt = 1.0 / 100
+                        for (i in 0..4) {
+                            Assertions.assertTrue(slave.doStep(dt))
+                            Assertions.assertEquals(slave.lastStatus, FmiStatus.OK)
 
-                val dt = 1.0 / 100
-                for (i in 0..4) {
-                    slave.doStep(dt)
-                    Assertions.assertTrue(slave.lastStatus === FmiStatus.OK)
+                            tempInputValue.read(slave).also {
+                                Assertions.assertTrue(it.status == FmiStatus.OK)
+                                LOG.info("t=${slave.simulationTime}, outputs[2]=${it.value}")
+                            }
 
-                    tempInputValue.read(slave).also {
-                        Assertions.assertTrue(it.status == FmiStatus.OK)
-                        LOG.info("t=${slave.simulationTime}, outputs[2]=${it.value}")
+                        }
+
                     }
 
                 }
-
-            }
-
-        }
 
     }
 }

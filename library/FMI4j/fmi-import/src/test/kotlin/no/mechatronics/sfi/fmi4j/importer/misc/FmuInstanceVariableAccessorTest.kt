@@ -1,8 +1,6 @@
 package no.mechatronics.sfi.fmi4j.importer.misc
 
-import no.mechatronics.sfi.fmi4j.TestUtils
-import no.mechatronics.sfi.fmi4j.common.currentOS
-import no.mechatronics.sfi.fmi4j.importer.Fmu
+import no.mechatronics.sfi.fmi4j.TestFMUs
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.BooleanVariable
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.IntegerVariable
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.RealVariable
@@ -14,7 +12,6 @@ import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import java.io.File
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @EnabledIfEnvironmentVariable(named = "TEST_FMUs", matches = ".*")
@@ -24,10 +21,9 @@ class FmuInstanceVariableAccessorTest {
         private val LOG: Logger = LoggerFactory.getLogger(FmuInstanceVariableAccessorTest::class.java)
     }
 
-    private val fmu = Fmu.from(File(TestUtils.getTEST_FMUs(),
-            "2.0/cs/$currentOS" +
-                    "/20sim/4.6.4.8004/ControlledTemperature/" +
-                    "ControlledTemperature.fmu")).asCoSimulationFmu()
+    private val fmu = TestFMUs.fmi20().cs()
+            .vendor("20sim").version("4.6.4.8004").fmu("ControlledTemperature")
+            .asCoSimulationFmu()
 
     @AfterAll
     fun tearDown() {
@@ -39,7 +35,7 @@ class FmuInstanceVariableAccessorTest {
 
         fmu.newInstance().use { slave ->
 
-            slave.simpleSetup()
+            Assertions.assertTrue(slave.simpleSetup())
 
             slave.modelVariables.forEach { variable ->
                 when (variable) {
@@ -63,9 +59,7 @@ class FmuInstanceVariableAccessorTest {
 
         fmu.newInstance().use { slave ->
 
-            slave.setup()
-            slave.enterInitializationMode()
-            slave.exitInitializationMode()
+            Assertions.assertTrue(slave.simpleSetup())
 
             slave.modelVariables.forEach { variable ->
                 when (variable) {

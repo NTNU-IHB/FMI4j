@@ -8,16 +8,14 @@ import com.fasterxml.jackson.dataformat.xml.XmlMapper
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.readValue
-import no.mechatronics.sfi.fmi4j.TestUtils
+import no.mechatronics.sfi.fmi4j.TestFMUs
 import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescriptionImpl
-import no.mechatronics.sfi.fmi4j.common.currentOS
 import no.mechatronics.sfi.fmi4j.modeldescription.parser.ModelDescriptionParser
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import java.io.File
 
 @EnabledIfEnvironmentVariable(named = "TEST_FMUs", matches = ".*")
 class TestJackson {
@@ -25,9 +23,9 @@ class TestJackson {
     companion object {
         val LOG: Logger = LoggerFactory.getLogger(TestJackson::class.java)
 
-        val fmuFile = File(TestUtils.getTEST_FMUs(),
-                "2.0/cs/$currentOS" +
-                        "/MapleSim/2017/ControlledTemperature/ControlledTemperature.fmu")
+        val fmuFile = TestFMUs.fmi20().cs()
+                .vendor("MapleSim").version("2017")
+                .file("ControlledTemperature")
 
     }
 

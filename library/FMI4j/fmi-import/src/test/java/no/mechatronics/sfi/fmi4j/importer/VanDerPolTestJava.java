@@ -24,7 +24,7 @@
 
 package no.mechatronics.sfi.fmi4j.importer;
 
-import no.mechatronics.sfi.fmi4j.TestUtils;
+import no.mechatronics.sfi.fmi4j.TestFMUs;
 import no.mechatronics.sfi.fmi4j.common.FmiStatus;
 import no.mechatronics.sfi.fmi4j.common.FmuRead;
 import no.mechatronics.sfi.fmi4j.common.FmuSlave;
@@ -37,8 +37,6 @@ import org.junit.jupiter.api.condition.EnabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.File;
 import java.io.IOException;
 
 /**
@@ -55,10 +53,8 @@ public class VanDerPolTestJava {
 
     @BeforeAll
     public static void setup() throws IOException {
-        final File file = new File(TestUtils.getTEST_FMUs(),
-                "2.0/me/win64/FMUSDK/2.0.4/vanDerPol/vanDerPol.fmu");
-        Assertions.assertTrue(file.exists());
-        fmu = Fmu.from(file);
+        fmu = TestFMUs.fmi20().cs()
+                .vendor("FMUSDK").version("2.0.4").fmu("vanDerPol");
     }
 
     @AfterAll
@@ -81,17 +77,18 @@ public class VanDerPolTestJava {
         RealVariable x0 = slave.getModelVariables()
                 .getByName("x0").asRealVariable();
 
-        slave.simpleSetup();
+        Assertions.assertTrue(slave.simpleSetup());
 
+        double stop = 1.0;
         double macroStep = 1.0 / 10;
-        while (slave.getSimulationTime() < 1) {
+        while (slave.getSimulationTime() <= stop) {
             FmuRead<Double> read = x0.read(slave);
             Assertions.assertSame(read.getStatus(), FmiStatus.OK);
             LOG.info("t={}, x0={}", slave.getSimulationTime(), read.getValue());
             Assertions.assertTrue(slave.doStep(macroStep));
         }
 
-        slave.terminate();
+       Assertions.assertTrue(slave.terminate());
     }
 
     @Test

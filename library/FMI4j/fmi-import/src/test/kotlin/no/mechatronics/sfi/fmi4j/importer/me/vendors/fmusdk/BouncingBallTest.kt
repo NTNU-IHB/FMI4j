@@ -1,8 +1,7 @@
 package no.mechatronics.sfi.fmi4j.importer.me.vendors.fmusdk
 
-import no.mechatronics.sfi.fmi4j.TestUtils
+import no.mechatronics.sfi.fmi4j.TestFMUs
 import no.mechatronics.sfi.fmi4j.common.FmiStatus
-import no.mechatronics.sfi.fmi4j.importer.Fmu
 import no.mechatronics.sfi.fmi4j.solvers.Solver
 import no.sfi.mechatronics.fmi4j.me.ApacheSolver
 import no.sfi.mechatronics.fmi4j.me.ApacheSolvers
@@ -15,7 +14,6 @@ import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable
 import org.junit.jupiter.api.condition.EnabledOnOs
 import org.junit.jupiter.api.condition.OS
 import org.slf4j.LoggerFactory
-import java.io.File
 
 @EnabledOnOs(OS.WINDOWS)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -24,11 +22,12 @@ class BouncingBallTest {
 
     private companion object {
         private val LOG = LoggerFactory.getLogger(BouncingBallTest::class.java)
-    }
 
-    private val fmu = Fmu.from(File(TestUtils.getTEST_FMUs(),
-            "2.0/me/win64/FMUSDK/" +
-                    "2.0.4/bouncingBall/bouncingBall.fmu")).asModelExchangeFmu()
+        private val fmu = TestFMUs.fmi20().cs()
+                .vendor("FMUSDK").version("2.0.4").fmu("bouncingBall")
+                .asModelExchangeFmu()
+
+    }
 
     @AfterAll
     fun tearDown() {

@@ -24,11 +24,9 @@
 
 package no.mechatronics.sfi.fmi4j.importer;
 
-
-import no.mechatronics.sfi.fmi4j.TestUtils;
+import no.mechatronics.sfi.fmi4j.TestFMUs;
 import no.mechatronics.sfi.fmi4j.common.FmiStatus;
 import no.mechatronics.sfi.fmi4j.common.FmuSlave;
-import no.mechatronics.sfi.fmi4j.common.OSUtil;
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.RealVariable;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
@@ -37,8 +35,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.File;
 import java.io.IOException;
 
 /**
@@ -54,12 +50,9 @@ public class ControlledTemperatureTestJava {
 
     @BeforeAll
     public static void setUp() throws IOException {
-
-        final File file = new File(TestUtils.getTEST_FMUs(),
-                "2.0/cs/" + OSUtil.getCurrentOS()
-                        + "/20sim/4.6.4.8004/ControlledTemperature/ControlledTemperature.fmu");
-        Assertions.assertTrue(file.exists());
-        fmu = Fmu.from(file).asCoSimulationFmu();
+        fmu = TestFMUs.fmi20().cs()
+                .vendor("20sim").version("4.6.4.8004").fmu("ControlledTemperature")
+                .asCoSimulationFmu();
     }
 
     @AfterAll
@@ -90,10 +83,10 @@ public class ControlledTemperatureTestJava {
 
             double dt = 1d / 100;
             for (int i = 0; i < 5; i++) {
-                slave.doStep(dt);
-                Assertions.assertSame(slave.getLastStatus(), FmiStatus.OK);
+                Assertions.assertTrue(slave.doStep(dt));
+                Assertions.assertEquals(slave.getLastStatus(), FmiStatus.OK);
                 double value = temperature_room.read(slave).getValue();
-                Assertions.assertSame(slave.getLastStatus(), FmiStatus.OK);
+                Assertions.assertEquals(slave.getLastStatus(), FmiStatus.OK);
 
                 LOG.info("temperature_room={}", value);
 

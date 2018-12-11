@@ -1,8 +1,7 @@
 package no.mechatronics.sfi.fmi4j.importer.cs.vendors.fmusdk
 
-import no.mechatronics.sfi.fmi4j.TestUtils
+import no.mechatronics.sfi.fmi4j.TestFMUs
 import no.mechatronics.sfi.fmi4j.common.FmiStatus
-import no.mechatronics.sfi.fmi4j.importer.Fmu
 import no.mechatronics.sfi.fmi4j.importer.me.vendors.fmusdk.VanDerPolTest
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Assertions
@@ -12,7 +11,6 @@ import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable
 import org.junit.jupiter.api.condition.EnabledOnOs
 import org.junit.jupiter.api.condition.OS
 import org.slf4j.LoggerFactory
-import java.io.File
 
 @EnabledOnOs(OS.WINDOWS)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -23,8 +21,8 @@ class VanDerPolTest {
         private val LOG = LoggerFactory.getLogger(VanDerPolTest::class.java)
     }
 
-    private val fmu = Fmu.from(File(TestUtils.getTEST_FMUs(),
-            "2.0/cs/win64/FMUSDK/2.0.4/vanDerPol/vanDerPol.fmu"))
+    private val fmu = TestFMUs.fmi20().cs()
+            .vendor("FMUSDK").version("2.0.4").fmu("vanDerPol")
 
     @AfterAll
     fun tearDown() {

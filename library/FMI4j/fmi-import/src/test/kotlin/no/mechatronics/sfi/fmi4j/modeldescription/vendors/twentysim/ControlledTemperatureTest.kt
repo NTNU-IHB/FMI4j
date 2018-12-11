@@ -24,10 +24,8 @@
 
 package no.mechatronics.sfi.fmi4j.modeldescription.vendors.twentysim
 
-import no.mechatronics.sfi.fmi4j.TestUtils
-import no.mechatronics.sfi.fmi4j.common.currentOS
+import no.mechatronics.sfi.fmi4j.TestFMUs
 import no.mechatronics.sfi.fmi4j.modeldescription.misc.DefaultExperiment
-import no.mechatronics.sfi.fmi4j.modeldescription.parser.ModelDescriptionParser
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.ModelVariables
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.RealVariable
 import org.junit.jupiter.api.Assertions
@@ -36,7 +34,6 @@ import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import java.io.File
 import java.util.*
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -47,11 +44,10 @@ class ControlledTemperatureTest {
 
         private val LOG: Logger = LoggerFactory.getLogger(ControlledTemperatureTest::class.java)
 
-        private val fmuFile = File(TestUtils.getTEST_FMUs(),
-                "2.0/cs/$currentOS" +
-                        "/20sim/4.6.4.8004/ControlledTemperature/ControlledTemperature.fmu")
-
-        private val modelDescription = ModelDescriptionParser.parse(fmuFile).asCoSimulationModelDescription()
+        private val modelDescription = TestFMUs.fmi20().cs()
+                .vendor("20sim").version("4.6.4.8004")
+                .modelDescription("ControlledTemperature")
+                .asCoSimulationModelDescription()
     }
 
     @Test

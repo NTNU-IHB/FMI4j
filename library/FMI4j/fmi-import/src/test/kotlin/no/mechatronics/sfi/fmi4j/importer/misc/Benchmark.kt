@@ -1,7 +1,6 @@
 package no.mechatronics.sfi.fmi4j.importer.misc
 
-import no.mechatronics.sfi.fmi4j.TestUtils
-import no.mechatronics.sfi.fmi4j.common.currentOS
+import no.mechatronics.sfi.fmi4j.TestFMUs
 import no.mechatronics.sfi.fmi4j.importer.Fmu
 import no.mechatronics.sfi.fmi4j.modeldescription.variables.RealVariable
 import org.javafmi.wrapper.Simulation
@@ -11,34 +10,28 @@ import java.io.File
 import kotlin.system.measureTimeMillis
 
 data class TestOptions(
-        val fmuPath: String,
+        val fmuFile: File,
         val stepSize: Double,
         val stopTime: Double,
         val vr: Long
-) {
-
-    val fmuName = File(fmuPath).nameWithoutExtension
-
-}
+)
 
 private val options = listOf(
         TestOptions(
-                fmuPath = "${TestUtils.getTEST_FMUs()}" +
-                        "/2.0/cs/win64/FMUSDK/2.0.4/BouncingBall/bouncingBall.fmu",
+                fmuFile = TestFMUs.fmi20().cs()
+                        .vendor("FMUSDK").version("2.0.4").file("bouncingBall"),
                 stepSize = 1E-2,
                 stopTime = 100.0,
                 vr = 0),
         TestOptions(
-                fmuPath = "${TestUtils.getTEST_FMUs()}" +
-                        "/2.0/cs/$currentOS" +
-                        "/20sim/4.6.4.8004/TorsionBar/TorsionBar.fmu",
+                fmuFile = TestFMUs.fmi20().cs()
+                        .vendor("20sim").version("4.6.4.8004").file("TorsionBar"),
                 stepSize = 1E-5,
                 stopTime = 12.0,
                 vr = 2),
         TestOptions(
-                fmuPath = "${TestUtils.getTEST_FMUs()}" +
-                        "/2.0/cs/$currentOS" +
-                        "/20sim/4.6.4.8004/ControlledTemperature/ControlledTemperature.fmu",
+                fmuFile = TestFMUs.fmi20().cs()
+                        .vendor("20sim").version("4.6.4.8004").file("ControlledTemperature"),
                 stepSize = 1E-4,
                 stopTime = 10.0,
                 vr = 46))
@@ -52,7 +45,7 @@ object Benchmark {
 
         for (option in intArrayOf(1).map { options[it] }) {
 
-            LOG.info("Running FMU '${option.fmuName}'")
+            LOG.info("Running FMU '${option.fmuFile}'")
 
             runJavaFMI(option)
             // System.gc()
@@ -66,7 +59,7 @@ object Benchmark {
 
     fun runFmi4j(option: TestOptions) {
 
-        Fmu.from(File(option.fmuPath)).use { fmu ->
+        Fmu.from(option.fmuFile).use { fmu ->
 
             val iter = 1
             var elapsed: Long
@@ -106,7 +99,7 @@ object Benchmark {
         var elapsed: Long
         for (i in 0..iter) {
 
-            Simulation(option.fmuPath).apply {
+            Simulation(option.fmuFile.absolutePath).apply {
 
                 val h = read(modelDescription.getModelVariable(option.vr.toInt()).name)
                 init(0.0, option.stopTime)

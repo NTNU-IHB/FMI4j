@@ -1,9 +1,7 @@
 package no.mechatronics.sfi.fmi4j.importer.me.vendors.openmodelica
 
-import no.mechatronics.sfi.fmi4j.TestUtils
+import no.mechatronics.sfi.fmi4j.TestFMUs
 import no.mechatronics.sfi.fmi4j.common.FmiStatus
-import no.mechatronics.sfi.fmi4j.common.currentOS
-import no.mechatronics.sfi.fmi4j.importer.Fmu
 import no.mechatronics.sfi.fmi4j.solvers.Solver
 import no.sfi.mechatronics.fmi4j.me.ApacheSolver
 import no.sfi.mechatronics.fmi4j.me.ApacheSolvers
@@ -11,7 +9,6 @@ import org.apache.commons.math3.ode.nonstiff.DormandPrince853Integrator
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable
 import org.slf4j.LoggerFactory
-import java.io.File
 
 @Disabled
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -19,15 +16,16 @@ import java.io.File
 class FmuExportCrossCompile {
 
     private companion object {
+
         private val LOG = LoggerFactory.getLogger(FmuExportCrossCompile::class.java)
 
         const val stop = 1.0
         const val macroStep = 1.0 / 10
         const val microStep = 1E-3
 
-        val fmu = Fmu.from(File(TestUtils.getTEST_FMUs(),
-                "2.0/me/$currentOS/OpenModelica/v1.11.0/" +
-                        "FmuExportCrossCompile/FmuExportCrossCompile.fmu")).asModelExchangeFmu()
+        val fmu = TestFMUs.fmi20().cs()
+                .vendor("openModelica").version("v1.11.0").fmu("FmuExportCrossCompile")
+                .asModelExchangeFmu()
 
     }
 
