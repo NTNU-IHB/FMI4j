@@ -107,7 +107,6 @@ class ModelDescriptionImpl(
 
 ) : ModelDescriptionProvider, Serializable {
 
-    @JsonSetter(nulls = Nulls.AS_EMPTY)
     @JacksonXmlProperty(localName = "ModelStructure")
     private val _modelStructure: ModelStructureImpl? = null
 
