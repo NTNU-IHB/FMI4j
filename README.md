@@ -59,7 +59,7 @@ Due to how cumbersome it is to publish artifacts to Maven Central, new releases 
 ```groovy
 allprojects {
     repositories {
-        ...
+        /*...*/
         maven { url 'https://jitpack.io' }
     }
 }
