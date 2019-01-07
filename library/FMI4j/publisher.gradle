@@ -21,74 +21,75 @@ class PublishPlugin implements Plugin<Project>{
 
     void apply(Project project) {
 
-        def extension = project.extensions.create('pomDescription', PublishPluginExtension)
-
         project.apply(plugin: MavenPublishPlugin)
+
+        def snapshot = true
+        project.group = 'no.mechatronics.sfi.fmi4j'
+        project.version = snapshot? 'dev-SNAPSHOT' : '0.13.1'
         
-        if (project.hasProperty("ossrhUsername") && project.hasProperty("ossrhPassword")) {
-            
-            project.apply(plugin: SigningPlugin)
+        def extension = project.extensions.create('pomDescription', PublishPluginExtension)
+        
+        println("maven version for ${project.archivesBaseName} is: ${project.version}")
 
-            def snapshot = true
-            project.group = 'no.mechatronics.sfi.fmi4j'
-            project.version = snapshot? 'dev-SNAPSHOT' : '0.13.1'
-
-            println("maven version for ${project.archivesBaseName} is: ${project.version}")
-            
-            project.publishing {
-                publications {
-                    mavenJava(MavenPublication) {
-
-                        from project.components.java
-                        artifact sourcesJar(project)
-                        artifact javadocJar(project)
-
-                        pom {
-                            name = project.archivesBaseName
-                            description = extension.description
-                            url = 'https://github.com/SFI-Mechatronics/FMI4j'
-
-                            scm {
-                                connection = 'scm:git:git://github.com/SFI-Mechatronics/FMI4j.git'
-                                developerConnection = 'scm:git:ssh://github.com/SFI-Mechatronics/FMI4j.git'
-                                url = 'https://github.com/SFI-Mechatronics/FMI4j/tree/master'
-                            }
-
-                            licenses {
-                                license {
-                                    name = 'The MIT License'
-                                    url = 'https://opensource.org/licenses/mit-license.php'
-                                }
-                            }
-
-                            developers {
-                                developer {
-                                    id = 'laht'
-                                    name = 'Lars Ivar Hatledal'
-                                    email = 'laht@ntnu.no'
-                                }
-                            }
-                        }
-                    }
-                }
-                repositories {
-                    maven {
-                        def releasesRepoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2"
-                        def snapshotsRepoUrl = "https://oss.sonatype.org/content/repositories/snapshots"
-                        url project.version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
-                        credentials {
-                            username = project.ossrhUsername
-                            password = project.ossrhPassword
-                        }
-                    }
-                }
-            }
-
-            project.signing {
-                sign project.publishing.publications.mavenJava
-            }
-
-        }
+        
+//        if (project.hasProperty("ossrhUsername") && project.hasProperty("ossrhPassword")) {
+//            
+//            project.apply(plugin: SigningPlugin)
+//
+//            project.publishing {
+//                publications {
+//                    mavenJava(MavenPublication) {
+//
+//                        from project.components.java
+//                        artifact sourcesJar(project)
+//                        artifact javadocJar(project)
+//
+//                        pom {
+//                            name = project.archivesBaseName
+//                            description = extension.description
+//                            url = 'https://github.com/SFI-Mechatronics/FMI4j'
+//
+//                            scm {
+//                                connection = 'scm:git:git://github.com/SFI-Mechatronics/FMI4j.git'
+//                                developerConnection = 'scm:git:ssh://github.com/SFI-Mechatronics/FMI4j.git'
+//                                url = 'https://github.com/SFI-Mechatronics/FMI4j/tree/master'
+//                            }
+//
+//                            licenses {
+//                                license {
+//                                    name = 'The MIT License'
+//                                    url = 'https://opensource.org/licenses/mit-license.php'
+//                                }
+//                            }
+//
+//                            developers {
+//                                developer {
+//                                    id = 'laht'
+//                                    name = 'Lars Ivar Hatledal'
+//                                    email = 'laht@ntnu.no'
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
+//                repositories {
+//                    maven {
+//                        def releasesRepoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2"
+//                        def snapshotsRepoUrl = "https://oss.sonatype.org/content/repositories/snapshots"
+//                        url project.version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+//                        credentials {
+//                            username = project.ossrhUsername
+//                            password = project.ossrhPassword
+//                        }
+//                    }
+//                }
+//            }
+//
+//            project.signing {
+//                sign project.publishing.publications.mavenJava
+//            }
+//
+//        }
     }
 
 }
