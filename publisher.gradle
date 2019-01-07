@@ -25,7 +25,7 @@ class PublishPlugin implements Plugin<Project> {
 
         def snapshot = true
         project.group = 'no.mechatronics.sfi.fmi4j'
-        project.version = snapshot ? 'dev-SNAPSHOT' : '0.13.1'
+        project.version = snapshot ? 'dev-SNAPSHOT' : '0.13.2'
 
         def extension = project.extensions.create('pomDescription', PublishPluginExtension)
 
