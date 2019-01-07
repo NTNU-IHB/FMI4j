@@ -1,4 +1,7 @@
+before_install:
+   - cd library/FMI4j
+
 install:
    - echo "Running a custom install command"
-   - cd library/FMI4j && gradle clean install
+   - ./gradlew clean install
 
