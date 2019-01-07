@@ -12,7 +12,7 @@ dependencies {
 
     api project(':fmi-import-solvers-api')
 
-    def jackson_version = '2.9.7'
+    def jackson_version = '2.9.8'
     implementation group: "com.fasterxml.jackson.module", name: "jackson-module-kotlin", version: jackson_version
     implementation group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-xml', version: jackson_version
 
