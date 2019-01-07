@@ -56,7 +56,7 @@ class Demo {
 
 Due to how cumbersome it is to publish artifacts to Maven Central, new releases can only be obtained using __jitpack__.
 
-```gradle
+```groovy
 allprojects {
     repositories {
         ...
