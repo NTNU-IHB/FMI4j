@@ -22,10 +22,11 @@ class PublishPlugin implements Plugin<Project>{
     void apply(Project project) {
 
         def extension = project.extensions.create('pomDescription', PublishPluginExtension)
+
+        project.apply(plugin: MavenPublishPlugin)
         
         if (project.hasProperty("ossrhUsername") && project.hasProperty("ossrhPassword")) {
-
-            project.apply(plugin: MavenPublishPlugin)
+            
             project.apply(plugin: SigningPlugin)
 
             def snapshot = true
