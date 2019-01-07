@@ -3,8 +3,6 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/SFI-Mechatronics/FMI4j/issues)
 
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/no.mechatronics.sfi.fmi4j/fmi-import/badge.svg)](http://mvnrepository.com/artifact/no.mechatronics.sfi.fmi4j/fmi-import)
-
 
 FMI4j is a software package for dealing with Functional Mock-up Units (FMUs) on the Java Virtual Machine (JVM), written in [Kotlin](https://kotlinlang.org/). 
 
@@ -52,7 +50,21 @@ class Demo {
     }
     
 }
+```
 
+Due to how cumbersome it is to publish artifacts to Maven Central, new releases can only be obtained using __jitpack__.
+
+```gradle
+allprojects {
+    repositories {
+        ...
+        maven { url 'https://jitpack.io' }
+    }
+}
+
+dependencies {
+    implementation 'com.github.SFI-Mechatronics.FMI4j:fmi-import:v0.13.2'
+}
 ```
 
 ### <a name="plugin"></a> Gradle plugin
