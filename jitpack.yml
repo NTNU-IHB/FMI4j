@@ -1,4 +1,4 @@
 install:
    - echo "Running a custom install command"
-   - cd library/FMI4j && ./gradlew clean install
+   - cd library/FMI4j && ./gradlew clean publishToMavenLocal
 
