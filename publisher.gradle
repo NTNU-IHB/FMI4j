@@ -1,3 +1,4 @@
+
 class PublishPluginExtension {
     String description = "A software library for dealing with Functional Mock-up Units (FMUs) on the JVM platform"
 }
@@ -85,8 +86,7 @@ class PublishPlugin implements Plugin<Project> {
                     }
                 }
             }
-
-
+            
             project.signing {
                 sign project.publishing.publications.mavenJava
             }
