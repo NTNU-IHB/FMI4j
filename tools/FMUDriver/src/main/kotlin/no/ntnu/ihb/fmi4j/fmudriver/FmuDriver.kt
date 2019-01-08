@@ -27,7 +27,7 @@ package no.ntnu.ihb.fmi4j.fmudriver
 import no.ntnu.ihb.fmi4j.common.FmuSlave
 import no.ntnu.ihb.fmi4j.importer.Fmu
 import no.ntnu.ihb.fmi4j.solvers.Solver
-import no.sfi.mechatronics.fmi4j.me.ApacheSolvers
+import no.ntnu.ihb.fmi4j.me.ApacheSolvers
 import org.apache.commons.csv.CSVFormat
 import org.apache.commons.csv.CSVPrinter
 import org.apache.commons.csv.QuoteMode
@@ -92,6 +92,7 @@ class FmuDriver(
 
     }
 
+    @Suppress("NAME_SHADOWING")
     private fun simulate(slave: FmuSlave) {
 
         slave.use { slave ->

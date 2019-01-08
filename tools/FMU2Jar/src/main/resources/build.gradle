@@ -10,7 +10,7 @@ version = '1.0-SNAPSHOT'
 group = 'no.ntnu.ihb.fmu2jar'
 
 def fmi4j_snapshot = true
-def fmi4j_version = !fmi4j_snapshot ? 'v0.14.0' : 'dev-SNAPSHOT'
+def fmi4j_version = !fmi4j_snapshot ? '0.14.0' : 'dev-SNAPSHOT'
 
 repositories {
     mavenCentral()
