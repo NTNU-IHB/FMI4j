@@ -40,7 +40,7 @@ dependencies {
     testCompile("org.junit.jupiter:junit-jupiter-params:$junit_version")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junit_version")
 
-    testCompile group: 'com.github.NTNU-IHB:FMI4j', name: 'fmi-import', version: fmi4j_version, changing: fmi4j_snapshot
+    testCompile group: 'com.github.NTNU-IHB.FMI4j', name: 'fmi-import', version: fmi4j_version, changing: fmi4j_snapshot
 
 }
 

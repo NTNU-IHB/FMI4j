@@ -14,11 +14,7 @@ def fmi4j_version = !fmi4j_snapshot ? '0.14.0' : 'dev-SNAPSHOT'
 
 repositories {
     mavenCentral()
-    if (fmi4j_snapshot) {
-        maven {
-            url "https://oss.sonatype.org/content/repositories/snapshots"
-        }
-    }
+    maven { url 'https://jitpack.io' }
 }
 
 if (fmi4j_snapshot) {
@@ -28,8 +24,8 @@ if (fmi4j_snapshot) {
 }
 
 dependencies {
-    api group: 'com.github.NTNU-IHB:FMI4j', name: 'fmi-import', version: fmi4j_version, changing: fmi4j_snapshot
-    api group: 'com.github.NTNU-IHB:FMI4j', name: 'fmi-import-solvers-apache-math3', version: fmi4j_version, changing: fmi4j_snapshot
+    api group: 'com.github.NTNU-IHB.FMI4j', name: 'fmi-import', version: fmi4j_version, changing: fmi4j_snapshot
+    api group: 'com.github.NTNU-IHB.FMI4j', name: 'fmi-import-solvers-apache-math3', version: fmi4j_version, changing: fmi4j_snapshot
 }
 
 task sourcesJar(type: Jar, dependsOn: classes, description: 'Creates a jar from the source files.') {
