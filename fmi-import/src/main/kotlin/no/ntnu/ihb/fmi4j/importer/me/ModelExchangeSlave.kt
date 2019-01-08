@@ -34,7 +34,6 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import kotlin.math.min
 
-
 /**
  * Wraps a Model Exchange instance, turning it into a FmuSlave
  *
@@ -60,7 +59,6 @@ class ModelExchangeFmuStepper internal constructor(
         this.z = DoubleArray(numberOfEventIndicators)
         this.pz = DoubleArray(numberOfEventIndicators)
 
-
         this.solver.setEquations(object : no.ntnu.ihb.fmi4j.solvers.Equations {
             override val dimension: Int = numberOfContinuousStates
             override fun computeDerivatives(time: Double, y: DoubleArray, yDot: DoubleArray) {
@@ -76,28 +74,12 @@ class ModelExchangeFmuStepper internal constructor(
         CoSimulationModelDescriptionWrapper(fmuInstance.modelDescription)
     }
 
-    private fun eventIteration(): Boolean {
+    override fun simpleSetup(): Boolean {
+        return simpleSetup(0.0,0.0,0.0)
+    }
 
-        fmuInstance.eventInfo.newDiscreteStatesNeeded = true
-        fmuInstance.eventInfo.terminateSimulation = false
-
-        while (fmuInstance.eventInfo.newDiscreteStatesNeeded) {
-            if (!fmuInstance.newDiscreteStates().isOK()) {
-                LOG.warn("fmuInstance.newDiscreteStates() returned status $lastStatus")
-                return true
-            }
-            if (fmuInstance.eventInfo.terminateSimulation) {
-                LOG.debug("eventInfo.getTerminateSimulation() returned true. Terminating FMU...")
-                terminate()
-                return true
-            }
-        }
-
-        fmuInstance.enterContinuousTimeMode().also {
-            it.warnOnStatusNotOK("fmuInstance.enterContinuousTimeMode()")
-        }
-
-        return false
+    override fun simpleSetup(start: Double, stop: Double, tolerance: Double): Boolean {
+        return fmuInstance.setup(start, stop, tolerance) && fmuInstance.enterInitializationMode() && exitInitializationMode()
     }
 
     override fun exitInitializationMode(): Boolean {
@@ -120,7 +102,7 @@ class ModelExchangeFmuStepper internal constructor(
         }
 
         var time = simulationTime
-        val stopTime = time + stepSize
+        val stopTime = (time + stepSize)
 
         while (time < stopTime) {
 
@@ -201,6 +183,31 @@ class ModelExchangeFmuStepper internal constructor(
         return (stateEvent() to integratedTime)
 
     }
+
+    private fun eventIteration(): Boolean {
+
+        fmuInstance.eventInfo.newDiscreteStatesNeeded = true
+        fmuInstance.eventInfo.terminateSimulation = false
+
+        while (fmuInstance.eventInfo.newDiscreteStatesNeeded) {
+            if (!fmuInstance.newDiscreteStates().isOK()) {
+                LOG.warn("fmuInstance.newDiscreteStates() returned status $lastStatus")
+                return true
+            }
+            if (fmuInstance.eventInfo.terminateSimulation) {
+                LOG.debug("eventInfo.getTerminateSimulation() returned true. Terminating FMU...")
+                terminate()
+                return true
+            }
+        }
+
+        fmuInstance.enterContinuousTimeMode().also {
+            it.warnOnStatusNotOK("fmuInstance.enterContinuousTimeMode()")
+        }
+
+        return false
+    }
+
 
     private companion object {
 
