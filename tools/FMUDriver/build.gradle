@@ -57,8 +57,8 @@ compileTestKotlin {
 }
 
 shadowJar {
-    baseName = "fmudriver"
-    classifier = null
+    archiveBaseName = "fmudriver"
+    archiveClassifier = null
     version = null
 }
 
