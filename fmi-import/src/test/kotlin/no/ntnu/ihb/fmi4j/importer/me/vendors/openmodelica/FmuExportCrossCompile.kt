@@ -28,7 +28,6 @@ class FmuExportCrossCompile {
 
     }
 
-
     @AfterAll
     fun tearDown() {
         fmu.close()
@@ -50,7 +49,7 @@ class FmuExportCrossCompile {
             val h = slave.modelVariables
                     .getByName("h").asRealVariable()
 
-            slave.simpleSetup()
+            Assertions.assertTrue(slave.simpleSetup())
 
             while (slave.simulationTime <= stop) {
                 Assertions.assertTrue(slave.doStep(macroStep))

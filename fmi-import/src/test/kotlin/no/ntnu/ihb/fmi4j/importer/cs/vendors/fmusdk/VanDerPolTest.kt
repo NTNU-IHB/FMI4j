@@ -1,6 +1,5 @@
 package no.ntnu.ihb.fmi4j.importer.cs.vendors.fmusdk
 
-import no.ntnu.ihb.fmi4j.TestFMUs
 import no.ntnu.ihb.fmi4j.common.FmiStatus
 import no.ntnu.ihb.fmi4j.importer.me.vendors.fmusdk.VanDerPolTest
 import org.junit.jupiter.api.AfterAll
@@ -34,7 +33,7 @@ class VanDerPolTest {
 
         fmu.asCoSimulationFmu().newInstance().use { slave ->
 
-            slave.simpleSetup()
+            Assertions.assertTrue(slave.simpleSetup())
 
             val variableName = "x0"
             val x0 = slave.modelVariables

@@ -56,7 +56,7 @@ public class VanDerPolTestJava {
 
     @BeforeAll
     public static void setup() throws IOException {
-        fmu = TestFMUs.fmi20().cs()
+        fmu = TestFMUs.fmi20().me()
                 .vendor("FMUSDK").version("2.0.4").fmu("vanDerPol");
     }
 

@@ -46,7 +46,10 @@ class VanDerPolTest {
 
         private val LOG = LoggerFactory.getLogger(VanDerPolTest::class.java)
 
-        private val fmu = no.ntnu.ihb.fmi4j.TestFMUs.fmi20().cs()
+        private val stop = 1.0
+        private val macroStep = 1.0 / 10
+
+        private val fmu = TestFMUs.fmi20().me()
                 .vendor("FMUSDK").version("2.0.4").fmu("vanDerPol")
                 .asModelExchangeFmu()
 
@@ -67,10 +70,9 @@ class VanDerPolTest {
             val x0 = slave.modelVariables
                     .getByName(variableName).asRealVariable()
 
-            slave.simpleSetup()
+            Assertions.assertTrue(slave.simpleSetup())
 
-            val macroStep = 1.0 / 10
-            while (slave.simulationTime < 1) {
+            while (slave.simulationTime <= stop) {
                 val read = x0.read(slave)
                 Assertions.assertTrue(read.status === FmiStatus.OK)
                 LOG.info("t=${slave.simulationTime}, $variableName=${read.value}")

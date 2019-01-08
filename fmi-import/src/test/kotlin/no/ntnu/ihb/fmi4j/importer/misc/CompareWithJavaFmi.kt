@@ -26,7 +26,6 @@ class CompareWithJavaFmi {
 
         private val fmu = Fmu.from(file).asCoSimulationFmu()
 
-
     }
 
     @AfterAll
