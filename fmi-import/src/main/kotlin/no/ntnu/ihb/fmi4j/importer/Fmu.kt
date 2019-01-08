@@ -304,7 +304,7 @@ class Fmu private constructor(
 
             val extension = file.extension.toLowerCase()
             if (extension != FMU_EXTENSION) {
-                throw IllegalArgumentException("File is not an FMU! Invalid extension found: .$extension")
+                throw IllegalArgumentException("File '$file' is not an FMU! Invalid extension found: .$extension")
             }
 
             if (!file.exists()) {
