@@ -1,7 +1,7 @@
 package example
 
-import no.mechatronics.sfi.fmi4j.ControlledTemperature
-import no.mechatronics.sfi.fmi4j.modeldescription.variables.RealVariable
+import no.ntnu.ihb.fmi4j.ControlledTemperature
+import no.ntnu.ihb.fmi4j.modeldescription.variables.RealVariable
 
 fun main(args: Array<String>) {
 

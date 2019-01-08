@@ -1,12 +1,12 @@
-package no.mechatronics.sfi.fmi4j
+package no.ntnu.ihb.fmi4j
 
-import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescriptionProvider
-import no.mechatronics.sfi.fmi4j.modeldescription.parser.ModelDescriptionParser
-import no.mechatronics.sfi.fmi4j.modeldescription.variables.Causality
-import no.mechatronics.sfi.fmi4j.modeldescription.variables.EnumerationVariable
-import no.mechatronics.sfi.fmi4j.modeldescription.variables.IntegerVariable
-import no.mechatronics.sfi.fmi4j.modeldescription.variables.RealVariable
-import no.mechatronics.sfi.fmi4j.modeldescription.variables.TypedScalarVariable
+import no.ntnu.ihb.fmi4j.modeldescription.ModelDescriptionProvider
+import no.ntnu.ihb.fmi4j.modeldescription.parser.ModelDescriptionParser
+import no.ntnu.ihb.fmi4j.modeldescription.variables.Causality
+import no.ntnu.ihb.fmi4j.modeldescription.variables.EnumerationVariable
+import no.ntnu.ihb.fmi4j.modeldescription.variables.IntegerVariable
+import no.ntnu.ihb.fmi4j.modeldescription.variables.RealVariable
+import no.ntnu.ihb.fmi4j.modeldescription.variables.TypedScalarVariable
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.artifacts.DependencyResolutionListener
@@ -48,7 +48,7 @@ class FmuPlugin implements Plugin<Project> {
 
             @Override
             void beforeResolve(ResolvableDependencies resolvableDependencies) {
-                target.dependencies.add(fmi4j.configurationName.get(), "no.mechatronics.sfi.fmi4j:fmi-import:${fmi4j.version.get()}")
+                target.dependencies.add(fmi4j.configurationName.get(), "no.ntnu.ihb.fmi4j:fmi-import:${fmi4j.version.get()}")
                 target.gradle.removeListener(this)
             }
 
@@ -108,11 +108,11 @@ class CodeGenerator {
 
         def solverImport = ""
         if (md.supportsModelExchange) {
-            solverImport = "import no.mechatronics.sfi.fmi4j.solvers.Solver"
+            solverImport = "import no.ntnu.ihb.fmi4j.solvers.Solver"
         }
 
         return """
-package no.mechatronics.sfi.fmi4j;
+package no.ntnu.ihb.fmi4j;
 
 import java.net.URL;
 import java.io.File;
@@ -120,10 +120,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Iterator;
 import java.io.IOException;
-import no.mechatronics.sfi.fmi4j.common.*;
-import no.mechatronics.sfi.fmi4j.importer.*;
-import no.mechatronics.sfi.fmi4j.modeldescription.*;
-import no.mechatronics.sfi.fmi4j.modeldescription.variables.*;
+import no.ntnu.ihb.fmi4j.common.*;
+import no.ntnu.ihb.fmi4j.importer.*;
+import no.ntnu.ihb.fmi4j.modeldescription.*;
+import no.ntnu.ihb.fmi4j.modeldescription.variables.*;
 $solverImport
 
 /***

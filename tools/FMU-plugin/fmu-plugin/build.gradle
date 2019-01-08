@@ -6,14 +6,14 @@ plugins {
     id 'com.gradle.plugin-publish' version '0.10.0'
 }
 
-version = "0.8.0"
-group = "no.mechatronics.sfi.fmi4j"
+version = "0.14.0"
+group = "no.ntnu.ihb.fmi4j"
 println("maven version for ${archivesBaseName} is: ${version}")
 
 dependencies {
     compile gradleApi()
     compile localGroovy()
-    implementation group: "no.mechatronics.sfi.fmi4j", name: 'fmi-import', version: '0.13.1'
+    implementation group: "com.github.NTNU-IHB.FMI4j", name: 'fmi-import', version: '0.14.0'
 }
 
 gradlePlugin {
@@ -26,8 +26,8 @@ gradlePlugin {
 }
 
 pluginBundle {
-    website = 'https://sfi-mechatronics.github.io/FMI4j/'
-    vcsUrl = 'https://github.com/SFI-Mechatronics/FMI4j'
+    website = 'https://ntnu-ihb.github.io/FMI4j/'
+    vcsUrl = 'https://github.com/NTNU-IHB/FMI4j'
     description = "Gradle plugin for simplifying programmatic interaction with FMUs"
     tags = ['fmi', 'fmu', 'fmi4j']
 

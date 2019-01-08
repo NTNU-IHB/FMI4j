@@ -22,11 +22,11 @@
  * THE SOFTWARE.
  */
 
-package no.mechatronics.sfi.fmu2jar.codegen
+package no.ntnu.ihb.fmu2jar.codegen
 
-import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescription
-import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescriptionProvider
-import no.mechatronics.sfi.fmi4j.modeldescription.variables.*
+import no.ntnu.ihb.fmi4j.modeldescription.ModelDescription
+import no.ntnu.ihb.fmi4j.modeldescription.ModelDescriptionProvider
+import no.ntnu.ihb.fmi4j.modeldescription.variables.*
 
 /**
  * @author Lars Ivar Hatledal
@@ -41,11 +41,11 @@ class CodeGenerator(
 
         var solverImport = ""
         if (md.supportsModelExchange) {
-            solverImport = "import no.mechatronics.sfi.fmi4j.solvers.Solver"
+            solverImport = "import no.ntnu.ihb.fmi4j.solvers.Solver"
         }
 
         return """
-package no.mechatronics.sfi.fmu2jar;
+package no.ntnu.ihb.fmu2jar;
 
 import java.net.URL;
 import java.io.File;
@@ -53,10 +53,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Iterator;
 import java.io.IOException;
-import no.mechatronics.sfi.fmi4j.common.*;
-import no.mechatronics.sfi.fmi4j.importer.*;
-import no.mechatronics.sfi.fmi4j.modeldescription.*;
-import no.mechatronics.sfi.fmi4j.modeldescription.variables.*;
+import no.ntnu.ihb.fmi4j.common.*;
+import no.ntnu.ihb.fmi4j.importer.*;
+import no.ntnu.ihb.fmi4j.modeldescription.*;
+import no.ntnu.ihb.fmi4j.modeldescription.variables.*;
 $solverImport
 
 /***

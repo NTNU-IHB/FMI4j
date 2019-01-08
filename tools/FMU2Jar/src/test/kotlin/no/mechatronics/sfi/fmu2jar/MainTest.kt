@@ -1,8 +1,8 @@
-package no.mechatronics.sfi.fmu2jar
+package no.ntnu.ihb.fmu2jar
 
-import no.mechatronics.sfi.fmi4j.common.FmuSlave
-import no.mechatronics.sfi.fmu2jar.util.TEST_FMUs
-import no.mechatronics.sfi.fmu2jar.util.currentOS
+import no.ntnu.ihb.fmi4j.common.FmuSlave
+import no.ntnu.ihb.fmu2jar.util.TEST_FMUs
+import no.ntnu.ihb.fmu2jar.util.currentOS
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
@@ -56,7 +56,7 @@ class MainTest {
         Assertions.assertTrue(myJar.length() > 0)
 
         val child = URLClassLoader(arrayOf(myJar.toURI().toURL()), this.javaClass.classLoader)
-        val classToLoad = Class.forName("no.mechatronics.sfi.fmu2jar.$fmuName", true, child)
+        val classToLoad = Class.forName("no.ntnu.ihb.fmu2jar.$fmuName", true, child)
 
         val method = classToLoad.getDeclaredMethod("newInstance")
         (method.invoke(null) as FmuSlave).use { slave ->

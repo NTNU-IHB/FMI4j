@@ -22,17 +22,17 @@
  * THE SOFTWARE.
  */
 
-package no.mechatronics.sfi.fmu2jar
+package no.ntnu.ihb.fmu2jar
 
-import no.mechatronics.sfi.fmi4j.common.currentOS
-import no.mechatronics.sfi.fmi4j.common.isLinux
-import no.mechatronics.sfi.fmi4j.common.isWindows
-import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescription
-import no.mechatronics.sfi.fmi4j.modeldescription.ModelDescriptionProvider
-import no.mechatronics.sfi.fmi4j.modeldescription.parser.ModelDescriptionParser
-import no.mechatronics.sfi.fmu2jar.cli.Args
-import no.mechatronics.sfi.fmu2jar.cli.GenerateOptions
-import no.mechatronics.sfi.fmu2jar.codegen.CodeGenerator
+import no.ntnu.ihb.fmi4j.common.currentOS
+import no.ntnu.ihb.fmi4j.common.isLinux
+import no.ntnu.ihb.fmi4j.common.isWindows
+import no.ntnu.ihb.fmi4j.modeldescription.ModelDescription
+import no.ntnu.ihb.fmi4j.modeldescription.ModelDescriptionProvider
+import no.ntnu.ihb.fmi4j.modeldescription.parser.ModelDescriptionParser
+import no.ntnu.ihb.fmu2jar.cli.Args
+import no.ntnu.ihb.fmu2jar.cli.GenerateOptions
+import no.ntnu.ihb.fmu2jar.codegen.CodeGenerator
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import picocli.CommandLine

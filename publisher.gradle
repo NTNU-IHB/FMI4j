@@ -24,8 +24,8 @@ class PublishPlugin implements Plugin<Project> {
         project.apply(plugin: MavenPublishPlugin)
 
         def snapshot = true
-        project.group = 'no.mechatronics.sfi.fmi4j'
-        project.version = snapshot ? 'dev-SNAPSHOT' : '0.13.2'
+        project.group = 'no.ntnu.ihb.fmi4j'
+        project.version = snapshot ? 'dev-SNAPSHOT' : '0.14.0'
 
         def extension = project.extensions.create('pomDescription', PublishPluginExtension)
 
@@ -42,12 +42,12 @@ class PublishPlugin implements Plugin<Project> {
                     pom {
                         name = project.archivesBaseName
                         description = extension.description
-                        url = 'https://github.com/SFI-Mechatronics/FMI4j'
+                        url = 'https://github.com/NTNU-IHB/FMI4j'
 
                         scm {
-                            connection = 'scm:git:git://github.com/SFI-Mechatronics/FMI4j.git'
-                            developerConnection = 'scm:git:ssh://github.com/SFI-Mechatronics/FMI4j.git'
-                            url = 'https://github.com/SFI-Mechatronics/FMI4j/tree/master'
+                            connection = 'scm:git:git://github.com/NTNU-IHB/FMI4j.git'
+                            developerConnection = 'scm:git:ssh://github.com/NTNU-IHB/FMI4j.git'
+                            url = 'https://github.com/NTNU-IHB/FMI4j/tree/master'
                         }
 
                         licenses {

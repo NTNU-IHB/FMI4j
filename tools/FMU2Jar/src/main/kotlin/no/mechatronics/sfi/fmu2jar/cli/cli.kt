@@ -1,6 +1,6 @@
-package no.mechatronics.sfi.fmu2jar.cli
+package no.ntnu.ihb.fmu2jar.cli
 
-import no.mechatronics.sfi.fmu2jar.Fmu2Jar
+import no.ntnu.ihb.fmu2jar.Fmu2Jar
 import picocli.CommandLine
 import java.io.File
 

@@ -1,6 +1,6 @@
-package no.mechatronics.sfi.fmi4j
+package no.ntnu.ihb.fmi4j
 
-import no.mechatronics.sfi.fmi4j.common.currentOS
+import no.ntnu.ihb.fmi4j.common.currentOS
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
 import org.junit.jupiter.api.AfterAll
@@ -34,7 +34,7 @@ class TestPlugin {
             writeText("""
                 plugins {
                     id 'java'
-                    id 'no.mechatronics.sfi.fmi4j.FmuPlugin'
+                    id 'no.ntnu.ihb.fmi4j.FmuPlugin'
                 }
 
             """.trimIndent())

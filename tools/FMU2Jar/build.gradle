@@ -7,19 +7,15 @@ plugins {
 
 println "Gradle version is ${gradle.getGradleVersion()}"
 
-def group = "no.mechatronics.sfi.fmu2jar"
+def group = "no.ntnu.ihb.fmu2jar"
 mainClassName = "${group}.Fmu2Jar"
 
-def fmi4j_snapshot = false
-def fmi4j_version = !fmi4j_snapshot ? '0.13.1' : 'dev-SNAPSHOT'
+def fmi4j_snapshot = true
+def fmi4j_version = !fmi4j_snapshot ? 'v0.14.0' : 'dev-SNAPSHOT'
 
 repositories {
     mavenCentral()
-    if (fmi4j_snapshot) {
-       maven {
-           url "https://oss.sonatype.org/content/repositories/snapshots"
-       }
-    }
+    maven { url 'https://jitpack.io' }
 }
 
 if (fmi4j_snapshot) {
@@ -33,18 +29,18 @@ dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
 
     compile group: 'info.picocli', name: 'picocli', version: '3.1.0'
-    compile group: 'no.mechatronics.sfi.fmi4j', name: 'fmi-import', version: fmi4j_version, changing: fmi4j_snapshot
+    compile group: 'com.github.NTNU-IHB.FMI4j', name: 'fmi-import', version: fmi4j_version, changing: fmi4j_snapshot
 
     def slf4j_version = '1.7.25'
     compile group: 'org.slf4j', name: 'slf4j-api', version: slf4j_version
     runtime group: 'org.slf4j', name: 'slf4j-log4j12', version: slf4j_version
 
-    def junit_version = '5.3.1'
+    def junit_version = '5.3.2'
     testCompile("org.junit.jupiter:junit-jupiter-api:$junit_version")
     testCompile("org.junit.jupiter:junit-jupiter-params:$junit_version")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junit_version")
 
-    testCompile group: 'no.mechatronics.sfi.fmi4j', name: 'fmi-import', version: fmi4j_version, changing: fmi4j_snapshot
+    testCompile group: 'com.github.NTNU-IHB:FMI4j', name: 'fmi-import', version: fmi4j_version, changing: fmi4j_snapshot
 
 }
 

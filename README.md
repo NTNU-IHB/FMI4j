@@ -105,13 +105,13 @@ ControlledTemperature.newInstance().use { slave -> //try with resources
     }
 ```
 
-The plugin has been added to the [Gradle Plugin portal](https://plugins.gradle.org/plugin/no.mechatronics.sfi.fmi4j.FmuPlugin).
+The plugin has been added to the [Gradle Plugin portal](https://plugins.gradle.org/plugin/no.ntnu.ihb.fmi4j.FmuPlugin).
 
 To use it, simply add the following to your build.gradle
 
 ```gradle
 plugins {
-    id "no.mechatronics.sfi.fmi4j.FmuPlugin" version "0.8.0"
+    id "no.ntnu.ihb.fmi4j.FmuPlugin" version "0.8.0"
 }
 
 ```

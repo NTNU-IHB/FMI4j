@@ -1,8 +1,8 @@
-package no.mechatronics.sfi.fmu2jar.codegen
+package no.ntnu.ihb.fmu2jar.codegen
 
-import no.mechatronics.sfi.fmi4j.modeldescription.parser.ModelDescriptionParser
-import no.mechatronics.sfi.fmu2jar.util.TEST_FMUs
-import no.mechatronics.sfi.fmu2jar.util.currentOS
+import no.ntnu.ihb.fmi4j.modeldescription.parser.ModelDescriptionParser
+import no.ntnu.ihb.fmu2jar.util.TEST_FMUs
+import no.ntnu.ihb.fmu2jar.util.currentOS
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable
