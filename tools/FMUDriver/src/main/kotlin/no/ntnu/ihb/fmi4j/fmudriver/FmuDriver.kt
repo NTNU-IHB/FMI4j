@@ -35,7 +35,6 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.File
 
-
 class Rejection(
         val reason: String
 ): Exception(reason)
@@ -68,7 +67,6 @@ class FmuDriver(
 ) {
 
     private val LOG: Logger = LoggerFactory.getLogger(FmuDriver::class.java)
-
 
     fun run() {
 
@@ -139,7 +137,7 @@ class FmuDriver(
 
                 val data = sb.toString()
                 data.toByteArray().size.also { size ->
-                    if (size > 1e6) {
+                    if (options.failOnLargeSize && (size > 1e6)) {
                         throw Rejection("Generated CSV larger than 1MB. Was: ${size/1e6}MB!")
                     }
                 }

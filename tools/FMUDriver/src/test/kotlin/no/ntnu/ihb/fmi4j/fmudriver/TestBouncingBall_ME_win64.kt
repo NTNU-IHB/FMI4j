@@ -2,6 +2,7 @@ package no.ntnu.ihb.fmi4j.fmudriver
 
 import no.ntnu.ihb.fmu2jar.TEST_FMUs
 import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable
 import org.junit.jupiter.api.condition.EnabledOnOs
@@ -10,6 +11,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.File
 
+@Disabled
 @EnabledOnOs(OS.WINDOWS)
 @EnabledIfEnvironmentVariable(named = "TEST_FMUs", matches = ".*")
 class TestBouncingBall_ME_win64 {

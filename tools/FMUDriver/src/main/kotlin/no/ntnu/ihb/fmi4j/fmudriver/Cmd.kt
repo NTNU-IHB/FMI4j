@@ -15,7 +15,7 @@ object Cmd {
         var showHelp = false
 
         @CommandLine.Option(names = ["-f", "--fmu"], description = ["Path to the FMU."], required = true)
-        lateinit var fmuPath: File
+        lateinit var fmuPath: String
 
         @CommandLine.Option(names = ["-out", "--outputFolder"], description = ["Folder to store xc result."], required = false)
         var outputFolder: String = "."
@@ -49,7 +49,7 @@ object Cmd {
                     outputFolder = outputFolder
             )
 
-            FmuDriver(fmuPath, options).run()
+            FmuDriver(File(fmuPath.removeSurrounding("\"")), options).run()
         }
 
     }
