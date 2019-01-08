@@ -22,9 +22,7 @@ class AMESimTest {
                 .fmu("MIS_cs").use {
 
                    LOG.debug(it.modelDescriptionXml)
-
                     it.asCoSimulationFmu()
-
                 }
 
     }

@@ -46,8 +46,8 @@ class VanDerPolTest {
 
         private val LOG = LoggerFactory.getLogger(VanDerPolTest::class.java)
 
-        private val stop = 1.0
-        private val macroStep = 1.0 / 10
+        private const val stop = 1.0
+        private const val macroStep = 1.0 / 10
 
         private val fmu = TestFMUs.fmi20().me()
                 .vendor("FMUSDK").version("2.0.4").fmu("vanDerPol")

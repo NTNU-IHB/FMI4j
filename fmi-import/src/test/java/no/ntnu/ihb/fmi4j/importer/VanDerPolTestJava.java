@@ -75,7 +75,7 @@ public class VanDerPolTestJava {
         LOG.info("Using solver: {}", solver.getName());
 
         FmuSlave slave = VanDerPolTestJava.fmu.asModelExchangeFmu()
-                .newInstance(solver, false, true);
+                .newInstance(solver, false, false);
 
         RealVariable x0 = slave.getModelVariables()
                 .getByName("x0").asRealVariable();

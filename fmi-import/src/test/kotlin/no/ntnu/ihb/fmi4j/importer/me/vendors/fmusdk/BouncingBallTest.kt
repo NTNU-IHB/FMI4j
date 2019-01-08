@@ -23,7 +23,7 @@ class BouncingBallTest {
     private companion object {
         private val LOG = LoggerFactory.getLogger(BouncingBallTest::class.java)
 
-        private val fmu = no.ntnu.ihb.fmi4j.TestFMUs.fmi20().me()
+        private val fmu = TestFMUs.fmi20().me()
                 .vendor("FMUSDK").version("2.0.4").fmu("bouncingBall")
                 .asModelExchangeFmu()
 
@@ -51,6 +51,10 @@ class BouncingBallTest {
                     .getByName("h").asRealVariable()
 
             Assertions.assertTrue(slave.simpleSetup())
+
+//            slave.setup()
+//            slave.enterInitializationMode()
+//            slave.exitInitializationMode()
 
             val macroStep = 1.0 / 10
             while (slave.simulationTime <= 1) {

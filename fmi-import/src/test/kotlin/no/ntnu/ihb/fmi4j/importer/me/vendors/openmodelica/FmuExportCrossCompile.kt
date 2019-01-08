@@ -1,5 +1,6 @@
 package no.ntnu.ihb.fmi4j.importer.me.vendors.openmodelica
 
+import no.ntnu.ihb.fmi4j.TestFMUs
 import no.ntnu.ihb.fmi4j.common.FmiStatus
 import no.ntnu.ihb.fmi4j.solvers.Solver
 import no.ntnu.ihb.fmi4j.me.ApacheSolver
@@ -9,7 +10,6 @@ import org.junit.jupiter.api.*
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable
 import org.slf4j.LoggerFactory
 
-@Disabled
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @EnabledIfEnvironmentVariable(named = "TEST_FMUs", matches = ".*")
 class FmuExportCrossCompile {
@@ -22,7 +22,7 @@ class FmuExportCrossCompile {
         const val macroStep = 1.0 / 10
         const val microStep = 1E-3
 
-        val fmu = no.ntnu.ihb.fmi4j.TestFMUs.fmi20().cs()
+        val fmu = TestFMUs.fmi20().cs()
                 .vendor("OpenModelica").version("v1.11.0").fmu("FmuExportCrossCompile")
                 .asModelExchangeFmu()
 

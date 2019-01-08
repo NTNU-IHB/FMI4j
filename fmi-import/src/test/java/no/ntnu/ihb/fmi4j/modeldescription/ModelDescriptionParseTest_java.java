@@ -21,7 +21,6 @@ public class ModelDescriptionParseTest_java {
                 .file("ControlledTemperature");
 
         Assertions.assertTrue(fmuFile.exists());
-
         Assertions.assertNotNull(ModelDescriptionParser.parse(fmuFile).asCoSimulationModelDescription());
 
         String xml = ModelDescriptionParser.extractModelDescriptionXml(fmuFile);
@@ -30,15 +29,14 @@ public class ModelDescriptionParseTest_java {
     }
 
     @Test
+    @EnabledOnOs(OS.LINUX)
     public void test2() {
-
 
         File fmuFile = TestFMUs.fmi20().cs()
                 .vendor("JModelica.org").version("1.15")
                 .file("PID_Controller");
 
         Assertions.assertTrue(fmuFile.exists());
-
         Assertions.assertNotNull(ModelDescriptionParser.parse(fmuFile).asCoSimulationModelDescription());
 
         String xml = ModelDescriptionParser.extractModelDescriptionXml(fmuFile);
@@ -55,7 +53,6 @@ public class ModelDescriptionParseTest_java {
                 .file("uart");
 
         Assertions.assertTrue(fmuFile.exists());
-
         Assertions.assertNotNull(ModelDescriptionParser.parse(fmuFile).asCoSimulationModelDescription());
 
         String xml = ModelDescriptionParser.extractModelDescriptionXml(fmuFile);
@@ -64,7 +61,6 @@ public class ModelDescriptionParseTest_java {
     }
 
     @Test
-    @EnabledOnOs(OS.LINUX)
     public void test4() {
 
         File fmuFile = TestFMUs.fmi20().cs()
@@ -72,7 +68,6 @@ public class ModelDescriptionParseTest_java {
                 .file("fuelrail_cs");
 
         Assertions.assertTrue(fmuFile.exists());
-
         Assertions.assertNotNull(ModelDescriptionParser.parse(fmuFile).asCoSimulationModelDescription());
 
         String xml = ModelDescriptionParser.extractModelDescriptionXml(fmuFile);
