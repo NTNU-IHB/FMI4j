@@ -20,7 +20,7 @@ class FmuPluginExtension {
 
     FmuPluginExtension(Project project) {
         version = project.objects.property(String)
-        version.set("0.13.1")
+        version.set("0.14.0")
         configurationName = project.objects.property(String)
         configurationName.set("implementation")
     }
@@ -47,7 +47,7 @@ class FmuPlugin implements Plugin<Project> {
 
             @Override
             void beforeResolve(ResolvableDependencies resolvableDependencies) {
-                target.dependencies.add(fmi4j.configurationName.get(), "no.ntnu.ihb.fmi4j:fmi-import:${fmi4j.version.get()}")
+                target.dependencies.add(fmi4j.configurationName.get(), "com.github.NTNU-IHB.FMI4j:fmi-import:${fmi4j.version.get()}")
                 target.gradle.removeListener(this)
             }
 
@@ -79,7 +79,7 @@ class FmuPlugin implements Plugin<Project> {
             if (file.name.toLowerCase().endsWith(".fmu")) {
 
                 def md = ModelDescriptionParser.parse(file)
-                def out = new File(outputDir, "no/mechatronics/sfi/fmi4j/${md.modelName}.java")
+                def out = new File(outputDir, "no/ntnu/ihb/fmi4j/${md.modelName}.java")
                 out.parentFile.mkdirs()
                 out.write(new CodeGenerator(md).generateBody())
             }
