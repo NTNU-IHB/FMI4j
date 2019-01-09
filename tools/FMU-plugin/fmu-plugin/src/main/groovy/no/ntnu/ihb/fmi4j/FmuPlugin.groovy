@@ -12,7 +12,6 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.DependencyResolutionListener
 import org.gradle.api.artifacts.ResolvableDependencies
 import org.gradle.api.provider.Property
-import org.gradle.api.tasks.compile.JavaCompile
 
 class FmuPluginExtension {
 
