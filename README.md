@@ -65,7 +65,8 @@ allprojects {
 }
 
 dependencies {
-    implementation 'com.github.SFI-Mechatronics.FMI4j:fmi-import:v0.13.2'
+    def fmi4j_version = "..." // e.g v0.14.0
+    implementation "com.github.SFI-Mechatronics.FMI4j:fmi-import:$fmi4j_version"
 }
 ```
 
@@ -111,7 +112,7 @@ To use it, simply add the following to your build.gradle
 
 ```gradle
 plugins {
-    id "no.ntnu.ihb.fmi4j.FmuPlugin" version "0.8.0"
+    id "no.ntnu.ihb.fmi4j.FmuPlugin" version "..."
 }
 
 ```
@@ -120,7 +121,7 @@ The plugin will automatically add a dependency to the FMI4j artifact ```fmi-impo
 
 ```gradle
 fmi4j {
-    version = "0.13.1"
+    version = "..."
     configurationName = "compile"
 }
 ```
