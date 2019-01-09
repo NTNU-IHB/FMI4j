@@ -8,6 +8,8 @@ import no.ntnu.ihb.fmi4j.me.ApacheSolvers
 import org.apache.commons.math3.ode.nonstiff.DormandPrince853Integrator
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable
+import org.junit.jupiter.api.condition.EnabledOnOs
+import org.junit.jupiter.api.condition.OS
 import org.slf4j.LoggerFactory
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -64,26 +66,31 @@ class FmuExportCrossCompile {
     }
 
     @Test
+    @EnabledOnOs(OS.WINDOWS)
     fun testEuler() {
         runFmu(ApacheSolvers.euler(microStep))
     }
-//
+
     @Test
+    @EnabledOnOs(OS.WINDOWS)
     fun testRungeKutta() {
         runFmu(ApacheSolvers.rk4(microStep))
     }
 
     @Test
+    @EnabledOnOs(OS.WINDOWS)
     fun testLuther() {
         runFmu(ApacheSolvers.luther(microStep))
     }
 
     @Test
+    @EnabledOnOs(OS.WINDOWS)
     fun testMidpoint() {
         runFmu(ApacheSolvers.midpoint(microStep))
     }
 
     @Test
+    @EnabledOnOs(OS.WINDOWS)
     fun testDp() {
         runFmu(ApacheSolver(DormandPrince853Integrator(0.0, microStep, 1E-4, 1E-4)))
     }
