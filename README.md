@@ -108,18 +108,28 @@ ControlledTemperature.newInstance().use { slave -> //try with resources
 
 The plugin has been added to the [Gradle Plugin portal](https://plugins.gradle.org/plugin/no.ntnu.ihb.fmi4j.FmuPlugin).
 
-To use it, simply add the following to your build.gradle
+To use it, simply add the following to your ```build.gradle```
 
-```gradle
+```groovy
 plugins {
     id "no.ntnu.ihb.fmi4j.FmuPlugin" version "..."
 }
+```
 
+and the following to your ``settings.gradle``
+
+```groovy
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        maven { url 'https://jitpack.io' }
+    }
+}
 ```
 
 The plugin will automatically add a dependency to the FMI4j artifact ```fmi-import```. It defaults to the _implementation_ configuration. You can change this behaviour through the _fmi4j_ extension. E.g:
 
-```gradle
+```groovy
 fmi4j {
     version = "..."
     configurationName = "compile"

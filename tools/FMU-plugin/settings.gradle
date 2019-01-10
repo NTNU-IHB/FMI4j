@@ -1,5 +1,13 @@
+
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        maven { url 'https://jitpack.io' }
+    }
+}
+
 rootProject.name = "FMU-plugin"
 
-include "example"
 include "fmu-plugin"
+include "example"
 

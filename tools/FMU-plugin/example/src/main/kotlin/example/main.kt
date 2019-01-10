@@ -3,7 +3,7 @@ package example
 import no.ntnu.ihb.fmi4j.ControlledTemperature
 import no.ntnu.ihb.fmi4j.modeldescription.variables.RealVariable
 
-fun main(args: Array<String>) {
+fun main() {
 
     ControlledTemperature.newInstance().use { slave ->
 
