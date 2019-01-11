@@ -3,7 +3,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/SFI-Mechatronics/FMI4j/issues)
 
-[![](https://jitpack.io/v/NTNU-IHB/FMI4j.svg)](https://jitpack.io/#SFI-Mechatronics/FMI4j)
+[![](https://jitpack.io/v/NTNU-IHB/FMI4j.svg)](https://jitpack.io/#SFI-Mechatronics/FMI4j) [![Join the chat at https://gitter.im/NTNU-IHB/FMI4j](https://badges.gitter.im/NTNU-IHB/FMI4j.svg)](https://gitter.im/NTNU-IHB/FMI4j?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 
 FMI4j is a software package for dealing with Functional Mock-up Units (FMUs) on the Java Virtual Machine (JVM), written in [Kotlin](https://kotlinlang.org/). 
