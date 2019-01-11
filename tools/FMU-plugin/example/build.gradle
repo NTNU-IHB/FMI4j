@@ -1,5 +1,4 @@
 
 plugins {
-    id "no.ntnu.ihb.fmi4j.FmuPlugin" version "0.14.0"
+    id "no.ntnu.ihb.fmi4j.FmuPlugin" version "0.14.0-6"
 }
-

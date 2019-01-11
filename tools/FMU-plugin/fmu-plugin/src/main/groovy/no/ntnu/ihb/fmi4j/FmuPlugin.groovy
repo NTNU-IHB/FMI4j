@@ -68,6 +68,7 @@ class FmuPlugin implements Plugin<Project> {
 
     }
 
+
     private void compileSources(File srcDir, File outputDir) {
 
         if (!srcDir.exists()) {

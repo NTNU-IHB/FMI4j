@@ -3,7 +3,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/SFI-Mechatronics/FMI4j/issues)
 
-[![](https://jitpack.io/v/NTNU-IHB/FMI4j.svg)](https://jitpack.io/#SFI-Mechatronics/FMI4j) [![Join the chat at https://gitter.im/NTNU-IHB/FMI4j](https://badges.gitter.im/NTNU-IHB/FMI4j.svg)](https://gitter.im/NTNU-IHB/FMI4j?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![](https://jitpack.io/v/NTNU-IHB/FMI4j.svg)](https://jitpack.io/#NTNU-IHB/FMI4j) [![CircleCI](https://circleci.com/gh/NTNU-IHB/FMI4j/tree/master.svg?style=svg)](https://circleci.com/gh/NTNU-IHB/FMI4j/tree/master)
 
 
 FMI4j is a software package for dealing with Functional Mock-up Units (FMUs) on the Java Virtual Machine (JVM), written in [Kotlin](https://kotlinlang.org/). 
@@ -108,18 +108,28 @@ ControlledTemperature.newInstance().use { slave -> //try with resources
 
 The plugin has been added to the [Gradle Plugin portal](https://plugins.gradle.org/plugin/no.ntnu.ihb.fmi4j.FmuPlugin).
 
-To use it, simply add the following to your build.gradle
+To use it, simply add the following to your ```build.gradle```
 
-```gradle
+```groovy
 plugins {
     id "no.ntnu.ihb.fmi4j.FmuPlugin" version "..."
 }
+```
 
+and the following to your ``settings.gradle``
+
+```groovy
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        maven { url 'https://jitpack.io' }
+    }
+}
 ```
 
 The plugin will automatically add a dependency to the FMI4j artifact ```fmi-import```. It defaults to the _implementation_ configuration. You can change this behaviour through the _fmi4j_ extension. E.g:
 
-```gradle
+```groovy
 fmi4j {
     version = "..."
     configurationName = "compile"
@@ -139,7 +149,7 @@ The jar file contains code that makes it easier to work with the FMU progamatica
 
 FmuDriver is a command line tool for running FMUs. Run: 
 
-```
+```bash
 java -jar FmuDriver -h
 ```
 
