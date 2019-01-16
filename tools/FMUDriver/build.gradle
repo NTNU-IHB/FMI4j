@@ -71,3 +71,10 @@ distributions {
 startScripts {
     applicationName = 'fmudriver'
 }
+
+task copyTestFmus(type: Copy) {
+    from "$projectDir/../../fmus"
+    into "$buildDir/resources/test/fmus"
+}
+
+testClasses.dependsOn(copyTestFmus)

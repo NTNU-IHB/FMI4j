@@ -1,6 +1,5 @@
 package no.ntnu.ihb.fmi4j.fmudriver
 
-import no.ntnu.ihb.fmu2jar.TEST_FMUs
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
@@ -14,18 +13,18 @@ import java.io.File
 @Disabled
 @EnabledOnOs(OS.WINDOWS)
 @EnabledIfEnvironmentVariable(named = "TEST_FMUs", matches = ".*")
-class TestBouncingBall_ME_win64 {
+class TestBouncingBall {
 
     private companion object {
-        val LOG: Logger = LoggerFactory.getLogger(TestBouncingBall_ME_win64::class.java)
+        val LOG: Logger = LoggerFactory.getLogger(TestBouncingBall::class.java)
     }
 
     @Test
     fun test() {
 
         val name = "bouncingBall"
-        val path = "$TEST_FMUs/2.0/me/win64/" +
-                "FMUSDK/2.0.4/bouncingBall/$name.fmu"
+        val path = "${TestBouncingBall::class.java.classLoader.getResource("fmus").file}" +
+                "/2.0/me/FMUSDK/2.0.4/bouncingBall/$name.fmu"
         Assertions.assertTrue(File(path).exists())
 
         val args = arrayOf(

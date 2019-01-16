@@ -1,8 +1,6 @@
 package no.ntnu.ihb.fmu2jar.codegen
 
 import no.ntnu.ihb.fmi4j.modeldescription.parser.ModelDescriptionParser
-import no.ntnu.ihb.fmu2jar.util.TEST_FMUs
-import no.ntnu.ihb.fmu2jar.util.currentOS
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable
@@ -20,10 +18,10 @@ class CodeGenerationTest {
     @Test
     fun generateBody() {
 
-        val file = File(TEST_FMUs,
-                "2.0/cs/$currentOS/20sim/4.6.4.8004/" +
-                        "ControlledTemperature/ControlledTemperature.fmu")
+        val file = File(CodeGenerationTest::class.java.classLoader.getResource("fmus").file,
+                "2.0/cs/20sim/4.6.4.8004/ControlledTemperature/ControlledTemperature.fmu")
         Assertions.assertTrue(file.exists())
+
         ModelDescriptionParser.parse(file).also {
             LOG.info( CodeGenerator(it).generateBody() )
         }

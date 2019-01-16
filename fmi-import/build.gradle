@@ -23,8 +23,8 @@ dependencies {
 }
 
 shadowJar {
-    baseName = archivesBaseName + "-shadow"
-    classifier = null
+    archivesBaseName += "-shadow"
+    archiveClassifier = null
     version = null
 }
 
@@ -110,3 +110,10 @@ model {
         }
     }
 }
+
+task copyTestFmus(type: Copy) {
+    from "$projectDir/../fmus"
+    into "$buildDir/resources/test/fmus"
+}
+
+testClasses.dependsOn(copyTestFmus)
