@@ -5,10 +5,12 @@ import no.ntnu.ihb.fmi4j.modeldescription.ModelDescription
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
-import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import java.io.*
+import java.io.ByteArrayInputStream
+import java.io.ByteArrayOutputStream
+import java.io.ObjectInputStream
+import java.io.ObjectOutputStream
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class FmuExportCrossCompileTest {

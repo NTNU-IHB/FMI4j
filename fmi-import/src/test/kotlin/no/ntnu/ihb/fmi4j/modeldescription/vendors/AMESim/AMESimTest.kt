@@ -2,7 +2,6 @@ package no.ntnu.ihb.fmi4j.modeldescription.vendors.AMESim
 
 import no.ntnu.ihb.fmi4j.TestFMUs
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -25,6 +24,5 @@ class AMESimTest {
                 }
 
     }
-
 
 }
