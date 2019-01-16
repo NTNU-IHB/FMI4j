@@ -37,14 +37,13 @@ import org.slf4j.LoggerFactory
 import java.util.*
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@EnabledIfEnvironmentVariable(named = "TEST_FMUs", matches = ".*")
 class ControlledTemperatureTest {
 
     companion object {
 
         private val LOG: Logger = LoggerFactory.getLogger(ControlledTemperatureTest::class.java)
 
-        private val modelDescription = no.ntnu.ihb.fmi4j.TestFMUs.fmi20().cs()
+        private val modelDescription = TestFMUs.fmi20().cs()
                 .vendor("20sim").version("4.6.4.8004")
                 .modelDescription("ControlledTemperature")
                 .asCoSimulationModelDescription()

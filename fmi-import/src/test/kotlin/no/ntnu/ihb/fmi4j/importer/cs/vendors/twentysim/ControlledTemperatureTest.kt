@@ -8,7 +8,7 @@ import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-@EnabledIfEnvironmentVariable(named = "TEST_FMUs", matches = ".*")
+
 class ControlledTemperatureTest {
 
     companion object {
@@ -18,7 +18,7 @@ class ControlledTemperatureTest {
     @Test
     fun test() {
 
-        no.ntnu.ihb.fmi4j.TestFMUs.fmi20().cs()
+        TestFMUs.fmi20().cs()
                 .vendor("20sim").version("4.6.4.8004")
                 .fmu("ControlledTemperature").use { fmu ->
 

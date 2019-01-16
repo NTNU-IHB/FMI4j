@@ -39,7 +39,6 @@ import org.slf4j.LoggerFactory
 
 @EnabledOnOs(OS.WINDOWS)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@EnabledIfEnvironmentVariable(named = "TEST_FMUs", matches = ".*")
 class VanDerPolTest {
 
     companion object {

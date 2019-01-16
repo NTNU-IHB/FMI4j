@@ -17,13 +17,12 @@ import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-@EnabledIfEnvironmentVariable(named = "TEST_FMUs", matches = ".*")
 class TestJackson {
 
     companion object {
         val LOG: Logger = LoggerFactory.getLogger(TestJackson::class.java)
 
-        val fmuFile = no.ntnu.ihb.fmi4j.TestFMUs.fmi20().cs()
+        val fmuFile = TestFMUs.fmi20().cs()
                 .vendor("MapleSim").version("2017")
                 .file("ControlledTemperature")
 

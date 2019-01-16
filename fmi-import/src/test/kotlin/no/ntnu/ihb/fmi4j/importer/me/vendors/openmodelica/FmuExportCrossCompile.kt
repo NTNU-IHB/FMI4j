@@ -13,7 +13,6 @@ import org.junit.jupiter.api.condition.OS
 import org.slf4j.LoggerFactory
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@EnabledIfEnvironmentVariable(named = "TEST_FMUs", matches = ".*")
 class FmuExportCrossCompile {
 
     private companion object {

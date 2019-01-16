@@ -15,13 +15,12 @@ import java.time.Duration
 import java.time.Instant
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@EnabledIfEnvironmentVariable(named = "TEST_FMUs", matches = ".*")
 class CompareWithJavaFmi {
 
     companion object {
         private val LOG: Logger = LoggerFactory.getLogger(CompareWithJavaFmi::class.java)
 
-        private val file = no.ntnu.ihb.fmi4j.TestFMUs.fmi20().cs()
+        private val file = TestFMUs.fmi20().cs()
                 .vendor("20sim").version("4.6.4.8004").file("ControlledTemperature")
 
         private val fmu = Fmu.from(file).asCoSimulationFmu()

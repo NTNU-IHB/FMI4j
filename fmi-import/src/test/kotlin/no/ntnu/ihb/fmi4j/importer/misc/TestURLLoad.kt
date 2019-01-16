@@ -8,7 +8,7 @@ class TestURLLoad {
 
     @Test
     fun test() {
-        Fmu.from(TestURLLoad::class.java.classLoader.getResource("bouncingBall.fmu")).use {
+        Fmu.from(TestURLLoad::class.java.classLoader.getResource("fmus/2.0/me/FMUSDK/2.0.4/bouncingBall/bouncingBall.fmu")).use {
             Assertions.assertEquals("bouncingBall", it.modelDescription.modelName)
         }
     }

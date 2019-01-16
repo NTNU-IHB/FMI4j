@@ -14,16 +14,14 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@EnabledIfEnvironmentVariable(named = "TEST_FMUs", matches = ".*")
 class FmuInstanceVariableAccessorTest {
 
     companion object {
         private val LOG: Logger = LoggerFactory.getLogger(FmuInstanceVariableAccessorTest::class.java)
     }
 
-    private val fmu = TestFMUs.fmi20().cs()
-            .vendor("20sim").version("4.6.4.8004").fmu("ControlledTemperature")
-            .asCoSimulationFmu()
+    private val fmu = TestFMUs.fmi20().cs().vendor("20sim")
+            .version("4.6.4.8004").fmu("ControlledTemperature").asCoSimulationFmu()
 
     @AfterAll
     fun tearDown() {

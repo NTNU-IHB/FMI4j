@@ -17,7 +17,6 @@ import org.slf4j.LoggerFactory
 
 @EnabledOnOs(OS.WINDOWS)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@EnabledIfEnvironmentVariable(named = "TEST_FMUs", matches = ".*")
 class BouncingBallTest {
 
     private companion object {
@@ -51,10 +50,6 @@ class BouncingBallTest {
                     .getByName("h").asRealVariable()
 
             Assertions.assertTrue(slave.simpleSetup())
-
-//            slave.setup()
-//            slave.enterInitializationMode()
-//            slave.exitInitializationMode()
 
             val macroStep = 1.0 / 10
             while (slave.simulationTime <= 1) {

@@ -10,7 +10,6 @@ import org.junit.jupiter.api.condition.OS;
 
 import java.io.File;
 
-@EnabledIfEnvironmentVariable(named = "TEST_FMUs", matches = ".*")
 public class ModelDescriptionParseTest_java {
 
     @Test

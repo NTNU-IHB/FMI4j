@@ -28,13 +28,10 @@ import no.ntnu.ihb.fmi4j.TestFMUs;
 import no.ntnu.ihb.fmi4j.common.FmiStatus;
 import no.ntnu.ihb.fmi4j.common.FmuSlave;
 import no.ntnu.ihb.fmi4j.modeldescription.variables.RealVariable;
-import no.ntnu.ihb.fmi4j.TestFMUs;
-import no.ntnu.ihb.fmi4j.common.FmuSlave;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.io.IOException;
@@ -43,7 +40,6 @@ import java.io.IOException;
  * @author Lars Ivar Hatledal
  */
 
-@EnabledIfEnvironmentVariable(named = "TEST_FMUs", matches = ".*")
 public class ControlledTemperatureTestJava {
 
     private final static Logger LOG = LoggerFactory.getLogger(ControlledTemperatureTestJava.class);

@@ -1,5 +1,6 @@
 package no.ntnu.ihb.fmi4j.importer.cs.vendors.fmusdk
 
+import no.ntnu.ihb.fmi4j.TestFMUs
 import no.ntnu.ihb.fmi4j.common.FmiStatus
 import no.ntnu.ihb.fmi4j.importer.me.vendors.fmusdk.VanDerPolTest
 import org.junit.jupiter.api.AfterAll
@@ -12,24 +13,17 @@ import org.junit.jupiter.api.condition.OS
 import org.slf4j.LoggerFactory
 
 @EnabledOnOs(OS.WINDOWS)
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@EnabledIfEnvironmentVariable(named = "TEST_FMUs", matches = ".*")
 class VanDerPolTest {
 
     private companion object {
         private val LOG = LoggerFactory.getLogger(VanDerPolTest::class.java)
     }
 
-    private val fmu = no.ntnu.ihb.fmi4j.TestFMUs.fmi20().cs()
-            .vendor("FMUSDK").version("2.0.4").fmu("vanDerPol")
-
-    @AfterAll
-    fun tearDown() {
-        fmu.close()
-    }
-
     @Test
     fun testInstance() {
+
+        val fmu = TestFMUs.fmi20().cs()
+                .vendor("FMUSDK").version("2.0.4").fmu("vanDerPol")
 
         fmu.asCoSimulationFmu().newInstance().use { slave ->
 
@@ -50,6 +44,8 @@ class VanDerPolTest {
             }
 
         }
+
+        fmu.close()
 
     }
 

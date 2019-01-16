@@ -10,20 +10,16 @@ class FmuTest {
 
     @Test
     fun testWrongExtension() {
-
         Assertions.assertThrows(IllegalArgumentException::class.java) {
             Fmu.from(File("wrong_extension.fm"))
         }
-
     }
 
     @Test
     fun testMissingFile() {
-
         Assertions.assertThrows(FileNotFoundException::class.java) {
             Fmu.from(File("missing_file.fmu"))
         }
-
     }
 
 }

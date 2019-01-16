@@ -1,13 +1,16 @@
 package no.ntnu.ihb.fmi4j.importer.cs.vendors.maplesim
 
+import no.ntnu.ihb.fmi4j.TestFMUs
 import no.ntnu.ihb.fmi4j.common.FmiStatus
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable
+import org.junit.jupiter.api.condition.EnabledOnOs
+import org.junit.jupiter.api.condition.OS
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-@EnabledIfEnvironmentVariable(named = "TEST_FMUs", matches = ".*")
+@EnabledOnOs(OS.WINDOWS)
 class ControlledTemperatureTest {
 
     companion object {
@@ -17,7 +20,7 @@ class ControlledTemperatureTest {
     @Test
     fun test() {
 
-        no.ntnu.ihb.fmi4j.TestFMUs.fmi20().cs()
+        TestFMUs.fmi20().cs()
                 .vendor("MapleSim").version("2017")
                 .fmu("ControlledTemperature").use { fmu ->
 

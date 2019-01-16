@@ -45,9 +45,8 @@ import java.io.IOException;
 /**
  * @author Lars Ivar Hatledal
  */
-@EnabledOnOs(OS.WINDOWS)
+
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@EnabledIfEnvironmentVariable(named = "TEST_FMUs", matches = ".*")
 public class VanDerPolTestJava {
 
     private static final Logger LOG = LoggerFactory.getLogger(VanDerPolTestJava.class);
@@ -95,16 +94,19 @@ public class VanDerPolTestJava {
     }
 
     @Test
+    @EnabledOnOs(OS.WINDOWS)
     public void testEuler() {
         runFmu(ApacheSolvers.euler(1E-3));
     }
 
     @Test
+    @EnabledOnOs(OS.WINDOWS)
     public void testRungeKutta() {
         runFmu(ApacheSolvers.rk4(1E-3));
     }
 
     @Test
+    @EnabledOnOs(OS.WINDOWS)
     public void testLuther() {
         runFmu(ApacheSolvers.luther(1E-3));
     }

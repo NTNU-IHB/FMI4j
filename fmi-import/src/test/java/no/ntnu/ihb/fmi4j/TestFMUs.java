@@ -1,6 +1,5 @@
 package no.ntnu.ihb.fmi4j;
 
-import no.ntnu.ihb.fmi4j.common.OSUtil;
 import no.ntnu.ihb.fmi4j.importer.Fmu;
 import no.ntnu.ihb.fmi4j.modeldescription.ModelDescriptionProvider;
 import no.ntnu.ihb.fmi4j.modeldescription.parser.ModelDescriptionParser;
@@ -11,13 +10,7 @@ import java.io.IOException;
 public class TestFMUs {
 
     private static String getPath() {
-
-        String env = System.getenv("TEST_FMUs");
-        if (env == null) {
-            throw new IllegalStateException("TEST_FMUs not found on PATH!");
-        }
-        return env;
-
+        return TestFMUs.class.getClassLoader().getResource("fmus").getFile();
     }
 
 
@@ -54,7 +47,7 @@ public class TestFMUs {
         }
 
         public FmuVendor vendor(String vendor) {
-            sb.append("/cs/").append(OSUtil.getCurrentOS());
+            sb.append("/cs/");
             return new FmuVendor(sb, vendor);
         }
 
@@ -69,7 +62,7 @@ public class TestFMUs {
         }
 
         public FmuVendor vendor(String vendor) {
-            sb.append("/me/").append(OSUtil.getCurrentOS());
+            sb.append("/me/");
             return new FmuVendor(sb, vendor);
         }
 

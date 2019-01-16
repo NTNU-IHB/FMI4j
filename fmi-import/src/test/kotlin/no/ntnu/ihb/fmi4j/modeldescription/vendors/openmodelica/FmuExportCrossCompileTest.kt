@@ -11,14 +11,13 @@ import org.slf4j.LoggerFactory
 import java.io.*
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@EnabledIfEnvironmentVariable(named = "TEST_FMUs", matches = ".*")
 class FmuExportCrossCompileTest {
 
     private companion object {
 
         val LOG: Logger = LoggerFactory.getLogger(FmuExportCrossCompileTest::class.java)
 
-        val modelDescription = no.ntnu.ihb.fmi4j.TestFMUs.fmi20().cs()
+        val modelDescription = TestFMUs.fmi20().cs()
                 .vendor("OpenModelica").version("v1.11.0")
                 .modelDescription("FmuExportCrossCompile")
 

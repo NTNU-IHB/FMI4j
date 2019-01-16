@@ -10,7 +10,6 @@ import org.junit.jupiter.api.condition.OS
 import java.io.File
 import java.io.FileNotFoundException
 
-@EnabledIfEnvironmentVariable(named = "TEST_FMUs", matches = ".*")
 class TestIllegalFmuInstanceType {
 
     @Test
