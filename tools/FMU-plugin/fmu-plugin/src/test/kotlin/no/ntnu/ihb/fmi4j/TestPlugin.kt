@@ -1,12 +1,10 @@
 package no.ntnu.ihb.fmi4j
 
-import no.ntnu.ihb.fmi4j.common.currentOS
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
-import org.junit.jupiter.api.condition.OS
 import java.io.File
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -23,11 +21,9 @@ class TestPlugin {
             }
 
             val fmuName = "ControlledTemperature"
-            val fmu = File(getTEST_FMUs(),
-                    "2.0/cs/$currentOS" +
-                            "/20sim/4.6.4.8004/$fmuName/$fmuName.fmu")
-
-            fmu.copyTo(File(this, fmuName))
+            File(TestPlugin::class.java.classLoader.getResource("ControlledTemperature.fmu").file).also {
+                copyTo(File(this, fmuName))
+            }
         }
 
         File(temp, "build.gradle").apply {
@@ -72,10 +68,6 @@ class TestPlugin {
 
     private fun gradle(vararg arguments: String): BuildResult {
         return gradle(true, *arguments)
-    }
-
-    private fun getTEST_FMUs(): String {
-        return System.getenv("TEST_FMUs") ?: throw IllegalStateException("TEST_FMUs not found on PATH!")
     }
 
 }
