@@ -66,8 +66,8 @@ allprojects {
 }
 
 dependencies {
-    def fmi4j_version = "..." // e.g v0.14.0
-    implementation "com.github.NTNU-IHB.FMI4j:fmi-import:$fmi4j_version"
+    def fmi4j_version = "..." // e.g 0.15.0
+    implementation "com.github.NTNU-IHB:FMI4j:$fmi4j_version"
 }
 ```
 
