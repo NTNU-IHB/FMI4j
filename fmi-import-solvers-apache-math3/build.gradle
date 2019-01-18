@@ -1,9 +1,0 @@
-
-apply from: rootProject.file('publisher.gradle')
-
-dependencies {
-
-    api project(':fmi-import-solvers-api')
-    api group: 'org.apache.commons', name: 'commons-math3', version: '3.6.1'
-
-}

@@ -26,7 +26,7 @@ package no.ntnu.ihb.fmi4j.importer.me.vendors.fmusdk
 
 import no.ntnu.ihb.fmi4j.TestFMUs
 import no.ntnu.ihb.fmi4j.common.FmiStatus
-import no.ntnu.ihb.fmi4j.me.ApacheSolvers
+import no.ntnu.ihb.fmi4j.solvers.me.ApacheSolvers
 import no.ntnu.ihb.fmi4j.solvers.Solver
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Assertions

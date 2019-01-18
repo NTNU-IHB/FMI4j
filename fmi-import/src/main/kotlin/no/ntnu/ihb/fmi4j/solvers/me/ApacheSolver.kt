@@ -22,10 +22,8 @@
  * THE SOFTWARE.
  */
 
-package no.ntnu.ihb.fmi4j.me
+package no.ntnu.ihb.fmi4j.solvers.me
 
-import no.ntnu.ihb.fmi4j.solvers.Equations
-import no.ntnu.ihb.fmi4j.solvers.Solver
 import org.apache.commons.math3.ode.FirstOrderDifferentialEquations
 import org.apache.commons.math3.ode.FirstOrderIntegrator
 
@@ -61,4 +59,3 @@ class ApacheSolver(
     }
 
 }
-

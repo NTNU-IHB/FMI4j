@@ -2,8 +2,8 @@ package no.ntnu.ihb.fmi4j.importer.me.vendors.openmodelica
 
 import no.ntnu.ihb.fmi4j.TestFMUs
 import no.ntnu.ihb.fmi4j.common.FmiStatus
-import no.ntnu.ihb.fmi4j.me.ApacheSolver
-import no.ntnu.ihb.fmi4j.me.ApacheSolvers
+import no.ntnu.ihb.fmi4j.solvers.me.ApacheSolver
+import no.ntnu.ihb.fmi4j.solvers.me.ApacheSolvers
 import no.ntnu.ihb.fmi4j.solvers.Solver
 import org.apache.commons.math3.ode.nonstiff.DormandPrince853Integrator
 import org.junit.jupiter.api.AfterAll
