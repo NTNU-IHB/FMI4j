@@ -1,8 +1,6 @@
 package no.ntnu.ihb.fmu2jar
 
 import no.ntnu.ihb.fmi4j.common.FmuSlave
-import no.ntnu.ihb.fmu2jar.util.TEST_FMUs
-import no.ntnu.ihb.fmu2jar.util.currentOS
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
@@ -37,9 +35,8 @@ class MainTest {
     fun testMain() {
 
         val fmuName = "ControlledTemperature"
-        val file = File(TEST_FMUs +
-                "/2.0/cs/$currentOS/20sim/" +
-                "4.6.4.8004/$fmuName/$fmuName.fmu")
+        val file = File(MainTest::class.java.classLoader.getResource("fmus").file +
+                "/2.0/cs/20sim/4.6.4.8004/$fmuName/$fmuName.fmu")
         Assertions.assertTrue(file.exists())
 
         val args = arrayOf<String>(

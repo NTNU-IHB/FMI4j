@@ -1,7 +1,5 @@
 package no.ntnu.ihb.fmi4j.fmudriver
 
-import no.ntnu.ihb.fmi4j.common.currentOS
-import no.ntnu.ihb.fmu2jar.TEST_FMUs
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable
@@ -10,17 +8,18 @@ import org.slf4j.LoggerFactory
 import java.io.File
 
 @EnabledIfEnvironmentVariable(named = "TEST_FMUs", matches = ".*")
-class TestControlledTemperature_CS {
+class TestControlledTemperature {
 
     private companion object {
-        val LOG: Logger = LoggerFactory.getLogger(TestControlledTemperature_CS::class.java)
+        val LOG: Logger = LoggerFactory.getLogger(TestControlledTemperature::class.java)
     }
 
     @Test
     fun test() {
 
-        val path = "$TEST_FMUs/2.0/cs/$currentOS/" +
-                "20sim/4.6.4.8004/ControlledTemperature/ControlledTemperature.fmu"
+        val path = "${TestControlledTemperature::class.java.classLoader.getResource("fmus").file}" +
+                "/2.0/cs/20sim/4.6.4.8004/" +
+                "ControlledTemperature/ControlledTemperature.fmu"
         Assertions.assertTrue(File(path).exists())
 
         val args = arrayOf(

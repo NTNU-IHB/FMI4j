@@ -56,17 +56,22 @@ compileTestKotlin {
 }
 
 shadowJar {
-    baseName = "fmu2jar"
-    classifier = null
+    archiveBaseName = "fmu2jar"
+    archiveClassifier = null
     version = null
 }
 
-task deleteCachedControlledTemperature(type: Delete) {
+task copyTestFmus(type: Copy) {
+    from "$projectDir/../../fmus"
+    into "$buildDir/resources/test/fmus"
+}
 
+testClasses.dependsOn(copyTestFmus)
+
+task deleteCachedControlledTemperature(type: Delete) {
     def fmuName = "ControlledTemperature"
     def m2 = System.getProperty("user.home") + "/.m2/repository"
     delete "$m2/${group.replace(".", "/")}/$fmuName"
-    
 }
 
 clean.dependsOn(deleteCachedControlledTemperature)
