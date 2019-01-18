@@ -12,7 +12,6 @@ import java.io.File
 
 @Disabled
 @EnabledOnOs(OS.WINDOWS)
-@EnabledIfEnvironmentVariable(named = "TEST_FMUs", matches = ".*")
 class TestBouncingBall {
 
     private companion object {

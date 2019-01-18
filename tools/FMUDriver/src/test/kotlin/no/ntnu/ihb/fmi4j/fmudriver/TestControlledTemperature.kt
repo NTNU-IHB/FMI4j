@@ -7,7 +7,6 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.File
 
-@EnabledIfEnvironmentVariable(named = "TEST_FMUs", matches = ".*")
 class TestControlledTemperature {
 
     private companion object {
@@ -17,9 +16,10 @@ class TestControlledTemperature {
     @Test
     fun test() {
 
+        val name = "ControlledTemperature"
         val path = "${TestControlledTemperature::class.java.classLoader.getResource("fmus").file}" +
                 "/2.0/cs/20sim/4.6.4.8004/" +
-                "ControlledTemperature/ControlledTemperature.fmu"
+                "$name/$name.fmu"
         Assertions.assertTrue(File(path).exists())
 
         val args = arrayOf(
@@ -31,7 +31,7 @@ class TestControlledTemperature {
 
         Cmd.main(args)
 
-        File("ControlledTemperature_out.csv").apply {
+        File("${name}_out.csv").apply {
             if (exists()) {
                 delete()
             }
