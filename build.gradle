@@ -1,48 +1,177 @@
 
+import org.apache.tools.ant.taskdefs.condition.Os
+
 plugins {
-    id "org.jetbrains.kotlin.jvm" version "1.3.11" apply false //apply in sub-projects
+    id "cpp"
+    id "java-library"
+    id "maven-publish"
+    id "org.jetbrains.kotlin.jvm" version "1.3.11"
+    id "com.github.johnrengelman.shadow" version "4.0.0"
 }
 
 println "Gradle version is ${gradle.getGradleVersion()}"
 
-subprojects { sub ->
 
-    apply plugin: 'kotlin'
-    apply plugin: 'java-library'
+def snapshot = true
+group = 'no.ntnu.ihb.fmi4j'
+version = snapshot ? 'dev-SNAPSHOT' : '0.15.0'
 
-    def snapshot = true
-    group = 'no.ntnu.ihb.fmi4j'
-    version = snapshot ? 'dev-SNAPSHOT' : '0.14.1'
+repositories {
+    mavenCentral()
+}
 
-    repositories {
-        mavenCentral()
-    }
+dependencies {
 
-    dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+    implementation group: 'org.jetbrains.kotlin', name: 'kotlin-reflect', version: '1.3.11'
 
-        implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
-        implementation group: 'org.jetbrains.kotlin', name: 'kotlin-reflect', version: '1.3.10'
-        
-        def slf4j_version = '1.7.25'
-        implementation group: 'org.slf4j', name: 'slf4j-api', version: slf4j_version
-        runtimeOnly group: 'org.slf4j', name: 'slf4j-log4j12', version: slf4j_version
+    api group: 'org.apache.commons', name: 'commons-math3', version: '3.6.1'
 
-        def junit_version = '5.3.2'
-        testImplementation("org.junit.jupiter:junit-jupiter-api:$junit_version")
-        testImplementation("org.junit.jupiter:junit-jupiter-params:$junit_version")
-        testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junit_version")
+    def jackson_version = '2.9.8'
+    implementation group: "com.fasterxml.jackson.module", name: "jackson-module-kotlin", version: jackson_version
+    implementation group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-xml', version: jackson_version
 
-    }
+    def slf4j_version = '1.7.25'
+    implementation group: 'org.slf4j', name: 'slf4j-api', version: slf4j_version
+    runtimeOnly group: 'org.slf4j', name: 'slf4j-log4j12', version: slf4j_version
 
-    test {
-        useJUnitPlatform()
-    }
 
-    compileKotlin {
-        kotlinOptions.jvmTarget = "1.8"
-    }
-    compileTestKotlin {
-        kotlinOptions.jvmTarget = "1.8"
-    }
+    def junit_version = '5.3.2'
+    testImplementation("org.junit.jupiter:junit-jupiter-api:$junit_version")
+    testImplementation("org.junit.jupiter:junit-jupiter-params:$junit_version")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junit_version")
+
+    testImplementation group: 'com.google.code.gson', name: 'gson', version: '2.8.5'
+    testImplementation group: 'org.siani.javafmi', name: 'fmu-wrapper', version: '2.25.0'
 
 }
+
+
+shadowJar {
+    archivesBaseName += "-shadow"
+    archiveClassifier = null
+    version = null
+}
+
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    archiveClassifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    archiveClassifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from components.java
+            artifact sourcesJar
+            artifact javadocJar
+        }
+    }
+}
+
+test {
+    useJUnitPlatform()
+}
+
+compileKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+}
+compileTestKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+}
+
+
+model {
+
+    buildTypes {
+        release
+    }
+
+    platforms {
+        if (Os.isFamily(Os.FAMILY_UNIX)) {
+            linux32 {
+                architecture "x86"
+                operatingSystem "linux"
+            }
+            linux64 {
+                architecture "x86_64"
+                operatingSystem "linux"
+            }
+        } else  if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+            win32 {
+                architecture "x86"
+                operatingSystem "windows"
+            }
+            win64 {
+                architecture "x86_64"
+                operatingSystem "windows"
+            }
+        }
+    }
+
+    toolChains {
+        visualCpp(VisualCpp) {}
+        gcc(Gcc) {
+            if (Os.isFamily(Os.FAMILY_UNIX)) {
+                target("linux32")
+                target("linux64")
+            }  else if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+                target("win32")
+                target("win64")
+            }
+        }
+
+    }
+
+    components {
+        fmi2(NativeLibrarySpec) {
+
+            baseName = "fmi2_jni"
+
+            if (Os.isFamily(Os.FAMILY_UNIX)) {
+                targetPlatform "linux32"
+                targetPlatform "linux64"
+            } else if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+                targetPlatform "win32"
+                targetPlatform "win64"
+            }
+
+            binaries.all {
+
+                cppCompiler.args "-I${org.gradle.internal.jvm.Jvm.current().javaHome}/include"
+                if (Os.isFamily(Os.FAMILY_UNIX)) {
+                    cppCompiler.args "-I${org.gradle.internal.jvm.Jvm.current().javaHome}/include/linux"
+                } else if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+                    cppCompiler.args "-I${org.gradle.internal.jvm.Jvm.current().javaHome}/include/win32"
+                }
+
+            }
+
+        }
+
+    }
+
+    tasks {
+        buildAllExecutables(Task) {
+            dependsOn $.binaries.findAll { it.buildable }
+        }
+        copyNativeLibs(Copy) {
+            from "$buildDir/libs/fmi2/shared"
+            include "**/*.dll", "**/*.so"
+            into "$projectDir/src/main/resources/native/fmi2"
+            dependsOn buildAllExecutables
+        }
+    }
+}
+
+task copyTestFmus(type: Copy) {
+    from "$projectDir/fmus"
+    into "$buildDir/resources/test/fmus"
+}
+
+testClasses.dependsOn(copyTestFmus)

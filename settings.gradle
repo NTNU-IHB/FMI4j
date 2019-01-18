@@ -1,3 +1,1 @@
 rootProject.name = 'FMI4j'
-
-include 'fmi-import'
