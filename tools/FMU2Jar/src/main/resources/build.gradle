@@ -9,7 +9,7 @@ println "Gradle version is ${gradle.getGradleVersion()}"
 version = '1.0-SNAPSHOT'
 group = 'no.ntnu.ihb.fmu2jar'
 
-def fmi4j_snapshot = false
+def fmi4j_snapshot = true
 def fmi4j_version = !fmi4j_snapshot ? '0.14.0' : 'dev-SNAPSHOT'
 
 repositories {
@@ -24,10 +24,10 @@ if (fmi4j_snapshot) {
 }
 
 dependencies {
-    api group: 'com.github.NTNU-IHB.FMI4j', name: 'fmi-import', version: fmi4j_version, changing: fmi4j_snapshot
+    api group: 'com.github.NTNU-IHB', name: 'FMI4j', version: fmi4j_version, changing: fmi4j_snapshot
 }
 
-task sourcesJar(type: Jar, dependsOn: classes, description: 'Creates a jar from the source files.') {
+task sourcesJar(type: Jar, dependsOn: classes) {
     archiveClassifier = 'sources'
     from sourceSets.main.allSource
 }
