@@ -143,7 +143,7 @@ FMU2Jar is similar to the Gradle plugin, but it does not require Gradle.
 
 It's a command line application which takes an FMU in and produces a Jar file. 
 You can also tell the application to install the Jar into your local maven repository (``.m2``),
-The jar file contains code that makes it easier to work with the FMU progamatically just as the Gradle plugin does. 
+The jar file contains code that makes it easier to work with the FMU programmatically just as the Gradle plugin does. 
 
 
 ### <a name="fmudriver"></a> FmuDriver
