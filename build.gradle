@@ -10,6 +10,10 @@ subprojects { sub ->
     apply plugin: 'kotlin'
     apply plugin: 'java-library'
 
+    def snapshot = true
+    group = 'no.ntnu.ihb.fmi4j'
+    version = snapshot ? 'dev-SNAPSHOT' : '0.14.1'
+
     repositories {
         mavenCentral()
     }

@@ -3,22 +3,18 @@ import org.apache.tools.ant.taskdefs.condition.Os
 
 plugins {
     id "cpp"
+    id "maven-publish"
     id "com.github.johnrengelman.shadow" version "4.0.0"
 }
 
-apply from: rootProject.file('publisher.gradle')
-
 dependencies {
-
-    api project(':fmi-import-solvers-api')
-
+    
     api group: 'org.apache.commons', name: 'commons-math3', version: '3.6.1'
 
     def jackson_version = '2.9.8'
     implementation group: "com.fasterxml.jackson.module", name: "jackson-module-kotlin", version: jackson_version
     implementation group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-xml', version: jackson_version
-
-    testImplementation project(':fmi-import-solvers-apache-math3')
+    
     testImplementation group: 'com.google.code.gson', name: 'gson', version: '2.8.5'
     testImplementation group: 'org.siani.javafmi', name: 'fmu-wrapper', version: '2.25.0'
 
@@ -28,6 +24,27 @@ shadowJar {
     archivesBaseName += "-shadow"
     archiveClassifier = null
     version = null
+}
+
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    archiveClassifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    archiveClassifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from components.java
+            artifact sourcesJar
+            artifact javadocJar
+        }
+    }
 }
 
 model {
