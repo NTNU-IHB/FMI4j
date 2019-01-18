@@ -10,7 +10,7 @@ println "Gradle version is ${gradle.getGradleVersion()}"
 def group = "no.ntnu.ihb.fmi4j.fmudriver"
 mainClassName = "${group}.FmuDriver"
 
-def fmi4j_snapshot = true
+def fmi4j_snapshot = false
 def fmi4j_version = fmi4j_snapshot ? 'dev-SNAPSHOT' : '0.14.0'
 
 repositories {
