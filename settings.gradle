@@ -1,1 +1,5 @@
 rootProject.name = 'FMI4j'
+
+file("tools").listFiles().each {
+    includeBuild(it)
+}
