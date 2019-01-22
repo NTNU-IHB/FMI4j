@@ -128,7 +128,7 @@ pluginManagement {
 }
 ```
 
-The plugin will automatically add a dependency to the FMI4j artifact ```fmi-import```. It defaults to the _implementation_ configuration. You can change this behaviour through the _fmi4j_ extension. E.g:
+The plugin will automatically add a dependency to FMI4j. It defaults to the _implementation_ configuration. You can change this behaviour through the _fmi4j_ extension. E.g:
 
 ```groovy
 fmi4j {
@@ -159,5 +159,5 @@ to see available options.
 
 ___
 
-To get started head over to the [Wiki](https://github.com/SFI-Mechatronics/FMI4j/wiki)!
+To get started head over to the [Wiki](https://github.com/NTNU-IHB/FMI4j/wiki)!
 
