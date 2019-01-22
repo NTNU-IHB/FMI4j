@@ -6,10 +6,9 @@ plugins {
     id 'com.gradle.plugin-publish' version '0.10.0'
 }
 
-def fmi4j_version = "0.14.0"
-def plugin_revision = "6"
+def fmi4j_version = "0.15.0"
 
-version = "$fmi4j_version-$plugin_revision"
+version = fmi4j_version
 group = "no.ntnu.ihb.fmi4j"
 println("maven version for ${archivesBaseName} is: ${version}")
 
@@ -20,7 +19,7 @@ repositories {
 dependencies {
     compile gradleApi()
     compile localGroovy()
-    implementation group: "com.github.NTNU-IHB.FMI4j", name: 'fmi-import', version: fmi4j_version
+    implementation group: "com.github.NTNU-IHB", name: 'FMI4j', version: fmi4j_version
 }
 
 gradlePlugin {

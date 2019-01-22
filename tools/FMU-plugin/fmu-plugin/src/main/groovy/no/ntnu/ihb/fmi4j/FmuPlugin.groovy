@@ -20,7 +20,7 @@ class FmuPluginExtension {
 
     FmuPluginExtension(Project project) {
         version = project.objects.property(String)
-        version.set("0.14.0")
+        version.set("0.15.0")
         configurationName = project.objects.property(String)
         configurationName.set("implementation")
     }
@@ -47,7 +47,7 @@ class FmuPlugin implements Plugin<Project> {
 
             @Override
             void beforeResolve(ResolvableDependencies resolvableDependencies) {
-                target.dependencies.add(fmi4j.configurationName.get(), "com.github.NTNU-IHB.FMI4j:fmi-import:${fmi4j.version.get()}")
+                target.dependencies.add(fmi4j.configurationName.get(), "com.github.NTNU-IHB:FMI4j:${fmi4j.version.get()}")
                 target.gradle.removeListener(this)
             }
 

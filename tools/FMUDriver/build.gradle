@@ -10,8 +10,8 @@ println "Gradle version is ${gradle.getGradleVersion()}"
 def group = "no.ntnu.ihb.fmi4j.fmudriver"
 mainClassName = "${group}.FmuDriver"
 
-def fmi4j_snapshot = true
-def fmi4j_version = fmi4j_snapshot ? 'dev-SNAPSHOT' : '0.14.0'
+def fmi4j_snapshot = false
+def fmi4j_version = fmi4j_snapshot ? 'dev-SNAPSHOT' : '0.15.0'
 
 repositories {
     mavenCentral()
@@ -28,7 +28,7 @@ dependencies {
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
 
-    compile group: 'info.picocli', name: 'picocli', version: '3.8.2'
+    compile group: 'info.picocli', name: 'picocli', version: '3.9.2'
     compile group: 'org.apache.commons', name: 'commons-csv', version: '1.5'
 
     compile group: 'com.github.NTNU-IHB', name: 'FMI4j', version: fmi4j_version, changing: fmi4j_snapshot
