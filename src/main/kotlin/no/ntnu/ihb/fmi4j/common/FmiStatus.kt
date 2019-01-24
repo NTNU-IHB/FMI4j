@@ -25,8 +25,6 @@
 package no.ntnu.ihb.fmi4j.common
 
 import java.io.Serializable
-import java.util.*
-import kotlin.streams.toList
 
 /**
  *
@@ -114,7 +112,7 @@ enum class FmiStatus(
                     return status
                 }
             }
-            throw IllegalArgumentException("$i not in range of ${Arrays.stream(values()).map { it.code }.toList()}")
+            throw IllegalArgumentException("$i not in range of ${values().map { it.code }}")
         }
 
     }
