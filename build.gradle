@@ -5,7 +5,7 @@ plugins {
     id "cpp"
     id "java-library"
     id "maven-publish"
-    id "org.jetbrains.kotlin.jvm" version "1.3.11"
+    id "org.jetbrains.kotlin.jvm" version "1.3.20"
     id "com.github.johnrengelman.shadow" version "4.0.4"
 }
 
