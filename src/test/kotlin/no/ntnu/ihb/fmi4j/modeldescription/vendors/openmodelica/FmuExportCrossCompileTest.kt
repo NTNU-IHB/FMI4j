@@ -21,7 +21,7 @@ class FmuExportCrossCompileTest {
 
         val modelDescription = TestFMUs.fmi20().cs()
                 .vendor("OpenModelica").version("v1.11.0")
-                .modelDescription("FmuExportCrossCompile")
+                .name("FmuExportCrossCompile").modelDescription()
 
     }
 

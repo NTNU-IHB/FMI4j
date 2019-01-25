@@ -20,9 +20,10 @@ class VanDerPolTest {
     fun testInstance() {
 
         val fmu = TestFMUs.fmi20().cs()
-                .vendor("FMUSDK").version("2.0.4").fmu("vanDerPol")
+                .vendor("FMUSDK").version("2.0.4")
+                .name("vanDerPol").fmu().asCoSimulationFmu()
 
-        fmu.asCoSimulationFmu().newInstance().use { slave ->
+        fmu.newInstance().use { slave ->
 
             Assertions.assertTrue(slave.simpleSetup())
 

@@ -44,7 +44,7 @@ class ControlledTemperatureTest {
 
         private val modelDescription = TestFMUs.fmi20().cs()
                 .vendor("20sim").version("4.6.4.8004")
-                .modelDescription("ControlledTemperature")
+                .name("ControlledTemperature").modelDescription()
                 .asCoSimulationModelDescription()
     }
 

@@ -18,7 +18,7 @@ class GsonTest {
 
         val modelDescription = TestFMUs.fmi20().cs()
                 .vendor("MapleSim").version("2017")
-                .modelDescription("ControlledTemperature")
+                .name("ControlledTemperature").modelDescription()
 
         GsonBuilder()
                 .setPrettyPrinting()

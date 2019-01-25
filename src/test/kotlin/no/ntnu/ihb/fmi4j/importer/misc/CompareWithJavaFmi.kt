@@ -20,7 +20,8 @@ class CompareWithJavaFmi {
         private val LOG: Logger = LoggerFactory.getLogger(CompareWithJavaFmi::class.java)
 
         private val file = TestFMUs.fmi20().cs()
-                .vendor("20sim").version("4.6.4.8004").file("ControlledTemperature")
+                .vendor("20sim").version("4.6.4.8004")
+                .name("ControlledTemperature").file()
 
         private val fmu = Fmu.from(file).asCoSimulationFmu()
 

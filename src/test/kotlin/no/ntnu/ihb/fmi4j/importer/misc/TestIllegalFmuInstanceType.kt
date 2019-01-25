@@ -14,7 +14,8 @@ class TestIllegalFmuInstanceType {
     @Test
     fun testNewInstanceME() {
         val file = TestFMUs.fmi20().cs()
-                .vendor("20sim").version("4.6.4.8004").file("ControlledTemperature")
+                .vendor("20sim").version("4.6.4.8004")
+                .name("ControlledTemperature").file()
         Assertions.assertTrue(file.exists())
         Assertions.assertThrows(IllegalStateException::class.java) {
             Fmu.from(file).use {
@@ -27,7 +28,8 @@ class TestIllegalFmuInstanceType {
     @EnabledOnOs(OS.WINDOWS)
     fun testNewInstanceCS() {
         val file = TestFMUs.fmi20().me()
-                .vendor("FMUSDK").version("2.0.4").file("vanDerPol")
+                .vendor("FMUSDK").version("2.0.4")
+                .name("vanDerPol").file()
         Assertions.assertTrue(file.exists())
         Assertions.assertThrows(IllegalStateException::class.java) {
             Fmu.from(file).use {

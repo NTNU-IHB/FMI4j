@@ -22,8 +22,8 @@ class BouncingBallTest {
         private val LOG = LoggerFactory.getLogger(BouncingBallTest::class.java)
 
         private val fmu = TestFMUs.fmi20().me()
-                .vendor("FMUSDK").version("2.0.4").fmu("bouncingBall")
-                .asModelExchangeFmu()
+                .vendor("FMUSDK").version("2.0.4")
+                .name("bouncingBall").fmu().asModelExchangeFmu()
 
     }
 

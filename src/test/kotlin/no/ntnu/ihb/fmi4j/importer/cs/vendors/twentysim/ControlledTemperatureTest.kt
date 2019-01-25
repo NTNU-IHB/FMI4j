@@ -19,7 +19,7 @@ class ControlledTemperatureTest {
 
         TestFMUs.fmi20().cs()
                 .vendor("20sim").version("4.6.4.8004")
-                .fmu("ControlledTemperature").use { fmu ->
+                .name("ControlledTemperature").fmu().use { fmu ->
 
             fmu.asCoSimulationFmu().newInstance(loggingOn = true).use { slave ->
 

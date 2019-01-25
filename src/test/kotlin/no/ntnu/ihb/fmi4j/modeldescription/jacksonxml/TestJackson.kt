@@ -23,7 +23,7 @@ class TestJackson {
 
         val fmuFile = TestFMUs.fmi20().cs()
                 .vendor("MapleSim").version("2017")
-                .file("ControlledTemperature")
+                .name("ControlledTemperature").file()
 
     }
 

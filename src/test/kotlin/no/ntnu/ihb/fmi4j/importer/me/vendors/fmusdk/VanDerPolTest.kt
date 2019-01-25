@@ -48,8 +48,8 @@ class VanDerPolTest {
         private const val macroStep = 1.0 / 10
 
         private val fmu = TestFMUs.fmi20().me()
-                .vendor("FMUSDK").version("2.0.4").fmu("vanDerPol")
-                .asModelExchangeFmu()
+                .vendor("FMUSDK").version("2.0.4")
+                .name("vanDerPol").fmu().asModelExchangeFmu()
 
     }
 

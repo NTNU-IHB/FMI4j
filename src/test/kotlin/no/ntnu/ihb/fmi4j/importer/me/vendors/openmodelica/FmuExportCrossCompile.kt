@@ -26,8 +26,8 @@ class FmuExportCrossCompile {
         const val microStep = 1E-3
 
         val fmu = TestFMUs.fmi20().cs()
-                .vendor("OpenModelica").version("v1.11.0").fmu("FmuExportCrossCompile")
-                .asModelExchangeFmu()
+                .vendor("OpenModelica").version("v1.11.0")
+                .name("FmuExportCrossCompile").fmu().asModelExchangeFmu()
 
     }
 

@@ -24,7 +24,7 @@ public class TestFMUs {
 
         private final StringBuilder sb;
 
-        FmiVersion20(StringBuilder sb) {
+        public FmiVersion20(StringBuilder sb) {
             this.sb = sb.append("/2.0");
         }
 
@@ -42,7 +42,7 @@ public class TestFMUs {
 
         private final StringBuilder sb;
 
-        CsType(StringBuilder sb) {
+        public CsType(StringBuilder sb) {
             this.sb = sb;
         }
 
@@ -57,7 +57,7 @@ public class TestFMUs {
 
         private final StringBuilder sb;
 
-        MeType(StringBuilder sb) {
+        public MeType(StringBuilder sb) {
             this.sb = sb;
         }
 
@@ -72,7 +72,7 @@ public class TestFMUs {
 
         private final StringBuilder sb;
 
-        FmuVendor(StringBuilder sb, String vendor) {
+        public FmuVendor(StringBuilder sb, String vendor) {
             this.sb = sb.append("/").append(vendor);
         }
 
@@ -86,28 +86,38 @@ public class TestFMUs {
 
         private final StringBuilder sb;
 
-        FmuVersion(StringBuilder sb, String version) {
+        public FmuVersion(StringBuilder sb, String version) {
             this.sb = sb.append("/").append(version);
         }
 
-        public Fmu fmu(String name) throws IOException {
+        public FmuProvider name(String name) {
             sb.append("/").append(name).append("/").append(name).append(".fmu");
-            return Fmu.from(new File(sb.toString()));
+            return new FmuProvider(new File(sb.toString()));
+        }
+    }
+
+    public static class FmuProvider {
+
+        private final File fmuFile;
+
+        public FmuProvider(File fmuFile) {
+            this.fmuFile = fmuFile;
         }
 
-        public ModelDescriptionProvider modelDescription(String name) {
-            sb.append("/").append(name).append("/").append(name).append(".fmu");
-            return ModelDescriptionParser.parse(new File(sb.toString()));
+        public Fmu fmu() throws IOException {
+            return Fmu.from(fmuFile);
         }
 
-        public String modelDescriptionXml(String name) {
-            sb.append("/").append(name).append("/").append(name).append(".fmu");
-            return ModelDescriptionParser.extractModelDescriptionXml(new File(sb.toString()));
+        public ModelDescriptionProvider modelDescription() {
+            return ModelDescriptionParser.parse(fmuFile);
         }
 
-        public File file(String name) {
-            sb.append("/").append(name).append("/").append(name).append(".fmu");
-            return new File(sb.toString());
+        public String modelDescriptionXml() {
+            return ModelDescriptionParser.extractModelDescriptionXml(fmuFile);
+        }
+
+        public File file() {
+            return fmuFile;
         }
 
     }

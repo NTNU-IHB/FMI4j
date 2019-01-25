@@ -19,8 +19,9 @@ class FmuInstanceVariableAccessorTest {
         private val LOG: Logger = LoggerFactory.getLogger(FmuInstanceVariableAccessorTest::class.java)
     }
 
-    private val fmu = TestFMUs.fmi20().cs().vendor("20sim")
-            .version("4.6.4.8004").fmu("ControlledTemperature").asCoSimulationFmu()
+    private val fmu = TestFMUs.fmi20().cs()
+            .vendor("20sim").version("4.6.4.8004")
+            .name("ControlledTemperature").fmu().asCoSimulationFmu()
 
     @AfterAll
     fun tearDown() {

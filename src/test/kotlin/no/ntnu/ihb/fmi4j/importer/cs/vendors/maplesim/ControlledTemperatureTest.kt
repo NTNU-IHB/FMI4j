@@ -21,7 +21,7 @@ class ControlledTemperatureTest {
 
         TestFMUs.fmi20().cs()
                 .vendor("MapleSim").version("2017")
-                .fmu("ControlledTemperature").use { fmu ->
+                .name("ControlledTemperature").fmu().use { fmu ->
 
                     fmu.asCoSimulationFmu().newInstance().use { slave ->
 

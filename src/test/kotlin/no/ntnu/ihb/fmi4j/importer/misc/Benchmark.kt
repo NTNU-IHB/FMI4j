@@ -1,5 +1,6 @@
 package no.ntnu.ihb.fmi4j.importer.misc
 
+import no.ntnu.ihb.fmi4j.TestFMUs
 import no.ntnu.ihb.fmi4j.importer.Fmu
 import no.ntnu.ihb.fmi4j.modeldescription.variables.RealVariable
 import org.javafmi.wrapper.Simulation
@@ -17,20 +18,23 @@ data class TestOptions(
 
 private val options = listOf(
         TestOptions(
-                fmuFile = no.ntnu.ihb.fmi4j.TestFMUs.fmi20().cs()
-                        .vendor("FMUSDK").version("2.0.4").file("bouncingBall"),
+                fmuFile = TestFMUs.fmi20().cs()
+                        .vendor("FMUSDK").version("2.0.4")
+                        .name("bouncingBall").file(),
                 stepSize = 1E-2,
                 stopTime = 100.0,
                 vr = 0),
         TestOptions(
                 fmuFile = no.ntnu.ihb.fmi4j.TestFMUs.fmi20().cs()
-                        .vendor("20sim").version("4.6.4.8004").file("TorsionBar"),
+                        .vendor("20sim").version("4.6.4.8004")
+                        .name("TorsionBar").file(),
                 stepSize = 1E-5,
                 stopTime = 12.0,
                 vr = 2),
         TestOptions(
                 fmuFile = no.ntnu.ihb.fmi4j.TestFMUs.fmi20().cs()
-                        .vendor("20sim").version("4.6.4.8004").file("ControlledTemperature"),
+                        .vendor("20sim").version("4.6.4.8004")
+                        .name("ControlledTemperature").file(),
                 stepSize = 1E-4,
                 stopTime = 10.0,
                 vr = 46))

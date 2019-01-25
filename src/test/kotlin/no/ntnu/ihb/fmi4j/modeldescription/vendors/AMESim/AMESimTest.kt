@@ -13,16 +13,12 @@ class AMESimTest {
 
     @Test
     fun test() {
-
        TestFMUs.fmi20().cs()
-                .vendor("AMESim")
-                .version("15")
-                .fmu("MIS_cs").use {
-
+                .vendor("AMESim").version("15")
+                .name("MIS_cs").fmu().use {
                    LOG.debug(it.modelDescriptionXml)
                     it.asCoSimulationFmu()
                 }
-
     }
 
 }
