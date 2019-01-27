@@ -11,7 +11,6 @@ plugins {
 
 println "Gradle version is ${gradle.getGradleVersion()}"
 
-
 def snapshot = true
 group = 'no.ntnu.ihb.fmi4j'
 version = snapshot ? 'dev-SNAPSHOT' : '0.15.0'
@@ -44,13 +43,11 @@ dependencies {
 
 }
 
-
 shadowJar {
     baseName += "-shadow"
     archiveClassifier = null
     version = null
 }
-
 
 task sourcesJar(type: Jar, dependsOn: classes) {
     archiveClassifier = 'sources'
@@ -82,7 +79,6 @@ compileKotlin {
 compileTestKotlin {
     kotlinOptions.jvmTarget = "1.8"
 }
-
 
 model {
 
@@ -127,7 +123,7 @@ model {
     }
 
     components {
-        fmi2(NativeLibrarySpec) {
+        main(NativeLibrarySpec) {
 
             baseName = "fmi2_jni"
 
@@ -159,11 +155,12 @@ model {
             dependsOn $.binaries.findAll { it.buildable }
         }
         copyNativeLibs(Copy) {
-            from "$buildDir/libs/fmi2/shared"
+            from "$buildDir/libs/main/shared"
             include "**/*.dll", "**/*.so"
             into "$projectDir/src/main/resources/native/fmi2"
             dependsOn buildAllExecutables
         }
+        assemble.dependsOn(copyNativeLibs)
     }
 }
 
