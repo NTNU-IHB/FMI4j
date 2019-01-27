@@ -23,6 +23,7 @@
  */
 
 #include <stdio.h>
+#include <stdlib.h>
 
 #if defined(_MSC_VER) || defined(WIN32) || defined(__MINGW32__)
 #include <windows.h>
