@@ -28,6 +28,8 @@ import no.ntnu.ihb.fmi4j.common.*
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.Closeable
+import java.io.File
+import java.io.FileOutputStream
 
 internal typealias NativeStatus = Int
 internal typealias Fmi2Component = Long
@@ -240,11 +242,24 @@ open class Fmi2Library(
         private val LOG: Logger = LoggerFactory.getLogger(Fmi2Library::class.java)
 
         init {
-            Fmi2Library::class.java.classLoader.apply {
-                getResource("native/fmi2/$currentOS/${libPrefix}fmi2_jni.$libExtension").file.also {
-                    System.load(it)
-                }
+
+            val fileName = "${libPrefix}fmi2_jni.$libExtension"
+            val copy = File(fileName).apply {
+                deleteOnExit()
             }
+            try {
+                Fmi2Library::class.java.classLoader
+                        .getResourceAsStream("native/fmi2/$currentOS/$fileName").use { `is` ->
+                            FileOutputStream(copy).use { fos ->
+                                `is`.copyTo(fos)
+                            }
+                        }
+                System.load(copy.absolutePath)
+            } catch (ex: Exception) {
+                copy.delete()
+                throw RuntimeException(ex)
+            }
+
         }
 
     }
