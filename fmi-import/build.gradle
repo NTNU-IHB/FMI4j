@@ -8,8 +8,6 @@ plugins {
     id "com.github.johnrengelman.shadow" version "4.0.4"
 }
 
-println "Gradle version is ${gradle.getGradleVersion()}"
-
 dependencies {
 
     api group: 'org.apache.commons', name: 'commons-math3', version: '3.6.1'
