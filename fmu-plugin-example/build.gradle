@@ -1,0 +1,10 @@
+
+plugins {
+    id "no.ntnu.ihb.fmi4j.FmuPlugin" version "0.15.0"
+}
+
+repositories {
+    maven { url 'https://jitpack.io' }
+}
+
+compileKotlin.dependsOn(generateFMUWrappers)

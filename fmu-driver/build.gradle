@@ -1,0 +1,34 @@
+
+plugins {
+    id 'application'
+    id "com.github.johnrengelman.shadow" version "4.0.4"
+}
+
+def group = "no.ntnu.ihb.fmi4j.fmudriver"
+mainClassName = "${group}.FmuDriver"
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile project(':fmi-import')
+    compile group: 'info.picocli', name: 'picocli', version: '3.9.2'
+    compile group: 'org.apache.commons', name: 'commons-csv', version: '1.5'
+}
+
+shadowJar {
+    archiveBaseName = "fmu-driver"
+    archiveClassifier = null
+    version = null
+}
+
+distributions {
+    main {
+        baseName = 'fmu-driver'
+    }
+}
+
+startScripts {
+    applicationName = 'fmu-driver'
+}
