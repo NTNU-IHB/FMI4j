@@ -6,7 +6,7 @@ plugins {
     id 'com.gradle.plugin-publish' version '0.10.0'
 }
 
-def fmi4j_version = "0.15.2"
+def fmi4j_version = "0.15.0"
 
 version = fmi4j_version
 group = "no.ntnu.ihb.fmi4j"

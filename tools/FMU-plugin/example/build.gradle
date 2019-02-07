@@ -1,6 +1,6 @@
 
 plugins {
-    id "no.ntnu.ihb.fmi4j.FmuPlugin" version "0.15.2"
+    id "no.ntnu.ihb.fmi4j.FmuPlugin" version "0.15.0"
 }
 
 compileKotlin.dependsOn(generateFMUWrappers)

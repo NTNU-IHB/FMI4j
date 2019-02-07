@@ -16,7 +16,7 @@ class FmuPluginExtension {
 
     FmuPluginExtension(Project project) {
         version = project.objects.property(String)
-        version.set("0.15.2")
+        version.set("0.15.0")
         configurationName = project.objects.property(String)
         configurationName.set("implementation")
     }
