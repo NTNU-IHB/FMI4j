@@ -9,10 +9,10 @@ class TestURLLoad {
 
     @Test
     fun test() {
-        Fmu.from(TestFMUs.fmi20().me()
-                .vendor("FMUSDK").version("2.0.4")
-                .name("bouncingball").file().toURI().toURL()).use {
-            Assertions.assertEquals("bouncingBall", it.modelDescription.modelName)
+        Fmu.from(TestFMUs.fmi20().cs()
+                .vendor("20sim").version("4.6.4.8004")
+                .name("ControlledTemperature").file().toURI().toURL()).use {
+            Assertions.assertEquals("ControlledTemperature", it.modelDescription.modelName)
         }
     }
 
