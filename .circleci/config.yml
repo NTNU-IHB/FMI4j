@@ -4,7 +4,7 @@
 #
 version: 2
 jobs:
-  "build":
+  build:
     docker:
       - image: circleci/openjdk:8-jdk
 
@@ -33,3 +33,11 @@ jobs:
           key: v1-dependencies-{{ checksum "build.gradle" }}
 
       - run: gradle test
+
+      - store artifacts:
+          path: fmu2jar/build/libs/fmu2jar.jar
+          destination: fmu2jar.jar
+
+      - store artifacts:
+          path: fmu-driver/build/libs/fmu-driver.jar
+          destination: fmu-driver.jar
