@@ -2,7 +2,6 @@ package no.ntnu.ihb.fmi4j.fmudriver
 
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.File
@@ -17,8 +16,7 @@ class TestControlledTemperature {
     fun test() {
 
         val name = "ControlledTemperature"
-        val path = "${TestControlledTemperature::class.java.classLoader.getResource("fmus").file}" +
-                "/2.0/cs/20sim/4.6.4.8004/" +
+        val path = "../../fmus/2.0/cs/20sim/4.6.4.8004/" +
                 "$name/$name.fmu"
         Assertions.assertTrue(File(path).exists())
 

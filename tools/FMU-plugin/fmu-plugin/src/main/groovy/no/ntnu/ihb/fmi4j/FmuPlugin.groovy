@@ -2,11 +2,7 @@ package no.ntnu.ihb.fmi4j
 
 import no.ntnu.ihb.fmi4j.modeldescription.ModelDescriptionProvider
 import no.ntnu.ihb.fmi4j.modeldescription.parser.ModelDescriptionParser
-import no.ntnu.ihb.fmi4j.modeldescription.variables.Causality
-import no.ntnu.ihb.fmi4j.modeldescription.variables.EnumerationVariable
-import no.ntnu.ihb.fmi4j.modeldescription.variables.IntegerVariable
-import no.ntnu.ihb.fmi4j.modeldescription.variables.RealVariable
-import no.ntnu.ihb.fmi4j.modeldescription.variables.TypedScalarVariable
+import no.ntnu.ihb.fmi4j.modeldescription.variables.*
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.artifacts.DependencyResolutionListener
@@ -20,7 +16,7 @@ class FmuPluginExtension {
 
     FmuPluginExtension(Project project) {
         version = project.objects.property(String)
-        version.set("0.15.0")
+        version.set("0.15.2")
         configurationName = project.objects.property(String)
         configurationName.set("implementation")
     }

@@ -10,7 +10,7 @@ import java.io.IOException;
 public class TestFMUs {
 
     private static String getPath() {
-        return TestFMUs.class.getClassLoader().getResource("fmus").getFile();
+        return "fmus";
     }
 
 
