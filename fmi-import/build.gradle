@@ -24,7 +24,7 @@ dependencies {
 shadowJar {
     baseName += "-shadow"
     archiveClassifier = null
-    version = null
+    archiveVersion = null
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {
@@ -132,7 +132,7 @@ model {
 }
 
 task copyTestFmus(type: Copy) {
-    from "$projectDir/fmus"
+    from "$projectDir/../fmus"
     into "$buildDir/resources/test/fmus"
 }
 

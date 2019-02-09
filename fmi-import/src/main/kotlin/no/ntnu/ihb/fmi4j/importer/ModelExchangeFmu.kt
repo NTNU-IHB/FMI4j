@@ -30,8 +30,12 @@ import no.ntnu.ihb.fmi4j.importer.me.ModelExchangeInstance
 import no.ntnu.ihb.fmi4j.importer.me.ModelExchangeLibraryWrapper
 import no.ntnu.ihb.fmi4j.importer.misc.FmiType
 import no.ntnu.ihb.fmi4j.modeldescription.ModelExchangeModelDescription
+import no.ntnu.ihb.fmi4j.solvers.Solver
 
-
+/**
+ *
+ * @author Lars Ivar Hatledal
+ */
 class ModelExchangeFmu(
         private val fmu: Fmu
 ): IFmu by fmu {
@@ -63,7 +67,7 @@ class ModelExchangeFmu(
     }
 
     @JvmOverloads
-    fun newInstance(solver: no.ntnu.ihb.fmi4j.solvers.Solver, visible: Boolean = false, loggingOn: Boolean = false): ModelExchangeFmuStepper {
+    fun newInstance(solver: Solver, visible: Boolean = false, loggingOn: Boolean = false): ModelExchangeFmuStepper {
         return newInstance(visible, loggingOn).let {
             ModelExchangeFmuStepper(it, solver)
         }

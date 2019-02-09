@@ -3,6 +3,7 @@ package no.ntnu.ihb.fmi4j;
 import no.ntnu.ihb.fmi4j.importer.Fmu;
 import no.ntnu.ihb.fmi4j.modeldescription.ModelDescriptionProvider;
 import no.ntnu.ihb.fmi4j.modeldescription.parser.ModelDescriptionParser;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
@@ -10,7 +11,7 @@ import java.io.IOException;
 public class TestFMUs {
 
     private static String getPath() {
-        return "../fmus";
+        return TestFMUs.class.getClassLoader().getResource("fmus").getFile();
     }
 
 

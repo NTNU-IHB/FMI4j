@@ -24,10 +24,7 @@
 
 package no.ntnu.ihb.fmu2jar
 
-import no.ntnu.ihb.fmi4j.common.currentOS
-import no.ntnu.ihb.fmi4j.common.isLinux
-import no.ntnu.ihb.fmi4j.common.isWindows
-import no.ntnu.ihb.fmi4j.modeldescription.ModelDescription
+import no.ntnu.ihb.fmi4j.common.OsUtil
 import no.ntnu.ihb.fmi4j.modeldescription.ModelDescriptionProvider
 import no.ntnu.ihb.fmi4j.modeldescription.parser.ModelDescriptionParser
 import no.ntnu.ihb.fmu2jar.cli.Args
@@ -148,7 +145,7 @@ class Fmu2Jar(
         try {
 
             val gradlewName = when {
-                isWindows -> "gradlew.bat"
+                OsUtil.isWindows -> "gradlew.bat"
                 else -> "gradlew"
             }
 

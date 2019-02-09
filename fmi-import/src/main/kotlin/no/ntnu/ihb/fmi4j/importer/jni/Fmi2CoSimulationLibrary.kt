@@ -27,6 +27,9 @@ package no.ntnu.ihb.fmi4j.importer.jni
 import no.ntnu.ihb.fmi4j.common.FmiStatus
 import no.ntnu.ihb.fmi4j.common.ValueReferences
 
+/**
+ * @author Lars Ivar Hatledal
+ */
 class Fmi2CoSimulationLibrary(
         libName: String
 ) : Fmi2Library(libName) {

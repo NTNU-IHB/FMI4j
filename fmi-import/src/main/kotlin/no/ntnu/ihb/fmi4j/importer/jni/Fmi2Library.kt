@@ -243,13 +243,13 @@ open class Fmi2Library(
 
         init {
 
-            val fileName = "${libPrefix}fmi2_jni.$libExtension"
+            val fileName = "${OsUtil.libPrefix}fmi2_jni.${OsUtil.libExtension}"
             val copy = File(fileName).apply {
                 deleteOnExit()
             }
             try {
                 Fmi2Library::class.java.classLoader
-                        .getResourceAsStream("native/fmi2/$currentOS/$fileName").use { `is` ->
+                        .getResourceAsStream("native/fmi2/${OsUtil.currentOS}/$fileName").use { `is` ->
                             FileOutputStream(copy).use { fos ->
                                 `is`.copyTo(fos)
                             }
