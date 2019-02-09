@@ -24,8 +24,6 @@
 
 package no.ntnu.ihb.fmi4j.common
 
-import java.io.Serializable
-
 /**
  *
  *  Indicates the success of a function call
@@ -34,7 +32,7 @@ import java.io.Serializable
  */
 enum class FmiStatus(
         val code: Int
-) : Serializable {
+) {
 
     NONE(-1),
 
