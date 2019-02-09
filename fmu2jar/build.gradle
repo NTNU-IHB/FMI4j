@@ -15,7 +15,7 @@ dependencies {
 shadowJar {
     archiveBaseName = "fmu2jar"
     archiveClassifier = null
-    version = null
+    archiveVersion = null
 }
 
 task deleteCachedControlledTemperature(type: Delete) {

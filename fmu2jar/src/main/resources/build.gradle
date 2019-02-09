@@ -24,6 +24,7 @@ if (fmi4j_snapshot) {
 }
 
 dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.3.21"
     api group: 'com.github.NTNU-IHB', name: 'FMI4j', version: fmi4j_version, changing: fmi4j_snapshot
 }
 

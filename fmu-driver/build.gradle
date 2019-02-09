@@ -20,7 +20,7 @@ dependencies {
 shadowJar {
     archiveBaseName = "fmu-driver"
     archiveClassifier = null
-    version = null
+    archiveVersion = null
 }
 
 distributions {
