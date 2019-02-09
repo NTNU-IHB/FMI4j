@@ -26,6 +26,9 @@ package no.ntnu.ihb.fmi4j.importer.jni
 
 import no.ntnu.ihb.fmi4j.common.FmiStatus
 
+/**
+ * @author Lars Ivar Hatledal
+ */
 class Fmi2ModelExchangeLibrary(
         libName: String
 ) : Fmi2Library(libName) {

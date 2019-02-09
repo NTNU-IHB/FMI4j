@@ -24,7 +24,7 @@
 
 package no.ntnu.ihb.fmi4j.importer
 
-import no.ntnu.ihb.fmi4j.common.*
+import no.ntnu.ihb.fmi4j.common.OsUtil
 import no.ntnu.ihb.fmi4j.importer.jni.Fmi2Library
 import no.ntnu.ihb.fmi4j.importer.misc.FmiType
 import no.ntnu.ihb.fmi4j.importer.misc.extractTo
@@ -78,7 +78,6 @@ interface FmuProvider: IFmu {
 }
 
 /**
- *
  * Represents an FMU
  *
  * @author Lars Ivar Hatledal
@@ -149,8 +148,8 @@ class Fmu private constructor(
      * Get the absolute name of the native library on the form "C://folder/name.extension"
      */
     fun getAbsoluteLibraryPath(modelIdentifier: String): String {
-        return File(fmuFile, BINARIES_FOLDER + File.separator + libraryFolderName + platformBitness
-                + File.separator + modelIdentifier + libraryExtension).absolutePath
+        return File(fmuFile, BINARIES_FOLDER + File.separator + OsUtil.libraryFolderName + OsUtil.platformBitness
+                + File.separator + modelIdentifier + OsUtil.libExtension).absolutePath
     }
 
     internal fun registerLibrary(library: Fmi2Library) {
@@ -238,18 +237,11 @@ class Fmu private constructor(
 
         private const val RESOURCES_FOLDER = "resources"
         private const val BINARIES_FOLDER = "binaries"
-        private const val MAC_OS_FOLDER = "darwin"
-        private const val WINDOWS_FOLDER = "win"
-        private const val LINUX_FOLDER = "linux"
-        private const val MAC_OS_LIBRARY_EXTENSION = ".dylib"
-        private const val WINDOWS_LIBRARY_EXTENSION = ".dll"
-        private const val LINUX_LIBRARY_EXTENSION = ".so"
 
         private const val FMU_EXTENSION = "fmu"
         private const val FMI4J_FILE_PREFIX = "fmi4j_"
 
         private const val MODEL_DESC = "modelDescription.xml"
-
 
         private val fmus = mutableListOf<Fmu>()
 
@@ -261,22 +253,6 @@ class Fmu private constructor(
                 }
             })
         }
-
-        private val libraryFolderName: String
-            get() = when {
-                isWindows -> WINDOWS_FOLDER
-                isLinux -> LINUX_FOLDER
-                isMac -> MAC_OS_FOLDER
-                else -> throw UnsupportedOperationException("OS '$osName' is unsupported!")
-            }
-
-        private val libraryExtension: String
-            get() = when {
-                isWindows -> WINDOWS_LIBRARY_EXTENSION
-                isLinux -> LINUX_LIBRARY_EXTENSION
-                isMac -> MAC_OS_LIBRARY_EXTENSION
-                else -> throw UnsupportedOperationException("OS '$osName' is unsupported!")
-            }
 
         private fun createTempDir(fmuName: String): File {
             return Files.createTempDirectory(FMI4J_FILE_PREFIX + fmuName).toFile().also {
@@ -297,7 +273,7 @@ class Fmu private constructor(
 
             val extension = file.extension.toLowerCase()
             if (extension != FMU_EXTENSION) {
-                throw IllegalArgumentException("File '$file' is not an FMU! Invalid extension found: .$extension")
+                throw IllegalArgumentException("File '${file.absolutePath}' is not an FMU! Invalid extension found: .$extension")
             }
 
             if (!file.exists()) {
@@ -322,7 +298,7 @@ class Fmu private constructor(
 
             val extension = File(url.file).extension
             if (extension != FMU_EXTENSION) {
-                throw IllegalArgumentException("URL does not point to an FMU! Invalid extension found: .$extension")
+                throw IllegalArgumentException("URL '$url' does not point to an FMU! Invalid extension found: .$extension")
             }
 
             return createTempDir(File(url.file).nameWithoutExtension).let { temp ->
