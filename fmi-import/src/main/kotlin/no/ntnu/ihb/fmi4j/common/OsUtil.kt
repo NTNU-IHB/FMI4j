@@ -32,9 +32,9 @@ object OsUtil {
     private const val WINDOWS_FOLDER = "win"
     private const val LINUX_FOLDER = "linux"
 
-    private const val MAC_OS_LIBRARY_EXTENSION = ".dylib"
-    private const val WINDOWS_LIBRARY_EXTENSION = ".dll"
-    private const val LINUX_LIBRARY_EXTENSION = ".so"
+    private const val MAC_OS_LIBRARY_EXTENSION = "dylib"
+    private const val WINDOWS_LIBRARY_EXTENSION = "dll"
+    private const val LINUX_LIBRARY_EXTENSION = "so"
 
     val osName: String = System.getProperty("os.name")
     val platformBitness: String = System.getProperty("sun.arch.data.model")

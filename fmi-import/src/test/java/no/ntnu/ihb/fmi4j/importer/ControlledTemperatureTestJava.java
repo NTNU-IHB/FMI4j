@@ -55,7 +55,7 @@ public class ControlledTemperatureTestJava {
     }
 
     @AfterAll
-    public static void tearDown() throws IOException {
+    public static void tearDown() {
         fmu.close();
     }
 

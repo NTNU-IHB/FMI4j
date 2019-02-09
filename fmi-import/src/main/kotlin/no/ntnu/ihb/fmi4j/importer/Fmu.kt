@@ -149,7 +149,7 @@ class Fmu private constructor(
      */
     fun getAbsoluteLibraryPath(modelIdentifier: String): String {
         return File(fmuFile, BINARIES_FOLDER + File.separator + OsUtil.libraryFolderName + OsUtil.platformBitness
-                + File.separator + modelIdentifier + OsUtil.libExtension).absolutePath
+                + File.separator + modelIdentifier + "." + OsUtil.libExtension).absolutePath
     }
 
     internal fun registerLibrary(library: Fmi2Library) {
