@@ -16,3 +16,8 @@ cache:
 script:
   - ./gradlew build --scan -s
 
+os:
+  - windows
+  - linux
+
+
