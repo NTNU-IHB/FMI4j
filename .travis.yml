@@ -14,7 +14,7 @@ cache:
     - $HOME/.gradle/wrapper/
 
 script:
-  - ./gradlew build --scan -s
+  - ./gradlew test
 
 os:
   - windows
