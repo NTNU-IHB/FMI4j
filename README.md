@@ -12,7 +12,7 @@ FMI4j is a software package for dealing with Functional Mock-up Units (FMUs) on 
 FMI4j supports [FMI](http://fmi-standard.org/) 2.0 for **Model Exchange** and **Co-simulation**. <br/>
 For Model Exchange, solvers from [Apache Commons Math](http://commons.apache.org/proper/commons-math/userguide/ode.html) can be used.
 
-Compared to other FMI libraries targeting the JVM, FMI4j is **considerably faster** due to the fact that we use JNI with manually optimized C-code instead of JNA or SWIG generated bindings. 
+Compared to other FMI libraries targeting the JVM, FMI4j is **considerably faster** due to the fact that we use JNI with manually optimized C++-code instead of JNA or SWIG generated bindings. 
 A significant speedup (2-5x) compared to other FMI implementations for the JVM, such as JFMI and JavaFMI, should be expected. 
 
 The package consists of:
@@ -66,8 +66,8 @@ allprojects {
 }
 
 dependencies {
-    def fmi4j_version = "..." // e.g 0.15.0
-    implementation "com.github.NTNU-IHB:FMI4j:$fmi4j_version"
+    def fmi4j_version = "..." // e.g 0.16.0
+    implementation "com.github.NTNU-IHB.FMI4j:fmi-import:${fmi4j_version}"
 }
 ```
 
@@ -81,7 +81,6 @@ It also generates javadoc based on the information found in the ```modelDescript
 Example for an FMU named _ControlledTemperature_ given in Kotlin:
 
 ```kotlin
-
 ControlledTemperature.newInstance().use { slave -> //try with resources
 
         slave.simpleSetup()
