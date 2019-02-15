@@ -8,6 +8,7 @@
 
 
 [![CircleCI](https://circleci.com/gh/NTNU-IHB/FMI4j/tree/master.svg?style=svg)](https://circleci.com/gh/NTNU-IHB/FMI4j/tree/master)
+[![Build Status](https://dev.azure.com/laht/laht/_apis/build/status/NTNU-IHB.FMI4j?branchName=master)](https://dev.azure.com/laht/laht/_build/latest?definitionId=2&branchName=master)
 
 
 FMI4j is a software package for dealing with Functional Mock-up Units (FMUs) on the Java Virtual Machine (JVM), written in [Kotlin](https://kotlinlang.org/). 
