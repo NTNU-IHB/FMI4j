@@ -8,9 +8,19 @@ pluginManagement {
 
 rootProject.name = 'FMI4j'
 
-include 'fmi-import'
-include 'fmu-plugin'
-include 'fmu-plugin-example'
-include 'fmu-driver'
-include 'fmu2jar'
+def subDirs = rootDir.listFiles(new FileFilter() {
+    boolean accept(File file) {
+        if (!file.isDirectory()) {
+            return false
+        }
+        if (file.name == 'buildSrc') {
+            return false
+        }
+        return new File(file, 'build.gradle').isFile()
+    }
+})
+
+subDirs.each { dir ->
+    include dir.name
+}
 

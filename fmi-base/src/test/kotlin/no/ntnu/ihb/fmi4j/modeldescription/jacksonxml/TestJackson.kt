@@ -8,7 +8,7 @@ import com.fasterxml.jackson.dataformat.xml.XmlMapper
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.readValue
-import no.ntnu.ihb.fmi4j.TestFMUs
+import no.ntnu.ihb.fmi4j.modeldescription.TestFMUs
 import no.ntnu.ihb.fmi4j.modeldescription.ModelDescriptionImpl
 import no.ntnu.ihb.fmi4j.modeldescription.parser.ModelDescriptionParser
 import org.junit.jupiter.api.Assertions

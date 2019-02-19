@@ -24,7 +24,6 @@
 
 package no.ntnu.ihb.fmi4j.importer;
 
-import no.ntnu.ihb.fmi4j.TestFMUs;
 import no.ntnu.ihb.fmi4j.common.FmiStatus;
 import no.ntnu.ihb.fmi4j.common.FmuSlave;
 import no.ntnu.ihb.fmi4j.modeldescription.variables.RealVariable;

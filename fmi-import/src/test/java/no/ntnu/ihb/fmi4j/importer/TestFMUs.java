@@ -1,9 +1,7 @@
-package no.ntnu.ihb.fmi4j;
+package no.ntnu.ihb.fmi4j.importer;
 
-import no.ntnu.ihb.fmi4j.importer.Fmu;
 import no.ntnu.ihb.fmi4j.modeldescription.ModelDescriptionProvider;
 import no.ntnu.ihb.fmi4j.modeldescription.parser.ModelDescriptionParser;
-import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
@@ -105,9 +103,7 @@ public class TestFMUs {
             this.fmuFile = fmuFile;
         }
 
-        public Fmu fmu() throws IOException {
-            return Fmu.from(fmuFile);
-        }
+        public Fmu fmu() throws IOException { return Fmu.from(fmuFile); }
 
         public ModelDescriptionProvider modelDescription() {
             return ModelDescriptionParser.parse(fmuFile);

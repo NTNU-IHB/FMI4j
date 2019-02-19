@@ -83,7 +83,7 @@ interface FmuProvider: IFmu {
  * @author Lars Ivar Hatledal
  */
 class Fmu private constructor(
-        val fmuFile: File
+        private val fmuFile: File
 ) : FmuProvider {
 
     private var isClosed = false

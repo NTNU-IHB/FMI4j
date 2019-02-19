@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2017-2018 Norwegian University of Technology
+ * Copyright 2017-2019 Norwegian University of Technology
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,18 +25,6 @@
 package no.ntnu.ihb.fmi4j.importer.misc
 
 import no.ntnu.ihb.fmi4j.common.ValueReferences
-
-/**
- * @author Lars Ivar Hatledal
- */
-internal enum class FmiType(
-        val code: Int
-) {
-
-    MODEL_EXCHANGE(0),
-    CO_SIMULATION(1)
-
-}
 
 /**
  *

@@ -24,7 +24,7 @@
 
 package no.ntnu.ihb.fmi4j.modeldescription.vendors.twentysim
 
-import no.ntnu.ihb.fmi4j.TestFMUs
+import no.ntnu.ihb.fmi4j.modeldescription.TestFMUs
 import no.ntnu.ihb.fmi4j.modeldescription.misc.DefaultExperiment
 import no.ntnu.ihb.fmi4j.modeldescription.variables.ModelVariables
 import no.ntnu.ihb.fmi4j.modeldescription.variables.RealVariable

@@ -1,6 +1,5 @@
 package no.ntnu.ihb.fmi4j.modeldescription;
 
-import no.ntnu.ihb.fmi4j.TestFMUs;
 import no.ntnu.ihb.fmi4j.modeldescription.parser.ModelDescriptionParser;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

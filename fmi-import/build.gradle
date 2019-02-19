@@ -8,15 +8,14 @@ plugins {
     id "com.github.johnrengelman.shadow" version "4.0.4"
 }
 
+apply from: rootProject.file("gradle/copyfmus.gradle")
+apply from: rootProject.file("gradle/mavenpublish.gradle")
+
 dependencies {
 
+    api project(':fmi-base')
     api group: 'org.apache.commons', name: 'commons-math3', version: '3.6.1'
 
-    def jackson_version = '2.9.8'
-    implementation group: "com.fasterxml.jackson.module", name: "jackson-module-kotlin", version: jackson_version
-    implementation group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-xml', version: jackson_version
-    
-    testImplementation group: 'com.google.code.gson', name: 'gson', version: '2.8.5'
     testImplementation group: 'org.siani.javafmi', name: 'fmu-wrapper', version: '2.25.1'
 
 }
@@ -25,26 +24,6 @@ shadowJar {
     baseName += "-shadow"
     archiveClassifier = null
     archiveVersion = null
-}
-
-task sourcesJar(type: Jar, dependsOn: classes) {
-    archiveClassifier = 'sources'
-    from sourceSets.main.allSource
-}
-
-task javadocJar(type: Jar, dependsOn: javadoc) {
-    archiveClassifier = 'javadoc'
-    from javadoc.destinationDir
-}
-
-publishing {
-    publications {
-        maven(MavenPublication) {
-            from components.java
-            artifact sourcesJar
-            artifact javadocJar
-        }
-    }
 }
 
 model {
@@ -131,9 +110,3 @@ model {
     }
 }
 
-task copyTestFmus(type: Copy) {
-    from "$projectDir/../fmus"
-    into "$buildDir/resources/test/fmus"
-}
-
-testClasses.dependsOn(copyTestFmus)

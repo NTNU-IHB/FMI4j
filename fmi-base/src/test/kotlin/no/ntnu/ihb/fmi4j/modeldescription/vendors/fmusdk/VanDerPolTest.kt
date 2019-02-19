@@ -1,6 +1,6 @@
 package no.ntnu.ihb.fmi4j.modeldescription.vendors.fmusdk
 
-import no.ntnu.ihb.fmi4j.TestFMUs
+import no.ntnu.ihb.fmi4j.modeldescription.TestFMUs
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance

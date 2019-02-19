@@ -1,6 +1,6 @@
 package no.ntnu.ihb.fmi4j.modeldescription.vendors.openmodelica
 
-import no.ntnu.ihb.fmi4j.TestFMUs
+import no.ntnu.ihb.fmi4j.modeldescription.TestFMUs
 import no.ntnu.ihb.fmi4j.modeldescription.ModelDescription
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test

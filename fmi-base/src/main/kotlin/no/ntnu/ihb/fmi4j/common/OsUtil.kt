@@ -64,7 +64,7 @@ object OsUtil {
             }
         }
 
-    internal val libPrefix: String
+    val libPrefix: String
         get() {
             return when {
                 isMac -> "" // NOT SURE IF THIS IS CORRECT!
@@ -74,7 +74,7 @@ object OsUtil {
             }
         }
 
-    internal val libExtension: String
+    val libExtension: String
         get() {
             return when {
                 isMac -> MAC_OS_LIBRARY_EXTENSION
@@ -85,7 +85,7 @@ object OsUtil {
         }
 
 
-    internal val libraryFolderName: String
+    val libraryFolderName: String
         get() = when {
             OsUtil.isWindows -> WINDOWS_FOLDER
             OsUtil.isLinux -> LINUX_FOLDER
