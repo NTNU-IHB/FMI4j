@@ -29,7 +29,7 @@ import no.ntnu.ihb.fmi4j.common.FmuRead;
 import no.ntnu.ihb.fmi4j.common.FmuSlave;
 import no.ntnu.ihb.fmi4j.modeldescription.variables.RealVariable;
 import no.ntnu.ihb.fmi4j.solvers.Solver;
-import no.ntnu.ihb.fmi4j.solvers.me.ApacheSolvers;
+import no.ntnu.ihb.fmi4j.solvers.apache.ApacheSolvers;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.condition.EnabledOnOs;
 import org.junit.jupiter.api.condition.OS;
