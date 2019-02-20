@@ -21,7 +21,6 @@ A significant speedup (2-5x) compared to other FMI implementations for the JVM, 
 
 The package consists of:
 * [A software API for interacting with FMUs](#api)
-* [A Gradle Plugin that makes it easier to programmatically work with FMUs](#plugin)
 * [A tool for wrapping an FMU as a JAR - batteries included](#fmu2jar).
 * [A tool for running FMUs from the command line](#fmudriver).
 
@@ -75,78 +74,11 @@ dependencies {
 }
 ```
 
-### <a name="plugin"></a> Gradle plugin
-
-For any FMUs located in your ```resources/fmus``` folder, the plugin generates Java code which makes it easier to interact with them progamatically.
-
-Among other things, it generates type safe getter and setters for the FMU variables - grouped by causality. 
-It also generates javadoc based on the information found in the ```modelDescription.xml```.
-
-Example for an FMU named _ControlledTemperature_ given in Kotlin:
-
-```kotlin
-ControlledTemperature.newInstance().use { slave -> //try with resources
-
-        slave.simpleSetup()
-        
-        //Variables are grouped by causality and have types!
-        val tempRef: RealVariable 
-                = slave.outputs.temperature_Reference()
-
-        val stop = 10.0
-        val stepSize = 1E-2
-        while (slave.simulationTime <= stop) {
-            
-            if (!slave.doStep(stepSize)) {
-                break
-            }
-
-            tempRef.read(slave).also {
-                println("t=${instance.currentTime}, ${tempRef.name}=${it.value}")
-            }
-            
-        }
-
-    }
-```
-
-The plugin has been added to the [Gradle Plugin portal](https://plugins.gradle.org/plugin/no.ntnu.ihb.fmi4j.FmuPlugin).
-
-To use it, simply add the following to your ```build.gradle```
-
-```groovy
-plugins {
-    id "no.ntnu.ihb.fmi4j.FmuPlugin" version "..."
-}
-```
-
-and the following to your ``settings.gradle``
-
-```groovy
-pluginManagement {
-    repositories {
-        gradlePluginPortal()
-        maven { url 'https://jitpack.io' }
-    }
-}
-```
-
-The plugin will automatically add a dependency to FMI4j. It defaults to the _implementation_ configuration. You can change this behaviour through the _fmi4j_ extension. E.g:
-
-```groovy
-fmi4j {
-    version = "..."
-    configurationName = "compile"
-}
-```
-
 ### <a name="fmu2jar"></a> FMU2Jar
 
-FMU2Jar is similar to the Gradle plugin, but it does not require Gradle. 
-
-It's a command line application which takes an FMU in and produces a Jar file. 
+FMU2Jar is a command line application (CLI) which takes an FMU in and produces a Jar file. 
 You can also tell the application to install the Jar into your local maven repository (``.m2``),
-The jar file contains code that makes it easier to work with the FMU programmatically just as the Gradle plugin does. 
+The Jar contains code that makes it easier to work with the FMU programmatically just as the Gradle plugin does. 
 
 
 ### <a name="fmudriver"></a> FmuDriver
