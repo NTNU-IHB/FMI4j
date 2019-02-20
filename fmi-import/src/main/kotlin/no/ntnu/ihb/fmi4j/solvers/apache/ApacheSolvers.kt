@@ -1,4 +1,4 @@
-package no.ntnu.ihb.fmi4j.solvers.me
+package no.ntnu.ihb.fmi4j.solvers.apache
 
 import org.apache.commons.math3.ode.nonstiff.*
 
