@@ -29,7 +29,7 @@ import java.io.Serializable
 
 /**
  *
- * Dependency of scalar Unknown from Knowns in continous-time and event mode (Model Exchange),
+ * Dependency of scalar Unknown from Knowns in continuous-time and event mode (Model Exchange),
  * and at communications points (Co-simulation)
  *
  * @author Lars Ivar Hatledal
@@ -43,7 +43,7 @@ interface Unknown {
 
     /**
      * Defines the dependency of the Unknown (directly or indirectly via auxiliary variables)
-     * on the Knowns in Continous-Time and Event Mode (ModelExchange) and at Communication Points (CoSimulation)
+     * on the Knowns in Continuous-Time and Event Mode (ModelExchange) and at Communication Points (CoSimulation)
      */
     val dependencies: List<Int>
 
