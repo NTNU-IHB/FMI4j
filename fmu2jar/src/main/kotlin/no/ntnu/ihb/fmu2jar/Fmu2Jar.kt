@@ -101,7 +101,7 @@ class Fmu2Jar(
     private fun copySourceFile(parentDir: File) {
 
         val fileName = "${modelDescription.modelName}.java"
-        File(parentDir, "src/main/java/no/mechatronics/sfi/fmu2jar/$fileName").apply {
+        File(parentDir, "src/main/java/no/ntnu/ihb/fmu2jar/$fileName").apply {
             if (!parentFile.exists()) {
                 parentFile.mkdirs()
             }
