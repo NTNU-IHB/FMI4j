@@ -52,5 +52,7 @@ build/
 /**/out/
 /**/build/
 
+/**/src/test/resources/fmus
+
 /**/cmake-build-debug
 /**/cmake-build-release

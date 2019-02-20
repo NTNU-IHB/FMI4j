@@ -1,6 +1,6 @@
 package no.ntnu.ihb.fmi4j.importer.misc
 
-import no.ntnu.ihb.fmi4j.TestFMUs
+import no.ntnu.ihb.fmi4j.importer.TestFMUs
 import no.ntnu.ihb.fmi4j.modeldescription.variables.BooleanVariable
 import no.ntnu.ihb.fmi4j.modeldescription.variables.IntegerVariable
 import no.ntnu.ihb.fmi4j.modeldescription.variables.RealVariable

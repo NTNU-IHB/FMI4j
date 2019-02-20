@@ -27,7 +27,7 @@ package no.ntnu.ihb.fmi4j.fmudriver
 import no.ntnu.ihb.fmi4j.common.FmuSlave
 import no.ntnu.ihb.fmi4j.importer.Fmu
 import no.ntnu.ihb.fmi4j.solvers.Solver
-import no.ntnu.ihb.fmi4j.solvers.me.ApacheSolvers
+import no.ntnu.ihb.fmi4j.solvers.apache.ApacheSolvers
 import org.apache.commons.csv.CSVFormat
 import org.apache.commons.csv.CSVPrinter
 import org.apache.commons.csv.QuoteMode

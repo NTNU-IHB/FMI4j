@@ -24,7 +24,6 @@
 
 package no.ntnu.ihb.fmi4j.importer
 
-import no.ntnu.ihb.fmi4j.common.OsUtil
 import no.ntnu.ihb.fmi4j.importer.jni.Fmi2Library
 import no.ntnu.ihb.fmi4j.importer.misc.FmiType
 import no.ntnu.ihb.fmi4j.importer.misc.extractTo
@@ -32,6 +31,7 @@ import no.ntnu.ihb.fmi4j.modeldescription.CommonModelDescription
 import no.ntnu.ihb.fmi4j.modeldescription.ModelDescription
 import no.ntnu.ihb.fmi4j.modeldescription.ModelDescriptionProvider
 import no.ntnu.ihb.fmi4j.modeldescription.parser.ModelDescriptionParser
+import no.ntnu.ihb.fmi4j.util.OsUtil
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.Closeable
@@ -83,7 +83,7 @@ interface FmuProvider: IFmu {
  * @author Lars Ivar Hatledal
  */
 class Fmu private constructor(
-        val fmuFile: File
+        private val fmuFile: File
 ) : FmuProvider {
 
     private var isClosed = false
