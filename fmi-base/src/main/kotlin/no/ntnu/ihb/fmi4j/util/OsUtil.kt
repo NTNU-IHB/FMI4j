@@ -1,4 +1,3 @@
-@file:JvmName("OSUtil")
 
 /*
  * The MIT License
@@ -24,7 +23,7 @@
  * THE SOFTWARE.
  */
 
-package no.ntnu.ihb.fmi4j.common
+package no.ntnu.ihb.fmi4j.util
 
 object OsUtil {
 
@@ -87,10 +86,10 @@ object OsUtil {
 
     val libraryFolderName: String
         get() = when {
-            OsUtil.isWindows -> WINDOWS_FOLDER
-            OsUtil.isLinux -> LINUX_FOLDER
-            OsUtil.isMac -> MAC_OS_FOLDER
-            else -> throw UnsupportedOperationException("OS '${OsUtil.osName}' is unsupported!")
+            isWindows -> WINDOWS_FOLDER
+            isLinux -> LINUX_FOLDER
+            isMac -> MAC_OS_FOLDER
+            else -> throw UnsupportedOperationException("OS '$osName' is unsupported!")
         }
 
 

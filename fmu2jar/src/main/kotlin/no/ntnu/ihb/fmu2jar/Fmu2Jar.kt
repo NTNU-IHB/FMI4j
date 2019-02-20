@@ -24,16 +24,19 @@
 
 package no.ntnu.ihb.fmu2jar
 
-import no.ntnu.ihb.fmi4j.common.OsUtil
 import no.ntnu.ihb.fmi4j.modeldescription.ModelDescriptionProvider
 import no.ntnu.ihb.fmi4j.modeldescription.parser.ModelDescriptionParser
+import no.ntnu.ihb.fmi4j.util.OsUtil
 import no.ntnu.ihb.fmu2jar.cli.Args
 import no.ntnu.ihb.fmu2jar.cli.GenerateOptions
 import no.ntnu.ihb.fmu2jar.codegen.CodeGenerator
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import picocli.CommandLine
-import java.io.*
+import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
+import java.io.InputStream
 import java.nio.file.Files
 import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream

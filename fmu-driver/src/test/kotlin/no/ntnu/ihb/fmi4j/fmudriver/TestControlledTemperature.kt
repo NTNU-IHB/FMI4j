@@ -24,9 +24,8 @@ class TestControlledTemperature {
         Cmd.main(args)
 
         File("${name}_out.csv").apply {
-            if (exists()) {
-                delete()
-            }
+            Assertions.assertTrue(exists())
+            delete()
         }
 
     }
