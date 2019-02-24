@@ -184,7 +184,8 @@ interface ModelDescriptionProvider: ModelDescription {
 
 }
 
-interface CommonModelDescription: ModelDescription {
+
+interface CommonAttributes {
 
     val modelIdentifier: String
     val needsExecutionTool: Boolean
@@ -197,7 +198,7 @@ interface CommonModelDescription: ModelDescription {
 
 }
 
-interface CoSimulationModelDescription: CommonModelDescription {
+interface CoSimulationAttributes: CommonAttributes {
 
     val maxOutputDerivativeOrder: Int?
     val canInterpolateInputs: Boolean
@@ -207,7 +208,15 @@ interface CoSimulationModelDescription: CommonModelDescription {
 
 }
 
-interface ModelExchangeModelDescription: CommonModelDescription {
+interface ModelExchangeAttributes: CommonAttributes {
+
+    val completedIntegratorStepNotNeeded: Boolean
+
+}
+
+interface CommonModelDescription: ModelDescription, CommonAttributes
+interface CoSimulationModelDescription: CommonModelDescription, CoSimulationAttributes
+interface ModelExchangeModelDescription: CommonModelDescription, ModelExchangeAttributes {
 
     /**
      * The (fixed) number of event indicators for an FMU based on FMI for Model Exchange.
@@ -215,6 +224,5 @@ interface ModelExchangeModelDescription: CommonModelDescription {
      */
     val numberOfEventIndicators: Int
 
-    val completedIntegratorStepNotNeeded: Boolean
-
 }
+
