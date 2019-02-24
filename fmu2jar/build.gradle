@@ -18,10 +18,3 @@ shadowJar {
     archiveVersion = null
 }
 
-task deleteCachedControlledTemperature(type: Delete) {
-    def fmuName = "ControlledTemperature"
-    def m2 = System.getProperty("user.home") + "/.m2/repository"
-    delete "$m2/${group.replace(".", "/")}/$fmuName"
-}
-
-clean.dependsOn(deleteCachedControlledTemperature)

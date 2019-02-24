@@ -38,8 +38,7 @@ class MainTest {
 
         val args = arrayOf<String>(
                 "--fmu", file.absolutePath,
-                "-out", out.absolutePath,
-                "-mvn")
+                "-out", out.absolutePath)
 
         LOG.debug(args.joinToString(" "))
 
@@ -55,7 +54,7 @@ class MainTest {
         val method = classToLoad.getDeclaredMethod("newInstance")
         (method.invoke(null) as Slave).use { slave ->
 
-            slave.simpleSetup()
+           Assertions.assertTrue(slave.simpleSetup())
 
             val stop = 1.0
             val stepSize = 1.0/100

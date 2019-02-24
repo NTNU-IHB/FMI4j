@@ -54,8 +54,8 @@ import java.util.Iterator;
 import java.io.IOException;
 import no.ntnu.ihb.fmi4j.common.*;
 import no.ntnu.ihb.fmi4j.importer.*;
-import no.ntnu.ihb.fmi4j.modeldescription.*;
-import no.ntnu.ihb.fmi4j.modeldescription.variables.*;
+import no.ntnu.ihb.fmi4j.xml.*;
+import no.ntnu.ihb.fmi4j.xml.variables.*;
 $solverImport
 
 /***
@@ -308,9 +308,9 @@ public class $modelName implements Slave {
         return calculatedParameters;
     }
 
-    public class AbstractParameters implements Iterable<TypedScalarVariable<?>> {
+    public class AbstractParameters implements Iterable<ScalarVariable> {
 
-        private final List<TypedScalarVariable<?>> vars;
+        private final List<ScalarVariable> vars;
 
         private AbstractParameters(Causality causality) {
             this.vars = getModelVariables().getByCausality(causality);
@@ -320,12 +320,12 @@ public class $modelName implements Slave {
             return vars.size();
         }
 
-        public List<TypedScalarVariable<?>> get() {
+        public List<ScalarVariable> get() {
             return vars;
         }
 
         @Override
-        public Iterator<TypedScalarVariable<?>> iterator() {
+        public Iterator<ScalarVariable> iterator() {
             return vars.iterator();
         }
 
