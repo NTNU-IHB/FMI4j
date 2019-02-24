@@ -54,23 +54,24 @@ enum class Initial {
      * The variable is initialized with the start value (provided under Real,
      * Integer, Boolean, String or Enumeration).
      */
-    EXACT,
+    exact,
 
     /**
      * The variable is an iteration variable of an algebraic loop and the
      * iteration at initialization starts with the start value.
      */
-    APPROX,
+    approx,
 
     /**
      * The variable is calculated from other categories during initialization. It
      * is not allowed to provide a “start” value.
      */
-    CALCULATED,
+    calculated,
 
     /**
      * Unknown initial
      */
-    UNKNOWN;
+    unknown;
+
 }
 

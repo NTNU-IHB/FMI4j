@@ -259,7 +259,7 @@ public class $modelName implements Slave {
     private CalculatedParameters calculatedParameters;
 
     /**
-     * Access variables with causality=LOCAL
+     * Access variables with causality=local
      */
     public Locals getLocals() {
         if (locals == null) {
@@ -269,7 +269,7 @@ public class $modelName implements Slave {
     }
 
     /**
-     * Access variables with causality=INPUT
+     * Access variables with causality=input
      */
     public Inputs getInputs() {
      if (inputs == null) {
@@ -279,7 +279,7 @@ public class $modelName implements Slave {
     }
 
     /**
-     * Access variables with causality=OUTPUT
+     * Access variables with causality=output
      */
     public Outputs getOutputs() {
      if (outputs == null) {
@@ -289,7 +289,7 @@ public class $modelName implements Slave {
     }
 
     /**
-     * Access variables with causality=PARAMETER
+     * Access variables with causality=parameter
      */
     public Parameters getParameters() {
      if (parameters == null) {
@@ -299,7 +299,7 @@ public class $modelName implements Slave {
     }
 
     /**
-     * Access variables with causality=CALCULATED_PARAMETER
+     * Access variables with causality=calculated_parameter
      */
     public CalculatedParameters getCalculatedParameters() {
      if (calculatedParameters == null) {
@@ -334,45 +334,45 @@ public class $modelName implements Slave {
     public class Inputs extends AbstractParameters {
 
         private Inputs() {
-            super(Causality.INPUT);
+            super(Causality.input);
         }
-        ${generateAccessors(Causality.INPUT)}
+        ${generateAccessors(Causality.input)}
 
     }
 
     public class Outputs extends AbstractParameters {
 
         private Outputs() {
-            super(Causality.OUTPUT);
+            super(Causality.output);
         }
-        ${generateAccessors(Causality.OUTPUT)}
+        ${generateAccessors(Causality.output)}
 
     }
 
     public class Parameters extends AbstractParameters {
 
         private Parameters() {
-            super(Causality.PARAMETER);
+            super(Causality.parameter);
         }
-        ${generateAccessors(Causality.PARAMETER)}
+        ${generateAccessors(Causality.parameter)}
 
     }
 
     public class CalculatedParameters extends AbstractParameters {
 
         private CalculatedParameters() {
-            super(Causality.CALCULATED_PARAMETER);
+            super(Causality.calculated_parameter);
         }
-        ${generateAccessors(Causality.CALCULATED_PARAMETER)}
+        ${generateAccessors(Causality.calculated_parameter)}
 
     }
 
     public class Locals extends AbstractParameters {
 
         private Locals() {
-            super(Causality.LOCAL);
+            super(Causality.local);
         }
-        ${generateAccessors(Causality.LOCAL)}
+        ${generateAccessors(Causality.local)}
 
     }
 

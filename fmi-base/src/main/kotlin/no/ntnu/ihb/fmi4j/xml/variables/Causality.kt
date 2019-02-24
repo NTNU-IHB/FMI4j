@@ -38,7 +38,7 @@ enum class Causality {
      * connections). variability must be "fixed" or "tunable". initial must be
      * exact or not present (meaning exact).
      */
-    PARAMETER,
+    parameter,
 
     /**
      * A data value that is constant during the simulation and is computed
@@ -46,27 +46,27 @@ enum class Causality {
      * be "fixed" or "tunable". initial must be "approx", "calculated" or not
      * present (meaning calculated).
      */
-    CALCULATED_PARAMETER,
+    calculated_parameter,
 
     /**
      * The variable value can be provided from another model or slave. It is not
      * allowed to define initial.
      */
-    INPUT,
+    input,
 
     /**
      * The variable value can be used by another model or slave. The algebraic
      * relationship to the inputs is defined via the dependencies attribute of
      * <fmiModelDescription><ModelStructure><Outputs><Unknown>.
      */
-    OUTPUT,
+    output,
 
     /**
      * Local variable that is calculated from other categories or is a
      * continuoustime state (see section 2.2.8). It is not allowed to use the
      * variable value in another model or slave.
      */
-    LOCAL,
+    local,
 
     /**
      * The independent variable (usually “time”). All categories are a function
@@ -81,7 +81,7 @@ enum class Causality {
      * currentCommunicationPoint and communicationStepSize of fmi2DoStep for
      * CoSimulation. [The actual value can be inquired with fmi2GetReal.]
      */
-    INDEPENDENT;
+    independent;
 
 }
 

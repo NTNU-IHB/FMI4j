@@ -57,10 +57,6 @@ object ModelDescriptionParser {
     @JvmStatic
     fun parse(xml: String): ModelDescriptionProvider {
 
-//        val correctedXml = xml.replace("calculatedParameter", "CALCULATED_PARAMETER")
-//                .replace("<ModelStructure>\n" +
-//                        "</ModelStructure>", "<ModelStructure/>")
-
         return JAXBContext.newInstance(Fmi2ModelDescription::class.java).createUnmarshaller().unmarshal(StringReader(xml)).let {
             ModelDescriptionImpl(it as Fmi2ModelDescription)
         }

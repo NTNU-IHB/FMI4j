@@ -63,14 +63,14 @@ enum class Variability {
     /**
      * The value of the variable never changes.
      */
-    CONSTANT,
+    constant,
 
     /**
      * The value of the variable is fixed after initialization, in other words
      * after fmi2ExitInitializationMode was called the variable value does not
      * change anymore.
      */
-    FIXED,
+    fixed,
 
     /**
      * The value of the variable is constant between external events
@@ -82,7 +82,7 @@ enum class Variability {
      * Point (CoSimulation) and the categories with variability = "tunable" and
      * causality = "calculatedParameter" or "output" must be newly computed.
      */
-    TUNABLE,
+    tunable,
 
     /**
      * ModelExchange: The value of the variable is constant between external and
@@ -91,13 +91,13 @@ enum class Variability {
      * data system and its value is only changed at Communication Points (also
      * inside the slave).
      */
-    DISCRETE,
+    discrete,
 
     /**
      * Only a variable of type = “Real” can be “continuous”. ModelExchange: No
      * restrictions on value changes. CoSimulation: By convention, the variable
      * is from a differential
      */
-    CONTINUOUS;
+    continuous;
 
 }
