@@ -24,7 +24,7 @@
 
 package no.ntnu.ihb.fmi4j.importer.jni
 
-import no.ntnu.ihb.fmi4j.common.FmiStatus
+import no.ntnu.ihb.fmi4j.common.Status
 import no.ntnu.ihb.fmi4j.common.ValueReferences
 
 /**
@@ -61,47 +61,47 @@ class Fmi2CoSimulationLibrary(
     fun step(c: Fmi2Component,
              currentCommunicationPoint: Double,
              communicationStepSize: Double,
-             noSetFMUStatePriorToCurrentPoint: Boolean): FmiStatus {
+             noSetFMUStatePriorToCurrentPoint: Boolean): Status {
         return step(p, c, currentCommunicationPoint, communicationStepSize, noSetFMUStatePriorToCurrentPoint).transform()
     }
 
-    fun cancelStep(c: Fmi2Component): FmiStatus {
+    fun cancelStep(c: Fmi2Component): Status {
         return cancelStep(p, c).transform()
     }
 
     fun setRealInputDerivatives(c: Fmi2Component,
                                 vr: ValueReferences, order: IntArray,
-                                value: DoubleArray): FmiStatus {
+                                value: DoubleArray): Status {
         return setRealInputDerivatives(p, c, vr, order, value).transform()
     }
 
     fun getRealOutputDerivatives(c: Fmi2Component,
                                  vr: ValueReferences, order: IntArray,
-                                 value: DoubleArray): FmiStatus {
+                                 value: DoubleArray): Status {
         return getRealOutputDerivatives(p, c, vr, order, value).transform()
     }
 
-    fun getStatus(c: Fmi2Component, s: Int, value: IntByReference): FmiStatus {
+    fun getStatus(c: Fmi2Component, s: Int, value: IntByReference): Status {
         return getStatus(p, c, s, value).transform()
     }
 
-    fun getIntegerStatus(c: Fmi2Component, s: Int, value: IntByReference): FmiStatus {
+    fun getIntegerStatus(c: Fmi2Component, s: Int, value: IntByReference): Status {
         return getIntegerStatus(p, c, s, value).transform()
     }
 
-    fun getRealStatus(c: Fmi2Component, s: Int, value: DoubleByReference): FmiStatus {
+    fun getRealStatus(c: Fmi2Component, s: Int, value: DoubleByReference): Status {
         return getRealStatus(p, c, s, value).transform()
     }
 
-    fun getStringStatus(c: Fmi2Component, s: Int, value: StringByReference): FmiStatus {
+    fun getStringStatus(c: Fmi2Component, s: Int, value: StringByReference): Status {
         return getStringStatus(p, c, s, value).transform()
     }
 
-    fun getBooleanStatus(c: Fmi2Component, s: Int, value: BooleanByReference): FmiStatus {
+    fun getBooleanStatus(c: Fmi2Component, s: Int, value: BooleanByReference): Status {
         return getBooleanStatus(p, c, s, value).transform()
     }
 
-    fun getMaxStepSize(c: Fmi2Component, stepSize: DoubleByReference): FmiStatus {
+    fun getMaxStepSize(c: Fmi2Component, stepSize: DoubleByReference): Status {
         return getMaxStepSize(p, c, stepSize).transform()
     }
 

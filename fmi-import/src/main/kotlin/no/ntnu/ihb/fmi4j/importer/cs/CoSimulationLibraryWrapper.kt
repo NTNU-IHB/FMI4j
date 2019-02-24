@@ -24,7 +24,7 @@
 
 package no.ntnu.ihb.fmi4j.importer.cs
 
-import no.ntnu.ihb.fmi4j.common.FmiStatus
+import no.ntnu.ihb.fmi4j.common.Status
 import no.ntnu.ihb.fmi4j.common.ValueReferences
 import no.ntnu.ihb.fmi4j.importer.jni.*
 
@@ -40,38 +40,38 @@ class CoSimulationLibraryWrapper(
     /**
      * @see Fmi2CoSimulationLibrary.fmi2SetRealInputDerivatives
      */
-    fun setRealInputDerivatives(vr: ValueReferences, order: IntArray, value: DoubleArray): FmiStatus {
+    fun setRealInputDerivatives(vr: ValueReferences, order: IntArray, value: DoubleArray): Status {
         return updateStatus(library.setRealInputDerivatives(c, vr, order, value))
     }
 
     /**
      * @see Fmi2CoSimulationLibrary.fmi2GetRealOutputDerivatives
      */
-    fun getRealOutputDerivatives(vr: ValueReferences, order: IntArray, value: DoubleArray): FmiStatus {
+    fun getRealOutputDerivatives(vr: ValueReferences, order: IntArray, value: DoubleArray): Status {
         return updateStatus(library.getRealOutputDerivatives(c, vr, order, value))
     }
 
     /**
      * @see Fmi2CoSimulationLibrary.fmi2DoStep
      */
-    fun doStep(t: Double, dt: Double, noSetFMUStatePriorToCurrent: Boolean): FmiStatus {
+    fun doStep(t: Double, dt: Double, noSetFMUStatePriorToCurrent: Boolean): Status {
         return updateStatus(library.step(c, t, dt, noSetFMUStatePriorToCurrent))
     }
 
     /**
      * @see Fmi2CoSimulationLibrary.fmi2CancelStep
      */
-    fun cancelStep(): FmiStatus {
+    fun cancelStep(): Status {
         return (updateStatus(library.cancelStep(c)))
     }
 
     /**
      * @see Fmi2CoSimulationLibrary.fmi2GetStatus
      */
-    fun getStatus(s: FmiStatusKind): FmiStatus {
+    fun getStatus(s: FmiStatusKind): Status {
         return IntByReference().let {
             updateStatus(library.getStatus(c, s.code, it))
-            FmiStatus.valueOf(it.value)
+            Status.valueOf(it.value)
         }
     }
 

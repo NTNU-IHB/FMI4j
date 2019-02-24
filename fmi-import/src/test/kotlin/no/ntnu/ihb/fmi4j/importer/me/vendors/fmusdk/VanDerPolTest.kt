@@ -24,7 +24,7 @@
 
 package no.ntnu.ihb.fmi4j.importer.me.vendors.fmusdk
 
-import no.ntnu.ihb.fmi4j.common.FmiStatus
+import no.ntnu.ihb.fmi4j.common.Status
 import no.ntnu.ihb.fmi4j.importer.TestFMUs
 import no.ntnu.ihb.fmi4j.solvers.Solver
 import no.ntnu.ihb.fmi4j.solvers.apache.ApacheSolvers
@@ -72,7 +72,7 @@ class VanDerPolTest {
 
             while (slave.simulationTime <= stop) {
                 val read = x0.read(slave)
-                Assertions.assertTrue(read.status === FmiStatus.OK)
+                Assertions.assertTrue(read.status === Status.OK)
                 LOG.info("t=${slave.simulationTime}, $variableName=${read.value}")
                 Assertions.assertTrue(slave.doStep(macroStep))
             }

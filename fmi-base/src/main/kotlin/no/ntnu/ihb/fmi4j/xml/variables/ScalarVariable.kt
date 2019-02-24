@@ -24,7 +24,10 @@
 
 package no.ntnu.ihb.fmi4j.xml.variables
 
+import no.ntnu.ihb.fmi4j.common.Instance
 import no.ntnu.ihb.fmi4j.common.Real
+import no.ntnu.ihb.fmi4j.common.Status
+import no.ntnu.ihb.fmi4j.common.VariableRead
 
 internal const val INTEGER_TYPE = "Integer"
 internal const val REAL_TYPE = "Real"
@@ -88,6 +91,16 @@ interface ScalarVariable {
             else -> throw IllegalStateException("")
         }
 
+    val start: Any?
+        get() = when {
+            isIntegerVariable() -> asIntegerVariable().start
+            isRealVariable() -> asRealVariable().start
+            isStringVariable() -> asStringVariable().start
+            isBooleanVariable() -> asBooleanVariable().start
+            isEnumerationVariable() -> asEnumerationVariable().start
+            else -> throw IllegalStateException("")
+        }
+
     fun isIntegerVariable(): Boolean
 
     fun isRealVariable(): Boolean
@@ -108,13 +121,28 @@ interface ScalarVariable {
 
     fun asEnumerationVariable(): EnumerationVariable
 
+    fun read(instance: Instance<*>): VariableRead<*> {
+        return when {
+            isIntegerVariable() -> asIntegerVariable().read(instance)
+            isRealVariable() -> asRealVariable().read(instance)
+            isStringVariable() -> asStringVariable().read(instance)
+            isBooleanVariable() -> asBooleanVariable().read(instance)
+            isEnumerationVariable() -> asEnumerationVariable().read(instance)
+            else -> throw IllegalStateException("")
+        }
+    }
+
 }
 
 interface TypedScalarVariable<E>: ScalarVariable {
 
-    val start: E?
+    override val start: E?
 
     val declaredType: String?
+
+    override fun read(instance: Instance<*>): VariableRead<E>
+
+    fun write(instance: Instance<*>, value: E): Status
 
 }
 
@@ -143,6 +171,7 @@ interface BoundedScalarVariable<E>: TypedScalarVariable<E> {
      * The quantity names are not standardized.
      */
     val quantity: String?
+
 }
 
 interface IntegerVariable: BoundedScalarVariable<Int>

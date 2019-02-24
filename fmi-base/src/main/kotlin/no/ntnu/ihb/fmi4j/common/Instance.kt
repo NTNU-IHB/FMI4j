@@ -34,7 +34,7 @@ typealias FmuState = Long
 /**
  * @author Lars Ivar Hatledal
  */
-interface SimpleFmuInstance : FmuVariableAccessorProvider, Closeable {
+interface SimpleFmuInstance : Closeable {
 
     /**
      * Has terminate been called?
@@ -49,17 +49,12 @@ interface SimpleFmuInstance : FmuVariableAccessorProvider, Closeable {
     /**
      * The last status returned by the FMU
      */
-    val lastStatus: FmiStatus
+    val lastStatus: Status
 
     /**
      * The parsed content found in the modelDescription.xml
      */
     val modelDescription: ModelDescription
-
-    /**
-     * Provides read and write access to FMU variables
-     */
-    override val variableAccessor: FmuVariableAccessor
 
     /**
      * @see ModelDescription.modelVariables
@@ -104,6 +99,16 @@ interface SimpleFmuInstance : FmuVariableAccessorProvider, Closeable {
     fun deSerializeFMUstate(state: ByteArray): FmuState
     fun getDirectionalDerivative(vUnknownRef: ValueReferences, vKnownRef: ValueReferences, dvKnown: RealArray): RealArray
 
+    fun readInteger(vr: ValueReferences, ref: IntArray): Status
+    fun readReal(vr: ValueReferences, ref: RealArray): Status
+    fun readString(vr: ValueReferences, ref: StringArray): Status
+    fun readBoolean(vr: ValueReferences, ref: BooleanArray): Status
+
+    fun writeInteger(vr: ValueReferences, value: IntArray): Status
+    fun writeReal(vr: ValueReferences, value: RealArray): Status
+    fun writeString(vr: ValueReferences, value: StringArray): Status
+    fun writeBoolean(vr: ValueReferences, value: BooleanArray): Status
+
     /**
      * Calls terminate()
      *
@@ -122,7 +127,7 @@ interface SimpleFmuInstance : FmuVariableAccessorProvider, Closeable {
  *
  * @author Lars Ivar Hatledal
  */
-interface FmuInstance<out E: CommonModelDescription> : SimpleFmuInstance {
+interface Instance<out E: CommonModelDescription> : SimpleFmuInstance {
 
     override val modelDescription: E
 

@@ -24,8 +24,8 @@
 
 package no.ntnu.ihb.fmi4j.importer.cs
 
-import no.ntnu.ihb.fmi4j.common.FmiStatus
-import no.ntnu.ihb.fmi4j.common.FmuSlave
+import no.ntnu.ihb.fmi4j.common.Slave
+import no.ntnu.ihb.fmi4j.common.Status
 import no.ntnu.ihb.fmi4j.common.ValueReferences
 import no.ntnu.ihb.fmi4j.importer.AbstractFmuInstance
 import no.ntnu.ihb.fmi4j.xml.CoSimulationModelDescription
@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory
 class CoSimulationSlave internal constructor(
         wrapper: CoSimulationLibraryWrapper,
         modelDescription: CoSimulationModelDescription
-) : FmuSlave, AbstractFmuInstance<CoSimulationModelDescription, CoSimulationLibraryWrapper>(wrapper, modelDescription) {
+) : Slave, AbstractFmuInstance<CoSimulationModelDescription, CoSimulationLibraryWrapper>(wrapper, modelDescription) {
 
     /**
      * @see CoSimulationLibraryWrapper.doStep
@@ -55,7 +55,7 @@ class CoSimulationSlave internal constructor(
         }
 
         return wrapper.doStep(simulationTime, stepSize, noSetFMUStatePriorToCurrent = true).let { status ->
-            (status == FmiStatus.OK).also {success ->
+            (status == Status.OK).also { success ->
                 if (success) {
                     simulationTime = tNext
                 }
@@ -68,7 +68,7 @@ class CoSimulationSlave internal constructor(
      * @see CoSimulationLibraryWrapper.cancelStep
      */
     override fun cancelStep(): Boolean {
-        return (wrapper.cancelStep() == FmiStatus.OK)
+        return (wrapper.cancelStep() == Status.OK)
     }
 
     /**
@@ -84,21 +84,21 @@ class CoSimulationSlave internal constructor(
     /**
      * @see CoSimulationLibraryWrapper.setRealInputDerivatives
      */
-    fun setRealInputDerivatives(vr: ValueReferences, order: IntArray, value: DoubleArray): FmiStatus {
+    fun setRealInputDerivatives(vr: ValueReferences, order: IntArray, value: DoubleArray): Status {
         return wrapper.setRealInputDerivatives(vr, order, value)
     }
 
     /**
      * @see CoSimulationLibraryWrapper.getRealOutputDerivatives
      */
-    fun getRealOutputDerivatives(vr: ValueReferences, order: IntArray, value: DoubleArray): FmiStatus {
+    fun getRealOutputDerivatives(vr: ValueReferences, order: IntArray, value: DoubleArray): Status {
         return wrapper.getRealOutputDerivatives(vr, order, value)
     }
 
     /**
      * @see CoSimulationLibraryWrapper.getStatus
      */
-    fun getStatus(s: FmiStatusKind): FmiStatus {
+    fun getStatus(s: FmiStatusKind): Status {
         return wrapper.getStatus(s)
     }
 

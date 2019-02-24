@@ -24,8 +24,8 @@
 
 package no.ntnu.ihb.fmi4j.importer;
 
-import no.ntnu.ihb.fmi4j.common.FmiStatus;
-import no.ntnu.ihb.fmi4j.common.FmuSlave;
+import no.ntnu.ihb.fmi4j.common.Slave;
+import no.ntnu.ihb.fmi4j.common.Status;
 import no.ntnu.ihb.fmi4j.xml.variables.RealVariable;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
@@ -61,7 +61,7 @@ public class ControlledTemperatureTestJava {
     @Test
     public void test() {
 
-        try (FmuSlave slave = fmu.newInstance()) {
+        try (Slave slave = fmu.newInstance()) {
 
             Assertions.assertEquals("2.0", slave.getModelDescription().getFmiVersion());
 
@@ -69,7 +69,7 @@ public class ControlledTemperatureTestJava {
                     .getVariableByName("HeatCapacity1.T0").asRealVariable().getStart();
             Assertions.assertEquals(298.0, startTemp);
 
-            slave.simpleSetup();
+            Assertions.assertTrue(slave.simpleSetup());
 
             final RealVariable heatCapacity1_C = slave.getModelDescription()
                     .getVariableByName("HeatCapacity1.C").asRealVariable();
@@ -82,14 +82,17 @@ public class ControlledTemperatureTestJava {
             double dt = 1d / 100;
             for (int i = 0; i < 5; i++) {
                 Assertions.assertTrue(slave.doStep(dt));
-                Assertions.assertEquals(slave.getLastStatus(), FmiStatus.OK);
+                Assertions.assertEquals(slave.getLastStatus(), Status.OK);
                 double value = temperature_room.read(slave).getValue();
-                Assertions.assertEquals(slave.getLastStatus(), FmiStatus.OK);
+                Assertions.assertEquals(slave.getLastStatus(), Status.OK);
 
                 LOG.info("temperature_room={}", value);
 
-                Assertions.assertEquals(value, (double) slave.getVariableAccessor()
-                        .readReal("Temperature_Room").getValue());
+                double[] ref = new double[1];
+                long[] vr = {slave.getModelVariables().getValueReference("Temperature_Room")};
+                slave.readReal(vr, ref);
+
+                Assertions.assertEquals(value, ref[0]);
 
             }
 

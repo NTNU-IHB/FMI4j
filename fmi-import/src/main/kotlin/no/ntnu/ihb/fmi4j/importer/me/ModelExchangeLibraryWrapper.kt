@@ -24,7 +24,7 @@
 
 package no.ntnu.ihb.fmi4j.importer.me
 
-import no.ntnu.ihb.fmi4j.common.FmiStatus
+import no.ntnu.ihb.fmi4j.common.Status
 import no.ntnu.ihb.fmi4j.importer.jni.BooleanByReference
 import no.ntnu.ihb.fmi4j.importer.jni.EventInfo
 import no.ntnu.ihb.fmi4j.importer.jni.Fmi2LibraryWrapper
@@ -46,7 +46,7 @@ class ModelExchangeLibraryWrapper(
      * @see Fmi2ModelExchangeLibrary.fmi2SetTime
      * @param time
      */
-    fun setTime(time: Double): FmiStatus {
+    fun setTime(time: Double): Status {
         return updateStatus((library.setTime(c, time)))
     }
 
@@ -55,25 +55,25 @@ class ModelExchangeLibraryWrapper(
      * @see Fmi2ModelExchangeLibrary.fmi2SetContinuousStates
      * @param x state
      */
-    fun setContinuousStates(x: DoubleArray): FmiStatus {
+    fun setContinuousStates(x: DoubleArray): Status {
         return updateStatus((library.setContinuousStates(c, x)))
     }
 
     /**
      * @see Fmi2ModelExchangeLibrary.fmi2EnterEventMode
      */
-    fun enterEventMode(): FmiStatus {
+    fun enterEventMode(): Status {
         return updateStatus((library.enterEventMode(c)))
     }
 
     /**
      * @see Fmi2ModelExchangeLibrary.fmi2EnterContinuousTimeMode
      */
-    fun enterContinuousTimeMode(): FmiStatus {
+    fun enterContinuousTimeMode(): Status {
         return updateStatus((library.enterContinuousTimeMode(c)))
     }
 
-    fun newDiscreteStates(eventInfo: EventInfo): FmiStatus {
+    fun newDiscreteStates(eventInfo: EventInfo): Status {
         return updateStatus((library.newDiscreteStates(c, eventInfo)))
     }
 
@@ -89,7 +89,7 @@ class ModelExchangeLibraryWrapper(
      * @see Fmi2ModelExchangeLibrary.fmi2GetDerivatives
      * @param derivatives
      */
-    fun getDerivatives(derivatives: DoubleArray): FmiStatus {
+    fun getDerivatives(derivatives: DoubleArray): Status {
         return updateStatus((library.getDerivatives(c, derivatives)))
     }
 
@@ -97,7 +97,7 @@ class ModelExchangeLibraryWrapper(
      *
      * @param eventIndicators
      */
-    fun getEventIndicators(eventIndicators: DoubleArray): FmiStatus {
+    fun getEventIndicators(eventIndicators: DoubleArray): Status {
         return updateStatus((library.getEventIndicators(c, eventIndicators)))
     }
 
@@ -105,7 +105,7 @@ class ModelExchangeLibraryWrapper(
      *
      * @param x
      */
-    fun getContinuousStates(x: DoubleArray): FmiStatus {
+    fun getContinuousStates(x: DoubleArray): Status {
         return updateStatus((library.getContinuousStates(c, x)))
     }
 
@@ -113,7 +113,7 @@ class ModelExchangeLibraryWrapper(
      *
      * @param x_nominal
      */
-    fun getNominalsOfContinuousStates(x_nominal: DoubleArray): FmiStatus {
+    fun getNominalsOfContinuousStates(x_nominal: DoubleArray): Status {
         return updateStatus((library.getNominalsOfContinuousStates(c, x_nominal)))
     }
 

@@ -1,7 +1,7 @@
 package no.ntnu.ihb.fmi4j.importer.cs.vendors.maplesim
 
+import no.ntnu.ihb.fmi4j.common.Status
 import no.ntnu.ihb.fmi4j.importer.TestFMUs
-import no.ntnu.ihb.fmi4j.common.FmiStatus
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.condition.EnabledOnOs
@@ -32,7 +32,7 @@ class ControlledTemperatureTest {
                         Assertions.assertEquals(2.93149999999999980e+02, heatCapacitorT.start!!)
 
                         Assertions.assertTrue(slave.simpleSetup())
-                        Assertions.assertTrue(slave.lastStatus === FmiStatus.OK)
+                        Assertions.assertTrue(slave.lastStatus === Status.OK)
 
                         LOG.debug("heatCapacitor_T=${heatCapacitorT.read(slave).value}")
 
@@ -42,10 +42,10 @@ class ControlledTemperatureTest {
                         val stepSize = 1.0 / 100
                         for (i in 0..4) {
                             Assertions.assertTrue(slave.doStep(stepSize))
-                            Assertions.assertEquals(slave.lastStatus, FmiStatus.OK)
+                            Assertions.assertEquals(slave.lastStatus, Status.OK)
 
                             tempInputValue.read(slave).also {
-                                Assertions.assertTrue(it.status == FmiStatus.OK)
+                                Assertions.assertTrue(it.status == Status.OK)
                                 LOG.info("t=${slave.simulationTime}, outputs[2]=${it.value}")
                             }
 

@@ -31,7 +31,7 @@ import no.ntnu.ihb.fmi4j.xml.CoSimulationModelDescription
  *
  * @author Lars Ivar Hatledal
  */
-interface FmuSlave: FmuInstance<CoSimulationModelDescription> {
+interface Slave: Instance<CoSimulationModelDescription> {
 
     /**
      * Step simulation forward in time

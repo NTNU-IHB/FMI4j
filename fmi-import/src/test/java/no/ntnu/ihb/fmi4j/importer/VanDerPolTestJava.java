@@ -24,9 +24,9 @@
 
 package no.ntnu.ihb.fmi4j.importer;
 
-import no.ntnu.ihb.fmi4j.common.FmiStatus;
-import no.ntnu.ihb.fmi4j.common.FmuRead;
-import no.ntnu.ihb.fmi4j.common.FmuSlave;
+import no.ntnu.ihb.fmi4j.common.Slave;
+import no.ntnu.ihb.fmi4j.common.Status;
+import no.ntnu.ihb.fmi4j.common.VariableRead;
 import no.ntnu.ihb.fmi4j.solvers.Solver;
 import no.ntnu.ihb.fmi4j.solvers.apache.ApacheSolvers;
 import no.ntnu.ihb.fmi4j.xml.variables.RealVariable;
@@ -70,7 +70,7 @@ public class VanDerPolTestJava {
 
         LOG.info("Using solver: {}", solver.getName());
 
-        FmuSlave slave = VanDerPolTestJava.fmu.asModelExchangeFmu()
+        Slave slave = VanDerPolTestJava.fmu.asModelExchangeFmu()
                 .newInstance(solver, false, false);
 
         RealVariable x0 = slave.getModelVariables()
@@ -81,8 +81,8 @@ public class VanDerPolTestJava {
         double stop = 1.0;
         double macroStep = 1.0 / 10;
         while (slave.getSimulationTime() <= stop) {
-            FmuRead<Double> read = x0.read(slave);
-            Assertions.assertSame(read.getStatus(), FmiStatus.OK);
+            VariableRead<Double> read = x0.read(slave);
+            Assertions.assertSame(read.getStatus(), Status.OK);
             LOG.info("t={}, x0={}", slave.getSimulationTime(), read.getValue());
             Assertions.assertTrue(slave.doStep(macroStep));
         }

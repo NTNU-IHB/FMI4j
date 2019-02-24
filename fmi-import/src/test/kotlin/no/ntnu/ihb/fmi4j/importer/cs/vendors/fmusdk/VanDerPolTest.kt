@@ -1,7 +1,7 @@
 package no.ntnu.ihb.fmi4j.importer.cs.vendors.fmusdk
 
+import no.ntnu.ihb.fmi4j.common.Status
 import no.ntnu.ihb.fmi4j.importer.TestFMUs
-import no.ntnu.ihb.fmi4j.common.FmiStatus
 import no.ntnu.ihb.fmi4j.importer.me.vendors.fmusdk.VanDerPolTest
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
@@ -34,8 +34,8 @@ class VanDerPolTest {
             val stop = 1.0
             val macroStep = 1E-2
             while (slave.simulationTime <= stop) {
-                x0.read(slave.variableAccessor).also { read ->
-                    Assertions.assertTrue(read.status === FmiStatus.OK)
+                x0.read(slave).also { read ->
+                    Assertions.assertTrue(read.status === Status.OK)
                     LOG.info("t=${slave.simulationTime}, $variableName=${read.value}")
                 }
                 Assertions.assertTrue(slave.doStep(macroStep))

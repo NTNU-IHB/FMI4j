@@ -1,7 +1,7 @@
 package no.ntnu.ihb.fmi4j.xml.variables
 
 import no.ntnu.ihb.fmi.fmi2.xml.jaxb.Fmi2ScalarVariable
-import no.ntnu.ihb.fmi4j.common.Real
+import no.ntnu.ihb.fmi4j.common.*
 
 class ScalarVariableImpl(
         private val v: Fmi2ScalarVariable
@@ -95,6 +95,18 @@ class ScalarVariableImpl(
             get() = attribute.quantity
         override val declaredType: String?
             get() = attribute.declaredType
+
+        override fun read(instance: Instance<*>): VariableRead<Int> {
+            return IntArray(1).let {
+                val status = instance.readInteger(longArrayOf(valueReference), it)
+                IntegerRead(it[0], status)
+            }
+        }
+
+        override fun write(instance: Instance<*>, value: Int): Status {
+            return instance.writeInteger(longArrayOf(valueReference), intArrayOf(value))
+        }
+
     }
 
     inner class RealVariableImpl: ScalarVariable by this, RealVariable {
@@ -127,6 +139,19 @@ class ScalarVariableImpl(
             get() = attribute.displayUnit
         override val relativeQuantity: Boolean?
             get() = attribute.isRelativeQuantity
+
+
+        override fun read(instance: Instance<*>): VariableRead<Real> {
+            return RealArray(1).let {
+                val status = instance.readReal(longArrayOf(valueReference), it)
+                RealRead(it[0], status)
+            }
+        }
+
+        override fun write(instance: Instance<*>, value: Real): Status {
+            return instance.writeReal(longArrayOf(valueReference), doubleArrayOf(value))
+        }
+
     }
     
     inner class StringVariableImpl: ScalarVariable by this, StringVariable {
@@ -138,6 +163,18 @@ class ScalarVariableImpl(
             get() = attribute.start
         override val declaredType: String?
             get() = attribute.declaredType
+
+        override fun read(instance: Instance<*>): VariableRead<String> {
+            return arrayOf("").let {
+                val status = instance.readString(longArrayOf(valueReference), it)
+                StringRead(it[0], status)
+            }
+        }
+
+        override fun write(instance: Instance<*>, value: String): Status {
+            return instance.writeString(longArrayOf(valueReference), arrayOf(value))
+        }
+
     }
 
     inner class BooleanVariableImpl: ScalarVariable by this, BooleanVariable {
@@ -149,6 +186,18 @@ class ScalarVariableImpl(
             get() = attribute.isStart
         override val declaredType: String?
             get() = attribute.declaredType
+
+        override fun read(instance: Instance<*>): VariableRead<Boolean> {
+            return BooleanArray(1).let {
+                val status = instance.readBoolean(longArrayOf(valueReference), it)
+                BooleanRead(it[0], status)
+            }
+        }
+
+        override fun write(instance: Instance<*>, value: Boolean): Status {
+            return instance.writeBoolean(longArrayOf(valueReference), booleanArrayOf(value))
+        }
+
     }
 
     inner class EnumerationVariableImpl: ScalarVariable by this, EnumerationVariable {
@@ -166,6 +215,18 @@ class ScalarVariableImpl(
             get() = attribute.quantity
         override val declaredType: String?
             get() = attribute.declaredType
+
+        override fun read(instance: Instance<*>): VariableRead<Int> {
+            return IntArray(1).let {
+                val status = instance.readInteger(longArrayOf(valueReference), it)
+                IntegerRead(it[0], status)
+            }
+        }
+
+        override fun write(instance: Instance<*>, value: Int): Status {
+            return instance.writeInteger(longArrayOf(valueReference), intArrayOf(value))
+        }
+
     }
 
 

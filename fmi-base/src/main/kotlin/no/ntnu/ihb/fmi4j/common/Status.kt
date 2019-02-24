@@ -30,7 +30,7 @@ package no.ntnu.ihb.fmi4j.common
  *
  * @author Lars Ivar Hatledal
  */
-enum class FmiStatus(
+enum class Status(
         val code: Int
 ) {
 
@@ -104,7 +104,7 @@ enum class FmiStatus(
     companion object {
 
         @JvmStatic
-        fun valueOf(i: Int): FmiStatus {
+        fun valueOf(i: Int): Status {
             for (status in values()) {
                 if (i == status.code) {
                     return status

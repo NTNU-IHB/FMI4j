@@ -1,11 +1,10 @@
 package no.ntnu.ihb.fmu2jar
 
-import no.ntnu.ihb.fmi4j.common.FmuSlave
+import no.ntnu.ihb.fmi4j.common.Slave
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
-import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.File
@@ -54,7 +53,7 @@ class MainTest {
         val classToLoad = Class.forName("no.ntnu.ihb.fmu2jar.$fmuName", true, child)
 
         val method = classToLoad.getDeclaredMethod("newInstance")
-        (method.invoke(null) as FmuSlave).use { slave ->
+        (method.invoke(null) as Slave).use { slave ->
 
             slave.simpleSetup()
 

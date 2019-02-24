@@ -35,20 +35,25 @@ class ModelVariables(
         private val variables: List<ScalarVariable>
 ) : List<ScalarVariable> by variables {
 
-    val integers: List<IntegerVariable>
-        get() = filter { it.isIntegerVariable() }.map { it.asIntegerVariable() }
+    val integers: List<IntegerVariable> by lazy {
+        filter { it.isIntegerVariable() }.map { it.asIntegerVariable() }
+    }
 
-    val reals: List<RealVariable>
-        get() = filter { it.isRealVariable() }.map { it.asRealVariable() }
+    val reals: List<RealVariable> by lazy {
+        filter { it.isRealVariable() }.map { it.asRealVariable() }
+    }
 
-    val strings: List<StringVariable>
-        get() = filter { it.isStringVariable() }.map { it.asStringVariable() }
+    val strings: List<StringVariable> by lazy {
+        filter { it.isStringVariable() }.map { it.asStringVariable() }
+    }
 
-    val booleans: List<BooleanVariable>
-        get() = filter { it.isBooleanVariable() }.map { it.asBooleanVariable() }
+    val booleans: List<BooleanVariable> by lazy {
+        filter { it.isBooleanVariable() }.map { it.asBooleanVariable() }
+    }
 
-    val enumerations: List<EnumerationVariable>
-        get() = filter { it.isEnumerationVariable() }.map { it.asEnumerationVariable() }
+    val enumerations: List<EnumerationVariable> by lazy {
+        filter { it.isEnumerationVariable() }.map { it.asEnumerationVariable() }
+    }
 
     /**
      * Does a variable with the provided valueReference exist?

@@ -63,12 +63,12 @@ $solverImport
  *
  * @author Lars Ivar Hatledal
  */
-public class $modelName implements FmuSlave {
+public class $modelName implements Slave {
 
     private static Fmu fmu = null;
-    private final FmuSlave slave;
+    private final Slave slave;
 
-    private $modelName(FmuSlave slave) {
+    private $modelName(Slave slave) {
         this.slave = slave;
     }
 
@@ -97,7 +97,7 @@ public class $modelName implements FmuSlave {
     }
 
     @Override
-    public FmiStatus getLastStatus() {
+    public Status getLastStatus() {
         return slave.getLastStatus();
     }
 
@@ -208,8 +208,43 @@ public class $modelName implements FmuSlave {
     }
 
     @Override
-    public FmuVariableAccessor getVariableAccessor() {
-        return slave.getVariableAccessor();
+    public Status readInteger(long[] vr, int[] ref) {
+        return slave.readInteger(vr, ref);
+    }
+
+    @Override
+    public Status readReal(long[] vr, double[] ref) {
+        return slave.readReal(vr, ref);
+    }
+
+    @Override
+    public Status readString(long[] vr, String[] ref) {
+        return slave.readString(vr, ref);
+    }
+
+    @Override
+    public Status readBoolean(long[] vr, boolean[] ref) {
+        return slave.readBoolean(vr, ref);
+    }
+
+    @Override
+    public Status writeInteger(long[] vr, int[] values) {
+        return slave.writeInteger(vr, values);
+    }
+
+    @Override
+    public Status writeReal(long[] vr, double[] values) {
+        return slave.writeReal(vr, values);
+    }
+
+    @Override
+    public Status writeString(long[] vr, String[] values) {
+        return slave.writeString(vr, values);
+    }
+
+    @Override
+    public Status writeBoolean(long[] vr, boolean[] values) {
+        return slave.writeBoolean(vr, values);
     }
 
     @Override
@@ -354,7 +389,7 @@ public class $modelName implements FmuSlave {
             result += """
 
             public static $modelName newInstance() {
-                FmuSlave slave = getOrCreateFmu().asCoSimulationFmu().newInstance();
+                Slave slave = getOrCreateFmu().asCoSimulationFmu().newInstance();
                 return new $modelName(Objects.requireNonNull(slave));
             }
             """
@@ -366,7 +401,7 @@ public class $modelName implements FmuSlave {
             result += """
 
             public static $modelName newInstance(Solver solver) {
-                FmuSlave slave = getOrCreateFmu().asModelExchangeFmu(solver).newInstance()
+                Slave slave = getOrCreateFmu().asModelExchangeFmu(solver).newInstance()
                 return new $modelName(Objects.requireNonNull(slave));
             }
             """
@@ -406,7 +441,7 @@ public class $modelName implements FmuSlave {
 
     }
 
-    private fun generateJavaDoc(v: TypedScalarVariable<*>) : String {
+    private fun generateJavaDoc(v: ScalarVariable) : String {
 
         val star = " *"
         val newLine = "\n$star\n"

@@ -24,9 +24,9 @@
 
 package no.ntnu.ihb.fmi4j.importer.me
 
-import no.ntnu.ihb.fmi4j.common.FmiStatus
-import no.ntnu.ihb.fmi4j.common.FmuSlave
 import no.ntnu.ihb.fmi4j.common.SimpleFmuInstance
+import no.ntnu.ihb.fmi4j.common.Slave
+import no.ntnu.ihb.fmi4j.common.Status
 import no.ntnu.ihb.fmi4j.xml.CoSimulationModelDescription
 import no.ntnu.ihb.fmi4j.xml.CommonModelDescription
 import no.ntnu.ihb.fmi4j.xml.ModelExchangeModelDescription
@@ -35,14 +35,14 @@ import org.slf4j.LoggerFactory
 import kotlin.math.min
 
 /**
- * Wraps a Model Exchange instance, turning it into a FmuSlave
+ * Wraps a Model Exchange instance, turning it into a Slave
  *
  * @author Lars Ivar Hatledal
  */
 class ModelExchangeFmuStepper internal constructor(
         private val fmuInstance: ModelExchangeInstance,
         private val solver: no.ntnu.ihb.fmi4j.solvers.Solver
-) : FmuSlave, SimpleFmuInstance by fmuInstance {
+) : Slave, SimpleFmuInstance by fmuInstance {
 
     private val x: DoubleArray
 
@@ -215,8 +215,8 @@ class ModelExchangeFmuStepper internal constructor(
 
         val LOG: Logger = LoggerFactory.getLogger(ModelExchangeFmuStepper::class.java)
 
-        fun FmiStatus.warnOnStatusNotOK(functionName: String) {
-            if (this != FmiStatus.OK) {
+        fun Status.warnOnStatusNotOK(functionName: String) {
+            if (this != Status.OK) {
                 LOG.warn("$functionName returned status: $this")
             }
         }

@@ -83,7 +83,7 @@ interface FmuProvider: IFmu {
  * @author Lars Ivar Hatledal
  */
 class Fmu private constructor(
-        private val fmuFile: File
+        private val extractedFmu: File
 ) : FmuProvider {
 
     private var isClosed = false
@@ -138,17 +138,17 @@ class Fmu private constructor(
      * Get the file handle for the modelDescription.xml file
      */
     private val modelDescriptionFile: File
-        get() = File(fmuFile, MODEL_DESC)
+        get() = File(extractedFmu, MODEL_DESC)
 
     private val resourcesPath: String
-        get() = "file:///${File(fmuFile, RESOURCES_FOLDER)
+        get() = "file:///${File(extractedFmu, RESOURCES_FOLDER)
                 .absolutePath.replace("\\", "/")}"
 
     /**
      * Get the absolute name of the native library on the form "C://folder/name.extension"
      */
     fun getAbsoluteLibraryPath(modelIdentifier: String): String {
-        return File(fmuFile, BINARIES_FOLDER + File.separator + OsUtil.libraryFolderName + OsUtil.platformBitness
+        return File(extractedFmu, BINARIES_FOLDER + File.separator + OsUtil.libraryFolderName + OsUtil.platformBitness
                 + File.separator + modelIdentifier + "." + OsUtil.libExtension).absolutePath
     }
 
@@ -171,7 +171,7 @@ class Fmu private constructor(
     override fun close() {
         if (!isClosed) {
 
-            LOG.debug("Closing FMU '$fmuFile'..")
+            LOG.debug("Closing FMU '$extractedFmu'..")
 
             terminateInstances()
             disposeNativeLibraries()
@@ -208,12 +208,12 @@ class Fmu private constructor(
      */
     private fun deleteExtractedFmuFolder(): Boolean {
 
-        if (fmuFile.exists()) {
-            return fmuFile.deleteRecursively().also { success ->
+        if (extractedFmu.exists()) {
+            return extractedFmu.deleteRecursively().also { success ->
                 if (success) {
-                    LOG.debug("Deleted extracted FMU contents: $fmuFile")
+                    LOG.debug("Deleted extracted FMU contents: $extractedFmu")
                 } else {
-                    LOG.debug("Failed to delete extracted FMU contents: $fmuFile")
+                    LOG.debug("Failed to delete extracted FMU contents: $extractedFmu")
                 }
             }
         }
@@ -228,7 +228,7 @@ class Fmu private constructor(
     }
 
     override fun toString(): String {
-        return "Fmu(fmu=${fmuFile.absolutePath})"
+        return "Fmu(fmu=${extractedFmu.absolutePath})"
     }
 
     companion object {

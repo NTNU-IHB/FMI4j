@@ -24,7 +24,7 @@
 
 package no.ntnu.ihb.fmi4j.fmudriver
 
-import no.ntnu.ihb.fmi4j.common.FmuSlave
+import no.ntnu.ihb.fmi4j.common.Slave
 import no.ntnu.ihb.fmi4j.importer.Fmu
 import no.ntnu.ihb.fmi4j.solvers.Solver
 import no.ntnu.ihb.fmi4j.solvers.apache.ApacheSolvers
@@ -91,7 +91,7 @@ class FmuDriver(
     }
 
     @Suppress("NAME_SHADOWING")
-    private fun simulate(slave: FmuSlave) {
+    private fun simulate(slave: Slave) {
 
         slave.use { slave ->
 

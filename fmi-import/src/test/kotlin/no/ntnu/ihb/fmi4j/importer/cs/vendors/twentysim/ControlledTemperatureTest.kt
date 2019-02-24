@@ -1,7 +1,7 @@
 package no.ntnu.ihb.fmi4j.importer.cs.vendors.twentysim
 
+import no.ntnu.ihb.fmi4j.common.Status
 import no.ntnu.ihb.fmi4j.importer.TestFMUs
-import no.ntnu.ihb.fmi4j.common.FmiStatus
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.slf4j.Logger
@@ -44,10 +44,10 @@ class ControlledTemperatureTest {
                 val dt = 1.0 / 100
                 for (i in 0..4) {
                     Assertions.assertTrue(slave.doStep(dt))
-                    Assertions.assertTrue(slave.lastStatus === FmiStatus.OK)
+                    Assertions.assertTrue(slave.lastStatus === Status.OK)
 
                     val read = temperatureRoom.read(slave)
-                    Assertions.assertTrue(read.status == FmiStatus.OK)
+                    Assertions.assertTrue(read.status == Status.OK)
                     val value = read.value
 
                     LOG.info("t=${slave.simulationTime}, Temperature_Room=$value")

@@ -26,7 +26,6 @@ package no.ntnu.ihb.fmi4j.importer
 
 import no.ntnu.ihb.fmi4j.common.*
 import no.ntnu.ihb.fmi4j.importer.jni.Fmi2LibraryWrapper
-import no.ntnu.ihb.fmi4j.importer.misc.FmuVariableAccessorImpl
 import no.ntnu.ihb.fmi4j.xml.CommonModelDescription
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -39,16 +38,16 @@ import org.slf4j.LoggerFactory
 abstract class AbstractFmuInstance<out E : CommonModelDescription, out T : Fmi2LibraryWrapper<*>> internal constructor(
         val wrapper: T,
         override val modelDescription: E
-) : FmuInstance<E> {
+) : Instance<E> {
 
     /**
-     * @see Fmi2Library.getTypesPlatform
+     * @see Fmi2LibraryWrapper.getTypesPlatform
      */
     val typesPlatform
         get() = wrapper.typesPlatform
 
     /**
-     * @see Fmi2Library.getVersion
+     * @see Fmi2LibraryWrapper.getVersion
      */
     val version
         get() = wrapper.version
@@ -77,20 +76,16 @@ abstract class AbstractFmuInstance<out E : CommonModelDescription, out T : Fmi2L
     /**
      * @see Fmi2LibraryWrapper.lastStatus
      */
-    override val lastStatus: FmiStatus
+    override val lastStatus: Status
         get() = wrapper.lastStatus
-
-    override val variableAccessor: FmuVariableAccessor by lazy {
-        FmuVariableAccessorImpl(wrapper) {
-            modelDescription.modelVariables.getByName(it).valueReference
-        }
-    }
 
     /**
      * @see Fmi2Library.setDebugLogging
      */
-    fun setDebugLogging(loggingOn: Boolean, categories: Array<String>): FmiStatus
-            = wrapper.setDebugLogging(loggingOn, categories)
+    fun setDebugLogging(loggingOn: Boolean, categories: Array<String>): Status {
+        return wrapper.setDebugLogging(loggingOn, categories)
+    }
+
 
     /**
      * Call init with provided start and stop
@@ -118,16 +113,32 @@ abstract class AbstractFmuInstance<out E : CommonModelDescription, out T : Fmi2L
 
     }
 
+    /**
+     * Enter initialization mode
+     *
+     * @see Fmi2LibraryWrapper.enterInitializationMode
+     */
     override fun enterInitializationMode(): Boolean {
         LOG.trace("FMU '${modelDescription.modelName}' enterInitializationMode")
         return wrapper.enterInitializationMode().isOK()
     }
 
+    /**
+     * Exit initialization mode
+     *
+     * @see Fmi2LibraryWrapper.exitInitializationMode
+     */
     override fun exitInitializationMode(): Boolean {
         LOG.trace("FMU '${modelDescription.modelName}' exitInitializationMode")
         return wrapper.exitInitializationMode().isOK()
     }
 
+    /**
+     *
+     * Terminates the FMU and frees the instance
+     *
+     * @see Fmi2LibraryWrapper.terminate
+     */
     override fun terminate(): Boolean {
         return terminate(true)
     }
@@ -137,8 +148,8 @@ abstract class AbstractFmuInstance<out E : CommonModelDescription, out T : Fmi2L
      *
      * @param freeInstance true if you are completely finished with the fmuInstance
      *
-     * @see Fmi2Library.terminate
-     * @see Fmi2Library.freeInstance
+     * @see Fmi2LibraryWrapper.terminate
+     * @see Fmi2LibraryWrapper.freeInstance
      */
     fun terminate(freeInstance: Boolean): Boolean {
         return wrapper.terminate(freeInstance).let { status ->
@@ -148,7 +159,7 @@ abstract class AbstractFmuInstance<out E : CommonModelDescription, out T : Fmi2L
     }
 
     /**
-     * @see Fmi2Library.reset
+     * @see Fmi2LibraryWrapper.reset
      */
     override fun reset(): Boolean {
         return wrapper.reset().isOK()
@@ -171,7 +182,7 @@ abstract class AbstractFmuInstance<out E : CommonModelDescription, out T : Fmi2L
     }
 
     /**
-     * @see Fmi2Library.getFMUstate
+     * @see Fmi2LibraryWrapper.getFMUstate
      */
     override fun getFMUstate(): FmuState {
         if (!modelDescription.canGetAndSetFMUstate) {
@@ -181,7 +192,7 @@ abstract class AbstractFmuInstance<out E : CommonModelDescription, out T : Fmi2L
     }
 
     /**
-     * @see Fmi2Library.setFMUstate
+     * @see Fmi2LibraryWrapper.setFMUstate
      */
     override fun setFMUstate(state: FmuState): Boolean {
         if (!modelDescription.canGetAndSetFMUstate) {
@@ -191,7 +202,7 @@ abstract class AbstractFmuInstance<out E : CommonModelDescription, out T : Fmi2L
     }
 
     /**
-     * @see Fmi2Library.freeFMUstate
+     * @see Fmi2LibraryWrapper.freeFMUstate
      */
     override fun freeFMUstate(state: FmuState): Boolean {
         if (!modelDescription.canGetAndSetFMUstate) {
@@ -201,7 +212,7 @@ abstract class AbstractFmuInstance<out E : CommonModelDescription, out T : Fmi2L
     }
 
     /**
-     * @see Fmi2Library.serializedFMUstateSize
+     * @see Fmi2LibraryWrapper.serializedFMUstateSize
      */
     fun serializedFMUstateSize(fmuState: FmuState): Int {
         if (!modelDescription.canSerializeFMUstate) {
@@ -211,7 +222,7 @@ abstract class AbstractFmuInstance<out E : CommonModelDescription, out T : Fmi2L
     }
 
     /**
-     * @see Fmi2Library.serializeFMUstate
+     * @see Fmi2LibraryWrapper.serializeFMUstate
      */
     override fun serializeFMUstate(state: FmuState): ByteArray {
         if (!modelDescription.canSerializeFMUstate) {
@@ -221,13 +232,46 @@ abstract class AbstractFmuInstance<out E : CommonModelDescription, out T : Fmi2L
     }
 
     /**
-     * @see Fmi2Library.deSerializeFMUstate
+     * @see Fmi2LibraryWrapper.deSerializeFMUstate
      */
     override fun deSerializeFMUstate(state: ByteArray): FmuState {
         if (!modelDescription.canSerializeFMUstate) {
             throw UnsupportedOperationException("Method call not allowed, FMU '${modelDescription.modelName}' cannot serialize/deserialize FMU state!")
         }
         return wrapper.deSerializeFMUState(state)
+    }
+
+
+    override fun readInteger(vr: ValueReferences, ref: IntArray): Status {
+        return wrapper.readInteger(vr, ref)
+    }
+
+    override fun readReal(vr: ValueReferences, ref: RealArray): Status {
+        return wrapper.readReal(vr, ref)
+    }
+
+    override fun readString(vr: ValueReferences, ref: StringArray): Status {
+        return wrapper.readString(vr, ref)
+    }
+
+    override fun readBoolean(vr: ValueReferences, ref: BooleanArray): Status {
+        return wrapper.readBoolean(vr, ref)
+    }
+
+    override fun writeInteger(vr: ValueReferences, value: IntArray): Status {
+        return wrapper.writeInteger(vr, value)
+    }
+
+    override fun writeReal(vr: ValueReferences, value: RealArray): Status {
+        return wrapper.writeReal(vr, value)
+    }
+
+    override fun writeString(vr: ValueReferences, value: StringArray): Status {
+        return wrapper.writeString(vr, value)
+    }
+
+    override fun writeBoolean(vr: ValueReferences, value: BooleanArray): Status {
+        return wrapper.writeBoolean(vr, value)
     }
 
     private companion object {

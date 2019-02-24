@@ -24,7 +24,7 @@
 
 package no.ntnu.ihb.fmi4j.importer.jni
 
-import no.ntnu.ihb.fmi4j.common.FmiStatus
+import no.ntnu.ihb.fmi4j.common.Status
 
 /**
  * @author Lars Ivar Hatledal
@@ -55,45 +55,45 @@ class Fmi2ModelExchangeLibrary(
 
     private external fun getNominalsOfContinuousStates(p: Long, c: Fmi2Component, x_nominals: DoubleArray): NativeStatus
 
-    fun enterEventMode(c: Fmi2Component): FmiStatus {
+    fun enterEventMode(c: Fmi2Component): Status {
         return enterEventMode(p, c).transform()
     }
 
-    fun newDiscreteStates(c: Fmi2Component, ev: EventInfo): FmiStatus {
+    fun newDiscreteStates(c: Fmi2Component, ev: EventInfo): Status {
         return newDiscreteStates(p, c, ev).transform()
     }
 
-    fun enterContinuousTimeMode(c: Fmi2Component): FmiStatus {
+    fun enterContinuousTimeMode(c: Fmi2Component): Status {
         return enterContinuousTimeMode(p, c).transform()
     }
 
-    fun setContinuousStates(c: Fmi2Component, x: DoubleArray): FmiStatus {
+    fun setContinuousStates(c: Fmi2Component, x: DoubleArray): Status {
         return setContinuousStates(p, c, x).transform()
     }
 
     fun completedIntegratorStep(
             c: Fmi2Component, noSetFMUStatePriorToCurrentPoint: Boolean,
-            enterEventMode: BooleanByReference, terminateSimulation: BooleanByReference): FmiStatus {
+            enterEventMode: BooleanByReference, terminateSimulation: BooleanByReference): Status {
         return completedIntegratorStep(p, c, noSetFMUStatePriorToCurrentPoint, enterEventMode, terminateSimulation).transform()
     }
 
-    fun setTime(c: Fmi2Component, time: Double): FmiStatus {
+    fun setTime(c: Fmi2Component, time: Double): Status {
         return setTime(p, c, time).transform()
     }
 
-    fun getDerivatives(c: Fmi2Component, derivatives: DoubleArray): FmiStatus {
+    fun getDerivatives(c: Fmi2Component, derivatives: DoubleArray): Status {
         return getDerivatives(p, c, derivatives).transform()
     }
 
-    fun getEventIndicators(c: Fmi2Component, eventIndicators: DoubleArray): FmiStatus {
+    fun getEventIndicators(c: Fmi2Component, eventIndicators: DoubleArray): Status {
         return getEventIndicators(p, c, eventIndicators).transform()
     }
 
-    fun getContinuousStates(c: Fmi2Component, x: DoubleArray): FmiStatus {
+    fun getContinuousStates(c: Fmi2Component, x: DoubleArray): Status {
         return getContinuousStates(p, c, x).transform()
     }
 
-    fun getNominalsOfContinuousStates(c: Fmi2Component, x_nominals: DoubleArray): FmiStatus {
+    fun getNominalsOfContinuousStates(c: Fmi2Component, x_nominals: DoubleArray): Status {
         return getNominalsOfContinuousStates(p, c, x_nominals).transform()
     }
 

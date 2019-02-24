@@ -1,6 +1,6 @@
 package no.ntnu.ihb.fmi4j.importer.me.vendors.fmusdk
 
-import no.ntnu.ihb.fmi4j.common.FmiStatus
+import no.ntnu.ihb.fmi4j.common.Status
 import no.ntnu.ihb.fmi4j.importer.TestFMUs
 import no.ntnu.ihb.fmi4j.solvers.Solver
 import no.ntnu.ihb.fmi4j.solvers.apache.ApacheSolver
@@ -54,7 +54,7 @@ class BouncingBallTest {
             while (slave.simulationTime <= 1) {
                 Assertions.assertTrue(slave.doStep(macroStep))
                 h.read(slave).also {
-                    Assertions.assertEquals(FmiStatus.OK, it.status)
+                    Assertions.assertEquals(Status.OK, it.status)
                     LOG.info("t=${slave.simulationTime}, h=${it.value}")
                 }
             }
