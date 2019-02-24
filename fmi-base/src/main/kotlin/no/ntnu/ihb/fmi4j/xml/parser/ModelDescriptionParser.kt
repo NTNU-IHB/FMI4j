@@ -22,11 +22,11 @@
  * THE SOFTWARE.
  */
 
-package no.ntnu.ihb.fmi4j.modeldescription.parser
+package no.ntnu.ihb.fmi4j.xml.parser
 
-import no.ntnu.ihb.fmi.fmi2.xml.Fmi2ModelDescription
-import no.ntnu.ihb.fmi4j.modeldescription.ModelDescriptionImpl
-import no.ntnu.ihb.fmi4j.modeldescription.ModelDescriptionProvider
+import no.ntnu.ihb.fmi.fmi2.xml.jaxb.Fmi2ModelDescription
+import no.ntnu.ihb.fmi4j.xml.ModelDescriptionImpl
+import no.ntnu.ihb.fmi4j.xml.ModelDescriptionProvider
 import java.io.*
 import java.net.URL
 import java.util.zip.ZipEntry

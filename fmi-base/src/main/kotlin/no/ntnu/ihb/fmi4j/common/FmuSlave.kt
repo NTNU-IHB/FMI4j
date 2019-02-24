@@ -24,7 +24,7 @@
 
 package no.ntnu.ihb.fmi4j.common
 
-import no.ntnu.ihb.fmi4j.modeldescription.CoSimulationModelDescription
+import no.ntnu.ihb.fmi4j.xml.CoSimulationModelDescription
 
 /**
  * Slave interface

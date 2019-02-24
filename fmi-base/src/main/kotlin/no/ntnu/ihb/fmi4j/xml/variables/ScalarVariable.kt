@@ -22,10 +22,9 @@
  * THE SOFTWARE.
  */
 
-package no.ntnu.ihb.fmi4j.modeldescription.variables
+package no.ntnu.ihb.fmi4j.xml.variables
 
 import no.ntnu.ihb.fmi4j.common.Real
-import java.lang.IllegalStateException
 
 internal const val INTEGER_TYPE = "Integer"
 internal const val REAL_TYPE = "Real"

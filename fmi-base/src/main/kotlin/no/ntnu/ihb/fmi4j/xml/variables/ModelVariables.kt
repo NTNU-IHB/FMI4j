@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package no.ntnu.ihb.fmi4j.modeldescription.variables
+package no.ntnu.ihb.fmi4j.xml.variables
 
 import no.ntnu.ihb.fmi4j.common.StringArray
 import no.ntnu.ihb.fmi4j.common.ValueReference

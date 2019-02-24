@@ -27,10 +27,9 @@ package no.ntnu.ihb.fmi4j.importer.me
 import no.ntnu.ihb.fmi4j.common.FmiStatus
 import no.ntnu.ihb.fmi4j.common.FmuSlave
 import no.ntnu.ihb.fmi4j.common.SimpleFmuInstance
-import no.ntnu.ihb.fmi4j.modeldescription.CoSimulationAttributes
-import no.ntnu.ihb.fmi4j.modeldescription.CoSimulationModelDescription
-import no.ntnu.ihb.fmi4j.modeldescription.CommonModelDescription
-import no.ntnu.ihb.fmi4j.modeldescription.ModelExchangeModelDescription
+import no.ntnu.ihb.fmi4j.xml.CoSimulationModelDescription
+import no.ntnu.ihb.fmi4j.xml.CommonModelDescription
+import no.ntnu.ihb.fmi4j.xml.ModelExchangeModelDescription
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import kotlin.math.min

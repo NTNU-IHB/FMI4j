@@ -22,21 +22,20 @@
  * THE SOFTWARE.
  */
 
-package no.ntnu.ihb.fmi4j.modeldescription
+package no.ntnu.ihb.fmi4j.xml
 
 import com.google.gson.ExclusionStrategy
 import com.google.gson.FieldAttributes
 import com.google.gson.GsonBuilder
-import no.ntnu.ihb.fmi.fmi2.xml.Fmi2ModelDescription
-import no.ntnu.ihb.fmi4j.modeldescription.logging.LogCategories
-import no.ntnu.ihb.fmi4j.modeldescription.logging.LogCategory
-import no.ntnu.ihb.fmi4j.modeldescription.misc.*
-import no.ntnu.ihb.fmi4j.modeldescription.misc.Unit
-import no.ntnu.ihb.fmi4j.modeldescription.structure.ModelStructure
-import no.ntnu.ihb.fmi4j.modeldescription.structure.Unknown
-import no.ntnu.ihb.fmi4j.modeldescription.variables.IntegerVariable
-import no.ntnu.ihb.fmi4j.modeldescription.variables.ModelVariables
-import no.ntnu.ihb.fmi4j.modeldescription.variables.ScalarVariableImpl
+import no.ntnu.ihb.fmi.fmi2.xml.jaxb.Fmi2ModelDescription
+import no.ntnu.ihb.fmi4j.xml.logging.LogCategories
+import no.ntnu.ihb.fmi4j.xml.logging.LogCategory
+import no.ntnu.ihb.fmi4j.xml.misc.*
+import no.ntnu.ihb.fmi4j.xml.misc.Unit
+import no.ntnu.ihb.fmi4j.xml.structure.ModelStructure
+import no.ntnu.ihb.fmi4j.xml.structure.Unknown
+import no.ntnu.ihb.fmi4j.xml.variables.ModelVariables
+import no.ntnu.ihb.fmi4j.xml.variables.ScalarVariableImpl
 import java.io.Serializable
 import java.util.*
 
@@ -135,7 +134,7 @@ class ModelDescriptionImpl(
                                         factor = du.factor,
                                         offset = du.offset
                                 )
-                            }
+                            } ?: emptyList()
                     )
                 }
             }
@@ -224,10 +223,89 @@ class ModelDescriptionImpl(
         return "ModelDescriptionImpl(\n$stringContent\n)"
     }
 
-    inner class CoSimulationModelDescriptionImpl : CoSimulationModelDescription, ModelDescription by this, CoSimulationAttributes by CoSimulationAttributesImpl(md)
+    inner class CoSimulationModelDescriptionImpl : CoSimulationModelDescription, ModelDescription by this {
 
-    inner class ModelExchangeModelDescriptionImpl : ModelExchangeModelDescription, ModelDescription by this, ModelExchangeAttributes by ModelExchangeAttributesImpl(md) {
+        private val cs: Fmi2ModelDescription.CoSimulation = md.modelExchangeAndCoSimulation.find {
+            it is Fmi2ModelDescription.CoSimulation
+        } as Fmi2ModelDescription.CoSimulation
+
+
+        override val modelIdentifier: String
+            get() = cs.modelIdentifier
+
+        override val needsExecutionTool: Boolean
+            get() = cs.isNeedsExecutionTool
+
+        override val canBeInstantiatedOnlyOncePerProcess: Boolean
+            get() = cs.isCanBeInstantiatedOnlyOncePerProcess
+
+        override val canNotUseMemoryManagementFunctions: Boolean
+            get() = cs.isCanNotUseMemoryManagementFunctions
+
+        override val canGetAndSetFMUstate: Boolean
+            get() = cs.isCanGetAndSetFMUstate
+
+        override val canSerializeFMUstate: Boolean
+            get() = cs.isCanSerializeFMUstate
+
+        override val providesDirectionalDerivative: Boolean
+            get() = cs.isProvidesDirectionalDerivative
+
+        override val sourceFiles: List<SourceFile>
+            get() = cs.sourceFiles?.file?.map { SourceFile(it.name) } ?: emptyList()
+
+        override val canHandleVariableCommunicationStepSize: Boolean
+            get() = cs.isCanHandleVariableCommunicationStepSize
+
+        override val canInterpolateInputs: Boolean
+            get() = cs.isCanInterpolateInputs
+
+        override val maxOutputDerivativeOrder: Int
+            get() = cs.maxOutputDerivativeOrder.toInt()
+
+        override val canRunAsynchronuously: Boolean
+            get() = cs.isCanRunAsynchronuously
+
+        override val canProvideMaxStepSize: Boolean
+            get() = cs.isCanHandleVariableCommunicationStepSize
+
+    }
+
+    inner class ModelExchangeModelDescriptionImpl : ModelExchangeModelDescription, ModelDescription by this {
+
+        private val me: Fmi2ModelDescription.ModelExchange = md.modelExchangeAndCoSimulation.find {
+            it is Fmi2ModelDescription.ModelExchange
+        } as Fmi2ModelDescription.ModelExchange
+
+        override val modelIdentifier: String
+            get() = me.modelIdentifier
+
+        override val needsExecutionTool: Boolean
+            get() = me.isNeedsExecutionTool
+
+        override val canBeInstantiatedOnlyOncePerProcess: Boolean
+            get() = me.isCanBeInstantiatedOnlyOncePerProcess
+
+        override val canNotUseMemoryManagementFunctions: Boolean
+            get() = me.isCanNotUseMemoryManagementFunctions
+
+        override val canGetAndSetFMUstate: Boolean
+            get() = me.isCanGetAndSetFMUstate
+
+        override val canSerializeFMUstate: Boolean
+            get() = me.isCanSerializeFMUstate
+
+        override val providesDirectionalDerivative: Boolean
+            get() = me.isProvidesDirectionalDerivative
+
+        override val sourceFiles: List<SourceFile>
+            get() = me.sourceFiles.file.map { SourceFile(it.name) }
+
+        override val completedIntegratorStepNotNeeded: Boolean
+            get() = me.isCompletedIntegratorStepNotNeeded
+
         override val numberOfEventIndicators: Int = md.numberOfEventIndicators.toInt()
+
     }
 
     companion object {

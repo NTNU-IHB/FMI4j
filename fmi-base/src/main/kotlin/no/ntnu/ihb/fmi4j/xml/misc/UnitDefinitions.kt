@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package no.ntnu.ihb.fmi4j.modeldescription.misc
+package no.ntnu.ihb.fmi4j.xml.misc
 
 import java.io.Serializable
 
@@ -42,8 +42,8 @@ data class Unit(
         val name: String,
 
         val baseUnit: BaseUnit? = null,
-        
-        val displayUnits: List<DisplayUnit>? = null
+
+        val displayUnits: List<DisplayUnit> = emptyList()
 
 ) : Serializable
 

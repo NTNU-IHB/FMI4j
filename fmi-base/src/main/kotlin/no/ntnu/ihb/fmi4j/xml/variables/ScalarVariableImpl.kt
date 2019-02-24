@@ -1,6 +1,6 @@
-package no.ntnu.ihb.fmi4j.modeldescription.variables
+package no.ntnu.ihb.fmi4j.xml.variables
 
-import no.ntnu.ihb.fmi.fmi2.xml.Fmi2ScalarVariable
+import no.ntnu.ihb.fmi.fmi2.xml.jaxb.Fmi2ScalarVariable
 import no.ntnu.ihb.fmi4j.common.Real
 
 class ScalarVariableImpl(
@@ -82,7 +82,7 @@ class ScalarVariableImpl(
 
     inner class IntegerVariableImpl: ScalarVariable by this, IntegerVariable {
 
-        private val attribute: Fmi2ScalarVariable.Integer 
+        private val attribute: Fmi2ScalarVariable.Integer
                 = v.integer ?: throw IllegalStateException("ScalarVariable is not of type Integer!")
         
         override val start: Int?
@@ -99,7 +99,7 @@ class ScalarVariableImpl(
 
     inner class RealVariableImpl: ScalarVariable by this, RealVariable {
 
-        private val attribute: Fmi2ScalarVariable.Real 
+        private val attribute: Fmi2ScalarVariable.Real
                 = v.real ?: throw IllegalStateException("ScalarVariable is not of type Real!")
 
         override val start: Real?

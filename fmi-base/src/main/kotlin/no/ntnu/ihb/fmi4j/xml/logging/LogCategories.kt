@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package no.ntnu.ihb.fmi4j.modeldescription.logging
+package no.ntnu.ihb.fmi4j.xml.logging
 
 import java.io.Serializable
 

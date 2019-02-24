@@ -28,7 +28,7 @@ import no.ntnu.ihb.fmi4j.common.FmiStatus
 import no.ntnu.ihb.fmi4j.common.FmuSlave
 import no.ntnu.ihb.fmi4j.common.ValueReferences
 import no.ntnu.ihb.fmi4j.importer.AbstractFmuInstance
-import no.ntnu.ihb.fmi4j.modeldescription.CoSimulationModelDescription
+import no.ntnu.ihb.fmi4j.xml.CoSimulationModelDescription
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 

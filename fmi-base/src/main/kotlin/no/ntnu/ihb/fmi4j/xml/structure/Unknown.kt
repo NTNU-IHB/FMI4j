@@ -22,32 +22,33 @@
  * THE SOFTWARE.
  */
 
-package no.ntnu.ihb.fmi4j.modeldescription.misc
+package no.ntnu.ihb.fmi4j.xml.structure
 
-import no.ntnu.ihb.fmi.fmi2.xml.Fmi2SimpleType
 
-typealias TypeDefinitions = List<SimpleType>
+/**
+ *
+ * Dependency of scalar Unknown from Knowns in continuous-time and event mode (Model Exchange),
+ * and at communications points (Co-simulation)
+ *
+ * @author Lars Ivar Hatledal
+ */
+data class Unknown (
 
-data class SimpleType (
+    /**
+     * ScalarVariable index of Unknown
+     */
+    val index: Int,
 
-        /**
-         * Name of SimpleType element.
-         * "name" must be unique with respect to all other elements
-         * of the TypeDefinitions list. Furthermore, "name" of a SimpleType
-         * must bee different to all "name"s of ScalarVariable
-         */
-        val name: String,
+    /**
+     * Defines the dependency of the Unknown (directly or indirectly via auxiliary variables)
+     * on the Knowns in Continuous-Time and Event Mode (ModelExchange) and at Communication Points (CoSimulation)
+     */
+    val dependencies: List<Int>,
 
-        /**
-         * Description of the SimpleType
-         */
-        val description: String?
+    /**
+     * If present, it must be assumed that the Unknown depends on the Knowns
+     * without a particular structure.
+     */
+    val dependenciesKind: List<String>
 
 )
-
-fun SimpleType.wrap(type: Fmi2SimpleType): SimpleType {
-        return SimpleType(
-                name = type.name,
-                description = type.description
-        )
-}

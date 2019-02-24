@@ -1,8 +1,9 @@
 package no.ntnu.ihb.fmi4j.modeldescription;
 
-import java.io.File;
+import no.ntnu.ihb.fmi4j.xml.ModelDescriptionProvider;
+import no.ntnu.ihb.fmi4j.xml.parser.ModelDescriptionParser;
 
-import no.ntnu.ihb.fmi4j.modeldescription.parser.ModelDescriptionParser;
+import java.io.File;
 
 public class TestFMUs {
 

@@ -24,9 +24,9 @@
 
 package no.ntnu.ihb.fmi4j.common
 
-import no.ntnu.ihb.fmi4j.modeldescription.CommonModelDescription
-import no.ntnu.ihb.fmi4j.modeldescription.ModelDescription
-import no.ntnu.ihb.fmi4j.modeldescription.variables.ModelVariables
+import no.ntnu.ihb.fmi4j.xml.CommonModelDescription
+import no.ntnu.ihb.fmi4j.xml.ModelDescription
+import no.ntnu.ihb.fmi4j.xml.variables.ModelVariables
 import java.io.Closeable
 
 typealias FmuState = Long

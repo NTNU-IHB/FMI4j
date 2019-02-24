@@ -1,16 +1,12 @@
 package no.ntnu.ihb.fmi4j.modeldescription.vendors.openmodelica
 
 import no.ntnu.ihb.fmi4j.modeldescription.TestFMUs
-import no.ntnu.ihb.fmi4j.modeldescription.ModelDescription
+import no.ntnu.ihb.fmi4j.xml.ModelDescriptionProvider
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import java.io.ByteArrayInputStream
-import java.io.ByteArrayOutputStream
-import java.io.ObjectInputStream
-import java.io.ObjectOutputStream
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class FmuExportCrossCompileTest {
@@ -19,7 +15,7 @@ class FmuExportCrossCompileTest {
 
         val LOG: Logger = LoggerFactory.getLogger(FmuExportCrossCompileTest::class.java)
 
-        val modelDescription = TestFMUs.fmi20().cs()
+        val modelDescription: ModelDescriptionProvider = TestFMUs.fmi20().cs()
                 .vendor("OpenModelica").version("v1.11.0")
                 .name("FmuExportCrossCompile").modelDescription()
 

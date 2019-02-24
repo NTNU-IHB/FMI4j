@@ -1,7 +1,7 @@
 package no.ntnu.ihb.fmi4j.importer;
 
-import no.ntnu.ihb.fmi4j.modeldescription.ModelDescriptionProvider;
-import no.ntnu.ihb.fmi4j.modeldescription.parser.ModelDescriptionParser;
+import no.ntnu.ihb.fmi4j.xml.ModelDescriptionProvider;
+import no.ntnu.ihb.fmi4j.xml.parser.ModelDescriptionParser;
 
 import java.io.File;
 import java.io.IOException;

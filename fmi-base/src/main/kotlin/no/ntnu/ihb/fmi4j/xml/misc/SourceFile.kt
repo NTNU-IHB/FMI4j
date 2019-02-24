@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2017-2018 Norwegian University of Technology (NTNU)
+ * Copyright 2017-2018 Norwegian University of Technology
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,40 +22,15 @@
  * THE SOFTWARE.
  */
 
-package no.ntnu.ihb.fmi4j.modeldescription.misc
-
+package no.ntnu.ihb.fmi4j.xml.misc
 
 /**
- * Provides default settings for the integrator, such as stop time and
- * relative tolerance.
- *
- * DefaultExperiment consists of the optional default start time, stop time, relative tolerance, and step size
- * for the first simulation run. A tool may ignore this information. However, it is convenient for a user that
- * startTime, stopTime, tolerance and stepSize have already a meaningful default value for the model at
- * hand. Furthermore, for CoSimulation the stepSize defines the preferred communicationStepSize.
- *
  * @author Lars Ivar Hatledal
  */
-data class DefaultExperiment(
+data class SourceFile(
         /**
-         * Default start time of simulation
+         * Name of the file including the path to the sources
+         * directory, using forward slash as separator
          */
-        val startTime: Double?,
-
-        /**
-         * Default stop time of simulation
-         */
-        val stopTime: Double?,
-
-        /**
-         * Default relative integration tolerance
-         */
-        val tolerance: Double?,
-
-        /***
-         * ModelExchange: Default step size for fixed step integrators
-         * CoSimulation: Preferred communicationStepSize
-         */
-        val stepSize: Double?
-
+        val name: String
 )

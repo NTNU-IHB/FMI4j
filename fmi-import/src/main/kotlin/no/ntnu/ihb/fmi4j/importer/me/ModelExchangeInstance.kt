@@ -27,7 +27,7 @@ package no.ntnu.ihb.fmi4j.importer.me
 import no.ntnu.ihb.fmi4j.common.FmiStatus
 import no.ntnu.ihb.fmi4j.importer.AbstractFmuInstance
 import no.ntnu.ihb.fmi4j.importer.jni.EventInfo
-import no.ntnu.ihb.fmi4j.modeldescription.ModelExchangeModelDescription
+import no.ntnu.ihb.fmi4j.xml.ModelExchangeModelDescription
 
 /**
  * Represent a FMI Model Exchange instance

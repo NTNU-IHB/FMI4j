@@ -22,16 +22,17 @@
  * THE SOFTWARE.
  */
 
-package no.ntnu.ihb.fmi4j.modeldescription
+package no.ntnu.ihb.fmi4j.xml
 
 import no.ntnu.ihb.fmi4j.common.ValueReference
-import no.ntnu.ihb.fmi4j.modeldescription.logging.LogCategories
-import no.ntnu.ihb.fmi4j.modeldescription.misc.DefaultExperiment
-import no.ntnu.ihb.fmi4j.modeldescription.misc.TypeDefinitions
-import no.ntnu.ihb.fmi4j.modeldescription.misc.UnitDefinitions
-import no.ntnu.ihb.fmi4j.modeldescription.structure.ModelStructure
-import no.ntnu.ihb.fmi4j.modeldescription.variables.ModelVariables
-import no.ntnu.ihb.fmi4j.modeldescription.variables.ScalarVariable
+import no.ntnu.ihb.fmi4j.xml.logging.LogCategories
+import no.ntnu.ihb.fmi4j.xml.misc.DefaultExperiment
+import no.ntnu.ihb.fmi4j.xml.misc.SourceFile
+import no.ntnu.ihb.fmi4j.xml.misc.TypeDefinitions
+import no.ntnu.ihb.fmi4j.xml.misc.UnitDefinitions
+import no.ntnu.ihb.fmi4j.xml.structure.ModelStructure
+import no.ntnu.ihb.fmi4j.xml.variables.ModelVariables
+import no.ntnu.ihb.fmi4j.xml.variables.ScalarVariable
 import java.util.*
 
 /**
@@ -183,16 +184,37 @@ interface ModelDescriptionProvider: ModelDescription {
 
 }
 
-interface CommonModelDescription: ModelDescription, CommonFmuAttributes
+interface CommonModelDescription: ModelDescription {
 
-interface CoSimulationModelDescription: CommonModelDescription, CoSimulationAttributes
+    val modelIdentifier: String
+    val needsExecutionTool: Boolean
+    val canBeInstantiatedOnlyOncePerProcess: Boolean
+    val canNotUseMemoryManagementFunctions: Boolean
+    val canGetAndSetFMUstate: Boolean
+    val canSerializeFMUstate: Boolean
+    val providesDirectionalDerivative: Boolean
+    val sourceFiles: List<SourceFile>
 
-interface ModelExchangeModelDescription: CommonModelDescription, ModelExchangeAttributes {
+}
+
+interface CoSimulationModelDescription: CommonModelDescription {
+
+    val maxOutputDerivativeOrder: Int?
+    val canInterpolateInputs: Boolean
+    val canRunAsynchronuously: Boolean
+    val canProvideMaxStepSize: Boolean
+    val canHandleVariableCommunicationStepSize: Boolean
+
+}
+
+interface ModelExchangeModelDescription: CommonModelDescription {
 
     /**
      * The (fixed) number of event indicators for an FMU based on FMI for Model Exchange.
      * For Co-Simulation, this value is ignored
      */
     val numberOfEventIndicators: Int
+
+    val completedIntegratorStepNotNeeded: Boolean
 
 }

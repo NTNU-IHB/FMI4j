@@ -24,9 +24,8 @@
 
 package no.ntnu.ihb.fmu2jar.codegen
 
-import no.ntnu.ihb.fmi4j.modeldescription.ModelDescription
-import no.ntnu.ihb.fmi4j.modeldescription.ModelDescriptionProvider
-import no.ntnu.ihb.fmi4j.modeldescription.variables.*
+import no.ntnu.ihb.fmi4j.xml.ModelDescriptionProvider
+import no.ntnu.ihb.fmi4j.xml.variables.*
 
 /**
  * @author Lars Ivar Hatledal

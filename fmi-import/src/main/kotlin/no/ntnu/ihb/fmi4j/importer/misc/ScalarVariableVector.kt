@@ -25,7 +25,7 @@
 package no.ntnu.ihb.fmi4j.importer.misc
 
 import no.ntnu.ihb.fmi4j.common.*
-import no.ntnu.ihb.fmi4j.modeldescription.variables.*
+import no.ntnu.ihb.fmi4j.xml.variables.*
 
 /**
  * @author Lars Ivar Hatledal

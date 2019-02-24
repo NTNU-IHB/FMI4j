@@ -1,11 +1,10 @@
 package no.ntnu.ihb.fmi4j.fmudriver
 
-import no.ntnu.ihb.fmi4j.modeldescription.parser.ModelDescriptionParser
+import no.ntnu.ihb.fmi4j.xml.parser.ModelDescriptionParser
 import org.junit.jupiter.api.condition.OS
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.File
-import java.lang.Exception
 import java.util.concurrent.atomic.AtomicInteger
 
 private const val FMI4j_VERSION = "0.13.1"

@@ -29,8 +29,8 @@ import no.ntnu.ihb.fmi4j.importer.me.ModelExchangeFmuStepper
 import no.ntnu.ihb.fmi4j.importer.me.ModelExchangeInstance
 import no.ntnu.ihb.fmi4j.importer.me.ModelExchangeLibraryWrapper
 import no.ntnu.ihb.fmi4j.importer.misc.FmiType
-import no.ntnu.ihb.fmi4j.modeldescription.ModelExchangeModelDescription
 import no.ntnu.ihb.fmi4j.solvers.Solver
+import no.ntnu.ihb.fmi4j.xml.ModelExchangeModelDescription
 
 /**
  *

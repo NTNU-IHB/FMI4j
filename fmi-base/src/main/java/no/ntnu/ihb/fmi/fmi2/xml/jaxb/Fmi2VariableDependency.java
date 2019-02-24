@@ -1,5 +1,5 @@
 
-package no.ntnu.ihb.fmi.fmi2.xml;
+package no.ntnu.ihb.fmi.fmi2.xml.jaxb;
 
 import javax.xml.bind.annotation.*;
 import java.util.ArrayList;

@@ -1,6 +1,6 @@
 package no.ntnu.ihb.fmi4j.modeldescription;
 
-import no.ntnu.ihb.fmi4j.modeldescription.parser.ModelDescriptionParser;
+import no.ntnu.ihb.fmi4j.xml.parser.ModelDescriptionParser;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledOnOs;

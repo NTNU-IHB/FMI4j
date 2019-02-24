@@ -28,7 +28,7 @@ import no.ntnu.ihb.fmi4j.importer.cs.CoSimulationLibraryWrapper
 import no.ntnu.ihb.fmi4j.importer.cs.CoSimulationSlave
 import no.ntnu.ihb.fmi4j.importer.jni.Fmi2CoSimulationLibrary
 import no.ntnu.ihb.fmi4j.importer.misc.FmiType
-import no.ntnu.ihb.fmi4j.modeldescription.CoSimulationModelDescription
+import no.ntnu.ihb.fmi4j.xml.CoSimulationModelDescription
 
 
 class CoSimulationFmu(

@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package no.ntnu.ihb.fmi4j.modeldescription.structure
+package no.ntnu.ihb.fmi4j.xml.structure
 
 import java.io.Serializable
 

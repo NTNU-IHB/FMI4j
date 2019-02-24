@@ -27,11 +27,11 @@ package no.ntnu.ihb.fmi4j.importer
 import no.ntnu.ihb.fmi4j.importer.jni.Fmi2Library
 import no.ntnu.ihb.fmi4j.importer.misc.FmiType
 import no.ntnu.ihb.fmi4j.importer.misc.extractTo
-import no.ntnu.ihb.fmi4j.modeldescription.CommonModelDescription
-import no.ntnu.ihb.fmi4j.modeldescription.ModelDescription
-import no.ntnu.ihb.fmi4j.modeldescription.ModelDescriptionProvider
-import no.ntnu.ihb.fmi4j.modeldescription.parser.ModelDescriptionParser
 import no.ntnu.ihb.fmi4j.util.OsUtil
+import no.ntnu.ihb.fmi4j.xml.CommonModelDescription
+import no.ntnu.ihb.fmi4j.xml.ModelDescription
+import no.ntnu.ihb.fmi4j.xml.ModelDescriptionProvider
+import no.ntnu.ihb.fmi4j.xml.parser.ModelDescriptionParser
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.Closeable

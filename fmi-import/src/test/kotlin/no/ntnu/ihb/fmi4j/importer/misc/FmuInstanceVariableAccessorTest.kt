@@ -1,10 +1,10 @@
 package no.ntnu.ihb.fmi4j.importer.misc
 
 import no.ntnu.ihb.fmi4j.importer.TestFMUs
-import no.ntnu.ihb.fmi4j.modeldescription.variables.BooleanVariable
-import no.ntnu.ihb.fmi4j.modeldescription.variables.IntegerVariable
-import no.ntnu.ihb.fmi4j.modeldescription.variables.RealVariable
-import no.ntnu.ihb.fmi4j.modeldescription.variables.StringVariable
+import no.ntnu.ihb.fmi4j.xml.variables.BooleanVariable
+import no.ntnu.ihb.fmi4j.xml.variables.IntegerVariable
+import no.ntnu.ihb.fmi4j.xml.variables.RealVariable
+import no.ntnu.ihb.fmi4j.xml.variables.StringVariable
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
