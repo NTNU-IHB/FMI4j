@@ -24,12 +24,14 @@
 
 package no.ntnu.ihb.fmi4j.modeldescription.variables
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties
-import com.fasterxml.jackson.annotation.JsonSetter
-import com.fasterxml.jackson.annotation.Nulls
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty
-import java.io.Serializable
+import no.ntnu.ihb.fmi4j.common.Real
 
+
+internal const val INTEGER_TYPE = "Integer"
+internal const val REAL_TYPE = "Real"
+internal const val STRING_TYPE = "String"
+internal const val BOOLEAN_TYPE = "Boolean"
+internal const val ENUMERATION_TYPE = "Enumeration"
 
 /**
  * @author Lars Ivar Hatledal
@@ -73,102 +75,123 @@ interface ScalarVariable {
      */
     val initial: Initial?
 
-    companion object {
-        const val INTEGER_TYPE = "Integer"
-        const val REAL_TYPE = "Real"
-        const val STRING_TYPE = "String"
-        const val BOOLEAN_TYPE = "Boolean"
-        const val ENUMERATION_TYPE = "Enumeration"
-    }
+    val annotations: Annotations?
+
+    val canHandleMultipleSetPerTimeInstant: Boolean
+
+    fun asIntegerVariable(): IntegerVariable
+
+    fun asRealVariable(): RealVariable
+
+    fun asStringVariable(): StringVariable
+
+    fun asBooleanVariable(): BooleanVariable
+
+    fun asEnumerationVariable(): EnumerationVariable
 
 }
 
-/**
- * @author Lars Ivar Hatledal
- */
-@JsonIgnoreProperties(ignoreUnknown = true)
-class ScalarVariableImpl(
+interface TypedScalarVariable<E>: ScalarVariable {
 
-        @JacksonXmlProperty
-        override val name: String,
+    val start: E?
+    val declaredType: String?
 
-        @JacksonXmlProperty
-        override val valueReference: Long,
+}
 
-        @JacksonXmlProperty
-        override val description: String? = null,
-
-        @JacksonXmlProperty
-        override val causality: Causality? = null,
-
-        @JacksonXmlProperty
-        override val variability: Variability? = null,
-
-        @JacksonXmlProperty
-        override val initial: Initial? = null
-
-
-) : ScalarVariable, Serializable {
-
-    @JacksonXmlProperty(localName = ScalarVariable.INTEGER_TYPE)
-    @JsonSetter(nulls = Nulls.AS_EMPTY)
-    var integerAttribute: IntegerAttributeImpl? = null
-
-    @JacksonXmlProperty(localName = ScalarVariable.REAL_TYPE)
-    @JsonSetter(nulls = Nulls.AS_EMPTY)
-    var realAttribute: RealAttributeImpl? = null
-
-    @JacksonXmlProperty(localName = ScalarVariable.STRING_TYPE)
-    @JsonSetter(nulls = Nulls.AS_EMPTY)
-    var stringAttribute: StringAttributeImpl? = null
-
-    @JacksonXmlProperty(localName = ScalarVariable.BOOLEAN_TYPE)
-    @JsonSetter(nulls = Nulls.AS_EMPTY)
-    var booleanAttribute: BooleanAttributeImpl? = null
-
-    @JacksonXmlProperty(localName = ScalarVariable.ENUMERATION_TYPE)
-    @JsonSetter(nulls = Nulls.AS_EMPTY)
-    var enumerationAttribute: EnumerationAttributeImpl? = null
+interface BoundedScalarVariable<E>: TypedScalarVariable<E> {
 
     /**
-     * Return a typed version of this variable.
+     * Minimum value of variable (variable Value ≥ min). If not defined, the
+     * minimum is the largest negative number that can be represented on the
+     * machine. The min definition is an information from the FMU to the
+     * environment defining the region in which the FMU is designed to operate, see
+     * also comment after this table.
      */
-    fun toTyped(): TypedScalarVariable<*> {
+    val min: E?
 
-        return when {
-            integerAttribute != null -> IntegerVariable(this, integerAttribute!!)
-            realAttribute != null -> RealVariable(this, realAttribute!!)
-            stringAttribute != null -> StringVariable(this, stringAttribute!!)
-            booleanAttribute != null -> BooleanVariable(this, booleanAttribute!!)
-            enumerationAttribute != null -> EnumerationVariable(this, enumerationAttribute!!)
-            else -> throw IllegalStateException("All attributes are null!")
-        }
+    /**
+     * Maximum value of variable (variableValue ≤ max). If not defined, the
+     * maximum is the largest positive number that can be represented on the
+     * machine. The max definition is an information from the FMU to the
+     * environment defining the region in which the FMU is designed to operate, see
+     * also comment after this table.
+     */
+    val max: E?
 
-    }
+    /**
+     * Physical quantity of the variable, for example “Angle”, or “Energy”.
+     * The quantity names are not standardized.
+     */
+    val quantity: String?
+}
 
-    override fun toString(): String {
+interface IntegerVariable: BoundedScalarVariable<Int>
 
-        val attribute = when {
-            integerAttribute != null -> integerAttribute
-            realAttribute != null -> realAttribute
-            stringAttribute != null -> stringAttribute
-            booleanAttribute != null -> booleanAttribute
-            enumerationAttribute != null -> enumerationAttribute
-            else -> throw IllegalStateException("All attributes are null!")
-        }
+interface RealVariable: BoundedScalarVariable<Real> {
+    /**
+     * Nominal value of variable. If not defined and no other information about the
+     * nominal value is available, then nominal = 1 is assumed.
+     * [The nominal value of a variable can be, for example used to determine the
+     * absolute tolerance for this variable as needed by numerical algorithms:
+     * absoluteTolerance = nominal*tolerance*0.01
+     * where tolerance is, e.g., the relative tolerance defined in
+     * <DefaultExperiment>, see section 2.2.5.]
+     */
+    val nominal: Double?
 
-        val entries = mutableListOf<String>().apply {
-            add("name=$name")
-            add("valueReference=$valueReference")
-            causality?.also { add("causality=$causality") }
-            variability?.also { add("variability=$variability") }
-            initial?.also { add("initial=$initial") }
-            description?.also { add("description=$description") }
-            add("attribute=$attribute")
-        }.joinToString(", ")
+    /**
+     * If present, this variable is the derivative of variable with ScalarVariable index "derivative",
+     */
+    val derivative: Int?
 
-        return "ScalarVariableImpl($entries)"
-    }
+    /**
+     * If true, indicates that the variable gets during time integration much larger
+     * than its nominal value nominal. [Typical examples are the monotonically
+     * increasing rotation angles of crank shafts and the longitudinal position of a
+     * vehicle along the track in long distance simulations. This information can, for
+     * example, be used to increase numerical stability and accuracy by setting the
+     * corresponding bound for the relative error to zero (relative tolerance = 0.0), if
+     * the corresponding variable or an alias of it is a continuous state variable.]
+     */
+    val unbounded: Boolean?
+
+    /**
+     * Only for Model exchange
+     *
+     * If true, state can be reinitialized at an event by the FMU.
+     * If false, state will never be reinitialized at an event by the FMU
+     */
+    val reinit: Boolean
+
+    /**
+     * Unit of the variable defined with UnitDefinitions.Unit.name that is used
+     * for the model equations [, for example “N.m”: in this case a Unit.name =
+     * "N.m" must be present under UnitDefinitions].
+     */
+    val unit: String?
+
+    /**
+     * Default display unit. The conversion to the “unit” is defined with the element
+     * “<fmiModelDescription><UnitDefinitions>”. If the corresponding
+     * “displayUnit” is not defined under <UnitDefinitions> <Unit>
+     * <DisplayUnit>, then displayUnit is ignored. It is an error if
+     * displayUnit is defined in element Real, but unit is not, or unit is not
+     * defined under <UnitDefinitions><Unit>.
+     */
+    val displayUnit: String?
+
+    /**
+     * If this attribute is true, then the “offset” of “displayUnit” must be ignored
+     * (for example 10 degree Celsius = 10 Kelvin if “relativeQuantity = true”
+     * and not 283,15 Kelvin).
+     */
+    val relativeQuantity: Boolean?
 
 }
+
+interface StringVariable: TypedScalarVariable<String>
+
+interface BooleanVariable: TypedScalarVariable<Boolean>
+
+interface EnumerationVariable: BoundedScalarVariable<Int>
 

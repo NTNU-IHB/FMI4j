@@ -24,20 +24,14 @@
 
 package no.ntnu.ihb.fmi4j.modeldescription.parser
 
-import com.fasterxml.jackson.databind.MapperFeature
-import com.fasterxml.jackson.dataformat.xml.JacksonXmlModule
-import com.fasterxml.jackson.dataformat.xml.XmlMapper
-import com.fasterxml.jackson.module.kotlin.KotlinModule
-import com.fasterxml.jackson.module.kotlin.readValue
+import no.ntnu.ihb.fmi.fmi2.xml.Fmi2ModelDescription
 import no.ntnu.ihb.fmi4j.modeldescription.ModelDescriptionImpl
 import no.ntnu.ihb.fmi4j.modeldescription.ModelDescriptionProvider
-import java.io.File
-import java.io.FileInputStream
-import java.io.FileNotFoundException
-import java.io.InputStream
+import java.io.*
 import java.net.URL
 import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
+import javax.xml.bind.JAXBContext
 
 
 /**
@@ -46,14 +40,6 @@ import java.util.zip.ZipInputStream
 object ModelDescriptionParser {
 
     private const val MODEL_DESC_FILE = "modelDescription.xml"
-
-    private val mapper by lazy {
-        XmlMapper().apply {
-            registerModule(KotlinModule())
-            registerModule(JacksonXmlModule())
-            enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS)
-        }
-    }
 
     @JvmStatic
     fun parse(url: URL): ModelDescriptionProvider {
@@ -71,11 +57,13 @@ object ModelDescriptionParser {
     @JvmStatic
     fun parse(xml: String): ModelDescriptionProvider {
 
-        val correctedXml = xml.replace("calculatedParameter", "CALCULATED_PARAMETER")
-                .replace("<ModelStructure>\n" +
-                        "</ModelStructure>", "<ModelStructure/>")
+//        val correctedXml = xml.replace("calculatedParameter", "CALCULATED_PARAMETER")
+//                .replace("<ModelStructure>\n" +
+//                        "</ModelStructure>", "<ModelStructure/>")
 
-        return mapper.readValue<ModelDescriptionImpl>(correctedXml)
+        return JAXBContext.newInstance(Fmi2ModelDescription::class.java).createUnmarshaller().unmarshal(StringReader(xml)).let {
+            ModelDescriptionImpl(it as Fmi2ModelDescription)
+        }
 
     }
 

@@ -254,27 +254,27 @@ import java.util.List;
     "modelStructure"
 })
 @XmlRootElement(name = "fmiModelDescription")
-public class FmiModelDescription {
+public class Fmi2ModelDescription {
 
     @XmlElements({
-        @XmlElement(name = "ModelExchange", type = FmiModelDescription.ModelExchange.class),
-        @XmlElement(name = "CoSimulation", type = FmiModelDescription.CoSimulation.class)
+        @XmlElement(name = "ModelExchange", type = Fmi2ModelDescription.ModelExchange.class),
+        @XmlElement(name = "CoSimulation", type = Fmi2ModelDescription.CoSimulation.class)
     })
     protected List<Object> modelExchangeAndCoSimulation;
     @XmlElement(name = "UnitDefinitions")
-    protected FmiModelDescription.UnitDefinitions unitDefinitions;
+    protected Fmi2ModelDescription.UnitDefinitions unitDefinitions;
     @XmlElement(name = "TypeDefinitions")
-    protected FmiModelDescription.TypeDefinitions typeDefinitions;
+    protected Fmi2ModelDescription.TypeDefinitions typeDefinitions;
     @XmlElement(name = "LogCategories")
-    protected FmiModelDescription.LogCategories logCategories;
+    protected Fmi2ModelDescription.LogCategories logCategories;
     @XmlElement(name = "DefaultExperiment")
-    protected FmiModelDescription.DefaultExperiment defaultExperiment;
+    protected Fmi2ModelDescription.DefaultExperiment defaultExperiment;
     @XmlElement(name = "VendorAnnotations")
     protected Fmi2Annotation vendorAnnotations;
     @XmlElement(name = "ModelVariables", required = true)
-    protected FmiModelDescription.ModelVariables modelVariables;
+    protected Fmi2ModelDescription.ModelVariables modelVariables;
     @XmlElement(name = "ModelStructure", required = true)
-    protected FmiModelDescription.ModelStructure modelStructure;
+    protected Fmi2ModelDescription.ModelStructure modelStructure;
     @XmlAttribute(name = "fmiVersion", required = true)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     @XmlSchemaType(name = "normalizedString")
@@ -329,8 +329,8 @@ public class FmiModelDescription {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link FmiModelDescription.ModelExchange }
-     * {@link FmiModelDescription.CoSimulation }
+     * {@link Fmi2ModelDescription.ModelExchange }
+     * {@link Fmi2ModelDescription.CoSimulation }
      * 
      * 
      */
@@ -346,10 +346,10 @@ public class FmiModelDescription {
      * 
      * @return
      *     possible object is
-     *     {@link FmiModelDescription.UnitDefinitions }
+     *     {@link Fmi2ModelDescription.UnitDefinitions }
      *     
      */
-    public FmiModelDescription.UnitDefinitions getUnitDefinitions() {
+    public Fmi2ModelDescription.UnitDefinitions getUnitDefinitions() {
         return unitDefinitions;
     }
 
@@ -358,10 +358,10 @@ public class FmiModelDescription {
      * 
      * @param value
      *     allowed object is
-     *     {@link FmiModelDescription.UnitDefinitions }
+     *     {@link Fmi2ModelDescription.UnitDefinitions }
      *     
      */
-    public void setUnitDefinitions(FmiModelDescription.UnitDefinitions value) {
+    public void setUnitDefinitions(Fmi2ModelDescription.UnitDefinitions value) {
         this.unitDefinitions = value;
     }
 
@@ -370,10 +370,10 @@ public class FmiModelDescription {
      * 
      * @return
      *     possible object is
-     *     {@link FmiModelDescription.TypeDefinitions }
+     *     {@link Fmi2ModelDescription.TypeDefinitions }
      *     
      */
-    public FmiModelDescription.TypeDefinitions getTypeDefinitions() {
+    public Fmi2ModelDescription.TypeDefinitions getTypeDefinitions() {
         return typeDefinitions;
     }
 
@@ -382,10 +382,10 @@ public class FmiModelDescription {
      * 
      * @param value
      *     allowed object is
-     *     {@link FmiModelDescription.TypeDefinitions }
+     *     {@link Fmi2ModelDescription.TypeDefinitions }
      *     
      */
-    public void setTypeDefinitions(FmiModelDescription.TypeDefinitions value) {
+    public void setTypeDefinitions(Fmi2ModelDescription.TypeDefinitions value) {
         this.typeDefinitions = value;
     }
 
@@ -394,10 +394,10 @@ public class FmiModelDescription {
      * 
      * @return
      *     possible object is
-     *     {@link FmiModelDescription.LogCategories }
+     *     {@link Fmi2ModelDescription.LogCategories }
      *     
      */
-    public FmiModelDescription.LogCategories getLogCategories() {
+    public Fmi2ModelDescription.LogCategories getLogCategories() {
         return logCategories;
     }
 
@@ -406,10 +406,10 @@ public class FmiModelDescription {
      * 
      * @param value
      *     allowed object is
-     *     {@link FmiModelDescription.LogCategories }
+     *     {@link Fmi2ModelDescription.LogCategories }
      *     
      */
-    public void setLogCategories(FmiModelDescription.LogCategories value) {
+    public void setLogCategories(Fmi2ModelDescription.LogCategories value) {
         this.logCategories = value;
     }
 
@@ -418,10 +418,10 @@ public class FmiModelDescription {
      * 
      * @return
      *     possible object is
-     *     {@link FmiModelDescription.DefaultExperiment }
+     *     {@link Fmi2ModelDescription.DefaultExperiment }
      *     
      */
-    public FmiModelDescription.DefaultExperiment getDefaultExperiment() {
+    public Fmi2ModelDescription.DefaultExperiment getDefaultExperiment() {
         return defaultExperiment;
     }
 
@@ -430,10 +430,10 @@ public class FmiModelDescription {
      * 
      * @param value
      *     allowed object is
-     *     {@link FmiModelDescription.DefaultExperiment }
+     *     {@link Fmi2ModelDescription.DefaultExperiment }
      *     
      */
-    public void setDefaultExperiment(FmiModelDescription.DefaultExperiment value) {
+    public void setDefaultExperiment(Fmi2ModelDescription.DefaultExperiment value) {
         this.defaultExperiment = value;
     }
 
@@ -466,10 +466,10 @@ public class FmiModelDescription {
      * 
      * @return
      *     possible object is
-     *     {@link FmiModelDescription.ModelVariables }
+     *     {@link Fmi2ModelDescription.ModelVariables }
      *     
      */
-    public FmiModelDescription.ModelVariables getModelVariables() {
+    public Fmi2ModelDescription.ModelVariables getModelVariables() {
         return modelVariables;
     }
 
@@ -478,10 +478,10 @@ public class FmiModelDescription {
      * 
      * @param value
      *     allowed object is
-     *     {@link FmiModelDescription.ModelVariables }
+     *     {@link Fmi2ModelDescription.ModelVariables }
      *     
      */
-    public void setModelVariables(FmiModelDescription.ModelVariables value) {
+    public void setModelVariables(Fmi2ModelDescription.ModelVariables value) {
         this.modelVariables = value;
     }
 
@@ -490,10 +490,10 @@ public class FmiModelDescription {
      * 
      * @return
      *     possible object is
-     *     {@link FmiModelDescription.ModelStructure }
+     *     {@link Fmi2ModelDescription.ModelStructure }
      *     
      */
-    public FmiModelDescription.ModelStructure getModelStructure() {
+    public Fmi2ModelDescription.ModelStructure getModelStructure() {
         return modelStructure;
     }
 
@@ -502,10 +502,10 @@ public class FmiModelDescription {
      * 
      * @param value
      *     allowed object is
-     *     {@link FmiModelDescription.ModelStructure }
+     *     {@link Fmi2ModelDescription.ModelStructure }
      *     
      */
-    public void setModelStructure(FmiModelDescription.ModelStructure value) {
+    public void setModelStructure(Fmi2ModelDescription.ModelStructure value) {
         this.modelStructure = value;
     }
 
@@ -861,7 +861,7 @@ public class FmiModelDescription {
     public static class CoSimulation {
 
         @XmlElement(name = "SourceFiles")
-        protected FmiModelDescription.CoSimulation.SourceFiles sourceFiles;
+        protected Fmi2ModelDescription.CoSimulation.SourceFiles sourceFiles;
         @XmlAttribute(name = "modelIdentifier", required = true)
         @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
         @XmlSchemaType(name = "normalizedString")
@@ -893,10 +893,10 @@ public class FmiModelDescription {
          * 
          * @return
          *     possible object is
-         *     {@link FmiModelDescription.CoSimulation.SourceFiles }
+         *     {@link Fmi2ModelDescription.CoSimulation.SourceFiles }
          *     
          */
-        public FmiModelDescription.CoSimulation.SourceFiles getSourceFiles() {
+        public Fmi2ModelDescription.CoSimulation.SourceFiles getSourceFiles() {
             return sourceFiles;
         }
 
@@ -905,10 +905,10 @@ public class FmiModelDescription {
          * 
          * @param value
          *     allowed object is
-         *     {@link FmiModelDescription.CoSimulation.SourceFiles }
+         *     {@link Fmi2ModelDescription.CoSimulation.SourceFiles }
          *     
          */
-        public void setSourceFiles(FmiModelDescription.CoSimulation.SourceFiles value) {
+        public void setSourceFiles(Fmi2ModelDescription.CoSimulation.SourceFiles value) {
             this.sourceFiles = value;
         }
 
@@ -1251,7 +1251,7 @@ public class FmiModelDescription {
         public static class SourceFiles {
 
             @XmlElement(name = "File", required = true)
-            protected List<FmiModelDescription.CoSimulation.SourceFiles.File> file;
+            protected List<Fmi2ModelDescription.CoSimulation.SourceFiles.File> file;
 
             /**
              * Gets the value of the file property.
@@ -1271,13 +1271,13 @@ public class FmiModelDescription {
              * 
              * <p>
              * Objects of the following type(s) are allowed in the list
-             * {@link FmiModelDescription.CoSimulation.SourceFiles.File }
+             * {@link Fmi2ModelDescription.CoSimulation.SourceFiles.File }
              * 
              * 
              */
-            public List<FmiModelDescription.CoSimulation.SourceFiles.File> getFile() {
+            public List<Fmi2ModelDescription.CoSimulation.SourceFiles.File> getFile() {
                 if (file == null) {
-                    file = new ArrayList<FmiModelDescription.CoSimulation.SourceFiles.File>();
+                    file = new ArrayList<Fmi2ModelDescription.CoSimulation.SourceFiles.File>();
                 }
                 return this.file;
             }
@@ -1507,7 +1507,7 @@ public class FmiModelDescription {
     public static class LogCategories {
 
         @XmlElement(name = "Category", required = true)
-        protected List<FmiModelDescription.LogCategories.Category> category;
+        protected List<Fmi2ModelDescription.LogCategories.Category> category;
 
         /**
          * Gets the value of the category property.
@@ -1527,13 +1527,13 @@ public class FmiModelDescription {
          * 
          * <p>
          * Objects of the following type(s) are allowed in the list
-         * {@link FmiModelDescription.LogCategories.Category }
+         * {@link Fmi2ModelDescription.LogCategories.Category }
          * 
          * 
          */
-        public List<FmiModelDescription.LogCategories.Category> getCategory() {
+        public List<Fmi2ModelDescription.LogCategories.Category> getCategory() {
             if (category == null) {
-                category = new ArrayList<FmiModelDescription.LogCategories.Category>();
+                category = new ArrayList<Fmi2ModelDescription.LogCategories.Category>();
             }
             return this.category;
         }
@@ -1675,7 +1675,7 @@ public class FmiModelDescription {
     public static class ModelExchange {
 
         @XmlElement(name = "SourceFiles")
-        protected FmiModelDescription.ModelExchange.SourceFiles sourceFiles;
+        protected Fmi2ModelDescription.ModelExchange.SourceFiles sourceFiles;
         @XmlAttribute(name = "modelIdentifier", required = true)
         @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
         @XmlSchemaType(name = "normalizedString")
@@ -1700,10 +1700,10 @@ public class FmiModelDescription {
          * 
          * @return
          *     possible object is
-         *     {@link FmiModelDescription.ModelExchange.SourceFiles }
+         *     {@link Fmi2ModelDescription.ModelExchange.SourceFiles }
          *     
          */
-        public FmiModelDescription.ModelExchange.SourceFiles getSourceFiles() {
+        public Fmi2ModelDescription.ModelExchange.SourceFiles getSourceFiles() {
             return sourceFiles;
         }
 
@@ -1712,10 +1712,10 @@ public class FmiModelDescription {
          * 
          * @param value
          *     allowed object is
-         *     {@link FmiModelDescription.ModelExchange.SourceFiles }
+         *     {@link Fmi2ModelDescription.ModelExchange.SourceFiles }
          *     
          */
-        public void setSourceFiles(FmiModelDescription.ModelExchange.SourceFiles value) {
+        public void setSourceFiles(Fmi2ModelDescription.ModelExchange.SourceFiles value) {
             this.sourceFiles = value;
         }
 
@@ -1974,7 +1974,7 @@ public class FmiModelDescription {
         public static class SourceFiles {
 
             @XmlElement(name = "File", required = true)
-            protected List<FmiModelDescription.ModelExchange.SourceFiles.File> file;
+            protected List<Fmi2ModelDescription.ModelExchange.SourceFiles.File> file;
 
             /**
              * Gets the value of the file property.
@@ -1994,13 +1994,13 @@ public class FmiModelDescription {
              * 
              * <p>
              * Objects of the following type(s) are allowed in the list
-             * {@link FmiModelDescription.ModelExchange.SourceFiles.File }
+             * {@link Fmi2ModelDescription.ModelExchange.SourceFiles.File }
              * 
              * 
              */
-            public List<FmiModelDescription.ModelExchange.SourceFiles.File> getFile() {
+            public List<Fmi2ModelDescription.ModelExchange.SourceFiles.File> getFile() {
                 if (file == null) {
-                    file = new ArrayList<FmiModelDescription.ModelExchange.SourceFiles.File>();
+                    file = new ArrayList<Fmi2ModelDescription.ModelExchange.SourceFiles.File>();
                 }
                 return this.file;
             }
@@ -2135,7 +2135,7 @@ public class FmiModelDescription {
         @XmlElement(name = "Derivatives")
         protected Fmi2VariableDependency derivatives;
         @XmlElement(name = "InitialUnknowns")
-        protected FmiModelDescription.ModelStructure.InitialUnknowns initialUnknowns;
+        protected Fmi2ModelDescription.ModelStructure.InitialUnknowns initialUnknowns;
 
         /**
          * Gets the value of the outputs property.
@@ -2190,10 +2190,10 @@ public class FmiModelDescription {
          * 
          * @return
          *     possible object is
-         *     {@link FmiModelDescription.ModelStructure.InitialUnknowns }
+         *     {@link Fmi2ModelDescription.ModelStructure.InitialUnknowns }
          *     
          */
-        public FmiModelDescription.ModelStructure.InitialUnknowns getInitialUnknowns() {
+        public Fmi2ModelDescription.ModelStructure.InitialUnknowns getInitialUnknowns() {
             return initialUnknowns;
         }
 
@@ -2202,10 +2202,10 @@ public class FmiModelDescription {
          * 
          * @param value
          *     allowed object is
-         *     {@link FmiModelDescription.ModelStructure.InitialUnknowns }
+         *     {@link Fmi2ModelDescription.ModelStructure.InitialUnknowns }
          *     
          */
-        public void setInitialUnknowns(FmiModelDescription.ModelStructure.InitialUnknowns value) {
+        public void setInitialUnknowns(Fmi2ModelDescription.ModelStructure.InitialUnknowns value) {
             this.initialUnknowns = value;
         }
 
@@ -2264,7 +2264,7 @@ public class FmiModelDescription {
         public static class InitialUnknowns {
 
             @XmlElement(name = "Unknown", required = true)
-            protected List<FmiModelDescription.ModelStructure.InitialUnknowns.Unknown> unknown;
+            protected List<Fmi2ModelDescription.ModelStructure.InitialUnknowns.Unknown> unknown;
 
             /**
              * Gets the value of the unknown property.
@@ -2284,13 +2284,13 @@ public class FmiModelDescription {
              * 
              * <p>
              * Objects of the following type(s) are allowed in the list
-             * {@link FmiModelDescription.ModelStructure.InitialUnknowns.Unknown }
+             * {@link Fmi2ModelDescription.ModelStructure.InitialUnknowns.Unknown }
              * 
              * 
              */
-            public List<FmiModelDescription.ModelStructure.InitialUnknowns.Unknown> getUnknown() {
+            public List<Fmi2ModelDescription.ModelStructure.InitialUnknowns.Unknown> getUnknown() {
                 if (unknown == null) {
-                    unknown = new ArrayList<FmiModelDescription.ModelStructure.InitialUnknowns.Unknown>();
+                    unknown = new ArrayList<Fmi2ModelDescription.ModelStructure.InitialUnknowns.Unknown>();
                 }
                 return this.unknown;
             }

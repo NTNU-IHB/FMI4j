@@ -24,8 +24,6 @@
 
 package no.ntnu.ihb.fmi4j.modeldescription.misc
 
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty
 import java.io.Serializable
 
 typealias UnitDefinitions = List<Unit>
@@ -33,7 +31,7 @@ typealias UnitDefinitions = List<Unit>
 /**
  * @author Lars Ivar Hatledal
  */
-class Unit(
+data class Unit(
 
         /**
          * Name of Unit element, e.g. "N.m", "Nm", "%/s".
@@ -41,80 +39,62 @@ class Unit(
          * UnitDefinitions list. The variable values of fmi2SetXXX and fmi2GetXXX
          * are with respect to this unit.
          */
-        @JacksonXmlProperty
-        val name: String
+        val name: String,
 
-) : Serializable {
+        val baseUnit: BaseUnit? = null,
+        
+        val displayUnits: List<DisplayUnit>? = null
 
-    @JacksonXmlProperty(localName = "BaseUnit")
-    val baseUnit: BaseUnit? = null
-
-    @JacksonXmlProperty(localName = "DisplayUnit")
-    @JacksonXmlElementWrapper(useWrapping = false)
-    val displayUnits: List<DisplayUnit>? = null
-
-    override fun toString(): String {
-        return "Unit(name='$name', baseUnit=$baseUnit, displayUnits=$displayUnits)"
-    }
-
-}
+) : Serializable
 
 /**
  * @author Lars Ivar Hatledal
  */
 data class BaseUnit(
+
         /**
          * Exponent of SI base unit "kg"
          */
-        @JacksonXmlProperty
-        val kg: Int = 0,
+        val kg: Int? = null,
 
         /**
          * Exponent of SI base unit "m"
          */
-        @JacksonXmlProperty
-        val m: Int = 0,
+        val m: Int? = null,
 
         /**
          * Exponent of SI base unit "s"
          */
-        @JacksonXmlProperty
-        val s: Int = 0,
+        val s: Int? = null,
 
         /**
          * Exponent of SI base unit "A"
          */
-        @JacksonXmlProperty
-        val A: Int = 0,
+        val A: Int? = null,
 
         /**
          * Exponent of SI base unit "K"
          */
-        @JacksonXmlProperty
-        val K: Int = 0,
+        val K: Int? = null,
 
         /**
          * Exponent of SI base unit "mol"
          */
-        @JacksonXmlProperty
-        val mol: Int = 0,
+        
+        val mol: Int? = null,
 
         /**
          * Exponent of SI base unit "cd"
          */
-        @JacksonXmlProperty
-        val cd: Int = 0,
+        val cd: Int? = null,
 
         /**
          * Exponent of SI base unit "rad"
          */
-        @JacksonXmlProperty
-        val rad: Int = 0,
+        val rad: Int? = null,
 
-        @JacksonXmlProperty
         val factor: Double = 1.0,
 
-        @JacksonXmlProperty
         val offset: Double = 0.0
 )
 
@@ -126,13 +106,10 @@ data class DisplayUnit(
         /**
          * Name of DisplayUnit element
          */
-        @JacksonXmlProperty
         val name: String,
-
-        @JacksonXmlProperty
+        
         val factor: Double = 1.0,
 
-        @JacksonXmlProperty
         val offset: Double = 0.0
 
 )

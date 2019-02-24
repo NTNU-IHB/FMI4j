@@ -24,13 +24,11 @@
 
 package no.ntnu.ihb.fmi4j.modeldescription.misc
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty
-import java.io.Serializable
+import no.ntnu.ihb.fmi.fmi2.xml.Fmi2SimpleType
 
-typealias TypeDefinitions = List<SimpleTypeImpl>
+typealias TypeDefinitions = List<SimpleType>
 
-interface SimpleType {
+data class SimpleType (
 
         /**
          * Name of SimpleType element.
@@ -38,47 +36,18 @@ interface SimpleType {
          * of the TypeDefinitions list. Furthermore, "name" of a SimpleType
          * must bee different to all "name"s of ScalarVariable
          */
-        val name: String
+        val name: String,
 
         /**
          * Description of the SimpleType
          */
         val description: String?
 
-}
+)
 
-/**
- * @author Lars Ivar Hatledal
- */
-@JsonIgnoreProperties(ignoreUnknown = true)
-data class SimpleTypeImpl (
-
-        @JacksonXmlProperty
-        override val name: String,
-
-        @JacksonXmlProperty
-        override val description: String? = null
-
-) : SimpleType, Serializable {
-
-//    @JacksonXmlProperty(localName = ScalarVariable.INTEGER_TYPE)
-//    @JsonSetter(nulls = Nulls.AS_EMPTY)
-//    var integerAttribute: IntegerAttributeImpl? = null
-//
-//    @JacksonXmlProperty(localName = ScalarVariable.REAL_TYPE)
-//    @JsonSetter(nulls = Nulls.AS_EMPTY)
-//    var realAttribute: RealAttributeImpl? = null
-//
-//    @JacksonXmlProperty(localName = ScalarVariable.STRING_TYPE)
-//    @JsonSetter(nulls = Nulls.AS_EMPTY)
-//    var stringAttribute: StringAttributeImpl? = null
-//
-//    @JacksonXmlProperty(localName = ScalarVariable.BOOLEAN_TYPE)
-//    @JsonSetter(nulls = Nulls.AS_EMPTY)
-//    var booleanAttribute: BooleanAttributeImpl? = null
-//
-//    @JacksonXmlProperty(localName = ScalarVariable.ENUMERATION_TYPE)
-//    @JsonSetter(nulls = Nulls.AS_EMPTY)
-//    var enumerationAttribute: EnumerationAttributeImpl? = null
-
+fun SimpleType.wrap(type: Fmi2SimpleType): SimpleType {
+        return SimpleType(
+                name = type.name,
+                description = type.description
+        )
 }

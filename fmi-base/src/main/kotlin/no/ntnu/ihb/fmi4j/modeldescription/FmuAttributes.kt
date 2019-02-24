@@ -24,10 +24,8 @@
 
 package no.ntnu.ihb.fmi4j.modeldescription
 
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty
+import no.ntnu.ihb.fmi.fmi2.xml.Fmi2ModelDescription
 import no.ntnu.ihb.fmi4j.modeldescription.misc.SourceFile
-import no.ntnu.ihb.fmi4j.modeldescription.misc.SourceFileImpl
 import java.io.Serializable
 
 /**
@@ -55,11 +53,11 @@ interface CommonFmuAttributes {
  */
 interface CoSimulationAttributes : CommonFmuAttributes {
 
-    val canHandleVariableCommunicationStepSize: Boolean
+    val maxOutputDerivativeOrder: Int?
     val canInterpolateInputs: Boolean
-    val maxOutputDerivativeOrder: Int
     val canRunAsynchronuously: Boolean
     val canProvideMaxStepSize: Boolean
+    val canHandleVariableCommunicationStepSize: Boolean
 
 }
 
@@ -77,64 +75,92 @@ interface ModelExchangeAttributes : CommonFmuAttributes {
 /**
  * @author Lars Ivar Hatledal
  */
-sealed class CommonFmuAttributesImpl : CommonFmuAttributes, Serializable {
+class CoSimulationAttributesImpl(
+        md: Fmi2ModelDescription
+) : CommonFmuAttributes, CoSimulationAttributes, Serializable  {
 
-    @JacksonXmlProperty
-    override val modelIdentifier: String = ""
+    private val cs: Fmi2ModelDescription.CoSimulation = md.modelExchangeAndCoSimulation.find {
+        it is Fmi2ModelDescription.CoSimulation
+    } as Fmi2ModelDescription.CoSimulation
 
-    @JacksonXmlProperty
-    override val needsExecutionTool: Boolean = false
+    override val modelIdentifier: String
+        get() = cs.modelIdentifier
 
-    @JacksonXmlProperty
-    override val canNotUseMemoryManagementFunctions: Boolean = false
+    override val needsExecutionTool: Boolean
+        get() = cs.isNeedsExecutionTool
 
-    @JacksonXmlProperty
-    override val canGetAndSetFMUstate: Boolean = false
+    override val canBeInstantiatedOnlyOncePerProcess: Boolean
+        get() = cs.isCanBeInstantiatedOnlyOncePerProcess
 
-    @JacksonXmlProperty
-    override val canSerializeFMUstate: Boolean = false
+    override val canNotUseMemoryManagementFunctions: Boolean
+        get() = cs.isCanNotUseMemoryManagementFunctions
 
-    @JacksonXmlProperty
-    override val providesDirectionalDerivative: Boolean = false
+    override val canGetAndSetFMUstate: Boolean
+        get() = cs.isCanGetAndSetFMUstate
 
-    @JacksonXmlProperty
-    override val canBeInstantiatedOnlyOncePerProcess: Boolean = false
+    override val canSerializeFMUstate: Boolean
+        get() = cs.isCanSerializeFMUstate
 
-    @JacksonXmlElementWrapper(localName = "SourceFiles")
-    @JacksonXmlProperty(localName = "File")
-    override val sourceFiles: List<SourceFileImpl> = emptyList()
+    override val providesDirectionalDerivative: Boolean
+        get() = cs.isProvidesDirectionalDerivative
+
+    override val sourceFiles: List<SourceFile>
+        get() = cs.sourceFiles.file.map { SourceFile(it.name) }
+
+    override val canHandleVariableCommunicationStepSize: Boolean
+        get() = cs.isCanHandleVariableCommunicationStepSize
+
+    override val canInterpolateInputs: Boolean
+        get() = cs.isCanInterpolateInputs
+
+    override val maxOutputDerivativeOrder: Int
+        get() = cs.maxOutputDerivativeOrder.toInt()
+
+    override val canRunAsynchronuously: Boolean
+        get() = cs.isCanRunAsynchronuously
+
+    override val canProvideMaxStepSize: Boolean
+        get() = cs.isCanHandleVariableCommunicationStepSize
 
 }
 
-/**
- * @author Lars Ivar Hatledal
- */
-data class CoSimulationAttributesImpl(
-
-        @JacksonXmlProperty
-        override val canHandleVariableCommunicationStepSize: Boolean = false,
-
-        @JacksonXmlProperty
-        override val canInterpolateInputs: Boolean = false,
-
-        @JacksonXmlProperty
-        override val maxOutputDerivativeOrder: Int = 0,
-
-        @JacksonXmlProperty
-        override val canRunAsynchronuously: Boolean = false,
-
-        @JacksonXmlProperty
-        override val canProvideMaxStepSize: Boolean = false
-
-
-) : CommonFmuAttributesImpl(), CoSimulationAttributes
 
 /**
  * @author Lars Ivar Hatledal
  */
-data class ModelExchangeAttributesImpl(
+class ModelExchangeAttributesImpl(
+        md: Fmi2ModelDescription
+) : CommonFmuAttributes, ModelExchangeAttributes, Serializable {
 
-        @JacksonXmlProperty
-        override val completedIntegratorStepNotNeeded: Boolean = false
+    private val me: Fmi2ModelDescription.ModelExchange = md.modelExchangeAndCoSimulation.find {
+        it is Fmi2ModelDescription.ModelExchange
+    } as Fmi2ModelDescription.ModelExchange
 
-) : CommonFmuAttributesImpl(), ModelExchangeAttributes
+    override val modelIdentifier: String
+        get() = me.modelIdentifier
+
+    override val needsExecutionTool: Boolean
+        get() = me.isNeedsExecutionTool
+
+    override val canBeInstantiatedOnlyOncePerProcess: Boolean
+        get() = me.isCanBeInstantiatedOnlyOncePerProcess
+
+    override val canNotUseMemoryManagementFunctions: Boolean
+        get() = me.isCanNotUseMemoryManagementFunctions
+
+    override val canGetAndSetFMUstate: Boolean
+        get() = me.isCanGetAndSetFMUstate
+
+    override val canSerializeFMUstate: Boolean
+        get() = me.isCanSerializeFMUstate
+
+    override val providesDirectionalDerivative: Boolean
+        get() = me.isProvidesDirectionalDerivative
+
+    override val sourceFiles: List<SourceFile>
+        get() = me.sourceFiles.file.map { SourceFile(it.name) }
+
+    override val completedIntegratorStepNotNeeded: Boolean
+        get() = me.isCompletedIntegratorStepNotNeeded
+
+}

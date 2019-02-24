@@ -24,8 +24,6 @@
 
 package no.ntnu.ihb.fmi4j.modeldescription.structure
 
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty
-import java.io.Serializable
 
 /**
  *
@@ -34,50 +32,23 @@ import java.io.Serializable
  *
  * @author Lars Ivar Hatledal
  */
-interface Unknown {
+data class Unknown (
 
     /**
      * ScalarVariable index of Unknown
      */
-    val index: Int
+    val index: Int,
 
     /**
      * Defines the dependency of the Unknown (directly or indirectly via auxiliary variables)
      * on the Knowns in Continuous-Time and Event Mode (ModelExchange) and at Communication Points (CoSimulation)
      */
-    val dependencies: List<Int>
+    val dependencies: List<Int>,
 
     /**
      * If present, it must be assumed that the Unknown depends on the Knowns
      * without a particular structure.
      */
-    val dependenciesKind: String?
+    val dependenciesKind: List<String>?
 
-}
-
-/**
- * @author Lars Ivar Hatledal
- */
-class UnknownImpl(
-
-        @JacksonXmlProperty
-        override var index: Int,
-
-        @JacksonXmlProperty(localName = "dependencies")
-        private var _dependencies: String? = null,
-
-        @JacksonXmlProperty
-        override val dependenciesKind: String? = null
-
-) : Unknown, Serializable {
-
-    override val dependencies: List<Int>
-        get() = _dependencies?.let {
-            it.split(" ").mapNotNull { it.toIntOrNull() }
-        } ?: emptyList()
-
-    override fun toString(): String {
-        return "UnknownImpl(index=$index, dependencies=$dependencies, dependenciesKind=$dependenciesKind)"
-    }
-
-}
+)

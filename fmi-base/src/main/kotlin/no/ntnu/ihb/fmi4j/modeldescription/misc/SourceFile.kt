@@ -24,29 +24,15 @@
 
 package no.ntnu.ihb.fmi4j.modeldescription.misc
 
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty
 import java.io.Serializable
-
 
 /**
  * @author Lars Ivar Hatledal
  */
-interface SourceFile {
-
+data class SourceFile(
         /**
          * Name of the file including the path to the sources
          * directory, using forward slash as separator
          */
         val name: String
-
-}
-
-/**
- * @author Lars Ivar Hatledal
- */
-data class SourceFileImpl(
-
-        @JacksonXmlProperty
-        override val name: String
-
-) : SourceFile, Serializable
+)

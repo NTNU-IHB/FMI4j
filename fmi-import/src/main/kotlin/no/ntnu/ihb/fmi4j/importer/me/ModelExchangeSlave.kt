@@ -240,6 +240,5 @@ class CoSimulationModelDescriptionWrapper(
         get() = false
     override val canProvideMaxStepSize: Boolean
         get() = false
-    override val attributes: CoSimulationAttributes
-        get() = super<CoSimulationModelDescription>.attributes
+
 }

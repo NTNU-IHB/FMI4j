@@ -31,7 +31,8 @@ import no.ntnu.ihb.fmi4j.modeldescription.misc.TypeDefinitions
 import no.ntnu.ihb.fmi4j.modeldescription.misc.UnitDefinitions
 import no.ntnu.ihb.fmi4j.modeldescription.structure.ModelStructure
 import no.ntnu.ihb.fmi4j.modeldescription.variables.ModelVariables
-import no.ntnu.ihb.fmi4j.modeldescription.variables.TypedScalarVariable
+import no.ntnu.ihb.fmi4j.modeldescription.variables.ScalarVariable
+import java.util.*
 
 /**
  * Static information related to an FMU
@@ -111,7 +112,7 @@ interface ModelDescription {
      * zone, in other words Greenwich meantime).
      * [Example: "2009-12-08T14:33:22Z"].
      */
-    val generationDateAndTime: String?
+    val generationDateAndTime: GregorianCalendar?
 
     /**
      * Provides default settings for the integrator, such as stop time and
@@ -162,7 +163,7 @@ interface ModelDescription {
     val numberOfContinuousStates: Int
         get() = modelStructure.derivatives.size
 
-    fun getVariableByName(name: String): TypedScalarVariable<*> {
+    fun getVariableByName(name: String): ScalarVariable {
         return modelVariables.getByName(name)
     }
 
@@ -182,19 +183,9 @@ interface ModelDescriptionProvider: ModelDescription {
 
 }
 
-interface CommonModelDescription: ModelDescription, CommonFmuAttributes {
+interface CommonModelDescription: ModelDescription, CommonFmuAttributes
 
-    val attributes: CommonFmuAttributes
-        get() = CommonFmuAttributesLite(this)
-
-}
-
-interface CoSimulationModelDescription: CommonModelDescription, CoSimulationAttributes {
-
-    override val attributes: CoSimulationAttributes
-        get() = CoSimulationAttributesLite(this)
-
-}
+interface CoSimulationModelDescription: CommonModelDescription, CoSimulationAttributes
 
 interface ModelExchangeModelDescription: CommonModelDescription, ModelExchangeAttributes {
 
@@ -204,21 +195,4 @@ interface ModelExchangeModelDescription: CommonModelDescription, ModelExchangeAt
      */
     val numberOfEventIndicators: Int
 
-    override val attributes: ModelExchangeAttributes
-        get() = ModelExchangeAttributesLite(this)
-
 }
-
-private class CommonFmuAttributesLite(
-        attributes: CommonFmuAttributes
-): CommonFmuAttributes by attributes
-
-private class CoSimulationAttributesLite(
-        attributes: CoSimulationAttributes
-): CoSimulationAttributes by attributes
-
-
-private class ModelExchangeAttributesLite(
-        attributes: ModelExchangeAttributes
-): ModelExchangeAttributes by attributes
-

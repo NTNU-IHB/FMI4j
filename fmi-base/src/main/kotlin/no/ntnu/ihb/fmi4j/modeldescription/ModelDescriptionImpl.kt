@@ -24,109 +24,164 @@
 
 package no.ntnu.ihb.fmi4j.modeldescription
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement
+import no.ntnu.ihb.fmi.fmi2.xml.Fmi2ModelDescription
 import no.ntnu.ihb.fmi4j.modeldescription.logging.LogCategories
-import no.ntnu.ihb.fmi4j.modeldescription.misc.DefaultExperimentImpl
-import no.ntnu.ihb.fmi4j.modeldescription.misc.TypeDefinitions
-import no.ntnu.ihb.fmi4j.modeldescription.misc.UnitDefinitions
+import no.ntnu.ihb.fmi4j.modeldescription.logging.LogCategory
+import no.ntnu.ihb.fmi4j.modeldescription.misc.*
+import no.ntnu.ihb.fmi4j.modeldescription.misc.Unit
 import no.ntnu.ihb.fmi4j.modeldescription.structure.ModelStructure
-import no.ntnu.ihb.fmi4j.modeldescription.structure.ModelStructureImpl
-import no.ntnu.ihb.fmi4j.modeldescription.variables.ModelVariablesImpl
+import no.ntnu.ihb.fmi4j.modeldescription.structure.Unknown
+import no.ntnu.ihb.fmi4j.modeldescription.variables.IntegerVariable
+import no.ntnu.ihb.fmi4j.modeldescription.variables.ModelVariables
+import no.ntnu.ihb.fmi4j.modeldescription.variables.ScalarVariableImpl
 import java.io.Serializable
-
+import java.util.*
 
 /**
  * Default ModelDescription implementation
  *
  * @author Lars Ivar Hatledal
  */
-@JacksonXmlRootElement(localName = "fmiModelDescription")
-@JsonIgnoreProperties(ignoreUnknown = true)
 class ModelDescriptionImpl(
-
-        @JacksonXmlProperty
-        override val fmiVersion: String,
-
-        @JacksonXmlProperty
-        override val modelName: String,
-
-        @JacksonXmlProperty
-        override val guid: String,
-
-        @JacksonXmlProperty
-        override val license: String? = null,
-
-        @JacksonXmlProperty
-        override val copyright: String? = null,
-
-        @JacksonXmlProperty
-        override val author: String? = null,
-
-        @JacksonXmlProperty
-        override val version: String? = null,
-
-        @JacksonXmlProperty
-        override val description: String? = null,
-
-        @JacksonXmlProperty
-        override val generationTool: String? = null,
-
-        @JacksonXmlProperty
-        override val generationDateAndTime: String? = null,
-
-        @JacksonXmlProperty
-        override val variableNamingConvention: String? = null,
-
-        @JacksonXmlProperty(localName = "DefaultExperiment")
-        override val defaultExperiment: DefaultExperimentImpl? = null,
-
-        @JacksonXmlProperty(localName = "ModelVariables")
-        override val modelVariables: ModelVariablesImpl,
-
-        @JacksonXmlProperty(localName = "LogCategories")
-        override val logCategories: LogCategories? = null,
-
-        @JacksonXmlProperty(localName = "UnitDefinitions")
-        override val unitDefinitions: UnitDefinitions? = null,
-
-        @JacksonXmlProperty(localName = "TypeDefinitions")
-        override val typeDefinitions: TypeDefinitions? = null,
-
-        @JacksonXmlProperty(localName = "CoSimulation")
-        private val coSimulationAttributes: CoSimulationAttributesImpl? = null,
-
-        @JacksonXmlProperty(localName = "ModelExchange")
-        private val modelExchangeAttributes: ModelExchangeAttributesImpl? = null,
-
-        @JacksonXmlProperty
-        private val numberOfEventIndicators: Int = 0
-
-
+        private val md: Fmi2ModelDescription
 ) : ModelDescriptionProvider, Serializable {
 
-    @JacksonXmlProperty(localName = "ModelStructure")
-    private val _modelStructure: ModelStructureImpl? = null
+    override val fmiVersion: String
+        get() = md.fmiVersion
 
-    override val modelStructure: ModelStructure
-        get() =_modelStructure!!
+    override val modelName: String
+        get() = md.modelName
+
+    override val guid: String
+        get() = md.guid
+
+    override val license: String?
+        get() = md.license
+
+    override val copyright: String?
+        get() = md.copyright
+
+    override val author: String?
+        get() = md.author
+
+    override val version: String?
+        get() = md.version
+
+    override val description: String?
+        get() = md.description
+
+    override val generationTool: String?
+        get() = md.generationTool
+
+    override val generationDateAndTime: GregorianCalendar?
+        get() = md.generationDateAndTime?.toGregorianCalendar()
+
+    override val variableNamingConvention: String?
+        get() = md.variableNamingConvention
+
+    override val defaultExperiment: DefaultExperiment? =
+            md.defaultExperiment?.let {
+                DefaultExperiment(
+                        startTime = it.startTime,
+                        stopTime = it.stopTime,
+                        tolerance = it.tolerance,
+                        stepSize = it.stepSize
+                )
+            }
+
+
+    override val modelVariables: ModelVariables =
+            md.modelVariables.scalarVariable.map {
+                ScalarVariableImpl(it)
+            }.let {
+                ModelVariables(it)
+            }
+
+    override val logCategories: LogCategories? =
+        md.logCategories?.category?.map {
+            LogCategory(
+                    name = it.name,
+                    description = it.description
+            )
+        }
+
+
+    override val unitDefinitions: UnitDefinitions? =
+        md.unitDefinitions?.let {
+            it.unit?.map { u ->
+                Unit(
+                        name = u.name,
+                        baseUnit = u.baseUnit.let { bu ->
+                            BaseUnit(
+                                    kg = bu?.kg,
+                                    K = bu?.k,
+                                    m = bu?.m,
+                                    mol = bu?.mol,
+                                    s = bu?.s,
+                                    A = bu?.a,
+                                    cd = bu?.cd,
+                                    rad = bu?.rad,
+                                    factor = bu.factor,
+                                    offset = bu.offset
+
+                            )
+                        },
+                        displayUnits = u.displayUnit?.map { du ->
+                            DisplayUnit(
+                                    name = du.name,
+                                    factor = du.factor,
+                                    offset = du.offset
+                            )
+                        }
+                )
+            }
+        }
+
+
+    override val typeDefinitions: TypeDefinitions? =
+        md.typeDefinitions?.simpleType?.map { type ->
+            SimpleType(
+                    name = type.name,
+                    description = type.description
+            )
+        }
+
+
+    override val modelStructure: ModelStructure =
+        md.modelStructure.let { structure ->
+            ModelStructure(
+                    outputs = structure.outputs.unknown.map { unknown ->
+                        Unknown(
+                                index = unknown.index.toInt(),
+                                dependencies = unknown.dependencies.map { it.toInt() },
+                                dependenciesKind = unknown.dependenciesKind
+                        )
+                    }
+            )
+        }
+
 
     override val supportsCoSimulation: Boolean
-        get() = coSimulationAttributes != null
+        get() = md.modelExchangeAndCoSimulation.find { it is Fmi2ModelDescription.CoSimulation } != null
 
     override val supportsModelExchange: Boolean
-        get() = modelExchangeAttributes != null
+        get() = md.modelExchangeAndCoSimulation.find { it is Fmi2ModelDescription.ModelExchange } != null
+
+
 
     override fun asCoSimulationModelDescription(): CoSimulationModelDescription {
-        return CoSimulationModelDescriptionImpl(this, coSimulationAttributes
-                ?: throw IllegalStateException("No CoSimulation attributes present in ModelDescription!"))
+        if (!supportsCoSimulation) {
+            throw IllegalStateException("FMU does not support Co-simulation!")
+        }
+        return CoSimulationModelDescriptionImpl()
     }
 
+
     override fun asModelExchangeModelDescription(): ModelExchangeModelDescription {
-        return ModelExchangeModelDescriptionImpl(this, modelExchangeAttributes
-                ?: throw IllegalStateException("No ModelExchange attributes in ModelDescription!"),
-                numberOfEventIndicators)
+        if (!supportsModelExchange) {
+            throw IllegalStateException("FMU does not support Model Exchange!")
+        }
+        return ModelExchangeModelDescriptionImpl()
     }
 
     private val stringContent: String
@@ -149,17 +204,11 @@ class ModelDescriptionImpl(
         return "ModelDescriptionImpl(\n$stringContent\n)"
     }
 
+    inner class CoSimulationModelDescriptionImpl : CoSimulationModelDescription, ModelDescription by this, CoSimulationAttributes by CoSimulationAttributesImpl(md)
+
+    inner class ModelExchangeModelDescriptionImpl : ModelExchangeModelDescription, ModelDescription by this, ModelExchangeAttributes by ModelExchangeAttributesImpl(md) {
+        override val numberOfEventIndicators: Int = md.numberOfEventIndicators.toInt()
+    }
+
 }
 
-class CoSimulationModelDescriptionImpl(
-        md: ModelDescription,
-        cs: CoSimulationAttributes
-): CoSimulationModelDescription, ModelDescription by md, CoSimulationAttributes by cs
-
-
-class ModelExchangeModelDescriptionImpl(
-        md: ModelDescription,
-        me: ModelExchangeAttributes,
-        override val numberOfEventIndicators: Int = 0
-
-): ModelExchangeModelDescription, ModelDescription by md, ModelExchangeAttributes by me

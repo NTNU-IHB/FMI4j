@@ -24,19 +24,17 @@
 
 package no.ntnu.ihb.fmi4j.modeldescription.logging
 
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty
 import java.io.Serializable
+
+typealias LogCategories = List<LogCategory>
 
 /**
  * @author Lars Ivar Hatledal
  */
 data class LogCategory(
 
-        @JacksonXmlProperty
         val name: String,
 
-        @JacksonXmlProperty
         val description: String? = null
 
 ) : Serializable {
@@ -92,30 +90,6 @@ data class LogCategory(
          * Log all messages
          */
         const val LOG_ALL = "logAll"
-    }
-
-}
-
-/**
- * @author Lars Ivar Hatledal
- */
-class LogCategories : Iterable<LogCategory>, Serializable {
-
-    val size: Int
-        get() = categories.size
-
-    override fun iterator(): Iterator<LogCategory> = categories.iterator()
-
-    @JacksonXmlProperty(localName = "Category")
-    @JacksonXmlElementWrapper(useWrapping = false)
-    private val categories: List<LogCategory> = emptyList()
-
-    operator fun contains(category: LogCategory) = categories.contains(category)
-
-    operator fun contains(category: String) = categories.map { it.name }.contains(category)
-
-    override fun toString(): String {
-        return "LogCategories(size=$size, categories=$categories)"
     }
 
 }

@@ -24,9 +24,6 @@
 
 package no.ntnu.ihb.fmi4j.modeldescription.variables
 
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement
 import no.ntnu.ihb.fmi4j.common.StringArray
 import no.ntnu.ihb.fmi4j.common.ValueReference
 import no.ntnu.ihb.fmi4j.common.ValueReferences
@@ -35,19 +32,9 @@ import java.io.Serializable
 /**
  * @author Lars Ivar Hatledal
  */
-interface ModelVariables : Iterable<TypedScalarVariable<*>> {
-
-    /**
-     * Get the number of model categories held by this structure
-     */
-    val size: Int
-        get() = getVariables().size
-
-    fun getVariables(): List<TypedScalarVariable<*>>
-
-    operator fun get(index: Int): TypedScalarVariable<*> = getVariables()[index]
-
-    override fun iterator(): Iterator<TypedScalarVariable<*>> = getVariables().iterator()
+class ModelVariables(
+        private val variables: List<ScalarVariable>
+) : List<ScalarVariable> by variables {
 
     val integers: List<IntegerVariable>
         get() = mapNotNull { (it as? IntegerVariable)?.asIntegerVariable() }
@@ -98,7 +85,7 @@ interface ModelVariables : Iterable<TypedScalarVariable<*>> {
      * @vr valueReference
      * @throws IllegalArgumentException if there are no variables with the provided value reference
      */
-    fun getByValueReference(vr: ValueReference): List<TypedScalarVariable<*>> {
+    fun getByValueReference(vr: ValueReference): List<ScalarVariable> {
         return filter { it.valueReference == vr }
     }
 
@@ -107,7 +94,7 @@ interface ModelVariables : Iterable<TypedScalarVariable<*>> {
      * @name the variable name
      * @throws IllegalArgumentException if there is no variable with the provided name
      */
-    fun getByName(name: String): TypedScalarVariable<*> {
+    fun getByName(name: String): ScalarVariable {
         return firstOrNull { it.name == name }
                 ?: throw IllegalArgumentException("No variable with name '$name'")
     }
@@ -115,35 +102,10 @@ interface ModelVariables : Iterable<TypedScalarVariable<*>> {
     /**
      * Return a list of all variables with the provided causality
      */
-    fun getByCausality(causality: Causality): List<TypedScalarVariable<*>> {
+    fun getByCausality(causality: Causality): List<ScalarVariable> {
         return filter { it.causality == causality }
     }
 
 }
 
-/**
- * @author Lars Ivar Hatledal
- */
-@JacksonXmlRootElement(localName = "ModelVariables")
-class ModelVariablesImpl : ModelVariables, Serializable {
-
-    @JacksonXmlProperty(localName = "ScalarVariable")
-    @JacksonXmlElementWrapper(useWrapping = false)
-    private val variables: List<ScalarVariableImpl>? = null
-
-    @Transient
-    private var _variables: List<TypedScalarVariable<*>>? = null
-
-    override fun getVariables(): List<TypedScalarVariable<*>> {
-        if (_variables == null) {
-            _variables = variables!!.map { it.toTyped() }
-        }
-        return _variables!!
-    }
-
-    override fun toString(): String {
-        return "ModelVariablesImpl(variables=$variables)"
-    }
-
-}
 
