@@ -22,12 +22,12 @@
  * THE SOFTWARE.
  */
 
-package no.ntnu.ihb.fmi4j.fmudriver
+package no.ntnu.ihb.fmi.fmudriver
 
-import no.ntnu.ihb.fmi4j.common.Slave
-import no.ntnu.ihb.fmi4j.importer.Fmu
-import no.ntnu.ihb.fmi4j.solvers.Solver
-import no.ntnu.ihb.fmi4j.solvers.apache.ApacheSolvers
+import no.ntnu.ihb.fmi.common.Slave
+import no.ntnu.ihb.fmi.importer.Fmu
+import no.ntnu.ihb.fmi.solvers.Solver
+import no.ntnu.ihb.fmi.solvers.apache.ApacheSolvers
 import org.apache.commons.csv.CSVFormat
 import org.apache.commons.csv.CSVPrinter
 import org.apache.commons.csv.QuoteMode
@@ -138,7 +138,7 @@ class FmuDriver(
                 val data = sb.toString()
                 data.toByteArray().size.also { size ->
                     if (options.failOnLargeSize && (size > 1e6)) {
-                        throw Rejection("Generated CSV larger than 1MB. Was: ${size/1e6}MB!")
+                        throw Rejection("Generated CSV larger than 1MB. Was: ${size / 1e6}MB!")
                     }
                 }
 

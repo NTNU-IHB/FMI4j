@@ -1,6 +1,6 @@
-package no.ntnu.ihb.fmi4j.fmudriver
+package no.ntnu.ihb.fmi.fmudriver
 
-import no.ntnu.ihb.fmi4j.xml.parser.ModelDescriptionParser
+import no.ntnu.ihb.fmi.xml.parser.ModelDescriptionParser
 import org.junit.jupiter.api.condition.OS
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -226,7 +226,7 @@ object CrossChecker {
             }
 
             fmus.parallelStream().forEach { fmu ->
-                if (CrossChecker.crossCheck(fmu, File(crossCheckDir, "results"))) {
+                if (crossCheck(fmu, File(crossCheckDir, "results"))) {
                     numPassed.incrementAndGet()
                 }
             }

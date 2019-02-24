@@ -1,6 +1,6 @@
 package no.ntnu.ihb.fmu2jar
 
-import no.ntnu.ihb.fmi4j.common.Slave
+import no.ntnu.ihb.fmi.common.Slave
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test

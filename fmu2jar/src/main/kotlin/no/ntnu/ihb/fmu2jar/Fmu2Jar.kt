@@ -24,9 +24,9 @@
 
 package no.ntnu.ihb.fmu2jar
 
-import no.ntnu.ihb.fmi4j.util.OsUtil
-import no.ntnu.ihb.fmi4j.xml.ModelDescriptionProvider
-import no.ntnu.ihb.fmi4j.xml.parser.ModelDescriptionParser
+import no.ntnu.ihb.fmi.util.OsUtil
+import no.ntnu.ihb.fmi.xml.ModelDescriptionProvider
+import no.ntnu.ihb.fmi.xml.parser.ModelDescriptionParser
 import no.ntnu.ihb.fmu2jar.cli.Args
 import no.ntnu.ihb.fmu2jar.cli.GenerateOptions
 import no.ntnu.ihb.fmu2jar.codegen.CodeGenerator

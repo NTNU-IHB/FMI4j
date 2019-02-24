@@ -1,6 +1,6 @@
 package no.ntnu.ihb.fmu2jar.codegen
 
-import no.ntnu.ihb.fmi4j.xml.parser.ModelDescriptionParser
+import no.ntnu.ihb.fmi.xml.parser.ModelDescriptionParser
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.slf4j.Logger

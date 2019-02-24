@@ -24,8 +24,8 @@
 
 package no.ntnu.ihb.fmu2jar.codegen
 
-import no.ntnu.ihb.fmi4j.xml.ModelDescriptionProvider
-import no.ntnu.ihb.fmi4j.xml.variables.*
+import no.ntnu.ihb.fmi.xml.ModelDescriptionProvider
+import no.ntnu.ihb.fmi.xml.variables.*
 
 /**
  * @author Lars Ivar Hatledal
@@ -40,7 +40,7 @@ class CodeGenerator(
 
         var solverImport = ""
         if (md.supportsModelExchange) {
-            solverImport = "import no.ntnu.ihb.fmi4j.solvers.Solver"
+            solverImport = "import no.ntnu.ihb.fmi.solvers.Solver"
         }
 
         return """
@@ -52,10 +52,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Iterator;
 import java.io.IOException;
-import no.ntnu.ihb.fmi4j.common.*;
-import no.ntnu.ihb.fmi4j.importer.*;
-import no.ntnu.ihb.fmi4j.xml.*;
-import no.ntnu.ihb.fmi4j.xml.variables.*;
+import no.ntnu.ihb.fmi.common.*;
+import no.ntnu.ihb.fmi.importer.*;
+import no.ntnu.ihb.fmi.xml.*;
+import no.ntnu.ihb.fmi.xml.variables.*;
 $solverImport
 
 /***

@@ -1,4 +1,4 @@
-package no.ntnu.ihb.fmi4j.fmudriver
+package no.ntnu.ihb.fmi.fmudriver
 
 import picocli.CommandLine
 import java.io.File
