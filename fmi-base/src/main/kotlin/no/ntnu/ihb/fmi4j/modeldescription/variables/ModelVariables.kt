@@ -27,7 +27,6 @@ package no.ntnu.ihb.fmi4j.modeldescription.variables
 import no.ntnu.ihb.fmi4j.common.StringArray
 import no.ntnu.ihb.fmi4j.common.ValueReference
 import no.ntnu.ihb.fmi4j.common.ValueReferences
-import java.io.Serializable
 
 /**
  * @author Lars Ivar Hatledal
@@ -37,19 +36,19 @@ class ModelVariables(
 ) : List<ScalarVariable> by variables {
 
     val integers: List<IntegerVariable>
-        get() = mapNotNull { (it as? IntegerVariable)?.asIntegerVariable() }
+        get() = filter { it.isIntegerVariable() }.map { it.asIntegerVariable() }
 
     val reals: List<RealVariable>
-        get() = mapNotNull { (it as? RealVariable)?.asRealVariable() }
+        get() = filter { it.isRealVariable() }.map { it.asRealVariable() }
 
     val strings: List<StringVariable>
-        get() = mapNotNull { (it as? StringVariable)?.asStringVariable() }
+        get() = filter { it.isStringVariable() }.map { it.asStringVariable() }
 
     val booleans: List<BooleanVariable>
-        get() = mapNotNull { (it as? BooleanVariable)?.asBooleanVariable() }
+        get() = filter { it.isBooleanVariable() }.map { it.asBooleanVariable() }
 
     val enumerations: List<EnumerationVariable>
-        get() = mapNotNull { (it as? EnumerationVariable)?.asEnumerationVariable() }
+        get() = filter { it.isEnumerationVariable() }.map { it.asEnumerationVariable() }
 
     /**
      * Does a variable with the provided valueReference exist?

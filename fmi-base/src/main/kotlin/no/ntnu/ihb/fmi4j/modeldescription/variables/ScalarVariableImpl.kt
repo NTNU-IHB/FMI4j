@@ -4,7 +4,7 @@ import no.ntnu.ihb.fmi.fmi2.xml.Fmi2ScalarVariable
 import no.ntnu.ihb.fmi4j.common.Real
 
 class ScalarVariableImpl(
-        val v: Fmi2ScalarVariable
+        private val v: Fmi2ScalarVariable
 ): ScalarVariable {
 
     override val name: String
@@ -35,6 +35,26 @@ class ScalarVariableImpl(
 
     override val canHandleMultipleSetPerTimeInstant: Boolean
         get() = v.isCanHandleMultipleSetPerTimeInstant
+
+    override fun isIntegerVariable(): Boolean {
+        return v.integer != null
+    }
+
+    override fun isRealVariable(): Boolean {
+        return v.real != null
+    }
+
+    override fun isStringVariable(): Boolean {
+        return v.string != null
+    }
+
+    override fun isBooleanVariable(): Boolean {
+        return v.boolean != null
+    }
+
+    override fun isEnumerationVariable(): Boolean {
+        return v.enumeration != null
+    }
 
     override fun asIntegerVariable(): IntegerVariable {
         return IntegerVariableImpl()

@@ -24,6 +24,9 @@
 
 package no.ntnu.ihb.fmi4j.modeldescription
 
+import com.google.gson.ExclusionStrategy
+import com.google.gson.FieldAttributes
+import com.google.gson.GsonBuilder
 import no.ntnu.ihb.fmi.fmi2.xml.Fmi2ModelDescription
 import no.ntnu.ihb.fmi4j.modeldescription.logging.LogCategories
 import no.ntnu.ihb.fmi4j.modeldescription.logging.LogCategory
@@ -98,67 +101,81 @@ class ModelDescriptionImpl(
             }
 
     override val logCategories: LogCategories? =
-        md.logCategories?.category?.map {
-            LogCategory(
-                    name = it.name,
-                    description = it.description
-            )
-        }
+            md.logCategories?.category?.map {
+                LogCategory(
+                        name = it.name,
+                        description = it.description
+                )
+            }
 
 
     override val unitDefinitions: UnitDefinitions? =
-        md.unitDefinitions?.let {
-            it.unit?.map { u ->
-                Unit(
-                        name = u.name,
-                        baseUnit = u.baseUnit.let { bu ->
-                            BaseUnit(
-                                    kg = bu?.kg,
-                                    K = bu?.k,
-                                    m = bu?.m,
-                                    mol = bu?.mol,
-                                    s = bu?.s,
-                                    A = bu?.a,
-                                    cd = bu?.cd,
-                                    rad = bu?.rad,
-                                    factor = bu.factor,
-                                    offset = bu.offset
+            md.unitDefinitions?.let {
+                it.unit?.map { u ->
+                    Unit(
+                            name = u.name,
+                            baseUnit = u.baseUnit?.let { bu ->
+                                BaseUnit(
+                                        kg = bu.kg,
+                                        K = bu.k,
+                                        m = bu.m,
+                                        mol = bu.mol,
+                                        s = bu.s,
+                                        A = bu.a,
+                                        cd = bu.cd,
+                                        rad = bu.rad,
+                                        factor = bu.factor,
+                                        offset = bu.offset
 
-                            )
-                        },
-                        displayUnits = u.displayUnit?.map { du ->
-                            DisplayUnit(
-                                    name = du.name,
-                                    factor = du.factor,
-                                    offset = du.offset
-                            )
-                        }
-                )
+                                )
+                            },
+                            displayUnits = u.displayUnit?.map { du ->
+                                DisplayUnit(
+                                        name = du.name,
+                                        factor = du.factor,
+                                        offset = du.offset
+                                )
+                            }
+                    )
+                }
             }
-        }
 
 
     override val typeDefinitions: TypeDefinitions? =
-        md.typeDefinitions?.simpleType?.map { type ->
-            SimpleType(
-                    name = type.name,
-                    description = type.description
-            )
-        }
+            md.typeDefinitions?.simpleType?.map { type ->
+                SimpleType(
+                        name = type.name,
+                        description = type.description
+                )
+            }
 
 
     override val modelStructure: ModelStructure =
-        md.modelStructure.let { structure ->
-            ModelStructure(
-                    outputs = structure.outputs.unknown.map { unknown ->
-                        Unknown(
-                                index = unknown.index.toInt(),
-                                dependencies = unknown.dependencies.map { it.toInt() },
-                                dependenciesKind = unknown.dependenciesKind
-                        )
-                    }
-            )
-        }
+            md.modelStructure.let { structure ->
+                ModelStructure(
+                        outputs = structure.outputs?.unknown?.map { unknown ->
+                            Unknown(
+                                    index = unknown.index.toInt(),
+                                    dependencies = unknown.dependencies.map { it.toInt() },
+                                    dependenciesKind = unknown.dependenciesKind
+                            )
+                        } ?: emptyList(),
+                        derivatives = structure.derivatives?.unknown?.map { unknown ->
+                            Unknown(
+                                    index = unknown.index.toInt(),
+                                    dependencies = unknown.dependencies.map { it.toInt() },
+                                    dependenciesKind = unknown.dependenciesKind
+                            )
+                        } ?: emptyList(),
+                        initialUnknowns = structure.derivatives?.unknown?.map { unknown ->
+                            Unknown(
+                                    index = unknown.index.toInt(),
+                                    dependencies = unknown.dependencies.map { it.toInt() },
+                                    dependenciesKind = unknown.dependenciesKind
+                            )
+                        } ?: emptyList()
+                )
+            }
 
 
     override val supportsCoSimulation: Boolean
@@ -167,15 +184,12 @@ class ModelDescriptionImpl(
     override val supportsModelExchange: Boolean
         get() = md.modelExchangeAndCoSimulation.find { it is Fmi2ModelDescription.ModelExchange } != null
 
-
-
     override fun asCoSimulationModelDescription(): CoSimulationModelDescription {
         if (!supportsCoSimulation) {
             throw IllegalStateException("FMU does not support Co-simulation!")
         }
         return CoSimulationModelDescriptionImpl()
     }
-
 
     override fun asModelExchangeModelDescription(): ModelExchangeModelDescription {
         if (!supportsModelExchange) {
@@ -200,6 +214,12 @@ class ModelDescriptionImpl(
                 defaultExperiment?.let { "defaultExperiment=$defaultExperiment" }
         ).joinToString("\n")
 
+    fun toJson(): String {
+        return GsonBuilder()
+                .setPrettyPrinting()
+                .create().toJson(md)
+    }
+
     override fun toString(): String {
         return "ModelDescriptionImpl(\n$stringContent\n)"
     }
@@ -208,6 +228,28 @@ class ModelDescriptionImpl(
 
     inner class ModelExchangeModelDescriptionImpl : ModelExchangeModelDescription, ModelDescription by this, ModelExchangeAttributes by ModelExchangeAttributesImpl(md) {
         override val numberOfEventIndicators: Int = md.numberOfEventIndicators.toInt()
+    }
+
+    companion object {
+
+        @JvmStatic
+        fun fromJson(json: String): ModelDescription {
+            return GsonBuilder()
+                    .addDeserializationExclusionStrategy(object: ExclusionStrategy {
+
+                        override fun shouldSkipField(f: FieldAttributes): Boolean {
+                            return f.name == "generationDateAndTime"
+                        }
+
+                        override fun shouldSkipClass(clazz: Class<*>): Boolean {
+                            return false
+                        }
+                    })
+                    .create().fromJson(json, Fmi2ModelDescription::class.java).let {
+                        ModelDescriptionImpl(it)
+                    }
+        }
+
     }
 
 }

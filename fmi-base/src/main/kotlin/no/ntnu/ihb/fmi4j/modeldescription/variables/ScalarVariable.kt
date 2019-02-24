@@ -25,7 +25,7 @@
 package no.ntnu.ihb.fmi4j.modeldescription.variables
 
 import no.ntnu.ihb.fmi4j.common.Real
-
+import java.lang.IllegalStateException
 
 internal const val INTEGER_TYPE = "Integer"
 internal const val REAL_TYPE = "Real"
@@ -79,6 +79,26 @@ interface ScalarVariable {
 
     val canHandleMultipleSetPerTimeInstant: Boolean
 
+    val typeName: String
+        get() = when {
+            isIntegerVariable() -> INTEGER_TYPE
+            isRealVariable() -> REAL_TYPE
+            isStringVariable() -> STRING_TYPE
+            isBooleanVariable() -> BOOLEAN_TYPE
+            isEnumerationVariable() -> ENUMERATION_TYPE
+            else -> throw IllegalStateException("")
+        }
+
+    fun isIntegerVariable(): Boolean
+
+    fun isRealVariable(): Boolean
+
+    fun isStringVariable(): Boolean
+
+    fun isBooleanVariable(): Boolean
+
+    fun isEnumerationVariable(): Boolean
+
     fun asIntegerVariable(): IntegerVariable
 
     fun asRealVariable(): RealVariable
@@ -94,6 +114,7 @@ interface ScalarVariable {
 interface TypedScalarVariable<E>: ScalarVariable {
 
     val start: E?
+
     val declaredType: String?
 
 }

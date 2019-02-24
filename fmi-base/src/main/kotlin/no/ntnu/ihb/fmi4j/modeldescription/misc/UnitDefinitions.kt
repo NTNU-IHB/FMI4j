@@ -55,43 +55,43 @@ data class BaseUnit(
         /**
          * Exponent of SI base unit "kg"
          */
-        val kg: Int? = null,
+        val kg: Int = 0,
 
         /**
          * Exponent of SI base unit "m"
          */
-        val m: Int? = null,
+        val m: Int = 0,
 
         /**
          * Exponent of SI base unit "s"
          */
-        val s: Int? = null,
+        val s: Int = 0,
 
         /**
          * Exponent of SI base unit "A"
          */
-        val A: Int? = null,
+        val A: Int = 0,
 
         /**
          * Exponent of SI base unit "K"
          */
-        val K: Int? = null,
+        val K: Int = 0,
 
         /**
          * Exponent of SI base unit "mol"
          */
         
-        val mol: Int? = null,
+        val mol: Int = 0,
 
         /**
          * Exponent of SI base unit "cd"
          */
-        val cd: Int? = null,
+        val cd: Int = 0,
 
         /**
          * Exponent of SI base unit "rad"
          */
-        val rad: Int? = null,
+        val rad: Int = 0,
 
         val factor: Double = 1.0,
 

@@ -49,6 +49,6 @@ data class Unknown (
      * If present, it must be assumed that the Unknown depends on the Knowns
      * without a particular structure.
      */
-    val dependenciesKind: List<String>?
+    val dependenciesKind: List<String>
 
 )
