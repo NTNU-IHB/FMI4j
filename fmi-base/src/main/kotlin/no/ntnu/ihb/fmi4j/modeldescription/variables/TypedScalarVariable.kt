@@ -145,7 +145,7 @@ class IntegerVariable internal constructor(
  * @author Lars Ivar Hatledal
  */
 class RealVariable internal constructor(
-        v: ScalarVariableImpl,
+        v: ScalarVariable,
         a: RealAttribute
 ) : BoundedScalarVariable<Real>, ScalarVariable by v, RealAttribute by a {
 
@@ -173,7 +173,7 @@ class RealVariable internal constructor(
             quantity?.also { add("quantity=$quantity") }
             unit?.also { add("unit=$unit") }
             displayUnit?.also { add("displayUnit=$displayUnit") }
-            relativeQuantity?.also { add("relativeQuantity=$relativeQuantity") }
+            relativeQuantity.also { add("relativeQuantity=$relativeQuantity") }
             derivative?.also { add("derivative=$derivative") }
             description?.also { add("description=$description") }
             declaredType?.also { add("declaredType=$declaredType") }
@@ -189,7 +189,7 @@ class RealVariable internal constructor(
  * @author Lars Ivar Hatledal
  */
 class StringVariable internal constructor(
-        v: ScalarVariableImpl,
+        v: ScalarVariable,
         a: StringAttribute
 ) : TypedScalarVariable<String>, ScalarVariable by v, StringAttribute by a {
 
@@ -224,7 +224,7 @@ class StringVariable internal constructor(
  * @author Lars Ivar Hatledal
  */
 class BooleanVariable internal constructor(
-        v: ScalarVariableImpl,
+        v: ScalarVariable,
         a: BooleanAttribute
 ) : TypedScalarVariable<Boolean>, ScalarVariable by v, BooleanAttribute by a {
 
@@ -259,7 +259,7 @@ class BooleanVariable internal constructor(
  * @author Lars Ivar Hatledal
  */
 class EnumerationVariable internal constructor(
-        v: ScalarVariableImpl,
+        v: ScalarVariable,
         a: EnumerationAttribute
 ) : BoundedScalarVariable<Int>, ScalarVariable by v, EnumerationAttribute by a {
 

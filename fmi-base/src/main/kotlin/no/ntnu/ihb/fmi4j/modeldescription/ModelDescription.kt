@@ -25,11 +25,6 @@
 package no.ntnu.ihb.fmi4j.modeldescription
 
 import no.ntnu.ihb.fmi4j.common.ValueReference
-import no.ntnu.ihb.fmi4j.modeldescription.logging.LogCategories
-import no.ntnu.ihb.fmi4j.modeldescription.misc.DefaultExperiment
-import no.ntnu.ihb.fmi4j.modeldescription.misc.TypeDefinitions
-import no.ntnu.ihb.fmi4j.modeldescription.misc.UnitDefinitions
-import no.ntnu.ihb.fmi4j.modeldescription.structure.ModelStructure
 import no.ntnu.ihb.fmi4j.modeldescription.variables.ModelVariables
 import no.ntnu.ihb.fmi4j.modeldescription.variables.TypedScalarVariable
 

@@ -22,19 +22,12 @@
  * THE SOFTWARE.
  */
 
-package no.ntnu.ihb.fmi4j.modeldescription
+package no.ntnu.ihb.fmi4j.modeldescription.jacskon
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement
-import no.ntnu.ihb.fmi4j.modeldescription.logging.LogCategories
-import no.ntnu.ihb.fmi4j.modeldescription.misc.DefaultExperimentImpl
-import no.ntnu.ihb.fmi4j.modeldescription.misc.TypeDefinitions
-import no.ntnu.ihb.fmi4j.modeldescription.misc.UnitDefinitions
-import no.ntnu.ihb.fmi4j.modeldescription.structure.ModelStructure
-import no.ntnu.ihb.fmi4j.modeldescription.structure.ModelStructureImpl
-import no.ntnu.ihb.fmi4j.modeldescription.variables.ModelVariablesImpl
-import java.io.Serializable
+import no.ntnu.ihb.fmi4j.modeldescription.*
 
 
 /**
@@ -80,31 +73,31 @@ class ModelDescriptionImpl(
         override val variableNamingConvention: String? = null,
 
         @JacksonXmlProperty(localName = "DefaultExperiment")
-        override val defaultExperiment: DefaultExperimentImpl? = null,
+        override val defaultExperiment: JacksonDefaultExperiment? = null,
 
         @JacksonXmlProperty(localName = "ModelVariables")
-        override val modelVariables: ModelVariablesImpl,
+        override val modelVariables: JacksonModelVariablesImpl,
 
         @JacksonXmlProperty(localName = "LogCategories")
-        override val logCategories: LogCategories? = null,
+        override val logCategories: LogCategoriesImpl? = null,
 
         @JacksonXmlProperty(localName = "UnitDefinitions")
-        override val unitDefinitions: UnitDefinitions? = null,
+        override val unitDefinitions: UnitDefinitionsImpl? = null,
 
         @JacksonXmlProperty(localName = "TypeDefinitions")
-        override val typeDefinitions: TypeDefinitions? = null,
+        override val typeDefinitions: TypeDefinitionsImpl? = null,
 
         @JacksonXmlProperty(localName = "CoSimulation")
-        private val coSimulationAttributes: CoSimulationAttributesImpl? = null,
+        private val coSimulationAttributes: JacksonCoSimulationAttributes? = null,
 
         @JacksonXmlProperty(localName = "ModelExchange")
-        private val modelExchangeAttributes: ModelExchangeAttributesImpl? = null,
+        private val modelExchangeAttributes: JacksonModelExchangeAttributes? = null,
 
         @JacksonXmlProperty
         private val numberOfEventIndicators: Int = 0
 
 
-) : ModelDescriptionProvider, Serializable {
+) : ModelDescriptionProvider {
 
     @JacksonXmlProperty(localName = "ModelStructure")
     private val _modelStructure: ModelStructureImpl? = null

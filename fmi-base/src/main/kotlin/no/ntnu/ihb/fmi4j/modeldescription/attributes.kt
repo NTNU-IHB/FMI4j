@@ -24,11 +24,7 @@
 
 package no.ntnu.ihb.fmi4j.modeldescription
 
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty
-import no.ntnu.ihb.fmi4j.modeldescription.misc.SourceFile
-import no.ntnu.ihb.fmi4j.modeldescription.misc.SourceFileImpl
-import java.io.Serializable
+
 
 /**
  * Represents the common content within the <CoSimulation> and <ModelExchange> XML elements
@@ -73,68 +69,3 @@ interface ModelExchangeAttributes : CommonFmuAttributes {
     val completedIntegratorStepNotNeeded: Boolean
 
 }
-
-/**
- * @author Lars Ivar Hatledal
- */
-sealed class CommonFmuAttributesImpl : CommonFmuAttributes, Serializable {
-
-    @JacksonXmlProperty
-    override val modelIdentifier: String = ""
-
-    @JacksonXmlProperty
-    override val needsExecutionTool: Boolean = false
-
-    @JacksonXmlProperty
-    override val canNotUseMemoryManagementFunctions: Boolean = false
-
-    @JacksonXmlProperty
-    override val canGetAndSetFMUstate: Boolean = false
-
-    @JacksonXmlProperty
-    override val canSerializeFMUstate: Boolean = false
-
-    @JacksonXmlProperty
-    override val providesDirectionalDerivative: Boolean = false
-
-    @JacksonXmlProperty
-    override val canBeInstantiatedOnlyOncePerProcess: Boolean = false
-
-    @JacksonXmlElementWrapper(localName = "SourceFiles")
-    @JacksonXmlProperty(localName = "File")
-    override val sourceFiles: List<SourceFileImpl> = emptyList()
-
-}
-
-/**
- * @author Lars Ivar Hatledal
- */
-data class CoSimulationAttributesImpl(
-
-        @JacksonXmlProperty
-        override val canHandleVariableCommunicationStepSize: Boolean = false,
-
-        @JacksonXmlProperty
-        override val canInterpolateInputs: Boolean = false,
-
-        @JacksonXmlProperty
-        override val maxOutputDerivativeOrder: Int = 0,
-
-        @JacksonXmlProperty
-        override val canRunAsynchronuously: Boolean = false,
-
-        @JacksonXmlProperty
-        override val canProvideMaxStepSize: Boolean = false
-
-
-) : CommonFmuAttributesImpl(), CoSimulationAttributes
-
-/**
- * @author Lars Ivar Hatledal
- */
-data class ModelExchangeAttributesImpl(
-
-        @JacksonXmlProperty
-        override val completedIntegratorStepNotNeeded: Boolean = false
-
-) : CommonFmuAttributesImpl(), ModelExchangeAttributes
