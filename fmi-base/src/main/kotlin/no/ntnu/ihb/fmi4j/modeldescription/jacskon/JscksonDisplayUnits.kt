@@ -7,7 +7,7 @@ import no.ntnu.ihb.fmi4j.modeldescription.DisplayUnit
 import no.ntnu.ihb.fmi4j.modeldescription.Unit
 
 
-typealias UnitDefinitionsImpl = List<JacksonUnit>
+typealias JacksonUnitDefinitions = List<JacksonUnit>
 
 /**
  * @author Lars Ivar Hatledal

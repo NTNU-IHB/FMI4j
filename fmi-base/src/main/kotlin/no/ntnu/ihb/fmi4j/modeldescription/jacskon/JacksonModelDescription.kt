@@ -82,7 +82,7 @@ class JacksonModelDescription(
         override val logCategories: JacksonLogCategories? = null,
 
         @JacksonXmlProperty(localName = "UnitDefinitions")
-        override val unitDefinitions: UnitDefinitionsImpl? = null,
+        override val unitDefinitions: JacksonUnitDefinitions? = null,
 
         @JacksonXmlProperty(localName = "TypeDefinitions")
         override val typeDefinitions: JacksonTypeDefinitions? = null,
