@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory
 abstract class Fmi2LibraryWrapper<E : Fmi2Library>(
         protected var c: Long,
         library: E
-): FmuVariableAccessorLite {
+): FmuVariableAccessor {
 
     private val buffers: ArrayBuffers by lazy {
         ArrayBuffers()
@@ -181,8 +181,8 @@ abstract class Fmi2LibraryWrapper<E : Fmi2Library>(
     /**
      * @see Fmi2Library.getInteger
      */
-    override fun readInteger(vr: ValueReferences, value: IntArray): FmiStatus {
-        return library.getInteger(c, vr, value).let { updateStatus(it) }
+    override fun readInteger(vr: ValueReferences, ref: IntArray): FmiStatus {
+        return library.getInteger(c, vr, ref).let { updateStatus(it) }
     }
 
     /**
@@ -201,8 +201,8 @@ abstract class Fmi2LibraryWrapper<E : Fmi2Library>(
     /**
      * @see Fmi2Library.getReal
      */
-    override fun readReal(vr: ValueReferences, value: DoubleArray): FmiStatus {
-        return library.getReal(c, vr, value).let { updateStatus(it) }
+    override fun readReal(vr: ValueReferences, ref: DoubleArray): FmiStatus {
+        return library.getReal(c, vr, ref).let { updateStatus(it) }
     }
 
     /**
@@ -221,8 +221,8 @@ abstract class Fmi2LibraryWrapper<E : Fmi2Library>(
     /**
      * @see Fmi2Library.getString
      */
-    override fun readString(vr: ValueReferences, value: StringArray): FmiStatus {
-        return library.getString(c, vr, value).let { updateStatus(it) }
+    override fun readString(vr: ValueReferences, ref: StringArray): FmiStatus {
+        return library.getString(c, vr, ref).let { updateStatus(it) }
     }
 
     /**
@@ -241,18 +241,18 @@ abstract class Fmi2LibraryWrapper<E : Fmi2Library>(
     /**
      * @see Fmi2Library.getBoolean
      */
-    override fun readBoolean(vr: ValueReferences, value: BooleanArray): FmiStatus {
-        return library.getBoolean(c, vr, value).let { updateStatus(it) }
+    override fun readBoolean(vr: ValueReferences, ref: BooleanArray): FmiStatus {
+        return library.getBoolean(c, vr, ref).let { updateStatus(it) }
     }
 
     /**
      * @see Fmi2Library.setInteger
      */
     @Synchronized
-    fun writeInteger(valueReference: ValueReference, value: Int): FmiStatus {
+    fun writeInteger(valueReference: ValueReference, ref: Int): FmiStatus {
         return with(buffers) {
             vr[0] = valueReference
-            iv[0] = value
+            iv[0] = ref
             writeInteger(vr, iv)
         }
     }

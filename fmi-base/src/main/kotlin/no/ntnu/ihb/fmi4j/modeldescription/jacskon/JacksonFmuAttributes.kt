@@ -54,11 +54,7 @@ data class JacksonCoSimulationAttributes(
         override val maxOutputDerivativeOrder: Int = 0,
 
         @JacksonXmlProperty
-        override val canRunAsynchronuously: Boolean = false,
-
-        @JacksonXmlProperty
-        override val canProvideMaxStepSize: Boolean = false
-
+        override val canRunAsynchronuously: Boolean = false
 
 ) : JacksonCommonFmuAttributes(), CoSimulationAttributes
 

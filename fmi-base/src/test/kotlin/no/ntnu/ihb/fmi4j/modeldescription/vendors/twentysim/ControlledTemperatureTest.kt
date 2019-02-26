@@ -77,7 +77,7 @@ class ControlledTemperatureTest {
 
     @Test
     fun testModelIdentifier() {
-        val modelIdentifier = modelDescription.modelIdentifier
+        val modelIdentifier = modelDescription.attributes.modelIdentifier
         LOG.info("modelIdentifier=$modelIdentifier")
         Assertions.assertEquals("ControlledTemperature", modelIdentifier)
     }
@@ -98,7 +98,7 @@ class ControlledTemperatureTest {
 
     @Test
     fun testState() {
-        val canGetAndSetFMUstate = modelDescription.canGetAndSetFMUstate
+        val canGetAndSetFMUstate = modelDescription.attributes.canGetAndSetFMUstate
         LOG.info("canGetAndSetFMUstate=$canGetAndSetFMUstate")
         Assertions.assertEquals(false, canGetAndSetFMUstate)
     }
@@ -135,18 +135,18 @@ class ControlledTemperatureTest {
 
     @Test
     fun needsExecutionTool() {
-        Assertions.assertTrue(!modelDescription.needsExecutionTool)
+        Assertions.assertTrue(!modelDescription.attributes.needsExecutionTool)
     }
 
     @Test
     fun canNotUseMemoryManagementFunctions() {
-        Assertions.assertTrue(modelDescription.canNotUseMemoryManagementFunctions)
+        Assertions.assertTrue(modelDescription.attributes.canNotUseMemoryManagementFunctions)
     }
 
     @Test
     fun testSourceFiles() {
 
-        val sourceFiles = modelDescription.sourceFiles
+        val sourceFiles = modelDescription.attributes.sourceFiles
         LOG.info("${sourceFiles.joinToString("\n")}")
         Assertions.assertTrue(sourceFiles.map { it.name }.containsAll(
                 Arrays.asList("EulerAngles.c",

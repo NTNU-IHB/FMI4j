@@ -146,13 +146,13 @@ class JacksonModelDescription(
 
 class JacksonCoSimulationModelDescriptionImpl(
         md: ModelDescription,
-        cs: CoSimulationAttributes
-): CoSimulationModelDescription, ModelDescription by md, CoSimulationAttributes by cs
+        override val attributes: CoSimulationAttributes
+): CoSimulationModelDescription, ModelDescription by md
 
 
 class JacksonModelExchangeModelDescriptionImpl(
         md: ModelDescription,
-        me: ModelExchangeAttributes,
+        override val attributes: ModelExchangeAttributes,
         override val numberOfEventIndicators: Int = 0
 
-): ModelExchangeModelDescription, ModelDescription by md, ModelExchangeAttributes by me
+): ModelExchangeModelDescription, ModelDescription by md

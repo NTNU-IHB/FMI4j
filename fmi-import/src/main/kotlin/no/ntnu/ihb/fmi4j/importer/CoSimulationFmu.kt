@@ -44,7 +44,7 @@ class CoSimulationFmu(
     }
 
     private fun loadLibrary(): Fmi2CoSimulationLibrary {
-        val modelIdentifier = modelDescription.modelIdentifier
+        val modelIdentifier = modelDescription.attributes.modelIdentifier
         val libName = fmu.getAbsoluteLibraryPath(modelIdentifier)
         return Fmi2CoSimulationLibrary(libName).also {
             fmu.registerLibrary(it)
@@ -53,7 +53,7 @@ class CoSimulationFmu(
 
     @JvmOverloads
     fun newInstance(visible: Boolean = false, loggingOn: Boolean = false): CoSimulationSlave {
-        val lib = if (modelDescription.canBeInstantiatedOnlyOncePerProcess) loadLibrary() else libraryCache
+        val lib = if (modelDescription.attributes.canBeInstantiatedOnlyOncePerProcess) loadLibrary() else libraryCache
         val c = fmu.instantiate(modelDescription, lib, FmiType.CO_SIMULATION, visible, loggingOn)
         val wrapper = CoSimulationLibraryWrapper(c, lib)
         return CoSimulationSlave(wrapper, modelDescription).also {

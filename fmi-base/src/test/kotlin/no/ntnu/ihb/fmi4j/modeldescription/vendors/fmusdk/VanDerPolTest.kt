@@ -53,7 +53,7 @@ class VanDerPolTest {
 
     @Test
     fun testModelIdentifier() {
-        val modelIdentifier = modelDescription.modelIdentifier
+        val modelIdentifier = modelDescription.attributes.modelIdentifier
         LOG.info("modelIdentifier=$modelIdentifier")
         Assertions.assertEquals("vanDerPol", modelIdentifier)
     }

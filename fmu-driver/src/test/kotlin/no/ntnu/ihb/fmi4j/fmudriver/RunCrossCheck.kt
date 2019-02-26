@@ -150,7 +150,7 @@ object CrossChecker {
                 defaults.startTime >= defaults.stopTime -> reject("Invalid start and or stop time (startTime >= stopTime).")
                 defaults.stepSize == 0.0 -> fail("Don't know how to handle variable step solver (stepsize=0.0).")
                 inputData != null -> fail("Unable to handle input files yet.")
-                md.asCoSimulationModelDescription().needsExecutionTool -> reject("FMU requires execution tool.")
+                md.asCoSimulationModelDescription().attributes.needsExecutionTool -> reject("FMU requires execution tool.")
                 else -> FmuDriver(fmuPath, options).run()
             }
 

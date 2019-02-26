@@ -24,6 +24,7 @@
 
 package no.ntnu.ihb.fmi4j.importer;
 
+import no.ntnu.ihb.fmi4j.common.Fmi4jVariableUtils;
 import no.ntnu.ihb.fmi4j.common.FmiStatus;
 import no.ntnu.ihb.fmi4j.common.FmuSlave;
 import no.ntnu.ihb.fmi4j.modeldescription.variables.RealVariable;
@@ -88,8 +89,8 @@ public class ControlledTemperatureTestJava {
 
                 LOG.info("temperature_room={}", value);
 
-                Assertions.assertEquals(value, (double) slave.getVariableAccessor()
-                        .readReal("Temperature_Room").getValue());
+                Assertions.assertEquals(value, (double) Fmi4jVariableUtils
+                        .readReal(slave, "Temperature_Room").getValue());
 
             }
 
