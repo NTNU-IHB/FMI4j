@@ -30,7 +30,7 @@ import no.ntnu.ihb.fmi4j.importer.misc.extractTo
 import no.ntnu.ihb.fmi4j.modeldescription.CommonModelDescription
 import no.ntnu.ihb.fmi4j.modeldescription.ModelDescription
 import no.ntnu.ihb.fmi4j.modeldescription.ModelDescriptionProvider
-import no.ntnu.ihb.fmi4j.modeldescription.parser.ModelDescriptionParser
+import no.ntnu.ihb.fmi4j.modeldescription.jacskon.JacksonModelDescriptionParser
 import no.ntnu.ihb.fmi4j.util.OsUtil
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -105,7 +105,7 @@ class Fmu private constructor(
         get() = modelDescriptionFile.readText()
 
     override val modelDescription: ModelDescriptionProvider by lazy {
-        ModelDescriptionParser.parse(modelDescriptionXml)
+        JacksonModelDescriptionParser.parse(modelDescriptionXml)
     }
 
     /**

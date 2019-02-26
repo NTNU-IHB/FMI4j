@@ -1,6 +1,6 @@
 package no.ntnu.ihb.fmi4j.modeldescription;
 
-import no.ntnu.ihb.fmi4j.modeldescription.parser.ModelDescriptionParser;
+import no.ntnu.ihb.fmi4j.modeldescription.jacskon.JacksonModelDescriptionParser;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledOnOs;
@@ -8,7 +8,9 @@ import org.junit.jupiter.api.condition.OS;
 
 import java.io.File;
 
-public class ModelDescriptionParseTest_java {
+public class ModelDescriptionParseTest {
+
+    private ModelDescriptionParser parser = JacksonModelDescriptionParser.INSTANCE;
 
     @Test
     public void test1() {
@@ -18,10 +20,10 @@ public class ModelDescriptionParseTest_java {
                 .name("ControlledTemperature").file();
 
         Assertions.assertTrue(fmuFile.exists());
-        Assertions.assertNotNull(ModelDescriptionParser.parse(fmuFile).asCoSimulationModelDescription());
+        Assertions.assertNotNull(parser.parse(fmuFile).asCoSimulationModelDescription());
 
-        String xml = ModelDescriptionParser.extractModelDescriptionXml(fmuFile);
-        Assertions.assertNotNull(ModelDescriptionParser.parse(xml).asCoSimulationModelDescription());
+        String xml = parser.extractModelDescriptionXml(fmuFile);
+        Assertions.assertNotNull(parser.parse(xml).asCoSimulationModelDescription());
 
     }
 
@@ -34,10 +36,10 @@ public class ModelDescriptionParseTest_java {
                 .name("PID_Controller").file();
 
         Assertions.assertTrue(fmuFile.exists());
-        Assertions.assertNotNull(ModelDescriptionParser.parse(fmuFile).asCoSimulationModelDescription());
+        Assertions.assertNotNull(parser.parse(fmuFile).asCoSimulationModelDescription());
 
-        String xml = ModelDescriptionParser.extractModelDescriptionXml(fmuFile);
-        Assertions.assertNotNull(ModelDescriptionParser.parse(xml).asCoSimulationModelDescription());
+        String xml = parser.extractModelDescriptionXml(fmuFile);
+        Assertions.assertNotNull(parser.parse(xml).asCoSimulationModelDescription());
 
     }
 
@@ -50,10 +52,10 @@ public class ModelDescriptionParseTest_java {
                 .name("uart").file();
 
         Assertions.assertTrue(fmuFile.exists());
-        Assertions.assertNotNull(ModelDescriptionParser.parse(fmuFile).asCoSimulationModelDescription());
+        Assertions.assertNotNull(parser.parse(fmuFile).asCoSimulationModelDescription());
 
-        String xml = ModelDescriptionParser.extractModelDescriptionXml(fmuFile);
-        Assertions.assertNotNull(ModelDescriptionParser.parse(xml).asCoSimulationModelDescription());
+        String xml = parser.extractModelDescriptionXml(fmuFile);
+        Assertions.assertNotNull(parser.parse(xml).asCoSimulationModelDescription());
 
     }
 
@@ -65,10 +67,10 @@ public class ModelDescriptionParseTest_java {
                 .name("fuelrail_cs").file();
 
         Assertions.assertTrue(fmuFile.exists());
-        Assertions.assertNotNull(ModelDescriptionParser.parse(fmuFile).asCoSimulationModelDescription());
+        Assertions.assertNotNull(parser.parse(fmuFile).asCoSimulationModelDescription());
 
-        String xml = ModelDescriptionParser.extractModelDescriptionXml(fmuFile);
-        Assertions.assertNotNull(ModelDescriptionParser.parse(xml).asCoSimulationModelDescription());
+        String xml = parser.extractModelDescriptionXml(fmuFile);
+        Assertions.assertNotNull(parser.parse(xml).asCoSimulationModelDescription());
 
     }
 

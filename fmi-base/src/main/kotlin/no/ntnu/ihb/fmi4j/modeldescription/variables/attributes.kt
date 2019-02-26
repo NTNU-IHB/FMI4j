@@ -24,13 +24,11 @@
 
 package no.ntnu.ihb.fmi4j.modeldescription.variables
 
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty
-import java.io.Serializable
 
 /**
  * @author Lars Ivar Hatledal
  */
-interface TypedAttribute<out E> : Serializable {
+interface TypedAttribute<out E> {
 
     /**
      * If present, name of type defined with TypeDefinitions / SimpleType. The value
@@ -93,33 +91,10 @@ interface BoundedTypedAttribute<out E> : TypedAttribute<E> {
 
 
 interface IntegerAttribute: BoundedTypedAttribute<Int>
+interface StringAttribute: TypedAttribute<String>
+interface BooleanAttribute: TypedAttribute<Boolean>
+interface EnumerationAttribute: BoundedTypedAttribute<Int>
 
-/**
- * @author Lars Ivar Hatledal
- */
-data class IntegerAttributeImpl(
-
-        @JacksonXmlProperty
-        override val min: Int? = null,
-
-        @JacksonXmlProperty
-        override val max: Int? = null,
-
-        @JacksonXmlProperty
-        override val quantity: String? = null,
-
-        @JacksonXmlProperty
-        override val start: Int? = null,
-
-        @JacksonXmlProperty
-        override val declaredType: String? = null
-
-) : IntegerAttribute {
-
-    override fun toString(): String {
-        return "IntegerAttribute(min=$min, max=$max, start=$start, declaredType=$declaredType)"
-    }
-}
 
 interface RealAttribute: BoundedTypedAttribute<Double> {
 
@@ -180,124 +155,6 @@ interface RealAttribute: BoundedTypedAttribute<Double> {
      * (for example 10 degree Celsius = 10 Kelvin if “relativeQuantity = true”
      * and not 283,15 Kelvin).
      */
-    val relativeQuantity: String?
-
-}
-
-/**
- * @author Lars Ivar Hatledal
- */
-data class RealAttributeImpl(
-
-        @JacksonXmlProperty
-        override val min: Double? = null,
-
-        @JacksonXmlProperty
-        override val max: Double? = null,
-
-        @JacksonXmlProperty
-        override val start: Double? = null,
-
-        @JacksonXmlProperty
-        override val declaredType: String? = null,
-
-        @JacksonXmlProperty
-        override val nominal: Double? = null,
-
-        @JacksonXmlProperty
-        override val derivative: Int? = null,
-
-        @JacksonXmlProperty
-        override val unbounded: Boolean? = null,
-
-        @JacksonXmlProperty
-        override val reinit: Boolean = false,
-
-        @JacksonXmlProperty
-        override val quantity: String? = null,
-
-        @JacksonXmlProperty
-        override val unit: String? = null,
-
-        @JacksonXmlProperty
-        override val displayUnit: String? = null,
-
-        @JacksonXmlProperty
-        override val relativeQuantity: String? = null
-
-) : RealAttribute {
-
-    override fun toString(): String {
-        return "RealAttribute(min=$min, max=$max, start=$start, declaredType=$declaredType, nominal=$nominal, derivative=$derivative, unbounded=$unbounded, reinit=$reinit, quantity=$quantity, unit=$unit, displayUnit=$displayUnit, relativeQuantity=$relativeQuantity)"
-    }
-}
-
-interface StringAttribute: TypedAttribute<String>
-/**
- * @author Lars Ivar Hatledal
- */
-data class StringAttributeImpl(
-
-        @JacksonXmlProperty
-        override val start: String? = null,
-
-        @JacksonXmlProperty
-        override val declaredType: String? = null
-
-) : StringAttribute {
-
-    override fun toString(): String {
-        return "StringAttribute(start=$start, declaredType=$declaredType)"
-    }
-
-}
-
-interface BooleanAttribute: TypedAttribute<Boolean>
-
-/**
- * @author Lars Ivar Hatledal
- */
-data class BooleanAttributeImpl(
-
-        @JacksonXmlProperty
-        override val start: Boolean? = null,
-
-        @JacksonXmlProperty
-        override val declaredType: String? = null
-
-) : BooleanAttribute {
-
-    override fun toString(): String {
-        return "BooleanAttribute(start=$start, declaredType=$declaredType)"
-    }
-}
-
-interface EnumerationAttribute: BoundedTypedAttribute<Int>
-
-/**
- * @author Lars Ivar Hatledal
- */
-data class EnumerationAttributeImpl(
-
-        @JacksonXmlProperty
-        override val min: Int? = null,
-
-        @JacksonXmlProperty
-        override val max: Int? = null,
-
-        @JacksonXmlProperty
-        override val quantity: String? = null,
-
-        @JacksonXmlProperty
-        override val start: Int? = null,
-
-        @JacksonXmlProperty
-        override val declaredType: String? = null
-
-) : EnumerationAttribute {
-
-    override fun toString(): String {
-        return "EnumerationAttribute(min=$min, max=$max, quantity=$quantity, start=$start, declaredType=$declaredType)"
-    }
+    val relativeQuantity: Boolean?
 
 }

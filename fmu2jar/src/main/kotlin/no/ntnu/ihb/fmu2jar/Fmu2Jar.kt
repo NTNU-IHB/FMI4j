@@ -25,7 +25,7 @@
 package no.ntnu.ihb.fmu2jar
 
 import no.ntnu.ihb.fmi4j.modeldescription.ModelDescriptionProvider
-import no.ntnu.ihb.fmi4j.modeldescription.parser.ModelDescriptionParser
+import no.ntnu.ihb.fmi4j.modeldescription.jacskon.JacksonModelDescriptionParser
 import no.ntnu.ihb.fmi4j.util.OsUtil
 import no.ntnu.ihb.fmu2jar.cli.Args
 import no.ntnu.ihb.fmu2jar.cli.GenerateOptions
@@ -65,7 +65,7 @@ class Fmu2Jar(
         if (!file.name.endsWith(".fmu", true)) {
             throw IllegalArgumentException("File '${file.absolutePath}' is not and FMU!")
         }
-        modelDescription = ModelDescriptionParser.parse(file)
+        modelDescription = JacksonModelDescriptionParser.parse(file)
     }
 
     private fun copyBuildFile(parentDir: File) {

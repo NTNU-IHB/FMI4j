@@ -22,13 +22,7 @@
  * THE SOFTWARE.
  */
 
-package no.ntnu.ihb.fmi4j.modeldescription.structure
-
-import com.fasterxml.jackson.annotation.JsonProperty
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty
-import java.io.Serializable
-
+package no.ntnu.ihb.fmi4j.modeldescription
 
 /**
  * Defines the structure of the model. Especially, the ordered lists of
@@ -81,70 +75,33 @@ interface ModelStructure {
     val initialUnknowns: List<Unknown>
 }
 
+
 /**
+ *
+ * Dependency of scalar Unknown from Knowns in continuous-time and event mode (Model Exchange),
+ * and at communications points (Co-simulation)
  *
  * @author Lars Ivar Hatledal
  */
+interface Unknown {
 
-class ModelStructureImpl: ModelStructure, Serializable {
+    /**
+     * ScalarVariable index of Unknown
+     */
+    val index: Int
 
-    @JacksonXmlProperty(localName = "Outputs")
-    private val _outputs: Outputs? = null
+    /**
+     * Defines the dependency of the Unknown (directly or indirectly via auxiliary variables)
+     * on the Knowns in Continuous-Time and Event Mode (ModelExchange) and at Communication Points (CoSimulation)
+     */
+    val dependencies: List<Int>
 
-    @JacksonXmlProperty(localName = "Derivatives")
-    private val _derivatives: Derivatives? = null
-
-    @JacksonXmlProperty(localName = "InitialUnknowns")
-    private val _initialUnknowns: InitialUnknowns? = null
-
-    override val outputs: List<Unknown>
-        get() = _outputs?.unknowns ?: emptyList()
-
-    override val derivatives: List<Unknown>
-        get() = _derivatives?.unknowns ?: emptyList()
-
-    override val initialUnknowns: List<Unknown>
-        get() = _initialUnknowns?.unknowns ?: emptyList()
-
-    override fun toString(): String {
-        return "ModelStructureImpl(outputs=$outputs, derivatives=$derivatives, initialUnknowns=$initialUnknowns)"
-    }
+    /**
+     * If present, it must be assumed that the Unknown depends on the Knowns
+     * without a particular structure.
+     */
+    val dependenciesKind: List<String>
 
 }
 
-/**
- *
- * @author Lars Ivar Hatledal
- */
-class Outputs(
-
-        @JacksonXmlProperty(localName = "Unknown")
-        @JacksonXmlElementWrapper(useWrapping = false)
-        val unknowns: List<UnknownImpl>? = null
-
-) : Serializable
-
-/**
- *
- * @author Lars Ivar Hatledal
- */
-class Derivatives(
-
-        @JsonProperty("Unknown")
-        @JacksonXmlElementWrapper(useWrapping = false)
-        val unknowns: List<UnknownImpl>? = null
-
-) : Serializable
-
-/**
- *
- * @author Lars Ivar Hatledal
- */
-class InitialUnknowns(
-
-        @JsonProperty("Unknown")
-        @JacksonXmlElementWrapper(useWrapping = false)
-        val unknowns: List<UnknownImpl>? = null
-
-) : Serializable
 
