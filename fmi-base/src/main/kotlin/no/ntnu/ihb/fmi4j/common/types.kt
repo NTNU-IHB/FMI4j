@@ -30,3 +30,6 @@ typealias ValueReference = Long
 typealias ValueReferences = LongArray
 typealias RealArray = DoubleArray
 typealias StringArray = Array<String>
+
+fun realArrayOf(vararg elements: Double): RealArray = doubleArrayOf(*elements)
+fun stringArrayOf(vararg elements: String): StringArray = arrayOf(*elements)
