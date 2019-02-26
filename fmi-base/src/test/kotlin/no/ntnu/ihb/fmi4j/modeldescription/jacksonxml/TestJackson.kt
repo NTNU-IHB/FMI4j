@@ -10,7 +10,7 @@ import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.readValue
 import no.ntnu.ihb.fmi4j.modeldescription.ModelDescriptionParser
 import no.ntnu.ihb.fmi4j.modeldescription.TestFMUs
-import no.ntnu.ihb.fmi4j.modeldescription.jacskon.ModelDescriptionImpl
+import no.ntnu.ihb.fmi4j.modeldescription.jacskon.JacksonModelDescription
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.slf4j.Logger
@@ -40,7 +40,7 @@ class TestJackson {
 
         val md = ModelDescriptionParser.extractModelDescriptionXml(fmuFile).let {
             LOG.info(it)
-            mapper.readValue<ModelDescriptionImpl>(it)
+            mapper.readValue<JacksonModelDescription>(it)
         }
 
         LOG.info("${md.modelVariables.size}")

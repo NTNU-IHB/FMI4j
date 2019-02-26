@@ -10,7 +10,7 @@ import no.ntnu.ihb.fmi4j.modeldescription.variables.TypedScalarVariable
  * @author Lars Ivar Hatledal
  */
 @JacksonXmlRootElement(localName = "ModelVariables")
-class JacksonModelVariablesImpl : ModelVariables {
+class JacksonModelVariables : ModelVariables {
 
     @JacksonXmlProperty(localName = "ScalarVariable")
     @JacksonXmlElementWrapper(useWrapping = false)
@@ -27,7 +27,7 @@ class JacksonModelVariablesImpl : ModelVariables {
     }
 
     override fun toString(): String {
-        return "JacksonModelVariablesImpl(variables=$variables)"
+        return "JacksonModelVariables(variables=$variables)"
     }
 
 }
