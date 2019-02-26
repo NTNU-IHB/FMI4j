@@ -22,8 +22,8 @@ class AMESimTest {
     fun test() {
 
         Assertions.assertEquals("2069003513", md.guid)
-        Assertions.assertEquals(true, md.canBeInstantiatedOnlyOncePerProcess)
-        Assertions.assertEquals(true, md.canNotUseMemoryManagementFunctions)
+        Assertions.assertEquals(true, md.attributes.canBeInstantiatedOnlyOncePerProcess)
+        Assertions.assertEquals(true, md.attributes.canNotUseMemoryManagementFunctions)
 
         md.modelVariables.getByName("maxTimeStep").also {
             Assertions.assertEquals(536870912L, it.valueReference)

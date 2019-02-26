@@ -177,21 +177,19 @@ interface ModelDescriptionProvider: ModelDescription {
 
 }
 
-interface CommonModelDescription: ModelDescription, CommonFmuAttributes {
+interface CommonModelDescription: ModelDescription {
 
     val attributes: CommonFmuAttributes
-        get() = CommonFmuAttributesLite(this)
 
 }
 
-interface CoSimulationModelDescription: CommonModelDescription, CoSimulationAttributes {
+interface CoSimulationModelDescription: CommonModelDescription {
 
     override val attributes: CoSimulationAttributes
-        get() = CoSimulationAttributesLite(this)
 
 }
 
-interface ModelExchangeModelDescription: CommonModelDescription, ModelExchangeAttributes {
+interface ModelExchangeModelDescription: CommonModelDescription {
 
     /**
      * The (fixed) number of event indicators for an FMU based on FMI for Model Exchange.
@@ -200,20 +198,5 @@ interface ModelExchangeModelDescription: CommonModelDescription, ModelExchangeAt
     val numberOfEventIndicators: Int
 
     override val attributes: ModelExchangeAttributes
-        get() = ModelExchangeAttributesLite(this)
 
 }
-
-private class CommonFmuAttributesLite(
-        attributes: CommonFmuAttributes
-): CommonFmuAttributes by attributes
-
-private class CoSimulationAttributesLite(
-        attributes: CoSimulationAttributes
-): CoSimulationAttributes by attributes
-
-
-private class ModelExchangeAttributesLite(
-        attributes: ModelExchangeAttributes
-): ModelExchangeAttributes by attributes
-

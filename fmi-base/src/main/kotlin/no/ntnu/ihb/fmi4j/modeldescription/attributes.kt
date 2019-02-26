@@ -55,7 +55,6 @@ interface CoSimulationAttributes : CommonFmuAttributes {
     val canInterpolateInputs: Boolean
     val maxOutputDerivativeOrder: Int
     val canRunAsynchronuously: Boolean
-    val canProvideMaxStepSize: Boolean
 
 }
 

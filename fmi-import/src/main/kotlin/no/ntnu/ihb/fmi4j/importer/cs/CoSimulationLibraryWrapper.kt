@@ -118,14 +118,4 @@ class CoSimulationLibraryWrapper(
 
     }
 
-    /**
-     * Extension method
-     */
-    fun getMaxStepSize(): Double {
-        return DoubleByReference().let {
-            updateStatus(library.getMaxStepSize(c, it))
-            it.value
-        }
-    }
-
 }

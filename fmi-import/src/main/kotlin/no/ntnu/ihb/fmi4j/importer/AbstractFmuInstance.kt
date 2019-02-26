@@ -162,7 +162,7 @@ abstract class AbstractFmuInstance<out E : CommonModelDescription, out T : Fmi2L
     }
 
     override fun getDirectionalDerivative(vUnknownRef: ValueReferences, vKnownRef: ValueReferences, dvKnown: RealArray): RealArray {
-        if (!modelDescription.providesDirectionalDerivative) {
+        if (!modelDescription.attributes.providesDirectionalDerivative) {
             throw IllegalStateException("Illegal call. FMU does not provide directional derivatives!")
         }
         return RealArray(vUnknownRef.size).also { dvUnknown ->
@@ -174,7 +174,7 @@ abstract class AbstractFmuInstance<out E : CommonModelDescription, out T : Fmi2L
      * @see Fmi2Library.getFMUstate
      */
     override fun getFMUstate(): FmuState {
-        if (!modelDescription.canGetAndSetFMUstate) {
+        if (!modelDescription.attributes.canGetAndSetFMUstate) {
             throw UnsupportedOperationException("Method call not allowed, FMU cannot get and set FMU state!")
         }
         return wrapper.getFMUState()
@@ -184,7 +184,7 @@ abstract class AbstractFmuInstance<out E : CommonModelDescription, out T : Fmi2L
      * @see Fmi2Library.setFMUstate
      */
     override fun setFMUstate(state: FmuState): Boolean {
-        if (!modelDescription.canGetAndSetFMUstate) {
+        if (!modelDescription.attributes.canGetAndSetFMUstate) {
             throw UnsupportedOperationException("Method call not allowed, FMU '${modelDescription.modelName}' cannot get and set FMU state!")
         }
         return wrapper.setFMUState(state).isOK()
@@ -194,7 +194,7 @@ abstract class AbstractFmuInstance<out E : CommonModelDescription, out T : Fmi2L
      * @see Fmi2Library.freeFMUstate
      */
     override fun freeFMUstate(state: FmuState): Boolean {
-        if (!modelDescription.canGetAndSetFMUstate) {
+        if (!modelDescription.attributes.canGetAndSetFMUstate) {
             throw UnsupportedOperationException("Method call not allowed, FMU '${modelDescription.modelName}' cannot get and set FMU state!")
         }
         return wrapper.freeFMUState(state).isOK()
@@ -204,7 +204,7 @@ abstract class AbstractFmuInstance<out E : CommonModelDescription, out T : Fmi2L
      * @see Fmi2Library.serializedFMUstateSize
      */
     fun serializedFMUstateSize(fmuState: FmuState): Int {
-        if (!modelDescription.canSerializeFMUstate) {
+        if (!modelDescription.attributes.canSerializeFMUstate) {
             throw UnsupportedOperationException("Method call not allowed, FMU '${modelDescription.modelName}' cannot serialize/deserialize FMU state!")
         }
         return wrapper.serializedFMUStateSize(fmuState)
@@ -214,7 +214,7 @@ abstract class AbstractFmuInstance<out E : CommonModelDescription, out T : Fmi2L
      * @see Fmi2Library.serializeFMUstate
      */
     override fun serializeFMUstate(state: FmuState): ByteArray {
-        if (!modelDescription.canSerializeFMUstate) {
+        if (!modelDescription.attributes.canSerializeFMUstate) {
             throw UnsupportedOperationException("Method call not allowed, FMU '${modelDescription.modelName}' cannot serialize/deserialize FMU state!")
         }
         return wrapper.serializeFMUState(state)
@@ -224,7 +224,7 @@ abstract class AbstractFmuInstance<out E : CommonModelDescription, out T : Fmi2L
      * @see Fmi2Library.deSerializeFMUstate
      */
     override fun deSerializeFMUstate(state: ByteArray): FmuState {
-        if (!modelDescription.canSerializeFMUstate) {
+        if (!modelDescription.attributes.canSerializeFMUstate) {
             throw UnsupportedOperationException("Method call not allowed, FMU '${modelDescription.modelName}' cannot serialize/deserialize FMU state!")
         }
         return wrapper.deSerializeFMUState(state)
