@@ -101,8 +101,4 @@ class Fmi2CoSimulationLibrary(
         return getBooleanStatus(p, c, s, value).transform()
     }
 
-    fun getMaxStepSize(c: Fmi2Component, stepSize: DoubleByReference): FmiStatus {
-        return getMaxStepSize(p, c, stepSize).transform()
-    }
-
 }

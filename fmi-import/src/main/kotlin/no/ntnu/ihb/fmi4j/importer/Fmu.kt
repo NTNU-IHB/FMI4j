@@ -164,7 +164,7 @@ class Fmu private constructor(
                              fmiType: FmiType, visible: Boolean, loggingOn: Boolean): Long {
         LOG.trace("Calling instantiate: visible=$visible, loggingOn=$loggingOn")
 
-        return library.instantiate(modelDescription.modelIdentifier,
+        return library.instantiate(modelDescription.attributes.modelIdentifier,
                 fmiType.code, modelDescription.guid, resourcesPath, visible, loggingOn)
     }
 

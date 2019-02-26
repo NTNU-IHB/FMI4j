@@ -31,19 +31,11 @@ import no.ntnu.ihb.fmi4j.common.*
  */
 interface TypedScalarVariable<E> : ScalarVariable, TypedAttribute<E> {
 
-    fun read(variableAccessorProvider: FmuVariableAccessorProvider): FmuRead<E> {
-        return read(variableAccessorProvider.variableAccessor)
-    }
-
     /**
      * Accesses the FMU and returns the current value of the variable
      * represented by this valueReference, as well as the status
      */
     fun read(reader: FmuVariableReader): FmuRead<E>
-
-    fun write(variableAccessorProvider: FmuVariableAccessorProvider, value: E): FmiStatus {
-        return write(variableAccessorProvider.variableAccessor, value)
-    }
 
     /**
      * Accesses the FMU and writes the provided value to the FMU

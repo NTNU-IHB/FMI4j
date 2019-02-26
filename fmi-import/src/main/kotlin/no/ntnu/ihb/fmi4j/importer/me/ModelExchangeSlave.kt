@@ -27,10 +27,8 @@ package no.ntnu.ihb.fmi4j.importer.me
 import no.ntnu.ihb.fmi4j.common.FmiStatus
 import no.ntnu.ihb.fmi4j.common.FmuSlave
 import no.ntnu.ihb.fmi4j.common.SimpleFmuInstance
-import no.ntnu.ihb.fmi4j.modeldescription.CoSimulationAttributes
-import no.ntnu.ihb.fmi4j.modeldescription.CoSimulationModelDescription
-import no.ntnu.ihb.fmi4j.modeldescription.CommonModelDescription
-import no.ntnu.ihb.fmi4j.modeldescription.ModelExchangeModelDescription
+import no.ntnu.ihb.fmi4j.modeldescription.*
+import no.ntnu.ihb.fmi4j.solvers.Solver
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import kotlin.math.min
@@ -42,7 +40,7 @@ import kotlin.math.min
  */
 class ModelExchangeFmuStepper internal constructor(
         private val fmuInstance: ModelExchangeInstance,
-        private val solver: no.ntnu.ihb.fmi4j.solvers.Solver
+        private val solver: Solver
 ) : FmuSlave, SimpleFmuInstance by fmuInstance {
 
     private val x: DoubleArray
@@ -129,7 +127,7 @@ class ModelExchangeFmuStepper internal constructor(
             }
 
             var enterEventMode = false
-            if (!fmuInstance.modelDescription.completedIntegratorStepNotNeeded) {
+            if (!fmuInstance.modelDescription.attributes.completedIntegratorStepNotNeeded) {
                 val completedIntegratorStep = fmuInstance.completedIntegratorStep()
                 if (completedIntegratorStep.terminateSimulation) {
                     LOG.debug("completedIntegratorStep.terminateSimulation returned true. Terminating FMU...")
@@ -227,19 +225,19 @@ class ModelExchangeFmuStepper internal constructor(
 }
 
 class CoSimulationModelDescriptionWrapper(
-        md: ModelExchangeModelDescription
+        private val md: ModelExchangeModelDescription
 ): CommonModelDescription by md, CoSimulationModelDescription {
 
-    override val maxOutputDerivativeOrder: Int
-        get() = 0
-    override val canHandleVariableCommunicationStepSize: Boolean
-        get() = true
-    override val canInterpolateInputs: Boolean
-        get() = false
-    override val canRunAsynchronuously: Boolean
-        get() = false
-    override val canProvideMaxStepSize: Boolean
-        get() = false
     override val attributes: CoSimulationAttributes
-        get() = super<CoSimulationModelDescription>.attributes
+        get() = object: CoSimulationAttributes, CommonFmuAttributes by md.attributes {
+            override val canHandleVariableCommunicationStepSize: Boolean
+                get() = true
+            override val canInterpolateInputs: Boolean
+                get() = false
+            override val maxOutputDerivativeOrder: Int
+                get() = 0
+            override val canRunAsynchronuously: Boolean
+                get() = false
+        }
+
 }
