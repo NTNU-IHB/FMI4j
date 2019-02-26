@@ -28,7 +28,7 @@ object JacksonModelDescriptionParser : ModelDescriptionParser() {
                 .replace("<ModelStructure>\n" +
                         "</ModelStructure>", "<ModelStructure/>")
 
-        return mapper.readValue(correctedXml, ModelDescriptionImpl::class.java)
+        return mapper.readValue(correctedXml, JacksonModelDescription::class.java)
 
     }
 

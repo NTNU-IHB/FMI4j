@@ -37,7 +37,7 @@ import no.ntnu.ihb.fmi4j.modeldescription.*
  */
 @JacksonXmlRootElement(localName = "fmiModelDescription")
 @JsonIgnoreProperties(ignoreUnknown = true)
-class ModelDescriptionImpl(
+class JacksonModelDescription(
 
         @JacksonXmlProperty
         override val fmiVersion: String,
@@ -76,16 +76,16 @@ class ModelDescriptionImpl(
         override val defaultExperiment: JacksonDefaultExperiment? = null,
 
         @JacksonXmlProperty(localName = "ModelVariables")
-        override val modelVariables: JacksonModelVariablesImpl,
+        override val modelVariables: JacksonModelVariables,
 
         @JacksonXmlProperty(localName = "LogCategories")
-        override val logCategories: LogCategoriesImpl? = null,
+        override val logCategories: JacksonLogCategories? = null,
 
         @JacksonXmlProperty(localName = "UnitDefinitions")
-        override val unitDefinitions: UnitDefinitionsImpl? = null,
+        override val unitDefinitions: JacksonUnitDefinitions? = null,
 
         @JacksonXmlProperty(localName = "TypeDefinitions")
-        override val typeDefinitions: TypeDefinitionsImpl? = null,
+        override val typeDefinitions: JacksonTypeDefinitions? = null,
 
         @JacksonXmlProperty(localName = "CoSimulation")
         private val coSimulationAttributes: JacksonCoSimulationAttributes? = null,
@@ -100,7 +100,7 @@ class ModelDescriptionImpl(
 ) : ModelDescriptionProvider {
 
     @JacksonXmlProperty(localName = "ModelStructure")
-    private val _modelStructure: ModelStructureImpl? = null
+    private val _modelStructure: JacksonModelStructure? = null
 
     override val modelStructure: ModelStructure
         get() =_modelStructure!!
@@ -112,12 +112,12 @@ class ModelDescriptionImpl(
         get() = modelExchangeAttributes != null
 
     override fun asCoSimulationModelDescription(): CoSimulationModelDescription {
-        return CoSimulationModelDescriptionImpl(this, coSimulationAttributes
+        return JacksonCoSimulationModelDescriptionImpl(this, coSimulationAttributes
                 ?: throw IllegalStateException("No CoSimulation attributes present in ModelDescription!"))
     }
 
     override fun asModelExchangeModelDescription(): ModelExchangeModelDescription {
-        return ModelExchangeModelDescriptionImpl(this, modelExchangeAttributes
+        return JacksonModelExchangeModelDescriptionImpl(this, modelExchangeAttributes
                 ?: throw IllegalStateException("No ModelExchange attributes in ModelDescription!"),
                 numberOfEventIndicators)
     }
@@ -139,18 +139,18 @@ class ModelDescriptionImpl(
         ).joinToString("\n")
 
     override fun toString(): String {
-        return "ModelDescriptionImpl(\n$stringContent\n)"
+        return "JacksonModelDescription(\n$stringContent\n)"
     }
 
 }
 
-class CoSimulationModelDescriptionImpl(
+class JacksonCoSimulationModelDescriptionImpl(
         md: ModelDescription,
         cs: CoSimulationAttributes
 ): CoSimulationModelDescription, ModelDescription by md, CoSimulationAttributes by cs
 
 
-class ModelExchangeModelDescriptionImpl(
+class JacksonModelExchangeModelDescriptionImpl(
         md: ModelDescription,
         me: ModelExchangeAttributes,
         override val numberOfEventIndicators: Int = 0

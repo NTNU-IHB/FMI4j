@@ -11,7 +11,7 @@ import no.ntnu.ihb.fmi4j.modeldescription.Unknown
  * @author Lars Ivar Hatledal
  */
 
-class ModelStructureImpl: ModelStructure {
+class JacksonModelStructure: ModelStructure {
 
     @JacksonXmlProperty(localName = "Outputs")
     private val _outputs: Outputs? = null
@@ -32,7 +32,7 @@ class ModelStructureImpl: ModelStructure {
         get() = _initialUnknowns?.unknowns ?: emptyList()
 
     override fun toString(): String {
-        return "ModelStructureImpl(outputs=$outputs, derivatives=$derivatives, initialUnknowns=$initialUnknowns)"
+        return "JacksonModelStructure(outputs=$outputs, derivatives=$derivatives, initialUnknowns=$initialUnknowns)"
     }
 
 }
@@ -41,7 +41,7 @@ class ModelStructureImpl: ModelStructure {
  *
  * @author Lars Ivar Hatledal
  */
-class Outputs(
+private class Outputs(
 
         @JacksonXmlProperty(localName = "Unknown")
         @JacksonXmlElementWrapper(useWrapping = false)
@@ -53,7 +53,7 @@ class Outputs(
  *
  * @author Lars Ivar Hatledal
  */
-class Derivatives(
+private class Derivatives(
 
         @JsonProperty("Unknown")
         @JacksonXmlElementWrapper(useWrapping = false)
@@ -65,7 +65,7 @@ class Derivatives(
  *
  * @author Lars Ivar Hatledal
  */
-class InitialUnknowns(
+private class InitialUnknowns(
 
         @JsonProperty("Unknown")
         @JacksonXmlElementWrapper(useWrapping = false)

@@ -5,13 +5,13 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty
 import no.ntnu.ihb.fmi4j.modeldescription.SimpleType
 
 
-typealias TypeDefinitionsImpl = List<SimpleTypeImpl>
+typealias JacksonTypeDefinitions = List<JacksonSimpleType>
 
 /**
  * @author Lars Ivar Hatledal
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-data class SimpleTypeImpl (
+data class JacksonSimpleType (
 
         @JacksonXmlProperty
         override val name: String,

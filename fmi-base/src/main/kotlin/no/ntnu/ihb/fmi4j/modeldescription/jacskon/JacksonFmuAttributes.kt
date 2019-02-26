@@ -35,7 +35,7 @@ sealed class JacksonCommonFmuAttributes : CommonFmuAttributes {
 
     @JacksonXmlElementWrapper(localName = "SourceFiles")
     @JacksonXmlProperty(localName = "File")
-    override val sourceFiles: List<JacksonSourceFile> = emptyList()
+    override val sourceFiles: JacksonSourceFiles = emptyList()
 
 }
 

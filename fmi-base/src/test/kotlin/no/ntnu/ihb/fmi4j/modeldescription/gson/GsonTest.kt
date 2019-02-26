@@ -2,7 +2,7 @@ package no.ntnu.ihb.fmi4j.modeldescription.gson
 
 import com.google.gson.GsonBuilder
 import no.ntnu.ihb.fmi4j.modeldescription.TestFMUs
-import no.ntnu.ihb.fmi4j.modeldescription.jacskon.ModelDescriptionImpl
+import no.ntnu.ihb.fmi4j.modeldescription.jacskon.JacksonModelDescription
 import org.junit.jupiter.api.Test
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -26,7 +26,7 @@ class GsonTest {
 
                     gson.toJson(modelDescription).also { json ->
                         LOG.info("$json")
-                        gson.fromJson(json, ModelDescriptionImpl::class.java).also { md ->
+                        gson.fromJson(json, JacksonModelDescription::class.java).also { md ->
                             LOG.info("${md.modelVariables}")
                         }
 

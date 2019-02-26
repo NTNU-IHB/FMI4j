@@ -4,7 +4,7 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty
 import no.ntnu.ihb.fmi4j.modeldescription.LogCategory
 
 
-typealias LogCategoriesImpl = List<JacksonLogCategory>
+typealias JacksonLogCategories = List<JacksonLogCategory>
 
 /**
  * @author Lars Ivar Hatledal
