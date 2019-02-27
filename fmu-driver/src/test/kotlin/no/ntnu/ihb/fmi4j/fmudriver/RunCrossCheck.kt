@@ -242,7 +242,7 @@ object CrossChecker {
 fun main(args: Array<String>) {
 
     if (args.size != 1) {
-        return
+        throw IllegalArgumentException("Missing path to fmi-cross-check folder!")
     }
 
     CrossChecker.run(args[0])
