@@ -22,7 +22,7 @@ public class ModelDescriptionParseTest {
         Assertions.assertTrue(fmuFile.exists());
         Assertions.assertNotNull(parser.parse(fmuFile).asCoSimulationModelDescription());
 
-        String xml = parser.extractModelDescriptionXml(fmuFile);
+        String xml = ModelDescriptionParser.extractModelDescriptionXml(fmuFile);
         Assertions.assertNotNull(parser.parse(xml).asCoSimulationModelDescription());
 
     }
@@ -38,7 +38,7 @@ public class ModelDescriptionParseTest {
         Assertions.assertTrue(fmuFile.exists());
         Assertions.assertNotNull(parser.parse(fmuFile).asCoSimulationModelDescription());
 
-        String xml = parser.extractModelDescriptionXml(fmuFile);
+        String xml = ModelDescriptionParser.extractModelDescriptionXml(fmuFile);
         Assertions.assertNotNull(parser.parse(xml).asCoSimulationModelDescription());
 
     }
@@ -54,7 +54,7 @@ public class ModelDescriptionParseTest {
         Assertions.assertTrue(fmuFile.exists());
         Assertions.assertNotNull(parser.parse(fmuFile).asCoSimulationModelDescription());
 
-        String xml = parser.extractModelDescriptionXml(fmuFile);
+        String xml = ModelDescriptionParser.extractModelDescriptionXml(fmuFile);
         Assertions.assertNotNull(parser.parse(xml).asCoSimulationModelDescription());
 
     }
@@ -69,7 +69,7 @@ public class ModelDescriptionParseTest {
         Assertions.assertTrue(fmuFile.exists());
         Assertions.assertNotNull(parser.parse(fmuFile).asCoSimulationModelDescription());
 
-        String xml = parser.extractModelDescriptionXml(fmuFile);
+        String xml = ModelDescriptionParser.extractModelDescriptionXml(fmuFile);
         Assertions.assertNotNull(parser.parse(xml).asCoSimulationModelDescription());
 
     }
