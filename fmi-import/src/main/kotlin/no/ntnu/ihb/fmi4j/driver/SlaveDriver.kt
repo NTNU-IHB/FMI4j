@@ -87,7 +87,10 @@ class SlaveDriver(
             val t = slave.simulationTime
             if (last == -1.0 || (t - last) > maxFrequency) {
                 appendData(String.format(Locale.US, "%.3f", slave.simulationTime), *outputVariables.map {
-                    String.format(Locale.US, "%.5f", it.read(slave).value)
+                    when (val value = it.read(slave).value) {
+                        is Double -> String.format(Locale.US, "%.5f", value)
+                        else -> value
+                    }
                 }.toTypedArray())
                 last = t
             }
