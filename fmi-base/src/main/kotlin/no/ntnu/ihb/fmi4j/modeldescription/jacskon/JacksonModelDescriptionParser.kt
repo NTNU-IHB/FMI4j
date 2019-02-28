@@ -25,9 +25,6 @@ object JacksonModelDescriptionParser : ModelDescriptionParser() {
     override fun parse(xml: String): ModelDescriptionProvider {
 
         val correctedXml = xml.replace("calculatedParameter", "CALCULATED_PARAMETER")
-                .replace("<ModelStructure>\n" +
-                        "</ModelStructure>", "<ModelStructure/>")
-
         return mapper.readValue(correctedXml, JacksonModelDescription::class.java)
 
     }
