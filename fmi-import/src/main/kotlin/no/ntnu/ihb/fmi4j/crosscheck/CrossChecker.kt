@@ -185,7 +185,7 @@ class CrossChecker(
 
                 }
 
-                fmus.stream().forEach { fmu ->
+                fmus.parallelStream().forEach { fmu ->
                     if (CrossChecker(fmu, File(crossCheckDir, "results")).run()) {
                         numPassed.incrementAndGet()
                     }
