@@ -49,7 +49,7 @@ class CrossChecker(
         }
     }.absolutePath
 
-    private val options: DriverOptions by lazy{
+    private val options: DriverOptions by lazy {
 
         val variables = parseVariables(refData)
         val defaults = XcOptions.parse(defaultsData.readText())
@@ -114,7 +114,7 @@ class CrossChecker(
 
             when {
                 refData.length() > 1E6 -> reject("Reference data > 1MB")
-                OS.LINUX.isCurrentOs && "JModelica.org" in fmuDir.absolutePath -> reject("JModelica.org FMUs makes the LInux system crash.")
+                OS.LINUX.isCurrentOs && "JModelica.org" in fmuDir.absolutePath -> reject("JModelica.org FMUs makes Linux crash.")
                 options.stepSize < 0 -> reject("Invalid stepSize (stepSize < 0).")
                 options.startTime >= options.stopTime -> reject("Invalid start and or stop time (startTime >= stopTime).")
                 options.stepSize == 0.0 -> fail("Don't know how to handle variable step solver (stepsize=0.0).")
@@ -168,7 +168,7 @@ class CrossChecker(
 //                "SimulationX/3.7.41138/Engine1b/Engine1b.fmu"
         )
 
-        private fun parseVariables(refData: File): List<String>{
+        private fun parseVariables(refData: File): List<String> {
             val txt = refData.reader().buffered().readLine()
             return txt.split(",").let {
                 it.subList(1, it.size).map { it.replace("^\"|\"$".toRegex(), "").trim() }
