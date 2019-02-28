@@ -1,4 +1,4 @@
-package no.ntnu.ihb.fmi4j.fmudriver
+package no.ntnu.ihb.fmi4j.driver
 
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Disabled

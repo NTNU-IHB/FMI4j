@@ -1,13 +1,12 @@
-package no.ntnu.ihb.fmi4j.fmudriver.crosscheck
+package no.ntnu.ihb.fmi4j.crosscheck
 
-import no.ntnu.ihb.fmi4j.fmudriver.DriverOptions
-import no.ntnu.ihb.fmi4j.fmudriver.Failure
-import no.ntnu.ihb.fmi4j.fmudriver.FmuDriver
-import no.ntnu.ihb.fmi4j.fmudriver.Rejection
+import no.ntnu.ihb.fmi4j.driver.DriverOptions
+import no.ntnu.ihb.fmi4j.driver.Failure
+import no.ntnu.ihb.fmi4j.driver.FmuDriver
+import no.ntnu.ihb.fmi4j.driver.Rejection
 import no.ntnu.ihb.fmi4j.modeldescription.ModelDescriptionProvider
 import no.ntnu.ihb.fmi4j.modeldescription.jacskon.JacksonModelDescriptionParser
 import no.ntnu.ihb.fmi4j.util.OsUtil
-import org.junit.jupiter.api.condition.OS
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.File
@@ -17,10 +16,10 @@ private const val FMI4j_VERSION = "0.18.0"
 
 private const val README = """
         The cross-check results have been generated with FMI4j's FmuDriver.
-        To get more information download the 'fmudriver' tool from https://github.com/NTNU-IHB/FMI4j/releases and run:
+        To get more information download the 'fmu-driver' tool from https://github.com/NTNU-IHB/FMI4j/releases and run:
 
         ```
-        java -jar fmudriver.jar -h
+        java -jar fmu-driver.jar -h
         ```
         """
 
@@ -52,7 +51,7 @@ class CrossChecker(
     private val options: DriverOptions by lazy {
 
         val variables = parseVariables(refData)
-        val defaults = XcOptions.parse(defaultsData.readText())
+        val defaults = CrossCheckOptions.parse(defaultsData.readText())
 
         DriverOptions(
                 startTime = defaults.startTime,
@@ -114,7 +113,7 @@ class CrossChecker(
 
             when {
                 refData.length() > 1E6 -> reject("Reference data > 1MB")
-                OS.LINUX.isCurrentOs && "JModelica.org" in fmuDir.absolutePath -> reject("JModelica.org FMUs makes Linux crash.")
+                OsUtil.isLinux && "JModelica.org" in fmuDir.absolutePath -> reject("JModelica.org FMUs makes Linux crash.")
                 options.stepSize < 0 -> reject("Invalid stepSize (stepSize < 0).")
                 options.startTime >= options.stopTime -> reject("Invalid start and or stop time (startTime >= stopTime).")
                 options.stepSize == 0.0 -> fail("Don't know how to handle variable step solver (stepsize=0.0).")
@@ -149,24 +148,7 @@ class CrossChecker(
 
         private val LOG: Logger = LoggerFactory.getLogger(CrossChecker::class.java)
 
-        private val platform = when {
-            OS.LINUX.isCurrentOs -> "linux64"
-            OS.WINDOWS.isCurrentOs -> "win64"
-            else -> throw AssertionError("Invalid platform '${OsUtil.currentOS}'..")
-        }
-
-        private val blacklist = listOf<String>(
-//                "MapleSim/2015.1/Rectifier/Rectifier.fmu",
-//                "MapleSim/2015.2/Rectifier/Rectifier.fmu",
-//                "MapleSim/2016.1/Rectifier/Rectifier.fmu",
-//                "MapleSim/2016.2/Rectifier/Rectifier.fmu",
-//                "MapleSimH2018/Rectifier/Rectifier.fmu",
-//                "MWorks/2016/Rectifier/Rectifier.fmu",
-//                "MWorks/2016/fullRobot/fullRobot.fmu",
-//                "MWorks/2016/DFFREG/DFFREG.fmu",
-//                "MWorks/2016/DFFREG/DFFREG.fmu",
-//                "SimulationX/3.7.41138/Engine1b/Engine1b.fmu"
-        )
+        private val blacklist = listOf<String>()
 
         private fun parseVariables(refData: File): List<String> {
             val txt = refData.reader().buffered().readLine()
@@ -177,6 +159,7 @@ class CrossChecker(
 
         fun run(crossCheckDir: String) {
 
+            val platform = OsUtil.currentOS
             val csPath = File("$crossCheckDir/fmus/2.0/cs/$platform")
 
             File("$crossCheckDir/results/2.0/cs/$platform/FMI4j/$FMI4j_VERSION").apply {
