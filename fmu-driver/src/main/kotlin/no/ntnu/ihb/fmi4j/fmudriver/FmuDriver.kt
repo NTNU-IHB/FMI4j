@@ -66,11 +66,9 @@ class FmuDriver(
         private val options: DriverOptions
 ) {
 
-    private val LOG: Logger = LoggerFactory.getLogger(FmuDriver::class.java)
-
     fun run() {
 
-        Fmu.from(fmuPath).also { fmu ->
+        Fmu.from(fmuPath).use { fmu ->
             if (options.modelExchange) {
 
                 if (options.modelExchange && !fmu.supportsModelExchange) {
@@ -99,58 +97,82 @@ class FmuDriver(
             val stopTime = options.stopTime
             val stepSize = options.stepSize
 
-            slave.simpleSetup(options.startTime)
-
-            val sb = StringBuilder()
-            val header = arrayOf("\"Time\"", *options.outputVariables.map { '"' + it + '"' }.toTypedArray())
-            val csvFormat = CSVFormat.DEFAULT
-                    .withHeader(*header)
-                    .withEscape('\\')
-                    .withQuoteMode(QuoteMode.NONE)
-            val printer = CSVPrinter(sb, csvFormat)
-
-            val outputVariables = options.outputVariables.map {
-                slave.modelVariables.getByName(it)
-            }
-
             LOG.info("Simulating FMU '$fmuPath', with startTime=$startTime, stopTime=$stopTime, stepSize=$stepSize")
 
-            fun record() {
-                printer.printRecord(slave.simulationTime, *outputVariables.map { it.read(slave).value }.toTypedArray())
+            if (!slave.simpleSetup(options.startTime)) {
+                throw Failure("Failed to initialize FMU!")
             }
 
-            record()
+            val recorder = Recorder(slave)
+            recorder.record()
             while (slave.simulationTime <= stopTime) {
                 if (!slave.doStep(stepSize)) {
-                    throw Failure("Simulation terminated prematurely!")
+                    throw Failure("doStep failed, simulation terminated prematurely!")
                 }
-                record()
+                recorder.record()
             }
 
-            if (options.outputFolder != null) {
-
-                File(options.outputFolder).apply {
-                    if (!exists()) {
-                        mkdirs()
-                    }
-                }
-
-                val data = sb.toString()
-                data.toByteArray().size.also { size ->
-                    if (options.failOnLargeSize && (size > 1e6)) {
-                        throw Rejection("Generated CSV larger than 1MB. Was: ${size/1e6}MB!")
-                    }
-                }
-
-                File(options.outputFolder, "${fmuPath.nameWithoutExtension}_out.csv").apply {
-                    writeText(data)
-                    LOG.info("Wrote results to file $absoluteFile..")
-                }
+            options.outputFolder?.also {
+                recorder.writeData(it)
             }
 
         }
 
     }
 
+    inner class Recorder(
+            private val slave: FmuSlave
+    ) {
+
+        private var last = -1.0
+        private val maxFrequency = 1e-3
+
+        private val sb = StringBuilder()
+        private val header = arrayOf("\"Time\"", *options.outputVariables.map { '"' + it + '"' }.toTypedArray())
+        private val csvFormat = CSVFormat.DEFAULT
+                .withHeader(*header)
+                .withEscape('\\')
+                .withQuoteMode(QuoteMode.NONE)
+        private val printer = CSVPrinter(sb, csvFormat)
+
+        private val outputVariables = options.outputVariables.map {
+            slave.modelVariables.getByName(it)
+        }
+
+        fun record() {
+
+            val t = slave.simulationTime
+            if (last == -1.0 || (t - last) > maxFrequency) {
+                printer.printRecord(slave.simulationTime, *outputVariables.map { it.read(slave).value }.toTypedArray())
+                last = t
+            }
+
+        }
+
+        fun writeData(outputFolder: String) {
+            File(options.outputFolder).apply {
+                if (!exists()) {
+                    mkdirs()
+                }
+            }
+
+            val data = sb.toString()
+            data.toByteArray().size.also { size ->
+                if (options.failOnLargeSize && (size > 1e6)) {
+                    throw Rejection("Generated CSV larger than 1MB. Was: ${size/1e6}MB!")
+                }
+            }
+
+            File(options.outputFolder, "${fmuPath.nameWithoutExtension}_out.csv").apply {
+                writeText(data)
+                LOG.info("Wrote results to file $absoluteFile..")
+            }
+        }
+
+    }
+
+    companion object {
+        private val LOG: Logger = LoggerFactory.getLogger(FmuDriver::class.java)
+    }
 
 }
