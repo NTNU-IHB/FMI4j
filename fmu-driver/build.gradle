@@ -14,7 +14,6 @@ repositories {
 dependencies {
     compile project(':fmi-import')
     compile group: 'info.picocli', name: 'picocli', version: '3.9.2'
-    compile group: 'org.apache.commons', name: 'commons-csv', version: '1.5'
 }
 
 shadowJar {
