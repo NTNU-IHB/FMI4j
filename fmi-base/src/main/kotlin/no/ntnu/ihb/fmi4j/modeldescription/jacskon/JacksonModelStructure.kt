@@ -3,7 +3,6 @@ package no.ntnu.ihb.fmi4j.modeldescription.jacskon
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement
 import no.ntnu.ihb.fmi4j.modeldescription.ModelStructure
 import no.ntnu.ihb.fmi4j.modeldescription.Unknown
 
@@ -22,7 +21,7 @@ class JacksonModelStructure(): ModelStructure {
     @JacksonXmlProperty(localName = "InitialUnknowns")
     private val _initialUnknowns: InitialUnknowns? = null
 
-    private constructor(dummy: String): this()
+    private constructor(@Suppress("UNUSED_PARAMETER") dummy: String): this()
 
     override val outputs: List<Unknown>
         get() = _outputs?.unknowns ?: emptyList()
