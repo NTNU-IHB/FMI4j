@@ -159,6 +159,8 @@ class CrossChecker(
 
         fun run(crossCheckDir: String) {
 
+            LOG.info("Path to cross-check dir: $crossCheckDir")
+
             val platform = OsUtil.currentOS
             val csPath = File("$crossCheckDir/fmus/2.0/cs/$platform")
 
