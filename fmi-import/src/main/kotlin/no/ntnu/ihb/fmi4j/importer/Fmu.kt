@@ -327,6 +327,7 @@ class Fmu private constructor(
                     it.flush()
                 }
                 fmu.extractTo(temp)
+                fmu.delete()
                 Fmu(temp).also {
                     fmus.add(it)
                 }
