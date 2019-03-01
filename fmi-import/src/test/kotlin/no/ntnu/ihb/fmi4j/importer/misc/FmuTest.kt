@@ -34,14 +34,14 @@ class FmuTest {
                 .name(fmuName).file()
 
 
-        FileInputStream(file).use {
-            val bytes = it.readBytes()
-
-            Fmu.from(fmuName, bytes).use {
-                Assertions.assertEquals("2.0", it.modelDescription.fmiVersion)
-            }
-
+        val bytes = FileInputStream(file).use {
+            it.readBytes()
         }
+
+        Fmu.from(fmuName, bytes).use {
+            Assertions.assertEquals("2.0", it.modelDescription.fmiVersion)
+        }
+
 
     }
 
