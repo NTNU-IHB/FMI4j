@@ -8,6 +8,7 @@ plugins {
     id "com.github.johnrengelman.shadow" version "4.0.4"
 }
 
+apply from: rootProject.file("gradle/junit.gradle")
 apply from: rootProject.file("gradle/copyfmus.gradle")
 apply from: rootProject.file("gradle/mavenpublish.gradle")
 
