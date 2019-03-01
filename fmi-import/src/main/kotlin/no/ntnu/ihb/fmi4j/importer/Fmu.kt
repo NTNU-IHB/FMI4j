@@ -34,10 +34,7 @@ import no.ntnu.ihb.fmi4j.modeldescription.jacskon.JacksonModelDescriptionParser
 import no.ntnu.ihb.fmi4j.util.OsUtil
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import java.io.Closeable
-import java.io.File
-import java.io.FileNotFoundException
-import java.io.IOException
+import java.io.*
 import java.net.URL
 import java.nio.file.Files
 import java.util.*
@@ -312,6 +309,26 @@ class Fmu private constructor(
                     synchronized(fmus) {
                         fmus.add(it)
                     }
+                }
+            }
+        }
+
+
+        /**
+         * Creates an FMU from the provided URL.
+         */
+        @Throws(IOException::class)
+        fun from(name: String, data: ByteArray): Fmu {
+
+            return createTempDir(name).let { temp ->
+                val fmu = File("$name.fmu")
+                FileOutputStream(fmu).use {
+                    it.write(data)
+                    it.flush()
+                }
+                fmu.extractTo(temp)
+                Fmu(temp).also {
+                    fmus.add(it)
                 }
             }
         }
