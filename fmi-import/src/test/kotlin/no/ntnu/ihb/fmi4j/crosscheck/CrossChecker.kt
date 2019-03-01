@@ -29,8 +29,6 @@ class CrossChecker(
         resultDir: File
 ) {
 
-    private var failedOrRejected = false
-
     private val fmuPath = fmuDir.listFiles().find {
         it.name.endsWith(".fmu")
     } ?: throw IllegalArgumentException("No .fmu file present in the FMU dir!")
@@ -48,6 +46,14 @@ class CrossChecker(
             mkdirs()
         }
     }.absolutePath
+
+    init {
+
+        File(outputFolder, "README.md").apply {
+            writeText(README)
+        }
+
+    }
 
     private val options: DriverOptions by lazy {
 
@@ -72,7 +78,7 @@ class CrossChecker(
             writeText(reason)
         }
         LOG.warn("Rejected FMU '$fmuPath'. Reason: $reason")
-        failedOrRejected = true
+        throw Rejection(reason)
     }
 
     private fun fail(reason: String) {
@@ -81,7 +87,7 @@ class CrossChecker(
             writeText(reason)
         }
         LOG.warn("Failed to handle FMU '$fmuPath'. Reason: $reason")
-        failedOrRejected = true
+        throw Failure(reason)
     }
 
     private fun pass() {
@@ -91,40 +97,41 @@ class CrossChecker(
         LOG.info("FMU '$fmuPath' passed crosscheck")
     }
 
-    private fun run(): Boolean {
+    private fun run() {
 
         val inputData = fmuDir.listFiles().find {
             it.name.endsWith("in.csv")
         }
+        if (inputData != null) {
+            throw Failure("Unable to handle input files yet.")
+        }
 
-        var md: ModelDescriptionProvider? = null
+        val md: ModelDescriptionProvider
         try {
             md = JacksonModelDescriptionParser.parse(fmuPath)
         } catch (ex: Exception) {
             LOG.error("Failed to parse model description!", ex)
-            fail("Failed to parse model description!")
+            throw Failure("Failed to parse model description!")
         }
-
-        try {
 
             val fileName = fmuPath.absolutePath.replace("\\", "/")
             blacklist.find { fileName.contains(it.toRegex()) }?.also {
-                reject("FMU has been blacklisted")
+                throw Rejection("FMU has been blacklisted")
             }
 
             when {
-                refData.length() > 1E6 -> reject("Reference data > 1MB")
-                OsUtil.isLinux && "JModelica.org" in fmuDir.absolutePath -> reject("JModelica.org FMUs makes Linux crash.")
-                options.stepSize < 0 -> reject("Invalid stepSize (stepSize < 0).")
-                options.startTime >= options.stopTime -> reject("Invalid start and or stop time (startTime >= stopTime).")
-                options.stepSize == 0.0 -> fail("Don't know how to handle variable step solver (stepsize=0.0).")
-                inputData != null -> fail("Unable to handle input files yet.")
-                md!!.asCoSimulationModelDescription().attributes.needsExecutionTool -> reject("FMU requires execution tool.")
+                refData.length() > 1E6 ->  throw Rejection("Reference data > 1MB")
+                OsUtil.isLinux && "JModelica.org" in fmuDir.absolutePath ->  throw Rejection("JModelica.org FMUs makes Linux crash.")
+                options.stepSize < 0 ->  throw Rejection("Invalid stepSize (stepSize < 0).")
+                options.startTime >= options.stopTime -> throw Rejection("Invalid start and or stop time (startTime >= stopTime).")
+                options.stepSize == 0.0 -> throw Failure("Don't know how to handle variable step solver (stepsize=0.0).")
+                md.asCoSimulationModelDescription().attributes.needsExecutionTool ->  throw Rejection("FMU requires execution tool.")
 
             }
 
-            if (!failedOrRejected) {
-                FmuDriver(fmuPath, options).run()
+        try {
+
+            FmuDriver(fmuPath, options).run().also {
                 pass()
             }
 
@@ -137,11 +144,6 @@ class CrossChecker(
             }
         }
 
-        File(outputFolder, "README.md").apply {
-            writeText(README)
-        }
-
-        return !failedOrRejected
 
     }
 
@@ -189,9 +191,10 @@ class CrossChecker(
                 }
 
                 fmus.parallelStream().forEach { fmu ->
-                    if (CrossChecker(fmu, File(crossCheckDir, "results")).run()) {
+                    try {
+                        CrossChecker(fmu, File(crossCheckDir, "results")).run()
                         numPassed.incrementAndGet()
-                    }
+                    } catch (ex: Exception) {}
                 }
 
                 return numPassed.get()
