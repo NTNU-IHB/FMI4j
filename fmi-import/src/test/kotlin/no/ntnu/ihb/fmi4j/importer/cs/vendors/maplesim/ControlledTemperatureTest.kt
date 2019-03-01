@@ -1,7 +1,7 @@
 package no.ntnu.ihb.fmi4j.importer.cs.vendors.maplesim
 
-import no.ntnu.ihb.fmi4j.importer.TestFMUs
 import no.ntnu.ihb.fmi4j.common.FmiStatus
+import no.ntnu.ihb.fmi4j.importer.TestFMUs
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.condition.EnabledOnOs

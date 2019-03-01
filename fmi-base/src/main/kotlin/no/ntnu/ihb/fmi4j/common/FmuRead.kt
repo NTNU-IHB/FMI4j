@@ -24,7 +24,6 @@
 
 package no.ntnu.ihb.fmi4j.common
 
-import java.io.Serializable
 
 /***
  *
@@ -44,7 +43,7 @@ sealed class FmuRead<out E>(
          */
         val status: FmiStatus
 
-) : Serializable {
+) {
 
     override fun toString(): String {
         return "FmuRead(value=$value, status=$status)"
