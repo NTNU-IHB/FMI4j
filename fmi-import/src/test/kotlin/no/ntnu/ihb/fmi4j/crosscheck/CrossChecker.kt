@@ -252,6 +252,6 @@ fun main(args: Array<String>) {
         CrossChecker.run(args[0])
     }
 
-    LoggerFactory.getLogger(CrossChecker::class.java).info("Crosschecked took $elapsed ms")
+    LoggerFactory.getLogger(CrossChecker::class.java).info("Crosscheck took $elapsed ms")
 
 }
