@@ -40,8 +40,9 @@ import java.io.FileNotFoundException
 import java.io.IOException
 import java.net.URL
 import java.nio.file.Files
+import java.util.*
 
-interface IFmu: Closeable {
+interface IFmu : Closeable {
 
     val guid: String
         get() = modelDescription.guid
@@ -53,7 +54,7 @@ interface IFmu: Closeable {
 
 }
 
-interface FmuProvider: IFmu {
+interface FmuProvider : IFmu {
 
     /**
      * Does the FMU support Co-simulation?
@@ -243,13 +244,15 @@ class Fmu private constructor(
 
         private const val MODEL_DESC = "modelDescription.xml"
 
-        private val fmus = mutableListOf<Fmu>()
+        private val fmus = Collections.synchronizedList(mutableListOf<Fmu>())
 
         init {
             Runtime.getRuntime().addShutdownHook(Thread {
-                fmus.toMutableList().forEach {
-                    //mutableList because the list is modified during call
-                    it.close()
+                synchronized(fmus) {
+                    fmus.toMutableList().forEach {
+                        //mutableList because the list is modified during call
+                        it?.close()
+                    }
                 }
             })
         }
@@ -282,8 +285,10 @@ class Fmu private constructor(
 
             return createTempDir(file.nameWithoutExtension).let { temp ->
                 file.extractTo(temp)
-            Fmu(temp).also {
-                    fmus.add(it)
+                Fmu(temp).also {
+                    synchronized(fmus) {
+                        fmus.add(it)
+                    }
                 }
             }
 
@@ -304,7 +309,9 @@ class Fmu private constructor(
             return createTempDir(File(url.file).nameWithoutExtension).let { temp ->
                 url.extractTo(temp)
                 Fmu(temp).also {
-                    fmus.add(it)
+                    synchronized(fmus) {
+                        fmus.add(it)
+                    }
                 }
             }
         }
