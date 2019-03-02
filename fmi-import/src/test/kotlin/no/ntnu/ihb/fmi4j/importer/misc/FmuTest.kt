@@ -45,4 +45,14 @@ class FmuTest {
 
     }
 
+    @Test
+    fun testFromUrl() {
+        val fmuName = "ControlledTemperature"
+        Fmu.from(TestFMUs.fmi20().cs()
+                .vendor("20sim").version("4.6.4.8004")
+                .name(fmuName).file().toURI().toURL()).use {
+            Assertions.assertEquals("ControlledTemperature", it.modelDescription.modelName)
+        }
+    }
+
 }
