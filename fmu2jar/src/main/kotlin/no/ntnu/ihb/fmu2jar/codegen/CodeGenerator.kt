@@ -24,7 +24,6 @@
 
 package no.ntnu.ihb.fmu2jar.codegen
 
-import no.ntnu.ihb.fmi4j.modeldescription.ModelDescription
 import no.ntnu.ihb.fmi4j.modeldescription.ModelDescriptionProvider
 import no.ntnu.ihb.fmi4j.modeldescription.variables.*
 
@@ -209,8 +208,43 @@ public class $modelName implements FmuSlave {
     }
 
     @Override
-    public FmuVariableAccessor getVariableAccessor() {
-        return slave.getVariableAccessor();
+    public FmiStatus readInteger(long[] vr, int[] ref) {
+        return slave.readInteger(vr, ref);
+    }
+
+    @Override
+    public FmiStatus readReal(long[] vr, double[] ref) {
+        return slave.readReal(vr, ref);
+    }
+
+    @Override
+    public FmiStatus readString(long[] vr, String[] ref) {
+        return slave.readString(vr, ref);
+    }
+
+    @Override
+    public FmiStatus readBoolean(long[] vr, boolean[] ref) {
+        return slave.readBoolean(vr, ref);
+    }
+
+    @Override
+    public FmiStatus writeInteger(long[] vr, int[] values) {
+        return slave.writeInteger(vr, values);
+    }
+
+    @Override
+    public FmiStatus writeReal(long[] vr, double[] values) {
+        return slave.writeReal(vr, values);
+    }
+
+    @Override
+    public FmiStatus writeString(long[] vr, String[] values) {
+        return slave.writeString(vr, values);
+    }
+
+    @Override
+    public FmiStatus writeBoolean(long[] vr, boolean[] values) {
+        return slave.writeBoolean(vr, values);
     }
 
     @Override
