@@ -262,7 +262,7 @@ class Fmu private constructor(
 
         private fun createTempDir(fmuName: String): File {
             return Files.createTempDirectory(FMI4J_FILE_PREFIX + fmuName).toFile().also {
-                File(it, "resources").apply {
+                File(it, RESOURCES_FOLDER).apply {
                     if (!exists()) {
                         mkdir()
                     }
