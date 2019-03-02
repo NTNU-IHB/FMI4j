@@ -118,6 +118,12 @@ class Fmu private constructor(
     override val supportsModelExchange: Boolean
         get() = modelDescription.supportsModelExchange
 
+    init {
+        synchronized(fmus) {
+            fmus.add(this)
+        }
+    }
+
     override fun asCoSimulationFmu(): CoSimulationFmu {
         if (!supportsCoSimulation) {
             throw IllegalStateException("FMU does not support Co-simulation!")
@@ -282,11 +288,7 @@ class Fmu private constructor(
 
             return createTempDir(file.nameWithoutExtension).let { temp ->
                 file.extractTo(temp)
-                Fmu(temp).also {
-                    synchronized(fmus) {
-                        fmus.add(it)
-                    }
-                }
+                Fmu(temp)
             }
 
         }
@@ -305,32 +307,19 @@ class Fmu private constructor(
 
             return createTempDir(File(url.file).nameWithoutExtension).let { temp ->
                 url.extractTo(temp)
-                Fmu(temp).also {
-                    synchronized(fmus) {
-                        fmus.add(it)
-                    }
-                }
+                Fmu(temp)
             }
         }
 
 
         /**
-         * Creates an FMU from the provided URL.
+         * Creates an FMU from the provided name and byte array.
          */
         @Throws(IOException::class)
         fun from(name: String, data: ByteArray): Fmu {
-
             return createTempDir(name).let { temp ->
-                val fmu = File("$name.fmu")
-                FileOutputStream(fmu).use {
-                    it.write(data)
-                    it.flush()
-                }
-                fmu.extractTo(temp)
-                fmu.delete()
-                Fmu(temp).also {
-                    fmus.add(it)
-                }
+                ByteArrayInputStream(data).extractTo(temp)
+                Fmu(temp)
             }
         }
 
