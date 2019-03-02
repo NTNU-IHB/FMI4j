@@ -38,6 +38,7 @@ import java.io.*
 import java.net.URL
 import java.nio.file.Files
 import java.util.*
+import java.util.concurrent.atomic.AtomicBoolean
 
 interface IFmu : Closeable {
 
@@ -84,7 +85,7 @@ class Fmu private constructor(
         private val fmuFile: File
 ) : FmuProvider {
 
-    private var isClosed = false
+    private var isClosed = AtomicBoolean(false)
     private val libraries = mutableListOf<Fmi2Library>()
     private val instances = mutableListOf<AbstractFmuInstance<*, *>>()
 
@@ -173,7 +174,7 @@ class Fmu private constructor(
     }
 
     override fun close() {
-        if (!isClosed) {
+        if (!isClosed.getAndSet(true)) {
 
             LOG.debug("Closing FMU '$fmuFile'..")
 
@@ -182,8 +183,6 @@ class Fmu private constructor(
             deleteExtractedFmuFolder()
 
             fmus.remove(this)
-            isClosed = true
-
         }
     }
 
@@ -222,13 +221,6 @@ class Fmu private constructor(
             }
         }
         return true
-    }
-
-    protected fun finalize() {
-        if (!isClosed) {
-            LOG.warn("FMU has not been closed prior to garbage collection. Doing it for you..")
-            close()
-        }
     }
 
     override fun toString(): String {
