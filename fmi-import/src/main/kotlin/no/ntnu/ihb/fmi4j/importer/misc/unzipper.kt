@@ -34,7 +34,7 @@ import java.util.zip.ZipInputStream
  *
  * @param directory folder to extract to
  */
-fun File.extractTo(directory: File) {
+internal fun File.extractTo(directory: File) {
     inputStream().extractTo(directory)
 }
 
@@ -43,7 +43,7 @@ fun File.extractTo(directory: File) {
  *
  * @param directory folder to extract to
  */
-fun URL.extractTo(directory: File) {
+internal fun URL.extractTo(directory: File) {
     openStream().extractTo(directory)
 }
 
@@ -52,7 +52,7 @@ fun URL.extractTo(directory: File) {
  *
  * @param directory folder to extract to
  */
-private fun InputStream.extractTo(directory: File) {
+internal fun InputStream.extractTo(directory: File) {
 
     ZipInputStream(this).use { zis ->
         var zipEntry = zis.nextEntry
