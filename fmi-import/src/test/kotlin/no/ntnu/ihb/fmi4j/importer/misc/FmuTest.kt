@@ -55,4 +55,11 @@ class FmuTest {
         }
     }
 
+    @Test
+    fun testIllegalFmu() {
+        Assertions.assertThrows(IllegalStateException::class.java) {
+            Fmu.from(FmuTest::class.java.classLoader.getResource("illegal.fmu"))
+        }
+    }
+
 }
