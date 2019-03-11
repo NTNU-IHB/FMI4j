@@ -53,16 +53,16 @@ task copyNativeLibs(type: Copy, dependsOn: assembleAllRelease) {
     if (OperatingSystem.current().isLinux()) {
         into ("linux64") {
             from "$buildDir/lib/main/release/linux/x86-64"
-            include "**/*.so"
+            include "*.so"
         }
     } else if (OperatingSystem.current().isWindows()) {
         into ("win32") {
             from "$buildDir/lib/main/release/windows/x86"
-            include "**/*.dll"
+            include "*.dll"
         }
         into ("win64") {
             from "$buildDir/lib/main/release/windows/x86-64"
-            include "**/*.dll"
+            include "*.dll"
         }
     } else {
         throw Exception("Unsupported OS: " + OperatingSystem.current().name)
