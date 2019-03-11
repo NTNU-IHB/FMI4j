@@ -14,7 +14,6 @@ library { CppLibrary lib ->
     targetMachines = [
         machines.windows.x86,
         machines.windows.x86_64,
-        machines.linux.x86,
         machines.linux.x86_64,
     ]
 
@@ -52,13 +51,9 @@ task copyNativeLibs(type: Copy, dependsOn: assembleAllRelease) {
     into "$rootDir/fmi-import/src/main/resources/native/fmi2"
 
     if (OperatingSystem.current().isLinux()) {
-        into ("linux32") {
-            from "$buildDir/lib/main/release/linux/x86"
-            include "**/*.dll"
-        }
         into ("linux64") {
             from "$buildDir/lib/main/release/linux/x86-64"
-            include "**/*.dll"
+            include "**/*.so"
         }
     } else if (OperatingSystem.current().isWindows()) {
         into ("win32") {
