@@ -1,91 +1,76 @@
 
-import org.apache.tools.ant.taskdefs.condition.Os
+import org.gradle.internal.os.OperatingSystem
 
 plugins {
-    id "cpp"
+    id "cpp-library"
 }
 
-model {
+library { CppLibrary lib ->
 
-    buildTypes {
-        release
-    }
+    baseName = "fmi2_jni"
 
-    platforms {
-        if (Os.isFamily(Os.FAMILY_UNIX)) {
-            linux32 {
-                architecture "x86"
-                operatingSystem "linux"
-            }
-            linux64 {
-                architecture "x86_64"
-                operatingSystem "linux"
-            }
-        } else  if (Os.isFamily(Os.FAMILY_WINDOWS)) {
-            win32 {
-                architecture "x86"
-                operatingSystem "windows"
-            }
-            win64 {
-                architecture "x86_64"
-                operatingSystem "windows"
-            }
-        }
-    }
+    linkage = [Linkage.SHARED]
 
-    toolChains {
-        visualCpp(VisualCpp) {}
-        gcc(Gcc) {
-            if (Os.isFamily(Os.FAMILY_UNIX)) {
-                target("linux32")
-                target("linux64")
-            }  else if (Os.isFamily(Os.FAMILY_WINDOWS)) {
-                target("win32")
-                target("win64")
-            }
-        }
+    targetMachines = [
+        machines.windows.x86,
+        machines.windows.x86_64,
+        machines.linux.x86,
+        machines.linux.x86_64,
+    ]
 
-    }
+    lib.binaries.whenElementFinalized { CppBinary binary ->
+        project.dependencies {
 
-    components {
-        main(NativeLibrarySpec) {
+            add(binary.includePathConfiguration.name, files("${org.gradle.internal.jvm.Jvm.current().javaHome}/include"))
 
-            baseName = "fmi2_jni"
-
-            if (Os.isFamily(Os.FAMILY_UNIX)) {
-                targetPlatform "linux32"
-                targetPlatform "linux64"
-            } else if (Os.isFamily(Os.FAMILY_WINDOWS)) {
-                targetPlatform "win32"
-                targetPlatform "win64"
-            }
-
-            binaries.all {
-
-                cppCompiler.args "-I${org.gradle.internal.jvm.Jvm.current().javaHome}/include"
-                if (Os.isFamily(Os.FAMILY_UNIX)) {
-                    cppCompiler.args "-I${org.gradle.internal.jvm.Jvm.current().javaHome}/include/linux"
-                } else if (Os.isFamily(Os.FAMILY_WINDOWS)) {
-                    cppCompiler.args "-I${org.gradle.internal.jvm.Jvm.current().javaHome}/include/win32"
-                }
-
+            if (OperatingSystem.current().isLinux()) {
+                add(binary.includePathConfiguration.name, files("${org.gradle.internal.jvm.Jvm.current().javaHome}/include/linux"))
+            } else if (OperatingSystem.current().isWindows()) {
+                add(binary.includePathConfiguration.name, files("${org.gradle.internal.jvm.Jvm.current().javaHome}/include/win32"))
             }
 
         }
 
     }
 
-    tasks {
-        buildAllExecutables(Task) {
-            dependsOn $.binaries.findAll { it.buildable }
-        }
-        copyNativeLibs(Copy) {
-            from "$buildDir/libs/main/shared"
-            include "**/*.dll", "**/*.so"
-            into "$rootDir/fmi-import/src/main/resources/native/fmi2"
-            dependsOn buildAllExecutables
-        }
-        assemble.dependsOn(copyNativeLibs)
+}
+
+def assembleAllRelease = []
+
+tasks.all {
+    if (it.name.contains("assembleRelease")) {
+        assembleAllRelease.add(it)
     }
-    
+}
+
+tasks.register("assembleAllRelease") {
+    dependsOn assembleAllRelease
+}
+
+task copyNativeLibs(type: Copy, dependsOn: assembleAllRelease) {
+
+    into "$rootDir/fmi-import/src/main/resources/native/fmi2"
+
+    if (OperatingSystem.current().isLinux()) {
+        into ("linux32") {
+            from "$buildDir/lib/main/release/linux/x86"
+            include "**/*.dll"
+        }
+        into ("linux64") {
+            from "$buildDir/lib/main/release/linux/x86-64"
+            include "**/*.dll"
+        }
+    } else if (OperatingSystem.current().isWindows()) {
+        into ("win32") {
+            from "$buildDir/lib/main/release/windows/x86"
+            include "**/*.dll"
+        }
+        into ("win64") {
+            from "$buildDir/lib/main/release/windows/x86-64"
+            include "**/*.dll"
+        }
+    } else {
+        throw Exception("Unsupported OS: " + OperatingSystem.current().name)
+    }
+
 }

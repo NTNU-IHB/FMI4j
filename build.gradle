@@ -7,30 +7,33 @@ println "Gradle version is ${gradle.getGradleVersion()}"
 
 group = 'no.ntnu.ihb.fmi4j'
 
-subprojects {
+subprojects { sub ->
 
-    apply plugin: 'java'
-    apply plugin: 'kotlin'
+    if (sub.name != "fmi-native") {
 
-    repositories {
-        mavenCentral()
-    }
+        apply plugin: 'java'
+        apply plugin: 'kotlin'
 
-    dependencies {
+        repositories {
+            mavenCentral()
+        }
 
-        implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
-        
-        def slf4j_version = '1.7.25'
-        implementation group: 'org.slf4j', name: 'slf4j-api', version: slf4j_version
-        runtimeOnly group: 'org.slf4j', name: 'slf4j-log4j12', version: slf4j_version
+        dependencies {
 
-    }
+            implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
 
-    compileKotlin {
-        kotlinOptions.jvmTarget = "1.8"
-    }
-    compileTestKotlin {
-        kotlinOptions.jvmTarget = "1.8"
+            def slf4j_version = '1.7.25'
+            implementation group: 'org.slf4j', name: 'slf4j-api', version: slf4j_version
+            runtimeOnly group: 'org.slf4j', name: 'slf4j-log4j12', version: slf4j_version
+
+        }
+
+        compileKotlin {
+            kotlinOptions.jvmTarget = "1.8"
+        }
+        compileTestKotlin {
+            kotlinOptions.jvmTarget = "1.8"
+        }
     }
 
 }
