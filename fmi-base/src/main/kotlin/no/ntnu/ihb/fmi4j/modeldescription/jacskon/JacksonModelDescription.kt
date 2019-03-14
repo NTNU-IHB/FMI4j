@@ -112,12 +112,12 @@ class JacksonModelDescription(
         get() = modelExchangeAttributes != null
 
     override fun asCoSimulationModelDescription(): CoSimulationModelDescription {
-        return JacksonCoSimulationModelDescriptionImpl(this, coSimulationAttributes
+        return JacksonCoSimulationModelDescription(this, coSimulationAttributes
                 ?: throw IllegalStateException("No CoSimulation attributes present in ModelDescription!"))
     }
 
     override fun asModelExchangeModelDescription(): ModelExchangeModelDescription {
-        return JacksonModelExchangeModelDescriptionImpl(this, modelExchangeAttributes
+        return JacksonModelExchangeModelDescription(this, modelExchangeAttributes
                 ?: throw IllegalStateException("No ModelExchange attributes in ModelDescription!"),
                 numberOfEventIndicators)
     }
@@ -144,13 +144,13 @@ class JacksonModelDescription(
 
 }
 
-class JacksonCoSimulationModelDescriptionImpl(
+class JacksonCoSimulationModelDescription(
         md: ModelDescription,
         override val attributes: CoSimulationAttributes
 ): CoSimulationModelDescription, ModelDescription by md
 
 
-class JacksonModelExchangeModelDescriptionImpl(
+class JacksonModelExchangeModelDescription(
         md: ModelDescription,
         override val attributes: ModelExchangeAttributes,
         override val numberOfEventIndicators: Int = 0
