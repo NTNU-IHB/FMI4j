@@ -58,11 +58,11 @@ class JaxbModelDescription internal constructor(
     override val modelVariables: ModelVariables
         get() = JaxbModelVariables(md.modelVariables)
     override val modelStructure: ModelStructure
-        get() = TODO()
+        get() = JaxbModelStructure(md.modelStructure)
     override val unitDefinitions: UnitDefinitions?
         get() = md.unitDefinitions?.unit?.map { JaxbUnit(it) }
     override val typeDefinitions: TypeDefinitions?
-        get() = TODO()
+        get() = md.typeDefinitions?.simpleType?.map { JaxbSimpleType(it) }
     override val logCategories: JaxbLogCategories?
         get() = md.logCategories?.category?.map { JaxbLogCategory(it) }
     override val supportsCoSimulation: Boolean
