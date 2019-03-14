@@ -34,14 +34,13 @@ import no.ntnu.ihb.fmi4j.modeldescription.jacskon.JacksonModelDescriptionParser
 import no.ntnu.ihb.fmi4j.util.OsUtil
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import java.io.Closeable
-import java.io.File
-import java.io.FileNotFoundException
-import java.io.IOException
+import java.io.*
 import java.net.URL
 import java.nio.file.Files
+import java.util.*
+import java.util.concurrent.atomic.AtomicBoolean
 
-interface IFmu: Closeable {
+interface IFmu : Closeable {
 
     val guid: String
         get() = modelDescription.guid
@@ -53,7 +52,7 @@ interface IFmu: Closeable {
 
 }
 
-interface FmuProvider: IFmu {
+interface FmuProvider : IFmu {
 
     /**
      * Does the FMU support Co-simulation?
@@ -83,10 +82,10 @@ interface FmuProvider: IFmu {
  * @author Lars Ivar Hatledal
  */
 class Fmu private constructor(
-        private val fmuFile: File
+        private val extractedFmu: File
 ) : FmuProvider {
 
-    private var isClosed = false
+    private var isClosed = AtomicBoolean(false)
     private val libraries = mutableListOf<Fmi2Library>()
     private val instances = mutableListOf<AbstractFmuInstance<*, *>>()
 
@@ -96,6 +95,14 @@ class Fmu private constructor(
 
     private val modelExchangeFmu by lazy {
         ModelExchangeFmu(this)
+    }
+
+    init {
+        if (!File(extractedFmu, MODEL_DESC).exists()) {
+            deleteExtractedFmuFolder().also {
+                throw IllegalStateException("FMU is invalid, no $MODEL_DESC present!")
+            }
+        }
     }
 
     /**
@@ -120,6 +127,12 @@ class Fmu private constructor(
     override val supportsModelExchange: Boolean
         get() = modelDescription.supportsModelExchange
 
+    init {
+        synchronized(fmus) {
+            fmus.add(this)
+        }
+    }
+
     override fun asCoSimulationFmu(): CoSimulationFmu {
         if (!supportsCoSimulation) {
             throw IllegalStateException("FMU does not support Co-simulation!")
@@ -138,17 +151,17 @@ class Fmu private constructor(
      * Get the file handle for the modelDescription.xml file
      */
     private val modelDescriptionFile: File
-        get() = File(fmuFile, MODEL_DESC)
+        get() = File(extractedFmu, MODEL_DESC)
 
     private val resourcesPath: String
-        get() = "file:///${File(fmuFile, RESOURCES_FOLDER)
+        get() = "file:///${File(extractedFmu, RESOURCES_FOLDER)
                 .absolutePath.replace("\\", "/")}"
 
     /**
      * Get the absolute name of the native library on the form "C://folder/name.extension"
      */
     fun getAbsoluteLibraryPath(modelIdentifier: String): String {
-        return File(fmuFile, BINARIES_FOLDER + File.separator + OsUtil.libraryFolderName + OsUtil.platformBitness
+        return File(extractedFmu, BINARIES_FOLDER + File.separator + OsUtil.libraryFolderName + OsUtil.platformBitness
                 + File.separator + modelIdentifier + "." + OsUtil.libExtension).absolutePath
     }
 
@@ -169,17 +182,15 @@ class Fmu private constructor(
     }
 
     override fun close() {
-        if (!isClosed) {
+        if (!isClosed.getAndSet(true)) {
 
-            LOG.debug("Closing FMU '$fmuFile'..")
+            LOG.debug("Closing FMU '$extractedFmu'..")
 
             terminateInstances()
             disposeNativeLibraries()
             deleteExtractedFmuFolder()
 
             fmus.remove(this)
-            isClosed = true
-
         }
     }
 
@@ -208,27 +219,20 @@ class Fmu private constructor(
      */
     private fun deleteExtractedFmuFolder(): Boolean {
 
-        if (fmuFile.exists()) {
-            return fmuFile.deleteRecursively().also { success ->
+        if (extractedFmu.exists()) {
+            return extractedFmu.deleteRecursively().also { success ->
                 if (success) {
-                    LOG.debug("Deleted extracted FMU contents: $fmuFile")
+                    LOG.debug("Deleted extracted FMU contents: $extractedFmu")
                 } else {
-                    LOG.debug("Failed to delete extracted FMU contents: $fmuFile")
+                    LOG.debug("Failed to delete extracted FMU contents: $extractedFmu")
                 }
             }
         }
         return true
     }
 
-    protected fun finalize() {
-        if (!isClosed) {
-            LOG.warn("FMU has not been closed prior to garbage collection. Doing it for you..")
-            close()
-        }
-    }
-
     override fun toString(): String {
-        return "Fmu(fmu=${fmuFile.absolutePath})"
+        return "Fmu(fmu=${extractedFmu.absolutePath})"
     }
 
     companion object {
@@ -243,20 +247,22 @@ class Fmu private constructor(
 
         private const val MODEL_DESC = "modelDescription.xml"
 
-        private val fmus = mutableListOf<Fmu>()
+        private val fmus = Collections.synchronizedList(mutableListOf<Fmu>())
 
         init {
             Runtime.getRuntime().addShutdownHook(Thread {
-                fmus.toMutableList().forEach {
-                    //mutableList because the list is modified during call
-                    it.close()
+                synchronized(fmus) {
+                    fmus.toMutableList().forEach {
+                        //mutableList because the list is modified during call
+                        it?.close()
+                    }
                 }
             })
         }
 
         private fun createTempDir(fmuName: String): File {
             return Files.createTempDirectory(FMI4J_FILE_PREFIX + fmuName).toFile().also {
-                File(it, "resources").apply {
+                File(it, RESOURCES_FOLDER).apply {
                     if (!exists()) {
                         mkdir()
                     }
@@ -282,9 +288,7 @@ class Fmu private constructor(
 
             return createTempDir(file.nameWithoutExtension).let { temp ->
                 file.extractTo(temp)
-            Fmu(temp).also {
-                    fmus.add(it)
-                }
+                Fmu(temp)
             }
 
         }
@@ -303,9 +307,19 @@ class Fmu private constructor(
 
             return createTempDir(File(url.file).nameWithoutExtension).let { temp ->
                 url.extractTo(temp)
-                Fmu(temp).also {
-                    fmus.add(it)
-                }
+                Fmu(temp)
+            }
+        }
+
+
+        /**
+         * Creates an FMU from the provided name and byte array.
+         */
+        @Throws(IOException::class)
+        fun from(name: String, data: ByteArray): Fmu {
+            return createTempDir(name).let { temp ->
+                ByteArrayInputStream(data).extractTo(temp)
+                Fmu(temp)
             }
         }
 

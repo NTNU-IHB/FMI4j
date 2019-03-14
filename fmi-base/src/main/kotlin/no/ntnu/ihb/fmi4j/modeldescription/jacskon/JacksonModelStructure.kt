@@ -10,8 +10,7 @@ import no.ntnu.ihb.fmi4j.modeldescription.Unknown
  *
  * @author Lars Ivar Hatledal
  */
-
-class JacksonModelStructure: ModelStructure {
+class JacksonModelStructure(): ModelStructure {
 
     @JacksonXmlProperty(localName = "Outputs")
     private val _outputs: Outputs? = null
@@ -21,6 +20,8 @@ class JacksonModelStructure: ModelStructure {
 
     @JacksonXmlProperty(localName = "InitialUnknowns")
     private val _initialUnknowns: InitialUnknowns? = null
+
+    private constructor(@Suppress("UNUSED_PARAMETER") dummy: String): this()
 
     override val outputs: List<Unknown>
         get() = _outputs?.unknowns ?: emptyList()

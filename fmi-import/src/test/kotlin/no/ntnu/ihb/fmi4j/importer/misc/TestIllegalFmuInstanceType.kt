@@ -1,7 +1,7 @@
 package no.ntnu.ihb.fmi4j.importer.misc
 
-import no.ntnu.ihb.fmi4j.importer.TestFMUs
 import no.ntnu.ihb.fmi4j.importer.Fmu
+import no.ntnu.ihb.fmi4j.importer.TestFMUs
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.condition.EnabledOnOs

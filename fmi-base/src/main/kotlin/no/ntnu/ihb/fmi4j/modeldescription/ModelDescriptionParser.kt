@@ -40,6 +40,7 @@ abstract class ModelDescriptionParser {
     fun parse(url: URL): ModelDescriptionProvider {
         return parse(url.openStream())
     }
+
     fun parse(file: File): ModelDescriptionProvider {
         if (!file.exists()) {
             throw FileNotFoundException("No such file '${file.absolutePath}'!")
@@ -47,7 +48,7 @@ abstract class ModelDescriptionParser {
         return parse(FileInputStream(file))
     }
 
-    private fun parse(stream: InputStream): ModelDescriptionProvider {
+    fun parse(stream: InputStream): ModelDescriptionProvider {
         return parse(extractModelDescriptionXml(stream))
     }
 
@@ -67,13 +68,13 @@ abstract class ModelDescriptionParser {
 
         @JvmStatic
         fun extractModelDescriptionXml(stream: InputStream): String {
-            ZipInputStream(stream).use {
-                var nextEntry: ZipEntry? = it.nextEntry
+            ZipInputStream(stream).use { zis ->
+                var nextEntry: ZipEntry? = zis.nextEntry
                 while (nextEntry != null) {
                     if (nextEntry.name == MODEL_DESC_FILE) {
-                        return it.bufferedReader(Charsets.UTF_8).use { it.readText() }
+                        return zis.bufferedReader(Charsets.UTF_8).use { it.readText() }
                     }
-                    nextEntry = it.nextEntry
+                    nextEntry = zis.nextEntry
                 }
             }
             throw IllegalArgumentException("Input is not an valid FMU! No $MODEL_DESC_FILE present!")

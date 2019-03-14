@@ -1,13 +1,11 @@
 
-import org.apache.tools.ant.taskdefs.condition.Os
-
 plugins {
-    id "cpp"
     id "java-library"
     id "maven-publish"
     id "com.github.johnrengelman.shadow" version "4.0.4"
 }
 
+apply from: rootProject.file("gradle/junit.gradle")
 apply from: rootProject.file("gradle/copyfmus.gradle")
 apply from: rootProject.file("gradle/mavenpublish.gradle")
 
@@ -26,87 +24,4 @@ shadowJar {
     archiveVersion = null
 }
 
-model {
-
-    buildTypes {
-        release
-    }
-
-    platforms {
-        if (Os.isFamily(Os.FAMILY_UNIX)) {
-            linux32 {
-                architecture "x86"
-                operatingSystem "linux"
-            }
-            linux64 {
-                architecture "x86_64"
-                operatingSystem "linux"
-            }
-        } else  if (Os.isFamily(Os.FAMILY_WINDOWS)) {
-            win32 {
-                architecture "x86"
-                operatingSystem "windows"
-            }
-            win64 {
-                architecture "x86_64"
-                operatingSystem "windows"
-            }
-        }
-    }
-
-    toolChains {
-        visualCpp(VisualCpp) {}
-        gcc(Gcc) {
-            if (Os.isFamily(Os.FAMILY_UNIX)) {
-                target("linux32")
-                target("linux64")
-            }  else if (Os.isFamily(Os.FAMILY_WINDOWS)) {
-                target("win32")
-                target("win64")
-            }
-        }
-
-    }
-
-    components {
-        main(NativeLibrarySpec) {
-
-            baseName = "fmi2_jni"
-
-            if (Os.isFamily(Os.FAMILY_UNIX)) {
-                targetPlatform "linux32"
-                targetPlatform "linux64"
-            } else if (Os.isFamily(Os.FAMILY_WINDOWS)) {
-                targetPlatform "win32"
-                targetPlatform "win64"
-            }
-
-            binaries.all {
-
-                cppCompiler.args "-I${org.gradle.internal.jvm.Jvm.current().javaHome}/include"
-                if (Os.isFamily(Os.FAMILY_UNIX)) {
-                    cppCompiler.args "-I${org.gradle.internal.jvm.Jvm.current().javaHome}/include/linux"
-                } else if (Os.isFamily(Os.FAMILY_WINDOWS)) {
-                    cppCompiler.args "-I${org.gradle.internal.jvm.Jvm.current().javaHome}/include/win32"
-                }
-
-            }
-
-        }
-
-    }
-
-    tasks {
-        buildAllExecutables(Task) {
-            dependsOn $.binaries.findAll { it.buildable }
-        }
-        copyNativeLibs(Copy) {
-            from "$buildDir/libs/main/shared"
-            include "**/*.dll", "**/*.so"
-            into "$projectDir/src/main/resources/native/fmi2"
-            dependsOn buildAllExecutables
-        }
-        assemble.dependsOn(copyNativeLibs)
-    }
-}
-
+compileKotlin.dependsOn(':fmi-native:copyNativeLibs')

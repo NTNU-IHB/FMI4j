@@ -1,0 +1,71 @@
+
+import org.gradle.internal.os.OperatingSystem
+
+plugins {
+    id "cpp-library"
+}
+
+library { CppLibrary lib ->
+
+    baseName = "fmi2_jni"
+
+    linkage = [Linkage.SHARED]
+
+    targetMachines = [
+        machines.windows.x86,
+        machines.windows.x86_64,
+        machines.linux.x86_64,
+    ]
+
+    lib.binaries.whenElementFinalized { CppBinary binary ->
+        project.dependencies {
+
+            add(binary.includePathConfiguration.name, files("${org.gradle.internal.jvm.Jvm.current().javaHome}/include"))
+
+            if (OperatingSystem.current().isLinux()) {
+                add(binary.includePathConfiguration.name, files("${org.gradle.internal.jvm.Jvm.current().javaHome}/include/linux"))
+            } else if (OperatingSystem.current().isWindows()) {
+                add(binary.includePathConfiguration.name, files("${org.gradle.internal.jvm.Jvm.current().javaHome}/include/win32"))
+            }
+
+        }
+
+    }
+
+}
+
+def assembleAllRelease = []
+
+tasks.all {
+    if (it.name.contains("assembleRelease")) {
+        assembleAllRelease.add(it)
+    }
+}
+
+tasks.register("assembleAllRelease") {
+    dependsOn assembleAllRelease
+}
+
+task copyNativeLibs(type: Copy, dependsOn: assembleAllRelease) {
+
+    into "$rootDir/fmi-import/src/main/resources/native/fmi2"
+
+    if (OperatingSystem.current().isLinux()) {
+        into ("linux64") {
+            from "$buildDir/lib/main/release/linux/x86-64"
+            include "*.so"
+        }
+    } else if (OperatingSystem.current().isWindows()) {
+        into ("win32") {
+            from "$buildDir/lib/main/release/windows/x86"
+            include "*.dll"
+        }
+        into ("win64") {
+            from "$buildDir/lib/main/release/windows/x86-64"
+            include "*.dll"
+        }
+    } else {
+        throw Exception("Unsupported OS: " + OperatingSystem.current().name)
+    }
+
+}

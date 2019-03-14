@@ -4,6 +4,8 @@ plugins {
     id "com.github.johnrengelman.shadow" version "4.0.4"
 }
 
+apply from: rootProject.file(("gradle/junit.gradle"))
+
 def group = "no.ntnu.ihb.fmi4j.fmudriver"
 mainClassName = "${group}.FmuDriver"
 
@@ -14,7 +16,6 @@ repositories {
 dependencies {
     compile project(':fmi-import')
     compile group: 'info.picocli', name: 'picocli', version: '3.9.2'
-    compile group: 'org.apache.commons', name: 'commons-csv', version: '1.5'
 }
 
 shadowJar {
