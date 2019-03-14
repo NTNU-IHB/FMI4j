@@ -22,23 +22,20 @@
  * THE SOFTWARE.
  */
 
-package no.ntnu.ihb.fmi4j.modeldescription.jacskon
+package no.ntnu.ihb.fmi4j.modeldescription.jaxb
 
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty
-import no.ntnu.ihb.fmi4j.modeldescription.LogCategory
+import no.ntnu.ihb.fmi4j.modeldescription.ModelDescriptionParser
+import no.ntnu.ihb.fmi4j.modeldescription.ModelDescriptionProvider
+import java.io.StringReader
+import javax.xml.bind.JAXBContext
 
+object JaxbModelDescriptionParser: ModelDescriptionParser() {
 
-typealias JacksonLogCategories = List<JacksonLogCategory>
+    override fun parse(xml: String): ModelDescriptionProvider {
+        val ctx = JAXBContext.newInstance(FmiModelDescription::class.java)
+        return ctx.createUnmarshaller().unmarshal(StringReader(xml)).let {
+            JaxbModelDescription(it as FmiModelDescription)
+        }
+    }
 
-/**
- * @author Lars Ivar Hatledal
- */
-data class JacksonLogCategory(
-
-        @JacksonXmlProperty
-        override val name: String,
-
-        @JacksonXmlProperty
-        override val description: String? = null
-
-): LogCategory
+}

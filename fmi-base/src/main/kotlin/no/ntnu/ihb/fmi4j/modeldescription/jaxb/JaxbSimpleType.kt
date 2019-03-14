@@ -22,23 +22,17 @@
  * THE SOFTWARE.
  */
 
-package no.ntnu.ihb.fmi4j.modeldescription.jacskon
+package no.ntnu.ihb.fmi4j.modeldescription.jaxb
 
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty
-import no.ntnu.ihb.fmi4j.modeldescription.LogCategory
+import no.ntnu.ihb.fmi4j.modeldescription.SimpleType
 
+class JaxbSimpleType internal constructor(
+        private val type: Fmi2SimpleType
+): SimpleType {
 
-typealias JacksonLogCategories = List<JacksonLogCategory>
+    override val name: String
+        get() = type.name
+    override val description: String?
+        get() = type.description
 
-/**
- * @author Lars Ivar Hatledal
- */
-data class JacksonLogCategory(
-
-        @JacksonXmlProperty
-        override val name: String,
-
-        @JacksonXmlProperty
-        override val description: String? = null
-
-): LogCategory
+}

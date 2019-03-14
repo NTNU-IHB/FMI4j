@@ -22,23 +22,20 @@
  * THE SOFTWARE.
  */
 
-package no.ntnu.ihb.fmi4j.modeldescription.jacskon
+package no.ntnu.ihb.fmi4j.modeldescription.jaxb
 
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty
-import no.ntnu.ihb.fmi4j.modeldescription.LogCategory
+import no.ntnu.ihb.fmi4j.modeldescription.SourceFile
 
+class JaxbSourcefile private constructor(
+        override val name: String
+): SourceFile {
 
-typealias JacksonLogCategories = List<JacksonLogCategory>
+    internal constructor(
+            file: FmiModelDescription.CoSimulation.SourceFiles.File
+    ) : this(file.name)
 
-/**
- * @author Lars Ivar Hatledal
- */
-data class JacksonLogCategory(
+    internal constructor(
+            file: FmiModelDescription.ModelExchange.SourceFiles.File
+    ) : this(file.name)
 
-        @JacksonXmlProperty
-        override val name: String,
-
-        @JacksonXmlProperty
-        override val description: String? = null
-
-): LogCategory
+}

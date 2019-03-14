@@ -22,23 +22,21 @@
  * THE SOFTWARE.
  */
 
-package no.ntnu.ihb.fmi4j.modeldescription.jacskon
+package no.ntnu.ihb.fmi4j.modeldescription.jaxb
 
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty
-import no.ntnu.ihb.fmi4j.modeldescription.LogCategory
+import no.ntnu.ihb.fmi4j.modeldescription.DefaultExperiment
 
+class JaxbDefaultExperiment internal constructor(
+        private val de: FmiModelDescription.DefaultExperiment
+): DefaultExperiment {
 
-typealias JacksonLogCategories = List<JacksonLogCategory>
+    override val startTime: Double
+        get() = de.startTime
+    override val stopTime: Double
+        get() = de.stopTime
+    override val tolerance: Double
+        get() = de.tolerance
+    override val stepSize: Double
+        get() = de.stepSize
 
-/**
- * @author Lars Ivar Hatledal
- */
-data class JacksonLogCategory(
-
-        @JacksonXmlProperty
-        override val name: String,
-
-        @JacksonXmlProperty
-        override val description: String? = null
-
-): LogCategory
+}
