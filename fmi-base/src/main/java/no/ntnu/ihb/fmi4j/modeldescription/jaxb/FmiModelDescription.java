@@ -1,19 +1,11 @@
 
 package no.ntnu.ihb.fmi4j.modeldescription.jaxb;
 
-import java.util.ArrayList;
-import java.util.List;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElements;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlSchemaType;
-import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.*;
 import javax.xml.bind.annotation.adapters.NormalizedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import javax.xml.datatype.XMLGregorianCalendar;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -251,7 +243,8 @@ import javax.xml.datatype.XMLGregorianCalendar;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
-    "modelExchangeAndCoSimulation",
+    "modelExchange",
+    "coSimulation",
     "unitDefinitions",
     "typeDefinitions",
     "logCategories",
@@ -263,11 +256,11 @@ import javax.xml.datatype.XMLGregorianCalendar;
 @XmlRootElement(name = "fmiModelDescription")
 public class FmiModelDescription {
 
-    @XmlElements({
-        @XmlElement(name = "ModelExchange", type = FmiModelDescription.ModelExchange.class),
-        @XmlElement(name = "CoSimulation", type = FmiModelDescription.CoSimulation.class)
-    })
-    protected List<Object> modelExchangeAndCoSimulation;
+
+    @XmlElement(name = "ModelExchange", type = FmiModelDescription.ModelExchange.class)
+    protected FmiModelDescription.ModelExchange modelExchange;
+    @XmlElement(name = "CoSimulation", type = FmiModelDescription.CoSimulation.class)
+    protected FmiModelDescription.CoSimulation coSimulation;
     @XmlElement(name = "UnitDefinitions")
     protected FmiModelDescription.UnitDefinitions unitDefinitions;
     @XmlElement(name = "TypeDefinitions")
@@ -310,7 +303,7 @@ public class FmiModelDescription {
     protected String generationTool;
     @XmlAttribute(name = "generationDateAndTime")
     @XmlSchemaType(name = "dateTime")
-    protected XMLGregorianCalendar generationDateAndTime;
+    protected String generationDateAndTime;
     @XmlAttribute(name = "variableNamingConvention")
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     protected String variableNamingConvention;
@@ -318,34 +311,13 @@ public class FmiModelDescription {
     @XmlSchemaType(name = "unsignedInt")
     protected Long numberOfEventIndicators;
 
-    /**
-     * Gets the value of the modelExchangeAndCoSimulation property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the modelExchangeAndCoSimulation property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getModelExchangeAndCoSimulation().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link FmiModelDescription.ModelExchange }
-     * {@link FmiModelDescription.CoSimulation }
-     * 
-     * 
-     */
-    public List<Object> getModelExchangeAndCoSimulation() {
-        if (modelExchangeAndCoSimulation == null) {
-            modelExchangeAndCoSimulation = new ArrayList<Object>();
-        }
-        return this.modelExchangeAndCoSimulation;
+
+    public ModelExchange getModelExchange() {
+        return this.modelExchange;
+    }
+
+    public CoSimulation getCoSimulation() {
+        return this.coSimulation;
     }
 
     /**
@@ -741,10 +713,10 @@ public class FmiModelDescription {
      * 
      * @return
      *     possible object is
-     *     {@link XMLGregorianCalendar }
+     *     {@link String }
      *     
      */
-    public XMLGregorianCalendar getGenerationDateAndTime() {
+    public String getGenerationDateAndTime() {
         return generationDateAndTime;
     }
 
@@ -753,10 +725,10 @@ public class FmiModelDescription {
      * 
      * @param value
      *     allowed object is
-     *     {@link XMLGregorianCalendar }
+     *     {@link String }
      *     
      */
-    public void setGenerationDateAndTime(XMLGregorianCalendar value) {
+    public void setGenerationDateAndTime(String value) {
         this.generationDateAndTime = value;
     }
 
