@@ -21,6 +21,7 @@ A significant speedup (2-5x) compared to other FMI implementations for the JVM, 
 
 The package consists of:
 * [A software API for interacting with FMUs](#api)
+* [A tool for wrapping an FMU as a JAR - batteries included](#fmu2jar).
 * [A tool for running FMUs from the command line](#fmudriver).
 
 
@@ -70,6 +71,13 @@ dependencies {
     implementation "com.github.NTNU-IHB.FMI4j:fmi-import:${fmi4j_version}"
 }
 ```
+
+### <a name="fmu2jar"></a> FMU2Jar
+
+FMU2Jar is a command line application (CLI) which takes an FMU in and produces a Jar file. 
+You can also tell the application to install the Jar into your local maven repository (``.m2``),
+The Jar contains code that makes it easier to work with the FMU programmatically just as the Gradle plugin does. 
+
 
 ### <a name="fmudriver"></a> FmuDriver
 
