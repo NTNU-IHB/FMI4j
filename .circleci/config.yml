@@ -37,9 +37,5 @@ jobs:
       - run: gradle shadowJar
 
       - store_artifacts:
-          path: fmu2jar/build/libs/fmu2jar.jar
-          destination: fmu2jar.jar
-
-      - store_artifacts:
           path: fmu-driver/build/libs/fmu-driver.jar
           destination: fmu-driver.jar
