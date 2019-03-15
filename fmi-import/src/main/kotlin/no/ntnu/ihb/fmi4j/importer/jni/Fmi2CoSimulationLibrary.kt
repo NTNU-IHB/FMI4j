@@ -25,7 +25,7 @@
 package no.ntnu.ihb.fmi4j.importer.jni
 
 import no.ntnu.ihb.fmi4j.common.FmiStatus
-import no.ntnu.ihb.fmi4j.common.ValueReferences
+import no.ntnu.ihb.fmi4j.modeldescription.ValueReferences
 
 /**
  * @author Lars Ivar Hatledal

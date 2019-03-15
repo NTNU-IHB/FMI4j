@@ -25,6 +25,7 @@
 package no.ntnu.ihb.fmi4j.driver
 
 import no.ntnu.ihb.fmi4j.common.FmuSlave
+import no.ntnu.ihb.fmi4j.common.read
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.File

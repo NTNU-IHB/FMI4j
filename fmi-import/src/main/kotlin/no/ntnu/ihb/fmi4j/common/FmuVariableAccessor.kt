@@ -24,12 +24,38 @@
 
 package no.ntnu.ihb.fmi4j.common
 
+import no.ntnu.ihb.fmi4j.modeldescription.RealArray
+import no.ntnu.ihb.fmi4j.modeldescription.StringArray
+import no.ntnu.ihb.fmi4j.modeldescription.ValueReferences
 
-typealias Real = Double
-typealias ValueReference = Long
-typealias ValueReferences = LongArray
-typealias RealArray = DoubleArray
-typealias StringArray = Array<String>
 
-fun realArrayOf(vararg elements: Double): RealArray = doubleArrayOf(*elements)
-fun stringArrayOf(vararg elements: String): StringArray = arrayOf(*elements)
+/**
+ * @author Lars Ivar Hatledal
+ */
+interface FmuVariableReader {
+
+    fun readInteger(vr: ValueReferences, ref: IntArray): FmiStatus
+    fun readReal(vr: ValueReferences, ref: RealArray): FmiStatus
+    fun readString(vr: ValueReferences, ref: StringArray): FmiStatus
+    fun readBoolean(vr: ValueReferences, ref: BooleanArray): FmiStatus
+
+}
+
+
+/**
+ * @author Lars Ivar Hatledal
+ */
+interface FmuVariableWriter {
+
+    fun writeInteger(vr: ValueReferences, value: IntArray): FmiStatus
+    fun writeReal(vr: ValueReferences, value: RealArray): FmiStatus
+    fun writeString(vr: ValueReferences, value: StringArray): FmiStatus
+    fun writeBoolean(vr: ValueReferences, value: BooleanArray): FmiStatus
+
+}
+
+
+/**
+ * @author Lars Ivar Hatledal
+ */
+interface FmuVariableAccessor: FmuVariableReader, FmuVariableWriter

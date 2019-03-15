@@ -1,14 +1,8 @@
 package no.ntnu.ihb.fmi4j.importer.misc
 
-import no.ntnu.ihb.fmi4j.common.readBoolean
-import no.ntnu.ihb.fmi4j.common.readInteger
-import no.ntnu.ihb.fmi4j.common.readReal
-import no.ntnu.ihb.fmi4j.common.readString
+import no.ntnu.ihb.fmi4j.common.*
 import no.ntnu.ihb.fmi4j.importer.TestFMUs
-import no.ntnu.ihb.fmi4j.modeldescription.variables.BooleanVariable
-import no.ntnu.ihb.fmi4j.modeldescription.variables.IntegerVariable
-import no.ntnu.ihb.fmi4j.modeldescription.variables.RealVariable
-import no.ntnu.ihb.fmi4j.modeldescription.variables.StringVariable
+import no.ntnu.ihb.fmi4j.modeldescription.variables.*
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
@@ -49,6 +43,8 @@ class FmuInstanceVariableAccessorTest {
                             variable.read(slave), slave.readString(variable.valueReference))
                     is BooleanVariable -> Assertions.assertEquals(
                             variable.read(slave), slave.readBoolean(variable.valueReference))
+                    is EnumerationVariable -> Assertions.assertEquals(
+                            variable.read(slave), slave.readInteger(variable.valueReference))
                 }
             }
 
@@ -77,6 +73,9 @@ class FmuInstanceVariableAccessorTest {
                     is BooleanVariable -> Assertions.assertEquals(
                             slave.readBoolean(variable.valueReference),
                             slave.readBoolean(variable.name))
+                    is EnumerationVariable -> Assertions.assertEquals(
+                            slave.readInteger(variable.valueReference),
+                            slave.readInteger(variable.name))
                 }
             }
 

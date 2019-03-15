@@ -21,3 +21,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+
+package no.ntnu.ihb.fmi4j.modeldescription
+
+
+typealias Real = Double
+typealias ValueReference = Long
+typealias ValueReferences = LongArray
+typealias RealArray = DoubleArray
+typealias StringArray = Array<String>
+
+fun realArrayOf(vararg elements: Double): RealArray = doubleArrayOf(*elements)
+fun stringArrayOf(vararg elements: String): StringArray = arrayOf(*elements)

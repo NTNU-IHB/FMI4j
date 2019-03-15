@@ -75,7 +75,7 @@ public class ControlledTemperatureTestJava {
             final RealVariable heatCapacity1_C = slave.getModelDescription()
                     .getVariableByName("HeatCapacity1.C").asRealVariable();
             Assertions.assertEquals(0.1, (double) heatCapacity1_C.getStart());
-            LOG.info("heatCapacity1_C={}", heatCapacity1_C.read(slave).getValue());
+            LOG.info("heatCapacity1_C={}", Fmi4jVariableUtils.read(heatCapacity1_C, slave).getValue());
 
             final RealVariable temperature_room = slave.getModelDescription()
                     .getVariableByName("Temperature_Room").asRealVariable();
@@ -84,7 +84,7 @@ public class ControlledTemperatureTestJava {
             for (int i = 0; i < 5; i++) {
                 Assertions.assertTrue(slave.doStep(dt));
                 Assertions.assertEquals(slave.getLastStatus(), FmiStatus.OK);
-                double value = temperature_room.read(slave).getValue();
+                double value = Fmi4jVariableUtils.read(temperature_room, slave).getValue();
                 Assertions.assertEquals(slave.getLastStatus(), FmiStatus.OK);
 
                 LOG.info("temperature_room={}", value);

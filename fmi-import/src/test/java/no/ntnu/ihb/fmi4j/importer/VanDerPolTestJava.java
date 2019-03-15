@@ -24,6 +24,7 @@
 
 package no.ntnu.ihb.fmi4j.importer;
 
+import no.ntnu.ihb.fmi4j.common.Fmi4jVariableUtils;
 import no.ntnu.ihb.fmi4j.common.FmiStatus;
 import no.ntnu.ihb.fmi4j.common.FmuRead;
 import no.ntnu.ihb.fmi4j.common.FmuSlave;
@@ -81,7 +82,7 @@ public class VanDerPolTestJava {
         double stop = 1.0;
         double macroStep = 1.0 / 10;
         while (slave.getSimulationTime() <= stop) {
-            FmuRead<Double> read = x0.read(slave);
+            FmuRead<Double> read = Fmi4jVariableUtils.read(x0, slave);
             Assertions.assertSame(read.getStatus(), FmiStatus.OK);
             LOG.info("t={}, x0={}", slave.getSimulationTime(), read.getValue());
             Assertions.assertTrue(slave.doStep(macroStep));
