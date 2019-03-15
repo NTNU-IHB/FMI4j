@@ -25,9 +25,9 @@
 package no.ntnu.ihb.fmi4j.modeldescription.variables
 
 
-import no.ntnu.ihb.fmi4j.common.StringArray
-import no.ntnu.ihb.fmi4j.common.ValueReference
-import no.ntnu.ihb.fmi4j.common.ValueReferences
+import no.ntnu.ihb.fmi4j.modeldescription.StringArray
+import no.ntnu.ihb.fmi4j.modeldescription.ValueReference
+import no.ntnu.ihb.fmi4j.modeldescription.ValueReferences
 
 /**
  * @author Lars Ivar Hatledal

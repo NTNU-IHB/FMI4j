@@ -24,26 +24,12 @@
 
 package no.ntnu.ihb.fmi4j.modeldescription.variables
 
-import no.ntnu.ihb.fmi4j.common.*
+import no.ntnu.ihb.fmi4j.modeldescription.Real
 
 /**
  * @author Lars Ivar Hatledal
  */
 interface TypedScalarVariable<E> : ScalarVariable, TypedAttribute<E> {
-
-    /**
-     * Accesses the FMU and returns the current value of the variable
-     * represented by this valueReference, as well as the status
-     */
-    fun read(reader: FmuVariableReader): FmuRead<E>
-
-    /**
-     * Accesses the FMU and writes the provided value to the FMU
-     * variable represented by this valueReference
-     *
-     * @value value to set
-     */
-    fun write(writer: FmuVariableWriter, value: E): FmiStatus
 
     /**
      * Get the type name
@@ -63,6 +49,21 @@ interface TypedScalarVariable<E> : ScalarVariable, TypedAttribute<E> {
             is EnumerationVariable -> ScalarVariable.ENUMERATION_TYPE
             else -> throw IllegalStateException("Instance $this is not a valid type!")
         }
+
+    val isInteger: Boolean
+        get() = this is IntegerVariable
+
+    val isReal: Boolean
+        get() = this is RealVariable
+
+    val isString: Boolean
+        get() = this is StringVariable
+
+    val isBoolean: Boolean
+        get() = this is BooleanVariable
+
+    val isEnumeration: Boolean
+        get() = this is EnumerationVariable
 
     fun asIntegerVariable(): IntegerVariable = when {
         this is IntegerVariable -> this
@@ -106,14 +107,6 @@ class IntegerVariable (
         a: IntegerAttribute
 ) : BoundedScalarVariable<Int>, ScalarVariable by v, IntegerAttribute by a {
 
-    override fun read(reader: FmuVariableReader): FmuIntegerRead {
-        return reader.readInteger(valueReference)
-    }
-
-    override fun write(writer: FmuVariableWriter, value: Int): FmiStatus {
-        return writer.writeInteger(valueReference, value)
-    }
-
     override fun toString(): String {
         val entries = mutableListOf<String>().apply {
             add("name=$name")
@@ -140,14 +133,6 @@ class RealVariable (
         v: ScalarVariable,
         a: RealAttribute
 ) : BoundedScalarVariable<Real>, ScalarVariable by v, RealAttribute by a {
-
-    override fun read(reader: FmuVariableReader): FmuRealRead {
-        return reader.readReal(valueReference)
-    }
-
-    override fun write(writer: FmuVariableWriter, value: Real): FmiStatus {
-        return writer.writeReal(valueReference, value)
-    }
 
     override fun toString(): String {
 
@@ -185,14 +170,6 @@ class StringVariable (
         a: StringAttribute
 ) : TypedScalarVariable<String>, ScalarVariable by v, StringAttribute by a {
 
-    override fun read(reader: FmuVariableReader): FmuStringRead {
-        return reader.readString(valueReference)
-    }
-
-    override fun write(writer: FmuVariableWriter, value: String): FmiStatus {
-        return writer.writeString(valueReference, value)
-    }
-
     override fun toString(): String {
 
         val entries = mutableListOf<String>().apply {
@@ -220,14 +197,6 @@ class BooleanVariable (
         a: BooleanAttribute
 ) : TypedScalarVariable<Boolean>, ScalarVariable by v, BooleanAttribute by a {
 
-    override fun read(reader: FmuVariableReader): FmuBooleanRead {
-        return reader.readBoolean(valueReference)
-    }
-
-    override fun write(writer: FmuVariableWriter, value: Boolean): FmiStatus {
-        return writer.writeBoolean(valueReference, value)
-    }
-
     override fun toString(): String {
 
         val entries = mutableListOf<String>().apply {
@@ -254,14 +223,6 @@ class EnumerationVariable (
         v: ScalarVariable,
         a: EnumerationAttribute
 ) : BoundedScalarVariable<Int>, ScalarVariable by v, EnumerationAttribute by a {
-
-    override fun read(reader: FmuVariableReader): FmuRead<Int> {
-        return reader.readInteger(valueReference)
-    }
-
-    override fun write(writer: FmuVariableWriter, value: Int): FmiStatus {
-        return writer.writeInteger(valueReference, value)
-    }
 
     override fun toString(): String {
 

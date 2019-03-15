@@ -27,6 +27,9 @@ package no.ntnu.ihb.fmi4j.importer
 import no.ntnu.ihb.fmi4j.common.*
 import no.ntnu.ihb.fmi4j.importer.jni.Fmi2LibraryWrapper
 import no.ntnu.ihb.fmi4j.modeldescription.CommonModelDescription
+import no.ntnu.ihb.fmi4j.modeldescription.RealArray
+import no.ntnu.ihb.fmi4j.modeldescription.StringArray
+import no.ntnu.ihb.fmi4j.modeldescription.ValueReferences
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 

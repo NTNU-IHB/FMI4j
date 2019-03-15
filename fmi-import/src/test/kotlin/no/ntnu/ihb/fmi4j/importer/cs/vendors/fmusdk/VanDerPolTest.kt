@@ -1,6 +1,7 @@
 package no.ntnu.ihb.fmi4j.importer.cs.vendors.fmusdk
 
 import no.ntnu.ihb.fmi4j.common.FmiStatus
+import no.ntnu.ihb.fmi4j.common.read
 import no.ntnu.ihb.fmi4j.importer.TestFMUs
 import no.ntnu.ihb.fmi4j.importer.me.vendors.fmusdk.VanDerPolTest
 import org.junit.jupiter.api.Assertions

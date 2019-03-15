@@ -24,7 +24,6 @@
 
 package no.ntnu.ihb.fmi4j.modeldescription
 
-import no.ntnu.ihb.fmi4j.common.ValueReference
 import no.ntnu.ihb.fmi4j.modeldescription.variables.ModelVariables
 import no.ntnu.ihb.fmi4j.modeldescription.variables.TypedScalarVariable
 

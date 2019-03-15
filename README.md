@@ -61,15 +61,13 @@ class Demo {
 Due to how cumbersome it is to publish artifacts to Maven Central, new releases can only be obtained using __jitpack__.
 
 ```groovy
-allprojects {
-    repositories {
-        /*...*/
-        maven { url 'https://jitpack.io' }
-    }
+repositories {
+    /*...*/
+    maven { url 'https://jitpack.io' }
 }
 
 dependencies {
-    def fmi4j_version = "..." // e.g 0.16.0
+    def fmi4j_version = "..."
     implementation "com.github.NTNU-IHB.FMI4j:fmi-import:${fmi4j_version}"
 }
 ```

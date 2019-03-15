@@ -24,7 +24,7 @@
 
 package no.ntnu.ihb.fmi4j.importer.misc
 
-import no.ntnu.ihb.fmi4j.common.ValueReferences
+import no.ntnu.ihb.fmi4j.modeldescription.ValueReferences
 
 /**
  *

@@ -24,6 +24,10 @@
 
 package no.ntnu.ihb.fmi4j.common
 
+import no.ntnu.ihb.fmi4j.modeldescription.Real
+import no.ntnu.ihb.fmi4j.modeldescription.RealArray
+import no.ntnu.ihb.fmi4j.modeldescription.StringArray
+
 
 /***
  *
