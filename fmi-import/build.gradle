@@ -25,3 +25,4 @@ shadowJar {
 }
 
 compileKotlin.dependsOn(':fmi-native:copyNativeLibs')
+clean.dependsOn(copyTestFmus)
