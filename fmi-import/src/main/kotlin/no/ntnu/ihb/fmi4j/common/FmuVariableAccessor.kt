@@ -34,10 +34,10 @@ import no.ntnu.ihb.fmi4j.modeldescription.ValueReferences
  */
 interface FmuVariableReader {
 
-    fun readInteger(vr: ValueReferences, ref: IntArray): FmiStatus
-    fun readReal(vr: ValueReferences, ref: RealArray): FmiStatus
-    fun readString(vr: ValueReferences, ref: StringArray): FmiStatus
-    fun readBoolean(vr: ValueReferences, ref: BooleanArray): FmiStatus
+    fun read(vr: ValueReferences, ref: IntArray): FmiStatus
+    fun read(vr: ValueReferences, ref: RealArray): FmiStatus
+    fun read(vr: ValueReferences, ref: StringArray): FmiStatus
+    fun read(vr: ValueReferences, ref: BooleanArray): FmiStatus
 
 }
 
@@ -47,10 +47,10 @@ interface FmuVariableReader {
  */
 interface FmuVariableWriter {
 
-    fun writeInteger(vr: ValueReferences, value: IntArray): FmiStatus
-    fun writeReal(vr: ValueReferences, value: RealArray): FmiStatus
-    fun writeString(vr: ValueReferences, value: StringArray): FmiStatus
-    fun writeBoolean(vr: ValueReferences, value: BooleanArray): FmiStatus
+    fun write(vr: ValueReferences, value: IntArray): FmiStatus
+    fun write(vr: ValueReferences, value: RealArray): FmiStatus
+    fun write(vr: ValueReferences, value: StringArray): FmiStatus
+    fun write(vr: ValueReferences, value: BooleanArray): FmiStatus
 
 }
 
