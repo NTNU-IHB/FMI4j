@@ -20,7 +20,7 @@ class BouncingBallTest {
     private companion object {
         private val LOG = LoggerFactory.getLogger(BouncingBallTest::class.java)
 
-        private val fmu = TestFMUs.fmi20().me()
+        private val fmu = TestFMUs.fmi20().both()
                 .vendor("Test-FMUs").version("0.0.1")
                 .name("BouncingBall").fmu().asModelExchangeFmu()
 
