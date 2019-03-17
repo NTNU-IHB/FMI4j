@@ -1,2 +1,2 @@
 install:
-  - gradlew -PskipBuildNative=true clean publishToMavenLocal
+  - ./gradlew -PskipBuildNative=true clean publishToMavenLocal
