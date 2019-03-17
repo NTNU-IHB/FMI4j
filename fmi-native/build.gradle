@@ -5,7 +5,7 @@ plugins {
     id "cpp-library"
 }
 
-if (!project.skipBuildNative) {
+if (!project.getProperties().get("skipBuildNative", false)) {
 
     library { CppLibrary lib ->
 
