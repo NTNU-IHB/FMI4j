@@ -27,7 +27,7 @@
 #include <stdlib.h>
 #include <vector>
 
-#include "FmuInstance.hpp"
+#include "fmu_instance.hpp"
 
 #ifdef __cplusplus
 extern "C" {
