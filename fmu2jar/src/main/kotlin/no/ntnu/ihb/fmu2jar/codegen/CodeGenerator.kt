@@ -208,43 +208,43 @@ public class $modelName implements FmuSlave {
     }
 
     @Override
-    public FmiStatus readInteger(long[] vr, int[] ref) {
-        return slave.readInteger(vr, ref);
+    public FmiStatus read(long[] vr, int[] ref) {
+        return slave.read(vr, ref);
     }
 
     @Override
-    public FmiStatus readReal(long[] vr, double[] ref) {
-        return slave.readReal(vr, ref);
+    public FmiStatus read(long[] vr, double[] ref) {
+        return slave.read(vr, ref);
     }
 
     @Override
-    public FmiStatus readString(long[] vr, String[] ref) {
-        return slave.readString(vr, ref);
+    public FmiStatus read(long[] vr, String[] ref) {
+        return slave.read(vr, ref);
     }
 
     @Override
-    public FmiStatus readBoolean(long[] vr, boolean[] ref) {
-        return slave.readBoolean(vr, ref);
+    public FmiStatus read(long[] vr, boolean[] ref) {
+        return slave.read(vr, ref);
     }
 
     @Override
-    public FmiStatus writeInteger(long[] vr, int[] values) {
-        return slave.writeInteger(vr, values);
+    public FmiStatus write(long[] vr, int[] values) {
+        return slave.write(vr, values);
     }
 
     @Override
-    public FmiStatus writeReal(long[] vr, double[] values) {
-        return slave.writeReal(vr, values);
+    public FmiStatus write(long[] vr, double[] values) {
+        return slave.write(vr, values);
     }
 
     @Override
-    public FmiStatus writeString(long[] vr, String[] values) {
-        return slave.writeString(vr, values);
+    public FmiStatus write(long[] vr, String[] values) {
+        return slave.write(vr, values);
     }
 
     @Override
-    public FmiStatus writeBoolean(long[] vr, boolean[] values) {
-        return slave.writeBoolean(vr, values);
+    public FmiStatus write(long[] vr, boolean[] values) {
+        return slave.write(vr, values);
     }
 
     @Override

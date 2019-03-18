@@ -9,9 +9,18 @@ apply from: rootProject.file("gradle/junit.gradle")
 def group = "no.ntnu.ihb.fmu2jar"
 mainClassName = "${group}.Fmu2Jar"
 
+repositories {
+    maven { url 'https://jitpack.io' }
+}
+
+def fmi4j_version = "v0.19.1"
+
 dependencies {
-    compile project(':fmi-import')
+    implementation "com.github.NTNU-IHB.FMI4j:fmi-base:$fmi4j_version"
     compile group: 'info.picocli', name: 'picocli', version: '3.9.2'
+
+    testImplementation "com.github.NTNU-IHB.FMI4j:fmi-import:$fmi4j_version"
+
 }
 
 shadowJar {
@@ -20,7 +29,7 @@ shadowJar {
     archiveVersion = null
 }
 
-task deleteCachedControlledTemperature(type: Delete) {
+task (deleteCachedControlledTemperature, type: Delete) {
     def fmuName = "ControlledTemperature"
     def m2 = System.getProperty("user.home") + "/.m2/repository"
     delete "$m2/${group.replace(".", "/")}/$fmuName"
