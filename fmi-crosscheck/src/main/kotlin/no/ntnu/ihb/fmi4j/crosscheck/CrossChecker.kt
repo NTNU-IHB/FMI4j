@@ -13,7 +13,7 @@ import java.io.File
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.system.measureTimeMillis
 
-private const val FMI4j_VERSION = "0.18.0"
+private const val FMI4j_VERSION = "0.19.1"
 
 private const val README = """
         The cross-check results have been generated with FMI4j's FmuDriver.
