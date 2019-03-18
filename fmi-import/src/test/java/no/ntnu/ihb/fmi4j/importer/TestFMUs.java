@@ -36,6 +36,24 @@ public class TestFMUs {
             return new MeType(sb);
         }
 
+        public BothType both() {
+            return new BothType(sb);
+        }
+
+    }
+
+    public static class BothType {
+
+        private final StringBuilder sb;
+
+        public BothType(StringBuilder sb) {
+            this.sb = sb;
+        }
+
+        public FmuVendor vendor(String vendor) {
+            return new FmuVendor(sb, vendor);
+        }
+
     }
 
     public static class CsType {

@@ -32,7 +32,7 @@ jobs:
             - ~/.gradle
           key: v1-dependencies-{{ checksum "build.gradle" }}
 
-      - run: gradle test
+      - run: gradle clean test
 
       - run: gradle shadowJar
 
