@@ -34,7 +34,7 @@ import no.ntnu.ihb.fmi4j.modeldescription.Unknown
  *
  * @author Lars Ivar Hatledal
  */
-class JacksonModelStructure(): ModelStructure {
+class JacksonModelStructure() : ModelStructure {
 
     @JacksonXmlProperty(localName = "Outputs")
     private val _outputs: Outputs? = null
@@ -45,7 +45,7 @@ class JacksonModelStructure(): ModelStructure {
     @JacksonXmlProperty(localName = "InitialUnknowns")
     private val _initialUnknowns: InitialUnknowns? = null
 
-    private constructor(@Suppress("UNUSED_PARAMETER") dummy: String): this()
+    private constructor(@Suppress("UNUSED_PARAMETER") dummy: String) : this()
 
     override val outputs: List<Unknown>
         get() = _outputs?.unknowns ?: emptyList()
@@ -66,34 +66,39 @@ class JacksonModelStructure(): ModelStructure {
  *
  * @author Lars Ivar Hatledal
  */
-private class Outputs(
+private class Outputs() {
 
-        @JacksonXmlProperty(localName = "Unknown")
-        @JacksonXmlElementWrapper(useWrapping = false)
-        val unknowns: List<JacksonUnknown>? = null
+    @JacksonXmlProperty(localName = "Unknown")
+    @JacksonXmlElementWrapper(useWrapping = false)
+    val unknowns: List<JacksonUnknown>? = null
 
-)
-
-/**
- *
- * @author Lars Ivar Hatledal
- */
-private class Derivatives(
-
-        @JsonProperty("Unknown")
-        @JacksonXmlElementWrapper(useWrapping = false)
-        val unknowns: List<JacksonUnknown>? = null
-
-)
+    private constructor(@Suppress("UNUSED_PARAMETER") dummy: String) : this()
+}
 
 /**
  *
  * @author Lars Ivar Hatledal
  */
-private class InitialUnknowns(
+private class Derivatives() {
 
-        @JsonProperty("Unknown")
-        @JacksonXmlElementWrapper(useWrapping = false)
-        val unknowns: List<JacksonUnknown>? = null
+    @JsonProperty("Unknown")
+    @JacksonXmlElementWrapper(useWrapping = false)
+    val unknowns: List<JacksonUnknown>? = null
 
-)
+    private constructor(@Suppress("UNUSED_PARAMETER") dummy: String) : this()
+
+}
+
+/**
+ *
+ * @author Lars Ivar Hatledal
+ */
+private class InitialUnknowns() {
+
+    @JsonProperty("Unknown")
+    @JacksonXmlElementWrapper(useWrapping = false)
+    val unknowns: List<JacksonUnknown>? = null
+
+    private constructor(@Suppress("UNUSED_PARAMETER") dummy: String) : this()
+
+}

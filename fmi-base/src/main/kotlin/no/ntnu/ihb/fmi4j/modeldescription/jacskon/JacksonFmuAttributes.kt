@@ -24,6 +24,7 @@
 
 package no.ntnu.ihb.fmi4j.modeldescription.jacskon
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty
 import no.ntnu.ihb.fmi4j.modeldescription.CoSimulationAttributes
@@ -34,6 +35,7 @@ import no.ntnu.ihb.fmi4j.modeldescription.ModelExchangeAttributes
 /**
  * @author Lars Ivar Hatledal
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 sealed class JacksonCommonFmuAttributes : CommonFmuAttributes {
 
     @JacksonXmlProperty
