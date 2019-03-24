@@ -67,95 +67,25 @@ namespace {
         }
     }
 
-     // replace e.g. #r1365# by variable name and ## by # in message
-        // copies the result to buffer
-        void replace_refs_in_message(const char* msg, char* buffer, int nBuffer){
-            int i = 0; // position in msg
-            int k = 0; // position in buffer
-            int n;
-            char c = msg[i];
-            while (c != '\0' && k < nBuffer) {
-                if (c != '#') {
-                    buffer[k++] = c;
-                    i++;
-                    c = msg[i];
-                } else if (strlen(msg + i + 1) >= 3
-                       && (strncmp(msg + i + 1, "IND", 3) == 0 || strncmp(msg + i + 1, "INF", 3) == 0)) {
-                    // 1.#IND, 1.#INF
-                    buffer[k++]=c;
-                    i++;
-                    c = msg[i];
-                } else {
-                    const char* end = strchr(msg + i + 1, '#');
-                    if (!end) {
-                        printf("unmatched '#' in '%s'\n", msg);
-                        buffer[k++] = '#';
-                        break;
-                    }
-                    n = end - (msg + i);
-                    if (n == 1) {
-                        // ## detected, output #
-                        buffer[k++] = '#';
-                        i += 2;
-                        c = msg[i];
-
-                    } else {
-                        char type = msg[i + 1]; // one of ribs
-                        fmi2ValueReference vr;
-                        int nvr = sscanf(msg + i + 2, "%u", &vr);
-                        if (nvr == 1) {
-                            // vr of type detected, e.g. #r12#
-    //                        ScalarVariable* sv = getSV(fmu, type, vr);
-    //                        const char* name = sv ? getAttributeValue((Element *)sv, att_name) : "?";
-    //                        sprintf(buffer + k, "%s", name);
-    //                        k += strlen(name);
-    //                        i += (n+1);
-    //                        c = msg[i];
-
-                        } else {
-                            // could not parse the number
-                            printf("illegal value reference at position %d in '%s'\n", i + 2, msg);
-                            buffer[k++] = '#';
-                            break;
-                        }
-                    }
-                }
-            } // while
-            buffer[k] = '\0';
-        }
-
-
-    #define MAX_MSG_SIZE 1000
     void logger(void* fmi2ComponentEnvironment, fmi2String instance_name, fmi2Status status, fmi2String category, fmi2String message, ...) {
 
-        char msg[MAX_MSG_SIZE];
+        char msg[1000];
         char* copy;
         va_list argp;
 
-        // replace C format strings
         va_start(argp, message);
         vsprintf(msg, message, argp);
         va_end(argp);
 
-        // replace e.g. ## and #r12#
-        copy = strdup(msg);
-        replace_refs_in_message(copy, msg, MAX_MSG_SIZE);
-        free(copy);
-
-        // print the final message
         if (!instance_name) instance_name = "?";
         if (!category) category = "?";
 
         printf("status = %s, instanceName = %s, category = %s: %s\n", status_to_string(status), instance_name, category, msg);
     }
 
-
-
-
 }
 
 class FmuInstance {
-
 
     public:
 
