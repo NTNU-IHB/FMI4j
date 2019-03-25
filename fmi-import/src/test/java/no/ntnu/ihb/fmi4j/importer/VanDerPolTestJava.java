@@ -49,11 +49,13 @@ public class VanDerPolTestJava {
 
     private static final Logger LOG = LoggerFactory.getLogger(VanDerPolTestJava.class);
 
-    private static Fmu fmu;
+    private static ModelExchangeFmu fmu;
 
     @BeforeAll
     public static void setup() throws IOException {
-        fmu = Fmu.from(new URL("https://markaren.github.io/fmi-cross-check/fmus/2.0/cs/linux64/Test-FMUs/0.0.1/VanDerPol/VanDerPol.fmu"));
+        fmu =  TestFMUs.fmi20().both()
+                .vendor("Test-FMUs").version("0.0.1")
+                .name("VanDerPol").fmu().asModelExchangeFmu();
     }
 
     @AfterAll
@@ -70,7 +72,7 @@ public class VanDerPolTestJava {
 
         LOG.info("Using solver: {}", solver.getName());
 
-        FmuSlave slave = VanDerPolTestJava.fmu.asModelExchangeFmu()
+        FmuSlave slave = VanDerPolTestJava.fmu
                 .newInstance(solver, false, false);
 
         RealVariable x0 = slave.getModelVariables()
