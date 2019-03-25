@@ -24,8 +24,10 @@
 
 package no.ntnu.ihb.fmi4j.driver
 
+import no.ntnu.ihb.fmi4j.importer.Fmu
 import picocli.CommandLine
 import java.io.File
+import java.net.URL
 
 /**
  * @author Lars Ivar Hatledal
@@ -38,8 +40,11 @@ internal object Cmd {
         @CommandLine.Option(names = ["-h", "--help"], description = ["Print this message and quits."], usageHelp = true)
         var showHelp = false
 
-        @CommandLine.Option(names = ["-f", "--fmu"], description = ["Path to the FMU."], required = true)
-        lateinit var fmuPath: String
+        @CommandLine.Option(names = ["-f", "--fmuFile"], description = ["Path to the FMU."], required = false)
+        var file: String? = null
+
+        @CommandLine.Option(names = ["-u", "--fmuUrl"], description = ["URL to the FMU."], required = false)
+        var url: String? = null
 
         @CommandLine.Option(names = ["-out", "--outputFolder"], description = ["Folder to store xc result."], required = false)
         var outputFolder: String = "."
@@ -64,6 +69,12 @@ internal object Cmd {
 
         override fun run() {
 
+            if (file == null && url == null) {
+                throw IllegalArgumentException("Specify either a file path or URL to the FMU!")
+            } else if (file != null && url != null) {
+                throw IllegalArgumentException("Specify either a file path or URL to the FMU!")
+            }
+
             val options = DriverOptions(
                     startTime = this@Args.startTime,
                     stopTime = this@Args.stopTime,
@@ -73,7 +84,17 @@ internal object Cmd {
                     outputFolder = outputFolder
             )
 
-            FmuDriver(File(fmuPath.removeSurrounding("\"")), options).run()
+            when {
+                file != null -> Fmu.from(File(file!!.removeSurrounding("\""))).use {
+                    FmuDriver(it, options).run()
+                }
+                url != null -> Fmu.from(URL(url)).use {
+                    FmuDriver(it, options).run()
+                }
+                else -> throw AssertionError()
+            }
+
+
         }
 
     }

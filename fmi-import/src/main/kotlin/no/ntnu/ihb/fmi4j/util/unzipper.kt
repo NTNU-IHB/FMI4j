@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package no.ntnu.ihb.fmi4j.importer.misc
+package no.ntnu.ihb.fmi4j.util
 
 import java.io.File
 import java.io.InputStream
@@ -34,8 +34,8 @@ import java.util.zip.ZipInputStream
  *
  * @param directory folder to extract to
  */
-internal fun File.extractTo(directory: File) {
-    inputStream().extractTo(directory)
+internal fun File.extractContentTo(directory: File) {
+    inputStream().extractContentTo(directory)
 }
 
 /**
@@ -43,8 +43,8 @@ internal fun File.extractTo(directory: File) {
  *
  * @param directory folder to extract to
  */
-internal fun URL.extractTo(directory: File) {
-    openStream().extractTo(directory)
+internal fun URL.extractContentTo(directory: File) {
+    openStream().extractContentTo(directory)
 }
 
 /**
@@ -52,7 +52,7 @@ internal fun URL.extractTo(directory: File) {
  *
  * @param directory folder to extract to
  */
-internal fun InputStream.extractTo(directory: File) {
+internal fun InputStream.extractContentTo(directory: File) {
 
     ZipInputStream(this).use { zis ->
         var zipEntry = zis.nextEntry

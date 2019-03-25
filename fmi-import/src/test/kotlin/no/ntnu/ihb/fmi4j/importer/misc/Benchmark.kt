@@ -20,8 +20,8 @@ data class TestOptions(
 private val options = listOf(
         TestOptions(
                 fmuFile = TestFMUs.fmi20().cs()
-                        .vendor("FMUSDK").version("2.0.4")
-                        .name("bouncingBall").file(),
+                        .vendor("Test-FMUs").version("0.0.1")
+                        .name("BouncingBall").file(),
                 stepSize = 1E-2,
                 stopTime = 100.0,
                 vr = 0),
@@ -52,7 +52,7 @@ object Benchmark {
             LOG.info("Running FMU '${option.fmuFile}'")
 
             runJavaFMI(option)
-            // System.gc()
+            System.gc()
             runFmi4j(option)
             //System.gc()
             println()
@@ -101,36 +101,39 @@ object Benchmark {
 
         val iter = 1
         var elapsed: Long
-        for (i in 0..iter) {
+        try {
+            for (i in 0..iter) {
 
-            Simulation(option.fmuFile.absolutePath).apply {
+                Simulation(option.fmuFile.absolutePath).apply {
 
-                val h = read(modelDescription.getModelVariable(option.vr.toInt()).name)
-                init(0.0, option.stopTime)
+                    val h = read(modelDescription.getModelVariable(option.vr.toInt()).name)
+                    init(0.0, option.stopTime)
 
-                var j = 0
-                var sum = 0.0
-                measureTimeMillis {
-                    while (currentTime < option.stopTime - option.stepSize) {
-                        doStep(option.stepSize)
-                        sum += h.asDouble()
-                        j++
+                    var j = 0
+                    var sum = 0.0
+                    measureTimeMillis {
+                        while (currentTime < option.stopTime - option.stepSize) {
+                            doStep(option.stepSize)
+                            sum += h.asDouble()
+                            j++
+                        }
+                    }.also { elapsed = it }
+
+                    if (i == iter) {
+                        println("JavaFMI: ${elapsed}ms")
+                        println("sum=$sum, iter=$j")
                     }
-                }.also { elapsed = it }
 
-                if (i == iter) {
-                    println("JavaFMI: ${elapsed}ms")
-                    println("sum=$sum, iter=$j")
-                }
-
-                try {
                     terminate()
-                } catch (ex: Error) {
 
                 }
-
             }
-
+        } catch (ex: Error) {
+            ex.printStackTrace()
+        } finally {
+            Simulation(option.fmuFile.absolutePath).apply {
+                fmuFile.deleteTemporalFolder()
+            }
         }
 
     }

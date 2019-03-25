@@ -51,7 +51,8 @@ public class TestFMUs {
         }
 
         public FmuVendor vendor(String vendor) {
-            return new FmuVendor(sb, vendor);
+            sb.append('/').append(vendor);
+            return new FmuVendor(sb);
         }
 
     }
@@ -65,8 +66,8 @@ public class TestFMUs {
         }
 
         public FmuVendor vendor(String vendor) {
-            sb.append("/cs/");
-            return new FmuVendor(sb, vendor);
+            sb.append("/cs/").append(vendor);
+            return new FmuVendor(sb);
         }
 
     }
@@ -80,8 +81,8 @@ public class TestFMUs {
         }
 
         public FmuVendor vendor(String vendor) {
-            sb.append("/me/");
-            return new FmuVendor(sb, vendor);
+            sb.append("/me/").append(vendor);
+            return new FmuVendor(sb);
         }
 
     }
@@ -90,12 +91,13 @@ public class TestFMUs {
 
         private final StringBuilder sb;
 
-        public FmuVendor(StringBuilder sb, String vendor) {
-            this.sb = sb.append("/").append(vendor);
+        public FmuVendor(StringBuilder sb) {
+            this.sb = sb;
         }
 
         public FmuVersion version(String version) {
-            return new FmuVersion(sb, version);
+            sb.append('/').append(version);
+            return new FmuVersion(sb);
         }
 
     }
@@ -104,8 +106,8 @@ public class TestFMUs {
 
         private final StringBuilder sb;
 
-        public FmuVersion(StringBuilder sb, String version) {
-            this.sb = sb.append("/").append(version);
+        public FmuVersion(StringBuilder sb) {
+            this.sb = sb;
         }
 
         public FmuProvider name(String name) {

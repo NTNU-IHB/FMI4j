@@ -38,6 +38,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.net.URL;
 
 /**
  * @author Lars Ivar Hatledal
@@ -52,9 +53,7 @@ public class VanDerPolTestJava {
 
     @BeforeAll
     public static void setup() throws IOException {
-        fmu = TestFMUs.fmi20().me()
-                .vendor("FMUSDK").version("2.0.4")
-                .name("vanDerPol").fmu();
+        fmu = Fmu.from(new URL("https://markaren.github.io/fmi-cross-check/fmus/2.0/cs/linux64/Test-FMUs/0.0.1/VanDerPol/VanDerPol.fmu"));
     }
 
     @AfterAll

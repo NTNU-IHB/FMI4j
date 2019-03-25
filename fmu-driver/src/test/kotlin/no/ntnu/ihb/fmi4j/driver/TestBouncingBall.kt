@@ -1,16 +1,12 @@
 package no.ntnu.ihb.fmi4j.driver
 
 import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.condition.EnabledOnOs
-import org.junit.jupiter.api.condition.OS
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.File
 
-@Disabled
-@EnabledOnOs(OS.WINDOWS)
+
 class TestBouncingBall {
 
     private companion object {
@@ -20,8 +16,8 @@ class TestBouncingBall {
     @Test
     fun test() {
 
-        val name = "bouncingBall"
-        val path = "../fmus/2.0/me/FMUSDK/2.0.4/bouncingBall/$name.fmu"
+        val name = "BouncingBall"
+        val path = "../fmus/2.0/Test-FMUs/0.0.1/$name/$name.fmu"
         Assertions.assertTrue(File(path).exists())
 
         val args = arrayOf(
@@ -29,7 +25,7 @@ class TestBouncingBall {
                 "-dt", "0.01",
                 "-stop", "4",
                 "-me",
-                "h", "der(h)", "v", "der(v)", "g", "e"
+                "h", "v"
         )
 
         Cmd.main(args)

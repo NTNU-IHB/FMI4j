@@ -14,10 +14,10 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class FmuInstanceVariableAccessorTest {
+class FmuVariableAccessorTest {
 
     companion object {
-        private val LOG: Logger = LoggerFactory.getLogger(FmuInstanceVariableAccessorTest::class.java)
+        private val LOG: Logger = LoggerFactory.getLogger(FmuVariableAccessorTest::class.java)
     }
 
     private val fmu = TestFMUs.fmi20().cs()

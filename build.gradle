@@ -39,7 +39,7 @@ subprojects { sub ->
 
 }
 
-task (cleanTemp) {
+tasks.create('cleanTemp') {
 
     doLast {
         def temp = new File(System.getProperty("java.io.tmpdir"))

@@ -5,7 +5,6 @@ import no.ntnu.ihb.fmi4j.importer.TestFMUs
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import java.io.File
-import java.io.FileInputStream
 import java.io.FileNotFoundException
 
 class FmuTest {
@@ -34,10 +33,7 @@ class FmuTest {
                 .name(fmuName).file()
 
 
-        val bytes = FileInputStream(file).use {
-            it.readBytes()
-        }
-
+        val bytes = file.readBytes()
         Fmu.from(fmuName, bytes).use {
             Assertions.assertEquals("2.0", it.modelDescription.fmiVersion)
         }
@@ -50,7 +46,7 @@ class FmuTest {
         val fmuName = "ControlledTemperature"
         Fmu.from(TestFMUs.fmi20().cs()
                 .vendor("20sim").version("4.6.4.8004")
-                .name(fmuName).file().toURI().toURL()).use {
+                .name(fmuName).file()).use {
             Assertions.assertEquals("ControlledTemperature", it.modelDescription.modelName)
         }
     }

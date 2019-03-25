@@ -25,37 +25,29 @@
 package no.ntnu.ihb.fmi4j.driver
 
 import no.ntnu.ihb.fmi4j.importer.Fmu
-import java.io.File
 
 
 /**
  * @author Lars Ivar Hatledal
  */
 class FmuDriver(
-        private val fmuPath: File,
+        private val fmu: Fmu,
         private val options: DriverOptions
 ) {
 
     fun run() {
-
-        Fmu.from(fmuPath).use { fmu ->
-            if (options.modelExchange) {
-
-                if (options.modelExchange && !fmu.supportsModelExchange) {
-                    throw Failure("FMU does not support Model Exchange!")
-                }
-
-                SlaveDriver(fmu.asModelExchangeFmu()
-                        .newInstance(options.solver), options, fmuPath.nameWithoutExtension).run()
-            } else {
-
-                if (!options.modelExchange && !fmu.supportsCoSimulation) {
-                    throw Failure("FMU does not support Co-simulation!")
-                }
-                SlaveDriver(fmu.asCoSimulationFmu().newInstance(), options, fmuPath.nameWithoutExtension).run()
+        if (options.modelExchange) {
+            if (options.modelExchange && !fmu.supportsModelExchange) {
+                throw Failure("FMU does not support Model Exchange!")
             }
+            SlaveDriver(fmu.asModelExchangeFmu()
+                    .newInstance(options.solver), options, fmu.name).run()
+        } else {
+            if (!options.modelExchange && !fmu.supportsCoSimulation) {
+                throw Failure("FMU does not support Co-simulation!")
+            }
+            SlaveDriver(fmu.asCoSimulationFmu().newInstance(), options, fmu.name).run()
         }
-
     }
 
 }

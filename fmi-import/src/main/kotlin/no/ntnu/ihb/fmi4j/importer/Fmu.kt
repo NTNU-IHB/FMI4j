@@ -26,12 +26,12 @@ package no.ntnu.ihb.fmi4j.importer
 
 import no.ntnu.ihb.fmi4j.importer.jni.Fmi2Library
 import no.ntnu.ihb.fmi4j.importer.misc.FmiType
-import no.ntnu.ihb.fmi4j.importer.misc.extractTo
 import no.ntnu.ihb.fmi4j.modeldescription.CommonModelDescription
 import no.ntnu.ihb.fmi4j.modeldescription.ModelDescription
 import no.ntnu.ihb.fmi4j.modeldescription.ModelDescriptionProvider
 import no.ntnu.ihb.fmi4j.modeldescription.jacskon.JacksonModelDescriptionParser
 import no.ntnu.ihb.fmi4j.util.OsUtil
+import no.ntnu.ihb.fmi4j.util.extractContentTo
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.*
@@ -82,6 +82,7 @@ interface FmuProvider : IFmu {
  * @author Lars Ivar Hatledal
  */
 class Fmu private constructor(
+        val name: String,
         private val extractedFmu: File
 ) : FmuProvider {
 
@@ -287,8 +288,8 @@ class Fmu private constructor(
             }
 
             return createTempDir(file.nameWithoutExtension).let { temp ->
-                file.extractTo(temp)
-                Fmu(temp)
+                file.extractContentTo(temp)
+                Fmu(file.nameWithoutExtension, temp)
             }
 
         }
@@ -305,9 +306,10 @@ class Fmu private constructor(
                 throw IllegalArgumentException("URL '$url' does not point to an FMU! Invalid extension found: .$extension")
             }
 
-            return createTempDir(File(url.file).nameWithoutExtension).let { temp ->
-                url.extractTo(temp)
-                Fmu(temp)
+            val fmuName = File(url.file).nameWithoutExtension
+            return createTempDir(fmuName).let { temp ->
+                url.extractContentTo(temp)
+                Fmu(fmuName, temp)
             }
         }
 
@@ -318,8 +320,8 @@ class Fmu private constructor(
         @Throws(IOException::class)
         fun from(name: String, data: ByteArray): Fmu {
             return createTempDir(name).let { temp ->
-                ByteArrayInputStream(data).extractTo(temp)
-                Fmu(temp)
+                ByteArrayInputStream(data).extractContentTo(temp)
+                Fmu(name, temp)
             }
         }
 
