@@ -29,54 +29,33 @@ import no.ntnu.ihb.fmi4j.modeldescription.BaseUnit
 import no.ntnu.ihb.fmi4j.modeldescription.DisplayUnit
 import no.ntnu.ihb.fmi4j.modeldescription.Unit
 
-class JaxbUnit internal constructor(
-        private val unit: Fmi2Unit
-): Unit {
-
-    override val name: String
-        get() = unit.name
-    override val baseUnit: BaseUnit?
-        get() = unit.baseUnit?.let { JaxbBaseUnit(it) }
-    override val displayUnits: List<DisplayUnit>?
-        get() = unit.displayUnit?.map { JaxbDisplayUnit(it) }
+fun Fmi2Unit.convert(): Unit {
+    return Unit(
+            name = this@convert.name,
+            baseUnit = this@convert.baseUnit.convert(),
+            displayUnits = this@convert.displayUnit.map { it.convert() }
+    )
 }
 
-class JaxbBaseUnit internal constructor(
-    private val baseUnit: Fmi2Unit.BaseUnit
-): BaseUnit {
-
-    override val kg: Int
-        get() = baseUnit.kg
-    override val m: Int
-        get() = baseUnit.m
-    override val s: Int
-        get() = baseUnit.s
-    override val A: Int
-        get() = baseUnit.a
-    override val K: Int
-        get() = baseUnit.k
-    override val mol: Int
-        get() = baseUnit.mol
-    override val cd: Int
-        get() = baseUnit.cd
-    override val rad: Int
-        get() = baseUnit.rad
-    override val factor: Double
-        get() = baseUnit.factor
-    override val offset: Double
-        get() = baseUnit.offset
-
+fun Fmi2Unit.BaseUnit.convert(): BaseUnit {
+    return BaseUnit(
+            kg = this@convert.kg ?: 0,
+            m = this@convert.m ?: 0,
+            s = this@convert.s ?: 0,
+            A = this@convert.a ?: 0,
+            K = this@convert.k ?: 0,
+            mol = this@convert.mol ?: 0,
+            cd = this@convert.cd ?: 0,
+            rad = this@convert.rad ?: 0,
+            factor = this@convert.factor ?: 1.0,
+            offset = this@convert.offset ?: 0.0
+    )
 }
 
-class JaxbDisplayUnit internal constructor(
-    private val displayUnit: Fmi2Unit.DisplayUnit
-): DisplayUnit {
-
-    override val name: String
-        get() = displayUnit.name
-    override val factor: Double
-        get() = displayUnit.factor
-    override val offset: Double
-        get() = displayUnit.offset
-
+fun Fmi2Unit.DisplayUnit.convert(): DisplayUnit {
+    return DisplayUnit(
+            name = this@convert.name,
+            factor = this@convert.factor ?: 1.0,
+            offset = this@convert.offset ?: 0.0
+    )
 }

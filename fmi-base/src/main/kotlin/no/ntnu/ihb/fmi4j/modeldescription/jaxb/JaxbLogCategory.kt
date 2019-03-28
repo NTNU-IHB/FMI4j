@@ -26,15 +26,9 @@ package no.ntnu.ihb.fmi4j.modeldescription.jaxb
 
 import no.ntnu.ihb.fmi4j.modeldescription.LogCategory
 
-typealias JaxbLogCategories = List<JaxbLogCategory>
-
-class JaxbLogCategory internal constructor(
-        private val lc: FmiModelDescription.LogCategories.Category
-): LogCategory {
-
-    override val name: String
-        get() = lc.name
-    override val description: String?
-        get() = lc.description
-
+fun FmiModelDescription.LogCategories.Category.convert(): LogCategory {
+    return LogCategory(
+            name = this@convert.name,
+            description = this@convert.description
+    )
 }

@@ -47,7 +47,7 @@ class JaxbCoSimulationAttributes internal constructor(
     override val providesDirectionalDerivative: Boolean
         get() = cs.isProvidesDirectionalDerivative
     override val sourceFiles: List<SourceFile>
-        get() = cs.sourceFiles?.file?.map { JaxbSourcefile(it) } ?: emptyList()
+        get() = cs.sourceFiles?.file?.map { it.convert() } ?: emptyList()
     override val canHandleVariableCommunicationStepSize: Boolean
         get() = cs.isCanHandleVariableCommunicationStepSize
     override val canInterpolateInputs: Boolean
@@ -78,7 +78,7 @@ class JaxbModelExchangeAttributes internal constructor(
     override val providesDirectionalDerivative: Boolean
         get() = me.isProvidesDirectionalDerivative
     override val sourceFiles: List<SourceFile>
-        get() = me.sourceFiles?.file?.map { JaxbSourcefile(it) } ?: emptyList()
+        get() = me.sourceFiles?.file?.map { it.convert() } ?: emptyList()
 
     override val completedIntegratorStepNotNeeded: Boolean
         get() = me.isCompletedIntegratorStepNotNeeded

@@ -54,17 +54,17 @@ class JaxbModelDescription internal constructor(
     override val generationDateAndTime: String?
         get() = md.generationDateAndTime
     override val defaultExperiment: DefaultExperiment?
-        get() = md.defaultExperiment?.let { JaxbDefaultExperiment(it) }
+        get() = md.defaultExperiment?.let { it.convert() }
     override val modelVariables: ModelVariables
         get() = JaxbModelVariables(md.modelVariables)
     override val modelStructure: ModelStructure
         get() = JaxbModelStructure(md.modelStructure)
     override val unitDefinitions: UnitDefinitions?
-        get() = md.unitDefinitions?.unit?.map { JaxbUnit(it) }
+        get() = md.unitDefinitions?.unit?.map { it.convert() }
     override val typeDefinitions: TypeDefinitions?
-        get() = md.typeDefinitions?.simpleType?.map { JaxbSimpleType(it) }
-    override val logCategories: JaxbLogCategories?
-        get() = md.logCategories?.category?.map { JaxbLogCategory(it) }
+        get() = md.typeDefinitions?.simpleType?.map { it.convert() }
+    override val logCategories: LogCategories?
+        get() = md.logCategories?.category?.map { it.convert() }
     override val supportsCoSimulation: Boolean
         get() = md.coSimulation != null
     override val supportsModelExchange: Boolean

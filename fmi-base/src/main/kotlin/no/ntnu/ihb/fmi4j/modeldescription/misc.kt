@@ -12,137 +12,144 @@ package no.ntnu.ihb.fmi4j.modeldescription
  *
  * @author Lars Ivar Hatledal
  */
-interface DefaultExperiment {
-    /**
-     * Default start time of simulation
-     */
-    val startTime: Double
+data class DefaultExperiment(
 
-    /**
-     * Default stop time of simulation
-     */
-    val stopTime: Double
+        /**
+         * Default start time of simulation
+         */
+        val startTime: Double,
 
-    /**
-     * Default relative integration tolerance
-     */
-    val tolerance: Double
+        /**
+         * Default stop time of simulation
+         */
+        val stopTime: Double,
 
-    /***
-     * ModelExchange: Default step size for fixed step integrators
-     * CoSimulation: Preferred communicationStepSize
-     */
-    val stepSize: Double
-}
+        /**
+         * Default relative integration tolerance
+         */
+        val tolerance: Double,
+
+        /***
+         * ModelExchange: Default step size for fixed step integrators
+         * CoSimulation: Preferred communicationStepSize
+         */
+        val stepSize: Double
+)
 
 typealias TypeDefinitions = List<SimpleType>
-interface SimpleType {
 
-    /**
-     * Name of SimpleType element.
-     * "name" must be unique with respect to all other elements
-     * of the TypeDefinitions list. Furthermore, "name" of a SimpleType
-     * must bee different to all "name"s of ScalarVariable
-     */
-    val name: String
+data class SimpleType(
 
-    /**
-     * Description of the SimpleType
-     */
-    val description: String?
+        /**
+         * Name of SimpleType element.
+         * "name" must be unique with respect to all other elements
+         * of the TypeDefinitions list. Furthermore, "name" of a SimpleType
+         * must bee different to all "name"s of ScalarVariable
+         */
+        val name: String,
 
-}
+        /**
+         * Description of the SimpleType
+         */
+        val description: String?
+
+)
 
 
 typealias UnitDefinitions = List<Unit>
-interface Unit {
 
-    val name: String
+data class Unit(
 
-    val baseUnit: BaseUnit?
+        val name: String,
 
-    val displayUnits: List<DisplayUnit>?
+        val baseUnit: BaseUnit?,
 
-}
+        val displayUnits: List<DisplayUnit>?
+)
 
-interface DisplayUnit {
+data class DisplayUnit(
 
-    /**
-     * Name of DisplayUnit element
-     */
-    val name: String
+        /**
+         * Name of DisplayUnit element
+         */
+        val name: String,
 
-    val factor: Double
+        val factor: Double = 1.0,
 
-    val offset: Double
-}
+        val offset: Double = 0.0
 
-interface BaseUnit {
+)
 
-    /**
-     * Exponent of SI base unit "kg"
-     */
-    val kg: Int
+data class BaseUnit(
 
-    /**
-     * Exponent of SI base unit "m"
-     */
-    val m: Int
+        /**
+         * Exponent of SI base unit "kg"
+         */
+        val kg: Int = 0,
 
-    /**
-     * Exponent of SI base unit "s"
-     */
+        /**
+         * Exponent of SI base unit "m"
+         */
+        val m: Int = 0,
 
-    val s: Int
+        /**
+         * Exponent of SI base unit "s"
+         */
 
-    /**
-     * Exponent of SI base unit "A"
-     */
-    val A: Int
+        val s: Int = 0,
 
-    /**
-     * Exponent of SI base unit "K"
-     */
-    val K: Int
+        /**
+         * Exponent of SI base unit "A"
+         */
+        val A: Int = 0,
 
-    /**
-     * Exponent of SI base unit "mol"
-     */
-    val mol: Int
+        /**
+         * Exponent of SI base unit "K"
+         */
+        val K: Int = 0,
 
-    /**
-     * Exponent of SI base unit "cd"
-     */
-    val cd: Int
+        /**
+         * Exponent of SI base unit "mol"
+         */
+        val mol: Int = 0,
 
-    /**
-     * Exponent of SI base unit "rad"
-     */
-    val rad: Int
+        /**
+         * Exponent of SI base unit "cd"
+         */
+        val cd: Int = 0,
 
-    val factor: Double
+        /**
+         * Exponent of SI base unit "rad"
+         */
+        val rad: Int = 0,
 
-    val offset: Double
+        val factor: Double = 1.0,
 
-}
+        val offset: Double = 0.0
+
+)
 
 typealias SourceFiles = List<SourceFile>
-interface SourceFile {
 
-    /**
-     * Name of the file including the path to the sources
-     * directory, using forward slash as separator
-     */
-    val name: String
+data class SourceFile(
 
-}
+        /**
+         * Name of the file including the path to the sources
+         * directory, using forward slash as separator
+         */
+        val name: String
+
+)
 
 typealias LogCategories = List<LogCategory>
-interface LogCategory {
 
-    val name: String
+data class LogCategory(
 
-    val description: String?
+        val name: String,
+
+        val description: String?
+
+) {
 
     companion object {
         /**

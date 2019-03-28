@@ -26,17 +26,11 @@ package no.ntnu.ihb.fmi4j.modeldescription.jaxb
 
 import no.ntnu.ihb.fmi4j.modeldescription.DefaultExperiment
 
-class JaxbDefaultExperiment internal constructor(
-        private val de: FmiModelDescription.DefaultExperiment
-): DefaultExperiment {
-
-    override val startTime: Double
-        get() = de.startTime
-    override val stopTime: Double
-        get() = de.stopTime
-    override val tolerance: Double
-        get() = de.tolerance
-    override val stepSize: Double
-        get() = de.stepSize
-
+fun FmiModelDescription.DefaultExperiment.convert(): DefaultExperiment {
+    return DefaultExperiment(
+            startTime = this@convert.startTime,
+            stopTime = this@convert.stopTime,
+            stepSize = this@convert.stepSize,
+            tolerance = this@convert.tolerance
+    )
 }
