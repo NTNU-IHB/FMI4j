@@ -74,7 +74,7 @@ class ModelExchangeFmuStepper internal constructor(
     }
 
     override fun simpleSetup(): Boolean {
-        return simpleSetup(0.0,0.0,0.0)
+        return simpleSetup(0.0, 0.0, 0.0)
     }
 
     override fun simpleSetup(start: Double, stop: Double, tolerance: Double): Boolean {
@@ -226,18 +226,22 @@ class ModelExchangeFmuStepper internal constructor(
 
 class CoSimulationModelDescriptionWrapper(
         private val md: ModelExchangeModelDescription
-): CommonModelDescription by md, CoSimulationModelDescription {
+) : CommonModelDescription by md, CoSimulationModelDescription {
 
     override val attributes: CoSimulationAttributes
-        get() = object: CoSimulationAttributes, CommonFmuAttributes by md.attributes {
-            override val canHandleVariableCommunicationStepSize: Boolean
-                get() = true
-            override val canInterpolateInputs: Boolean
-                get() = false
-            override val maxOutputDerivativeOrder: Int
-                get() = 0
-            override val canRunAsynchronuously: Boolean
-                get() = false
-        }
+        get() = CoSimulationAttributes(
+                modelIdentifier = md.attributes.modelIdentifier,
+                needsExecutionTool = md.attributes.needsExecutionTool,
+                canBeInstantiatedOnlyOncePerProcess = md.attributes.canBeInstantiatedOnlyOncePerProcess,
+                canNotUseMemoryManagementFunctions = md.attributes.canNotUseMemoryManagementFunctions,
+                canGetAndSetFMUstate = md.attributes.canGetAndSetFMUstate,
+                canSerializeFMUstate = md.attributes.canSerializeFMUstate,
+                providesDirectionalDerivative = md.attributes.providesDirectionalDerivative,
+                canHandleVariableCommunicationStepSize = true,
+                canRunAsynchronuously = false,
+                canInterpolateInputs = false,
+                maxOutputDerivativeOrder = 0,
+                sourceFiles = emptyList()
+        )
 
 }

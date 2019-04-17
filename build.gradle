@@ -1,12 +1,16 @@
 
 plugins {
     id "base"
-    id "org.jetbrains.kotlin.jvm" version "1.3.21" apply false
+    id "org.jetbrains.kotlin.jvm" version "1.3.30" apply false
 }
 
 println "Gradle version is ${gradle.getGradleVersion()}"
 
 group = 'no.ntnu.ihb.fmi4j'
+
+wrapper {
+    distributionType = Wrapper.DistributionType.ALL
+}
 
 subprojects { sub ->
 

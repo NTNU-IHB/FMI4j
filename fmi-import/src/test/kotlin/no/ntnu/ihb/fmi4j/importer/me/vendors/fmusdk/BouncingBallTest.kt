@@ -44,7 +44,7 @@ class BouncingBallTest {
 
         LOG.info("Using solver: '${solver.name}'")
 
-        fmu.newInstance(solver).use { slave ->
+        fmu.newInstance(solver, loggingOn = true).use { slave ->
 
             val h = slave.modelVariables
                     .getByName("h").asRealVariable()
@@ -52,8 +52,13 @@ class BouncingBallTest {
             Assertions.assertTrue(slave.simpleSetup())
 
             val macroStep = 1.0 / 10
-            while (slave.simulationTime <= 1) {
-                Assertions.assertTrue(slave.doStep(macroStep))
+            while (slave.simulationTime <= 0.1) {
+
+                if (!slave.doStep(macroStep)) {
+                    LOG.error("${slave.lastStatus} @ ${slave.simulationTime}")
+                    break
+                }
+//                Assertions.assertTrue()
                 h.read(slave).also {
                     Assertions.assertEquals(FmiStatus.OK, it.status)
                     LOG.info("t=${slave.simulationTime}, h=${it.value}")

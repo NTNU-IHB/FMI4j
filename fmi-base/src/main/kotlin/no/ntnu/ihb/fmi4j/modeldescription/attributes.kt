@@ -24,13 +24,6 @@
 
 package no.ntnu.ihb.fmi4j.modeldescription
 
-
-
-/**
- * Represents the common content within the <CoSimulation> and <ModelExchange> XML elements
- *
- * @author Lars Ivar Hatledal
- */
 interface CommonFmuAttributes {
 
     val modelIdentifier: String
@@ -49,22 +42,40 @@ interface CommonFmuAttributes {
  *
  * @author Lars Ivar Hatledal
  */
-interface CoSimulationAttributes : CommonFmuAttributes {
+data class CoSimulationAttributes(
 
-    val canHandleVariableCommunicationStepSize: Boolean
-    val canInterpolateInputs: Boolean
-    val maxOutputDerivativeOrder: Int
-    val canRunAsynchronuously: Boolean
+        override val modelIdentifier: String,
+        override val needsExecutionTool: Boolean,
+        override val canBeInstantiatedOnlyOncePerProcess: Boolean,
+        override val canNotUseMemoryManagementFunctions: Boolean,
+        override val canGetAndSetFMUstate: Boolean,
+        override val canSerializeFMUstate: Boolean,
+        override val providesDirectionalDerivative: Boolean,
+        override val sourceFiles: List<SourceFile>,
 
-}
+        val canHandleVariableCommunicationStepSize: Boolean,
+        val canInterpolateInputs: Boolean,
+        val maxOutputDerivativeOrder: Int,
+        val canRunAsynchronuously: Boolean
+
+): CommonFmuAttributes
 
 /**
  * Represents the content within the <ModelExchange></> XML element
  *
  * @author Lars Ivar Hatledal
  */
-interface ModelExchangeAttributes : CommonFmuAttributes {
+data class ModelExchangeAttributes(
 
-    val completedIntegratorStepNotNeeded: Boolean
+        override val modelIdentifier: String,
+        override val needsExecutionTool: Boolean,
+        override val canBeInstantiatedOnlyOncePerProcess: Boolean,
+        override val canNotUseMemoryManagementFunctions: Boolean,
+        override val canGetAndSetFMUstate: Boolean,
+        override val canSerializeFMUstate: Boolean,
+        override val providesDirectionalDerivative: Boolean,
+        override val sourceFiles: List<SourceFile>,
 
-}
+        val completedIntegratorStepNotNeeded: Boolean
+
+): CommonFmuAttributes

@@ -26,13 +26,9 @@ package no.ntnu.ihb.fmi4j.modeldescription.jaxb
 
 import no.ntnu.ihb.fmi4j.modeldescription.SimpleType
 
-class JaxbSimpleType internal constructor(
-        private val type: Fmi2SimpleType
-): SimpleType {
-
-    override val name: String
-        get() = type.name
-    override val description: String?
-        get() = type.description
-
+fun Fmi2SimpleType.convert(): SimpleType {
+    return SimpleType(
+            name = this@convert.name,
+            description = this@convert.description
+    )
 }

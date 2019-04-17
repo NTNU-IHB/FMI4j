@@ -29,7 +29,7 @@ import no.ntnu.ihb.fmi4j.importer.misc.FmiType
 import no.ntnu.ihb.fmi4j.modeldescription.CommonModelDescription
 import no.ntnu.ihb.fmi4j.modeldescription.ModelDescription
 import no.ntnu.ihb.fmi4j.modeldescription.ModelDescriptionProvider
-import no.ntnu.ihb.fmi4j.modeldescription.jacskon.JacksonModelDescriptionParser
+import no.ntnu.ihb.fmi4j.modeldescription.jaxb.JaxbModelDescriptionParser
 import no.ntnu.ihb.fmi4j.util.OsUtil
 import no.ntnu.ihb.fmi4j.util.extractContentTo
 import org.slf4j.Logger
@@ -40,42 +40,6 @@ import java.nio.file.Files
 import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
 
-interface IFmu : Closeable {
-
-    val guid: String
-        get() = modelDescription.guid
-
-    val modelName: String
-        get() = modelDescription.modelName
-
-    val modelDescription: ModelDescription
-
-}
-
-interface FmuProvider : IFmu {
-
-    /**
-     * Does the FMU support Co-simulation?
-     */
-    val supportsCoSimulation: Boolean
-
-    /**
-     * Does the FMU support Model Exchange?
-     */
-    val supportsModelExchange: Boolean
-
-    /**
-     * Treat this FMU as a CoSimulation FMU
-     */
-    fun asCoSimulationFmu(): CoSimulationFmu
-
-    /**
-     * Threat this FMU as a ModelExchange FMU
-     */
-    fun asModelExchangeFmu(): ModelExchangeFmu
-
-}
-
 /**
  * Represents an FMU
  *
@@ -84,7 +48,7 @@ interface FmuProvider : IFmu {
 class Fmu private constructor(
         val name: String,
         private val extractedFmu: File
-) : FmuProvider {
+) : Closeable {
 
     private var isClosed = AtomicBoolean(false)
     private val libraries = mutableListOf<Fmi2Library>()
@@ -106,26 +70,32 @@ class Fmu private constructor(
         }
     }
 
+    val guid: String
+        get() = modelDescription.guid
+
+    val modelName: String
+        get() = modelDescription.modelName
+
     /**
      * Get the content of the modelDescription.xml file as a String
      */
     val modelDescriptionXml: String
         get() = modelDescriptionFile.readText()
 
-    override val modelDescription: ModelDescriptionProvider by lazy {
-        JacksonModelDescriptionParser.parse(modelDescriptionXml)
+    val modelDescription: ModelDescriptionProvider by lazy {
+        JaxbModelDescriptionParser.parse(modelDescriptionXml)
     }
 
     /**
      * Does the FMU support Co-simulation?
      */
-    override val supportsCoSimulation: Boolean
+    val supportsCoSimulation: Boolean
         get() = modelDescription.supportsCoSimulation
 
     /**
      * Does the FMU support Model Exchange?
      */
-    override val supportsModelExchange: Boolean
+    val supportsModelExchange: Boolean
         get() = modelDescription.supportsModelExchange
 
     init {
@@ -134,14 +104,14 @@ class Fmu private constructor(
         }
     }
 
-    override fun asCoSimulationFmu(): CoSimulationFmu {
+    fun asCoSimulationFmu(): CoSimulationFmu {
         if (!supportsCoSimulation) {
             throw IllegalStateException("FMU does not support Co-simulation!")
         }
         return coSimulationFmu
     }
 
-    override fun asModelExchangeFmu(): ModelExchangeFmu {
+    fun asModelExchangeFmu(): ModelExchangeFmu {
         if (!supportsModelExchange) {
             throw IllegalStateException("FMU does not support Model Exchange!")
         }

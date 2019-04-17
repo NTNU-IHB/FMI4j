@@ -27,6 +27,10 @@ package no.ntnu.ihb.fmi4j.modeldescription.jaxb
 import no.ntnu.ihb.fmi4j.modeldescription.*
 import no.ntnu.ihb.fmi4j.modeldescription.variables.ModelVariables
 
+fun FmiModelDescription.convert(): JaxbModelDescription {
+    return JaxbModelDescription(this)
+}
+
 class JaxbModelDescription internal constructor(
         private val md: FmiModelDescription
 ): ModelDescriptionProvider {
@@ -54,17 +58,17 @@ class JaxbModelDescription internal constructor(
     override val generationDateAndTime: String?
         get() = md.generationDateAndTime
     override val defaultExperiment: DefaultExperiment?
-        get() = md.defaultExperiment?.let { JaxbDefaultExperiment(it) }
+        get() = md.defaultExperiment?.let { it.convert() }
     override val modelVariables: ModelVariables
         get() = JaxbModelVariables(md.modelVariables)
     override val modelStructure: ModelStructure
-        get() = JaxbModelStructure(md.modelStructure)
+        get() = md.modelStructure.convert()
     override val unitDefinitions: UnitDefinitions?
-        get() = md.unitDefinitions?.unit?.map { JaxbUnit(it) }
+        get() = md.unitDefinitions?.unit?.map { it.convert() }
     override val typeDefinitions: TypeDefinitions?
-        get() = md.typeDefinitions?.simpleType?.map { JaxbSimpleType(it) }
-    override val logCategories: JaxbLogCategories?
-        get() = md.logCategories?.category?.map { JaxbLogCategory(it) }
+        get() = md.typeDefinitions?.simpleType?.map { it.convert() }
+    override val logCategories: LogCategories?
+        get() = md.logCategories?.category?.map { it.convert() }
     override val supportsCoSimulation: Boolean
         get() = md.coSimulation != null
     override val supportsModelExchange: Boolean
@@ -74,14 +78,15 @@ class JaxbModelDescription internal constructor(
         if (!supportsCoSimulation) {
             throw IllegalStateException()
         }
-        return JaxbCoSimulationModelDescription(this, JaxbCoSimulationAttributes(md.coSimulation))
+        return JaxbCoSimulationModelDescription(this, md.coSimulation.convert() )
     }
 
     override fun asModelExchangeModelDescription(): ModelExchangeModelDescription {
         if (!supportsModelExchange) {
             throw IllegalStateException()
         }
-        return JaxbModelExchangeModelDescription(this, JaxbModelExchangeAttributes(md.modelExchange))
+        val numberOfEventIndicators = md.numberOfEventIndicators.toInt()
+        return JaxbModelExchangeModelDescription(this, md.modelExchange.convert(), numberOfEventIndicators)
     }
 
 }
@@ -94,5 +99,5 @@ class JaxbCoSimulationModelDescription(
 class JaxbModelExchangeModelDescription(
         md: JaxbModelDescription,
         override val attributes: ModelExchangeAttributes,
-        override val numberOfEventIndicators: Int = 0
+        override val numberOfEventIndicators: Int
 ): ModelExchangeModelDescription, ModelDescription by md

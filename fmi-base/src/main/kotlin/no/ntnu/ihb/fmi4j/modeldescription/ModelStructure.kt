@@ -36,13 +36,13 @@ package no.ntnu.ihb.fmi4j.modeldescription
  *
  * @author Lars Ivar Hatledal
  */
-interface ModelStructure {
+class ModelStructure (
 
     /**
      * Ordered list of all outputs, in other words a list of ScalarVariable indices
      * where every corresponding ScalarVariable must have causality = "output"
      */
-    val outputs: List<Unknown>
+    val outputs: List<Unknown>,
 
     /**
      * Ordered list of all state derivatives, in other words a list of ScalarVariable
@@ -70,10 +70,10 @@ interface ModelStructure {
      * used for a CoSimulation slave, then the model still has continuous-time states and
      * just a special solver is used.
      */
-    val derivatives: List<Unknown>
+    val derivatives: List<Unknown>,
 
     val initialUnknowns: List<Unknown>
-}
+)
 
 
 /**
@@ -83,18 +83,18 @@ interface ModelStructure {
  *
  * @author Lars Ivar Hatledal
  */
-interface Unknown {
+data class Unknown (
 
     /**
      * ScalarVariable index of Unknown
      */
-    val index: Int
+    val index: Int,
 
     /**
      * Defines the dependency of the Unknown (directly or indirectly via auxiliary variables)
      * on the Knowns in Continuous-Time and Event Mode (ModelExchange) and at Communication Points (CoSimulation)
      */
-    val dependencies: List<Int>
+    val dependencies: List<Int>,
 
     /**
      * If present, it must be assumed that the Unknown depends on the Knowns
@@ -102,6 +102,6 @@ interface Unknown {
      */
     val dependenciesKind: List<String>
 
-}
+)
 
 
