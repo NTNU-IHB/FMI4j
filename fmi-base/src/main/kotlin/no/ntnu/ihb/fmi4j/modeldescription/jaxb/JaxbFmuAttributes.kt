@@ -28,6 +28,10 @@ import no.ntnu.ihb.fmi4j.modeldescription.CoSimulationAttributes
 import no.ntnu.ihb.fmi4j.modeldescription.ModelExchangeAttributes
 import no.ntnu.ihb.fmi4j.modeldescription.SourceFile
 
+fun FmiModelDescription.CoSimulation.convert(): JaxbCoSimulationAttributes {
+    return JaxbCoSimulationAttributes(this)
+}
+
 class JaxbCoSimulationAttributes internal constructor(
         private val cs: FmiModelDescription.CoSimulation
 ): CoSimulationAttributes {
