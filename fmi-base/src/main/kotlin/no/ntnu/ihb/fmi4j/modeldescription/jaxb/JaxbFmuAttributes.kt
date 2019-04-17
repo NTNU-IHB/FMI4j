@@ -28,62 +28,36 @@ import no.ntnu.ihb.fmi4j.modeldescription.CoSimulationAttributes
 import no.ntnu.ihb.fmi4j.modeldescription.ModelExchangeAttributes
 import no.ntnu.ihb.fmi4j.modeldescription.SourceFile
 
-fun FmiModelDescription.CoSimulation.convert(): JaxbCoSimulationAttributes {
-    return JaxbCoSimulationAttributes(this)
-}
+fun FmiModelDescription.CoSimulation.convert(): CoSimulationAttributes {
 
-class JaxbCoSimulationAttributes internal constructor(
-        private val cs: FmiModelDescription.CoSimulation
-): CoSimulationAttributes {
-
-    override val modelIdentifier: String
-        get() = cs.modelIdentifier
-    override val needsExecutionTool: Boolean
-        get() = cs.isNeedsExecutionTool
-    override val canBeInstantiatedOnlyOncePerProcess: Boolean
-        get() = cs.isCanBeInstantiatedOnlyOncePerProcess
-    override val canNotUseMemoryManagementFunctions: Boolean
-        get() = cs.isCanNotUseMemoryManagementFunctions
-    override val canGetAndSetFMUstate: Boolean
-        get() = cs.isCanGetAndSetFMUstate
-    override val canSerializeFMUstate: Boolean
-        get() = cs.isCanSerializeFMUstate
-    override val providesDirectionalDerivative: Boolean
-        get() = cs.isProvidesDirectionalDerivative
-    override val sourceFiles: List<SourceFile>
-        get() = cs.sourceFiles?.file?.map { it.convert() } ?: emptyList()
-    override val canHandleVariableCommunicationStepSize: Boolean
-        get() = cs.isCanHandleVariableCommunicationStepSize
-    override val canInterpolateInputs: Boolean
-        get() = cs.isCanInterpolateInputs
-    override val maxOutputDerivativeOrder: Int
-        get() = cs.maxOutputDerivativeOrder.toInt()
-    override val canRunAsynchronuously: Boolean
-        get() = cs.isCanRunAsynchronuously
+    return CoSimulationAttributes(
+            modelIdentifier = this@convert.modelIdentifier,
+            needsExecutionTool =  this@convert.isNeedsExecutionTool,
+            canBeInstantiatedOnlyOncePerProcess =  this@convert.isCanBeInstantiatedOnlyOncePerProcess,
+            canNotUseMemoryManagementFunctions =  this@convert.isCanNotUseMemoryManagementFunctions,
+            canGetAndSetFMUstate =  this@convert.isCanGetAndSetFMUstate,
+            canSerializeFMUstate =  this@convert.isCanSerializeFMUstate,
+            providesDirectionalDerivative =  this@convert.isProvidesDirectionalDerivative,
+            canHandleVariableCommunicationStepSize =  this@convert.canHandleVariableCommunicationStepSize,
+            canRunAsynchronuously =  this@convert.isCanRunAsynchronuously,
+            canInterpolateInputs = this@convert.isCanInterpolateInputs,
+            maxOutputDerivativeOrder =  this@convert.getMaxOutputDerivativeOrder().toInt(),
+            sourceFiles =  this@convert.sourceFiles?.file?.map { it.convert() } ?: emptyList()
+    )
 
 }
 
-class JaxbModelExchangeAttributes internal constructor(
-        private val me: FmiModelDescription.ModelExchange
-): ModelExchangeAttributes {
+fun FmiModelDescription.ModelExchange.convert(): ModelExchangeAttributes {
+    return ModelExchangeAttributes(
+            modelIdentifier = this@convert.modelIdentifier,
+            needsExecutionTool =  this@convert.isNeedsExecutionTool,
+            canBeInstantiatedOnlyOncePerProcess =  this@convert.isCanBeInstantiatedOnlyOncePerProcess,
+            canNotUseMemoryManagementFunctions =  this@convert.isCanNotUseMemoryManagementFunctions,
+            canGetAndSetFMUstate =  this@convert.isCanGetAndSetFMUstate,
+            canSerializeFMUstate =  this@convert.isCanSerializeFMUstate,
+            providesDirectionalDerivative =  this@convert.isProvidesDirectionalDerivative,
+            completedIntegratorStepNotNeeded = this@convert.isCompletedIntegratorStepNotNeeded,
+            sourceFiles =  this@convert.sourceFiles?.file?.map { it.convert() } ?: emptyList()
+    )
 
-    override val modelIdentifier: String
-        get() = me.modelIdentifier
-    override val needsExecutionTool: Boolean
-        get() = me.isNeedsExecutionTool
-    override val canBeInstantiatedOnlyOncePerProcess: Boolean
-        get() = me.isCanBeInstantiatedOnlyOncePerProcess
-    override val canNotUseMemoryManagementFunctions: Boolean
-        get() = me.isCanNotUseMemoryManagementFunctions
-    override val canGetAndSetFMUstate: Boolean
-        get() = me.isCanGetAndSetFMUstate
-    override val canSerializeFMUstate: Boolean
-        get() = me.isCanSerializeFMUstate
-    override val providesDirectionalDerivative: Boolean
-        get() = me.isProvidesDirectionalDerivative
-    override val sourceFiles: List<SourceFile>
-        get() = me.sourceFiles?.file?.map { it.convert() } ?: emptyList()
-
-    override val completedIntegratorStepNotNeeded: Boolean
-        get() = me.isCompletedIntegratorStepNotNeeded
 }

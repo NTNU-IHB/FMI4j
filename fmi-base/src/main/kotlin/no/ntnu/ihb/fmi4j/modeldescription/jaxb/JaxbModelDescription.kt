@@ -78,7 +78,7 @@ class JaxbModelDescription internal constructor(
         if (!supportsCoSimulation) {
             throw IllegalStateException()
         }
-        return JaxbCoSimulationModelDescription(this, JaxbCoSimulationAttributes(md.coSimulation) )
+        return JaxbCoSimulationModelDescription(this, md.coSimulation.convert() )
     }
 
     override fun asModelExchangeModelDescription(): ModelExchangeModelDescription {
@@ -86,7 +86,7 @@ class JaxbModelDescription internal constructor(
             throw IllegalStateException()
         }
         val numberOfEventIndicators = md.numberOfEventIndicators.toInt()
-        return JaxbModelExchangeModelDescription(this, JaxbModelExchangeAttributes(md.modelExchange), numberOfEventIndicators)
+        return JaxbModelExchangeModelDescription(this, md.modelExchange.convert(), numberOfEventIndicators)
     }
 
 }
