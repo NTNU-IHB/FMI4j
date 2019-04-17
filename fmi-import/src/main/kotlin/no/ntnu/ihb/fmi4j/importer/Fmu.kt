@@ -70,6 +70,12 @@ class Fmu private constructor(
         }
     }
 
+    val guid: String
+        get() = modelDescription.guid
+
+    val modelName: String
+        get() = modelDescription.modelName
+
     /**
      * Get the content of the modelDescription.xml file as a String
      */
