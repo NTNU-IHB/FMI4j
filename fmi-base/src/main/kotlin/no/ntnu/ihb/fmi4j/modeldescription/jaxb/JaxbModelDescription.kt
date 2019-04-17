@@ -27,6 +27,10 @@ package no.ntnu.ihb.fmi4j.modeldescription.jaxb
 import no.ntnu.ihb.fmi4j.modeldescription.*
 import no.ntnu.ihb.fmi4j.modeldescription.variables.ModelVariables
 
+fun FmiModelDescription.convert(): JaxbModelDescription {
+    return JaxbModelDescription(this)
+}
+
 class JaxbModelDescription internal constructor(
         private val md: FmiModelDescription
 ): ModelDescriptionProvider {
