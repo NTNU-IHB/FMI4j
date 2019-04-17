@@ -74,14 +74,15 @@ class JaxbModelDescription internal constructor(
         if (!supportsCoSimulation) {
             throw IllegalStateException()
         }
-        return JaxbCoSimulationModelDescription(this, JaxbCoSimulationAttributes(md.coSimulation))
+        return JaxbCoSimulationModelDescription(this, JaxbCoSimulationAttributes(md.coSimulation) )
     }
 
     override fun asModelExchangeModelDescription(): ModelExchangeModelDescription {
         if (!supportsModelExchange) {
             throw IllegalStateException()
         }
-        return JaxbModelExchangeModelDescription(this, JaxbModelExchangeAttributes(md.modelExchange))
+        val numberOfEventIndicators = md.numberOfEventIndicators.toInt()
+        return JaxbModelExchangeModelDescription(this, JaxbModelExchangeAttributes(md.modelExchange), numberOfEventIndicators)
     }
 
 }
@@ -94,5 +95,5 @@ class JaxbCoSimulationModelDescription(
 class JaxbModelExchangeModelDescription(
         md: JaxbModelDescription,
         override val attributes: ModelExchangeAttributes,
-        override val numberOfEventIndicators: Int = 0
+        override val numberOfEventIndicators: Int
 ): ModelExchangeModelDescription, ModelDescription by md

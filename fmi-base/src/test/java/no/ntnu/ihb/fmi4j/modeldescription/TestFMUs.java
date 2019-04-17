@@ -1,6 +1,6 @@
 package no.ntnu.ihb.fmi4j.modeldescription;
 
-import no.ntnu.ihb.fmi4j.modeldescription.jacskon.JacksonModelDescriptionParser;
+import no.ntnu.ihb.fmi4j.modeldescription.jaxb.JaxbModelDescriptionParser;
 
 import java.io.File;
 
@@ -102,7 +102,7 @@ public class TestFMUs {
         }
 
         public ModelDescriptionProvider modelDescription() {
-            return JacksonModelDescriptionParser.INSTANCE.parse(fmuFile);
+            return JaxbModelDescriptionParser.INSTANCE.parse(fmuFile);
         }
 
         public String modelDescriptionXml() {

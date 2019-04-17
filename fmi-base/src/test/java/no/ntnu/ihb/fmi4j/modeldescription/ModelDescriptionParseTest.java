@@ -1,6 +1,6 @@
 package no.ntnu.ihb.fmi4j.modeldescription;
 
-import no.ntnu.ihb.fmi4j.modeldescription.jacskon.JacksonModelDescriptionParser;
+import no.ntnu.ihb.fmi4j.modeldescription.jaxb.JaxbModelDescriptionParser;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledOnOs;
@@ -10,7 +10,7 @@ import java.io.File;
 
 public class ModelDescriptionParseTest {
 
-    private ModelDescriptionParser parser = JacksonModelDescriptionParser.INSTANCE;
+    private ModelDescriptionParser parser = JaxbModelDescriptionParser.INSTANCE;
 
     @Test
     public void test1() {

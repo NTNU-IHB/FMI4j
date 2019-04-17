@@ -28,9 +28,9 @@ import no.ntnu.ihb.fmi4j.modeldescription.DefaultExperiment
 
 fun FmiModelDescription.DefaultExperiment.convert(): DefaultExperiment {
     return DefaultExperiment(
-            startTime = this@convert.startTime,
-            stopTime = this@convert.stopTime,
-            stepSize = this@convert.stepSize,
-            tolerance = this@convert.tolerance
+            startTime = this@convert.startTime ?: 0.0,
+            stopTime = this@convert.stopTime ?: 0.0,
+            stepSize = this@convert.stepSize ?: 0.0,
+            tolerance = this@convert.tolerance ?: 0.0
     )
 }

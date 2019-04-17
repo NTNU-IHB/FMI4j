@@ -32,8 +32,8 @@ import no.ntnu.ihb.fmi4j.modeldescription.Unit
 fun Fmi2Unit.convert(): Unit {
     return Unit(
             name = this@convert.name,
-            baseUnit = this@convert.baseUnit.convert(),
-            displayUnits = this@convert.displayUnit.map { it.convert() }
+            baseUnit = this@convert.baseUnit?.convert(),
+            displayUnits = this@convert.displayUnit?.map { it.convert() }
     )
 }
 
