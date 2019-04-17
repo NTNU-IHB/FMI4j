@@ -75,7 +75,10 @@ class ModelExchangeFmu @JvmOverloads constructor(
         return newInstance(solver, false, false)
     }
 
-    @JvmOverloads
+    fun newInstance(solver: Solver): ModelExchangeFmuStepper {
+        return newInstance(solver, false, false)
+    }
+
     fun newInstance(solver: Solver, visible: Boolean = false, loggingOn: Boolean = false): ModelExchangeFmuStepper {
         return newInstance(visible, loggingOn).let {
             ModelExchangeFmuStepper(it, solver)

@@ -26,7 +26,6 @@ package no.ntnu.ihb.fmi4j.modeldescription.jaxb
 
 import no.ntnu.ihb.fmi4j.modeldescription.SourceFile
 
-
 fun FmiModelDescription.CoSimulation.SourceFiles.File.convert(): SourceFile {
     return SourceFile(
             name = this@convert.name

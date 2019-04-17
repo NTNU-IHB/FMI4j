@@ -58,7 +58,6 @@ class CoSimulationFmu(
         return newInstance(false, false)
     }
 
-    @JvmOverloads
     fun newInstance(visible: Boolean = false, loggingOn: Boolean = false): CoSimulationSlave {
         val lib = if (modelDescription.attributes.canBeInstantiatedOnlyOncePerProcess) loadLibrary() else libraryCache
         val c = fmu.instantiate(modelDescription, lib, FmiType.CO_SIMULATION, visible, loggingOn)

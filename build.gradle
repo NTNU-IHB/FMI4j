@@ -8,6 +8,10 @@ println "Gradle version is ${gradle.getGradleVersion()}"
 
 group = 'no.ntnu.ihb.fmi4j'
 
+wrapper {
+    distributionType = Wrapper.DistributionType.ALL
+}
+
 subprojects { sub ->
 
     if (sub.name != "fmi-native") {

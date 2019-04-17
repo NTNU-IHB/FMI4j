@@ -62,7 +62,7 @@ class JaxbModelDescription internal constructor(
     override val modelVariables: ModelVariables
         get() = JaxbModelVariables(md.modelVariables)
     override val modelStructure: ModelStructure
-        get() = JaxbModelStructure(md.modelStructure)
+        get() = md.modelStructure.convert()
     override val unitDefinitions: UnitDefinitions?
         get() = md.unitDefinitions?.unit?.map { it.convert() }
     override val typeDefinitions: TypeDefinitions?
