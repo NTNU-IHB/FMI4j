@@ -146,7 +146,7 @@ class RealVariable (
             variability?.also { add("variability=$variability") }
             initial?.also { add("initial=$initial") }
             nominal?.also { add("nominal=$nominal") }
-            unbounded?.also { add("unbounded=$unbounded") }
+            unbounded.also { add("unbounded=$unbounded") }
             quantity?.also { add("quantity=$quantity") }
             unit?.also { add("unit=$unit") }
             displayUnit?.also { add("displayUnit=$displayUnit") }
@@ -154,6 +154,7 @@ class RealVariable (
             derivative?.also { add("derivative=$derivative") }
             description?.also { add("description=$description") }
             declaredType?.also { add("declaredType=$declaredType") }
+            reinit.also { add("reinit=$reinit") }
         }.joinToString(", ")
 
         return "${RealVariable::class.java.simpleName}($entries)"
