@@ -97,16 +97,16 @@ class JaxbRealAttribute internal constructor(
         get() = attribute.nominal
     override val derivative: Int?
         get() = attribute.derivative?.toInt()
-    override val unbounded: Boolean?
-        get() = attribute.isUnbounded
+    override val unbounded: Boolean
+        get() = attribute.unbounded ?: false
     override val reinit: Boolean
-        get() = attribute.isReinit
+        get() = attribute.reinit ?: false
     override val unit: String?
         get() = attribute.unit
     override val displayUnit: String?
         get() = attribute.displayUnit
-    override val relativeQuantity: Boolean?
-        get() = attribute.isRelativeQuantity
+    override val relativeQuantity: Boolean
+        get() = attribute.relativeQuantity ?: false
 
 }
 

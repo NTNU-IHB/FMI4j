@@ -123,7 +123,7 @@ interface RealAttribute: BoundedTypedAttribute<Double> {
      * corresponding bound for the relative error to zero (relative tolerance = 0.0), if
      * the corresponding variable or an alias of it is a continuous state variable.]
      */
-    val unbounded: Boolean?
+    val unbounded: Boolean
 
     /**
      * Only for Model exchange
@@ -155,6 +155,6 @@ interface RealAttribute: BoundedTypedAttribute<Double> {
      * (for example 10 degree Celsius = 10 Kelvin if “relativeQuantity = true”
      * and not 283,15 Kelvin).
      */
-    val relativeQuantity: Boolean?
+    val relativeQuantity: Boolean
 
 }
