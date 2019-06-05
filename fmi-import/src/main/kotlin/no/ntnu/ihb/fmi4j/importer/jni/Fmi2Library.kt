@@ -251,7 +251,7 @@ open class Fmi2Library(
             }
             try {
                 Fmi2Library::class.java.classLoader
-                        .getResourceAsStream("native/fmi2/${OsUtil.currentOS}/$fileName").use { `is` ->
+                        .getResourceAsStream("native/fmi/${OsUtil.currentOS}/$fileName").use { `is` ->
                             FileOutputStream(copy).use { fos ->
                                 `is`.copyTo(fos)
                             }

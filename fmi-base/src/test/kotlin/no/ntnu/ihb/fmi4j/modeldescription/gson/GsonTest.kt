@@ -2,7 +2,7 @@ package no.ntnu.ihb.fmi4j.modeldescription.gson
 
 import com.google.gson.GsonBuilder
 import no.ntnu.ihb.fmi4j.modeldescription.TestFMUs
-import no.ntnu.ihb.fmi4j.modeldescription.jaxb.JaxbModelDescription
+import no.ntnu.ihb.fmi4j.modeldescription.fmi2.JaxbModelDescription
 import org.junit.jupiter.api.Test
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory

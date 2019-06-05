@@ -53,7 +53,7 @@ if (!project.getProperties().get("skipBuildNative", false)) {
 
     task copyNativeLibs(type: Copy, dependsOn: assembleAllRelease) {
 
-        into "$rootDir/fmi-import/src/main/resources/native/fmi2"
+        into "$rootDir/fmi-import/src/main/resources/native/fmi"
 
         if (OperatingSystem.current().isLinux()) {
             into("linux64") {
