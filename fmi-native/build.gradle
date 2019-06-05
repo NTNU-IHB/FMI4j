@@ -1,4 +1,5 @@
 
+import org.gradle.internal.jvm.Jvm
 import org.gradle.internal.os.OperatingSystem
 
 plugins {
@@ -22,12 +23,12 @@ if (!project.getProperties().get("skipBuildNative", false)) {
         lib.binaries.whenElementFinalized { CppBinary binary ->
             project.dependencies {
 
-                add(binary.includePathConfiguration.name, files("${org.gradle.internal.jvm.Jvm.current().javaHome}/include"))
+                add(binary.includePathConfiguration.name, files("${Jvm.current().javaHome}/include"))
 
                 if (OperatingSystem.current().isLinux()) {
-                    add(binary.includePathConfiguration.name, files("${org.gradle.internal.jvm.Jvm.current().javaHome}/include/linux"))
+                    add(binary.includePathConfiguration.name, files("${Jvm.current().javaHome}/include/linux"))
                 } else if (OperatingSystem.current().isWindows()) {
-                    add(binary.includePathConfiguration.name, files("${org.gradle.internal.jvm.Jvm.current().javaHome}/include/win32"))
+                    add(binary.includePathConfiguration.name, files("${Jvm.current().javaHome}/include/win32"))
                 } else {
                     throw new IllegalStateException("Unsupported OS: " + OperatingSystem.current().name)
                 }
