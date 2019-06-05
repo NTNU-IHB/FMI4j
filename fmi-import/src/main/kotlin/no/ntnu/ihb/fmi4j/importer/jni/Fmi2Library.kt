@@ -241,12 +241,11 @@ open class Fmi2Library(
 
     private companion object {
 
-        private const val JNI_LIB = "fmi4j"
         private val LOG: Logger = LoggerFactory.getLogger(Fmi2Library::class.java)
 
         init {
 
-            val fileName = "${OsUtil.libPrefix}$JNI_LIB.${OsUtil.libExtension}"
+            val fileName = "${OsUtil.libPrefix}fmi2_jni.${OsUtil.libExtension}"
             val copy = File(fileName).apply {
                 deleteOnExit()
             }
