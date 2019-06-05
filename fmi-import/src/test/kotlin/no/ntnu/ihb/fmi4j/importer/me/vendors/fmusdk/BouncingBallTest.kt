@@ -58,7 +58,7 @@ class BouncingBallTest {
                     LOG.error("${slave.lastStatus} @ ${slave.simulationTime}")
                     break
                 }
-//                Assertions.assertTrue()
+
                 h.read(slave).also {
                     Assertions.assertEquals(FmiStatus.OK, it.status)
                     LOG.info("t=${slave.simulationTime}, h=${it.value}")
