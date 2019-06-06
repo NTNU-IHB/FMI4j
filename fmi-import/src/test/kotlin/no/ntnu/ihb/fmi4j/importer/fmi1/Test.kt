@@ -2,12 +2,14 @@ package no.ntnu.ihb.fmi4j.importer.fmi1
 
 import no.ntnu.ihb.fmi4j.readReal
 import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.io.File
 
 class Test {
 
     @Test
+    @Disabled
     fun TestFmi1() {
 
         Fmu.from(File("D:\\Development\\misc\\cse-demos\\dp-ship\\DPController.fmu")).use { fmu ->

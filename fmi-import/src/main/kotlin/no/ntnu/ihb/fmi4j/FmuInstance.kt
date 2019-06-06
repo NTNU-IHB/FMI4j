@@ -82,16 +82,9 @@ interface SimpleFmuInstance : FmuVariableAccessor, Closeable {
 
     fun exitInitializationMode(): Boolean
 
-    /**
-     * @see no.ntnu.ihb.fmi4j.importer.jni.Fmi2Library.reset
-     */
     fun reset(): Boolean
 
-    /**
-     * @see no.ntnu.ihb.fmi4j.importer.jni.Fmi2Library.terminate
-     */
     fun terminate(): Boolean
-
 
     fun getFMUstate(): FmuState
     fun setFMUstate(state: FmuState): Boolean

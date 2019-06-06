@@ -80,7 +80,7 @@ namespace {
         if (!instance_name) instance_name = "?";
         if (!category) category = "?";
 
-        printf("status = %s, instanceName = %s, category = %s: %s\n", status_to_string(status), instance_name, category, msg);
+        printf("[FMI native bridge] status = %s, instanceName = %s, category = %s: %s\n", status_to_string(status), instance_name, category, msg);
     }
 
     const char* full_function_name(std::string modelIdentifier, std::string function_name) {
