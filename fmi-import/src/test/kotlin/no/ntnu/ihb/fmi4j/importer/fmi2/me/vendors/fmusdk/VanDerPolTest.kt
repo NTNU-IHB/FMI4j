@@ -22,11 +22,11 @@
  * THE SOFTWARE.
  */
 
-package no.ntnu.ihb.fmi4j.importer.me.vendors.fmusdk
+package no.ntnu.ihb.fmi4j.importer.fmi2.me.vendors.fmusdk
 
 import no.ntnu.ihb.fmi4j.FmiStatus
-import no.ntnu.ihb.fmi4j.read
 import no.ntnu.ihb.fmi4j.importer.TestFMUs
+import no.ntnu.ihb.fmi4j.read
 import no.ntnu.ihb.fmi4j.solvers.Solver
 import no.ntnu.ihb.fmi4j.solvers.apache.ApacheSolvers
 import org.junit.jupiter.api.AfterAll

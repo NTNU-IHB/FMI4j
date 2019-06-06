@@ -1,8 +1,8 @@
-package no.ntnu.ihb.fmi4j.importer.me.vendors.fmusdk
+package no.ntnu.ihb.fmi4j.importer.fmi2.me.vendors.openmodelica
 
 import no.ntnu.ihb.fmi4j.FmiStatus
-import no.ntnu.ihb.fmi4j.read
 import no.ntnu.ihb.fmi4j.importer.TestFMUs
+import no.ntnu.ihb.fmi4j.read
 import no.ntnu.ihb.fmi4j.solvers.Solver
 import no.ntnu.ihb.fmi4j.solvers.apache.ApacheSolver
 import no.ntnu.ihb.fmi4j.solvers.apache.ApacheSolvers
@@ -15,16 +15,20 @@ import org.junit.jupiter.api.condition.EnabledOnOs
 import org.junit.jupiter.api.condition.OS
 import org.slf4j.LoggerFactory
 
-@EnabledOnOs(OS.WINDOWS)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class BouncingBallTest {
+class FmuExportCrossCompile {
 
     private companion object {
-        private val LOG = LoggerFactory.getLogger(BouncingBallTest::class.java)
 
-        private val fmu = TestFMUs.fmi20().me()
-                .vendor("FMUSDK").version("2.0.4")
-                .name("bouncingBall").fmu().asModelExchangeFmu()
+        private val LOG = LoggerFactory.getLogger(FmuExportCrossCompile::class.java)
+
+        const val stop = 1.0
+        const val macroStep = 1.0 / 10
+        const val microStep = 1E-3
+
+        val fmu = TestFMUs.fmi20().cs()
+                .vendor("OpenModelica").version("v1.11.0")
+                .name("FmuExportCrossCompile").fmu().asModelExchangeFmu()
 
     }
 
@@ -44,21 +48,15 @@ class BouncingBallTest {
 
         LOG.info("Using solver: '${solver.name}'")
 
-        fmu.newInstance(solver, loggingOn = true).use { slave ->
+        fmu.newInstance(solver).use { slave ->
 
             val h = slave.modelVariables
                     .getByName("h").asRealVariable()
 
             Assertions.assertTrue(slave.simpleSetup())
 
-            val macroStep = 1.0 / 10
-            while (slave.simulationTime <= 0.1) {
-
-                if (!slave.doStep(macroStep)) {
-                    LOG.error("${slave.lastStatus} @ ${slave.simulationTime}")
-                    break
-                }
-
+            while (slave.simulationTime <= stop) {
+                Assertions.assertTrue(slave.doStep(macroStep))
                 h.read(slave).also {
                     Assertions.assertEquals(FmiStatus.OK, it.status)
                     LOG.info("t=${slave.simulationTime}, h=${it.value}")
@@ -70,28 +68,33 @@ class BouncingBallTest {
     }
 
     @Test
+    @EnabledOnOs(OS.WINDOWS)
     fun testEuler() {
-        runFmu(ApacheSolvers.euler(1E-3))
+        runFmu(ApacheSolvers.euler(microStep))
     }
 
     @Test
+    @EnabledOnOs(OS.WINDOWS)
     fun testRungeKutta() {
-        runFmu(ApacheSolvers.rk4(1E-3))
+        runFmu(ApacheSolvers.rk4(microStep))
     }
 
     @Test
+    @EnabledOnOs(OS.WINDOWS)
     fun testLuther() {
-        runFmu(ApacheSolvers.luther(1E-3))
+        runFmu(ApacheSolvers.luther(microStep))
     }
 
     @Test
+    @EnabledOnOs(OS.WINDOWS)
     fun testMidpoint() {
-        runFmu(ApacheSolvers.midpoint(1E-3))
+        runFmu(ApacheSolvers.midpoint(microStep))
     }
 
     @Test
+    @EnabledOnOs(OS.WINDOWS)
     fun testDp() {
-        runFmu(ApacheSolver(DormandPrince853Integrator(0.0, 1E-3, 1E-4, 1E-4)))
+        runFmu(ApacheSolver(DormandPrince853Integrator(0.0, microStep, 1E-4, 1E-4)))
     }
 
 }

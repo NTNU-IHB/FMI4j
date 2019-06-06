@@ -73,19 +73,19 @@ open class Fmi2Library(
 
     private external fun getTypesPlatform(p: Long): String
 
+    private external fun instantiate(p: Long, instanceName: String, type: Int, guid: String,
+                                     resourceLocation: String, visible: Boolean, loggingOn: Boolean): Long
 
     private external fun setDebugLogging(p: Long, c: Fmi2Component,
                                          loggingOn: Boolean, categories: Array<String>): NativeStatus
 
-    private external fun setupExperiment(p: Long, c: Fmi2Component,
-                                         tolerance: Double, startTime: Double, stopTime: Double): NativeStatus
+    private external fun setup(p: Long, c: Fmi2Component,
+                               tolerance: Double, startTime: Double, stopTime: Double): NativeStatus
 
     private external fun enterInitializationMode(p: Long, c: Fmi2Component): NativeStatus
 
     private external fun exitInitializationMode(p: Long, c: Fmi2Component): NativeStatus
 
-    private external fun instantiate(p: Long, instanceName: String, type: Int, guid: String,
-                                     resourceLocation: String, visible: Boolean, loggingOn: Boolean): Long
 
     private external fun terminate(p: Long, c: Fmi2Component): NativeStatus
 
@@ -140,14 +140,18 @@ open class Fmi2Library(
         return getTypesPlatform(p)
     }
 
+    fun instantiate(instanceName: String, type: Int, guid: String,
+                    resourceLocation: String, visible: Boolean, loggingOn: Boolean): Long {
+        return instantiate(p, instanceName, type, guid, resourceLocation, visible, loggingOn)
+    }
 
     fun setDebugLogging(c: Fmi2Component, loggingOn: Boolean, categories: Array<String>): FmiStatus {
         return setDebugLogging(p, c, loggingOn, categories).transform()
     }
 
-    fun setupExperiment(c: Fmi2Component,
-                        tolerance: Double, startTime: Double, stopTime: Double): FmiStatus {
-        return setupExperiment(p, c, tolerance, startTime, stopTime).transform()
+    fun setup(c: Fmi2Component,
+              tolerance: Double, startTime: Double, stopTime: Double): FmiStatus {
+        return setup(p, c, tolerance, startTime, stopTime).transform()
     }
 
     fun enterInitializationMode(c: Fmi2Component): FmiStatus {
@@ -156,11 +160,6 @@ open class Fmi2Library(
 
     fun exitInitializationMode(c: Fmi2Component): FmiStatus {
         return exitInitializationMode(p, c).transform()
-    }
-
-    fun instantiate(instanceName: String, type: Int, guid: String,
-                    resourceLocation: String, visible: Boolean, loggingOn: Boolean): Long {
-        return instantiate(p, instanceName, type, guid, resourceLocation, visible, loggingOn)
     }
 
     fun terminate(c: Fmi2Component): FmiStatus {
@@ -312,10 +311,10 @@ abstract class Fmi2LibraryWrapper<E : Fmi2Library>(
     }
 
     /**
-     * @see Fmi2Library.setupExperiment
+     * @see Fmi2Library.setup
      */
-    fun setupExperiment(tolerance: Double, startTime: Double, stopTime: Double): FmiStatus {
-        return updateStatus(library.setupExperiment(c, tolerance, startTime, stopTime))
+    fun setup(tolerance: Double, startTime: Double, stopTime: Double): FmiStatus {
+        return updateStatus(library.setup(c, tolerance, startTime, stopTime))
     }
 
     /**

@@ -1,8 +1,7 @@
-package no.ntnu.ihb.fmi4j.importer.misc
+package no.ntnu.ihb.fmi4j.importer.fmi2
 
-import no.ntnu.ihb.fmi4j.read
-import no.ntnu.ihb.fmi4j.importer.fmi2.Fmu
 import no.ntnu.ihb.fmi4j.importer.TestFMUs
+import no.ntnu.ihb.fmi4j.read
 import org.javafmi.proxy.Status
 import org.javafmi.wrapper.Simulation
 import org.junit.jupiter.api.AfterAll

@@ -66,7 +66,7 @@ Types for Common Functions
    typedef fmiComponent fmiInstantiateSlaveTYPE (fmiString, fmiString, fmiString, fmiString, fmiReal, fmiBoolean, fmiBoolean, fmiCallbackFunctions, fmiBoolean);
    typedef void          fmiFreeSlaveInstanceTYPE(fmiComponent);
 
-/* Enter and exit initialization mode, terminate and reset */
+/* Initialize, terminate and reset */
    typedef fmiStatus fmiInitializeSlaveTYPE       (fmiComponent, fmiReal, fmiBoolean, fmiReal);
    typedef fmiStatus fmiTerminateSlaveTYPE              (fmiComponent);
    typedef fmiStatus fmiResetSlaveTYPE                  (fmiComponent);

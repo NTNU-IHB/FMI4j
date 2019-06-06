@@ -1,8 +1,9 @@
-package no.ntnu.ihb.fmi4j.importer.me.vendors.openmodelica
+package no.ntnu.ihb.fmi4j.importer.fmi2.me.vendors.testfmus
 
 import no.ntnu.ihb.fmi4j.FmiStatus
-import no.ntnu.ihb.fmi4j.read
 import no.ntnu.ihb.fmi4j.importer.TestFMUs
+import no.ntnu.ihb.fmi4j.importer.fmi2.me.vendors.fmusdk.BouncingBallTest
+import no.ntnu.ihb.fmi4j.read
 import no.ntnu.ihb.fmi4j.solvers.Solver
 import no.ntnu.ihb.fmi4j.solvers.apache.ApacheSolver
 import no.ntnu.ihb.fmi4j.solvers.apache.ApacheSolvers
@@ -11,24 +12,17 @@ import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
-import org.junit.jupiter.api.condition.EnabledOnOs
-import org.junit.jupiter.api.condition.OS
 import org.slf4j.LoggerFactory
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class FmuExportCrossCompile {
+class BouncingBallTest {
 
     private companion object {
+        private val LOG = LoggerFactory.getLogger(BouncingBallTest::class.java)
 
-        private val LOG = LoggerFactory.getLogger(FmuExportCrossCompile::class.java)
-
-        const val stop = 1.0
-        const val macroStep = 1.0 / 10
-        const val microStep = 1E-3
-
-        val fmu = TestFMUs.fmi20().cs()
-                .vendor("OpenModelica").version("v1.11.0")
-                .name("FmuExportCrossCompile").fmu().asModelExchangeFmu()
+        private val fmu = TestFMUs.fmi20().both()
+                .vendor("Test-FMUs").version("0.0.1")
+                .name("BouncingBall").fmu().asModelExchangeFmu()
 
     }
 
@@ -55,7 +49,8 @@ class FmuExportCrossCompile {
 
             Assertions.assertTrue(slave.simpleSetup())
 
-            while (slave.simulationTime <= stop) {
+            val macroStep = 1.0 / 10
+            while (slave.simulationTime <= 1) {
                 Assertions.assertTrue(slave.doStep(macroStep))
                 h.read(slave).also {
                     Assertions.assertEquals(FmiStatus.OK, it.status)
@@ -68,33 +63,28 @@ class FmuExportCrossCompile {
     }
 
     @Test
-    @EnabledOnOs(OS.WINDOWS)
     fun testEuler() {
-        runFmu(ApacheSolvers.euler(microStep))
+        runFmu(ApacheSolvers.euler(1E-3))
     }
 
     @Test
-    @EnabledOnOs(OS.WINDOWS)
     fun testRungeKutta() {
-        runFmu(ApacheSolvers.rk4(microStep))
+        runFmu(ApacheSolvers.rk4(1E-3))
     }
 
     @Test
-    @EnabledOnOs(OS.WINDOWS)
     fun testLuther() {
-        runFmu(ApacheSolvers.luther(microStep))
+        runFmu(ApacheSolvers.luther(1E-3))
     }
 
     @Test
-    @EnabledOnOs(OS.WINDOWS)
     fun testMidpoint() {
-        runFmu(ApacheSolvers.midpoint(microStep))
+        runFmu(ApacheSolvers.midpoint(1E-3))
     }
 
     @Test
-    @EnabledOnOs(OS.WINDOWS)
     fun testDp() {
-        runFmu(ApacheSolver(DormandPrince853Integrator(0.0, microStep, 1E-4, 1E-4)))
+        runFmu(ApacheSolver(DormandPrince853Integrator(0.0, 1E-3, 1E-4, 1E-4)))
     }
 
 }

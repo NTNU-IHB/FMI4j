@@ -1,9 +1,8 @@
-package no.ntnu.ihb.fmi4j.importer.me.vendors.testfmus
+package no.ntnu.ihb.fmi4j.importer.fmi2.me.vendors.fmusdk
 
 import no.ntnu.ihb.fmi4j.FmiStatus
-import no.ntnu.ihb.fmi4j.read
 import no.ntnu.ihb.fmi4j.importer.TestFMUs
-import no.ntnu.ihb.fmi4j.importer.me.vendors.fmusdk.BouncingBallTest
+import no.ntnu.ihb.fmi4j.read
 import no.ntnu.ihb.fmi4j.solvers.Solver
 import no.ntnu.ihb.fmi4j.solvers.apache.ApacheSolver
 import no.ntnu.ihb.fmi4j.solvers.apache.ApacheSolvers
@@ -12,17 +11,20 @@ import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
+import org.junit.jupiter.api.condition.EnabledOnOs
+import org.junit.jupiter.api.condition.OS
 import org.slf4j.LoggerFactory
 
+@EnabledOnOs(OS.WINDOWS)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class BouncingBallTest {
 
     private companion object {
         private val LOG = LoggerFactory.getLogger(BouncingBallTest::class.java)
 
-        private val fmu = TestFMUs.fmi20().both()
-                .vendor("Test-FMUs").version("0.0.1")
-                .name("BouncingBall").fmu().asModelExchangeFmu()
+        private val fmu = TestFMUs.fmi20().me()
+                .vendor("FMUSDK").version("2.0.4")
+                .name("bouncingBall").fmu().asModelExchangeFmu()
 
     }
 
@@ -42,7 +44,7 @@ class BouncingBallTest {
 
         LOG.info("Using solver: '${solver.name}'")
 
-        fmu.newInstance(solver).use { slave ->
+        fmu.newInstance(solver, loggingOn = true).use { slave ->
 
             val h = slave.modelVariables
                     .getByName("h").asRealVariable()
@@ -50,8 +52,13 @@ class BouncingBallTest {
             Assertions.assertTrue(slave.simpleSetup())
 
             val macroStep = 1.0 / 10
-            while (slave.simulationTime <= 1) {
-                Assertions.assertTrue(slave.doStep(macroStep))
+            while (slave.simulationTime <= 0.1) {
+
+                if (!slave.doStep(macroStep)) {
+                    LOG.error("${slave.lastStatus} @ ${slave.simulationTime}")
+                    break
+                }
+
                 h.read(slave).also {
                     Assertions.assertEquals(FmiStatus.OK, it.status)
                     LOG.info("t=${slave.simulationTime}, h=${it.value}")

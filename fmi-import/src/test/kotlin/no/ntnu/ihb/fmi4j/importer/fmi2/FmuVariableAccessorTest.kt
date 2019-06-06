@@ -1,11 +1,11 @@
-package no.ntnu.ihb.fmi4j.importer.misc
+package no.ntnu.ihb.fmi4j.importer.fmi2
 
+import no.ntnu.ihb.fmi4j.importer.TestFMUs
+import no.ntnu.ihb.fmi4j.modeldescription.variables.*
 import no.ntnu.ihb.fmi4j.read
 import no.ntnu.ihb.fmi4j.readBoolean
 import no.ntnu.ihb.fmi4j.readInteger
 import no.ntnu.ihb.fmi4j.readReal
-import no.ntnu.ihb.fmi4j.importer.TestFMUs
-import no.ntnu.ihb.fmi4j.modeldescription.variables.*
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test

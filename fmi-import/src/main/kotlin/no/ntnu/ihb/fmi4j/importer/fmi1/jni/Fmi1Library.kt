@@ -24,9 +24,12 @@
 
 package no.ntnu.ihb.fmi4j.importer.fmi1.jni
 
-import no.ntnu.ihb.fmi4j.FMI4j
-import no.ntnu.ihb.fmi4j.FmiStatus
+import no.ntnu.ihb.fmi4j.*
+import no.ntnu.ihb.fmi4j.importer.fmi2.jni.Fmi2Library
+import no.ntnu.ihb.fmi4j.modeldescription.StringArray
+import no.ntnu.ihb.fmi4j.modeldescription.ValueReference
 import no.ntnu.ihb.fmi4j.modeldescription.ValueReferences
+import no.ntnu.ihb.fmi4j.util.ArrayBuffers
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.Closeable
@@ -38,10 +41,11 @@ internal typealias FmiComponent = Long
  * @author Lars Ivar Hatledal
  */
 open class Fmi1Library(
-        libName: String
+        libName: String,
+        modelIdentifier: String
 ) : Closeable {
 
-    protected val p: Long = load(libName)
+    protected val p: Long = load(libName, modelIdentifier)
     private var isClosed = false
 
     override fun close() {
@@ -61,7 +65,7 @@ open class Fmi1Library(
         }
     }
 
-    private external fun load(libName: String): Long
+    private external fun load(libName: String, modelIdentifier: String): Long
 
     private external fun free(p: Long): Boolean
 
@@ -69,15 +73,10 @@ open class Fmi1Library(
 
     private external fun getTypesPlatform(p: Long): String
 
-//    private external fun setupExperiment(p: Long, c: FmiComponent,
-//                                         tolerance: Double, startTime: Double, stopTime: Double): NativeStatus
-//
-//    private external fun enterInitializationMode(p: Long, c: FmiComponent): NativeStatus
-//
-//    private external fun exitInitializationMode(p: Long, c: FmiComponent): NativeStatus
+    private external fun instantiate(p: Long, instanceName: String, guid: String,
+                                     fmuLocation: String, mimeType: String, visible: Boolean, interactive: Boolean, loggingOn: Boolean): Long
 
-    private external fun instantiate(p: Long, instanceName: String, type: Int, guid: String,
-                                     resourceLocation: String, visible: Boolean, loggingOn: Boolean): Long
+    private external fun setup(p: Long, c: FmiComponent, startTime: Double, stopTime: Double): NativeStatus
 
     private external fun terminate(p: Long, c: FmiComponent): NativeStatus
 
@@ -109,23 +108,13 @@ open class Fmi1Library(
         return getTypesPlatform(p)
     }
 
+    fun instantiate(instanceName: String, guid: String,
+                    fmuLocation: String, visible: Boolean, interactive: Boolean, loggingOn: Boolean): Long {
+        return instantiate(p, instanceName, guid, fmuLocation, "application/x-fmu-sharedlibrary", visible, interactive, loggingOn)
+    }
 
-//    fun setupExperiment(c: FmiComponent,
-//                        tolerance: Double, startTime: Double, stopTime: Double): FmiStatus {
-//        return setupExperiment(p, c, tolerance, startTime, stopTime).transform()
-//    }
-//
-//    fun enterInitializationMode(c: FmiComponent): FmiStatus {
-//        return enterInitializationMode(p, c).transform()
-//    }
-//
-//    fun exitInitializationMode(c: FmiComponent): FmiStatus {
-//        return exitInitializationMode(p, c).transform()
-//    }
-
-    fun instantiate(instanceName: String, type: Int, guid: String,
-                    resourceLocation: String, visible: Boolean, loggingOn: Boolean): Long {
-        return instantiate(p, instanceName, type, guid, resourceLocation, visible, loggingOn)
+    fun setup(c: FmiComponent, startTime: Double, stopTime: Double): FmiStatus {
+        return setup(p, c, startTime, stopTime).transform()
     }
 
     fun terminate(c: FmiComponent): FmiStatus {
@@ -184,3 +173,283 @@ open class Fmi1Library(
     }
 
 }
+
+/**
+ * @author Lars Ivar Hatledal
+ */
+abstract class Fmi1LibraryWrapper<E : Fmi1Library>(
+        protected var c: Long,
+        library: E
+) : FmuVariableAccessor {
+
+    private val buffers: ArrayBuffers by lazy {
+        ArrayBuffers()
+    }
+
+    private var _library: E? = library
+
+    protected val library: E
+        get() = _library ?: throw IllegalAccessException("Library is no longer accessible!")
+
+    val isInstanceFreed: Boolean
+        get() = _library == null
+
+    /**
+     * The status returned from the last call to a FMU function
+     */
+    var lastStatus: FmiStatus = FmiStatus.NONE
+        private set
+
+    /**
+     * Has terminate been called on the FMU?
+     */
+    var isTerminated: Boolean = false
+        private set
+
+
+    protected fun updateStatus(status: FmiStatus): FmiStatus {
+        return status.also { lastStatus = it }
+    }
+
+    /**
+     * @see Fmi2Library.getTypesPlatform
+     */
+    val typesPlatform: String
+        get() = library.getTypesPlatform()
+
+    /**
+     *
+     * @see Fmi2Library.getVersion()
+     */
+    val version: String
+        get() = library.getVersion()
+
+
+    fun instantiate(instanceName: String, guid: String,
+                    fmuLocation: String, visible: Boolean, interactive: Boolean, loggingOn: Boolean): Long {
+        return library.instantiate(instanceName, guid, fmuLocation, visible, interactive, loggingOn)
+    }
+
+    fun setup(startTime: Double, stopTime: Double): FmiStatus {
+        return library.setup(c, startTime, stopTime)
+    }
+
+    /**
+     * @see Fmi2Library.terminate
+     */
+    @JvmOverloads
+    fun terminate(freeInstance: Boolean = true): FmiStatus {
+
+        if (!isTerminated) {
+
+            return try {
+                updateStatus(library.terminate(c))
+            } catch (ex: Error) {
+                LOG.error("Error caught on fmi2Terminate: ${ex.javaClass.simpleName}")
+                updateStatus(FmiStatus.OK)
+            } finally {
+                isTerminated = true
+                if (freeInstance) {
+                    freeInstance()
+                }
+            }
+
+        } else {
+            LOG.warn("Terminated has already been called..")
+            return FmiStatus.OK
+        }
+    }
+
+    /**
+     * @see Fmi2Library.freeInstance
+     */
+    internal fun freeInstance() {
+        if (!isInstanceFreed) {
+            var success = false
+            try {
+                library.freeInstance(c)
+                success = true
+            } catch (ex: Error) {
+                LOG.error("Error caught on fmi2FreeInstance: ${ex.javaClass.simpleName}")
+            } finally {
+                val msg = if (success) "successfully" else "unsuccessfully"
+                LOG.debug("Instance freed $msg")
+                _library = null
+                System.gc()
+            }
+        }
+    }
+
+    /**
+     * @see Fmi2Library.reset
+     */
+    fun reset(): FmiStatus {
+        return updateStatus(library.reset(c)).also { status ->
+            if (status == FmiStatus.OK) {
+                isTerminated = false
+            }
+        }
+    }
+
+    /**
+     * @see Fmi2Library.getInteger
+     */
+    @Synchronized
+    fun readInteger(valueReference: ValueReference): FmuIntegerRead {
+        return with(buffers) {
+            vr[0] = valueReference
+            library.getInteger(c, vr, iv).let {
+                FmuIntegerRead(iv[0], updateStatus(it))
+            }
+        }
+    }
+
+    /**
+     * @see Fmi2Library.getInteger
+     */
+    override fun read(vr: ValueReferences, ref: IntArray): FmiStatus {
+        return library.getInteger(c, vr, ref).let { updateStatus(it) }
+    }
+
+    /**
+     * @see Fmi2Library.getReal
+     */
+    @Synchronized
+    fun readReal(valueReference: ValueReference): FmuRealRead {
+        return with(buffers) {
+            vr[0] = valueReference
+            library.getReal(c, vr, rv).let {
+                FmuRealRead(rv[0], updateStatus(it))
+            }
+        }
+    }
+
+    /**
+     * @see Fmi2Library.getReal
+     */
+    override fun read(vr: ValueReferences, ref: DoubleArray): FmiStatus {
+        return library.getReal(c, vr, ref).let { updateStatus(it) }
+    }
+
+    /**
+     * @see Fmi2Library.getString
+     */
+    @Synchronized
+    fun readString(valueReference: ValueReference): FmuStringRead {
+        return with(buffers) {
+            vr[0] = valueReference
+            library.getString(c, vr, sv).let {
+                FmuStringRead(sv[0], updateStatus(it))
+            }
+        }
+    }
+
+    /**
+     * @see Fmi2Library.getString
+     */
+    override fun read(vr: ValueReferences, ref: StringArray): FmiStatus {
+        return library.getString(c, vr, ref).let { updateStatus(it) }
+    }
+
+    /**
+     * @see Fmi2Library.getBoolean
+     */
+    @Synchronized
+    fun readBoolean(valueReference: ValueReference): FmuBooleanRead {
+        return with(buffers) {
+            vr[0] = valueReference
+            library.getBoolean(c, vr, bv).let {
+                FmuBooleanRead(bv[0], updateStatus(it))
+            }
+        }
+    }
+
+    /**
+     * @see Fmi2Library.getBoolean
+     */
+    override fun read(vr: ValueReferences, ref: BooleanArray): FmiStatus {
+        return library.getBoolean(c, vr, ref).let { updateStatus(it) }
+    }
+
+    /**
+     * @see Fmi2Library.setInteger
+     */
+    @Synchronized
+    fun writeInteger(valueReference: ValueReference, ref: Int): FmiStatus {
+        return with(buffers) {
+            vr[0] = valueReference
+            iv[0] = ref
+            write(vr, iv)
+        }
+    }
+
+    /**
+     * @see Fmi2Library.setInteger
+     */
+    override fun write(vr: ValueReferences, value: IntArray): FmiStatus {
+        return updateStatus((library.setInteger(c, vr, value)))
+    }
+
+    /**
+     * @see Fmi2Library.setReal
+     */
+    @Synchronized
+    fun writeReal(valueReference: ValueReference, value: Double): FmiStatus {
+        return with(buffers) {
+            vr[0] = valueReference
+            rv[0] = value
+            write(vr, rv)
+        }
+    }
+
+    /**
+     * @see Fmi2Library.setReal
+     */
+    override fun write(vr: ValueReferences, value: DoubleArray): FmiStatus {
+        return updateStatus((library.setReal(c, vr, value)))
+    }
+
+    /**
+     * @see Fmi2Library.setString
+     */
+    @Synchronized
+    fun writeString(valueReference: ValueReference, value: String): FmiStatus {
+        return with(buffers) {
+            vr[0] = valueReference
+            sv[0] = value
+            write(vr, sv)
+        }
+    }
+
+    /**
+     * @see Fmi2Library.setString
+     */
+    override fun write(vr: ValueReferences, value: StringArray): FmiStatus {
+        return updateStatus((library.setString(c, vr, value)))
+    }
+
+    /**
+     * @see Fmi2Library.setBoolean
+     */
+    @Synchronized
+    fun writeBoolean(valueReference: ValueReference, value: Boolean): FmiStatus {
+        return with(buffers) {
+            vr[0] = valueReference
+            bv[0] = value
+            write(vr, bv)
+        }
+    }
+
+    /**
+     * @see Fmi2Library.setBoolean
+     */
+    override fun write(vr: ValueReferences, value: BooleanArray): FmiStatus {
+        return updateStatus(library.setBoolean(c, vr, value))
+    }
+
+    private companion object {
+        val LOG: Logger = LoggerFactory.getLogger(Fmi1LibraryWrapper::class.java)
+    }
+
+}
+

@@ -22,43 +22,38 @@
  * THE SOFTWARE.
  */
 
-package no.ntnu.ihb.fmi4j.importer.fmi2
+package no.ntnu.ihb.fmi4j.importer.fmi1
 
 import no.ntnu.ihb.fmi4j.FmuSlave
 import no.ntnu.ihb.fmi4j.SlaveProvider
-import no.ntnu.ihb.fmi4j.importer.fmi2.jni.CoSimulationLibraryWrapper
-import no.ntnu.ihb.fmi4j.importer.fmi2.jni.Fmi2CoSimulationLibrary
+import no.ntnu.ihb.fmi4j.importer.fmi1.jni.CoSimulationLibraryWrapper
+import no.ntnu.ihb.fmi4j.importer.fmi1.jni.Fmi1CoSimulationLibrary
 import no.ntnu.ihb.fmi4j.modeldescription.CoSimulationModelDescription
 import java.io.Closeable
 
 
 class CoSimulationFmu(
         private val fmu: Fmu
-): SlaveProvider, Closeable by fmu {
+) : SlaveProvider, Closeable by fmu {
 
     override val modelDescription: CoSimulationModelDescription by lazy {
         fmu.modelDescription.asCoSimulationModelDescription()
     }
 
-    private val libraryCache: Fmi2CoSimulationLibrary by lazy {
-        loadLibrary()
-    }
-
-    private fun loadLibrary(): Fmi2CoSimulationLibrary {
+    private val lib: Fmi1CoSimulationLibrary by lazy {
         val modelIdentifier = modelDescription.attributes.modelIdentifier
         val libName = fmu.getAbsoluteLibraryPath(modelIdentifier)
-        return Fmi2CoSimulationLibrary(libName).also {
+        Fmi1CoSimulationLibrary(libName, modelIdentifier).also {
             fmu.registerLibrary(it)
         }
     }
 
     override fun newInstance(): FmuSlave {
-        return newInstance(false, false)
+        return newInstance(visible = false, interactive = false, loggingOn = false)
     }
 
-    fun newInstance(visible: Boolean = false, loggingOn: Boolean = false): CoSimulationSlave {
-        val lib = if (modelDescription.attributes.canBeInstantiatedOnlyOncePerProcess) loadLibrary() else libraryCache
-        val c = fmu.instantiate(modelDescription, lib, 1, visible, loggingOn)
+    fun newInstance(visible: Boolean = false, interactive: Boolean = false, loggingOn: Boolean = false): CoSimulationSlave {
+        val c = fmu.instantiate(modelDescription, lib, visible, interactive, loggingOn)
         val wrapper = CoSimulationLibraryWrapper(c, lib)
         return CoSimulationSlave(wrapper, modelDescription).also {
             fmu.registerInstance(it)

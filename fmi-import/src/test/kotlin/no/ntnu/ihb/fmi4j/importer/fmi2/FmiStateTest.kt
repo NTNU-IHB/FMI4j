@@ -22,10 +22,8 @@
  * THE SOFTWARE.
  */
 
-package no.ntnu.ihb.fmi4j.importer.misc
+package no.ntnu.ihb.fmi4j.importer.fmi2
 
-import no.ntnu.ihb.fmi4j.importer.fmi2.FmiMethod
-import no.ntnu.ihb.fmi4j.importer.fmi2.FmiState
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 

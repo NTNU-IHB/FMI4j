@@ -1,8 +1,8 @@
-package no.ntnu.ihb.fmi4j.importer.cs.vendors.twentysim
+package no.ntnu.ihb.fmi4j.importer.fmi2.cs.vendors.twentysim
 
 import no.ntnu.ihb.fmi4j.FmiStatus
-import no.ntnu.ihb.fmi4j.read
 import no.ntnu.ihb.fmi4j.importer.TestFMUs
+import no.ntnu.ihb.fmi4j.read
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.slf4j.Logger

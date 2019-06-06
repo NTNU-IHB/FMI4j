@@ -24,7 +24,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
+#include <string>
 
 #if defined(_MSC_VER) || defined(WIN32) || defined(__MINGW32__)
 #include <windows.h>
@@ -83,6 +83,10 @@ namespace {
         printf("status = %s, instanceName = %s, category = %s: %s\n", status_to_string(status), instance_name, category, msg);
     }
 
+    const char* full_function_name(std::string modelIdentifier, std::string function_name) {
+        return (modelIdentifier + "_" + function_name).c_str();
+    }
+
 }
 
 class FmuInstance {
@@ -122,35 +126,35 @@ class FmuInstance {
         fmiDoStepTYPE *fmiDoStep_;
         fmiCancelStepTYPE *fmiCancelStep_;
 
-        explicit FmuInstance(const char* libName) {
+        explicit FmuInstance(const char* libName, std::string modelIdentifier) {
             handle_ = load_library(libName);
 
-            fmiGetVersion_ = load_function<fmiGetVersionTYPE *>(handle_, "fmiGetVersion");
-            fmiGetTypesPlatform_ = load_function<fmiGetTypesPlatformTYPE *>(handle_, "fmiGetTypesPlatform");
+            fmiGetVersion_ = load_function<fmiGetVersionTYPE *>(handle_, full_function_name(modelIdentifier, "_fmiGetVersion"));
+            fmiGetTypesPlatform_ = load_function<fmiGetTypesPlatformTYPE *>(handle_,  full_function_name(modelIdentifier, "fmiGetTypesPlatform"));
 
-            fmiInstantiateSlave_ = load_function<fmiInstantiateSlaveTYPE *>(handle_, "fmiInstantiateSlave");
-            fmiInitializeSlave_ = load_function<fmiInitializeSlaveTYPE *>(handle_, "fmiInitializeSlave");
+            fmiInstantiateSlave_ = load_function<fmiInstantiateSlaveTYPE *>(handle_,  full_function_name(modelIdentifier, "fmiInstantiateSlave"));
+            fmiInitializeSlave_ = load_function<fmiInitializeSlaveTYPE *>(handle_,  full_function_name(modelIdentifier, "fmiInitializeSlave"));
 
-            fmiResetSlave_ = load_function<fmiResetSlaveTYPE *>(handle_, "fmiResetSlave");
-            fmiTerminateSlave_ = load_function<fmiTerminateSlaveTYPE *>(handle_, "fmiTerminateSlave");
+            fmiResetSlave_ = load_function<fmiResetSlaveTYPE *>(handle_,  full_function_name(modelIdentifier, "fmiResetSlave"));
+            fmiTerminateSlave_ = load_function<fmiTerminateSlaveTYPE *>(handle_,  full_function_name(modelIdentifier, "fmiTerminateSlave"));
 
-            fmiGetInteger_ = load_function<fmiGetIntegerTYPE *>(handle_, "fmiGetInteger");
-            fmiGetReal_ = load_function<fmiGetRealTYPE *>(handle_, "fmiGetReal");
-            fmiGetString_ = load_function<fmiGetStringTYPE *>(handle_, "fmiGetString");
-            fmiGetBoolean_ = load_function<fmiGetBooleanTYPE *>(handle_, "fmiGetBoolean");
+            fmiGetInteger_ = load_function<fmiGetIntegerTYPE *>(handle_, full_function_name(modelIdentifier, "fmiGetInteger"));
+            fmiGetReal_ = load_function<fmiGetRealTYPE *>(handle_, full_function_name(modelIdentifier, "fmiGetReal"));
+            fmiGetString_ = load_function<fmiGetStringTYPE *>(handle_, full_function_name(modelIdentifier, "fmiGetString"));
+            fmiGetBoolean_ = load_function<fmiGetBooleanTYPE *>(handle_, full_function_name(modelIdentifier, "fmiGetBoolean"));
 
-            fmiSetInteger_ = load_function<fmiSetIntegerTYPE *>(handle_, "fmiSetInteger");
-            fmiSetReal_ = load_function<fmiSetRealTYPE *>(handle_, "fmiSetReal");
-            fmiSetString_ = load_function<fmiSetStringTYPE *>(handle_, "fmiSetString");
-            fmiSetBoolean_ = load_function<fmiSetBooleanTYPE *>(handle_, "fmiSetBoolean");
+            fmiSetInteger_ = load_function<fmiSetIntegerTYPE *>(handle_, full_function_name(modelIdentifier, "fmiSetInteger"));
+            fmiSetReal_ = load_function<fmiSetRealTYPE *>(handle_, full_function_name(modelIdentifier, "fmiSetReal"));
+            fmiSetString_ = load_function<fmiSetStringTYPE *>(handle_, full_function_name(modelIdentifier, "fmiSetString"));
+            fmiSetBoolean_ = load_function<fmiSetBooleanTYPE *>(handle_, full_function_name(modelIdentifier, "fmiSetBoolean"));
 
-            fmiFreeSlaveInstance_ = load_function<fmiFreeSlaveInstanceTYPE *>(handle_, "fmiFreeSlaveInstance");
+            fmiFreeSlaveInstance_ = load_function<fmiFreeSlaveInstanceTYPE *>(handle_,  full_function_name(modelIdentifier, "fmiFreeSlaveInstance"));
 
-            fmiSetRealInputDerivatives_ = load_function<fmiSetRealInputDerivativesTYPE *>(handle_, "fmiSetRealInputDerivatives");
-            fmiGetRealOutputDerivatives_ = load_function<fmiGetRealOutputDerivativesTYPE *>(handle_, "fmiGetRealOutputDerivatives");
+            fmiSetRealInputDerivatives_ = load_function<fmiSetRealInputDerivativesTYPE *>(handle_, full_function_name(modelIdentifier, "fmiSetRealInputDerivatives"));
+            fmiGetRealOutputDerivatives_ = load_function<fmiGetRealOutputDerivativesTYPE *>(handle_, full_function_name(modelIdentifier, "fmiGetRealOutputDerivatives"));
 
-            fmiDoStep_ = load_function<fmiDoStepTYPE *>(handle_, "fmiDoStep");
-            fmiCancelStep_ = load_function<fmiCancelStepTYPE *>(handle_, "fmiCancelStep");
+            fmiDoStep_ = load_function<fmiDoStepTYPE *>(handle_, full_function_name(modelIdentifier, "fmiDoStep"));
+            fmiCancelStep_ = load_function<fmiCancelStepTYPE *>(handle_, full_function_name(modelIdentifier, "fmiCancelStep"));
 
         };
 
