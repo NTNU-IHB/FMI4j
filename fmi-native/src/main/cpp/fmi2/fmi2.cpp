@@ -325,7 +325,7 @@ JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_jni_Fmi2Library_serialize
 
     FmuInstance* fmu = (FmuInstance*) p;
 
-    jclass size_cls = env->FindClass("no/ntnu/ihb/fmi4j/importer/jni/IntByReference");
+    jclass size_cls = env->FindClass("no/ntnu/ihb/fmi4j/util/IntByReference");
     jfieldID size_id = env->GetFieldID(size_cls, "value", "I");
 
     size_t _size;
