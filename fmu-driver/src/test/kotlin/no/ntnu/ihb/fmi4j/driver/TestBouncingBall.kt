@@ -17,7 +17,7 @@ class TestBouncingBall {
     fun test() {
 
         val name = "BouncingBall"
-        val path = "../fmus/2.0/Test-FMUs/0.0.1/$name/$name.fmu"
+        val path = "../fmus/2.0/both/Test-FMUs/0.0.1/$name/$name.fmu"
         Assertions.assertTrue(File(path).exists())
 
         val args = arrayOf(

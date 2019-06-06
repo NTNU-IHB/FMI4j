@@ -2,26 +2,29 @@ package no.ntnu.ihb.fmi4j.importer.fmi1
 
 import no.ntnu.ihb.fmi4j.readReal
 import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.io.File
 
 class Test {
 
     @Test
-    @Disabled
     fun TestFmi1() {
 
-        Fmu.from(File("D:\\Development\\misc\\cse-demos\\dp-ship\\DPController.fmu")).use { fmu ->
+        Fmu.from(File(Test::class.java.classLoader.getResource("fmus/1.0/cs/BouncingBall.fmu").file)).use { fmu ->
 
-            Assertions.assertEquals("7d868e5a-ae40-3592-9c35-0ed5d0b25746", fmu.guid)
-            Assertions.assertEquals("DPController", fmu.modelDescription.asCoSimulationModelDescription().attributes.modelIdentifier)
+            Assertions.assertEquals("{8c4e810f-3df3-4a00-8276-176fa3c9f003}", fmu.guid)
+            Assertions.assertEquals("BouncingBall", fmu.modelDescription.asCoSimulationModelDescription().attributes.modelIdentifier)
 
-            fmu.asCoSimulationFmu().newInstance().use {
+            fmu.asCoSimulationFmu().newInstance().use { slave ->
 
-                it.setup()
-                Assertions.assertEquals(1.0, it.readReal("ComTimeStep").value)
-                it.doStep(1E-3)
+                slave.setup()
+                Assertions.assertEquals(1.0, slave.readReal("h").value)
+
+                for (i in 0..10) {
+                    slave.doStep(1E-3)
+                }
+
+                Assertions.assertTrue(slave.readReal("h").value < 1.0)
 
             }
 
