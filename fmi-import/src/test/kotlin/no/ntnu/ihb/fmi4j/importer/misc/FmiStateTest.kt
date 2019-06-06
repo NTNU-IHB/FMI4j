@@ -24,6 +24,8 @@
 
 package no.ntnu.ihb.fmi4j.importer.misc
 
+import no.ntnu.ihb.fmi4j.importer.fmi2.FmiMethod
+import no.ntnu.ihb.fmi4j.importer.fmi2.FmiState
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 

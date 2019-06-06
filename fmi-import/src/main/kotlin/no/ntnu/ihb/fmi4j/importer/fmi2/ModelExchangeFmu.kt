@@ -22,15 +22,14 @@
  * THE SOFTWARE.
  */
 
-package no.ntnu.ihb.fmi4j.importer
+package no.ntnu.ihb.fmi4j.importer.fmi2
 
 import no.ntnu.ihb.fmi4j.FmuSlave
 import no.ntnu.ihb.fmi4j.SlaveProvider
-import no.ntnu.ihb.fmi4j.importer.jni.Fmi2ModelExchangeLibrary
-import no.ntnu.ihb.fmi4j.importer.me.ModelExchangeFmuStepper
-import no.ntnu.ihb.fmi4j.importer.me.ModelExchangeInstance
-import no.ntnu.ihb.fmi4j.importer.me.ModelExchangeLibraryWrapper
-import no.ntnu.ihb.fmi4j.importer.misc.FmiType
+import no.ntnu.ihb.fmi4j.importer.fmi2.jni.Fmi2ModelExchangeLibrary
+import no.ntnu.ihb.fmi4j.importer.fmi2.me.ModelExchangeFmuStepper
+import no.ntnu.ihb.fmi4j.importer.fmi2.me.ModelExchangeInstance
+import no.ntnu.ihb.fmi4j.importer.fmi2.me.ModelExchangeLibraryWrapper
 import no.ntnu.ihb.fmi4j.modeldescription.ModelExchangeModelDescription
 import no.ntnu.ihb.fmi4j.solvers.Solver
 import java.io.Closeable

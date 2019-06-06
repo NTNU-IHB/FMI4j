@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package no.ntnu.ihb.fmi4j.importer.misc
+package no.ntnu.ihb.fmi4j.importer.fmi2
 
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory

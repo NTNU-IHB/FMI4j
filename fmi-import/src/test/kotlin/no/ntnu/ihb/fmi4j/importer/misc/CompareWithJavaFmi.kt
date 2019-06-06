@@ -1,7 +1,7 @@
 package no.ntnu.ihb.fmi4j.importer.misc
 
 import no.ntnu.ihb.fmi4j.read
-import no.ntnu.ihb.fmi4j.importer.Fmu
+import no.ntnu.ihb.fmi4j.importer.fmi2.Fmu
 import no.ntnu.ihb.fmi4j.importer.TestFMUs
 import org.javafmi.proxy.Status
 import org.javafmi.wrapper.Simulation

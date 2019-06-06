@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package no.ntnu.ihb.fmi4j.importer.cs
+package no.ntnu.ihb.fmi4j.importer.fmi2.cs
 
 /**
  *

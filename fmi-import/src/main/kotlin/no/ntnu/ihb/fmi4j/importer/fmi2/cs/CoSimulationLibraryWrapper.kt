@@ -22,9 +22,11 @@
  * THE SOFTWARE.
  */
 
-package no.ntnu.ihb.fmi4j.importer.cs
+package no.ntnu.ihb.fmi4j.importer.fmi2.cs
 
 import no.ntnu.ihb.fmi4j.FmiStatus
+import no.ntnu.ihb.fmi4j.importer.fmi2.jni.Fmi2CoSimulationLibrary
+import no.ntnu.ihb.fmi4j.importer.fmi2.jni.Fmi2LibraryWrapper
 import no.ntnu.ihb.fmi4j.modeldescription.ValueReferences
 import no.ntnu.ihb.fmi4j.importer.jni.*
 import no.ntnu.ihb.fmi4j.util.BooleanByReference

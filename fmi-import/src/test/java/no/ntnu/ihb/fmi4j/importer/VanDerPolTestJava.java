@@ -28,6 +28,7 @@ import no.ntnu.ihb.fmi4j.Fmi4jVariableUtils;
 import no.ntnu.ihb.fmi4j.FmiStatus;
 import no.ntnu.ihb.fmi4j.FmuRead;
 import no.ntnu.ihb.fmi4j.FmuSlave;
+import no.ntnu.ihb.fmi4j.importer.fmi2.ModelExchangeFmu;
 import no.ntnu.ihb.fmi4j.modeldescription.variables.RealVariable;
 import no.ntnu.ihb.fmi4j.solvers.Solver;
 import no.ntnu.ihb.fmi4j.solvers.apache.ApacheSolvers;

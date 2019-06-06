@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package no.ntnu.ihb.fmi4j.importer.jni
+package no.ntnu.ihb.fmi4j.importer.fmi2.jni
 
 import no.ntnu.ihb.fmi4j.FmiStatus
 import no.ntnu.ihb.fmi4j.modeldescription.ValueReferences

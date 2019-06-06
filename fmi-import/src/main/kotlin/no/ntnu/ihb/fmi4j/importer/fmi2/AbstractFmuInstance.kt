@@ -22,12 +22,12 @@
  * THE SOFTWARE.
  */
 
-package no.ntnu.ihb.fmi4j.importer
+package no.ntnu.ihb.fmi4j.importer.fmi2
 
 import no.ntnu.ihb.fmi4j.FmiStatus
 import no.ntnu.ihb.fmi4j.FmuInstance
 import no.ntnu.ihb.fmi4j.FmuState
-import no.ntnu.ihb.fmi4j.importer.jni.Fmi2LibraryWrapper
+import no.ntnu.ihb.fmi4j.importer.fmi2.jni.Fmi2LibraryWrapper
 import no.ntnu.ihb.fmi4j.modeldescription.CommonModelDescription
 import no.ntnu.ihb.fmi4j.modeldescription.RealArray
 import no.ntnu.ihb.fmi4j.modeldescription.StringArray

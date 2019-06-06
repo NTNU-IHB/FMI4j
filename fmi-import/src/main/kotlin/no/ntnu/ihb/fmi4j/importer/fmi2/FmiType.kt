@@ -22,20 +22,16 @@
  * THE SOFTWARE.
  */
 
-package no.ntnu.ihb.fmi4j.importer.misc
-
-import no.ntnu.ihb.fmi4j.modeldescription.ValueReferences
+package no.ntnu.ihb.fmi4j.importer.fmi2
 
 /**
- *
  * @author Lars Ivar Hatledal
  */
-internal class ArrayBuffers {
+internal enum class FmiType(
+        val code: Int
+) {
 
-    val vr = ValueReferences(1)
-    val iv = IntArray(1)
-    val rv = DoubleArray(1)
-    val bv = BooleanArray(1)
-    val sv = arrayOf("")
+    MODEL_EXCHANGE(0),
+    CO_SIMULATION(1)
 
 }

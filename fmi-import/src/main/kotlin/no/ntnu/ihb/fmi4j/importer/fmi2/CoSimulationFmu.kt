@@ -22,14 +22,13 @@
  * THE SOFTWARE.
  */
 
-package no.ntnu.ihb.fmi4j.importer
+package no.ntnu.ihb.fmi4j.importer.fmi2
 
 import no.ntnu.ihb.fmi4j.FmuSlave
 import no.ntnu.ihb.fmi4j.SlaveProvider
-import no.ntnu.ihb.fmi4j.importer.cs.CoSimulationLibraryWrapper
-import no.ntnu.ihb.fmi4j.importer.cs.CoSimulationSlave
-import no.ntnu.ihb.fmi4j.importer.jni.Fmi2CoSimulationLibrary
-import no.ntnu.ihb.fmi4j.importer.misc.FmiType
+import no.ntnu.ihb.fmi4j.importer.fmi2.cs.CoSimulationLibraryWrapper
+import no.ntnu.ihb.fmi4j.importer.fmi2.cs.CoSimulationSlave
+import no.ntnu.ihb.fmi4j.importer.fmi2.jni.Fmi2CoSimulationLibrary
 import no.ntnu.ihb.fmi4j.modeldescription.CoSimulationModelDescription
 import java.io.Closeable
 

@@ -22,12 +22,12 @@
  * THE SOFTWARE.
  */
 
-package no.ntnu.ihb.fmi4j.importer.cs
+package no.ntnu.ihb.fmi4j.importer.fmi2.cs
 
 import no.ntnu.ihb.fmi4j.FmiStatus
 import no.ntnu.ihb.fmi4j.FmuSlave
 import no.ntnu.ihb.fmi4j.modeldescription.ValueReferences
-import no.ntnu.ihb.fmi4j.importer.AbstractFmuInstance
+import no.ntnu.ihb.fmi4j.importer.fmi2.AbstractFmuInstance
 import no.ntnu.ihb.fmi4j.modeldescription.CoSimulationModelDescription
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory

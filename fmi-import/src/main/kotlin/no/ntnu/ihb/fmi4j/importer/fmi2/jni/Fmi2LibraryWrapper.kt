@@ -22,10 +22,10 @@
  * THE SOFTWARE.
  */
 
-package no.ntnu.ihb.fmi4j.importer.jni
+package no.ntnu.ihb.fmi4j.importer.fmi2.jni
 
 import no.ntnu.ihb.fmi4j.*
-import no.ntnu.ihb.fmi4j.importer.misc.ArrayBuffers
+import no.ntnu.ihb.fmi4j.util.ArrayBuffers
 import no.ntnu.ihb.fmi4j.modeldescription.StringArray
 import no.ntnu.ihb.fmi4j.modeldescription.ValueReference
 import no.ntnu.ihb.fmi4j.modeldescription.ValueReferences

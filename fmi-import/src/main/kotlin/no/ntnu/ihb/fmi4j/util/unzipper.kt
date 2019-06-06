@@ -72,4 +72,3 @@ internal fun InputStream.extractContentTo(directory: File) {
     }
 
 }
-

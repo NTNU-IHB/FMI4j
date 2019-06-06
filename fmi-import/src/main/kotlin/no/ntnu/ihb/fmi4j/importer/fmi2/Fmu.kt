@@ -22,10 +22,9 @@
  * THE SOFTWARE.
  */
 
-package no.ntnu.ihb.fmi4j.importer
+package no.ntnu.ihb.fmi4j.importer.fmi2
 
-import no.ntnu.ihb.fmi4j.importer.jni.Fmi2Library
-import no.ntnu.ihb.fmi4j.importer.misc.FmiType
+import no.ntnu.ihb.fmi4j.importer.fmi2.jni.Fmi2Library
 import no.ntnu.ihb.fmi4j.modeldescription.CommonModelDescription
 import no.ntnu.ihb.fmi4j.modeldescription.ModelDescriptionProvider
 import no.ntnu.ihb.fmi4j.modeldescription.fmi2.JaxbModelDescriptionParser
