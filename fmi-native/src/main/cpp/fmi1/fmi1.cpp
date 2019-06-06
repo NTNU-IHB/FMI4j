@@ -33,46 +33,46 @@
 extern "C" {
 #endif
 
-JNIEXPORT jlong JNICALL Java_no_ntnu_ihb_fmi4j_importer_jni_FmiLibrary_load(JNIEnv *env, jobject obj, jstring lib_name) {
+JNIEXPORT jlong JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi1_jni_FmiLibrary_load(JNIEnv *env, jobject obj, jstring lib_name) {
     const char* _lib_name = env->GetStringUTFChars(lib_name, 0);
     FmuInstance* fmu = new FmuInstance(_lib_name);
     env->ReleaseStringUTFChars(lib_name, _lib_name);
     return (jlong) fmu;
 }
 
-JNIEXPORT jstring JNICALL Java_no_ntnu_ihb_fmi4j_importer_jni_FmiLibrary_getVersion(JNIEnv *env, jobject obj, jlong p) {
+JNIEXPORT jstring JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi1_jni_FmiLibrary_getVersion(JNIEnv *env, jobject obj, jlong p) {
     FmuInstance* fmu = (FmuInstance*) p;
     fmiGetVersionTYPE* fmiGetVersion = fmu->fmiGetVersion_;
     const char* version = (*fmiGetVersion)();
     return env->NewStringUTF(version);
 }
 
-JNIEXPORT jstring JNICALL Java_no_ntnu_ihb_fmi4j_importer_jni_FmiLibrary_getTypesPlatform(JNIEnv *env, jobject obj, jlong p) {
+JNIEXPORT jstring JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi1_jni_FmiLibrary_getTypesPlatform(JNIEnv *env, jobject obj, jlong p) {
     FmuInstance* fmu = (FmuInstance*) p;
     fmiGetTypesPlatformTYPE* fmiGetTypesPlatform = fmu->fmiGetTypesPlatform_;
     const char* platform = (*fmiGetTypesPlatform)();
     return env->NewStringUTF(platform);
 }
 
-JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_jni_Fmi1Library_terminate(JNIEnv *env, jobject obj, jlong p, jlong c) {
+JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi1_jni_Fmi1Library_terminate(JNIEnv *env, jobject obj, jlong p, jlong c) {
     FmuInstance* fmu = (FmuInstance*) p;
     fmiTerminateSlaveTYPE* fmiTerminate = fmu->fmiTerminateSlave_;
     return (*fmiTerminate)((void*) c);
 }
 
-JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_jni_Fmi1Library_reset(JNIEnv *env, jobject obj, jlong p, jlong c) {
+JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi1_jni_Fmi1Library_reset(JNIEnv *env, jobject obj, jlong p, jlong c) {
     FmuInstance* fmu = (FmuInstance*) p;
     fmiResetSlaveTYPE* fmiReset = fmu->fmiResetSlave_;
     return (*fmiReset)((void*) c);
 }
 
-JNIEXPORT void JNICALL Java_no_ntnu_ihb_fmi4j_importer_jni_Fmi1Library_freeInstance(JNIEnv *env, jobject obj, jlong p, jlong c) {
+JNIEXPORT void JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi1_jni_Fmi1Library_freeInstance(JNIEnv *env, jobject obj, jlong p, jlong c) {
     FmuInstance* fmu = (FmuInstance*) p;
     fmiFreeSlaveInstanceTYPE* fmiFreeInstance = fmu->fmiFreeSlaveInstance_;
     (*fmiFreeInstance)((void*) c);
 }
 
-JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_jni_Fmi1Library_getInteger(JNIEnv *env, jobject obj, jlong p, jlong c, jlongArray vr, jintArray ref) {
+JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi1_jni_Fmi1Library_getInteger(JNIEnv *env, jobject obj, jlong p, jlong c, jlongArray vr, jintArray ref) {
 
     FmuInstance* fmu = (FmuInstance*) p;
 
@@ -91,7 +91,7 @@ JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_jni_Fmi1Library_getIntege
     return status;
 }
 
-JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_jni_Fmi1Library_getReal(JNIEnv *env, jobject obj, jlong p, jlong c, jlongArray vr, jdoubleArray ref) {
+JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi1_jni_Fmi1Library_getReal(JNIEnv *env, jobject obj, jlong p, jlong c, jlongArray vr, jdoubleArray ref) {
 
     FmuInstance* fmu = (FmuInstance*) p;
 
@@ -111,7 +111,7 @@ JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_jni_Fmi1Library_getReal(J
     return status;
 }
 
-JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_jni_Fmi1Library_getString(JNIEnv *env, jobject obj, jlong p, jlong c, jlongArray vr, jobjectArray ref) {
+JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi1_jni_Fmi1Library_getString(JNIEnv *env, jobject obj, jlong p, jlong c, jlongArray vr, jobjectArray ref) {
 
     FmuInstance* fmu = (FmuInstance*) p;
 
@@ -138,7 +138,7 @@ JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_jni_Fmi1Library_getString
     return status;
 }
 
-JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_jni_Fmi1Library_getBoolean(JNIEnv *env, jobject obj, jlong p, jlong c, jlongArray vr, jbooleanArray ref) {
+JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi1_jni_Fmi1Library_getBoolean(JNIEnv *env, jobject obj, jlong p, jlong c, jlongArray vr, jbooleanArray ref) {
 
     FmuInstance* fmu = (FmuInstance*) p;
 
@@ -161,7 +161,7 @@ JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_jni_Fmi1Library_getBoolea
     return status;
 }
 
-JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_jni_Fmi1Library_setInteger(JNIEnv *env, jobject obj, jlong p, jlong c, jlongArray vr, jintArray values) {
+JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi1_jni_Fmi1Library_setInteger(JNIEnv *env, jobject obj, jlong p, jlong c, jlongArray vr, jintArray values) {
 
     FmuInstance* fmu = (FmuInstance*) p;
 
@@ -178,7 +178,7 @@ JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_jni_Fmi1Library_setIntege
     return status;
 }
 
-JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_jni_Fmi1Library_setReal(JNIEnv *env, jobject obj, jlong p, jlong c, jlongArray vr, jdoubleArray values) {
+JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi1_jni_Fmi1Library_setReal(JNIEnv *env, jobject obj, jlong p, jlong c, jlongArray vr, jdoubleArray values) {
 
     FmuInstance* fmu = (FmuInstance*) p;
 
@@ -195,7 +195,7 @@ JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_jni_Fmi1Library_setReal(J
     return status;
 }
 
-JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_jni_Fmi1Library_setString(JNIEnv *env, jobject obj, jlong p, jlong c, jlongArray vr, jobjectArray values) {
+JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi1_jni_Fmi1Library_setString(JNIEnv *env, jobject obj, jlong p, jlong c, jlongArray vr, jobjectArray values) {
 
     FmuInstance* fmu = (FmuInstance*) p;
 
@@ -216,7 +216,7 @@ JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_jni_Fmi1Library_setString
     return status;
 }
 
-JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_jni_Fmi1Library_setBoolean(JNIEnv *env, jobject obj, jlong p, jlong c, jlongArray vr, jbooleanArray values) {
+JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi1_jni_Fmi1Library_setBoolean(JNIEnv *env, jobject obj, jlong p, jlong c, jlongArray vr, jbooleanArray values) {
 
     FmuInstance* fmu = (FmuInstance*) p;
 
@@ -233,7 +233,7 @@ JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_jni_Fmi1Library_setBoolea
     return status;
 }
 
-JNIEXPORT jboolean JNICALL Java_no_ntnu_ihb_fmi4j_importer_jni_Fmi1Library_free(JNIEnv *env, jobject obj, jlong p) {
+JNIEXPORT jboolean JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi1_jni_Fmi1Library_free(JNIEnv *env, jobject obj, jlong p) {
 
     FmuInstance* fmu = (FmuInstance*) p;
 
@@ -251,13 +251,13 @@ JNIEXPORT jboolean JNICALL Java_no_ntnu_ihb_fmi4j_importer_jni_Fmi1Library_free(
     return status;
 }
 
-JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_jni_Fmi1CoSimulationLibrary_step(JNIEnv *env, jobject obj, jlong p, jlong c, jdouble currentCommunicationPoint, jdouble communicationStepSize, jboolean newStep) {
+JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi1_jni_Fmi1CoSimulationLibrary_step(JNIEnv *env, jobject obj, jlong p, jlong c, jdouble currentCommunicationPoint, jdouble communicationStepSize, jboolean newStep) {
     FmuInstance* fmu = (FmuInstance*) p;
     fmiDoStepTYPE* fmiDoStep = fmu->fmiDoStep_;
     return (*fmiDoStep)((void*) c, currentCommunicationPoint, communicationStepSize, newStep);
 }
 
-JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_jni_Fmi1CoSimulationLibrary_cancelStep(JNIEnv *env, jobject obj, jlong p, jlong c) {
+JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi1_jni_Fmi1CoSimulationLibrary_cancelStep(JNIEnv *env, jobject obj, jlong p, jlong c) {
     FmuInstance* fmu = (FmuInstance*) p;
     fmiCancelStepTYPE* fmiCancelStep = fmu->fmiCancelStep_;
     return (*fmiCancelStep)((void*) c);

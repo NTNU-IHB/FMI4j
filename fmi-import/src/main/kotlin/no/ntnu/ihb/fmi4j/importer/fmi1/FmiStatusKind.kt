@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2017-2018 Norwegian University of Technology
+ * Copyright 2017-2019 Norwegian University of Technology
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package no.ntnu.ihb.fmi4j.importer.fmi2.cs
+package no.ntnu.ihb.fmi4j.importer.fmi1
 
 /**
  *
@@ -33,33 +33,23 @@ enum class FmiStatusKind(
 ) {
 
     /**
-     * Can be called when the fmi2DoStep function returned fmi2Pending. The
-     * function delivers fmi2Pending if the computation is not finished.
-     * Otherwise the function returns the result of the asynchronously executed
-     * fmi2DoStep call.
+     * Can be called when the fmiDoStep function returned fmiPending.
+     * The function delivers fmiPending if the computation is not finished.
+     * If the computation is finished meanwhile the function returns the result of the asynchronous executed fmiDoStep(...) call.
      */
     DO_STEP_STATUS(0),
 
     /**
-     * Can be called when the fmi2DoStep function returned fmi2Pending. The
-     * function delivers a string which informs about the status of the
-     * currently running asynchronous fmi2DoStep computation.
+     * Can be called when the fmiDoStep function returned fmiPending.
+     * The function delivers a string which informs about the status of the currently running asynchronous fmiDoStep computation
      */
     PENDING_STATUS(1),
 
     /**
-     * Returns the end time of the last successfully completed communication
-     * step. Can be called after fmi2DoStep(...) returned fmi2Discard.
+     * Returns the time until the last communication step was computed successfully.
+     * Can be called after fmiDoStep(...) returned fmiDiscard.
      */
-    LAST_SUCCESSFUL_TIME(2),
-
-    /**
-     * Returns true, if the slave wants to terminate the simulation. Can be
-     * called after fmi2DoStep(...) returned fmi2Discard. Use
-     * fmi2LastSuccessfulTime to determine the time instant at which the slave
-     * terminated.
-     */
-    TERMINATED(3);
+    LAST_SUCCESSFUL_TIME(2);
 
     companion object {
 

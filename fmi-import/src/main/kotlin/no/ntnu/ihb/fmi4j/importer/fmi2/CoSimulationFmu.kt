@@ -26,8 +26,7 @@ package no.ntnu.ihb.fmi4j.importer.fmi2
 
 import no.ntnu.ihb.fmi4j.FmuSlave
 import no.ntnu.ihb.fmi4j.SlaveProvider
-import no.ntnu.ihb.fmi4j.importer.fmi2.cs.CoSimulationLibraryWrapper
-import no.ntnu.ihb.fmi4j.importer.fmi2.cs.CoSimulationSlave
+import no.ntnu.ihb.fmi4j.importer.fmi2.jni.CoSimulationLibraryWrapper
 import no.ntnu.ihb.fmi4j.importer.fmi2.jni.Fmi2CoSimulationLibrary
 import no.ntnu.ihb.fmi4j.modeldescription.CoSimulationModelDescription
 import java.io.Closeable
@@ -54,12 +53,12 @@ class CoSimulationFmu(
     }
 
     override fun newInstance(): FmuSlave {
-        return newInstance(false, false)
+        return newInstance(visible = false, loggingOn = false)
     }
 
     fun newInstance(visible: Boolean = false, loggingOn: Boolean = false): CoSimulationSlave {
         val lib = if (modelDescription.attributes.canBeInstantiatedOnlyOncePerProcess) loadLibrary() else libraryCache
-        val c = fmu.instantiate(modelDescription, lib, FmiType.CO_SIMULATION, visible, loggingOn)
+        val c = fmu.instantiate(modelDescription, lib, 1, visible, loggingOn)
         val wrapper = CoSimulationLibraryWrapper(c, lib)
         return CoSimulationSlave(wrapper, modelDescription).also {
             fmu.registerInstance(it)

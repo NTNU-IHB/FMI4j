@@ -25,6 +25,7 @@
 package no.ntnu.ihb.fmi4j.importer.fmi2.jni
 
 import no.ntnu.ihb.fmi4j.FmiStatus
+import no.ntnu.ihb.fmi4j.importer.fmi2.FmiStatusKind
 import no.ntnu.ihb.fmi4j.modeldescription.ValueReferences
 import no.ntnu.ihb.fmi4j.util.BooleanByReference
 import no.ntnu.ihb.fmi4j.util.DoubleByReference
@@ -103,6 +104,98 @@ class Fmi2CoSimulationLibrary(
 
     fun getBooleanStatus(c: Fmi2Component, s: Int, value: BooleanByReference): FmiStatus {
         return getBooleanStatus(p, c, s, value).transform()
+    }
+
+}
+
+/**
+ *
+ * @author Lars Ivar Hatledal
+ */
+class CoSimulationLibraryWrapper(
+        c: Long,
+        library: Fmi2CoSimulationLibrary
+) : Fmi2LibraryWrapper<Fmi2CoSimulationLibrary>(c, library) {
+
+    /**
+     * @see Fmi2CoSimulationLibrary.fmi2SetRealInputDerivatives
+     */
+    fun setRealInputDerivatives(vr: ValueReferences, order: IntArray, value: DoubleArray): FmiStatus {
+        return updateStatus(library.setRealInputDerivatives(c, vr, order, value))
+    }
+
+    /**
+     * @see Fmi2CoSimulationLibrary.fmi2GetRealOutputDerivatives
+     */
+    fun getRealOutputDerivatives(vr: ValueReferences, order: IntArray, value: DoubleArray): FmiStatus {
+        return updateStatus(library.getRealOutputDerivatives(c, vr, order, value))
+    }
+
+    /**
+     * @see Fmi2CoSimulationLibrary.fmi2DoStep
+     */
+    fun doStep(t: Double, dt: Double, noSetFMUStatePriorToCurrent: Boolean): FmiStatus {
+        return updateStatus(library.step(c, t, dt, noSetFMUStatePriorToCurrent))
+    }
+
+    /**
+     * @see Fmi2CoSimulationLibrary.fmi2CancelStep
+     */
+    fun cancelStep(): FmiStatus {
+        return (updateStatus(library.cancelStep(c)))
+    }
+
+    /**
+     * @see Fmi2CoSimulationLibrary.fmi2GetStatus
+     */
+    fun getStatus(s: FmiStatusKind): FmiStatus {
+        return IntByReference().let {
+            updateStatus(library.getStatus(c, s.code, it))
+            FmiStatus.valueOf(it.value)
+        }
+    }
+
+    /**
+     * @see Fmi2CoSimulationLibrary.fmi2GetIntegerStatus
+     */
+    fun getIntegerStatus(s: FmiStatusKind): Int {
+        return IntByReference().let {
+            updateStatus(library.getIntegerStatus(c, s.code, it))
+            it.value
+        }
+
+    }
+
+    /**
+     * @see Fmi2CoSimulationLibrary.fmi2GetRealStatus
+     */
+    fun getRealStatus(s: FmiStatusKind): Double {
+        return DoubleByReference().let {
+            updateStatus(library.getRealStatus(c, s.code, it))
+            it.value
+        }
+
+    }
+
+    /**
+     * @see Fmi2CoSimulationLibrary.fmi2GetBooleanStatus
+     */
+    fun getBooleanStatus(s: FmiStatusKind): Boolean {
+        return BooleanByReference().let {
+            updateStatus(library.getBooleanStatus(c, s.code, it))
+            it.value
+        }
+    }
+
+    /**
+     * @see Fmi2CoSimulationLibrary.fmi2GetStringStatus
+     */
+    fun getStringStatus(s: FmiStatusKind): String {
+        return StringByReference().let {
+            updateStatus((library.getStringStatus(c, s.code, it)))
+            it.value
+        }
+
     }
 
 }

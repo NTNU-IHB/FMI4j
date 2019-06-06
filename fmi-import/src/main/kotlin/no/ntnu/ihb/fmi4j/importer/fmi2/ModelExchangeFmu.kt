@@ -27,9 +27,7 @@ package no.ntnu.ihb.fmi4j.importer.fmi2
 import no.ntnu.ihb.fmi4j.FmuSlave
 import no.ntnu.ihb.fmi4j.SlaveProvider
 import no.ntnu.ihb.fmi4j.importer.fmi2.jni.Fmi2ModelExchangeLibrary
-import no.ntnu.ihb.fmi4j.importer.fmi2.me.ModelExchangeFmuStepper
-import no.ntnu.ihb.fmi4j.importer.fmi2.me.ModelExchangeInstance
-import no.ntnu.ihb.fmi4j.importer.fmi2.me.ModelExchangeLibraryWrapper
+import no.ntnu.ihb.fmi4j.importer.fmi2.jni.ModelExchangeLibraryWrapper
 import no.ntnu.ihb.fmi4j.modeldescription.ModelExchangeModelDescription
 import no.ntnu.ihb.fmi4j.solvers.Solver
 import java.io.Closeable
@@ -62,7 +60,7 @@ class ModelExchangeFmu @JvmOverloads constructor(
     @JvmOverloads
     fun newInstance(visible: Boolean = false, loggingOn: Boolean = false): ModelExchangeInstance {
         val lib = if (modelDescription.attributes.canBeInstantiatedOnlyOncePerProcess) loadLibrary() else libraryCache
-        val c = fmu.instantiate(modelDescription, lib, FmiType.MODEL_EXCHANGE, visible, loggingOn)
+        val c = fmu.instantiate(modelDescription, lib, 0, visible, loggingOn)
         val wrapper = ModelExchangeLibraryWrapper(c, lib)
         return ModelExchangeInstance(wrapper, modelDescription).also {
             fmu.registerInstance(it)
@@ -71,11 +69,11 @@ class ModelExchangeFmu @JvmOverloads constructor(
 
     override fun newInstance(): FmuSlave {
         val solver = solver ?: throw IllegalStateException("Class instantiated with no solver!")
-        return newInstance(solver, false, false)
+        return newInstance(solver, visible = false, loggingOn = false)
     }
 
     fun newInstance(solver: Solver): ModelExchangeFmuStepper {
-        return newInstance(solver, false, false)
+        return newInstance(solver, visible = false, loggingOn = false)
     }
 
     fun newInstance(solver: Solver, visible: Boolean = false, loggingOn: Boolean = false): ModelExchangeFmuStepper {

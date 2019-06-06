@@ -143,11 +143,11 @@ class Fmu private constructor(
     }
 
     internal fun instantiate(modelDescription: CommonModelDescription, library: Fmi2Library,
-                             fmiType: FmiType, visible: Boolean, loggingOn: Boolean): Long {
+                             fmiType: Int, visible: Boolean, loggingOn: Boolean): Long {
         LOG.trace("Calling instantiate: visible=$visible, loggingOn=$loggingOn")
 
         return library.instantiate(modelDescription.attributes.modelIdentifier,
-                fmiType.code, modelDescription.guid, resourcesPath, visible, loggingOn)
+                fmiType, modelDescription.guid, resourcesPath, visible, loggingOn)
     }
 
     override fun close() {

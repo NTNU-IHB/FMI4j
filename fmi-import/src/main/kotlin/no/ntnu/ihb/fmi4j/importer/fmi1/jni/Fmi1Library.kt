@@ -24,14 +24,12 @@
 
 package no.ntnu.ihb.fmi4j.importer.fmi1.jni
 
+import no.ntnu.ihb.fmi4j.FMI4j
 import no.ntnu.ihb.fmi4j.FmiStatus
 import no.ntnu.ihb.fmi4j.modeldescription.ValueReferences
-import no.ntnu.ihb.fmi4j.util.OsUtil
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.Closeable
-import java.io.File
-import java.io.FileOutputStream
 
 internal typealias NativeStatus = Int
 internal typealias FmiComponent = Long
@@ -71,12 +69,12 @@ open class Fmi1Library(
 
     private external fun getTypesPlatform(p: Long): String
 
-    private external fun setupExperiment(p: Long, c: FmiComponent,
-                                         tolerance: Double, startTime: Double, stopTime: Double): NativeStatus
-
-    private external fun enterInitializationMode(p: Long, c: FmiComponent): NativeStatus
-
-    private external fun exitInitializationMode(p: Long, c: FmiComponent): NativeStatus
+//    private external fun setupExperiment(p: Long, c: FmiComponent,
+//                                         tolerance: Double, startTime: Double, stopTime: Double): NativeStatus
+//
+//    private external fun enterInitializationMode(p: Long, c: FmiComponent): NativeStatus
+//
+//    private external fun exitInitializationMode(p: Long, c: FmiComponent): NativeStatus
 
     private external fun instantiate(p: Long, instanceName: String, type: Int, guid: String,
                                      resourceLocation: String, visible: Boolean, loggingOn: Boolean): Long
@@ -175,30 +173,12 @@ open class Fmi1Library(
         return setBoolean(p, c, vr, values).transform()
     }
 
-
     private companion object {
 
-        private val LOG: Logger = LoggerFactory.getLogger(Fmi1Library::class.java)
+        val LOG: Logger = LoggerFactory.getLogger(Fmi1Library::class.java)
 
         init {
-
-            val fileName = "${OsUtil.libPrefix}fmi2_jni.${OsUtil.libExtension}"
-            val copy = File(fileName).apply {
-                deleteOnExit()
-            }
-            try {
-                Fmi1Library::class.java.classLoader
-                        .getResourceAsStream("native/fmi/${OsUtil.currentOS}/$fileName").use { `is` ->
-                            FileOutputStream(copy).use { fos ->
-                                `is`.copyTo(fos)
-                            }
-                        }
-                System.load(copy.absolutePath)
-            } catch (ex: Exception) {
-                copy.delete()
-                throw RuntimeException(ex)
-            }
-
+            FMI4j.init()
         }
 
     }

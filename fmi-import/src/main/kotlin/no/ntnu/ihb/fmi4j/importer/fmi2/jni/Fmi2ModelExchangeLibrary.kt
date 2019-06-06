@@ -100,6 +100,105 @@ class Fmi2ModelExchangeLibrary(
 
 }
 
+/**
+ *
+ * @author Lars Ivar Hatledal
+ */
+class ModelExchangeLibraryWrapper(
+        c: Long,
+        library: Fmi2ModelExchangeLibrary
+) : Fmi2LibraryWrapper<Fmi2ModelExchangeLibrary>(c, library) {
+
+    private val enterEventMode = BooleanByReference()
+    private val terminateSimulation = BooleanByReference()
+
+    /**
+     * @see Fmi2ModelExchangeLibrary.fmi2SetTime
+     * @param time
+     */
+    fun setTime(time: Double): FmiStatus {
+        return updateStatus((library.setTime(c, time)))
+    }
+
+    /**
+     *
+     * @see Fmi2ModelExchangeLibrary.fmi2SetContinuousStates
+     * @param x state
+     */
+    fun setContinuousStates(x: DoubleArray): FmiStatus {
+        return updateStatus((library.setContinuousStates(c, x)))
+    }
+
+    /**
+     * @see Fmi2ModelExchangeLibrary.fmi2EnterEventMode
+     */
+    fun enterEventMode(): FmiStatus {
+        return updateStatus((library.enterEventMode(c)))
+    }
+
+    /**
+     * @see Fmi2ModelExchangeLibrary.fmi2EnterContinuousTimeMode
+     */
+    fun enterContinuousTimeMode(): FmiStatus {
+        return updateStatus((library.enterContinuousTimeMode(c)))
+    }
+
+    fun newDiscreteStates(eventInfo: EventInfo): FmiStatus {
+        return updateStatus((library.newDiscreteStates(c, eventInfo)))
+    }
+
+    fun completedIntegratorStep(): CompletedIntegratorStepResult {
+        updateStatus((library.completedIntegratorStep(c,
+                true, enterEventMode, terminateSimulation)))
+        return CompletedIntegratorStepResult(
+                enterEventMode.value,
+                terminateSimulation.value)
+    }
+
+    /**
+     * @see Fmi2ModelExchangeLibrary.fmi2GetDerivatives
+     * @param derivatives
+     */
+    fun getDerivatives(derivatives: DoubleArray): FmiStatus {
+        return updateStatus((library.getDerivatives(c, derivatives)))
+    }
+
+    /**
+     *
+     * @param eventIndicators
+     */
+    fun getEventIndicators(eventIndicators: DoubleArray): FmiStatus {
+        return updateStatus((library.getEventIndicators(c, eventIndicators)))
+    }
+
+    /**
+     *
+     * @param x
+     */
+    fun getContinuousStates(x: DoubleArray): FmiStatus {
+        return updateStatus((library.getContinuousStates(c, x)))
+    }
+
+    /**
+     *
+     * @param x_nominal
+     */
+    fun getNominalsOfContinuousStates(x_nominal: DoubleArray): FmiStatus {
+        return updateStatus((library.getNominalsOfContinuousStates(c, x_nominal)))
+    }
+
+}
+
+/**
+ *
+ * @author Lars Ivar Hatledal
+ */
+data class CompletedIntegratorStepResult(
+        val enterEventMode: Boolean,
+        val terminateSimulation: Boolean
+)
+
+
 class EventInfo {
 
     var newDiscreteStatesNeeded: Boolean = false
