@@ -22,40 +22,27 @@
  * THE SOFTWARE.
  */
 
-package no.ntnu.ihb.fmi4j.common
+package no.ntnu.ihb.fmi4j
 
-import no.ntnu.ihb.fmi4j.modeldescription.RealArray
-import no.ntnu.ihb.fmi4j.modeldescription.StringArray
-import no.ntnu.ihb.fmi4j.modeldescription.ValueReferences
-
+import no.ntnu.ihb.fmi4j.modeldescription.CoSimulationModelDescription
 
 /**
+ * Slave interface
+ *
  * @author Lars Ivar Hatledal
  */
-interface FmuVariableReader {
+interface FmuSlave: FmuInstance<CoSimulationModelDescription> {
 
-    fun read(vr: ValueReferences, ref: IntArray): FmiStatus
-    fun read(vr: ValueReferences, ref: RealArray): FmiStatus
-    fun read(vr: ValueReferences, ref: StringArray): FmiStatus
-    fun read(vr: ValueReferences, ref: BooleanArray): FmiStatus
+    /**
+     * Step simulation forward in time
+     *
+     * @param stepSize time to step simulation forward (in seconds)
+     */
+    fun doStep(stepSize: Double): Boolean
+
+    /**
+     * Cancel step
+     */
+    fun cancelStep(): Boolean
 
 }
-
-
-/**
- * @author Lars Ivar Hatledal
- */
-interface FmuVariableWriter {
-
-    fun write(vr: ValueReferences, value: IntArray): FmiStatus
-    fun write(vr: ValueReferences, value: RealArray): FmiStatus
-    fun write(vr: ValueReferences, value: StringArray): FmiStatus
-    fun write(vr: ValueReferences, value: BooleanArray): FmiStatus
-
-}
-
-
-/**
- * @author Lars Ivar Hatledal
- */
-interface FmuVariableAccessor: FmuVariableReader, FmuVariableWriter

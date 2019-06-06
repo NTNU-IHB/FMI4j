@@ -24,9 +24,9 @@
 
 package no.ntnu.ihb.fmi4j.importer.me
 
-import no.ntnu.ihb.fmi4j.common.FmiStatus
-import no.ntnu.ihb.fmi4j.common.FmuSlave
-import no.ntnu.ihb.fmi4j.common.SimpleFmuInstance
+import no.ntnu.ihb.fmi4j.FmiStatus
+import no.ntnu.ihb.fmi4j.FmuSlave
+import no.ntnu.ihb.fmi4j.SimpleFmuInstance
 import no.ntnu.ihb.fmi4j.modeldescription.*
 import no.ntnu.ihb.fmi4j.solvers.Solver
 import org.slf4j.Logger

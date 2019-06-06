@@ -24,8 +24,8 @@
 
 package no.ntnu.ihb.fmi4j.importer.cs
 
-import no.ntnu.ihb.fmi4j.common.FmiStatus
-import no.ntnu.ihb.fmi4j.common.FmuSlave
+import no.ntnu.ihb.fmi4j.FmiStatus
+import no.ntnu.ihb.fmi4j.FmuSlave
 import no.ntnu.ihb.fmi4j.modeldescription.ValueReferences
 import no.ntnu.ihb.fmi4j.importer.AbstractFmuInstance
 import no.ntnu.ihb.fmi4j.modeldescription.CoSimulationModelDescription
@@ -55,7 +55,7 @@ class CoSimulationSlave internal constructor(
         }
 
         return wrapper.doStep(simulationTime, stepSize, noSetFMUStatePriorToCurrent = true).let { status ->
-            (status == FmiStatus.OK).also {success ->
+            (status == FmiStatus.OK).also { success ->
                 if (success) {
                     simulationTime = tNext
                 }

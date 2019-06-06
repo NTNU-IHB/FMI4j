@@ -87,7 +87,6 @@ Types for Common Functions
 Types for Functions for FMI2 for Co-Simulation
 ****************************************************/
 
-/* Simulating the slave */
    typedef fmiStatus fmiSetRealInputDerivativesTYPE (fmiComponent, const fmiValueReference [], size_t, const fmiInteger [], const fmiReal []);
    typedef fmiStatus fmiGetRealOutputDerivativesTYPE(fmiComponent, const fmiValueReference [], size_t, const fmiInteger [], fmiReal []);
 

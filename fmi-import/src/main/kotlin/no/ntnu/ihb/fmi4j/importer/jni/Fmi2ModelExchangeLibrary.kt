@@ -24,7 +24,8 @@
 
 package no.ntnu.ihb.fmi4j.importer.jni
 
-import no.ntnu.ihb.fmi4j.common.FmiStatus
+import no.ntnu.ihb.fmi4j.FmiStatus
+import no.ntnu.ihb.fmi4j.util.BooleanByReference
 
 /**
  * @author Lars Ivar Hatledal
@@ -95,6 +96,28 @@ class Fmi2ModelExchangeLibrary(
 
     fun getNominalsOfContinuousStates(c: Fmi2Component, x_nominals: DoubleArray): FmiStatus {
         return getNominalsOfContinuousStates(p, c, x_nominals).transform()
+    }
+
+}
+
+class EventInfo {
+
+    var newDiscreteStatesNeeded: Boolean = false
+    var terminateSimulation: Boolean = false
+    var nominalsOfContinuousStatesChanged: Boolean = false
+    var valuesOfContinuousStatesChanged: Boolean = false
+    var nextEventTimeDefined: Boolean = false
+    var nextEventTime: Double = 0.0
+
+    override fun toString(): String {
+        return "EventInfo{" +
+                "newDiscreteStatesNeeded=" + newDiscreteStatesNeeded +
+                ", terminateSimulation=" + terminateSimulation +
+                ", nominalsOfContinuousStatesChanged=" + nominalsOfContinuousStatesChanged +
+                ", valuesOfContinuousStatesChanged=" + valuesOfContinuousStatesChanged +
+                ", nextEventTimeDefined=" + nextEventTimeDefined +
+                ", nextEventTime=" + nextEventTime +
+                '}'.toString()
     }
 
 }

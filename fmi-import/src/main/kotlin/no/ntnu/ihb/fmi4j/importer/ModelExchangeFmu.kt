@@ -24,8 +24,8 @@
 
 package no.ntnu.ihb.fmi4j.importer
 
-import no.ntnu.ihb.fmi4j.common.FmuSlave
-import no.ntnu.ihb.fmi4j.common.SlaveProvider
+import no.ntnu.ihb.fmi4j.FmuSlave
+import no.ntnu.ihb.fmi4j.SlaveProvider
 import no.ntnu.ihb.fmi4j.importer.jni.Fmi2ModelExchangeLibrary
 import no.ntnu.ihb.fmi4j.importer.me.ModelExchangeFmuStepper
 import no.ntnu.ihb.fmi4j.importer.me.ModelExchangeInstance

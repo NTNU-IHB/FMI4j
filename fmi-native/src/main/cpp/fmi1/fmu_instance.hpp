@@ -116,6 +116,9 @@ class FmuInstance {
 
         fmiFreeSlaveInstanceTYPE *fmiFreeSlaveInstance_;
 
+        fmiSetRealInputDerivativesTYPE *fmiSetRealInputDerivatives_;
+        fmiGetRealOutputDerivativesTYPE *fmiGetRealOutputDerivatives_;
+
         fmiDoStepTYPE *fmiDoStep_;
         fmiCancelStepTYPE *fmiCancelStep_;
 
@@ -142,6 +145,9 @@ class FmuInstance {
             fmiSetBoolean_ = load_function<fmiSetBooleanTYPE *>(handle_, "fmiSetBoolean");
 
             fmiFreeSlaveInstance_ = load_function<fmiFreeSlaveInstanceTYPE *>(handle_, "fmiFreeSlaveInstance");
+
+            fmiSetRealInputDerivatives_ = load_function<fmiSetRealInputDerivativesTYPE *>(handle_, "fmiSetRealInputDerivatives");
+            fmiGetRealOutputDerivatives_ = load_function<fmiGetRealOutputDerivativesTYPE *>(handle_, "fmiGetRealOutputDerivatives");
 
             fmiDoStep_ = load_function<fmiDoStepTYPE *>(handle_, "fmiDoStep");
             fmiCancelStep_ = load_function<fmiCancelStepTYPE *>(handle_, "fmiCancelStep");

@@ -24,8 +24,10 @@
 
 package no.ntnu.ihb.fmi4j.importer.jni
 
-import no.ntnu.ihb.fmi4j.common.FmiStatus
+import no.ntnu.ihb.fmi4j.FmiStatus
 import no.ntnu.ihb.fmi4j.modeldescription.ValueReferences
+import no.ntnu.ihb.fmi4j.util.IntByReference
+import no.ntnu.ihb.fmi4j.util.LongByReference
 import no.ntnu.ihb.fmi4j.util.OsUtil
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory

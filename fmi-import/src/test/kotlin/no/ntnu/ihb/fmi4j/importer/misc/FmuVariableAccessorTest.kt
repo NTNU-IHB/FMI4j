@@ -1,9 +1,9 @@
 package no.ntnu.ihb.fmi4j.importer.misc
 
-import no.ntnu.ihb.fmi4j.common.read
-import no.ntnu.ihb.fmi4j.common.readBoolean
-import no.ntnu.ihb.fmi4j.common.readInteger
-import no.ntnu.ihb.fmi4j.common.readReal
+import no.ntnu.ihb.fmi4j.read
+import no.ntnu.ihb.fmi4j.readBoolean
+import no.ntnu.ihb.fmi4j.readInteger
+import no.ntnu.ihb.fmi4j.readReal
 import no.ntnu.ihb.fmi4j.importer.TestFMUs
 import no.ntnu.ihb.fmi4j.modeldescription.variables.*
 import org.junit.jupiter.api.AfterAll

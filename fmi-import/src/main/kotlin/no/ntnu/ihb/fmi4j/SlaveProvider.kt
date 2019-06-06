@@ -1,4 +1,4 @@
-package no.ntnu.ihb.fmi4j.common
+package no.ntnu.ihb.fmi4j
 
 import no.ntnu.ihb.fmi4j.modeldescription.ModelDescription
 import java.io.Closeable

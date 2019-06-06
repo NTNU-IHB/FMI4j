@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package no.ntnu.ihb.fmi4j.common
+package no.ntnu.ihb.fmi4j
 
 /**
  *
@@ -98,7 +98,7 @@ enum class FmiStatus(
     Pending(5);
 
     fun isOK(): Boolean {
-        return this == OK;
+        return this == OK
     }
 
     companion object {

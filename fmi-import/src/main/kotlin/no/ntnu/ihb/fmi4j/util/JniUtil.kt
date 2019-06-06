@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2017-2018 Norwegian University of Technology
+ * Copyright 2017-2019 Norwegian University of Technology
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package no.ntnu.ihb.fmi4j.importer.jni
+package no.ntnu.ihb.fmi4j.util
 
 open class IntByReference(
         var value: Int = 0
@@ -43,25 +43,3 @@ open class BooleanByReference(
 open class LongByReference(
         var value: Long = 0
 )
-
-class EventInfo {
-
-    var newDiscreteStatesNeeded: Boolean = false
-    var terminateSimulation: Boolean = false
-    var nominalsOfContinuousStatesChanged: Boolean = false
-    var valuesOfContinuousStatesChanged: Boolean = false
-    var nextEventTimeDefined: Boolean = false
-    var nextEventTime: Double = 0.0
-
-    override fun toString(): String {
-        return "EventInfo{" +
-                "newDiscreteStatesNeeded=" + newDiscreteStatesNeeded +
-                ", terminateSimulation=" + terminateSimulation +
-                ", nominalsOfContinuousStatesChanged=" + nominalsOfContinuousStatesChanged +
-                ", valuesOfContinuousStatesChanged=" + valuesOfContinuousStatesChanged +
-                ", nextEventTimeDefined=" + nextEventTimeDefined +
-                ", nextEventTime=" + nextEventTime +
-                '}'.toString()
-    }
-
-}

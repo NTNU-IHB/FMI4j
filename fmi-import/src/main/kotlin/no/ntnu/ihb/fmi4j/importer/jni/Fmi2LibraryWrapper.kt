@@ -24,11 +24,13 @@
 
 package no.ntnu.ihb.fmi4j.importer.jni
 
-import no.ntnu.ihb.fmi4j.common.*
+import no.ntnu.ihb.fmi4j.*
 import no.ntnu.ihb.fmi4j.importer.misc.ArrayBuffers
 import no.ntnu.ihb.fmi4j.modeldescription.StringArray
 import no.ntnu.ihb.fmi4j.modeldescription.ValueReference
 import no.ntnu.ihb.fmi4j.modeldescription.ValueReferences
+import no.ntnu.ihb.fmi4j.util.IntByReference
+import no.ntnu.ihb.fmi4j.util.LongByReference
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 

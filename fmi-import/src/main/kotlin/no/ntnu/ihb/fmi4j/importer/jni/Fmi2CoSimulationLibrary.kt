@@ -24,8 +24,12 @@
 
 package no.ntnu.ihb.fmi4j.importer.jni
 
-import no.ntnu.ihb.fmi4j.common.FmiStatus
+import no.ntnu.ihb.fmi4j.FmiStatus
 import no.ntnu.ihb.fmi4j.modeldescription.ValueReferences
+import no.ntnu.ihb.fmi4j.util.BooleanByReference
+import no.ntnu.ihb.fmi4j.util.DoubleByReference
+import no.ntnu.ihb.fmi4j.util.IntByReference
+import no.ntnu.ihb.fmi4j.util.StringByReference
 
 /**
  * @author Lars Ivar Hatledal

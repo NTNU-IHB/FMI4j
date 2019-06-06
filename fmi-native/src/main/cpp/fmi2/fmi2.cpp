@@ -583,7 +583,7 @@ JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_jni_Fmi2ModelExchangeLibr
     fmi2Boolean _enterEventMode;
     fmi2Boolean _terminateSimulation;
 
-    jclass cls = env->FindClass("no/ntnu/ihb/fmi4j/importer/jni/BooleanByReference");
+    jclass cls = env->FindClass("no/ntnu/ihb/fmi4j/util/BooleanByReference");
     jfieldID id = env->GetFieldID(cls, "value", "Z");
 
     fmi2CompletedIntegratorStepTYPE* fmi2CompletedIntegratorStep = fmu->fmi2CompletedIntegratorStep_;
