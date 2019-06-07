@@ -22,7 +22,3 @@ shadowJar {
     archiveClassifier = null
     archiveVersion = null
 }
-
-if (!project.getProperties().get("skipBuildNative", false)) {
-    compileKotlin.dependsOn(':fmi-native:copyNativeLibs')
-}
