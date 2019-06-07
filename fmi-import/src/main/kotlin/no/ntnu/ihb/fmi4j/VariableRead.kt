@@ -116,7 +116,7 @@ class StringRead(
 /**
  * @author Lars Ivar Hatledal
  */
-class FmuStringArrayRead(
+class StringArrayRead(
         value: StringArray,
         status: FmiStatus
 ) : VariableRead<StringArray>(value, status)
