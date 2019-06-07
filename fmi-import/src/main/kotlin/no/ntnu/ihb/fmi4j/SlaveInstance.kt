@@ -31,7 +31,7 @@ import no.ntnu.ihb.fmi4j.modeldescription.CoSimulationModelDescription
  *
  * @author Lars Ivar Hatledal
  */
-interface FmuSlave: FmuInstance<CoSimulationModelDescription> {
+interface SlaveInstance : ModelInstance<CoSimulationModelDescription> {
 
     /**
      * Step simulation forward in time
@@ -39,10 +39,5 @@ interface FmuSlave: FmuInstance<CoSimulationModelDescription> {
      * @param stepSize time to step simulation forward (in seconds)
      */
     fun doStep(stepSize: Double): Boolean
-
-    /**
-     * Cancel step
-     */
-    fun cancelStep(): Boolean
 
 }

@@ -24,8 +24,8 @@
 
 package no.ntnu.ihb.fmi4j.importer.fmi1
 
-import no.ntnu.ihb.fmi4j.FmuSlave
-import no.ntnu.ihb.fmi4j.SlaveProvider
+import no.ntnu.ihb.fmi4j.Model
+import no.ntnu.ihb.fmi4j.SlaveInstance
 import no.ntnu.ihb.fmi4j.importer.fmi1.jni.CoSimulationLibraryWrapper
 import no.ntnu.ihb.fmi4j.importer.fmi1.jni.Fmi1CoSimulationLibrary
 import no.ntnu.ihb.fmi4j.modeldescription.CoSimulationModelDescription
@@ -34,7 +34,7 @@ import java.io.Closeable
 
 class CoSimulationFmu(
         private val fmu: Fmu
-) : SlaveProvider, Closeable by fmu {
+) : Model, Closeable by fmu {
 
     override val modelDescription: CoSimulationModelDescription by lazy {
         fmu.modelDescription.asCoSimulationModelDescription()
@@ -48,7 +48,7 @@ class CoSimulationFmu(
         }
     }
 
-    override fun newInstance(): FmuSlave {
+    override fun newInstance(): SlaveInstance {
         return newInstance(visible = false, interactive = false, loggingOn = false)
     }
 

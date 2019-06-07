@@ -24,7 +24,7 @@
 
 package no.ntnu.ihb.fmi4j.driver
 
-import no.ntnu.ihb.fmi4j.FmuSlave
+import no.ntnu.ihb.fmi4j.SlaveInstance
 import no.ntnu.ihb.fmi4j.read
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -32,7 +32,7 @@ import java.io.File
 import java.util.*
 
 class SlaveDriver(
-        private val slave: FmuSlave,
+        private val slave: SlaveInstance,
         private val options: DriverOptions,
         private val fmuName: String = slave.modelDescription.modelName
 ) {
@@ -64,7 +64,7 @@ class SlaveDriver(
     }
 
     private inner class Recorder(
-            private val slave: FmuSlave
+            private val slave: SlaveInstance
     ) {
 
         private var last = -1.0

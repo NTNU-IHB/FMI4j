@@ -179,7 +179,7 @@ open class Fmi1Library(
 abstract class Fmi1LibraryWrapper<E : Fmi1Library>(
         protected var c: Long,
         library: E
-) : FmuVariableAccessor {
+) : VariableAccessor {
 
     private val buffers: ArrayBuffers by lazy {
         ArrayBuffers()
@@ -275,11 +275,11 @@ abstract class Fmi1LibraryWrapper<E : Fmi1Library>(
     }
 
     @Synchronized
-    fun readInteger(valueReference: ValueReference): FmuIntegerRead {
+    fun readInteger(valueReference: ValueReference): IntegerRead {
         return with(buffers) {
             vr[0] = valueReference
             library.getInteger(c, vr, iv).let {
-                FmuIntegerRead(iv[0], updateStatus(it))
+                IntegerRead(iv[0], updateStatus(it))
             }
         }
     }
@@ -289,11 +289,11 @@ abstract class Fmi1LibraryWrapper<E : Fmi1Library>(
     }
 
     @Synchronized
-    fun readReal(valueReference: ValueReference): FmuRealRead {
+    fun readReal(valueReference: ValueReference): RealRead {
         return with(buffers) {
             vr[0] = valueReference
             library.getReal(c, vr, rv).let {
-                FmuRealRead(rv[0], updateStatus(it))
+                RealRead(rv[0], updateStatus(it))
             }
         }
     }
@@ -303,11 +303,11 @@ abstract class Fmi1LibraryWrapper<E : Fmi1Library>(
     }
 
     @Synchronized
-    fun readString(valueReference: ValueReference): FmuStringRead {
+    fun readString(valueReference: ValueReference): StringRead {
         return with(buffers) {
             vr[0] = valueReference
             library.getString(c, vr, sv).let {
-                FmuStringRead(sv[0], updateStatus(it))
+                StringRead(sv[0], updateStatus(it))
             }
         }
     }
@@ -317,11 +317,11 @@ abstract class Fmi1LibraryWrapper<E : Fmi1Library>(
     }
 
     @Synchronized
-    fun readBoolean(valueReference: ValueReference): FmuBooleanRead {
+    fun readBoolean(valueReference: ValueReference): BooleanRead {
         return with(buffers) {
             vr[0] = valueReference
             library.getBoolean(c, vr, bv).let {
-                FmuBooleanRead(bv[0], updateStatus(it))
+                BooleanRead(bv[0], updateStatus(it))
             }
         }
     }

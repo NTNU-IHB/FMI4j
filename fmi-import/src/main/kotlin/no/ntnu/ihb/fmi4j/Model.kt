@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2017-2018 Norwegian University of Technology
+ * Copyright 2017-2019 Norwegian University of Technology
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,38 +24,19 @@
 
 package no.ntnu.ihb.fmi4j
 
-import no.ntnu.ihb.fmi4j.modeldescription.RealArray
-import no.ntnu.ihb.fmi4j.modeldescription.StringArray
-import no.ntnu.ihb.fmi4j.modeldescription.ValueReferences
+import no.ntnu.ihb.fmi4j.modeldescription.ModelDescription
+import java.io.Closeable
 
+interface Model : Closeable {
 
-/**
- * @author Lars Ivar Hatledal
- */
-interface FmuVariableReader {
+    val guid: String
+        get() = modelDescription.guid
 
-    fun read(vr: ValueReferences, ref: IntArray): FmiStatus
-    fun read(vr: ValueReferences, ref: RealArray): FmiStatus
-    fun read(vr: ValueReferences, ref: StringArray): FmiStatus
-    fun read(vr: ValueReferences, ref: BooleanArray): FmiStatus
+    val modelName: String
+        get() = modelDescription.modelName
 
-}
+    val modelDescription: ModelDescription
 
-
-/**
- * @author Lars Ivar Hatledal
- */
-interface FmuVariableWriter {
-
-    fun write(vr: ValueReferences, value: IntArray): FmiStatus
-    fun write(vr: ValueReferences, value: RealArray): FmiStatus
-    fun write(vr: ValueReferences, value: StringArray): FmiStatus
-    fun write(vr: ValueReferences, value: BooleanArray): FmiStatus
+    fun newInstance(): SlaveInstance
 
 }
-
-
-/**
- * @author Lars Ivar Hatledal
- */
-interface FmuVariableAccessor: FmuVariableReader, FmuVariableWriter

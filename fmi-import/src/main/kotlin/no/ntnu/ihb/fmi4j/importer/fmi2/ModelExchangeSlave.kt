@@ -25,8 +25,8 @@
 package no.ntnu.ihb.fmi4j.importer.fmi2
 
 import no.ntnu.ihb.fmi4j.FmiStatus
-import no.ntnu.ihb.fmi4j.FmuSlave
 import no.ntnu.ihb.fmi4j.SimpleFmuInstance
+import no.ntnu.ihb.fmi4j.SlaveInstance
 import no.ntnu.ihb.fmi4j.modeldescription.CoSimulationAttributes
 import no.ntnu.ihb.fmi4j.modeldescription.CoSimulationModelDescription
 import no.ntnu.ihb.fmi4j.modeldescription.CommonModelDescription
@@ -37,14 +37,14 @@ import org.slf4j.LoggerFactory
 import kotlin.math.min
 
 /**
- * Wraps a Model Exchange instance, turning it into a FmuSlave
+ * Wraps a Model Exchange instance, turning it into a SlaveInstance
  *
  * @author Lars Ivar Hatledal
  */
 class ModelExchangeFmuStepper internal constructor(
         private val fmuInstance: ModelExchangeInstance,
         private val solver: Solver
-) : FmuSlave, SimpleFmuInstance by fmuInstance {
+) : SlaveInstance, SimpleFmuInstance by fmuInstance {
 
     private val x: DoubleArray
 
@@ -157,10 +157,6 @@ class ModelExchangeFmuStepper internal constructor(
 
         return true
 
-    }
-
-    override fun cancelStep(): Boolean {
-        return false
     }
 
     private fun solve(t: Double, tNext: Double): Pair<Boolean, Double> {

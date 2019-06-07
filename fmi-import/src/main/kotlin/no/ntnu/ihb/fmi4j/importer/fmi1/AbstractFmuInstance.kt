@@ -25,8 +25,8 @@
 package no.ntnu.ihb.fmi4j.importer.fmi1
 
 import no.ntnu.ihb.fmi4j.FmiStatus
-import no.ntnu.ihb.fmi4j.FmuInstance
 import no.ntnu.ihb.fmi4j.FmuState
+import no.ntnu.ihb.fmi4j.ModelInstance
 import no.ntnu.ihb.fmi4j.importer.fmi1.jni.Fmi1LibraryWrapper
 import no.ntnu.ihb.fmi4j.modeldescription.CommonModelDescription
 import no.ntnu.ihb.fmi4j.modeldescription.RealArray
@@ -43,7 +43,7 @@ import org.slf4j.LoggerFactory
 abstract class AbstractFmuInstance<out E : CommonModelDescription, out T : Fmi1LibraryWrapper<*>> internal constructor(
         val wrapper: T,
         override val modelDescription: E
-) : FmuInstance<E> {
+) : ModelInstance<E> {
 
     val typesPlatform
         get() = wrapper.typesPlatform

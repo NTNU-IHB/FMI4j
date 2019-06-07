@@ -35,7 +35,7 @@ import no.ntnu.ihb.fmi4j.modeldescription.StringArray
  *
  * @author Lars Ivar Hatledal
  */
-sealed class FmuRead<out E>(
+sealed class VariableRead<out E>(
 
         /**
          * The value returned by the FMU during the call to getXXX
@@ -50,14 +50,14 @@ sealed class FmuRead<out E>(
 ) {
 
     override fun toString(): String {
-        return "FmuRead(value=$value, status=$status)"
+        return "VariableRead(value=$value, status=$status)"
     }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as FmuRead<*>
+        other as VariableRead<*>
 
         if (value != other.value) return false
         if (status != other.status) return false
@@ -76,42 +76,42 @@ sealed class FmuRead<out E>(
 /**
  * @author Lars Ivar Hatledal
  */
-class FmuIntegerRead(
+class IntegerRead(
         value: Int,
         status: FmiStatus
-) : FmuRead<Int>(value, status)
+) : VariableRead<Int>(value, status)
 
 /**
  * @author Lars Ivar Hatledal
  */
-class FmuIntegerArrayRead(
+class IntegerArrayRead(
         value: IntArray,
         status: FmiStatus
-) : FmuRead<IntArray>(value, status)
+) : VariableRead<IntArray>(value, status)
 
 /**
  * @author Lars Ivar Hatledal
  */
-class FmuRealRead(
+class RealRead(
         value: Real,
         status: FmiStatus
-) : FmuRead<Real>(value, status)
+) : VariableRead<Real>(value, status)
 
 /**
  * @author Lars Ivar Hatledal
  */
-class FmuRealArrayRead(
+class RealArrayRead(
         value: RealArray,
         status: FmiStatus
-) : FmuRead<RealArray>(value, status)
+) : VariableRead<RealArray>(value, status)
 
 /**
  * @author Lars Ivar Hatledal
  */
-class FmuStringRead(
+class StringRead(
         value: String,
         status: FmiStatus
-) : FmuRead<String>(value, status)
+) : VariableRead<String>(value, status)
 
 /**
  * @author Lars Ivar Hatledal
@@ -119,24 +119,24 @@ class FmuStringRead(
 class FmuStringArrayRead(
         value: StringArray,
         status: FmiStatus
-) : FmuRead<StringArray>(value, status)
+) : VariableRead<StringArray>(value, status)
 
 /**
  * @author Lars Ivar Hatledal
  */
-class FmuBooleanRead(
+class BooleanRead(
         value: Boolean,
         status: FmiStatus
-) : FmuRead<Boolean>(value, status)
+) : VariableRead<Boolean>(value, status)
 
 /**
  * @author Lars Ivar Hatledal
  */
-class FmuBooleanArrayRead(
+class BooleanArrayRead(
         value: BooleanArray,
         status: FmiStatus
-) : FmuRead<BooleanArray>(value, status)
+) : VariableRead<BooleanArray>(value, status)
 
 
-typealias FmuEnumerationRead = FmuIntegerRead
-typealias FmuEnumerationArrayRead = FmuIntegerArrayRead
+typealias EnumerationRead = IntegerRead
+typealias EnumerationArrayRead = IntegerArrayRead

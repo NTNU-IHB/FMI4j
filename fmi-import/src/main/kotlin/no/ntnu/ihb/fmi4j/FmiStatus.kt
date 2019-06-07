@@ -25,7 +25,6 @@
 package no.ntnu.ihb.fmi4j
 
 /**
- *
  *  Indicates the success of a function call
  *
  * @author Lars Ivar Hatledal

@@ -36,7 +36,7 @@ typealias FmuState = Long
 /**
  * @author Lars Ivar Hatledal
  */
-interface SimpleFmuInstance : FmuVariableAccessor, Closeable {
+interface SimpleFmuInstance : VariableAccessor, Closeable {
 
     /**
      * Has terminate been called?
@@ -112,7 +112,7 @@ interface SimpleFmuInstance : FmuVariableAccessor, Closeable {
  *
  * @author Lars Ivar Hatledal
  */
-interface FmuInstance<out E: CommonModelDescription> : SimpleFmuInstance {
+interface ModelInstance<out E : CommonModelDescription> : SimpleFmuInstance {
 
     override val modelDescription: E
 

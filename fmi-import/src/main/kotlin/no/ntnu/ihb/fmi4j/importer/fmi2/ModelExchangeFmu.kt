@@ -24,8 +24,8 @@
 
 package no.ntnu.ihb.fmi4j.importer.fmi2
 
-import no.ntnu.ihb.fmi4j.FmuSlave
-import no.ntnu.ihb.fmi4j.SlaveProvider
+import no.ntnu.ihb.fmi4j.Model
+import no.ntnu.ihb.fmi4j.SlaveInstance
 import no.ntnu.ihb.fmi4j.importer.fmi2.jni.Fmi2ModelExchangeLibrary
 import no.ntnu.ihb.fmi4j.importer.fmi2.jni.ModelExchangeLibraryWrapper
 import no.ntnu.ihb.fmi4j.modeldescription.ModelExchangeModelDescription
@@ -39,7 +39,7 @@ import java.io.Closeable
 class ModelExchangeFmu @JvmOverloads constructor(
         private val fmu: Fmu,
         private val solver: Solver? = null
-): SlaveProvider, Closeable by fmu {
+) : Model, Closeable by fmu {
 
     override val modelDescription: ModelExchangeModelDescription by lazy {
         fmu.modelDescription.asModelExchangeModelDescription()
@@ -67,7 +67,7 @@ class ModelExchangeFmu @JvmOverloads constructor(
         }
     }
 
-    override fun newInstance(): FmuSlave {
+    override fun newInstance(): SlaveInstance {
         val solver = solver ?: throw IllegalStateException("Class instantiated with no solver!")
         return newInstance(solver, visible = false, loggingOn = false)
     }

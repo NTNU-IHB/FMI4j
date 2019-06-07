@@ -42,8 +42,6 @@ class Fmi2CoSimulationLibrary(
     private external fun step(p: Long, c: Fmi2Component, currentCommunicationPoint: Double,
                               communicationStepSize: Double, noSetFMUStatePriorToCurrentPoint: Boolean): NativeStatus
 
-    private external fun cancelStep(p: Long, c: Fmi2Component): NativeStatus
-
     private external fun setRealInputDerivatives(p: Long, c: Fmi2Component, vr: ValueReferences, order: IntArray,
                                                  value: DoubleArray): NativeStatus
 
@@ -60,18 +58,12 @@ class Fmi2CoSimulationLibrary(
 
     private external fun getBooleanStatus(p: Long, c: Fmi2Component, s: Int, value: BooleanByReference): NativeStatus
 
-    private external fun getMaxStepSize(p: Long, c: Fmi2Component, stepSize: DoubleByReference): NativeStatus
-
 
     fun step(c: Fmi2Component,
              currentCommunicationPoint: Double,
              communicationStepSize: Double,
              noSetFMUStatePriorToCurrentPoint: Boolean): FmiStatus {
         return step(p, c, currentCommunicationPoint, communicationStepSize, noSetFMUStatePriorToCurrentPoint).transform()
-    }
-
-    fun cancelStep(c: Fmi2Component): FmiStatus {
-        return cancelStep(p, c).transform()
     }
 
     fun setRealInputDerivatives(c: Fmi2Component,
@@ -136,13 +128,6 @@ class CoSimulationLibraryWrapper(
      */
     fun doStep(t: Double, dt: Double, noSetFMUStatePriorToCurrent: Boolean): FmiStatus {
         return updateStatus(library.step(c, t, dt, noSetFMUStatePriorToCurrent))
-    }
-
-    /**
-     * @see Fmi2CoSimulationLibrary.fmi2CancelStep
-     */
-    fun cancelStep(): FmiStatus {
-        return (updateStatus(library.cancelStep(c)))
     }
 
     /**

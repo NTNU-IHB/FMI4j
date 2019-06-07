@@ -43,8 +43,6 @@ class Fmi1CoSimulationLibrary(
     private external fun step(p: Long, c: FmiComponent, currentCommunicationPoint: Double,
                               communicationStepSize: Double, noSetFMUStatePriorToCurrentPoint: Boolean): NativeStatus
 
-    private external fun cancelStep(p: Long, c: FmiComponent): NativeStatus
-
     private external fun setRealInputDerivatives(p: Long, c: FmiComponent, vr: ValueReferences, order: IntArray,
                                                  value: DoubleArray): NativeStatus
 
@@ -66,10 +64,6 @@ class Fmi1CoSimulationLibrary(
              communicationStepSize: Double,
              newStep: Boolean): FmiStatus {
         return step(p, c, currentCommunicationPoint, communicationStepSize, newStep).transform()
-    }
-
-    fun cancelStep(c: FmiComponent): FmiStatus {
-        return cancelStep(p, c).transform()
     }
 
     fun setRealInputDerivatives(c: FmiComponent,
@@ -125,10 +119,6 @@ class CoSimulationLibraryWrapper(
 
     fun doStep(t: Double, dt: Double, newStep: Boolean): FmiStatus {
         return updateStatus(library.step(c, t, dt, newStep))
-    }
-
-    fun cancelStep(): FmiStatus {
-        return (updateStatus(library.cancelStep(c)))
     }
 
     fun getStatus(s: FmiStatusKind): FmiStatus {

@@ -25,7 +25,7 @@
 package no.ntnu.ihb.fmi4j.importer.fmi1
 
 import no.ntnu.ihb.fmi4j.FmiStatus
-import no.ntnu.ihb.fmi4j.FmuSlave
+import no.ntnu.ihb.fmi4j.SlaveInstance
 import no.ntnu.ihb.fmi4j.importer.fmi1.jni.CoSimulationLibraryWrapper
 import no.ntnu.ihb.fmi4j.modeldescription.CoSimulationModelDescription
 import no.ntnu.ihb.fmi4j.modeldescription.ValueReferences
@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory
 class CoSimulationSlave internal constructor(
         wrapper: CoSimulationLibraryWrapper,
         modelDescription: CoSimulationModelDescription
-) : FmuSlave, AbstractFmuInstance<CoSimulationModelDescription, CoSimulationLibraryWrapper>(wrapper, modelDescription) {
+) : SlaveInstance, AbstractFmuInstance<CoSimulationModelDescription, CoSimulationLibraryWrapper>(wrapper, modelDescription) {
 
 
     override fun doStep(stepSize: Double): Boolean {
@@ -62,9 +62,6 @@ class CoSimulationSlave internal constructor(
 
     }
 
-    override fun cancelStep(): Boolean {
-        return (wrapper.cancelStep() == FmiStatus.OK)
-    }
 
     override fun terminate(): Boolean {
         return super.terminate(freeInstance = true)
