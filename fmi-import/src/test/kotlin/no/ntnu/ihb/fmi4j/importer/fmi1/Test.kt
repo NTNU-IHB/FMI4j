@@ -41,6 +41,7 @@ class Test {
     }
 
     @Test
+    @EnabledOnOs(OS.WINDOWS)
     fun testAbstractFmuLoad() {
 
         val file = File(Test::class.java.classLoader.getResource("fmus/1.0/cs/BouncingBall.fmu").file)
