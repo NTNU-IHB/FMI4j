@@ -1,5 +1,6 @@
 package no.ntnu.ihb.fmi4j.importer.fmi1
 
+import no.ntnu.ihb.fmi4j.modeldescription.ModelDescriptionParser
 import no.ntnu.ihb.fmi4j.readReal
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
@@ -13,7 +14,10 @@ class Test {
     @EnabledOnOs(OS.WINDOWS)
     fun TestFmi1() {
 
-        Fmu.from(File(Test::class.java.classLoader.getResource("fmus/1.0/cs/BouncingBall.fmu").file)).use { fmu ->
+        val file = File(Test::class.java.classLoader.getResource("fmus/1.0/cs/BouncingBall.fmu").file)
+        Assertions.assertEquals("1.0", ModelDescriptionParser.extractVersion(file))
+
+        Fmu.from(file).use { fmu ->
 
             Assertions.assertEquals("{8c4e810f-3df3-4a00-8276-176fa3c9f003}", fmu.guid)
             Assertions.assertEquals("BouncingBall", fmu.modelDescription.attributes.modelIdentifier)
