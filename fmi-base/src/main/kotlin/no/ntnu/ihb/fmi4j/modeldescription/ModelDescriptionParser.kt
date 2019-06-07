@@ -63,7 +63,6 @@ abstract class ModelDescriptionParser {
 
         @JvmStatic
         fun extractModelDescriptionXml(file: File): String {
-
             return file.inputStream().use { extractModelDescriptionXml(it) }
         }
 
@@ -92,6 +91,14 @@ abstract class ModelDescriptionParser {
 
         fun extractVersion(xml: String): String {
             return JAXB.unmarshal(StringReader(xml), MockupModelDescription::class.java).fmiVersion
+        }
+
+        fun parse(url: URL): ModelDescriptionProvider {
+            return parse(extractModelDescriptionXml(url))
+        }
+
+        fun parse(file: File): ModelDescriptionProvider {
+            return parse(extractModelDescriptionXml(file))
         }
 
         fun parse(xml: String): ModelDescriptionProvider {
