@@ -24,10 +24,11 @@
 
 package no.ntnu.ihb.fmi4j.importer;
 
-import no.ntnu.ihb.fmi4j.common.Fmi4jVariableUtils;
-import no.ntnu.ihb.fmi4j.common.FmiStatus;
-import no.ntnu.ihb.fmi4j.common.FmuRead;
-import no.ntnu.ihb.fmi4j.common.FmuSlave;
+import no.ntnu.ihb.fmi4j.Fmi4jVariableUtils;
+import no.ntnu.ihb.fmi4j.FmiStatus;
+import no.ntnu.ihb.fmi4j.SlaveInstance;
+import no.ntnu.ihb.fmi4j.VariableRead;
+import no.ntnu.ihb.fmi4j.importer.fmi2.ModelExchangeFmu;
 import no.ntnu.ihb.fmi4j.modeldescription.variables.RealVariable;
 import no.ntnu.ihb.fmi4j.solvers.Solver;
 import no.ntnu.ihb.fmi4j.solvers.apache.ApacheSolvers;
@@ -38,7 +39,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.net.URL;
 
 /**
  * @author Lars Ivar Hatledal
@@ -72,7 +72,7 @@ public class VanDerPolTestJava {
 
         LOG.info("Using solver: {}", solver.getName());
 
-        FmuSlave slave = VanDerPolTestJava.fmu
+        SlaveInstance slave = VanDerPolTestJava.fmu
                 .newInstance(solver, false, false);
 
         RealVariable x0 = slave.getModelVariables()
@@ -83,7 +83,7 @@ public class VanDerPolTestJava {
         double stop = 1.0;
         double macroStep = 1.0 / 10;
         while (slave.getSimulationTime() <= stop) {
-            FmuRead<Double> read = Fmi4jVariableUtils.read(x0, slave);
+            VariableRead<Double> read = Fmi4jVariableUtils.read(x0, slave);
             Assertions.assertSame(read.getStatus(), FmiStatus.OK);
             LOG.info("t={}, x0={}", slave.getSimulationTime(), read.getValue());
             Assertions.assertTrue(slave.doStep(macroStep));

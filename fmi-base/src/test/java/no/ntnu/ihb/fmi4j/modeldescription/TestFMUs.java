@@ -1,6 +1,6 @@
 package no.ntnu.ihb.fmi4j.modeldescription;
 
-import no.ntnu.ihb.fmi4j.modeldescription.jaxb.JaxbModelDescriptionParser;
+import no.ntnu.ihb.fmi4j.modeldescription.fmi2.JaxbModelDescriptionParser;
 
 import java.io.File;
 

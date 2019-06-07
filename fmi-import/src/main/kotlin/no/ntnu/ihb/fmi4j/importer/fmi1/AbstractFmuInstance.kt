@@ -1,0 +1,191 @@
+/*
+ * The MIT License
+ *
+ * Copyright 2017-2018 Norwegian University of Technology
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING  FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
+package no.ntnu.ihb.fmi4j.importer.fmi1
+
+import no.ntnu.ihb.fmi4j.FmiStatus
+import no.ntnu.ihb.fmi4j.FmuState
+import no.ntnu.ihb.fmi4j.ModelInstance
+import no.ntnu.ihb.fmi4j.importer.fmi1.jni.Fmi1LibraryWrapper
+import no.ntnu.ihb.fmi4j.modeldescription.CommonModelDescription
+import no.ntnu.ihb.fmi4j.modeldescription.RealArray
+import no.ntnu.ihb.fmi4j.modeldescription.StringArray
+import no.ntnu.ihb.fmi4j.modeldescription.ValueReferences
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
+
+/**
+ * Base class for FMU instances
+ *
+ * @author Lars Ivar Hatledal
+ */
+abstract class AbstractFmuInstance<out E : CommonModelDescription, out T : Fmi1LibraryWrapper<*>> internal constructor(
+        val wrapper: T,
+        override val modelDescription: E
+) : ModelInstance<E> {
+
+    val typesPlatform
+        get() = wrapper.typesPlatform
+
+    val version
+        get() = wrapper.version
+
+    override val isTerminated
+        get() = wrapper.isTerminated
+
+    protected var startTime: Double = 0.0
+        private set
+
+    protected var stopTime: Double = 0.0
+        private set
+
+    protected val stopDefined
+        get() = stopTime > startTime
+
+    /**
+     * Current simulation time
+     */
+    override var simulationTime: Double = 0.0
+        internal set
+
+    override val lastStatus: FmiStatus
+        get() = wrapper.lastStatus
+
+
+    /**
+     * Call init with provided start and stop
+     * @param start the start time
+     * @param stop the stop time
+     *
+     */
+    override fun setup(start: Double, stop: Double, tolerance: Double): Boolean {
+
+        LOG.debug("FMU '${modelDescription.modelName}' setup with start=$start, stop=$stop")
+
+        if (start < 0) {
+            LOG.error("Start must be a positive value, was $start!")
+            return false
+        }
+        startTime = start
+        if (stop > startTime) {
+            stopTime = stop
+        }
+
+        return (wrapper.setup(startTime, stopTime).isOK()).also {
+            simulationTime = start
+        }
+
+    }
+
+    override fun enterInitializationMode(): Boolean {
+        return true
+    }
+
+    override fun exitInitializationMode(): Boolean {
+        return true
+    }
+
+    override fun terminate(): Boolean {
+        return terminate(true)
+    }
+
+    fun terminate(freeInstance: Boolean): Boolean {
+        return wrapper.terminate(freeInstance).let { status ->
+            LOG.debug("FMU '${modelDescription.modelName}' terminated with status $status! #${hashCode()}")
+            status.isOK()
+        }
+    }
+
+    override fun reset(): Boolean {
+        return wrapper.reset().isOK()
+    }
+
+    protected fun finalize() {
+        if (!isTerminated) {
+            LOG.warn("Instance ${modelDescription.modelName} was not terminated before garbage collection. Doing it for you..")
+            close()
+        }
+    }
+
+    override fun read(vr: ValueReferences, ref: IntArray): FmiStatus {
+        return wrapper.read(vr, ref)
+    }
+
+    override fun read(vr: ValueReferences, ref: RealArray): FmiStatus {
+        return wrapper.read(vr, ref)
+    }
+
+    override fun read(vr: ValueReferences, ref: StringArray): FmiStatus {
+        return wrapper.read(vr, ref)
+    }
+
+    override fun read(vr: ValueReferences, ref: BooleanArray): FmiStatus {
+        return wrapper.read(vr, ref)
+    }
+
+    override fun write(vr: ValueReferences, value: IntArray): FmiStatus {
+        return wrapper.write(vr, value)
+    }
+
+    override fun write(vr: ValueReferences, value: RealArray): FmiStatus {
+        return wrapper.write(vr, value)
+    }
+
+    override fun write(vr: ValueReferences, value: StringArray): FmiStatus {
+        return wrapper.write(vr, value)
+    }
+
+    override fun write(vr: ValueReferences, value: BooleanArray): FmiStatus {
+        return wrapper.write(vr, value)
+    }
+
+    private companion object {
+        private val LOG: Logger = LoggerFactory.getLogger(AbstractFmuInstance::class.java)
+    }
+
+    override fun getFMUstate(): FmuState {
+        throw IllegalStateException("Feature not available for FMI 1.0")
+    }
+
+    override fun setFMUstate(state: FmuState): Boolean {
+        throw IllegalStateException("Feature not available for FMI 1.0")
+    }
+
+    override fun freeFMUstate(state: FmuState): Boolean {
+        throw IllegalStateException("Feature not available for FMI 1.0")
+    }
+
+    override fun serializeFMUstate(state: FmuState): ByteArray {
+        throw IllegalStateException("Feature not available for FMI 1.0")
+    }
+
+    override fun deSerializeFMUstate(state: ByteArray): FmuState {
+        throw IllegalStateException("Feature not available for FMI 1.0")
+    }
+
+    override fun getDirectionalDerivative(vUnknownRef: ValueReferences, vKnownRef: ValueReferences, dvKnown: RealArray): RealArray {
+        throw IllegalStateException("Feature not available for FMI 1.0")
+    }
+
+}

@@ -1,8 +1,9 @@
 package no.ntnu.ihb.fmi4j.importer;
 
+import no.ntnu.ihb.fmi4j.importer.fmi2.Fmu;
 import no.ntnu.ihb.fmi4j.modeldescription.ModelDescriptionParser;
 import no.ntnu.ihb.fmi4j.modeldescription.ModelDescriptionProvider;
-import no.ntnu.ihb.fmi4j.modeldescription.jaxb.JaxbModelDescriptionParser;
+import no.ntnu.ihb.fmi4j.modeldescription.fmi2.JaxbModelDescriptionParser;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,9 +15,37 @@ public class TestFMUs {
     }
 
 
+    public static FmiVersion10 fmi10() {
+
+        return new FmiVersion10(new StringBuilder(TestFMUs.getPath()));
+    }
+
     public static FmiVersion20 fmi20() {
 
         return new FmiVersion20(new StringBuilder(TestFMUs.getPath()));
+    }
+
+
+    public static class FmiVersion10 {
+
+        private final StringBuilder sb;
+
+        public FmiVersion10(StringBuilder sb) {
+            this.sb = sb.append("/2.0");
+        }
+
+        public CsType cs() {
+            return new CsType(sb);
+        }
+
+        public MeType me() {
+            return new MeType(sb);
+        }
+
+        public BothType both() {
+            return new BothType(sb);
+        }
+
     }
 
 
@@ -42,6 +71,7 @@ public class TestFMUs {
 
     }
 
+
     public static class BothType {
 
         private final StringBuilder sb;
@@ -51,7 +81,7 @@ public class TestFMUs {
         }
 
         public FmuVendor vendor(String vendor) {
-            sb.append('/').append(vendor);
+            sb.append("/both/").append(vendor);
             return new FmuVendor(sb);
         }
 
@@ -124,7 +154,9 @@ public class TestFMUs {
             this.fmuFile = fmuFile;
         }
 
-        public Fmu fmu() throws IOException { return Fmu.from(fmuFile); }
+        public Fmu fmu() throws IOException {
+            return Fmu.from(fmuFile);
+        }
 
         public ModelDescriptionProvider modelDescription() {
             return JaxbModelDescriptionParser.INSTANCE.parse(fmuFile);

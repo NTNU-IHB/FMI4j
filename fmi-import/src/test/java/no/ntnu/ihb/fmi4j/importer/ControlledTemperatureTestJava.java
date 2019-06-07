@@ -24,9 +24,10 @@
 
 package no.ntnu.ihb.fmi4j.importer;
 
-import no.ntnu.ihb.fmi4j.common.Fmi4jVariableUtils;
-import no.ntnu.ihb.fmi4j.common.FmiStatus;
-import no.ntnu.ihb.fmi4j.common.FmuSlave;
+import no.ntnu.ihb.fmi4j.Fmi4jVariableUtils;
+import no.ntnu.ihb.fmi4j.FmiStatus;
+import no.ntnu.ihb.fmi4j.SlaveInstance;
+import no.ntnu.ihb.fmi4j.importer.fmi2.CoSimulationFmu;
 import no.ntnu.ihb.fmi4j.modeldescription.variables.RealVariable;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
@@ -62,7 +63,7 @@ public class ControlledTemperatureTestJava {
     @Test
     public void test() {
 
-        try (FmuSlave slave = fmu.newInstance()) {
+        try (SlaveInstance slave = fmu.newInstance()) {
 
             Assertions.assertEquals("2.0", slave.getModelDescription().getFmiVersion());
 

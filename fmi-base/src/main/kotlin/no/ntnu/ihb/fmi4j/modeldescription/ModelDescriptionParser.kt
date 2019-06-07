@@ -24,13 +24,13 @@
 
 package no.ntnu.ihb.fmi4j.modeldescription
 
-import java.io.File
-import java.io.FileInputStream
-import java.io.FileNotFoundException
-import java.io.InputStream
+import java.io.*
 import java.net.URL
 import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
+import javax.xml.bind.JAXB
+import javax.xml.bind.annotation.XmlAttribute
+import javax.xml.bind.annotation.XmlRootElement
 
 
 abstract class ModelDescriptionParser {
@@ -63,6 +63,7 @@ abstract class ModelDescriptionParser {
 
         @JvmStatic
         fun extractModelDescriptionXml(file: File): String {
+
             return file.inputStream().use { extractModelDescriptionXml(it) }
         }
 
@@ -81,6 +82,29 @@ abstract class ModelDescriptionParser {
         }
 
 
+        fun extractVersion(url: URL): String {
+            return extractVersion(extractModelDescriptionXml(url))
+        }
+
+        fun extractVersion(file: File): String {
+            return extractVersion(extractModelDescriptionXml(file))
+        }
+
+        fun extractVersion(xml: String): String {
+            return JAXB.unmarshal(StringReader(xml), MockupModelDescription::class.java).fmiVersion
+        }
+
     }
 
 }
+
+@XmlRootElement(name = "fmiModelDescription")
+private class MockupModelDescription {
+    @XmlAttribute(name = "fmiVersion", required = true)
+    private var fmiVersion_: String? = null
+
+    val fmiVersion: String
+        get() = fmiVersion_!!
+
+}
+
