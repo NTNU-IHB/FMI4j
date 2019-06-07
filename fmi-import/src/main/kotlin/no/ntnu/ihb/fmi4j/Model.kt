@@ -29,12 +29,6 @@ import java.io.Closeable
 
 interface Model : Closeable {
 
-    val guid: String
-        get() = modelDescription.guid
-
-    val modelName: String
-        get() = modelDescription.modelName
-
     val modelDescription: ModelDescription
 
     fun newInstance(): SlaveInstance
