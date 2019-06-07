@@ -45,21 +45,17 @@ class ModelExchangeFmu @JvmOverloads constructor(
         fmu.modelDescription.asModelExchangeModelDescription()
     }
 
-    private val libraryCache: Fmi2ModelExchangeLibrary by lazy {
-        loadLibrary()
-    }
-
-    private fun loadLibrary(): Fmi2ModelExchangeLibrary {
+    private val lib: Fmi2ModelExchangeLibrary by lazy {
         val modelIdentifier = modelDescription.attributes.modelIdentifier
         val libName = fmu.getAbsoluteLibraryPath(modelIdentifier)
-        return Fmi2ModelExchangeLibrary(libName).also {
+        Fmi2ModelExchangeLibrary(libName).also {
             fmu.registerLibrary(it)
         }
     }
 
+
     @JvmOverloads
     fun newInstance(visible: Boolean = false, loggingOn: Boolean = false): ModelExchangeInstance {
-        val lib = if (modelDescription.attributes.canBeInstantiatedOnlyOncePerProcess) loadLibrary() else libraryCache
         val c = fmu.instantiate(modelDescription, lib, 0, visible, loggingOn)
         val wrapper = ModelExchangeLibraryWrapper(c, lib)
         return ModelExchangeInstance(wrapper, modelDescription).also {

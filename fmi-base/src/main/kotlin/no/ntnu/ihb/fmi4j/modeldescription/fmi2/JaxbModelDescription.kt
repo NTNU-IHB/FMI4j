@@ -58,7 +58,7 @@ class JaxbModelDescription internal constructor(
     override val generationDateAndTime: String?
         get() = md.generationDateAndTime
     override val defaultExperiment: DefaultExperiment?
-        get() = md.defaultExperiment?.let { it.convert() }
+        get() = md.defaultExperiment?.convert()
     override val modelVariables: ModelVariables
         get() = JaxbModelVariables(md.modelVariables)
     override val modelStructure: ModelStructure
