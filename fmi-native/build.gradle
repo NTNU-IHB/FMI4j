@@ -1,4 +1,3 @@
-
 import org.gradle.internal.jvm.Jvm
 import org.gradle.internal.os.OperatingSystem
 
@@ -47,35 +46,37 @@ if (!project.getProperties().get("skipBuildNative", false)) {
         }
     }
 
-    tasks.register("assembleAllRelease") {
-        dependsOn assembleAllRelease
-    }
+    tasks.register("assembleAllRelease")
 
-    task copyNativeLibs(type: Copy, dependsOn: assembleAllRelease) {
+    tasks.register("copyNativeLibs") { //(type: Copy, dependsOn: assembleAllRelease) {
 
         doLast {
+            copy {
 
-            into "$rootDir/fmi-import/src/main/resources/native/fmi"
+                into "$rootDir/fmi-import/src/main/resources/native/fmi"
 
-            if (OperatingSystem.current().isLinux()) {
-                into("linux64") {
-                    from "$buildDir/lib/main/release/linux/x86-64"
-                    include "*.so"
+                if (OperatingSystem.current().isLinux()) {
+                    into("linux64") {
+                        from "$buildDir/lib/main/release/linux/x86-64"
+                        include "*.so"
+                    }
+                } else if (OperatingSystem.current().isWindows()) {
+                    into("win32") {
+                        from "$buildDir/lib/main/release/windows/x86"
+                        include "*.dll"
+                    }
+                    into("win64") {
+                        from "$buildDir/lib/main/release/windows/x86-64"
+                        include "*.dll"
+                    }
+                } else {
+                    throw new Exception("Unsupported OS: " + OperatingSystem.current().name)
                 }
-            } else if (OperatingSystem.current().isWindows()) {
-                into("win32") {
-                    from "$buildDir/lib/main/release/windows/x86"
-                    include "*.dll"
-                }
-                into("win64") {
-                    from "$buildDir/lib/main/release/windows/x86-64"
-                    include "*.dll"
-                }
-            } else {
-                throw new Exception("Unsupported OS: " + OperatingSystem.current().name)
+
             }
-            
         }
+
+        dependsOn assembleAllRelease
 
     }
 
