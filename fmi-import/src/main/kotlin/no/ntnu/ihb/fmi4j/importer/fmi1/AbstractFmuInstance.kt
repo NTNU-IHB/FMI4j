@@ -187,4 +187,5 @@ abstract class AbstractFmuInstance<out E : CommonModelDescription, out T : Fmi1L
     override fun getDirectionalDerivative(vUnknownRef: ValueReferences, vKnownRef: ValueReferences, dvKnown: RealArray): RealArray {
         throw IllegalStateException("Feature not available for FMI 1.0")
     }
+
 }

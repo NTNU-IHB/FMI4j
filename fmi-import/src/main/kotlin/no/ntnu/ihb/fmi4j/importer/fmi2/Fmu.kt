@@ -66,6 +66,9 @@ class Fmu private constructor(
                 throw IllegalStateException("FMU is invalid, no $MODEL_DESC present!")
             }
         }
+        synchronized(fmus) {
+            fmus.add(this)
+        }
     }
 
     val guid: String
@@ -95,12 +98,6 @@ class Fmu private constructor(
      */
     val supportsModelExchange: Boolean
         get() = modelDescription.supportsModelExchange
-
-    init {
-        synchronized(fmus) {
-            fmus.add(this)
-        }
-    }
 
     fun asCoSimulationFmu(): CoSimulationFmu {
         if (!supportsCoSimulation) {
@@ -187,7 +184,6 @@ class Fmu private constructor(
      * Deletes the temporary folder where the FMU was extracted
      */
     private fun deleteExtractedFmuFolder(): Boolean {
-
         if (extractedFmu.exists()) {
             return extractedFmu.deleteRecursively().also { success ->
                 if (success) {

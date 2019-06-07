@@ -62,6 +62,10 @@ class Fmu private constructor(
                 throw IllegalStateException("FMU is invalid, no $MODEL_DESC present!")
             }
         }
+
+        synchronized(fmus) {
+            fmus.add(this)
+        }
     }
 
     val guid: String
@@ -92,19 +96,12 @@ class Fmu private constructor(
     val supportsModelExchange: Boolean
         get() = modelDescription.supportsModelExchange
 
-    init {
-        synchronized(fmus) {
-            fmus.add(this)
-        }
-    }
-
     fun asCoSimulationFmu(): CoSimulationFmu {
         if (!supportsCoSimulation) {
             throw IllegalStateException("FMU does not support Co-simulation!")
         }
         return coSimulationFmu
     }
-
 
     /**
      * Get the file handle for the modelDescription.xml file
