@@ -34,8 +34,6 @@ import java.util.concurrent.atomic.AtomicBoolean
 
 object FMI4j {
 
-//    val version = "1.20.0"
-
     private val initialized = AtomicBoolean(false)
 
     internal fun init() {
