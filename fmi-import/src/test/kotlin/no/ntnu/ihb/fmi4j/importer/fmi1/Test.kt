@@ -3,11 +3,14 @@ package no.ntnu.ihb.fmi4j.importer.fmi1
 import no.ntnu.ihb.fmi4j.readReal
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.condition.EnabledOnOs
+import org.junit.jupiter.api.condition.OS
 import java.io.File
 
 class Test {
 
     @Test
+    @EnabledOnOs(OS.WINDOWS)
     fun TestFmi1() {
 
         Fmu.from(File(Test::class.java.classLoader.getResource("fmus/1.0/cs/BouncingBall.fmu").file)).use { fmu ->
