@@ -122,4 +122,3 @@ private class MockupModelDescription {
         get() = fmiVersion_!!
 
 }
-

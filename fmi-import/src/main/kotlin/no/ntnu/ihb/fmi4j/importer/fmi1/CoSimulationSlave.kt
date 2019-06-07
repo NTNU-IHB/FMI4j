@@ -62,7 +62,6 @@ class CoSimulationSlave internal constructor(
 
     }
 
-
     override fun terminate(): Boolean {
         return super.terminate(freeInstance = true)
     }
