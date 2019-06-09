@@ -44,7 +44,7 @@ class BouncingBallTest {
 
         LOG.info("Using solver: '${solver.name}'")
 
-        fmu.newInstance(solver, loggingOn = true).use { slave ->
+        fmu.newInstance(solver, loggingOn = false).use { slave ->
 
             val h = slave.modelVariables
                     .getByName("h").asRealVariable()

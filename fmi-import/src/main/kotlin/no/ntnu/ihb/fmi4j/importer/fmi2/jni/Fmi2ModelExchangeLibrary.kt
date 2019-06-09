@@ -112,33 +112,18 @@ class ModelExchangeLibraryWrapper(
     private val enterEventMode = BooleanByReference()
     private val terminateSimulation = BooleanByReference()
 
-    /**
-     * @see Fmi2ModelExchangeLibrary.fmi2SetTime
-     * @param time
-     */
     fun setTime(time: Double): FmiStatus {
         return updateStatus((library.setTime(c, time)))
     }
 
-    /**
-     *
-     * @see Fmi2ModelExchangeLibrary.fmi2SetContinuousStates
-     * @param x state
-     */
     fun setContinuousStates(x: DoubleArray): FmiStatus {
         return updateStatus((library.setContinuousStates(c, x)))
     }
 
-    /**
-     * @see Fmi2ModelExchangeLibrary.fmi2EnterEventMode
-     */
     fun enterEventMode(): FmiStatus {
         return updateStatus((library.enterEventMode(c)))
     }
 
-    /**
-     * @see Fmi2ModelExchangeLibrary.fmi2EnterContinuousTimeMode
-     */
     fun enterContinuousTimeMode(): FmiStatus {
         return updateStatus((library.enterContinuousTimeMode(c)))
     }
@@ -155,34 +140,18 @@ class ModelExchangeLibraryWrapper(
                 terminateSimulation.value)
     }
 
-    /**
-     * @see Fmi2ModelExchangeLibrary.fmi2GetDerivatives
-     * @param derivatives
-     */
     fun getDerivatives(derivatives: DoubleArray): FmiStatus {
         return updateStatus((library.getDerivatives(c, derivatives)))
     }
 
-    /**
-     *
-     * @param eventIndicators
-     */
     fun getEventIndicators(eventIndicators: DoubleArray): FmiStatus {
         return updateStatus((library.getEventIndicators(c, eventIndicators)))
     }
 
-    /**
-     *
-     * @param x
-     */
     fun getContinuousStates(x: DoubleArray): FmiStatus {
         return updateStatus((library.getContinuousStates(c, x)))
     }
 
-    /**
-     *
-     * @param x_nominal
-     */
     fun getNominalsOfContinuousStates(x_nominal: DoubleArray): FmiStatus {
         return updateStatus((library.getNominalsOfContinuousStates(c, x_nominal)))
     }

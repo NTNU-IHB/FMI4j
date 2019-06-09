@@ -55,10 +55,7 @@ abstract class AbstractFmuInstance<out E : CommonModelDescription, out T : Fmi1L
         get() = wrapper.isTerminated
 
     protected var startTime: Double = 0.0
-        private set
-
     protected var stopTime: Double = 0.0
-        private set
 
     protected val stopDefined
         get() = stopTime > startTime
@@ -72,31 +69,6 @@ abstract class AbstractFmuInstance<out E : CommonModelDescription, out T : Fmi1L
     override val lastStatus: FmiStatus
         get() = wrapper.lastStatus
 
-
-    /**
-     * Call init with provided start and stop
-     * @param start the start time
-     * @param stop the stop time
-     *
-     */
-    override fun setup(start: Double, stop: Double, tolerance: Double): Boolean {
-
-        LOG.debug("FMU '${modelDescription.modelName}' setup with start=$start, stop=$stop")
-
-        if (start < 0) {
-            LOG.error("Start must be a positive value, was $start!")
-            return false
-        }
-        startTime = start
-        if (stop > startTime) {
-            stopTime = stop
-        }
-
-        return (wrapper.setup(startTime, stopTime).isOK()).also {
-            simulationTime = start
-        }
-
-    }
 
     override fun enterInitializationMode(): Boolean {
         return true
@@ -115,10 +87,6 @@ abstract class AbstractFmuInstance<out E : CommonModelDescription, out T : Fmi1L
             LOG.debug("FMU '${modelDescription.modelName}' terminated with status $status! #${hashCode()}")
             status.isOK()
         }
-    }
-
-    override fun reset(): Boolean {
-        return wrapper.reset().isOK()
     }
 
     protected fun finalize() {

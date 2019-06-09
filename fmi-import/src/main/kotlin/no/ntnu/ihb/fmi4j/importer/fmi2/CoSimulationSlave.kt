@@ -50,7 +50,7 @@ class CoSimulationSlave internal constructor(
         val tNext = (simulationTime + stepSize)
 
         if (stopDefined && tNext > stopTime) {
-            LOG.warn("Cannot perform step! tNext=$tNext > stopTime=$stopTime")
+            LOG.warn("Cannot perform doStep! tNext=$tNext > stopTime=$stopTime")
             return false
         }
 
