@@ -113,47 +113,47 @@ class ModelExchangeLibraryWrapper(
     private val terminateSimulation = BooleanByReference()
 
     fun setTime(time: Double): FmiStatus {
-        return updateStatus((library.setTime(c, time)))
+        return updateStatus(library.setTime(c, time))
     }
 
     fun setContinuousStates(x: DoubleArray): FmiStatus {
-        return updateStatus((library.setContinuousStates(c, x)))
+        return updateStatus(library.setContinuousStates(c, x))
     }
 
     fun enterEventMode(): FmiStatus {
-        return updateStatus((library.enterEventMode(c)))
+        return updateStatus(library.enterEventMode(c))
     }
 
     fun enterContinuousTimeMode(): FmiStatus {
-        return updateStatus((library.enterContinuousTimeMode(c)))
+        return updateStatus(library.enterContinuousTimeMode(c))
     }
 
     fun newDiscreteStates(eventInfo: EventInfo): FmiStatus {
-        return updateStatus((library.newDiscreteStates(c, eventInfo)))
+        return updateStatus(library.newDiscreteStates(c, eventInfo))
     }
 
     fun completedIntegratorStep(): CompletedIntegratorStepResult {
-        updateStatus((library.completedIntegratorStep(c,
-                true, enterEventMode, terminateSimulation)))
+        updateStatus(library.completedIntegratorStep(c,
+                true, enterEventMode, terminateSimulation))
         return CompletedIntegratorStepResult(
                 enterEventMode.value,
                 terminateSimulation.value)
     }
 
     fun getDerivatives(derivatives: DoubleArray): FmiStatus {
-        return updateStatus((library.getDerivatives(c, derivatives)))
+        return updateStatus(library.getDerivatives(c, derivatives))
     }
 
     fun getEventIndicators(eventIndicators: DoubleArray): FmiStatus {
-        return updateStatus((library.getEventIndicators(c, eventIndicators)))
+        return updateStatus(library.getEventIndicators(c, eventIndicators))
     }
 
     fun getContinuousStates(x: DoubleArray): FmiStatus {
-        return updateStatus((library.getContinuousStates(c, x)))
+        return updateStatus(library.getContinuousStates(c, x))
     }
 
     fun getNominalsOfContinuousStates(x_nominal: DoubleArray): FmiStatus {
-        return updateStatus((library.getNominalsOfContinuousStates(c, x_nominal)))
+        return updateStatus(library.getNominalsOfContinuousStates(c, x_nominal))
     }
 
 }

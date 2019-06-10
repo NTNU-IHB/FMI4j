@@ -25,7 +25,6 @@
 package no.ntnu.ihb.fmi4j.importer.fmi2
 
 import no.ntnu.ihb.fmi4j.Model
-import no.ntnu.ihb.fmi4j.SlaveInstance
 import no.ntnu.ihb.fmi4j.importer.fmi2.jni.Fmi2ModelExchangeLibrary
 import no.ntnu.ihb.fmi4j.importer.fmi2.jni.ModelExchangeLibraryWrapper
 import no.ntnu.ihb.fmi4j.modeldescription.ModelExchangeModelDescription
@@ -45,21 +44,16 @@ class ModelExchangeFmu @JvmOverloads constructor(
         fmu.modelDescription.asModelExchangeModelDescription()
     }
 
-    private val libraryCache: Fmi2ModelExchangeLibrary by lazy {
-        loadLibrary()
-    }
-
-    private fun loadLibrary(): Fmi2ModelExchangeLibrary {
+    private val lib: Fmi2ModelExchangeLibrary by lazy {
         val modelIdentifier = modelDescription.attributes.modelIdentifier
         val libName = fmu.getAbsoluteLibraryPath(modelIdentifier)
-        return Fmi2ModelExchangeLibrary(libName).also {
+        Fmi2ModelExchangeLibrary(libName).also {
             fmu.registerLibrary(it)
         }
     }
 
     @JvmOverloads
     fun newInstance(visible: Boolean = false, loggingOn: Boolean = false): ModelExchangeInstance {
-        val lib = if (modelDescription.attributes.canBeInstantiatedOnlyOncePerProcess) loadLibrary() else libraryCache
         val c = fmu.instantiate(modelDescription, lib, 0, visible, loggingOn)
         val wrapper = ModelExchangeLibraryWrapper(c, lib)
         return ModelExchangeInstance(wrapper, modelDescription).also {
@@ -67,7 +61,7 @@ class ModelExchangeFmu @JvmOverloads constructor(
         }
     }
 
-    override fun newInstance(): SlaveInstance {
+    override fun newInstance(): ModelExchangeFmuStepper {
         val solver = solver ?: throw IllegalStateException("Class instantiated with no solver!")
         return newInstance(solver, visible = false, loggingOn = false)
     }

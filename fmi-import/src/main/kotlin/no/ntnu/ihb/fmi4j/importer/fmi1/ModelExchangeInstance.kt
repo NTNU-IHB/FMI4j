@@ -28,6 +28,7 @@ import no.ntnu.ihb.fmi4j.FmiStatus
 import no.ntnu.ihb.fmi4j.importer.fmi1.jni.EventInfo
 import no.ntnu.ihb.fmi4j.importer.fmi1.jni.ModelExchangeLibraryWrapper
 import no.ntnu.ihb.fmi4j.modeldescription.ModelExchangeModelDescription
+import no.ntnu.ihb.fmi4j.modeldescription.ValueReferences
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -67,7 +68,7 @@ open class ModelExchangeInstance internal constructor(
     }
 
     override fun reset(): Boolean {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        throw IllegalStateException("Reset not supported by FMI 1.0 for Model Exchange")
     }
 
     fun setTime(time: Double): FmiStatus {
@@ -80,33 +81,15 @@ open class ModelExchangeInstance internal constructor(
 
     fun completedIntegratorStep() = wrapper.completedIntegratorStep()
 
-    /**
-     * @see ModelExchangeLibraryWrapper.getDerivatives
-     *
-     * @param derivatives
-     */
     fun getDerivatives(derivatives: DoubleArray) = wrapper.getDerivatives(derivatives)
 
-    /**
-     * @see ModelExchangeLibraryWrapper.getEventIndicators
-     *
-     * @param eventIndicators
-     */
     fun getEventIndicators(eventIndicators: DoubleArray) = wrapper.getEventIndicators(eventIndicators)
 
-    /**
-     * @see ModelExchangeLibraryWrapper.getContinuousStates
-     *
-     * @param x
-     */
     fun getContinuousStates(x: DoubleArray) = wrapper.getContinuousStates(x)
 
-    /**
-     * @see ModelExchangeLibraryWrapper.getNominalsOfContinuousStates
-     *
-     * @param x_nominal
-     */
-    fun getNominalsOfContinuousStates(x_nominal: DoubleArray) = wrapper.getNominalsOfContinuousStates(x_nominal)
+    fun getNominalsOfContinuousStates(xNominal: DoubleArray) = wrapper.getNominalsOfContinuousStates(xNominal)
+
+    fun getStateValueReferences(vrx: ValueReferences) = wrapper.getStateValueReferences(vrx)
 
     private companion object {
 

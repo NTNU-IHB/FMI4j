@@ -30,18 +30,12 @@ import no.ntnu.ihb.fmi4j.importer.fmi1.jni.CoSimulationLibraryWrapper
 import no.ntnu.ihb.fmi4j.importer.fmi1.jni.Fmi1CoSimulationLibrary
 import no.ntnu.ihb.fmi4j.modeldescription.CoSimulationModelDescription
 import no.ntnu.ihb.fmi4j.modeldescription.CommonModelDescription
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import java.io.Closeable
 
 
 class CoSimulationFmu(
         private val fmu: Fmu
 ) : Model, Closeable by fmu {
-
-    private companion object {
-        val LOG: Logger = LoggerFactory.getLogger(CoSimulationFmu::class.java)
-    }
 
     override val modelDescription: CoSimulationModelDescription by lazy {
         fmu.modelDescription.asCoSimulationModelDescription()
@@ -55,9 +49,8 @@ class CoSimulationFmu(
         }
     }
 
-    internal fun instantiate(modelDescription: CommonModelDescription, library: Fmi1CoSimulationLibrary, visible: Boolean, interactive: Boolean, loggingOn: Boolean): Long {
-        LOG.trace("Calling instantiate: visible=$visible, interactive=$interactive, loggingOn=$loggingOn")
-        return library.instantiateSlave(modelDescription.attributes.modelIdentifier,
+    private fun instantiate(modelDescription: CommonModelDescription, visible: Boolean, interactive: Boolean, loggingOn: Boolean): Long {
+        return lib.instantiateSlave(modelDescription.attributes.modelIdentifier,
                 modelDescription.guid, fmu.fmuPath, visible, interactive, loggingOn)
     }
 
@@ -66,7 +59,7 @@ class CoSimulationFmu(
     }
 
     fun newInstance(visible: Boolean = false, interactive: Boolean = false, loggingOn: Boolean = false): CoSimulationSlave {
-        val c = instantiate(modelDescription, lib, visible, interactive, loggingOn)
+        val c = instantiate(modelDescription, visible, interactive, loggingOn)
         val wrapper = CoSimulationLibraryWrapper(c, lib)
         return CoSimulationSlave(wrapper, modelDescription).also {
             fmu.registerInstance(it)

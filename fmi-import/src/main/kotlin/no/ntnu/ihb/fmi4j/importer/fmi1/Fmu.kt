@@ -51,12 +51,34 @@ class Fmu private constructor(
     private val libraries = mutableListOf<Fmi1Library>()
     private val instances = mutableListOf<AbstractFmuInstance<*, *>>()
 
+    private val coSimulationFmu by lazy {
+        CoSimulationFmu(this)
+    }
+
+    private val modelExchangeFmu by lazy {
+        ModelExchangeFmu(this)
+    }
+
     override val modelDescription: ModelDescriptionProvider by lazy {
         JaxbModelDescriptionParser.parse(modelDescriptionXml)
     }
 
     internal val fmuPath: String
         get() = "file:///${extractedFmu.absolutePath.replace("\\", "/")}"
+
+    override fun asCoSimulationFmu(): CoSimulationFmu {
+        if (!supportsCoSimulation) {
+            throw IllegalStateException("FMU does not support Co-simulation!")
+        }
+        return coSimulationFmu
+    }
+
+    override fun asModelExchangeFmu(): ModelExchangeFmu {
+        if (!supportsModelExchange) {
+            throw IllegalStateException("FMU does not support Model Exchange!")
+        }
+        return modelExchangeFmu
+    }
 
     /**
      * Get the absolute name of the native library on the form "C://folder/name.extension"

@@ -24,21 +24,23 @@
 
 package no.ntnu.ihb.fmi4j.importer.fmi1
 
+import no.ntnu.ihb.fmi4j.Model
+import no.ntnu.ihb.fmi4j.SlaveInstance
 import no.ntnu.ihb.fmi4j.importer.fmi1.jni.Fmi1ModelExchangeLibrary
+import no.ntnu.ihb.fmi4j.importer.fmi1.jni.FmiComponent
+import no.ntnu.ihb.fmi4j.importer.fmi1.jni.ModelExchangeLibraryWrapper
 import no.ntnu.ihb.fmi4j.modeldescription.ModelExchangeModelDescription
-import no.ntnu.ihb.fmi4j.solvers.Solver
 import java.io.Closeable
 
 /**
  *
  * @author Lars Ivar Hatledal
  */
-class ModelExchangeFmu @JvmOverloads constructor(
-        private val fmu: Fmu,
-        private val solver: Solver? = null
-) : Closeable by fmu {
+class ModelExchangeFmu(
+        private val fmu: Fmu
+) : Model, Closeable by fmu {
 
-    val modelDescription: ModelExchangeModelDescription by lazy {
+    override val modelDescription: ModelExchangeModelDescription by lazy {
         fmu.modelDescription.asModelExchangeModelDescription()
     }
 
@@ -50,19 +52,22 @@ class ModelExchangeFmu @JvmOverloads constructor(
         }
     }
 
-//    @JvmOverloads
-//    fun newInstance(visible: Boolean = false, loggingOn: Boolean = false): ModelExchangeInstance {
-//        val c = fmu.instantiate(modelDescription, lib, 0, visible, loggingOn)
-//        val wrapper = ModelExchangeLibraryWrapper(c, lib)
-//        return ModelExchangeInstance(wrapper, modelDescription).also {
-//            fmu.registerInstance(it)
-//        }
-//    }
+    private fun instantiate(loggingOn: Boolean): FmiComponent {
+        return lib.instantiateModel(modelDescription.attributes.modelIdentifier, modelDescription.guid, loggingOn)
+    }
 
-//    override fun newInstance(): SlaveInstance {
-//        val solver = solver ?: throw IllegalStateException("Class instantiated with no solver!")
-//        return newInstance(solver, visible = false, loggingOn = false)
-//    }
+    @JvmOverloads
+    fun newInstance(loggingOn: Boolean = false): ModelExchangeInstance {
+        val c = instantiate(loggingOn)
+        val wrapper = ModelExchangeLibraryWrapper(c, lib)
+        return ModelExchangeInstance(wrapper, modelDescription).also {
+            fmu.registerInstance(it)
+        }
+    }
+
+    override fun newInstance(): SlaveInstance {
+        throw IllegalStateException("Not supported (yet)")
+    }
 
 //    fun newInstance(solver: Solver): ModelExchangeFmuStepper {
 //        return newInstance(solver, visible = false, loggingOn = false)
