@@ -93,20 +93,21 @@ class FmuInstance {
 
     public:
 
-        fmiCallbackFunctions callback_ = {
+        fmiMeCallbackFunctions meCallback_ = {
+            logger, calloc, free
+        };
+
+        fmiCsCallbackFunctions csCallback_ = {
             logger, calloc, free, NULL
         };
 
         DLL_HANDLE handle_;
 
+        /*common functions*/
         fmiGetVersionTYPE *fmiGetVersion_;
         fmiGetTypesPlatformTYPE *fmiGetTypesPlatform_;
-
-        fmiInstantiateSlaveTYPE *fmiInstantiateSlave_;
-        fmiInitializeSlaveTYPE *fmiInitializeSlave_;
-
-        fmiResetSlaveTYPE *fmiResetSlave_;
-        fmiTerminateSlaveTYPE *fmiTerminateSlave_;
+        
+        fmiSetDebugLoggingTYPE* fmiSetDebugLogging_;
 
         fmiGetIntegerTYPE *fmiGetInteger_;
         fmiGetRealTYPE *fmiGetReal_;
@@ -118,13 +119,37 @@ class FmuInstance {
         fmiSetStringTYPE *fmiSetString_;
         fmiSetBooleanTYPE *fmiSetBoolean_;
 
-        fmiFreeSlaveInstanceTYPE *fmiFreeSlaveInstance_;
+        /*Co-simulation*/
+        fmiInstantiateSlaveTYPE *fmiInstantiateSlave_;
+        fmiInitializeSlaveTYPE *fmiInitializeSlave_;
 
         fmiSetRealInputDerivativesTYPE *fmiSetRealInputDerivatives_;
         fmiGetRealOutputDerivativesTYPE *fmiGetRealOutputDerivatives_;
 
         fmiDoStepTYPE *fmiDoStep_;
-        fmiCancelStepTYPE *fmiCancelStep_;
+        fmiResetSlaveTYPE *fmiResetSlave_;
+
+        fmiTerminateSlaveTYPE *fmiTerminateSlave_;
+        fmiFreeSlaveInstanceTYPE *fmiFreeSlaveInstance_;
+
+        /*Model Exchange*/
+        fmiInstantiateModelTYPE *fmiInstantiateModel_;
+        fmiInitializeTYPE *fmiInitialize_;
+
+        fmiGetDerivativesTYPE *fmiGetDerivatives_;
+        fmiGetEventIndicatorsTYPE *fmiGetEventIndicators_;
+
+        fmiSetTimeTYPE *fmiSetTime_;
+        fmiSetContinuousStatesTYPE *fmiSetContinuousStates_;
+        fmiCompletedIntegratorStepTYPE *fmiCompletedIntegratorStep_;
+
+        fmiEventUpdateTYPE *fmiEventUpdate_;
+        fmiGetContinuousStatesTYPE *fmiGetContinuousStates_;
+        fmiGetNominalContinuousStatesTYPE *fmiGetNominalContinuousStates_;
+        fmiGetStateValueReferencesTYPE *fmiGetStateValueReferences_;
+
+        fmiTerminateTYPE *fmiTerminate_;
+        fmiFreeModelInstanceTYPE *fmiFreeModelInstance_;
 
         explicit FmuInstance(const char* libName, std::string modelIdentifier) {
             handle_ = load_library(libName);
@@ -132,11 +157,7 @@ class FmuInstance {
             fmiGetVersion_ = load_function<fmiGetVersionTYPE *>(handle_, full_function_name(modelIdentifier, "_fmiGetVersion"));
             fmiGetTypesPlatform_ = load_function<fmiGetTypesPlatformTYPE *>(handle_,  full_function_name(modelIdentifier, "fmiGetTypesPlatform"));
 
-            fmiInstantiateSlave_ = load_function<fmiInstantiateSlaveTYPE *>(handle_,  full_function_name(modelIdentifier, "fmiInstantiateSlave"));
-            fmiInitializeSlave_ = load_function<fmiInitializeSlaveTYPE *>(handle_,  full_function_name(modelIdentifier, "fmiInitializeSlave"));
-
-            fmiResetSlave_ = load_function<fmiResetSlaveTYPE *>(handle_,  full_function_name(modelIdentifier, "fmiResetSlave"));
-            fmiTerminateSlave_ = load_function<fmiTerminateSlaveTYPE *>(handle_,  full_function_name(modelIdentifier, "fmiTerminateSlave"));
+            fmiSetDebugLogging_ = load_function<fmiSetDebugLoggingTYPE *>(handle_, full_function_name(modelIdentifier, "fmiSetDebugLogging"));
 
             fmiGetInteger_ = load_function<fmiGetIntegerTYPE *>(handle_, full_function_name(modelIdentifier, "fmiGetInteger"));
             fmiGetReal_ = load_function<fmiGetRealTYPE *>(handle_, full_function_name(modelIdentifier, "fmiGetReal"));
@@ -148,13 +169,36 @@ class FmuInstance {
             fmiSetString_ = load_function<fmiSetStringTYPE *>(handle_, full_function_name(modelIdentifier, "fmiSetString"));
             fmiSetBoolean_ = load_function<fmiSetBooleanTYPE *>(handle_, full_function_name(modelIdentifier, "fmiSetBoolean"));
 
-            fmiFreeSlaveInstance_ = load_function<fmiFreeSlaveInstanceTYPE *>(handle_,  full_function_name(modelIdentifier, "fmiFreeSlaveInstance"));
+            /*Co simulation*/
+            fmiInstantiateSlave_ = load_function<fmiInstantiateSlaveTYPE *>(handle_,  full_function_name(modelIdentifier, "fmiInstantiateSlave"));
+            fmiInitializeSlave_ = load_function<fmiInitializeSlaveTYPE *>(handle_,  full_function_name(modelIdentifier, "fmiInitializeSlave"));
 
             fmiSetRealInputDerivatives_ = load_function<fmiSetRealInputDerivativesTYPE *>(handle_, full_function_name(modelIdentifier, "fmiSetRealInputDerivatives"));
             fmiGetRealOutputDerivatives_ = load_function<fmiGetRealOutputDerivativesTYPE *>(handle_, full_function_name(modelIdentifier, "fmiGetRealOutputDerivatives"));
 
             fmiDoStep_ = load_function<fmiDoStepTYPE *>(handle_, full_function_name(modelIdentifier, "fmiDoStep"));
-            fmiCancelStep_ = load_function<fmiCancelStepTYPE *>(handle_, full_function_name(modelIdentifier, "fmiCancelStep"));
+            fmiResetSlave_ = load_function<fmiResetSlaveTYPE *>(handle_,  full_function_name(modelIdentifier, "fmiResetSlave"));
+
+            fmiTerminateSlave_ = load_function<fmiTerminateSlaveTYPE *>(handle_,  full_function_name(modelIdentifier, "fmiTerminateSlave"));
+            fmiFreeSlaveInstance_ = load_function<fmiFreeSlaveInstanceTYPE *>(handle_,  full_function_name(modelIdentifier, "fmiFreeSlaveInstance"));
+
+            /*Model Exchange*/
+            fmiInstantiateModel_ = load_function<fmiInstantiateModelTYPE *>(handle_,  full_function_name(modelIdentifier, "fmiInstantiateModel"));
+            fmiInitialize_ = load_function<fmiInitializeTYPE *>(handle_,  full_function_name(modelIdentifier, "fmiInitialize"));
+
+            fmiGetDerivatives_ = load_function<fmiGetDerivativesTYPE *>(handle_, full_function_name(modelIdentifier, "fmiGetDerivatives"));
+            fmiGetEventIndicators_ = load_function<fmiGetEventIndicatorsTYPE *>(handle_, full_function_name(modelIdentifier, "fmiGetEventIndicators"));
+
+            fmiSetTime_ = load_function<fmiSetTimeTYPE *>(handle_, full_function_name(modelIdentifier, "fmiSetTime"));
+            fmiSetContinuousStates_ = load_function<fmiSetContinuousStatesTYPE *>(handle_, full_function_name(modelIdentifier, "fmiSetContinuousStates"));
+
+            fmiGetContinuousStates_ = load_function<fmiGetContinuousStatesTYPE *>(handle_, full_function_name(modelIdentifier, "fmiGetContinuousStates"));
+            fmiGetNominalContinuousStates_ = load_function<fmiGetNominalContinuousStatesTYPE *>(handle_, full_function_name(modelIdentifier, "fmiGetNominalContinuousStates"));
+            fmiCompletedIntegratorStep_ = load_function<fmiCompletedIntegratorStepTYPE *>(handle_, full_function_name(modelIdentifier, "fmiCompletedIntegratorStep"));
+            fmiGetStateValueReferences_ = load_function<fmiGetStateValueReferencesTYPE *>(handle_, full_function_name(modelIdentifier, "fmiGetStateValueReferences"));
+
+            fmiTerminate_ = load_function<fmiTerminateTYPE *>(handle_,  full_function_name(modelIdentifier, "fmiTerminate"));
+            fmiFreeModelInstance_ = load_function<fmiFreeModelInstanceTYPE *>(handle_,  full_function_name(modelIdentifier, "fmiFreeModelInstance"));
 
         };
 

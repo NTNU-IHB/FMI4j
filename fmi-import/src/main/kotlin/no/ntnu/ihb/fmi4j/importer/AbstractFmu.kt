@@ -24,8 +24,9 @@
 
 package no.ntnu.ihb.fmi4j.importer
 
-import no.ntnu.ihb.fmi4j.modeldescription.ModelDescription
+import no.ntnu.ihb.fmi4j.Model
 import no.ntnu.ihb.fmi4j.modeldescription.ModelDescriptionParser
+import no.ntnu.ihb.fmi4j.modeldescription.ModelDescriptionProvider
 import no.ntnu.ihb.fmi4j.util.extractContentTo
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -48,13 +49,26 @@ abstract class AbstractFmu internal constructor(
 
     private var isClosed = AtomicBoolean(false)
 
-    abstract val modelDescription: ModelDescription
+    abstract val modelDescription: ModelDescriptionProvider
 
     /**
      * Get the content of the modelDescription.xml file as a String
      */
     val modelDescriptionXml: String
         get() = modelDescriptionFile.readText()
+
+
+    /**
+     * Does the FMU support Co-simulation?
+     */
+    val supportsCoSimulation: Boolean
+        get() = modelDescription.supportsCoSimulation
+
+    /**
+     * Does the FMU support Model Exchange?
+     */
+    val supportsModelExchange: Boolean
+        get() = modelDescription.supportsModelExchange
 
     /**
      * Get the file handle for the modelDescription.xml file
@@ -74,6 +88,15 @@ abstract class AbstractFmu internal constructor(
         }
     }
 
+    abstract fun asCoSimulationFmu(): Model
+
+    abstract fun asModelExchangeFmu(): Model
+
+
+    protected abstract fun terminateInstances()
+
+    protected abstract fun disposeNativeLibraries()
+
     /**
      * Deletes the temporary folder where the FMU was extracted
      */
@@ -91,10 +114,6 @@ abstract class AbstractFmu internal constructor(
         return true
     }
 
-
-    protected abstract fun terminateInstances()
-
-    protected abstract fun disposeNativeLibraries()
 
     override fun close() {
         if (!isClosed.getAndSet(true)) {

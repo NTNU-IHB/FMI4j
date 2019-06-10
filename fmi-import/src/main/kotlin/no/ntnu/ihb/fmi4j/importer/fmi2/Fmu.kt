@@ -62,35 +62,24 @@ class Fmu internal constructor(
         JaxbModelDescriptionParser.parse(modelDescriptionXml)
     }
 
-    /**
-     * Does the FMU support Co-simulation?
-     */
-    val supportsCoSimulation: Boolean
-        get() = modelDescription.supportsCoSimulation
+    private val resourcesPath: String
+        get() = "file:///${File(extractedFmu, RESOURCES_FOLDER)
+                .absolutePath.replace("\\", "/")}"
 
-    /**
-     * Does the FMU support Model Exchange?
-     */
-    val supportsModelExchange: Boolean
-        get() = modelDescription.supportsModelExchange
 
-    fun asCoSimulationFmu(): CoSimulationFmu {
+    override fun asCoSimulationFmu(): CoSimulationFmu {
         if (!supportsCoSimulation) {
             throw IllegalStateException("FMU does not support Co-simulation!")
         }
         return coSimulationFmu
     }
 
-    fun asModelExchangeFmu(): ModelExchangeFmu {
+    override fun asModelExchangeFmu(): ModelExchangeFmu {
         if (!supportsModelExchange) {
             throw IllegalStateException("FMU does not support Model Exchange!")
         }
         return modelExchangeFmu
     }
-
-    private val resourcesPath: String
-        get() = "file:///${File(extractedFmu, RESOURCES_FOLDER)
-                .absolutePath.replace("\\", "/")}"
 
     /**
      * Get the absolute name of the native library on the form "C://folder/name.extension"

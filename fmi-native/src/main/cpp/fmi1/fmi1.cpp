@@ -57,50 +57,11 @@ JNIEXPORT jstring JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi1_jni_Fmi1Library_g
     return env->NewStringUTF(platform);
 }
 
-
-JNIEXPORT jlong JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi1_jni_Fmi1Library_instantiate(JNIEnv *env, jobject obj, jlong p, jstring instanceName, jstring guid,  jstring fmuLocation, jstring mimeType, jdouble timeout, jboolean visible, jboolean interactive, jboolean loggingOn) {
-
+JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi1_jni_Fmi1Library_setDebugLogging(JNIEnv *env, jobject obj, jlong p, jlong c, jboolean loggingOn) {
     FmuInstance* fmu = (FmuInstance*) p;
-
-    const char* _instanceName = env->GetStringUTFChars(instanceName, 0);
-    const char* _guid = env->GetStringUTFChars(guid, 0);
-    const char* _fmuLocation = env->GetStringUTFChars(fmuLocation, 0);
-    const char* _mimeType = env->GetStringUTFChars(mimeType, 0);
-
-    fmiInstantiateSlaveTYPE* fmiInstantiate = fmu->fmiInstantiateSlave_;
-    fmiComponent c = (*fmiInstantiate)(_instanceName, _guid, _fmuLocation, _mimeType, timeout, (fmiBoolean) visible, (fmiBoolean) interactive, fmu->callback_, (fmiBoolean) loggingOn);
-
-    env->ReleaseStringUTFChars(instanceName, _instanceName);
-    env->ReleaseStringUTFChars(guid, _guid);
-    env->ReleaseStringUTFChars(fmuLocation, _fmuLocation);
-    env->ReleaseStringUTFChars(mimeType, _mimeType);
-
-    return (jlong) c;
-}
-
-JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi1_jni_Fmi1Library_setup(JNIEnv *env, jobject obj, jlong p, jlong c, jdouble startTime, jdouble stopTime) {
-    FmuInstance* fmu = (FmuInstance*) p;
-    fmiBoolean stopTimeDefined = stopTime > startTime;
-    fmiInitializeSlaveTYPE* fmiSetup = fmu->fmiInitializeSlave_;
-    return (*fmiSetup)((void*) c, startTime, stopTimeDefined, stopTime);
-}
-
-JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi1_jni_Fmi1Library_terminate(JNIEnv *env, jobject obj, jlong p, jlong c) {
-    FmuInstance* fmu = (FmuInstance*) p;
-    fmiTerminateSlaveTYPE* fmiTerminate = fmu->fmiTerminateSlave_;
-    return (*fmiTerminate)((void*) c);
-}
-
-JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi1_jni_Fmi1Library_reset(JNIEnv *env, jobject obj, jlong p, jlong c) {
-    FmuInstance* fmu = (FmuInstance*) p;
-    fmiResetSlaveTYPE* fmiReset = fmu->fmiResetSlave_;
-    return (*fmiReset)((void*) c);
-}
-
-JNIEXPORT void JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi1_jni_Fmi1Library_freeInstance(JNIEnv *env, jobject obj, jlong p, jlong c) {
-    FmuInstance* fmu = (FmuInstance*) p;
-    fmiFreeSlaveInstanceTYPE* fmiFreeInstance = fmu->fmiFreeSlaveInstance_;
-    (*fmiFreeInstance)((void*) c);
+    fmiSetDebugLoggingTYPE* fmiSetDebugLogging = fmu->fmiSetDebugLogging_;
+    fmiStatus status = (*fmiSetDebugLogging)((void*) c, (fmiBoolean) loggingOn);
+    return status;
 }
 
 JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi1_jni_Fmi1Library_getInteger(JNIEnv *env, jobject obj, jlong p, jlong c, jlongArray vr, jintArray ref) {
@@ -282,17 +243,195 @@ JNIEXPORT jboolean JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi1_jni_Fmi1Library_
     return status;
 }
 
-JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi1_jni_Fmi1CoSimulationLibrary_step(JNIEnv *env, jobject obj, jlong p, jlong c, jdouble currentCommunicationPoint, jdouble communicationStepSize, jboolean newStep) {
+
+/***************************************************
+Functions for FMI for Model Exchange
+****************************************************/
+JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi1_jni_Fmi1ModelExchangeLibrary_instantiateModel(JNIEnv *env, jobject obj, jlong p, jstring instanceName, jstring guid, jboolean loggingOn) {
+    FmuInstance* fmu = (FmuInstance*) p;
+
+    const char* _instanceName = env->GetStringUTFChars(instanceName, 0);
+    const char* _guid = env->GetStringUTFChars(guid, 0);
+
+    fmiInstantiateModelTYPE* fmiInstantiate = fmu->fmiInstantiateModel_;
+    fmiComponent c = (*fmiInstantiate)(_instanceName, _guid, fmu->meCallback_, (fmiBoolean) loggingOn);
+
+    env->ReleaseStringUTFChars(instanceName, _instanceName);
+    env->ReleaseStringUTFChars(guid, _guid);
+
+    return (jlong) c;
+}
+
+JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi1_jni_Fmi1ModelExchangeLibrary_setTime(JNIEnv *env, jobject obj, jlong p, jlong c, jdouble time) {
+    FmuInstance* fmu = (FmuInstance*) p;
+    fmiSetTimeTYPE* fmiSetTime = fmu->fmiSetTime_;
+    return (*fmiSetTime)((void*) c, time);
+}
+
+JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi1_jni_Fmi1ModelExchangeLibrary_setContinuousStates(JNIEnv *env, jobject obj, jlong p, jlong c, jdoubleArray x) {
+
+    FmuInstance* fmu = (FmuInstance*) p;
+
+    const jsize size = env->GetArrayLength(x);
+    jdouble* _x = env->GetDoubleArrayElements(x, 0);
+
+    fmiSetContinuousStatesTYPE* fmiSetContinuousStates = fmu->fmiSetContinuousStates_;
+    fmiStatus status = (*fmiSetContinuousStates)((void*) c, _x, size);
+
+    env->ReleaseDoubleArrayElements(x, _x, 0);
+
+    return status;
+}
+
+
+JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi1_jni_Fmi1ModelExchangeLibrary_getDerivatives(JNIEnv *env, jobject obj, jlong p, jlong c, jdoubleArray derivatives) {
+
+    FmuInstance* fmu = (FmuInstance*) p;
+
+    const jsize size = env->GetArrayLength(derivatives);
+    fmiReal* _derivatives = (fmiReal*) malloc(sizeof(fmiReal) * size);
+
+    fmiGetDerivativesTYPE* fmiGetDerivatives = fmu->fmiGetDerivatives_;
+    fmiStatus status = (*fmiGetDerivatives)((void*) c, _derivatives, size);
+
+    env->SetDoubleArrayRegion(derivatives, 0, size, _derivatives);
+    free(_derivatives);
+
+    return status;
+}
+
+JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi_jni_Fmi1ModelExchangeLibrary_getEventIndicators(JNIEnv *env, jobject obj, jlong p, jlong c, jdoubleArray eventIndicators) {
+
+    FmuInstance* fmu = (FmuInstance*) p;
+
+    const jsize size = env->GetArrayLength(eventIndicators);
+    fmiReal* _eventIndicators = (fmiReal*) malloc(sizeof(fmiReal) * size);
+
+    fmiGetEventIndicatorsTYPE* fmiGetEventIndicators = fmu->fmiGetEventIndicators_;
+    fmiStatus status = (*fmiGetEventIndicators)((void*) c, _eventIndicators, size);
+
+    env->SetDoubleArrayRegion(eventIndicators, 0, size, _eventIndicators);
+    free(_eventIndicators);
+
+    return status;
+}
+
+JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi1_jni_Fmi1ModelExchangeLibrary_getContinuousStates(JNIEnv *env, jobject obj, jlong p, jlong c, jdoubleArray x) {
+
+    FmuInstance* fmu = (FmuInstance*) p;
+
+    const jsize size = env->GetArrayLength(x);
+    fmiReal* _x = (fmiReal*) malloc(sizeof(fmiReal) * size);
+
+    fmiGetContinuousStatesTYPE* fmiGetContinuousStates = fmu->fmiGetContinuousStates_;
+    fmiStatus status = (*fmiGetContinuousStates)((void*) c, _x, size);
+
+    env->SetDoubleArrayRegion(x, 0, size, _x);
+    free(_x);
+
+    return status;
+}
+
+JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi1_jni_Fmi1ModelExchangeLibrary_getNominalContinuousStates(JNIEnv *env, jobject obj, jlong p, jlong c, jdoubleArray xNominal) {
+
+    FmuInstance* fmu = (FmuInstance*) p;
+
+    const jsize size = env->GetArrayLength(xNominal);
+    fmiReal* _xNominal = (fmiReal*) malloc(sizeof(fmiReal) * size);
+
+    fmiGetNominalContinuousStatesTYPE* fmiGetNominalContinuousStates = fmu->fmiGetNominalContinuousStates_;
+    fmiStatus status = (*fmiGetNominalContinuousStates)((void*) c, _xNominal, size);
+
+    env->SetDoubleArrayRegion(xNominal, 0, size, _xNominal);
+    free(_xNominal);
+
+    return status;
+}
+
+JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi1_jni_Fmi1ModelExchangeLibrary_getStateValueReferences(JNIEnv *env, jobject obj, jlong p, jlong c, jlongArray vrx) {
+
+    FmuInstance* fmu = (FmuInstance*) p;
+
+    const jsize size = env->GetArrayLength(vrx);
+    jlong* _vrx = (jlong*) malloc(sizeof(jlong) * size);
+
+    fmiGetStateValueReferencesTYPE* fmiGetStateValueReferences = fmu->fmiGetStateValueReferences_;
+    fmiStatus status = (*fmiGetStateValueReferences)((void*) c, (fmiValueReference*)_vrx, size);
+
+    env->SetLongArrayRegion(vrx, 0, size, _vrx);
+    free(_vrx);
+
+    return status;
+}
+
+JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi1_jni_Fmi1ModelExchangeLibrary_terminate(JNIEnv *env, jobject obj, jlong p, jlong c) {
+    FmuInstance* fmu = (FmuInstance*) p;
+    fmiTerminateTYPE* fmiTerminate = fmu->fmiTerminate_;
+    return (*fmiTerminate)((void*) c);
+}
+
+JNIEXPORT void JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi1_jni_Fmi1ModelExchangeLibrary_freeModelInstance(JNIEnv *env, jobject obj, jlong p, jlong c) {
+    FmuInstance* fmu = (FmuInstance*) p;
+    fmiFreeModelInstanceTYPE* fmiFreeInstance = fmu->fmiFreeModelInstance_;
+    (*fmiFreeInstance)((void*) c);
+}
+
+
+
+/***************************************************
+Functions for FMI for Co-Simulation
+****************************************************/
+
+JNIEXPORT jlong JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi1_jni_Fmi1CoSimulationLibrary_instantiateSlave(JNIEnv *env, jobject obj, jlong p, jstring instanceName, jstring guid, jstring fmuLocation, jboolean visible, jboolean interactive, jboolean loggingOn) {
+
+    FmuInstance* fmu = (FmuInstance*) p;
+
+    const char* _instanceName = env->GetStringUTFChars(instanceName, 0);
+    const char* _guid = env->GetStringUTFChars(guid, 0);
+    const char* _fmuLocation = env->GetStringUTFChars(fmuLocation, 0);
+
+    fmiInstantiateSlaveTYPE* fmiInstantiate = fmu->fmiInstantiateSlave_;
+    fmiComponent c = (*fmiInstantiate)(_instanceName, _guid, _fmuLocation, "application/x-fmu-sharedlibrary", 0, (fmiBoolean) visible, (fmiBoolean) interactive, fmu->csCallback_, (fmiBoolean) loggingOn);
+
+    env->ReleaseStringUTFChars(instanceName, _instanceName);
+    env->ReleaseStringUTFChars(guid, _guid);
+    env->ReleaseStringUTFChars(fmuLocation, _fmuLocation);
+
+    return (jlong) c;
+}
+
+JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi1_jni_Fmi1CoSimulationLibrary_initializeSlave(JNIEnv *env, jobject obj, jlong p, jlong c, jdouble startTime, jdouble stopTime) {
+    FmuInstance* fmu = (FmuInstance*) p;
+    fmiBoolean stopTimeDefined = stopTime > startTime;
+    fmiInitializeSlaveTYPE* fmiSetup = fmu->fmiInitializeSlave_;
+    return (*fmiSetup)((void*) c, startTime, stopTimeDefined, stopTime);
+}
+
+JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi1_jni_Fmi1CoSimulationLibrary_doStep(JNIEnv *env, jobject obj, jlong p, jlong c, jdouble currentCommunicationPoint, jdouble communicationStepSize, jboolean newStep) {
     FmuInstance* fmu = (FmuInstance*) p;
     fmiDoStepTYPE* fmiDoStep = fmu->fmiDoStep_;
     return (*fmiDoStep)((void*) c, currentCommunicationPoint, communicationStepSize, newStep);
 }
 
-JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi1_jni_Fmi1CoSimulationLibrary_cancelStep(JNIEnv *env, jobject obj, jlong p, jlong c) {
+JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi1_jni_Fmi1CoSimulationLibrary_resetSlave(JNIEnv *env, jobject obj, jlong p, jlong c) {
     FmuInstance* fmu = (FmuInstance*) p;
-    fmiCancelStepTYPE* fmiCancelStep = fmu->fmiCancelStep_;
-    return (*fmiCancelStep)((void*) c);
+    fmiResetSlaveTYPE* fmiReset = fmu->fmiResetSlave_;
+    return (*fmiReset)((void*) c);
 }
+
+JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi1_jni_Fmi1CoSimulationLibrary_terminateSlave(JNIEnv *env, jobject obj, jlong p, jlong c) {
+    FmuInstance* fmu = (FmuInstance*) p;
+    fmiTerminateSlaveTYPE* fmiTerminate = fmu->fmiTerminateSlave_;
+    return (*fmiTerminate)((void*) c);
+}
+
+JNIEXPORT void JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi1_jni_Fmi1CoSimulationLibrary_freeSlaveInstance(JNIEnv *env, jobject obj, jlong p, jlong c) {
+    FmuInstance* fmu = (FmuInstance*) p;
+    fmiFreeSlaveInstanceTYPE* fmiFreeInstance = fmu->fmiFreeSlaveInstance_;
+    (*fmiFreeInstance)((void*) c);
+}
+
+
 
 #ifdef __cplusplus
 }

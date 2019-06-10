@@ -418,16 +418,10 @@ JNIEXPORT jboolean JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi2_jni_Fmi2Library_
 /***************************************************
 Functions for FMI2 for Co-Simulation
 ****************************************************/
-JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi2_jni_Fmi2CoSimulationLibrary_step(JNIEnv *env, jobject obj, jlong p, jlong c, jdouble currentCommunicationPoint, jdouble communicationStepSize, jboolean noSetFMUStatePriorToCurrentPoint) {
+JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi2_jni_Fmi2CoSimulationLibrary_doStep(JNIEnv *env, jobject obj, jlong p, jlong c, jdouble currentCommunicationPoint, jdouble communicationStepSize, jboolean noSetFMUStatePriorToCurrentPoint) {
     FmuInstance* fmu = (FmuInstance*) p;
     fmi2DoStepTYPE* fmi2DoStep = fmu->fmi2DoStep_;
     return (*fmi2DoStep)((void*) c, currentCommunicationPoint, communicationStepSize, noSetFMUStatePriorToCurrentPoint);
-}
-
-JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi2_jni_Fmi2CoSimulationLibrary_cancelStep(JNIEnv *env, jobject obj, jlong p, jlong c) {
-    FmuInstance* fmu = (FmuInstance*) p;
-    fmi2CancelStepTYPE* fmi2CancelStep = fmu->fmi2CancelStep_;
-    return (*fmi2CancelStep)((void*) c);
 }
 
 JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi2_jni_Fmi2CoSimulationLibrary_setRealInputDerivatives(JNIEnv *env, jobject obj, jlong p, jlong c, jlongArray vr, jintArray order, jdoubleArray value) {

@@ -22,12 +22,15 @@
  * THE SOFTWARE.
  */
 
-package no.ntnu.ihb.fmi4j.importer.fmi2
+package no.ntnu.ihb.fmi4j.importer.fmi1
 
 import no.ntnu.ihb.fmi4j.FmiStatus
-import no.ntnu.ihb.fmi4j.importer.fmi2.jni.EventInfo
-import no.ntnu.ihb.fmi4j.importer.fmi2.jni.ModelExchangeLibraryWrapper
+import no.ntnu.ihb.fmi4j.importer.fmi1.jni.EventInfo
+import no.ntnu.ihb.fmi4j.importer.fmi1.jni.ModelExchangeLibraryWrapper
 import no.ntnu.ihb.fmi4j.modeldescription.ModelExchangeModelDescription
+import no.ntnu.ihb.fmi4j.modeldescription.ValueReferences
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 /**
  * Represent a FMI Model Exchange instance
@@ -39,73 +42,59 @@ open class ModelExchangeInstance internal constructor(
         modelDescription: ModelExchangeModelDescription
 ) : AbstractFmuInstance<ModelExchangeModelDescription, ModelExchangeLibraryWrapper>(wrapper, modelDescription) {
 
+
     internal val eventInfo = EventInfo()
 
-    /**
-     * @see ModelExchangeLibraryWrapper.setTime
-     *
-     * @param time
-     */
+    override fun setup(start: Double, stop: Double, tolerance: Double): Boolean {
+
+        LOG.debug("FMU '${modelDescription.modelName}' setup with start=$start, stop=$stop")
+
+        if (start < 0) {
+            LOG.error("Start must be a positive value, was $start!")
+            return false
+        }
+        startTime = start
+        if (stop > startTime) {
+            stopTime = stop
+        }
+
+        setTime(start)
+
+        val toleranceControlled = tolerance > 0
+        return (wrapper.initialize(toleranceControlled, tolerance).isOK()).also {
+            simulationTime = start
+        }
+
+    }
+
+    override fun reset(): Boolean {
+        throw IllegalStateException("Reset not supported by FMI 1.0 for Model Exchange")
+    }
+
     fun setTime(time: Double): FmiStatus {
         return wrapper.setTime(time).also {
             simulationTime = time
         }
     }
 
-    /**
-     * @see ModelExchangeLibraryWrapper.setContinuousStates
-     *
-     * @param x states
-     */
     fun setContinuousStates(x: DoubleArray) = wrapper.setContinuousStates(x)
 
-    /**
-     * @see ModelExchangeLibraryWrapper.enterEventMode
-     */
-    fun enterEventMode() = wrapper.enterEventMode()
-
-    /**
-     * @see ModelExchangeLibraryWrapper.enterContinuousTimeMode
-     */
-    fun enterContinuousTimeMode() = wrapper.enterContinuousTimeMode()
-
-    /**
-     * @see ModelExchangeLibraryWrapper.newDiscreteStates
-     *
-     */
-    fun newDiscreteStates() = wrapper.newDiscreteStates(eventInfo)
-
-    /**
-     * @see ModelExchangeLibraryWrapper.completedIntegratorStep
-     */
     fun completedIntegratorStep() = wrapper.completedIntegratorStep()
 
-    /**
-     * @see ModelExchangeLibraryWrapper.getDerivatives
-     *
-     * @param derivatives
-     */
     fun getDerivatives(derivatives: DoubleArray) = wrapper.getDerivatives(derivatives)
 
-    /**
-     * @see ModelExchangeLibraryWrapper.getEventIndicators
-     *
-     * @param eventIndicators
-     */
     fun getEventIndicators(eventIndicators: DoubleArray) = wrapper.getEventIndicators(eventIndicators)
 
-    /**
-     * @see ModelExchangeLibraryWrapper.getContinuousStates
-     *
-     * @param x
-     */
     fun getContinuousStates(x: DoubleArray) = wrapper.getContinuousStates(x)
 
-    /**
-     * @see ModelExchangeLibraryWrapper.getNominalsOfContinuousStates
-     *
-     * @param x_nominal
-     */
-    fun getNominalsOfContinuousStates(x_nominal: DoubleArray) = wrapper.getNominalsOfContinuousStates(x_nominal)
+    fun getNominalsOfContinuousStates(xNominal: DoubleArray) = wrapper.getNominalsOfContinuousStates(xNominal)
+
+    fun getStateValueReferences(vrx: ValueReferences) = wrapper.getStateValueReferences(vrx)
+
+    private companion object {
+
+        val LOG: Logger = LoggerFactory.getLogger(ModelExchangeInstance::class.java)
+
+    }
 
 }

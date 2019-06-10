@@ -22,59 +22,61 @@
  * THE SOFTWARE.
  */
 
-package no.ntnu.ihb.fmi4j.importer.fmi2
+package no.ntnu.ihb.fmi4j.importer.fmi1
 
 import no.ntnu.ihb.fmi4j.Model
-import no.ntnu.ihb.fmi4j.importer.fmi2.jni.Fmi2ModelExchangeLibrary
-import no.ntnu.ihb.fmi4j.importer.fmi2.jni.ModelExchangeLibraryWrapper
+import no.ntnu.ihb.fmi4j.SlaveInstance
+import no.ntnu.ihb.fmi4j.importer.fmi1.jni.Fmi1ModelExchangeLibrary
+import no.ntnu.ihb.fmi4j.importer.fmi1.jni.FmiComponent
+import no.ntnu.ihb.fmi4j.importer.fmi1.jni.ModelExchangeLibraryWrapper
 import no.ntnu.ihb.fmi4j.modeldescription.ModelExchangeModelDescription
-import no.ntnu.ihb.fmi4j.solvers.Solver
 import java.io.Closeable
 
 /**
  *
  * @author Lars Ivar Hatledal
  */
-class ModelExchangeFmu @JvmOverloads constructor(
-        private val fmu: Fmu,
-        private val solver: Solver? = null
+class ModelExchangeFmu(
+        private val fmu: Fmu
 ) : Model, Closeable by fmu {
 
     override val modelDescription: ModelExchangeModelDescription by lazy {
         fmu.modelDescription.asModelExchangeModelDescription()
     }
 
-    private val lib: Fmi2ModelExchangeLibrary by lazy {
+    private val lib: Fmi1ModelExchangeLibrary by lazy {
         val modelIdentifier = modelDescription.attributes.modelIdentifier
         val libName = fmu.getAbsoluteLibraryPath(modelIdentifier)
-        Fmi2ModelExchangeLibrary(libName).also {
+        Fmi1ModelExchangeLibrary(libName, modelIdentifier).also {
             fmu.registerLibrary(it)
         }
     }
 
+    private fun instantiate(loggingOn: Boolean): FmiComponent {
+        return lib.instantiateModel(modelDescription.attributes.modelIdentifier, modelDescription.guid, loggingOn)
+    }
 
     @JvmOverloads
-    fun newInstance(visible: Boolean = false, loggingOn: Boolean = false): ModelExchangeInstance {
-        val c = fmu.instantiate(modelDescription, lib, 0, visible, loggingOn)
+    fun newInstance(loggingOn: Boolean = false): ModelExchangeInstance {
+        val c = instantiate(loggingOn)
         val wrapper = ModelExchangeLibraryWrapper(c, lib)
         return ModelExchangeInstance(wrapper, modelDescription).also {
             fmu.registerInstance(it)
         }
     }
 
-    override fun newInstance(): ModelExchangeFmuStepper {
-        val solver = solver ?: throw IllegalStateException("Class instantiated with no solver!")
-        return newInstance(solver, visible = false, loggingOn = false)
+    override fun newInstance(): SlaveInstance {
+        throw IllegalStateException("Not supported (yet)")
     }
 
-    fun newInstance(solver: Solver): ModelExchangeFmuStepper {
-        return newInstance(solver, visible = false, loggingOn = false)
-    }
-
-    fun newInstance(solver: Solver, visible: Boolean = false, loggingOn: Boolean = false): ModelExchangeFmuStepper {
-        return newInstance(visible, loggingOn).let {
-            ModelExchangeFmuStepper(it, solver)
-        }
-    }
+//    fun newInstance(solver: Solver): ModelExchangeFmuStepper {
+//        return newInstance(solver, visible = false, loggingOn = false)
+//    }
+//
+//    fun newInstance(solver: Solver, visible: Boolean = false, loggingOn: Boolean = false): ModelExchangeFmuStepper {
+//        return newInstance(visible, loggingOn).let {
+//            ModelExchangeFmuStepper(it, solver)
+//        }
+//    }
 
 }

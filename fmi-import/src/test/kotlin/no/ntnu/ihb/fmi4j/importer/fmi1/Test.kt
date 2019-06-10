@@ -18,9 +18,9 @@ class Test {
         val file = File(Test::class.java.classLoader.getResource("fmus/1.0/cs/BouncingBall.fmu").file)
         Assertions.assertEquals("1.0", ModelDescriptionParser.extractVersion(file))
 
-        Fmu.from(file).use { fmu ->
+        Fmu.from(file).asCoSimulationFmu().use { fmu ->
 
-            Assertions.assertEquals("{8c4e810f-3df3-4a00-8276-176fa3c9f003}", fmu.guid)
+            Assertions.assertEquals("{8c4e810f-3df3-4a00-8276-176fa3c9f003}", fmu.modelDescription.guid)
             Assertions.assertEquals("BouncingBall", fmu.modelDescription.attributes.modelIdentifier)
 
             fmu.newInstance().use { slave ->
@@ -45,7 +45,7 @@ class Test {
     fun testAbstractFmuLoad() {
 
         val file = File(Test::class.java.classLoader.getResource("fmus/1.0/cs/BouncingBall.fmu").file)
-        (AbstractFmu.from(file) as Fmu).use { fmu ->
+        AbstractFmu.from(file).asCoSimulationFmu().use { fmu ->
 
             fmu.newInstance().use { slave ->
                 Assertions.assertTrue(slave.setup())

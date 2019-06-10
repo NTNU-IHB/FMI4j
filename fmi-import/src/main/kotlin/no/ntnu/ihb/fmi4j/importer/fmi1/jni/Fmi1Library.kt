@@ -39,7 +39,7 @@ internal typealias FmiComponent = Long
 /**
  * @author Lars Ivar Hatledal
  */
-open class Fmi1Library(
+abstract class Fmi1Library(
         libName: String,
         modelIdentifier: String
 ) : Closeable {
@@ -72,22 +72,12 @@ open class Fmi1Library(
 
     private external fun getTypesPlatform(p: Long): String
 
-    private external fun instantiate(p: Long, instanceName: String, guid: String,
-                                     fmuLocation: String, mimeType: String, visible: Boolean, interactive: Boolean, loggingOn: Boolean): Long
-
-    private external fun setup(p: Long, c: FmiComponent, startTime: Double, stopTime: Double): NativeStatus
-
-    private external fun terminate(p: Long, c: FmiComponent): NativeStatus
-
-    private external fun reset(p: Long, c: FmiComponent): NativeStatus
-
-    private external fun freeInstance(p: Long, c: FmiComponent)
+    private external fun setDebugLogging(p: Long, c: FmiComponent, loggingOn: Boolean): FmiStatus
 
     private external fun getInteger(p: Long, c: FmiComponent, vr: ValueReferences, ref: IntArray): NativeStatus
     private external fun getReal(p: Long, c: FmiComponent, vr: ValueReferences, ref: DoubleArray): NativeStatus
     private external fun getString(p: Long, c: FmiComponent, vr: ValueReferences, ref: Array<String>): NativeStatus
     private external fun getBoolean(p: Long, c: FmiComponent, vr: ValueReferences, ref: BooleanArray): NativeStatus
-
 
     private external fun setInteger(p: Long, c: FmiComponent, vr: ValueReferences, values: IntArray): NativeStatus
     private external fun setReal(p: Long, c: FmiComponent, vr: ValueReferences, values: DoubleArray): NativeStatus
@@ -107,26 +97,13 @@ open class Fmi1Library(
         return getTypesPlatform(p)
     }
 
-    fun instantiate(instanceName: String, guid: String,
-                    fmuLocation: String, visible: Boolean, interactive: Boolean, loggingOn: Boolean): Long {
-        return instantiate(p, instanceName, guid, fmuLocation, "application/x-fmu-sharedlibrary", visible, interactive, loggingOn)
+    fun setDebugLogging(c: FmiComponent, loggingOn: Boolean): FmiStatus {
+        return setDebugLogging(p, c, loggingOn)
     }
 
-    fun setup(c: FmiComponent, startTime: Double, stopTime: Double): FmiStatus {
-        return setup(p, c, startTime, stopTime).transform()
-    }
+    abstract fun terminate(c: FmiComponent): FmiStatus
 
-    fun terminate(c: FmiComponent): FmiStatus {
-        return terminate(p, c).transform()
-    }
-
-    fun reset(c: FmiComponent): FmiStatus {
-        return reset(p, c).transform()
-    }
-
-    fun freeInstance(c: FmiComponent) {
-        freeInstance(p, c)
-    }
+    abstract fun freeInstance(c: FmiComponent)
 
     fun getInteger(c: FmiComponent, vr: ValueReferences, ref: IntArray): FmiStatus {
         return getInteger(p, c, vr, ref).transform()
@@ -203,7 +180,7 @@ abstract class Fmi1LibraryWrapper<E : Fmi1Library>(
      * Has terminate been called on the FMU?
      */
     var isTerminated: Boolean = false
-        private set
+        protected set
 
 
     protected fun updateStatus(status: FmiStatus): FmiStatus {
@@ -215,16 +192,6 @@ abstract class Fmi1LibraryWrapper<E : Fmi1Library>(
 
     val version: String
         get() = library.getVersion()
-
-
-    fun instantiate(instanceName: String, guid: String,
-                    fmuLocation: String, visible: Boolean, interactive: Boolean, loggingOn: Boolean): Long {
-        return library.instantiate(instanceName, guid, fmuLocation, visible, interactive, loggingOn)
-    }
-
-    fun setup(startTime: Double, stopTime: Double): FmiStatus {
-        return library.setup(c, startTime, stopTime)
-    }
 
     @JvmOverloads
     fun terminate(freeInstance: Boolean = true): FmiStatus {
@@ -256,7 +223,7 @@ abstract class Fmi1LibraryWrapper<E : Fmi1Library>(
                 library.freeInstance(c)
                 success = true
             } catch (ex: Error) {
-                LOG.error("Error caught on fmi2FreeInstance: ${ex.javaClass.simpleName}")
+                LOG.error("Error caught on fmiFreeInstance: ${ex.javaClass.simpleName}")
             } finally {
                 val msg = if (success) "successfully" else "unsuccessfully"
                 LOG.debug("Instance freed $msg")
@@ -266,13 +233,6 @@ abstract class Fmi1LibraryWrapper<E : Fmi1Library>(
         }
     }
 
-    fun reset(): FmiStatus {
-        return updateStatus(library.reset(c)).also { status ->
-            if (status == FmiStatus.OK) {
-                isTerminated = false
-            }
-        }
-    }
 
     @Synchronized
     fun readInteger(valueReference: ValueReference): IntegerRead {
@@ -388,4 +348,3 @@ abstract class Fmi1LibraryWrapper<E : Fmi1Library>(
     }
 
 }
-

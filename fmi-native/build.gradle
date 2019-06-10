@@ -38,6 +38,16 @@ if (!project.getProperties().get("skipBuildNative", false)) {
 
     }
 
+    def assembleAllRelease = []
+
+    tasks.all {
+        if (it.name.contains("assembleRelease")) {
+            assembleAllRelease.add(it)
+        }
+    }
+
+    tasks.register("assembleAllRelease")
+
     tasks.register("copyNativeLibs") {
 
         doLast {
@@ -66,6 +76,8 @@ if (!project.getProperties().get("skipBuildNative", false)) {
             }
         }
 
-    }
+        dependsOn assembleAllRelease
 
+    }
+    
 }

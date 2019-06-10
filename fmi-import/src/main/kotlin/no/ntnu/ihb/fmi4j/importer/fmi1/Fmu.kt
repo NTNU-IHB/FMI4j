@@ -24,14 +24,9 @@
 
 package no.ntnu.ihb.fmi4j.importer.fmi1
 
-import no.ntnu.ihb.fmi4j.Model
-import no.ntnu.ihb.fmi4j.SlaveInstance
 import no.ntnu.ihb.fmi4j.importer.AbstractFmu
-import no.ntnu.ihb.fmi4j.importer.fmi1.jni.CoSimulationLibraryWrapper
-import no.ntnu.ihb.fmi4j.importer.fmi1.jni.Fmi1CoSimulationLibrary
 import no.ntnu.ihb.fmi4j.importer.fmi1.jni.Fmi1Library
-import no.ntnu.ihb.fmi4j.modeldescription.CoSimulationModelDescription
-import no.ntnu.ihb.fmi4j.modeldescription.CommonModelDescription
+import no.ntnu.ihb.fmi4j.modeldescription.ModelDescriptionProvider
 import no.ntnu.ihb.fmi4j.modeldescription.fmi1.JaxbModelDescriptionParser
 import no.ntnu.ihb.fmi4j.util.OsUtil
 import org.slf4j.Logger
@@ -49,59 +44,54 @@ import java.net.URL
 class Fmu internal constructor(
         name: String,
         extractedFmu: File
-) : AbstractFmu(name, extractedFmu), Model {
+) : AbstractFmu(name, extractedFmu) {
 
     private val libraries = mutableListOf<Fmi1Library>()
     private val instances = mutableListOf<AbstractFmuInstance<*, *>>()
 
-    private val lib: Fmi1CoSimulationLibrary by lazy {
-        val modelIdentifier = modelDescription.attributes.modelIdentifier
-        val libName = getAbsoluteLibraryPath(modelIdentifier)
-        Fmi1CoSimulationLibrary(libName, modelIdentifier).also {
-            registerLibrary(it)
-        }
+    private val coSimulationFmu by lazy {
+        CoSimulationFmu(this)
     }
 
-    override fun newInstance(): SlaveInstance {
-        return newInstance(visible = false, interactive = false, loggingOn = false)
+    private val modelExchangeFmu by lazy {
+        ModelExchangeFmu(this)
     }
 
-    fun newInstance(visible: Boolean = false, interactive: Boolean = false, loggingOn: Boolean = false): CoSimulationSlave {
-        val c = instantiate(modelDescription, lib, visible, interactive, loggingOn)
-        val wrapper = CoSimulationLibraryWrapper(c, lib)
-        return CoSimulationSlave(wrapper, modelDescription).also {
-            registerInstance(it)
-        }
+    override val modelDescription: ModelDescriptionProvider by lazy {
+        JaxbModelDescriptionParser.parse(modelDescriptionXml)
     }
 
-    override val modelDescription: CoSimulationModelDescription by lazy {
-        JaxbModelDescriptionParser.parse(modelDescriptionXml).asCoSimulationModelDescription()
-    }
-
-    private val fmuPath: String
+    internal val fmuPath: String
         get() = "file:///${extractedFmu.absolutePath.replace("\\", "/")}"
+
+    override fun asCoSimulationFmu(): CoSimulationFmu {
+        if (!supportsCoSimulation) {
+            throw IllegalStateException("FMU does not support Co-simulation!")
+        }
+        return coSimulationFmu
+    }
+
+    override fun asModelExchangeFmu(): ModelExchangeFmu {
+        if (!supportsModelExchange) {
+            throw IllegalStateException("FMU does not support Model Exchange!")
+        }
+        return modelExchangeFmu
+    }
 
     /**
      * Get the absolute name of the native library on the form "C://folder/name.extension"
      */
-    private fun getAbsoluteLibraryPath(modelIdentifier: String): String {
+    internal fun getAbsoluteLibraryPath(modelIdentifier: String): String {
         return File(extractedFmu, BINARIES_FOLDER + File.separator + OsUtil.libraryFolderName + OsUtil.platformBitness
                 + File.separator + modelIdentifier + "." + OsUtil.libExtension).absolutePath
     }
 
-    private fun registerLibrary(library: Fmi1Library) {
+    internal fun registerLibrary(library: Fmi1Library) {
         libraries.add(library)
     }
 
-    private fun registerInstance(instance: AbstractFmuInstance<*, *>) {
+    internal fun registerInstance(instance: AbstractFmuInstance<*, *>) {
         instances.add(instance)
-    }
-
-    private fun instantiate(modelDescription: CommonModelDescription, library: Fmi1Library, visible: Boolean, interactive: Boolean, loggingOn: Boolean): Long {
-        LOG.trace("Calling instantiate: visible=$visible, interactive=$interactive, loggingOn=$loggingOn")
-
-        return library.instantiate(modelDescription.attributes.modelIdentifier,
-                modelDescription.guid, fmuPath, visible, interactive, loggingOn)
     }
 
     override fun disposeNativeLibraries() {

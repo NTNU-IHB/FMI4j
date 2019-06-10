@@ -42,13 +42,37 @@ class CoSimulationSlave internal constructor(
         modelDescription: CoSimulationModelDescription
 ) : SlaveInstance, AbstractFmuInstance<CoSimulationModelDescription, CoSimulationLibraryWrapper>(wrapper, modelDescription) {
 
+    /**
+     * Call init with provided start and stop
+     * @param start the start time
+     * @param stop the stop time
+     *
+     */
+    override fun setup(start: Double, stop: Double, tolerance: Double): Boolean {
+
+        LOG.debug("FMU '${modelDescription.modelName}' setup with start=$start, stop=$stop")
+
+        if (start < 0) {
+            LOG.error("Start must be a positive value, was $start!")
+            return false
+        }
+        startTime = start
+        if (stop > startTime) {
+            stopTime = stop
+        }
+
+        return (wrapper.initializeSlave(startTime, stopTime).isOK()).also {
+            simulationTime = start
+        }
+
+    }
 
     override fun doStep(stepSize: Double): Boolean {
 
         val tNext = (simulationTime + stepSize)
 
         if (stopDefined && tNext > stopTime) {
-            LOG.warn("Cannot perform step! tNext=$tNext > stopTime=$stopTime")
+            LOG.warn("Cannot perform doStep! tNext=$tNext > stopTime=$stopTime")
             return false
         }
 
@@ -60,6 +84,10 @@ class CoSimulationSlave internal constructor(
             }
         }
 
+    }
+
+    override fun reset(): Boolean {
+        return wrapper.reset().isOK()
     }
 
     override fun terminate(): Boolean {

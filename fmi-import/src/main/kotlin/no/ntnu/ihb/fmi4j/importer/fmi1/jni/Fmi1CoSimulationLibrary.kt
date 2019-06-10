@@ -40,8 +40,20 @@ class Fmi1CoSimulationLibrary(
         modelIdentifier: String
 ) : Fmi1Library(libName, modelIdentifier) {
 
-    private external fun step(p: Long, c: FmiComponent, currentCommunicationPoint: Double,
-                              communicationStepSize: Double, noSetFMUStatePriorToCurrentPoint: Boolean): NativeStatus
+    private external fun instantiateSlave(p: Long, instanceName: String, guid: String,
+                                          fmuLocation: String, visible: Boolean, interactive: Boolean, loggingOn: Boolean): FmiComponent
+
+    private external fun initializeSlave(p: Long, c: FmiComponent, startTime: Double, stopTime: Double): NativeStatus
+
+    private external fun doStep(p: Long, c: FmiComponent, currentCommunicationPoint: Double,
+                                communicationStepSize: Double, newStep: Boolean): NativeStatus
+
+    private external fun reset(p: Long, c: FmiComponent): NativeStatus
+
+    private external fun terminateSlave(p: Long, c: FmiComponent): NativeStatus
+
+    private external fun freeSlaveInstance(p: Long, c: FmiComponent)
+
 
     private external fun setRealInputDerivatives(p: Long, c: FmiComponent, vr: ValueReferences, order: IntArray,
                                                  value: DoubleArray): NativeStatus
@@ -59,11 +71,33 @@ class Fmi1CoSimulationLibrary(
 
     private external fun getBooleanStatus(p: Long, c: FmiComponent, s: Int, value: BooleanByReference): NativeStatus
 
-    fun step(c: FmiComponent,
-             currentCommunicationPoint: Double,
-             communicationStepSize: Double,
-             newStep: Boolean): FmiStatus {
-        return step(p, c, currentCommunicationPoint, communicationStepSize, newStep).transform()
+    fun instantiateSlave(instanceName: String, guid: String,
+                         fmuLocation: String, visible: Boolean, interactive: Boolean, loggingOn: Boolean): Long {
+        return instantiateSlave(p, instanceName, guid, fmuLocation, visible, interactive, loggingOn)
+    }
+
+    fun initializeSlave(c: FmiComponent, startTime: Double, stopTime: Double): FmiStatus {
+        return initializeSlave(p, c, startTime, stopTime).transform()
+    }
+
+    fun doStep(c: FmiComponent,
+               currentCommunicationPoint: Double,
+               communicationStepSize: Double,
+               newStep: Boolean): FmiStatus {
+        return doStep(p, c, currentCommunicationPoint, communicationStepSize, newStep).transform()
+    }
+
+    fun reset(c: FmiComponent): FmiStatus {
+        return reset(p, c).transform()
+    }
+
+
+    override fun terminate(c: FmiComponent): FmiStatus {
+        return terminateSlave(p, c).transform()
+    }
+
+    override fun freeInstance(c: FmiComponent) {
+        freeSlaveInstance(p, c)
     }
 
     fun setRealInputDerivatives(c: FmiComponent,
@@ -109,16 +143,33 @@ class CoSimulationLibraryWrapper(
         library: Fmi1CoSimulationLibrary
 ) : Fmi1LibraryWrapper<Fmi1CoSimulationLibrary>(c, library) {
 
+    fun instantiateSlave(instanceName: String, guid: String,
+                         fmuLocation: String, visible: Boolean, interactive: Boolean, loggingOn: Boolean): Long {
+        return library.instantiateSlave(instanceName, guid, fmuLocation, visible, interactive, loggingOn)
+    }
+
+    fun initializeSlave(startTime: Double, stopTime: Double): FmiStatus {
+        return library.initializeSlave(c, startTime, stopTime)
+    }
+
+    fun doStep(t: Double, dt: Double, newStep: Boolean): FmiStatus {
+        return updateStatus(library.doStep(c, t, dt, newStep))
+    }
+
+    fun reset(): FmiStatus {
+        return updateStatus(library.reset(c)).also { status ->
+            if (status == FmiStatus.OK) {
+                isTerminated = false
+            }
+        }
+    }
+
     fun setRealInputDerivatives(vr: ValueReferences, order: IntArray, value: DoubleArray): FmiStatus {
         return updateStatus(library.setRealInputDerivatives(c, vr, order, value))
     }
 
     fun getRealOutputDerivatives(vr: ValueReferences, order: IntArray, value: DoubleArray): FmiStatus {
         return updateStatus(library.getRealOutputDerivatives(c, vr, order, value))
-    }
-
-    fun doStep(t: Double, dt: Double, newStep: Boolean): FmiStatus {
-        return updateStatus(library.step(c, t, dt, newStep))
     }
 
     fun getStatus(s: FmiStatusKind): FmiStatus {
@@ -160,4 +211,3 @@ class CoSimulationLibraryWrapper(
     }
 
 }
-

@@ -45,15 +45,9 @@ abstract class AbstractFmuInstance<out E : CommonModelDescription, out T : Fmi2L
         override val modelDescription: E
 ) : ModelInstance<E> {
 
-    /**
-     * @see Fmi2Library.getTypesPlatform
-     */
     val typesPlatform
         get() = wrapper.typesPlatform
 
-    /**
-     * @see Fmi2Library.getVersion
-     */
     val version
         get() = wrapper.version
 
@@ -63,9 +57,7 @@ abstract class AbstractFmuInstance<out E : CommonModelDescription, out T : Fmi2L
     override val isTerminated
         get() = wrapper.isTerminated
 
-    protected var startTime: Double = 0.0
-        private set
-
+    private var startTime: Double = 0.0
     protected var stopTime: Double = 0.0
         private set
 
@@ -78,16 +70,10 @@ abstract class AbstractFmuInstance<out E : CommonModelDescription, out T : Fmi2L
     override var simulationTime: Double = 0.0
         internal set
 
-    /**
-     * @see Fmi2LibraryWrapper.lastStatus
-     */
     override val lastStatus: FmiStatus
         get() = wrapper.lastStatus
 
 
-    /**
-     * @see Fmi2Library.setDebugLogging
-     */
     fun setDebugLogging(loggingOn: Boolean, categories: Array<String>): FmiStatus
             = wrapper.setDebugLogging(loggingOn, categories)
 
@@ -136,8 +122,6 @@ abstract class AbstractFmuInstance<out E : CommonModelDescription, out T : Fmi2L
      *
      * @param freeInstance true if you are completely finished with the fmuInstance
      *
-     * @see Fmi2Library.terminate
-     * @see Fmi2Library.freeInstance
      */
     fun terminate(freeInstance: Boolean): Boolean {
         return wrapper.terminate(freeInstance).let { status ->
@@ -146,9 +130,6 @@ abstract class AbstractFmuInstance<out E : CommonModelDescription, out T : Fmi2L
         }
     }
 
-    /**
-     * @see Fmi2Library.reset
-     */
     override fun reset(): Boolean {
         return wrapper.reset().isOK()
     }

@@ -206,15 +206,13 @@ class FmuInstance {
 
 
             fmi2EnterEventMode_ = load_function<fmi2EnterEventModeTYPE *>(handle_, "fmi2EnterEventMode");
-            fmi2EnterContinuousTimeMode_ = load_function<fmi2EnterContinuousTimeModeTYPE *>(
-                    handle_, "fmi2EnterContinuousTimeMode");
+            fmi2EnterContinuousTimeMode_ = load_function<fmi2EnterContinuousTimeModeTYPE *>(handle_, "fmi2EnterContinuousTimeMode");
             fmi2SetTime_ = load_function<fmi2SetTimeTYPE *>(handle_, "fmi2SetTime");
             fmi2SetContinuousStates_ = load_function<fmi2SetContinuousStatesTYPE *>(handle_, "fmi2SetContinuousStates");
             fmi2GetDerivatives_ = load_function<fmi2GetDerivativesTYPE *>(handle_, "fmi2GetDerivatives");
             fmi2GetEventIndicators_ = load_function<fmi2GetEventIndicatorsTYPE *>(handle_, "fmi2GetEventIndicators");
             fmi2GetContinuousStates_ = load_function<fmi2GetContinuousStatesTYPE *>(handle_, "fmi2GetContinuousStates");
-            fmi2GetNominalsOfContinuousStates_ = load_function<fmi2GetNominalsOfContinuousStatesTYPE *>(
-                    handle_, "fmi2GetNominalsOfContinuousStates");
+            fmi2GetNominalsOfContinuousStates_ = load_function<fmi2GetNominalsOfContinuousStatesTYPE *>(handle_, "fmi2GetNominalsOfContinuousStates");
             fmi2CompletedIntegratorStep_ = load_function<fmi2CompletedIntegratorStepTYPE *>(handle_, "fmi2CompletedIntegratorStep");
             fmi2NewDiscreteStates_ = load_function<fmi2NewDiscreteStatesTYPE *>(handle_, "fmi2NewDiscreteStates");
 
