@@ -40,9 +40,8 @@ class Fmi1CoSimulationLibrary(
         modelIdentifier: String
 ) : Fmi1Library(libName, modelIdentifier) {
 
-
     private external fun instantiateSlave(p: Long, instanceName: String, guid: String,
-                                          fmuLocation: String, mimeType: String, visible: Boolean, interactive: Boolean, loggingOn: Boolean): Long
+                                          fmuLocation: String, visible: Boolean, interactive: Boolean, loggingOn: Boolean): FmiComponent
 
     private external fun initializeSlave(p: Long, c: FmiComponent, startTime: Double, stopTime: Double): NativeStatus
 
@@ -74,7 +73,7 @@ class Fmi1CoSimulationLibrary(
 
     fun instantiateSlave(instanceName: String, guid: String,
                          fmuLocation: String, visible: Boolean, interactive: Boolean, loggingOn: Boolean): Long {
-        return instantiateSlave(p, instanceName, guid, fmuLocation, "application/x-fmu-sharedlibrary", visible, interactive, loggingOn)
+        return instantiateSlave(p, instanceName, guid, fmuLocation, visible, interactive, loggingOn)
     }
 
     fun initializeSlave(c: FmiComponent, startTime: Double, stopTime: Double): FmiStatus {

@@ -25,11 +25,9 @@
 package no.ntnu.ihb.fmi4j
 
 import no.ntnu.ihb.fmi4j.importer.fmi1.jni.Fmi1Library
-import no.ntnu.ihb.fmi4j.modeldescription.ModelDescriptionParser
 import no.ntnu.ihb.fmi4j.util.OsUtil
 import java.io.File
 import java.io.FileOutputStream
-import java.net.URL
 import java.util.concurrent.atomic.AtomicBoolean
 
 object FMI4j {
@@ -54,22 +52,6 @@ object FMI4j {
                 copy.delete()
                 throw RuntimeException(ex)
             }
-        }
-    }
-
-    fun loadModel(url: URL): Model {
-        return when (val version = ModelDescriptionParser.extractVersion(url)) {
-            "1.0" -> no.ntnu.ihb.fmi4j.importer.fmi1.Fmu.from(url)
-            "2.0" -> no.ntnu.ihb.fmi4j.importer.fmi2.Fmu.from(url).asCoSimulationFmu()
-            else -> throw UnsupportedOperationException("Unsupported FMI version: '$version'")
-        }
-    }
-
-    fun loadModel(file: File): Model {
-        return when (val version = ModelDescriptionParser.extractVersion(file)) {
-            "1.0" -> no.ntnu.ihb.fmi4j.importer.fmi1.Fmu.from(file)
-            "2.0" -> no.ntnu.ihb.fmi4j.importer.fmi2.Fmu.from(file).asCoSimulationFmu()
-            else -> throw UnsupportedOperationException("Unsupported FMI version: '$version'")
         }
     }
 

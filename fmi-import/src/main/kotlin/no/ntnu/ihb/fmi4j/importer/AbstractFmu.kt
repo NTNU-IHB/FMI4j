@@ -25,9 +25,8 @@
 package no.ntnu.ihb.fmi4j.importer
 
 import no.ntnu.ihb.fmi4j.Model
-import no.ntnu.ihb.fmi4j.modeldescription.ModelDescriptionProvider
-import no.ntnu.ihb.fmi4j.modeldescription.ModelDescription
 import no.ntnu.ihb.fmi4j.modeldescription.ModelDescriptionParser
+import no.ntnu.ihb.fmi4j.modeldescription.ModelDescriptionProvider
 import no.ntnu.ihb.fmi4j.util.extractContentTo
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
