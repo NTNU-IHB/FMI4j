@@ -52,6 +52,7 @@ class ModelExchangeFmu @JvmOverloads constructor(
         }
     }
 
+
     @JvmOverloads
     fun newInstance(visible: Boolean = false, loggingOn: Boolean = false): ModelExchangeInstance {
         val c = fmu.instantiate(modelDescription, lib, 0, visible, loggingOn)

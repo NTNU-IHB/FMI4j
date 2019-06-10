@@ -29,10 +29,8 @@ import no.ntnu.ihb.fmi4j.importer.fmi1.jni.Fmi1Library
 import no.ntnu.ihb.fmi4j.modeldescription.ModelDescriptionProvider
 import no.ntnu.ihb.fmi4j.modeldescription.fmi1.JaxbModelDescriptionParser
 import no.ntnu.ihb.fmi4j.util.OsUtil
-import no.ntnu.ihb.fmi4j.util.extractContentTo
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import java.io.ByteArrayInputStream
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.IOException
@@ -43,7 +41,7 @@ import java.net.URL
  *
  * @author Lars Ivar Hatledal
  */
-class Fmu private constructor(
+class Fmu internal constructor(
         name: String,
         extractedFmu: File
 ) : AbstractFmu(name, extractedFmu) {
@@ -126,21 +124,7 @@ class Fmu private constructor(
         @JvmStatic
         @Throws(IOException::class, FileNotFoundException::class)
         fun from(file: File): Fmu {
-
-            val extension = file.extension.toLowerCase()
-            if (extension != FMU_EXTENSION) {
-                throw IllegalArgumentException("File '${file.absolutePath}' is not an FMU! Invalid extension found: .$extension")
-            }
-
-            if (!file.exists()) {
-                throw FileNotFoundException("No such file: $file!")
-            }
-
-            return createTempDir(file.nameWithoutExtension).let { temp ->
-                file.extractContentTo(temp)
-                Fmu(file.nameWithoutExtension, temp)
-            }
-
+            return AbstractFmu.from(file) as Fmu
         }
 
         /**
@@ -149,29 +133,15 @@ class Fmu private constructor(
         @JvmStatic
         @Throws(IOException::class)
         fun from(url: URL): Fmu {
-
-            val extension = File(url.file).extension
-            if (extension != FMU_EXTENSION) {
-                throw IllegalArgumentException("URL '$url' does not point to an FMU! Invalid extension found: .$extension")
-            }
-
-            val fmuName = File(url.file).nameWithoutExtension
-            return createTempDir(fmuName).let { temp ->
-                url.extractContentTo(temp)
-                Fmu(fmuName, temp)
-            }
+            return AbstractFmu.from(url) as Fmu
         }
-
 
         /**
          * Creates an FMU from the provided name and byte array.
          */
         @Throws(IOException::class)
         fun from(name: String, data: ByteArray): Fmu {
-            return createTempDir(name).let { temp ->
-                ByteArrayInputStream(data).extractContentTo(temp)
-                Fmu(name, temp)
-            }
+            return AbstractFmu.from(name, data) as Fmu
         }
 
     }

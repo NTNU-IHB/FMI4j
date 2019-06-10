@@ -63,7 +63,6 @@ abstract class ModelDescriptionParser {
 
         @JvmStatic
         fun extractModelDescriptionXml(file: File): String {
-
             return file.inputStream().use { extractModelDescriptionXml(it) }
         }
 
@@ -94,6 +93,22 @@ abstract class ModelDescriptionParser {
             return JAXB.unmarshal(StringReader(xml), MockupModelDescription::class.java).fmiVersion
         }
 
+        fun parse(url: URL): ModelDescriptionProvider {
+            return parse(extractModelDescriptionXml(url))
+        }
+
+        fun parse(file: File): ModelDescriptionProvider {
+            return parse(extractModelDescriptionXml(file))
+        }
+
+        fun parse(xml: String): ModelDescriptionProvider {
+            return when (val version = extractVersion(xml)) {
+                "1.0" -> no.ntnu.ihb.fmi4j.modeldescription.fmi1.JaxbModelDescriptionParser.parse(xml)
+                "2.0" -> no.ntnu.ihb.fmi4j.modeldescription.fmi2.JaxbModelDescriptionParser.parse(xml)
+                else -> throw UnsupportedOperationException("Unsupported FMI version: '$version'")
+            }
+        }
+
     }
 
 }
@@ -107,4 +122,3 @@ private class MockupModelDescription {
         get() = fmiVersion_!!
 
 }
-
