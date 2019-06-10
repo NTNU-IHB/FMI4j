@@ -25,10 +25,12 @@
 package no.ntnu.ihb.fmi4j.importer
 
 import no.ntnu.ihb.fmi4j.modeldescription.ModelDescription
+import no.ntnu.ihb.fmi4j.modeldescription.ModelDescriptionParser
+import no.ntnu.ihb.fmi4j.util.extractContentTo
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import java.io.Closeable
-import java.io.File
+import java.io.*
+import java.net.URL
 import java.nio.file.Files
 import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
@@ -111,17 +113,17 @@ abstract class AbstractFmu internal constructor(
         return "Fmu(fmu=${extractedFmu.absolutePath})"
     }
 
-    protected companion object {
+    companion object {
 
         private val LOG: Logger = LoggerFactory.getLogger(AbstractFmu::class.java)
 
-        const val FMU_EXTENSION = "fmu"
+        private const val FMU_EXTENSION = "fmu"
         private const val FMI4J_FILE_PREFIX = "fmi4j_"
 
-        const val BINARIES_FOLDER = "binaries"
-        const val MODEL_DESC = "modelDescription.xml"
+        internal const val BINARIES_FOLDER = "binaries"
+        internal const val MODEL_DESC = "modelDescription.xml"
 
-        val fmus: MutableList<AbstractFmu> = Collections.synchronizedList(mutableListOf<AbstractFmu>())
+        internal val fmus: MutableList<AbstractFmu> = Collections.synchronizedList(mutableListOf<AbstractFmu>())
 
         init {
             Runtime.getRuntime().addShutdownHook(Thread {
@@ -134,10 +136,82 @@ abstract class AbstractFmu internal constructor(
             })
         }
 
-        fun createTempDir(fmuName: String): File {
+        private fun createTempDir(fmuName: String): File {
             return Files.createTempDirectory(FMI4J_FILE_PREFIX + fmuName).toFile()
         }
 
+        private fun getModelDescriptionFileFromExtractedFmuDir(folder: File): File {
+            return folder.listFiles().find {
+                it.name == MODEL_DESC
+            } ?: throw IllegalArgumentException("Folder '$folder' does not contain a file named '$MODEL_DESC'!")
+        }
+
+        /**
+         * Creates an FMU from the provided File
+         */
+        @JvmStatic
+        @Throws(IOException::class, FileNotFoundException::class)
+        fun from(file: File): AbstractFmu {
+
+            val extension = file.extension.toLowerCase()
+            if (extension != FMU_EXTENSION) {
+                throw IllegalArgumentException("File '${file.absolutePath}' is not an FMU! Invalid extension found: .$extension")
+            }
+
+            if (!file.exists()) {
+                throw FileNotFoundException("No such file: '$file'!")
+            }
+
+            return createTempDir(file.nameWithoutExtension).let { temp ->
+                file.extractContentTo(temp)
+                when (val version = ModelDescriptionParser.extractVersion(getModelDescriptionFileFromExtractedFmuDir(temp).readText())) {
+                    "1.0" -> no.ntnu.ihb.fmi4j.importer.fmi1.Fmu(file.nameWithoutExtension, temp)
+                    "2.0" -> no.ntnu.ihb.fmi4j.importer.fmi2.Fmu(file.nameWithoutExtension, temp)
+                    else -> throw UnsupportedOperationException("Unsupported FMI version: '$version'")
+                }
+            }
+
+        }
+
+        /**
+         * Creates an FMU from the provided URL.
+         */
+        @JvmStatic
+        @Throws(IOException::class)
+        fun from(url: URL): AbstractFmu {
+
+            val extension = File(url.file).extension
+            if (extension != FMU_EXTENSION) {
+                throw IllegalArgumentException("URL '$url' does not point to an FMU! Invalid extension found: .$extension")
+            }
+
+            val fmuName = File(url.file).nameWithoutExtension
+            return createTempDir(fmuName).let { temp ->
+                url.extractContentTo(temp)
+                when (val version = ModelDescriptionParser.extractVersion(getModelDescriptionFileFromExtractedFmuDir(temp).readText())) {
+                    "1.0" -> no.ntnu.ihb.fmi4j.importer.fmi1.Fmu(fmuName, temp)
+                    "2.0" -> no.ntnu.ihb.fmi4j.importer.fmi2.Fmu(fmuName, temp)
+                    else -> throw UnsupportedOperationException("Unsupported FMI version: '$version'")
+                }
+            }
+        }
+
+
+        /**
+         * Creates an FMU from the provided name and byte array.
+         */
+        @Throws(IOException::class)
+        fun from(name: String, data: ByteArray): AbstractFmu {
+            return createTempDir(name).let { temp ->
+                ByteArrayInputStream(data).extractContentTo(temp)
+                when (val version = ModelDescriptionParser.extractVersion(getModelDescriptionFileFromExtractedFmuDir(temp).readText())) {
+                    "1.0" -> no.ntnu.ihb.fmi4j.importer.fmi1.Fmu(name, temp)
+                    "2.0" -> no.ntnu.ihb.fmi4j.importer.fmi2.Fmu(name, temp)
+                    else -> throw UnsupportedOperationException("Unsupported FMI version: '$version'")
+                }
+            }
+
+        }
     }
 
 }

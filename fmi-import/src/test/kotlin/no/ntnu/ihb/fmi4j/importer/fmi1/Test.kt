@@ -1,5 +1,6 @@
 package no.ntnu.ihb.fmi4j.importer.fmi1
 
+import no.ntnu.ihb.fmi4j.importer.AbstractFmu
 import no.ntnu.ihb.fmi4j.modeldescription.ModelDescriptionParser
 import no.ntnu.ihb.fmi4j.readReal
 import org.junit.jupiter.api.Assertions
@@ -33,6 +34,21 @@ class Test {
 
                 Assertions.assertTrue(slave.readReal("h").value < 1.0)
 
+            }
+
+        }
+
+    }
+
+    @Test
+    @EnabledOnOs(OS.WINDOWS)
+    fun testAbstractFmuLoad() {
+
+        val file = File(Test::class.java.classLoader.getResource("fmus/1.0/cs/BouncingBall.fmu").file)
+        (AbstractFmu.from(file) as Fmu).use { fmu ->
+
+            fmu.newInstance().use { slave ->
+                Assertions.assertTrue(slave.setup())
             }
 
         }

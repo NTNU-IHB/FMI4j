@@ -24,20 +24,15 @@ class FmuTest {
 
     @Test
     fun testFromBinary() {
-
         val fmuName = "ControlledTemperature"
-
         val file = TestFMUs.fmi20().cs()
                 .vendor("20sim").version("4.6.4.8004")
                 .name(fmuName).file()
-
 
         val bytes = file.readBytes()
         Fmu.from(fmuName, bytes).use {
             Assertions.assertEquals("2.0", it.modelDescription.fmiVersion)
         }
-
-
     }
 
     @Test
@@ -52,7 +47,7 @@ class FmuTest {
 
     @Test
     fun testIllegalFmu() {
-        Assertions.assertThrows(IllegalStateException::class.java) {
+        Assertions.assertThrows(IllegalArgumentException::class.java) {
             Fmu.from(FmuTest::class.java.classLoader.getResource("illegal.fmu"))
         }
     }
