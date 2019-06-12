@@ -23,6 +23,7 @@
  */
 
 #include <string>
+#include <sstream>
 #include <iostream>
 
 #if defined(_MSC_VER) || defined(WIN32) || defined(__MINGW32__)
@@ -46,6 +47,16 @@ namespace {
     #endif
     }
 
+    std::string getLastError() {
+    #ifdef WIN32
+        std::ostringstream os;
+        os << GetLastError();
+        return os.str();
+    #else
+        return dlerror();
+    #endif
+    }
+
     DLL_HANDLE load_library(const char* dir, const char* libName) {
         DLL_HANDLE lib = nullptr;
     #ifdef WIN32
@@ -55,8 +66,8 @@ namespace {
         lib = dlopen(libName, RTLD_NOW | RTLD_LOCAL);
     #endif
         if (lib == nullptr) {
-            const auto err = std::string("[FMI native bridge] Fatal: Failed to load library '") + libName + std::string("'") ;
-            std::cerr << err << ", error:" << GetLastError() <<  std::endl;
+            const auto err = std::string("[FMI native bridge] Fatal: Failed to load library '") + libName + std::string("', error: ") + getLastError() ;
+            std::cerr << err << std::endl;
             throw err;
         }
         return lib;
