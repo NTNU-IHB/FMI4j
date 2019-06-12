@@ -64,7 +64,7 @@ namespace {
         SetDllDirectory(dir);
         lib = LoadLibrary(libName);
     #else
-        lib = dlopen(std::string(dir + "/" + libName).c_str(), RTLD_NOW | RTLD_LOCAL);
+        lib = dlopen(std::string(std::string(dir) + "/" + std::string(libName)).c_str(), RTLD_NOW | RTLD_LOCAL);
     #endif
         if (lib == nullptr) {
             const auto err = std::string("[FMI native bridge] Fatal: Failed to load library '") + libName + std::string("', error: ") + getLastError() ;
