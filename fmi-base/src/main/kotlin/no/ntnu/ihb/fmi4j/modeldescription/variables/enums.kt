@@ -8,6 +8,8 @@ package no.ntnu.ihb.fmi4j.modeldescription.variables
  */
 enum class Causality {
 
+    UNKNOWN,
+
     /**
      * Independent parameter (a data value that is constant during the
      * simulation and is provided by the environment and cannot be used in
@@ -44,20 +46,25 @@ enum class Causality {
      */
     LOCAL,
 
-    /**
-     * The independent variable (usually “time”). All categories are a function
-     * of this independent variable. variability must be "continuous". At most
-     * one ScalarVariable of an FMU can be defined as "independent". If no
-     * variable is defined as "independent", it is implicitely present with name
-     * = "time" and unit = "s". If one variable is defined as "independent", it
-     * must be defined as "Real" without a "start" attribute. It is not allowed
-     * to call function fmi2SetReal on an "independent" variable. Instead, its
-     * value is initialized with fmi2SetupExperiment and after initialization
-     * set by fmi2SetTime for ModelExchange and by arguments
-     * currentCommunicationPoint and communicationStepSize of fmi2DoStep for
-     * CoSimulation. [The actual value can be inquired with fmi2GetReal.]
-     */
     INDEPENDENT;
+
+    companion object {
+
+        @JvmStatic
+        fun fmi1ValueOf(c: String, v: String?): Causality {
+
+            val causality = c.toLowerCase().trim()
+            val variablity = v?.toLowerCase()?.trim()
+
+            return when (causality) {
+                "input" -> if (variablity == "parameter") PARAMETER else INPUT
+                "output" -> OUTPUT
+                "internal", "none" -> LOCAL
+                else -> UNKNOWN
+            }
+
+        }
+    }
 
 }
 
@@ -98,6 +105,8 @@ enum class Causality {
  */
 enum class Variability {
 
+    UNKNOWN,
+
     /**
      * The value of the variable never changes.
      */
@@ -137,6 +146,23 @@ enum class Variability {
      * is from a differential
      */
     CONTINUOUS;
+
+    companion object {
+
+        @JvmStatic
+        fun fmi1ValueOf(value: String): Variability {
+
+            return when (value.toLowerCase().trim()) {
+                "parameter" -> FIXED
+                "tunable" -> TUNABLE
+                "discrete" -> DISCRETE
+                "continuous" -> CONTINUOUS
+                else -> UNKNOWN
+            }
+
+        }
+
+    }
 
 }
 
