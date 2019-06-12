@@ -4,14 +4,12 @@ import no.ntnu.ihb.fmi4j.importer.TestFMUs
 import no.ntnu.ihb.fmi4j.read
 import org.javafmi.proxy.Status
 import org.javafmi.wrapper.Simulation
-import org.junit.jupiter.api.AfterAll
-import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInstance
+import org.junit.jupiter.api.*
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import kotlin.system.measureTimeMillis
 
+@Disabled
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class CompareWithJavaFmi {
 
@@ -94,6 +92,5 @@ class CompareWithJavaFmi {
         }
         return duration1 to duration2
     }
-
 
 }
