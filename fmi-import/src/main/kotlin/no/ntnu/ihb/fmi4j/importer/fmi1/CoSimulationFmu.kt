@@ -49,17 +49,17 @@ class CoSimulationFmu(
         }
     }
 
-    private fun instantiate(modelDescription: CommonModelDescription, visible: Boolean, interactive: Boolean, loggingOn: Boolean): Long {
+    private fun instantiate(modelDescription: CommonModelDescription, loggingOn: Boolean): Long {
         return lib.instantiateSlave(modelDescription.attributes.modelIdentifier,
-                modelDescription.guid, fmu.fmuPath, visible, interactive, loggingOn)
+                modelDescription.guid, fmu.fmuPath, loggingOn)
     }
 
     override fun newInstance(): SlaveInstance {
-        return newInstance(visible = false, interactive = false, loggingOn = false)
+        return newInstance(loggingOn = false)
     }
 
-    fun newInstance(visible: Boolean = false, interactive: Boolean = false, loggingOn: Boolean = false): CoSimulationSlave {
-        val c = instantiate(modelDescription, visible, interactive, loggingOn)
+    fun newInstance(loggingOn: Boolean = false): CoSimulationSlave {
+        val c = instantiate(modelDescription, loggingOn)
         val wrapper = CoSimulationLibraryWrapper(c, lib)
         return CoSimulationSlave(wrapper, modelDescription).also {
             fmu.registerInstance(it)

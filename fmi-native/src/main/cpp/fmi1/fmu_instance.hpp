@@ -22,9 +22,8 @@
  * THE SOFTWARE.
  */
 
-#include <stdio.h>
-#include <stdlib.h>
 #include <string>
+#include <iostream>
 
 #if defined(_MSC_VER) || defined(WIN32) || defined(__MINGW32__)
 #include <windows.h>
@@ -48,11 +47,18 @@ namespace {
     }
 
     DLL_HANDLE load_library(const char* libName) {
+        DLL_HANDLE lib = nullptr;
     #ifdef WIN32
-        return LoadLibrary(libName);
+        lib = LoadLibrary(libName);
     #else
-        return dlopen(libName, RTLD_NOW | RTLD_LOCAL);
+        lib = dlopen(libName, RTLD_NOW | RTLD_LOCAL);
     #endif
+        if (lib == nullptr) {
+            const auto err = std::string("[FMI native bridge] Fatal: Failed to load library '") + libName + std::string("'");
+            std::cerr << err << std::endl;
+            throw err;
+        }
+        return lib;
     }
 
     const char* status_to_string(fmiStatus status) {

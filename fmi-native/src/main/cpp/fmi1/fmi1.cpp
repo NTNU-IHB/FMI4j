@@ -436,7 +436,7 @@ JNIEXPORT void JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi1_jni_Fmi1ModelExchang
 Functions for FMI for Co-Simulation
 ****************************************************/
 
-JNIEXPORT jlong JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi1_jni_Fmi1CoSimulationLibrary_instantiateSlave(JNIEnv *env, jobject obj, jlong p, jstring instanceName, jstring guid, jstring fmuLocation, jboolean visible, jboolean interactive, jboolean loggingOn) {
+JNIEXPORT jlong JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi1_jni_Fmi1CoSimulationLibrary_instantiateSlave(JNIEnv *env, jobject obj, jlong p, jstring instanceName, jstring guid, jstring fmuLocation, jboolean loggingOn) {
 
     FmuInstance* fmu = (FmuInstance*) p;
 
@@ -445,7 +445,7 @@ JNIEXPORT jlong JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi1_jni_Fmi1CoSimulatio
     const char* _fmuLocation = env->GetStringUTFChars(fmuLocation, 0);
 
     fmiInstantiateSlaveTYPE* fmiInstantiate = fmu->fmiInstantiateSlave_;
-    fmiComponent c = (*fmiInstantiate)(_instanceName, _guid, _fmuLocation, "application/x-fmu-sharedlibrary", 0, (fmiBoolean) visible, (fmiBoolean) interactive, fmu->csCallback_, (fmiBoolean) loggingOn);
+    fmiComponent c = (*fmiInstantiate)(_instanceName, _guid, _fmuLocation, "application/x-fmu-sharedlibrary", 0, 0, 0, fmu->csCallback_, (fmiBoolean) loggingOn);
 
     env->ReleaseStringUTFChars(instanceName, _instanceName);
     env->ReleaseStringUTFChars(guid, _guid);

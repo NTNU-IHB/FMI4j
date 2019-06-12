@@ -41,7 +41,7 @@ class Fmi1CoSimulationLibrary(
 ) : Fmi1Library(libName, modelIdentifier) {
 
     private external fun instantiateSlave(p: Long, instanceName: String, guid: String,
-                                          fmuLocation: String, visible: Boolean, interactive: Boolean, loggingOn: Boolean): FmiComponent
+                                          fmuLocation: String, loggingOn: Boolean): FmiComponent
 
     private external fun initializeSlave(p: Long, c: FmiComponent, startTime: Double, stopTime: Double): NativeStatus
 
@@ -72,8 +72,8 @@ class Fmi1CoSimulationLibrary(
     private external fun getBooleanStatus(p: Long, c: FmiComponent, s: Int, value: BooleanByReference): NativeStatus
 
     fun instantiateSlave(instanceName: String, guid: String,
-                         fmuLocation: String, visible: Boolean, interactive: Boolean, loggingOn: Boolean): Long {
-        return instantiateSlave(p, instanceName, guid, fmuLocation, visible, interactive, loggingOn)
+                         fmuLocation: String, loggingOn: Boolean): Long {
+        return instantiateSlave(p, instanceName, guid, fmuLocation, loggingOn)
     }
 
     fun initializeSlave(c: FmiComponent, startTime: Double, stopTime: Double): FmiStatus {
@@ -144,8 +144,8 @@ class CoSimulationLibraryWrapper(
 ) : Fmi1LibraryWrapper<Fmi1CoSimulationLibrary>(c, library) {
 
     fun instantiateSlave(instanceName: String, guid: String,
-                         fmuLocation: String, visible: Boolean, interactive: Boolean, loggingOn: Boolean): Long {
-        return library.instantiateSlave(instanceName, guid, fmuLocation, visible, interactive, loggingOn)
+                         fmuLocation: String, loggingOn: Boolean): Long {
+        return library.instantiateSlave(instanceName, guid, fmuLocation, loggingOn)
     }
 
     fun initializeSlave(startTime: Double, stopTime: Double): FmiStatus {
