@@ -32,7 +32,7 @@ import java.net.URL
 /**
  * @author Lars Ivar Hatledal
  */
-internal object Cmd {
+object Cmd {
 
     @CommandLine.Command(name = "fmudriver")
     class Args : Runnable {

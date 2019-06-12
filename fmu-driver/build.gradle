@@ -6,8 +6,8 @@ plugins {
 
 apply from: rootProject.file(("gradle/junit.gradle"))
 
-def group = "no.ntnu.ihb.fmi4j.fmudriver"
-mainClassName = "${group}.FmuDriver"
+def group = "no.ntnu.ihb.fmi4j.driver"
+mainClassName = "${group}.Cmd"
 
 repositories {
     mavenCentral()
