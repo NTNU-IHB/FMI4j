@@ -38,13 +38,13 @@ package no.ntnu.ihb.fmi4j.modeldescription
  */
 class ModelStructure (
 
-    /**
+        /**
      * Ordered list of all outputs, in other words a list of ScalarVariable indices
      * where every corresponding ScalarVariable must have causality = "output"
      */
-    val outputs: List<Unknown>,
+        val outputs: List<Unknown> = emptyList(),
 
-    /**
+        /**
      * Ordered list of all state derivatives, in other words a list of ScalarVariable
      * indices where every corresponding ScalarVariable must be a state
      * derivative. [Note, only continuous Real variables are listed here. If a state or a
@@ -70,9 +70,9 @@ class ModelStructure (
      * used for a CoSimulation slave, then the model still has continuous-time states and
      * just a special solver is used.
      */
-    val derivatives: List<Unknown>,
+        val derivatives: List<Unknown> = emptyList(),
 
-    val initialUnknowns: List<Unknown>
+        val initialUnknowns: List<Unknown> = emptyList()
 )
 
 

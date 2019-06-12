@@ -5,7 +5,6 @@ import javax.xml.bind.annotation.*;
 import javax.xml.bind.annotation.adapters.NormalizedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.datatype.XMLGregorianCalendar;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -166,7 +165,7 @@ public class FmiModelDescription {
     @XmlAttribute(name = "author")
     protected String author;
     @XmlAttribute(name = "version")
-    protected BigDecimal version;
+    protected String version;
     @XmlAttribute(name = "generationTool")
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     @XmlSchemaType(name = "normalizedString")
@@ -481,10 +480,10 @@ public class FmiModelDescription {
      * 
      * @return
      *     possible object is
-     *     {@link BigDecimal }
+     *     {@link String }
      *     
      */
-    public BigDecimal getVersion() {
+    public String getVersion() {
         return version;
     }
 
@@ -493,10 +492,10 @@ public class FmiModelDescription {
      * 
      * @param value
      *     allowed object is
-     *     {@link BigDecimal }
+     *     {@link String }
      *     
      */
-    public void setVersion(BigDecimal value) {
+    public void setVersion(String value) {
         this.version = value;
     }
 

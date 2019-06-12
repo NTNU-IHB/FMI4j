@@ -48,7 +48,7 @@ class JaxbModelDescription internal constructor(
     override val author: String?
         get() = md.author
     override val version: String?
-        get() = null
+        get() = md.version
     override val description: String?
         get() = md.description
     override val generationTool: String?
@@ -62,9 +62,9 @@ class JaxbModelDescription internal constructor(
     override val modelVariables: ModelVariables
         get() = JaxbModelVariables(md.modelVariables)
     override val modelStructure: ModelStructure
-        get() = throw UnsupportedOperationException("Feature not available for FMI 1.0")
+        get() = ModelStructure()
     override val unitDefinitions: UnitDefinitions?
-        get() = throw UnsupportedOperationException("Feature not available for FMI 1.0")
+        get() = null
     override val typeDefinitions: TypeDefinitions?
         get() = throw UnsupportedOperationException("Feature not available for FMI 1.0")
     override val logCategories: LogCategories?
