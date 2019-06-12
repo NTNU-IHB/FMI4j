@@ -27,6 +27,7 @@
 #include <stdlib.h>
 #include <vector>
 
+#include <iostream>
 #include "fmu_instance.hpp"
 
 #ifdef __cplusplus
@@ -155,14 +156,20 @@ JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi2_jni_Fmi2Library_getR
     const jsize size = env->GetArrayLength(vr);
     jlong *_vr = env->GetLongArrayElements(vr, 0);
 
+    fmi2ValueReference* __vr = (fmi2ValueReference*) malloc(sizeof(fmi2ValueReference) * size);
+    for (unsigned int i = 0; i < size; ++i) {
+        __vr[i] = (fmi2ValueReference) _vr[i];
+    }
+
     fmi2GetRealTYPE* fmi2GetReal = fmu->fmi2GetReal_;
 
     fmi2Real* _ref = (fmi2Real*) malloc(sizeof(fmi2Real) * size);
-    fmi2Status status = (*fmi2GetReal)((void*) c, (fmi2ValueReference*)_vr, size, _ref);
+    fmi2Status status = (*fmi2GetReal)((void*) c, __vr, size, _ref);
 
     env->SetDoubleArrayRegion(ref, 0, size, _ref);
 
     free(_ref);
+    free(__vr);
     env->ReleaseLongArrayElements(vr, _vr, 0);
 
     return status;
@@ -175,6 +182,11 @@ JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi2_jni_Fmi2Library_getS
     const jsize size = env->GetArrayLength(vr);
     jlong *_vr = env->GetLongArrayElements(vr, 0);
 
+    fmi2ValueReference* __vr = (fmi2ValueReference*) malloc(sizeof(fmi2ValueReference) * size);
+    for (unsigned int i = 0; i < size; ++i) {
+        __vr[i] = (fmi2ValueReference) _vr[i];
+    }
+
     fmi2GetStringTYPE* fmi2GetString = fmu->fmi2GetString_;
 
     std::vector<const char*> _ref(size);
@@ -183,7 +195,7 @@ JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi2_jni_Fmi2Library_getS
         _ref[i] = env->GetStringUTFChars(str, 0);
     }
 
-    fmi2Status status = (*fmi2GetString)((void*) c, (fmi2ValueReference*)_vr, size, _ref.data());
+    fmi2Status status = (*fmi2GetString)((void*) c, __vr, size, _ref.data());
 
     for (int i = 0; i < size; i++) {
         jstring value = env->NewStringUTF(_ref[i]);
@@ -191,6 +203,8 @@ JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi2_jni_Fmi2Library_getS
     }
 
     env->ReleaseLongArrayElements(vr, _vr, 0);
+
+    free(__vr);
 
     return status;
 }
@@ -202,10 +216,15 @@ JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi2_jni_Fmi2Library_getB
     const jsize size = env->GetArrayLength(vr);
     jlong *_vr = env->GetLongArrayElements(vr, 0);
 
+    fmi2ValueReference* __vr = (fmi2ValueReference*) malloc(sizeof(fmi2ValueReference) * size);
+    for (unsigned int i = 0; i < size; ++i) {
+        __vr[i] = (fmi2ValueReference) _vr[i];
+    }
+
     fmi2Boolean* _ref = (fmi2Boolean*) malloc(sizeof(fmi2Boolean*) * size);
 
     fmi2GetBooleanTYPE* fmi2GetBoolean = fmu->fmi2GetBoolean_;
-    fmi2Status status = (*fmi2GetBoolean)((void*) c, (fmi2ValueReference*)_vr, size, _ref);
+    fmi2Status status = (*fmi2GetBoolean)((void*) c, __vr, size, _ref);
 
     for (int i = 0; i < size; i++) {
         jboolean value = (jboolean) _ref[i];
@@ -213,6 +232,7 @@ JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi2_jni_Fmi2Library_getB
     }
 
     free(_ref);
+    free(__vr);
     env->ReleaseLongArrayElements(vr, _vr, 0);
 
     return status;
@@ -226,11 +246,18 @@ JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi2_jni_Fmi2Library_setI
     jlong *_vr = env->GetLongArrayElements(vr, 0);
     jint *_values = env->GetIntArrayElements(values, 0);
 
+    fmi2ValueReference* __vr = (fmi2ValueReference*) malloc(sizeof(fmi2ValueReference) * size);
+    for (unsigned int i = 0; i < size; ++i) {
+        __vr[i] = (fmi2ValueReference) _vr[i];
+    }
+
     fmi2SetIntegerTYPE* fmi2SetInteger = fmu->fmi2SetInteger_;
-    fmi2Status status = (*fmi2SetInteger)((void*) c, (fmi2ValueReference*)_vr, size, (fmi2Integer*)_values);
+    fmi2Status status = (*fmi2SetInteger)((void*) c, __vr, size, (fmi2Integer*)_values);
 
     env->ReleaseLongArrayElements(vr, _vr, 0);
     env->ReleaseIntArrayElements(values, _values, 0);
+
+    free(__vr);
 
     return status;
 }
@@ -243,11 +270,18 @@ JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi2_jni_Fmi2Library_setR
     jlong *_vr = env->GetLongArrayElements(vr, 0);
     jdouble *_values = env->GetDoubleArrayElements(values, 0);
 
+    fmi2ValueReference* __vr = (fmi2ValueReference*) malloc(sizeof(fmi2ValueReference) * size);
+    for (unsigned int i = 0; i < size; ++i) {
+        __vr[i] = (fmi2ValueReference) _vr[i];
+    }
+
     fmi2SetRealTYPE* fmi2SetReal = fmu->fmi2SetReal_;
-    fmi2Status status = (*fmi2SetReal)((void*) c, (fmi2ValueReference*)_vr, size, _values);
+    fmi2Status status = (*fmi2SetReal)((void*) c, __vr, size, _values);
 
     env->ReleaseLongArrayElements(vr, _vr, 0);
     env->ReleaseDoubleArrayElements(values, _values, 0);
+
+    free(__vr);
 
     return status;
 }
@@ -259,6 +293,11 @@ JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi2_jni_Fmi2Library_setS
     const jsize size = env->GetArrayLength(vr);
     jlong *_vr = env->GetLongArrayElements(vr, 0);
 
+    fmi2ValueReference* __vr = (fmi2ValueReference*) malloc(sizeof(fmi2ValueReference) * size);
+    for (unsigned int i = 0; i < size; ++i) {
+        __vr[i] = (fmi2ValueReference) _vr[i];
+    }
+
     std::vector<const char*> _values(size);
     for (int i = 0; i < size; i++) {
        jstring str = (jstring) env->GetObjectArrayElement(values, i);
@@ -266,9 +305,11 @@ JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi2_jni_Fmi2Library_setS
     }
 
     fmi2SetStringTYPE* fmi2SetString = fmu->fmi2SetString_;
-    fmi2Status status = (*fmi2SetString)((void*) c, (fmi2ValueReference*)_vr, size, _values.data());
+    fmi2Status status = (*fmi2SetString)((void*) c, __vr, size, _values.data());
 
     env->ReleaseLongArrayElements(vr, _vr, 0);
+
+    free(__vr);
 
     return status;
 }
@@ -281,11 +322,18 @@ JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi2_jni_Fmi2Library_setB
     jlong *_vr = env->GetLongArrayElements(vr, 0);
     jboolean *_values = env->GetBooleanArrayElements(values, 0);
 
+    fmi2ValueReference* __vr = (fmi2ValueReference*) malloc(sizeof(fmi2ValueReference) * size);
+    for (unsigned int i = 0; i < size; ++i) {
+        __vr[i] = (fmi2ValueReference) _vr[i];
+    }
+
     fmi2SetBooleanTYPE* fmi2SetBoolean = fmu->fmi2SetBoolean_;
-    fmi2Status status = (*fmi2SetBoolean)((void*) c, (fmi2ValueReference*)_vr, size, (fmi2Boolean*)_values);
+    fmi2Status status = (*fmi2SetBoolean)((void*) c, __vr, size, (fmi2Boolean*)_values);
 
     env->ReleaseLongArrayElements(vr, _vr, 0);
     env->ReleaseBooleanArrayElements(values, _values, 0);
+
+    free(__vr);
 
     return status;
 }
