@@ -175,7 +175,7 @@ abstract class Fmi1LibraryWrapper<E : Fmi1Library>(
      * The status returned from the last call to a FMU function
      */
     var lastStatus: FmiStatus = FmiStatus.NONE
-        private set
+        internal set
 
     /**
      * Has terminate been called on the FMU?

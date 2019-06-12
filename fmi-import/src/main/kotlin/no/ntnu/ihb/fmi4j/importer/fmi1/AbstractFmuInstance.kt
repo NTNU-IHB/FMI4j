@@ -71,11 +71,15 @@ abstract class AbstractFmuInstance<out E : CommonModelDescription, out T : Fmi1L
 
 
     override fun enterInitializationMode(): Boolean {
-        return true
+        return true.also {
+            wrapper.lastStatus = FmiStatus.OK
+        }
     }
 
     override fun exitInitializationMode(): Boolean {
-        return true
+        return true.also {
+            wrapper.lastStatus = FmiStatus.OK
+        }
     }
 
     override fun terminate(): Boolean {

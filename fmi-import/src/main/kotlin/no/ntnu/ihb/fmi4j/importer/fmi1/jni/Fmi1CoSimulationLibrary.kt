@@ -150,7 +150,7 @@ class CoSimulationLibraryWrapper(
     }
 
     fun initializeSlave(startTime: Double, stopTime: Double): FmiStatus {
-        return library.initializeSlave(c, startTime, stopTime)
+        return updateStatus(library.initializeSlave(c, startTime, stopTime))
     }
 
     fun doStep(t: Double, dt: Double, newStep: Boolean): FmiStatus {
