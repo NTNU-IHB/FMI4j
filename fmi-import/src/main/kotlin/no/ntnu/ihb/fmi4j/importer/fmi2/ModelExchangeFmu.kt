@@ -46,8 +46,8 @@ class ModelExchangeFmu @JvmOverloads constructor(
 
     private val lib: Fmi2ModelExchangeLibrary by lazy {
         val modelIdentifier = modelDescription.attributes.modelIdentifier
-        val libName = fmu.getAbsoluteLibraryPath(modelIdentifier)
-        Fmi2ModelExchangeLibrary(libName).also {
+        val lib = fmu.getAbsoluteLibraryPath(modelIdentifier)
+        Fmi2ModelExchangeLibrary(lib).also {
             fmu.registerLibrary(it)
         }
     }

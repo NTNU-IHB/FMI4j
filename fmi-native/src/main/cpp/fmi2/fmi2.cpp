@@ -27,16 +27,17 @@
 #include <stdlib.h>
 #include <vector>
 
-#include <iostream>
 #include "fmu_instance.hpp"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-JNIEXPORT jlong JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi2_jni_Fmi2Library_load(JNIEnv *env, jobject obj, jstring lib_name) {
+JNIEXPORT jlong JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi2_jni_Fmi2Library_load(JNIEnv *env, jobject obj, jstring dir, jstring lib_name) {
+    const char* _dir = env->GetStringUTFChars(dir, 0);
     const char* _lib_name = env->GetStringUTFChars(lib_name, 0);
-    FmuInstance* fmu = new FmuInstance(_lib_name);
+    FmuInstance* fmu = new FmuInstance(_dir, _lib_name);
+    env->ReleaseStringUTFChars(dir, _dir);
     env->ReleaseStringUTFChars(lib_name, _lib_name);
     return (jlong) fmu;
 }

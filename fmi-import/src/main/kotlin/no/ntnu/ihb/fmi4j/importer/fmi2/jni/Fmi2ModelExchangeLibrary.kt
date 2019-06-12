@@ -26,13 +26,14 @@ package no.ntnu.ihb.fmi4j.importer.fmi2.jni
 
 import no.ntnu.ihb.fmi4j.FmiStatus
 import no.ntnu.ihb.fmi4j.util.BooleanByReference
+import java.io.File
 
 /**
  * @author Lars Ivar Hatledal
  */
 class Fmi2ModelExchangeLibrary(
-        libName: String
-) : Fmi2Library(libName) {
+        lib: File
+) : Fmi2Library(lib) {
 
     private external fun enterEventMode(p: Long, c: Fmi2Component): NativeStatus
 
@@ -54,7 +55,7 @@ class Fmi2ModelExchangeLibrary(
 
     private external fun getContinuousStates(p: Long, c: Fmi2Component, x: DoubleArray): NativeStatus
 
-    private external fun getNominalsOfContinuousStates(p: Long, c: Fmi2Component, x_nominals: DoubleArray): NativeStatus
+    private external fun getNominalsOfContinuousStates(p: Long, c: Fmi2Component, xNominals: DoubleArray): NativeStatus
 
     fun enterEventMode(c: Fmi2Component): FmiStatus {
         return enterEventMode(p, c).transform()

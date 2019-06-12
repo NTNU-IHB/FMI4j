@@ -26,11 +26,12 @@ package no.ntnu.ihb.fmi4j.importer.fmi1.jni
 
 import no.ntnu.ihb.fmi4j.FmiStatus
 import no.ntnu.ihb.fmi4j.modeldescription.ValueReferences
+import java.io.File
 
 class Fmi1ModelExchangeLibrary(
-        libName: String,
+        lib: File,
         modelIdentifier: String
-) : Fmi1Library(libName, modelIdentifier) {
+) : Fmi1Library(lib, modelIdentifier) {
 
     private external fun instantiateModel(p: Long, instanceName: String, guid: String, loggingOn: Boolean): FmiComponent
 

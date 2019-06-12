@@ -34,10 +34,12 @@
 extern "C" {
 #endif
 
-JNIEXPORT jlong JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi1_jni_Fmi1Library_load(JNIEnv *env, jobject obj, jstring libName, jstring modelIdentifier) {
+JNIEXPORT jlong JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi1_jni_Fmi1Library_load(JNIEnv *env, jobject obj, jstring dir, jstring libName, jstring modelIdentifier) {
+    const char* _dir = env->GetStringUTFChars(dir, 0);
     const char* _libName = env->GetStringUTFChars(libName, 0);
     const char* _modelIdentifier = env->GetStringUTFChars(modelIdentifier, 0);
-    FmuInstance* fmu = new FmuInstance(_libName, _modelIdentifier);
+    FmuInstance* fmu = new FmuInstance(_dir, _libName, _modelIdentifier);
+    env->ReleaseStringUTFChars(dir, _dir);
     env->ReleaseStringUTFChars(libName, _libName);
     env->ReleaseStringUTFChars(modelIdentifier, _modelIdentifier);
     return (jlong) fmu;

@@ -34,6 +34,7 @@ import no.ntnu.ihb.fmi4j.util.LongByReference
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.Closeable
+import java.io.File
 
 internal typealias NativeStatus = Int
 internal typealias Fmi2Component = Long
@@ -42,10 +43,10 @@ internal typealias Fmi2Component = Long
  * @author Lars Ivar Hatledal
  */
 open class Fmi2Library(
-        libName: String
+        lib: File
 ) : Closeable {
 
-    protected val p: Long = load(libName)
+    protected val p: Long = load(lib.parent, lib.name)
     private var isClosed = false
 
     override fun close() {
@@ -65,7 +66,7 @@ open class Fmi2Library(
         }
     }
 
-    private external fun load(libName: String): Long
+    private external fun load(dir: String, libName: String): Long
 
     private external fun free(p: Long): Boolean
 

@@ -63,8 +63,7 @@ class Fmu internal constructor(
     }
 
     private val resourcesPath: String
-        get() = "file:///${File(extractedFmu, RESOURCES_FOLDER)
-                .absolutePath.replace("\\", "/")}"
+        get() = "file:///${File(extractedFmu, RESOURCES_FOLDER).absolutePath}"
 
 
     override fun asCoSimulationFmu(): CoSimulationFmu {
@@ -84,9 +83,9 @@ class Fmu internal constructor(
     /**
      * Get the absolute name of the native library on the form "C://folder/name.extension"
      */
-    fun getAbsoluteLibraryPath(modelIdentifier: String): String {
+    fun getAbsoluteLibraryPath(modelIdentifier: String): File {
         return File(extractedFmu, BINARIES_FOLDER + File.separator + OsUtil.libraryFolderName + OsUtil.platformBitness
-                + File.separator + modelIdentifier + "." + OsUtil.libExtension).absolutePath
+                + File.separator + modelIdentifier + "." + OsUtil.libExtension)
     }
 
     internal fun registerLibrary(library: Fmi2Library) {

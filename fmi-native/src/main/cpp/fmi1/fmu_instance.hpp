@@ -46,16 +46,17 @@ namespace {
     #endif
     }
 
-    DLL_HANDLE load_library(const char* libName) {
+    DLL_HANDLE load_library(const char* dir, const char* libName) {
         DLL_HANDLE lib = nullptr;
     #ifdef WIN32
+        SetDllDirectory(dir);
         lib = LoadLibrary(libName);
     #else
         lib = dlopen(libName, RTLD_NOW | RTLD_LOCAL);
     #endif
         if (lib == nullptr) {
-            const auto err = std::string("[FMI native bridge] Fatal: Failed to load library '") + libName + std::string("'");
-            std::cerr << err << std::endl;
+            const auto err = std::string("[FMI native bridge] Fatal: Failed to load library '") + libName + std::string("'") ;
+            std::cerr << err << ", error:" << GetLastError() <<  std::endl;
             throw err;
         }
         return lib;
@@ -157,8 +158,8 @@ class FmuInstance {
         fmiTerminateTYPE *fmiTerminate_;
         fmiFreeModelInstanceTYPE *fmiFreeModelInstance_;
 
-        explicit FmuInstance(const char* libName, std::string modelIdentifier) {
-            handle_ = load_library(libName);
+        explicit FmuInstance(const char* dir, const char* libName, std::string modelIdentifier) {
+            handle_ = load_library(dir, libName);
 
             fmiGetVersion_ = load_function<fmiGetVersionTYPE *>(handle_, full_function_name(modelIdentifier, "_fmiGetVersion"));
             fmiGetTypesPlatform_ = load_function<fmiGetTypesPlatformTYPE *>(handle_,  full_function_name(modelIdentifier, "fmiGetTypesPlatform"));

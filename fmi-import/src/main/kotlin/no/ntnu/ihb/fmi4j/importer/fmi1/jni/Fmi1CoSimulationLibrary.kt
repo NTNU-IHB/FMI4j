@@ -31,14 +31,15 @@ import no.ntnu.ihb.fmi4j.util.BooleanByReference
 import no.ntnu.ihb.fmi4j.util.DoubleByReference
 import no.ntnu.ihb.fmi4j.util.IntByReference
 import no.ntnu.ihb.fmi4j.util.StringByReference
+import java.io.File
 
 /**
  * @author Lars Ivar Hatledal
  */
 class Fmi1CoSimulationLibrary(
-        libName: String,
+        lib: File,
         modelIdentifier: String
-) : Fmi1Library(libName, modelIdentifier) {
+) : Fmi1Library(lib, modelIdentifier) {
 
     private external fun instantiateSlave(p: Long, instanceName: String, guid: String,
                                           fmuLocation: String, loggingOn: Boolean): FmiComponent

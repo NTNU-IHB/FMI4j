@@ -42,8 +42,8 @@ class CoSimulationFmu(
 
     private val lib: Fmi2CoSimulationLibrary by lazy {
         val modelIdentifier = modelDescription.attributes.modelIdentifier
-        val libName = fmu.getAbsoluteLibraryPath(modelIdentifier)
-        Fmi2CoSimulationLibrary(libName).also {
+        val lib = fmu.getAbsoluteLibraryPath(modelIdentifier)
+        Fmi2CoSimulationLibrary(lib).also {
             fmu.registerLibrary(it)
         }
     }

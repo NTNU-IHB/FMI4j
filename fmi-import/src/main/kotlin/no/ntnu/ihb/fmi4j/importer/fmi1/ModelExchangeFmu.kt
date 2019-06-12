@@ -46,8 +46,8 @@ class ModelExchangeFmu(
 
     private val lib: Fmi1ModelExchangeLibrary by lazy {
         val modelIdentifier = modelDescription.attributes.modelIdentifier
-        val libName = fmu.getAbsoluteLibraryPath(modelIdentifier)
-        Fmi1ModelExchangeLibrary(libName, modelIdentifier).also {
+        val lib = fmu.getAbsoluteLibraryPath(modelIdentifier)
+        Fmi1ModelExchangeLibrary(lib, modelIdentifier).also {
             fmu.registerLibrary(it)
         }
     }

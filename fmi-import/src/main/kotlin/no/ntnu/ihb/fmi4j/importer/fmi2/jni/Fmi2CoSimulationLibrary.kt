@@ -31,13 +31,14 @@ import no.ntnu.ihb.fmi4j.util.BooleanByReference
 import no.ntnu.ihb.fmi4j.util.DoubleByReference
 import no.ntnu.ihb.fmi4j.util.IntByReference
 import no.ntnu.ihb.fmi4j.util.StringByReference
+import java.io.File
 
 /**
  * @author Lars Ivar Hatledal
  */
 class Fmi2CoSimulationLibrary(
-        libName: String
-) : Fmi2Library(libName) {
+        lib: File
+) : Fmi2Library(lib) {
 
     private external fun doStep(p: Long, c: Fmi2Component, currentCommunicationPoint: Double,
                                 communicationStepSize: Double, noSetFMUStatePriorToCurrentPoint: Boolean): NativeStatus
