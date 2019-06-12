@@ -22,10 +22,10 @@ steps:
   inputs:
     workingDirectory: ''
     gradleWrapperFile: 'gradlew'
-    gradleOptions: '-Xmx3072m'
+    gradleOptions: '-Xmx3072m -PskipBuildNative=true'
     javaHomeOption: 'JDKVersion'
     jdkVersionOption: '1.11'
     jdkArchitectureOption: 'x64'
     publishJUnitResults: true
     testResultsFiles: '**/TEST-*.xml'
-    tasks: '-PskipBuildNative=true clean build'
+    tasks: 'clean build'
