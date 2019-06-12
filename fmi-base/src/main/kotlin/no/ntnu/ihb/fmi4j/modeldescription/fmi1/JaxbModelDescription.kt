@@ -66,7 +66,7 @@ class JaxbModelDescription internal constructor(
     override val unitDefinitions: UnitDefinitions?
         get() = null
     override val typeDefinitions: TypeDefinitions?
-        get() = throw UnsupportedOperationException("Feature not available for FMI 1.0")
+        get() = null
     override val logCategories: LogCategories?
         get() = null
     override val supportsCoSimulation: Boolean
