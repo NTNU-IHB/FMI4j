@@ -117,4 +117,3 @@ interface ModelVariables : Iterable<TypedScalarVariable<*>> {
     }
 
 }
-
