@@ -37,7 +37,7 @@ fun FmiModelDescription.CoSimulation.convert(): CoSimulationAttributes {
             canGetAndSetFMUstate = this@convert.isCanGetAndSetFMUstate,
             canSerializeFMUstate = this@convert.isCanSerializeFMUstate,
             providesDirectionalDerivative = this@convert.isProvidesDirectionalDerivative,
-            canHandleVariableCommunicationStepSize = this@convert.canHandleVariableCommunicationStepSize,
+            canHandleVariableCommunicationStepSize = this@convert.isCanHandleVariableCommunicationStepSize,
             canRunAsynchronuously = this@convert.isCanRunAsynchronuously,
             canInterpolateInputs = this@convert.isCanInterpolateInputs,
             maxOutputDerivativeOrder = this@convert.getMaxOutputDerivativeOrder().toInt(),
