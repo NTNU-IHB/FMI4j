@@ -58,7 +58,7 @@ class Fmu internal constructor(
     }
 
     override val modelDescription: ModelDescriptionProvider by lazy {
-        JaxbModelDescriptionParser.parse(modelDescriptionXml)
+        JaxbModelDescriptionParser().parse(modelDescriptionXml)
     }
 
     internal val fmuPath: String

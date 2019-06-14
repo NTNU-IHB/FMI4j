@@ -80,31 +80,36 @@ abstract class ModelDescriptionParser {
             throw IllegalArgumentException("Input is not an valid FMU! No $MODEL_DESC_FILE present!")
         }
 
-
+        @JvmStatic
         fun extractVersion(url: URL): String {
             return extractVersion(extractModelDescriptionXml(url))
         }
 
+        @JvmStatic
         fun extractVersion(file: File): String {
             return extractVersion(extractModelDescriptionXml(file))
         }
 
+        @JvmStatic
         fun extractVersion(xml: String): String {
             return JAXB.unmarshal(StringReader(xml), MockupModelDescription::class.java).fmiVersion
         }
 
-        fun parse(url: URL): ModelDescriptionProvider {
-            return parse(extractModelDescriptionXml(url))
+        @JvmStatic
+        fun parseModelDescription(url: URL): ModelDescriptionProvider {
+            return parseModelDescription(extractModelDescriptionXml(url))
         }
 
-        fun parse(file: File): ModelDescriptionProvider {
-            return parse(extractModelDescriptionXml(file))
+        @JvmStatic
+        fun parseModelDescription(file: File): ModelDescriptionProvider {
+            return parseModelDescription(extractModelDescriptionXml(file))
         }
 
-        fun parse(xml: String): ModelDescriptionProvider {
+        @JvmStatic
+        fun parseModelDescription(xml: String): ModelDescriptionProvider {
             return when (val version = extractVersion(xml)) {
-                "1.0" -> no.ntnu.ihb.fmi4j.modeldescription.fmi1.JaxbModelDescriptionParser.parse(xml)
-                "2.0" -> no.ntnu.ihb.fmi4j.modeldescription.fmi2.JaxbModelDescriptionParser.parse(xml)
+                "1.0" -> no.ntnu.ihb.fmi4j.modeldescription.fmi1.JaxbModelDescriptionParser().parse(xml)
+                "2.0" -> no.ntnu.ihb.fmi4j.modeldescription.fmi2.JaxbModelDescriptionParser().parse(xml)
                 else -> throw UnsupportedOperationException("Unsupported FMI version: '$version'")
             }
         }
@@ -115,6 +120,7 @@ abstract class ModelDescriptionParser {
 
 @XmlRootElement(name = "fmiModelDescription")
 private class MockupModelDescription {
+
     @XmlAttribute(name = "fmiVersion", required = true)
     private var fmiVersion_: String? = null
 

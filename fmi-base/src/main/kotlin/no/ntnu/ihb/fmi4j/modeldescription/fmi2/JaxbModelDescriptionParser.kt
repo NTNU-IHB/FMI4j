@@ -29,13 +29,11 @@ import no.ntnu.ihb.fmi4j.modeldescription.ModelDescriptionProvider
 import java.io.StringReader
 import javax.xml.bind.JAXBContext
 
-object JaxbModelDescriptionParser: ModelDescriptionParser() {
+class JaxbModelDescriptionParser : ModelDescriptionParser() {
 
     override fun parse(xml: String): ModelDescriptionProvider {
         val ctx = JAXBContext.newInstance(FmiModelDescription::class.java)
-        return ctx.createUnmarshaller().unmarshal(StringReader(xml)).let {
-            JaxbModelDescription(it as FmiModelDescription)
-        }
+        return JaxbModelDescription(ctx.createUnmarshaller().unmarshal(StringReader(xml)) as FmiModelDescription)
     }
 
 }

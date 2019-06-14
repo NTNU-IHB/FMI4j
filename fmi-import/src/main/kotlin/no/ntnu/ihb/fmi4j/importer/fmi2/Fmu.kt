@@ -59,7 +59,7 @@ class Fmu internal constructor(
     }
 
     override val modelDescription: ModelDescriptionProvider by lazy {
-        JaxbModelDescriptionParser.parse(modelDescriptionXml)
+        JaxbModelDescriptionParser().parse(modelDescriptionXml)
     }
 
     private val resourcesPath: String
@@ -80,9 +80,6 @@ class Fmu internal constructor(
         return modelExchangeFmu
     }
 
-    /**
-     * Get the absolute name of the native library on the form "C://folder/name.extension"
-     */
     fun getAbsoluteLibraryPath(modelIdentifier: String): File {
         return File(extractedFmu, BINARIES_FOLDER + File.separator + OsUtil.libraryFolderName + OsUtil.platformBitness
                 + File.separator + modelIdentifier + "." + OsUtil.libExtension)

@@ -10,7 +10,7 @@ import java.io.File;
 
 public class ModelDescriptionParseTest {
 
-    private ModelDescriptionParser parser = JaxbModelDescriptionParser.INSTANCE;
+    private ModelDescriptionParser parser = new JaxbModelDescriptionParser();
 
     @Test
     public void test1() {

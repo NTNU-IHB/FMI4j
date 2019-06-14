@@ -102,7 +102,7 @@ public class TestFMUs {
         }
 
         public ModelDescriptionProvider modelDescription() {
-            return JaxbModelDescriptionParser.INSTANCE.parse(fmuFile);
+            return new JaxbModelDescriptionParser().parse(fmuFile);
         }
 
         public String modelDescriptionXml() {
