@@ -79,7 +79,7 @@ fun VariableWriter.write(vr: ValueReference, value: Int): FmiStatus {
     return this.write(longArrayOf(vr), intArrayOf(value))
 }
 
-fun VariableWriter.writeReal(vr: ValueReference, value: Real): FmiStatus {
+fun VariableWriter.write(vr: ValueReference, value: Real): FmiStatus {
     return write(longArrayOf(vr), realArrayOf(value))
 }
 
@@ -129,7 +129,7 @@ fun IntegerVariable.write(writer: VariableWriter, value: Int): FmiStatus {
 }
 
 fun RealVariable.write(writer: VariableWriter, value: Real): FmiStatus {
-    return writer.writeReal(valueReference, value)
+    return writer.write(valueReference, value)
 }
 
 fun StringVariable.write(writer: VariableWriter, value: String): FmiStatus {
