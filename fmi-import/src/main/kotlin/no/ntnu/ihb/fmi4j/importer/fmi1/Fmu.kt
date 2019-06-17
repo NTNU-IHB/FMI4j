@@ -47,7 +47,7 @@ class Fmu internal constructor(
 ) : AbstractFmu(name, extractedFmu) {
 
     private val libraries = mutableListOf<Fmi1Library>()
-    private val instances = mutableListOf<AbstractFmuInstance<*, *>>()
+    private val instances = mutableListOf<AbstractModelInstance<*, *>>()
 
     private val coSimulationFmu by lazy {
         CoSimulationFmu(this)
@@ -90,7 +90,7 @@ class Fmu internal constructor(
         libraries.add(library)
     }
 
-    internal fun registerInstance(instance: AbstractFmuInstance<*, *>) {
+    internal fun registerInstance(instance: AbstractModelInstance<*, *>) {
         instances.add(instance)
     }
 

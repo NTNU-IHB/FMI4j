@@ -37,7 +37,7 @@ fun VariableReader.readInteger(vr: ValueReference): IntegerRead {
     }
 }
 
-fun SimpleFmuInstance.readInteger(name: String): IntegerRead {
+fun SimpleModelInstance.readInteger(name: String): IntegerRead {
     return readInteger(modelVariables.getValueReference(name))
 }
 
@@ -48,7 +48,7 @@ fun VariableReader.readReal(vr: ValueReference): RealRead {
     }
 }
 
-fun SimpleFmuInstance.readReal(name: String): RealRead {
+fun SimpleModelInstance.readReal(name: String): RealRead {
     return readReal(modelVariables.getValueReference(name))
 }
 
@@ -59,7 +59,7 @@ fun VariableReader.read(vr: ValueReference): StringRead {
     }
 }
 
-fun SimpleFmuInstance.read(name: String): StringRead {
+fun SimpleModelInstance.read(name: String): StringRead {
     return this.read(modelVariables.getValueReference(name))
 }
 
@@ -70,7 +70,7 @@ fun VariableReader.readBoolean(vr: ValueReference): BooleanRead {
     }
 }
 
-fun SimpleFmuInstance.readBoolean(name: String): BooleanRead {
+fun SimpleModelInstance.readBoolean(name: String): BooleanRead {
     return readBoolean(modelVariables.getValueReference(name))
 }
 

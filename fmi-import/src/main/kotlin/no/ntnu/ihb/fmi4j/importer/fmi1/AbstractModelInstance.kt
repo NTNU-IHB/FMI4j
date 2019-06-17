@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory
  *
  * @author Lars Ivar Hatledal
  */
-abstract class AbstractFmuInstance<out E : CommonModelDescription, out T : Fmi1LibraryWrapper<*>> internal constructor(
+abstract class AbstractModelInstance<out E : CommonModelDescription, out T : Fmi1LibraryWrapper<*>> internal constructor(
         val wrapper: T,
         override val modelDescription: E
 ) : ModelInstance<E> {
@@ -133,7 +133,7 @@ abstract class AbstractFmuInstance<out E : CommonModelDescription, out T : Fmi1L
     }
 
     private companion object {
-        private val LOG: Logger = LoggerFactory.getLogger(AbstractFmuInstance::class.java)
+        private val LOG: Logger = LoggerFactory.getLogger(AbstractModelInstance::class.java)
     }
 
     override fun getFMUstate(): FmuState {

@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory
 class CoSimulationSlave internal constructor(
         wrapper: CoSimulationLibraryWrapper,
         modelDescription: CoSimulationModelDescription
-) : SlaveInstance, AbstractFmuInstance<CoSimulationModelDescription, CoSimulationLibraryWrapper>(wrapper, modelDescription) {
+) : SlaveInstance, AbstractModelInstance<CoSimulationModelDescription, CoSimulationLibraryWrapper>(wrapper, modelDescription) {
 
     /**
      * @see CoSimulationLibraryWrapper.doStep

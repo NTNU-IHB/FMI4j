@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory
 open class ModelExchangeInstance internal constructor(
         wrapper: ModelExchangeLibraryWrapper,
         modelDescription: ModelExchangeModelDescription
-) : AbstractFmuInstance<ModelExchangeModelDescription, ModelExchangeLibraryWrapper>(wrapper, modelDescription) {
+) : AbstractModelInstance<ModelExchangeModelDescription, ModelExchangeLibraryWrapper>(wrapper, modelDescription) {
 
 
     internal val eventInfo = EventInfo()

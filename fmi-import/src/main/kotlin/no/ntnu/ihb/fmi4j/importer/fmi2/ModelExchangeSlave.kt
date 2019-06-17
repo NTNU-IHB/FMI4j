@@ -25,7 +25,7 @@
 package no.ntnu.ihb.fmi4j.importer.fmi2
 
 import no.ntnu.ihb.fmi4j.FmiStatus
-import no.ntnu.ihb.fmi4j.SimpleFmuInstance
+import no.ntnu.ihb.fmi4j.SimpleModelInstance
 import no.ntnu.ihb.fmi4j.SlaveInstance
 import no.ntnu.ihb.fmi4j.modeldescription.CoSimulationAttributes
 import no.ntnu.ihb.fmi4j.modeldescription.CoSimulationModelDescription
@@ -41,10 +41,10 @@ import kotlin.math.min
  *
  * @author Lars Ivar Hatledal
  */
-class ModelExchangeFmuStepper internal constructor(
+class ModelExchangeSlave(
         private val fmuInstance: ModelExchangeInstance,
         private val solver: Solver
-) : SlaveInstance, SimpleFmuInstance by fmuInstance {
+) : SlaveInstance, SimpleModelInstance by fmuInstance {
 
     private val x: DoubleArray
 
@@ -211,7 +211,7 @@ class ModelExchangeFmuStepper internal constructor(
 
         const val EPS = 1E-13
 
-        val LOG: Logger = LoggerFactory.getLogger(ModelExchangeFmuStepper::class.java)
+        val LOG: Logger = LoggerFactory.getLogger(ModelExchangeSlave::class.java)
 
         fun FmiStatus.warnOnStatusNotOK(functionName: String) {
             if (this != FmiStatus.OK) {

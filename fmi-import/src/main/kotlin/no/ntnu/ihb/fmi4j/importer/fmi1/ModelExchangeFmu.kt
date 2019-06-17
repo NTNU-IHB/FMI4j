@@ -69,13 +69,13 @@ class ModelExchangeFmu(
         throw IllegalStateException("Not supported (yet)")
     }
 
-//    fun newInstance(solver: Solver): ModelExchangeFmuStepper {
+//    fun newInstance(solver: Solver): ModelExchangeSlave {
 //        return newInstance(solver, visible = false, loggingOn = false)
 //    }
 //
-//    fun newInstance(solver: Solver, visible: Boolean = false, loggingOn: Boolean = false): ModelExchangeFmuStepper {
+//    fun newInstance(solver: Solver, visible: Boolean = false, loggingOn: Boolean = false): ModelExchangeSlave {
 //        return newInstance(visible, loggingOn).let {
-//            ModelExchangeFmuStepper(it, solver)
+//            ModelExchangeSlave(it, solver)
 //        }
 //    }
 

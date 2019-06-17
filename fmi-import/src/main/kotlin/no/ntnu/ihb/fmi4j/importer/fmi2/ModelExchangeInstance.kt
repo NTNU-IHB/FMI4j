@@ -37,7 +37,7 @@ import no.ntnu.ihb.fmi4j.modeldescription.ModelExchangeModelDescription
 open class ModelExchangeInstance internal constructor(
         wrapper: ModelExchangeLibraryWrapper,
         modelDescription: ModelExchangeModelDescription
-) : AbstractFmuInstance<ModelExchangeModelDescription, ModelExchangeLibraryWrapper>(wrapper, modelDescription) {
+) : AbstractModelInstance<ModelExchangeModelDescription, ModelExchangeLibraryWrapper>(wrapper, modelDescription) {
 
     internal val eventInfo = EventInfo()
 
