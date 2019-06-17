@@ -19,10 +19,6 @@ For Model Exchange, solvers from [Apache Commons Math](http://commons.apache.org
 Compared to other FMI libraries targeting the JVM, FMI4j is **considerably faster** due to the fact that we use JNI with manually optimized C++-code instead of JNA or SWIG generated bindings. 
 A significant speedup (2-5x) compared to other FMI implementations for the JVM, such as JFMI and JavaFMI, should be expected. 
 
-The package consists of:
-* [A software API for interacting with FMUs](#api)
-* [A tool for running FMUs from the command line](#fmudriver).
-
 
 ### <a name="api"></a> Software API 
 
@@ -70,16 +66,6 @@ dependencies {
     implementation "com.github.NTNU-IHB.FMI4j:fmi-import:${fmi4j_version}"
 }
 ```
-
-### <a name="fmudriver"></a> FmuDriver
-
-FmuDriver is a command line tool for running FMUs. Run: 
-
-```bash
-java -jar FmuDriver -h
-```
-
-to see available options.
 
 ___
 
