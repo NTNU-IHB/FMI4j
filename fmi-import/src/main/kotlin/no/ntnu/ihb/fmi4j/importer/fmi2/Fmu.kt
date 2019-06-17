@@ -63,7 +63,7 @@ class Fmu internal constructor(
     }
 
     private val resourcesPath: String
-        get() = "file:///${File(extractedFmu, RESOURCES_FOLDER).absolutePath}"
+        get() = "file:///${File(extractedFmu, RESOURCES_FOLDER).absolutePath.replace("\\", "/")}"
 
 
     override fun asCoSimulationFmu(): CoSimulationFmu {
