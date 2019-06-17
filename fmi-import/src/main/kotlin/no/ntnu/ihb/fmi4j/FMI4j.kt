@@ -28,29 +28,34 @@ import no.ntnu.ihb.fmi4j.importer.fmi1.jni.Fmi1Library
 import no.ntnu.ihb.fmi4j.util.OsUtil
 import java.io.File
 import java.io.FileOutputStream
+import java.nio.file.Files
 import java.util.concurrent.atomic.AtomicBoolean
 
 object FMI4j {
 
     private val initialized = AtomicBoolean(false)
 
+    private val fileName = "${OsUtil.libPrefix}fmi4j.${OsUtil.libExtension}"
+
     internal fun init() {
         if (!initialized.getAndSet(true)) {
-            val fileName = "${OsUtil.libPrefix}fmi4j.${OsUtil.libExtension}"
-            val copy = File(fileName).apply {
-                deleteOnExit()
-            }
+
+            val tempFolder = Files.createTempDirectory("fmi4j_dll").toFile()
+            val fmi4jdll = File(tempFolder, fileName)
             try {
                 Fmi1Library::class.java.classLoader
                         .getResourceAsStream("native/fmi/${OsUtil.currentOS}/$fileName").use { `is` ->
-                            FileOutputStream(copy).use { fos ->
+                            FileOutputStream(fmi4jdll).use { fos ->
                                 `is`.copyTo(fos)
                             }
                         }
-                System.load(copy.absolutePath)
+                System.load(fmi4jdll.absolutePath)
             } catch (ex: Exception) {
-                copy.delete()
+                tempFolder.deleteRecursively()
                 throw RuntimeException(ex)
+            } finally {
+                fmi4jdll.deleteOnExit()
+                tempFolder.deleteOnExit()
             }
         }
     }
