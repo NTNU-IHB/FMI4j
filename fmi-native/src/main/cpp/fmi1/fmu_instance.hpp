@@ -22,57 +22,10 @@
  * THE SOFTWARE.
  */
 
-#include <string>
-#include <sstream>
-#include <iostream>
-
-#if defined(_MSC_VER) || defined(WIN32) || defined(__MINGW32__)
-#include <windows.h>
-#define DLL_HANDLE HMODULE
-#else
-#define DLL_HANDLE void*
-#include <dlfcn.h>
-#endif
-
+#include "../util.hpp"
 #include "fmiFunctionTypes.h"
 
 namespace {
-
-
-    template<class T>
-    T load_function(DLL_HANDLE handle, const char *function_name) {
-    #ifdef WIN32
-        return (T) GetProcAddress(handle, function_name);
-    #else
-        return (T) dlsym(handle, function_name);
-    #endif
-    }
-
-    std::string getLastError() {
-    #ifdef WIN32
-        std::ostringstream os;
-        os << GetLastError();
-        return os.str();
-    #else
-        return dlerror();
-    #endif
-    }
-
-    DLL_HANDLE load_library(const char* dir, const char* libName) {
-        DLL_HANDLE lib = nullptr;
-    #ifdef WIN32
-        SetDllDirectory(dir);
-        lib = LoadLibrary(libName);
-    #else
-        lib = dlopen(std::string(std::string(dir) + "/" + std::string(libName)).c_str(), RTLD_NOW | RTLD_LOCAL);
-    #endif
-        if (lib == nullptr) {
-            const auto err = std::string("[FMI native bridge] Fatal: Failed to load library '") + libName + std::string("', error: ") + getLastError() ;
-            std::cerr << err << std::endl;
-            throw err;
-        }
-        return lib;
-    }
 
     const char* status_to_string(fmiStatus status) {
         switch (status){
