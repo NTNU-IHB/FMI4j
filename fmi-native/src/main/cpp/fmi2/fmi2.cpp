@@ -138,13 +138,19 @@ JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi2_jni_Fmi2Library_getI
     const jsize size = env->GetArrayLength(vr);
     jlong* _vr = env->GetLongArrayElements(vr, 0);
 
+    fmi2ValueReference* __vr = (fmi2ValueReference*) malloc(sizeof(fmi2ValueReference) * size);
+    for (unsigned int i = 0; i < size; ++i) {
+        __vr[i] = (fmi2ValueReference) _vr[i];
+    }
+
     fmi2GetIntegerTYPE* fmi2GetInteger = fmu->fmi2GetInteger_;
 
     fmi2Integer* _ref = (fmi2Integer*) malloc(sizeof(fmi2Integer) * size);
-    fmi2Status status = (*fmi2GetInteger)((void*) c, (fmi2ValueReference*)_vr, size, _ref);
+    fmi2Status status = (*fmi2GetInteger)((void*) c, __vr, size, _ref);
 
     env->SetIntArrayRegion(ref, 0, size, (jint*)_ref);
     free(_ref);
+    free(_vr);
     env->ReleaseLongArrayElements(vr, _vr, 0);
 
     return status;
@@ -480,16 +486,24 @@ JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi2_jni_Fmi2CoSimulation
     const jsize size = env->GetArrayLength(vr);
 
     jlong* _vr = env->GetLongArrayElements(vr, 0);
+
+    fmi2ValueReference* __vr = (fmi2ValueReference*) malloc(sizeof(fmi2ValueReference) * size);
+    for (unsigned int i = 0; i < size; ++i) {
+        __vr[i] = (fmi2ValueReference) _vr[i];
+    }
+
     jint* _order = env->GetIntArrayElements(order, 0);
     jdouble* _value = env->GetDoubleArrayElements(value, 0);
 
     fmi2SetRealInputDerivativesTYPE* fmi2SetRealInputDerivatives = fmu->fmi2SetRealInputDerivatives_;
-    fmi2Status status = (*fmi2SetRealInputDerivatives)((void*) c, (fmi2ValueReference*)_vr, size, (fmi2Integer*)_order, _value);
+    fmi2Status status = (*fmi2SetRealInputDerivatives)((void*) c, __vr, size, (fmi2Integer*)_order, _value);
 
     env->ReleaseLongArrayElements(vr, _vr, 0);
     env->ReleaseIntArrayElements(order, _order, 0);
 
     env->ReleaseDoubleArrayElements(value, _value, 0);
+
+    free(__vr);
 
     return status;
 }
@@ -502,17 +516,24 @@ JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi2_jni_Fmi2CoSimulation
     const jsize size = env->GetArrayLength(vr);
 
     jlong* _vr = env->GetLongArrayElements(vr, 0);
+
+    fmi2ValueReference* __vr = (fmi2ValueReference*) malloc(sizeof(fmi2ValueReference) * size);
+    for (unsigned int i = 0; i < size; ++i) {
+        __vr[i] = (fmi2ValueReference) _vr[i];
+    }
+
     jint* _order = env->GetIntArrayElements(order, 0);
     fmi2Real* _value = (fmi2Real*) malloc(sizeof(fmi2Real) * size);
 
     fmi2GetRealOutputDerivativesTYPE* fmi2GetRealOutputDerivatives = fmu->fmi2GetRealOutputDerivatives_;
-    fmi2Status status = (*fmi2GetRealOutputDerivatives)((void*) c, (fmi2ValueReference*)_vr, size, (fmi2Integer*)_order, _value);
+    fmi2Status status = (*fmi2GetRealOutputDerivatives)((void*) c, __vr, size, (fmi2Integer*)_order, _value);
 
     env->ReleaseLongArrayElements(vr, _vr, 0);
     env->ReleaseIntArrayElements(order, _order, 0);
 
     env->SetDoubleArrayRegion(value, 0, size, _value);
     free(_value);
+    free(__vr);
 
     return status;
 }
