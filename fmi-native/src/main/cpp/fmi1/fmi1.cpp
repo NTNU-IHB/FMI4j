@@ -219,7 +219,7 @@ JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi1_jni_Fmi1Library_setR
     }
 
     fmiSetRealTYPE* fmiSetReal = fmu->fmiSetReal_;
-    fmiStatus status = (*fmiSetReal)((void*) c, (fmiValueReference*)_vr, size, _values);
+    fmiStatus status = (*fmiSetReal)((void*) c, __vr, size, _values);
 
     env->ReleaseLongArrayElements(vr, _vr, 0);
     env->ReleaseDoubleArrayElements(values, _values, 0);
