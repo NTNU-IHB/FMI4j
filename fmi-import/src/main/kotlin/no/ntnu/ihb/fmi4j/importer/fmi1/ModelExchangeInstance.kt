@@ -44,6 +44,7 @@ open class ModelExchangeInstance internal constructor(
 
 
     internal val eventInfo = EventInfo()
+    private var relativeTolerance: Double = 0.0
 
     override fun setup(start: Double, stop: Double, tolerance: Double): Boolean {
 
@@ -60,11 +61,17 @@ open class ModelExchangeInstance internal constructor(
 
         setTime(start)
 
-        val toleranceControlled = tolerance > 0
-        return (wrapper.initialize(toleranceControlled, tolerance).isOK()).also {
-            simulationTime = start
-        }
+        relativeTolerance = tolerance
 
+        return true
+
+    }
+
+    override fun exitInitializationMode(): Boolean {
+        val toleranceControlled = relativeTolerance > 0
+        return (wrapper.initialize(toleranceControlled, relativeTolerance).isOK()).also {
+            wrapper.lastStatus = FmiStatus.OK
+        }
     }
 
     override fun reset(): Boolean {
