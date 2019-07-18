@@ -63,15 +63,15 @@ open class ModelExchangeInstance internal constructor(
 
         relativeTolerance = tolerance
 
-        return true
+        return true.also {
+            wrapper.lastStatus = FmiStatus.OK
+        }
 
     }
 
     override fun exitInitializationMode(): Boolean {
         val toleranceControlled = relativeTolerance > 0
-        return (wrapper.initialize(toleranceControlled, relativeTolerance).isOK()).also {
-            wrapper.lastStatus = FmiStatus.OK
-        }
+        return wrapper.initialize(toleranceControlled, relativeTolerance).isOK()
     }
 
     override fun reset(): Boolean {

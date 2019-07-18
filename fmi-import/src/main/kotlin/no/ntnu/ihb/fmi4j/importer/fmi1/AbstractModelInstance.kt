@@ -126,10 +126,6 @@ abstract class AbstractModelInstance<out E : CommonModelDescription, out T : Fmi
         return wrapper.write(vr, value)
     }
 
-    private companion object {
-        private val LOG: Logger = LoggerFactory.getLogger(AbstractModelInstance::class.java)
-    }
-
     override fun getFMUstate(): FmuState {
         throw IllegalStateException("Feature not available for FMI 1.0")
     }
@@ -152,6 +148,10 @@ abstract class AbstractModelInstance<out E : CommonModelDescription, out T : Fmi
 
     override fun getDirectionalDerivative(vUnknownRef: ValueReferences, vKnownRef: ValueReferences, dvKnown: RealArray): RealArray {
         throw IllegalStateException("Feature not available for FMI 1.0")
+    }
+
+    private companion object {
+        private val LOG: Logger = LoggerFactory.getLogger(AbstractModelInstance::class.java)
     }
 
 }
