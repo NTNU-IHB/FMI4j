@@ -76,12 +76,6 @@ abstract class AbstractModelInstance<out E : CommonModelDescription, out T : Fmi
         }
     }
 
-    override fun exitInitializationMode(): Boolean {
-        return true.also {
-            wrapper.lastStatus = FmiStatus.OK
-        }
-    }
-
     override fun terminate(): Boolean {
         return terminate(true)
     }

@@ -61,10 +61,15 @@ class CoSimulationSlave internal constructor(
             stopTime = stop
         }
 
-        return (wrapper.initializeSlave(startTime, stopTime).isOK()).also {
-            simulationTime = start
-        }
+        simulationTime = start
 
+        return true
+    }
+
+    override fun exitInitializationMode(): Boolean {
+        return (wrapper.initializeSlave(startTime, stopTime).isOK()).also {
+            wrapper.lastStatus = FmiStatus.OK
+        }
     }
 
     override fun doStep(stepSize: Double): Boolean {
