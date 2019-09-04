@@ -196,12 +196,7 @@ JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi2_jni_Fmi2Library_getS
 
     fmi2GetStringTYPE* fmi2GetString = fmu->fmi2GetString_;
 
-    std::vector<const char*> _ref(size);
-    for (int i = 0; i < size; i++) {
-        jstring str = (jstring) env->GetObjectArrayElement(ref, i);
-        _ref[i] = env->GetStringUTFChars(str, 0);
-    }
-
+    std::vector<fmi2String> _ref(size);
     fmi2Status status = (*fmi2GetString)((void*) c, __vr, size, _ref.data());
 
     for (int i = 0; i < size; i++) {
