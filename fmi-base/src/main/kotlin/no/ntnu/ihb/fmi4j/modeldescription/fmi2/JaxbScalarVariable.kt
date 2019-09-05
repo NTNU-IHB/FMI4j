@@ -37,7 +37,14 @@ class JaxbScalarVariable internal constructor(
     override val description: String?
         get() = v.description
     override val causality: Causality?
-        get() = v.causality?.let { Causality.valueOf(it.toUpperCase()) }
+        get() = v.causality?.let {
+            var causalityString = it
+            val upperCaseIndex = it.indexOfFirst { it.isUpperCase() }
+            if (upperCaseIndex != -1) {
+                causalityString = causalityString.substring(0, upperCaseIndex) + "_" + causalityString.substring(upperCaseIndex, causalityString.length)
+            }
+            Causality.valueOf(causalityString.toUpperCase())
+        }
     override val variability: Variability?
         get() = v.variability?.let { Variability.valueOf(it.toUpperCase()) }
     override val initial: Initial?
