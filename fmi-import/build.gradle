@@ -1,12 +1,13 @@
 
 plugins {
     id "java-library"
-    id "com.github.johnrengelman.shadow" version "4.0.4"
+    id "com.jfrog.bintray" version "1.8.4"
 }
 
 apply from: rootProject.file("gradle/junit.gradle")
 apply from: rootProject.file("gradle/copyfmus.gradle")
 apply from: rootProject.file("gradle/mavenpublish.gradle")
+apply from: rootProject.file("gradle/bintraypublish.gradle")
 
 dependencies {
 
@@ -15,10 +16,4 @@ dependencies {
 
     testImplementation group: 'org.siani.javafmi', name: 'fmu-wrapper', version: '2.25.1'
 
-}
-
-shadowJar {
-    baseName += "-shadow"
-    archiveClassifier = null
-    archiveVersion = null
 }

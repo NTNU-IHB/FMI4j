@@ -6,13 +6,14 @@ plugins {
 
 println "Gradle version is ${gradle.getGradleVersion()}"
 
-group = 'no.ntnu.ihb.fmi4j'
-
 wrapper {
     distributionType = Wrapper.DistributionType.ALL
 }
 
 subprojects { sub ->
+
+    group = 'no.ntnu.ihb.fmi4j'
+    version = '0.22.5'
 
     if (sub.name != "fmi-native") {
 

@@ -1,0 +1,18 @@
+
+if (hasProperty("bintrayUser") && hasProperty("bintrayKey")) {
+
+    bintray {
+        user = bintrayUser
+        key = bintrayKey
+        setPublications("maven")
+        pkg {
+            userOrg = "ntnu-ihb"
+            repo = "mvn"
+            name = "FMI4j"
+            websiteUrl = "https://github.com/NTNU-IHB/FMI4j"
+            vcsUrl = "https://github.com/NTNU-IHB/FMI4j"
+            setLicenses("MIT")
+        }
+    }
+
+}
