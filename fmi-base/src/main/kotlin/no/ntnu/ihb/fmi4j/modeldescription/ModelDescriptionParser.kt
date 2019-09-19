@@ -96,6 +96,21 @@ abstract class ModelDescriptionParser {
         }
 
         @JvmStatic
+        fun extractGuid(url: URL): String {
+            return extractGuid(extractModelDescriptionXml(url))
+        }
+
+        @JvmStatic
+        fun extractGuid(file: File): String {
+            return extractGuid(extractModelDescriptionXml(file))
+        }
+
+        @JvmStatic
+        fun extractGuid(xml: String): String {
+            return JAXB.unmarshal(StringReader(xml), MockupModelDescription::class.java).guid
+        }
+
+        @JvmStatic
         fun parseModelDescription(url: URL): ModelDescriptionProvider {
             return parseModelDescription(extractModelDescriptionXml(url))
         }
@@ -122,9 +137,15 @@ abstract class ModelDescriptionParser {
 private class MockupModelDescription {
 
     @XmlAttribute(name = "fmiVersion", required = true)
-    private var fmiVersion_: String? = null
+    private val fmiVersion_: String? = null
+
+    @XmlAttribute(name = "guid", required = true)
+    private val guid_: String? = null
 
     val fmiVersion: String
         get() = fmiVersion_!!
+
+    val guid: String
+        get() = guid_!!
 
 }
