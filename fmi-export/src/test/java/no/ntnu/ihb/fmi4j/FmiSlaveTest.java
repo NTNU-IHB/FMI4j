@@ -1,0 +1,55 @@
+package no.ntnu.ihb.fmi4j;
+
+import no.ntnu.ihb.fmi4j.modeldescription.fmi2.Fmi2ScalarVariable;
+import no.ntnu.ihb.fmi4j.modeldescription.fmi2.FmiModelDescription;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+
+import javax.xml.bind.JAXB;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+
+class FmiSlaveTest {
+
+    private static FmiModelDescription md;
+
+    @BeforeAll
+    static void setUp() {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        JAXB.marshal(new MyTestSlave().getModelDescription(), bos);
+        System.out.println(new String(bos.toByteArray()));
+        md = JAXB.unmarshal(new ByteArrayInputStream(bos.toByteArray()), FmiModelDescription.class);
+    }
+
+    @Test
+    void test() {
+
+        Assertions.assertEquals("Test", md.getModelName());
+        Assertions.assertEquals("Lars Ivar Hatledal", md.getAuthor());
+
+        {
+            Fmi2ScalarVariable var = md.getModelVariables().getScalarVariable()
+                    .stream().filter(v -> v.getValueReference() == 0).findFirst().get();
+
+            Assertions.assertNotNull(var);
+            Assertions.assertEquals(2.0, (double) var.getReal().getStart());
+        }
+
+        {
+            Fmi2ScalarVariable v1 = md.getModelVariables().getScalarVariable()
+                    .stream().filter(v -> v.getValueReference() == 1).findFirst().get();
+
+            Assertions.assertNotNull(v1);
+            Assertions.assertEquals(50.0, (double) v1.getReal().getStart());
+
+            Fmi2ScalarVariable v2 = md.getModelVariables().getScalarVariable()
+                    .stream().filter(v -> v.getValueReference() == 2).findFirst().get();
+
+            Assertions.assertNotNull(v2);
+            Assertions.assertEquals(200.0, (double) v2.getReal().getStart());
+        }
+
+    }
+
+}
