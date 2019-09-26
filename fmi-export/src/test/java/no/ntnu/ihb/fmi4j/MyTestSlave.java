@@ -10,13 +10,13 @@ import no.ntnu.ihb.fmi4j.modeldescription.fmi2.Fmi2Causality;
 class MyTestSlave extends FmiSlave {
 
     @ScalarVariable(causality = Fmi2Causality.output)
-    private double realOut = 2.0;
+    protected double realOut = 2.0;
 
     @ScalarVariables(size = 2, causality = Fmi2Causality.output)
-    private double[] realsOut = {50.0, 200.0};
+    protected double[] realsOut = {50.0, 200.0};
 
     @ScalarVariables(size = 2, causality = Fmi2Causality.local)
-    private String[] string = {"Hello", "world!"};
+    protected String[] string = {"Hello", "world!"};
 
     @Override
     public void doStep(double dt) {

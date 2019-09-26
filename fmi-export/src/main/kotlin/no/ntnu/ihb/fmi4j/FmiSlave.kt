@@ -2,6 +2,7 @@ package no.ntnu.ihb.fmi4j
 
 import no.ntnu.ihb.fmi4j.modeldescription.fmi2.*
 import java.util.*
+import java.util.concurrent.atomic.AtomicLong
 
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.RUNTIME)
@@ -32,6 +33,8 @@ annotation class ScalarVariables(
 )
 
 abstract class FmiSlave {
+
+    private val variables = mutableMapOf<Long, Var<*>>()
 
     val modelDescription: FmiModelDescription by lazy {
 
@@ -74,29 +77,33 @@ abstract class FmiSlave {
 
                     when (val type = field.type) {
                         Int::class, Int::class.java -> {
-                            apply {
-                                it.integer = Fmi2ScalarVariable.Integer().also { i ->
+                            variables[vr] = IntVar({field.getInt(this)}, {field.setInt(this, it)})
+                            apply { v ->
+                                v.integer = Fmi2ScalarVariable.Integer().also { i ->
                                     (field.get(this) as? Int)?.also { i.start = it }
                                 }
                             }
                         }
                         Double::class, Double::class.java -> {
-                            apply {
-                                it.real = Fmi2ScalarVariable.Real().also { i ->
+                            variables[vr] = RealVar({field.getDouble(this)}, {field.setDouble(this, it)})
+                            apply { v ->
+                                v.real = Fmi2ScalarVariable.Real().also { i ->
                                     (field.get(this) as? Double)?.also { i.start = it }
                                 }
                             }
                         }
                         Boolean::class, Boolean::class.java -> {
-                            apply {
-                                it.boolean = Fmi2ScalarVariable.Boolean().also { i ->
+                            variables[vr] = BoolVar({field.getBoolean(this)}, {field.setBoolean(this, it)})
+                            apply { v ->
+                                v.boolean = Fmi2ScalarVariable.Boolean().also { i ->
                                     (field.get(this) as? Boolean)?.also { i.isStart = it }
                                 }
                             }
                         }
                         String::class, String::class.java -> {
-                            apply {
-                                it.string = Fmi2ScalarVariable.String().also { i ->
+                            variables[vr] = StringVar({field.get(this) as String}, {field.set(this, it)})
+                            apply { v ->
+                                v.string = Fmi2ScalarVariable.String().also { i ->
                                     (field.get(this) as? String)?.also { i.start = it }
                                 }
                             }
@@ -125,8 +132,9 @@ abstract class FmiSlave {
                         IntArray::class, IntArray::class.java -> {
                             val array = field.get(this) as? IntArray
                             for (i in 0 until annotation.size) {
-                                apply(i) {
-                                    it.integer = Fmi2ScalarVariable.Integer().also { v ->
+                                variables[vr] = IntVar({(field.get(this) as IntArray)[i]}, {(field.get(this) as IntArray)[i] = it})
+                                apply(i) { v ->
+                                    v.integer = Fmi2ScalarVariable.Integer().also { v ->
                                         array?.also { v.start = it[i] }
                                     }
                                 }
@@ -135,8 +143,9 @@ abstract class FmiSlave {
                         DoubleArray::class, DoubleArray::class.java -> {
                             val array = field.get(this) as? DoubleArray
                             for (i in 0 until annotation.size) {
-                                apply(i) {
-                                    it.real = Fmi2ScalarVariable.Real().also { v ->
+                                variables[vr] = RealVar({(field.get(this) as DoubleArray)[i]}, {(field.get(this) as DoubleArray)[i] = it})
+                                apply(i) { v ->
+                                    v.real = Fmi2ScalarVariable.Real().also { v ->
                                         array?.also { v.start = it[i] }
                                     }
                                 }
@@ -145,8 +154,9 @@ abstract class FmiSlave {
                         BooleanArray::class, BooleanArray::class.java -> {
                             val array = field.get(this) as? BooleanArray
                             for (i in 0 until annotation.size) {
-                                apply(i) {
-                                    it.boolean = Fmi2ScalarVariable.Boolean().also { v ->
+                                variables[vr] = BoolVar({(field.get(this) as BooleanArray)[i]}, {(field.get(this) as BooleanArray)[i] = it})
+                                apply(i) { v ->
+                                    v.boolean = Fmi2ScalarVariable.Boolean().also { v ->
                                         array?.also { v.isStart = it[i] }
                                     }
                                 }
@@ -155,8 +165,9 @@ abstract class FmiSlave {
                         Array<String>::class, Array<String>::class.java -> {
                             val array = field.get(this) as? Array<String>
                             for (i in 0 until annotation.size) {
-                                apply(i) {
-                                    it.string = Fmi2ScalarVariable.String().also { v ->
+                                variables[vr] = StringVar({(field.get(this) as Array<String>)[i]}, {(field.get(this) as Array<String>)[i] = it})
+                                apply(i) { v ->
+                                    v.string = Fmi2ScalarVariable.String().also { v ->
                                         array?.also { v.start = it[i] }
                                     }
                                 }
@@ -186,4 +197,90 @@ abstract class FmiSlave {
 
     fun terminate() {}
 
+    @Suppress("UNCHECKED_CAST")
+    fun getReal(vr: LongArray): DoubleArray {
+        return DoubleArray(vr.size) { i ->
+            (variables.getValue(vr[i]) as RealVar).let {
+                it.getter()
+            }
+        }
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    fun setReal(vr: LongArray, values: DoubleArray) {
+        for (i in vr.indices) {
+            (variables.getValue(vr[i]) as RealVar).apply {
+                setter?.invoke(values[i])
+            }
+        }
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    fun getInteger(vr: LongArray): IntArray {
+        return IntArray(vr.size) { i ->
+            (variables.getValue(vr[i]) as IntVar).let {
+                it.getter()
+            }
+        }
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    fun setInteger(vr: LongArray, values: IntArray) {
+        for (i in vr.indices) {
+            (variables.getValue(vr[i]) as IntVar).apply {
+                setter?.invoke(values[i])
+            }
+        }
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    fun getBoolean(vr: LongArray): BooleanArray {
+        return BooleanArray(vr.size) { i ->
+            (variables.getValue(vr[i]) as BoolVar).let {
+                it.getter()
+            }
+        }
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    fun setBoolean(vr: LongArray, values: BooleanArray) {
+        for (i in vr.indices) {
+            (variables.getValue(vr[i]) as BoolVar).apply {
+                setter?.invoke(values[i])
+            }
+        }
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    fun getString(vr: LongArray): Array<String> {
+        return Array(vr.size) { i ->
+            (variables.getValue(vr[i]) as StringVar).let {
+                it.getter()
+            }
+        }
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    fun setString(vr: LongArray, values: Array<String>) {
+        for (i in vr.indices) {
+            (variables.getValue(vr[i]) as StringVar).apply {
+                setter?.invoke(values[i])
+            }
+        }
+    }
+
+    private companion object {
+        private val counter = AtomicLong(0)
+    }
+
 }
+
+class Var<T>(
+        val getter: () -> T,
+        val setter: ((T) -> Unit)?
+)
+
+typealias IntVar = Var<Int>
+typealias RealVar = Var<Double>
+typealias BoolVar = Var<Boolean>
+typealias StringVar = Var<String>

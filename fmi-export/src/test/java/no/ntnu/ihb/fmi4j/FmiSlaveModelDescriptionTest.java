@@ -10,7 +10,7 @@ import javax.xml.bind.JAXB;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
-class FmiSlaveTest {
+class FmiSlaveModelDescriptionTest {
 
     private static FmiModelDescription md;
 
