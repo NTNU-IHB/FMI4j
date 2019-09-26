@@ -269,10 +269,6 @@ abstract class FmiSlave {
         }
     }
 
-    private companion object {
-        private val counter = AtomicLong(0)
-    }
-
 }
 
 class Var<T>(
