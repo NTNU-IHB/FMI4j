@@ -23,4 +23,3 @@ def subDirs = rootDir.listFiles(new FileFilter() {
 subDirs.each { dir ->
     include dir.name
 }
-
