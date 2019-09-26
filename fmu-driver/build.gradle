@@ -4,6 +4,9 @@ plugins {
     id "com.github.johnrengelman.shadow" version "4.0.4"
 }
 
+apply plugin: 'java'
+apply plugin: 'kotlin'
+
 apply from: rootProject.file(("gradle/junit.gradle"))
 
 def group = "no.ntnu.ihb.fmi4j.driver"
@@ -19,9 +22,9 @@ dependencies {
 }
 
 shadowJar {
-    archiveBaseName = "fmu-driver"
-    archiveClassifier = null
-    archiveVersion = null
+    archiveBaseName.set("fmu-driver")
+    archiveClassifier.set(null)
+    archiveVersion.set(null)
 }
 
 distributions {

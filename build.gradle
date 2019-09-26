@@ -13,12 +13,9 @@ wrapper {
 subprojects { sub ->
 
     group = 'no.ntnu.ihb.fmi4j'
-    version = '0.22.5'
+    version = '0.23.0'
 
-    if (sub.name != "fmi-native") {
-
-        apply plugin: 'java'
-        apply plugin: 'kotlin'
+    pluginManager.withPlugin('java') {
 
         repositories {
             mavenCentral()
@@ -26,21 +23,27 @@ subprojects { sub ->
 
         dependencies {
 
-            implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
-
             def slf4j_version = '1.7.25'
             implementation group: 'org.slf4j', name: 'slf4j-api', version: slf4j_version
             runtimeOnly group: 'org.slf4j', name: 'slf4j-log4j12', version: slf4j_version
 
         }
 
-        compileKotlin {
-            kotlinOptions.jvmTarget = "1.8"
+        pluginManager.withPlugin('kotlin') {
+
+            dependencies {
+                implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+            }
+
+            compileKotlin {
+                kotlinOptions.jvmTarget = "1.8"
+            }
+            compileTestKotlin {
+                kotlinOptions.jvmTarget = "1.8"
+            }
+
         }
-        compileTestKotlin {
-            kotlinOptions.jvmTarget = "1.8"
-        }
-        
+
     }
 
 }
