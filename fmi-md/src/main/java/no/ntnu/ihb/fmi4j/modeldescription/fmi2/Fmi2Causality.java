@@ -16,7 +16,7 @@ public enum Fmi2Causality {
      * be "fixed" or "tunable". initial must be "approx", "calculated" or not
      * present (meaning calculated).
      */
-    calculated_parameter,
+    calculatedParameter,
 
     /**
      * The variable value can be provided from another model or slave. It is not
