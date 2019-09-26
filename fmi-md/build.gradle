@@ -4,6 +4,7 @@ plugins {
     id "com.jfrog.bintray" version "1.8.4"
 }
 
+apply from: rootProject.file("gradle/junit.gradle")
 apply from: rootProject.file("gradle/mavenpublish.gradle")
 apply from: rootProject.file("gradle/bintraypublish.gradle")
 

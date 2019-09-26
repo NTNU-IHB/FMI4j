@@ -319,6 +319,10 @@ public class FmiModelDescription {
         return this.coSimulation;
     }
 
+    public void setCoSimulation(CoSimulation coSimulation) {
+        this.coSimulation = coSimulation;
+    }
+
     /**
      * Gets the value of the unitDefinitions property.
      * 
