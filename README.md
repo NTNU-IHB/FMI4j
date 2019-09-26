@@ -4,7 +4,7 @@
 [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/NTNU-IHB/FMI4j/issues)
 
 [![](https://jitpack.io/v/NTNU-IHB/FMI4j.svg)](https://jitpack.io/#NTNU-IHB/FMI4j) 
-[ ![Download](https://api.bintray.com/packages/ntnu-ihb/mvn/FMI4j/images/download.svg) ](https://bintray.com/ntnu-ihb/mvn/FMI4j/_latestVersion)
+[ ![Bintray](https://api.bintray.com/packages/ntnu-ihb/mvn/FMI4j/images/download.svg) ](https://bintray.com/ntnu-ihb/mvn/FMI4j/_latestVersion)
 
 [![CircleCI](https://circleci.com/gh/NTNU-IHB/FMI4j/tree/master.svg?style=svg)](https://circleci.com/gh/NTNU-IHB/FMI4j/tree/master)
 ![](https://github.com/NTNU-IHB/FMI4j/workflows/Build/badge.svg)
