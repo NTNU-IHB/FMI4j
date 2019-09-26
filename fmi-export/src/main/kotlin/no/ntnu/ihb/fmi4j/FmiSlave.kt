@@ -1,6 +1,7 @@
 package no.ntnu.ihb.fmi4j
 
 import no.ntnu.ihb.fmi4j.modeldescription.fmi2.*
+import java.util.*
 
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.RUNTIME)
@@ -8,7 +9,9 @@ annotation class FmiSlaveInfo(
         val name: String = "",
         val author: String = "",
         val version: String = "",
-        val description: String = ""
+        val description: String = "",
+        val copyright: String = "",
+        val license: String = ""
 )
 
 @Target(AnnotationTarget.FIELD)
@@ -37,12 +40,18 @@ abstract class FmiSlave {
 
         FmiModelDescription().also { md ->
 
+            md.fmiVersion = "2.0"
+            md.guid = UUID.randomUUID().toString()
             md.modelName = slaveInfo.name
             md.author = if (slaveInfo.author.isNotEmpty()) slaveInfo.author else null
             md.version = if (slaveInfo.version.isNotEmpty()) slaveInfo.version else null
+            md.copyright = if (slaveInfo.copyright.isNotEmpty()) slaveInfo.copyright else null
+            md.license = if (slaveInfo.license.isNotEmpty()) slaveInfo.license else null
             md.description = if (slaveInfo.description.isNotEmpty()) slaveInfo.description else null
             md.modelVariables = FmiModelDescription.ModelVariables()
             md.coSimulation = FmiModelDescription.CoSimulation()
+            md.generationTool = "fmi4j"
+            md.variableNamingConvention = "structured"
 
             var vr = 0L
 
@@ -133,6 +142,26 @@ abstract class FmiSlave {
                                 }
                             }
                         }
+                        BooleanArray::class, BooleanArray::class.java -> {
+                            val array = field.get(this) as? BooleanArray
+                            for (i in 0 until annotation.size) {
+                                apply(i) {
+                                    it.boolean = Fmi2ScalarVariable.Boolean().also { v ->
+                                        array?.also { v.isStart = it[i] }
+                                    }
+                                }
+                            }
+                        }
+                        Array<String>::class, Array<String>::class.java -> {
+                            val array = field.get(this) as? Array<String>
+                            for (i in 0 until annotation.size) {
+                                apply(i) {
+                                    it.string = Fmi2ScalarVariable.String().also { v ->
+                                        array?.also { v.start = it[i] }
+                                    }
+                                }
+                            }
+                        }
                         else -> throw IllegalStateException("Unsupported variable type: $type")
                     }
 
@@ -145,14 +174,16 @@ abstract class FmiSlave {
         }
     }
 
-    abstract fun setupExperiment(startTime: Double)
+    fun setupExperiment(startTime: Double) {}
 
-    abstract fun enterInitialisationMode()
+    fun enterInitialisationMode() {}
 
-    abstract fun exitInitialisationMode()
+    fun exitInitialisationMode() {}
 
     abstract fun doStep(dt: Double)
 
-    abstract fun terminate()
+    fun reset() {}
+
+    fun terminate() {}
 
 }
