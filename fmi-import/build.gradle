@@ -13,7 +13,7 @@ apply from: rootProject.file("gradle/bintraypublish.gradle")
 
 dependencies {
 
-    api project(':fmi-base')
+    api project(':fmi-model')
     api group: 'org.apache.commons', name: 'commons-math3', version: '3.6.1'
 
     testImplementation group: 'org.siani.javafmi', name: 'fmu-wrapper', version: '2.25.1'
