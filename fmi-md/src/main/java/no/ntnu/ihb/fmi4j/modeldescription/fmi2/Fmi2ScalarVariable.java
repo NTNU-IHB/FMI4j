@@ -155,14 +155,11 @@ public class Fmi2ScalarVariable {
     @XmlAttribute(name = "description")
     protected java.lang.String description;
     @XmlAttribute(name = "causality")
-    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
-    protected java.lang.String causality;
+    protected Fmi2Causality causality;
     @XmlAttribute(name = "variability")
-    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
-    protected java.lang.String variability;
+    protected Fmi2Variability variability;
     @XmlAttribute(name = "initial")
-    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
-    protected java.lang.String initial;
+    protected Fmi2Initial initial;
     @XmlAttribute(name = "canHandleMultipleSetPerTimeInstant")
     protected java.lang.Boolean canHandleMultipleSetPerTimeInstant;
 
@@ -379,12 +376,12 @@ public class Fmi2ScalarVariable {
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link Fmi2Causality }
      *     
      */
-    public java.lang.String getCausality() {
+    public Fmi2Causality getCausality() {
         if (causality == null) {
-            return "local";
+            return Fmi2Causality.local;
         } else {
             return causality;
         }
@@ -395,10 +392,10 @@ public class Fmi2ScalarVariable {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link Fmi2Causality }
      *     
      */
-    public void setCausality(java.lang.String value) {
+    public void setCausality(Fmi2Causality value) {
         this.causality = value;
     }
 
@@ -407,12 +404,12 @@ public class Fmi2ScalarVariable {
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link Fmi2Variability }
      *     
      */
-    public java.lang.String getVariability() {
+    public Fmi2Variability getVariability() {
         if (variability == null) {
-            return "continuous";
+            return Fmi2Variability.continuous;
         } else {
             return variability;
         }
@@ -423,10 +420,10 @@ public class Fmi2ScalarVariable {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link Fmi2Variability }
      *     
      */
-    public void setVariability(java.lang.String value) {
+    public void setVariability(Fmi2Variability value) {
         this.variability = value;
     }
 
@@ -435,11 +432,15 @@ public class Fmi2ScalarVariable {
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link Fmi2Initial }
      *     
      */
-    public java.lang.String getInitial() {
-        return initial;
+    public Fmi2Initial getInitial() {
+        if (initial == null) {
+            return Fmi2Initial.undefined;
+        } else {
+            return initial;
+        }
     }
 
     /**
@@ -447,10 +448,10 @@ public class Fmi2ScalarVariable {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link Fmi2Initial }
      *     
      */
-    public void setInitial(java.lang.String value) {
+    public void setInitial(Fmi2Initial value) {
         this.initial = value;
     }
 
