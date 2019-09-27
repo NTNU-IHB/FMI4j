@@ -1,0 +1,13 @@
+plugins {
+    id 'java'
+}
+
+apply plugin: 'kotlin'
+
+apply from: rootProject.file("gradle/junit.gradle")
+
+dependencies {
+
+    api project(':fmi-export')
+
+}
