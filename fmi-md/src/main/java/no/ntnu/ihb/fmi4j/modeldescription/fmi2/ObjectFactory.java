@@ -30,11 +30,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link FmiModelDescription }
+     * Create an instance of {@link Fmi2ModelDescription }
      * 
      */
-    public FmiModelDescription createFmiModelDescription() {
-        return new FmiModelDescription();
+    public Fmi2ModelDescription createFmiModelDescription() {
+        return new Fmi2ModelDescription();
     }
 
     /**
@@ -78,19 +78,19 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link FmiModelDescription.ModelStructure }
+     * Create an instance of {@link Fmi2ModelDescription.ModelStructure }
      * 
      */
-    public FmiModelDescription.ModelStructure createFmiModelDescriptionModelStructure() {
-        return new FmiModelDescription.ModelStructure();
+    public Fmi2ModelDescription.ModelStructure createFmiModelDescriptionModelStructure() {
+        return new Fmi2ModelDescription.ModelStructure();
     }
 
     /**
-     * Create an instance of {@link FmiModelDescription.ModelStructure.InitialUnknowns }
+     * Create an instance of {@link Fmi2ModelDescription.ModelStructure.InitialUnknowns }
      * 
      */
-    public FmiModelDescription.ModelStructure.InitialUnknowns createFmiModelDescriptionModelStructureInitialUnknowns() {
-        return new FmiModelDescription.ModelStructure.InitialUnknowns();
+    public Fmi2ModelDescription.ModelStructure.InitialUnknowns createFmiModelDescriptionModelStructureInitialUnknowns() {
+        return new Fmi2ModelDescription.ModelStructure.InitialUnknowns();
     }
 
     /**
@@ -102,75 +102,75 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link FmiModelDescription.LogCategories }
+     * Create an instance of {@link Fmi2ModelDescription.LogCategories }
      * 
      */
-    public FmiModelDescription.LogCategories createFmiModelDescriptionLogCategories() {
-        return new FmiModelDescription.LogCategories();
+    public Fmi2ModelDescription.LogCategories createFmiModelDescriptionLogCategories() {
+        return new Fmi2ModelDescription.LogCategories();
     }
 
     /**
-     * Create an instance of {@link FmiModelDescription.CoSimulation }
+     * Create an instance of {@link Fmi2ModelDescription.CoSimulation }
      * 
      */
-    public FmiModelDescription.CoSimulation createFmiModelDescriptionCoSimulation() {
-        return new FmiModelDescription.CoSimulation();
+    public Fmi2ModelDescription.CoSimulation createFmiModelDescriptionCoSimulation() {
+        return new Fmi2ModelDescription.CoSimulation();
     }
 
     /**
-     * Create an instance of {@link FmiModelDescription.CoSimulation.SourceFiles }
+     * Create an instance of {@link Fmi2ModelDescription.CoSimulation.SourceFiles }
      * 
      */
-    public FmiModelDescription.CoSimulation.SourceFiles createFmiModelDescriptionCoSimulationSourceFiles() {
-        return new FmiModelDescription.CoSimulation.SourceFiles();
+    public Fmi2ModelDescription.CoSimulation.SourceFiles createFmiModelDescriptionCoSimulationSourceFiles() {
+        return new Fmi2ModelDescription.CoSimulation.SourceFiles();
     }
 
     /**
-     * Create an instance of {@link FmiModelDescription.ModelExchange }
+     * Create an instance of {@link Fmi2ModelDescription.ModelExchange }
      * 
      */
-    public FmiModelDescription.ModelExchange createFmiModelDescriptionModelExchange() {
-        return new FmiModelDescription.ModelExchange();
+    public Fmi2ModelDescription.ModelExchange createFmiModelDescriptionModelExchange() {
+        return new Fmi2ModelDescription.ModelExchange();
     }
 
     /**
-     * Create an instance of {@link FmiModelDescription.ModelExchange.SourceFiles }
+     * Create an instance of {@link Fmi2ModelDescription.ModelExchange.SourceFiles }
      * 
      */
-    public FmiModelDescription.ModelExchange.SourceFiles createFmiModelDescriptionModelExchangeSourceFiles() {
-        return new FmiModelDescription.ModelExchange.SourceFiles();
+    public Fmi2ModelDescription.ModelExchange.SourceFiles createFmiModelDescriptionModelExchangeSourceFiles() {
+        return new Fmi2ModelDescription.ModelExchange.SourceFiles();
     }
 
     /**
-     * Create an instance of {@link FmiModelDescription.UnitDefinitions }
+     * Create an instance of {@link Fmi2ModelDescription.UnitDefinitions }
      * 
      */
-    public FmiModelDescription.UnitDefinitions createFmiModelDescriptionUnitDefinitions() {
-        return new FmiModelDescription.UnitDefinitions();
+    public Fmi2ModelDescription.UnitDefinitions createFmiModelDescriptionUnitDefinitions() {
+        return new Fmi2ModelDescription.UnitDefinitions();
     }
 
     /**
-     * Create an instance of {@link FmiModelDescription.TypeDefinitions }
+     * Create an instance of {@link Fmi2ModelDescription.TypeDefinitions }
      * 
      */
-    public FmiModelDescription.TypeDefinitions createFmiModelDescriptionTypeDefinitions() {
-        return new FmiModelDescription.TypeDefinitions();
+    public Fmi2ModelDescription.TypeDefinitions createFmiModelDescriptionTypeDefinitions() {
+        return new Fmi2ModelDescription.TypeDefinitions();
     }
 
     /**
-     * Create an instance of {@link FmiModelDescription.DefaultExperiment }
+     * Create an instance of {@link Fmi2ModelDescription.DefaultExperiment }
      * 
      */
-    public FmiModelDescription.DefaultExperiment createFmiModelDescriptionDefaultExperiment() {
-        return new FmiModelDescription.DefaultExperiment();
+    public Fmi2ModelDescription.DefaultExperiment createFmiModelDescriptionDefaultExperiment() {
+        return new Fmi2ModelDescription.DefaultExperiment();
     }
 
     /**
-     * Create an instance of {@link FmiModelDescription.ModelVariables }
+     * Create an instance of {@link Fmi2ModelDescription.ModelVariables }
      * 
      */
-    public FmiModelDescription.ModelVariables createFmiModelDescriptionModelVariables() {
-        return new FmiModelDescription.ModelVariables();
+    public Fmi2ModelDescription.ModelVariables createFmiModelDescriptionModelVariables() {
+        return new Fmi2ModelDescription.ModelVariables();
     }
 
     /**
@@ -262,11 +262,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link FmiModelDescription.ModelStructure.InitialUnknowns.Unknown }
+     * Create an instance of {@link Fmi2ModelDescription.ModelStructure.InitialUnknowns.Unknown }
      * 
      */
-    public FmiModelDescription.ModelStructure.InitialUnknowns.Unknown createFmiModelDescriptionModelStructureInitialUnknownsUnknown() {
-        return new FmiModelDescription.ModelStructure.InitialUnknowns.Unknown();
+    public Fmi2ModelDescription.ModelStructure.InitialUnknowns.Unknown createFmiModelDescriptionModelStructureInitialUnknownsUnknown() {
+        return new Fmi2ModelDescription.ModelStructure.InitialUnknowns.Unknown();
     }
 
     /**
@@ -278,27 +278,27 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link FmiModelDescription.LogCategories.Category }
+     * Create an instance of {@link Fmi2ModelDescription.LogCategories.Category }
      * 
      */
-    public FmiModelDescription.LogCategories.Category createFmiModelDescriptionLogCategoriesCategory() {
-        return new FmiModelDescription.LogCategories.Category();
+    public Fmi2ModelDescription.LogCategories.Category createFmiModelDescriptionLogCategoriesCategory() {
+        return new Fmi2ModelDescription.LogCategories.Category();
     }
 
     /**
-     * Create an instance of {@link FmiModelDescription.CoSimulation.SourceFiles.File }
+     * Create an instance of {@link Fmi2ModelDescription.CoSimulation.SourceFiles.File }
      * 
      */
-    public FmiModelDescription.CoSimulation.SourceFiles.File createFmiModelDescriptionCoSimulationSourceFilesFile() {
-        return new FmiModelDescription.CoSimulation.SourceFiles.File();
+    public Fmi2ModelDescription.CoSimulation.SourceFiles.File createFmiModelDescriptionCoSimulationSourceFilesFile() {
+        return new Fmi2ModelDescription.CoSimulation.SourceFiles.File();
     }
 
     /**
-     * Create an instance of {@link FmiModelDescription.ModelExchange.SourceFiles.File }
+     * Create an instance of {@link Fmi2ModelDescription.ModelExchange.SourceFiles.File }
      * 
      */
-    public FmiModelDescription.ModelExchange.SourceFiles.File createFmiModelDescriptionModelExchangeSourceFilesFile() {
-        return new FmiModelDescription.ModelExchange.SourceFiles.File();
+    public Fmi2ModelDescription.ModelExchange.SourceFiles.File createFmiModelDescriptionModelExchangeSourceFilesFile() {
+        return new Fmi2ModelDescription.ModelExchange.SourceFiles.File();
     }
 
 }

@@ -26,7 +26,7 @@ package no.ntnu.ihb.fmi4j.modeldescription.fmi2
 
 import no.ntnu.ihb.fmi4j.modeldescription.LogCategory
 
-fun FmiModelDescription.LogCategories.Category.convert(): LogCategory {
+fun Fmi2ModelDescription.LogCategories.Category.convert(): LogCategory {
     return LogCategory(
             name = this@convert.name,
             description = this@convert.description

@@ -32,8 +32,8 @@ import javax.xml.bind.JAXBContext
 class JaxbModelDescriptionParser : ModelDescriptionParser() {
 
     override fun parse(xml: String): ModelDescriptionProvider {
-        val ctx = JAXBContext.newInstance(FmiModelDescription::class.java)
-        return JaxbModelDescription(ctx.createUnmarshaller().unmarshal(StringReader(xml)) as FmiModelDescription)
+        val ctx = JAXBContext.newInstance(Fmi2ModelDescription::class.java)
+        return JaxbModelDescription(ctx.createUnmarshaller().unmarshal(StringReader(xml)) as Fmi2ModelDescription)
     }
 
 }

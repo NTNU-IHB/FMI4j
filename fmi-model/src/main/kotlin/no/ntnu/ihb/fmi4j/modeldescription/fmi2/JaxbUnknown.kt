@@ -35,7 +35,7 @@ fun Fmi2VariableDependency.Unknown.convert(): Unknown {
     )
 }
 
-fun FmiModelDescription.ModelStructure.InitialUnknowns.Unknown.convert(): Unknown {
+fun Fmi2ModelDescription.ModelStructure.InitialUnknowns.Unknown.convert(): Unknown {
     return Unknown(
             index =  this@convert.getIndex().toInt(),
             dependencies =  this@convert.dependencies?.map { it.toInt() } ?: emptyList(),

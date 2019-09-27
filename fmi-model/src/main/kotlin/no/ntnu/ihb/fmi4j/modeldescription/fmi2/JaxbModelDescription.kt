@@ -27,12 +27,12 @@ package no.ntnu.ihb.fmi4j.modeldescription.fmi2
 import no.ntnu.ihb.fmi4j.modeldescription.*
 import no.ntnu.ihb.fmi4j.modeldescription.variables.ModelVariables
 
-fun FmiModelDescription.convert(): JaxbModelDescription {
+fun Fmi2ModelDescription.convert(): JaxbModelDescription {
     return JaxbModelDescription(this)
 }
 
 class JaxbModelDescription internal constructor(
-        private val md: FmiModelDescription
+        private val md: Fmi2ModelDescription
 ): ModelDescriptionProvider {
 
     override val fmiVersion: String

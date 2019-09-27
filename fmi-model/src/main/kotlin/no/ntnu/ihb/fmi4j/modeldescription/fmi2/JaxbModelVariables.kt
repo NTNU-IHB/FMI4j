@@ -28,7 +28,7 @@ import no.ntnu.ihb.fmi4j.modeldescription.variables.ModelVariables
 import no.ntnu.ihb.fmi4j.modeldescription.variables.TypedScalarVariable
 
 class JaxbModelVariables internal constructor(
-        private val mv: FmiModelDescription.ModelVariables
+        private val mv: Fmi2ModelDescription.ModelVariables
 ): ModelVariables {
 
     @delegate:Transient

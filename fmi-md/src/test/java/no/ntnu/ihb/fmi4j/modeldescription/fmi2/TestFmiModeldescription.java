@@ -8,12 +8,12 @@ import javax.xml.bind.JAXB;
 
 public class TestFmiModeldescription {
 
-    private static FmiModelDescription md;
+    private static Fmi2ModelDescription md;
 
     @BeforeAll
     static void setup() {
         md = JAXB.unmarshal(TestFmiModeldescription.class.getClassLoader()
-                .getResource("fmi2/ControlledTemperature/modelDescription.xml"), FmiModelDescription.class);
+                .getResource("fmi2/ControlledTemperature/modelDescription.xml"), Fmi2ModelDescription.class);
     }
 
     @Test

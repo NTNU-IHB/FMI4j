@@ -27,7 +27,7 @@ package no.ntnu.ihb.fmi4j.modeldescription.fmi2
 import no.ntnu.ihb.fmi4j.modeldescription.CoSimulationAttributes
 import no.ntnu.ihb.fmi4j.modeldescription.ModelExchangeAttributes
 
-fun FmiModelDescription.CoSimulation.convert(): CoSimulationAttributes {
+fun Fmi2ModelDescription.CoSimulation.convert(): CoSimulationAttributes {
 
     return CoSimulationAttributes(
             modelIdentifier = this@convert.modelIdentifier,
@@ -46,7 +46,7 @@ fun FmiModelDescription.CoSimulation.convert(): CoSimulationAttributes {
 
 }
 
-fun FmiModelDescription.ModelExchange.convert(): ModelExchangeAttributes {
+fun Fmi2ModelDescription.ModelExchange.convert(): ModelExchangeAttributes {
     return ModelExchangeAttributes(
             modelIdentifier = this@convert.modelIdentifier,
             needsExecutionTool = this@convert.isNeedsExecutionTool,

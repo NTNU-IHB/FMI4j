@@ -26,13 +26,13 @@ package no.ntnu.ihb.fmi4j.modeldescription.fmi2
 
 import no.ntnu.ihb.fmi4j.modeldescription.SourceFile
 
-fun FmiModelDescription.CoSimulation.SourceFiles.File.convert(): SourceFile {
+fun Fmi2ModelDescription.CoSimulation.SourceFiles.File.convert(): SourceFile {
     return SourceFile(
             name = this@convert.name
     )
 }
 
-fun FmiModelDescription.ModelExchange.SourceFiles.File.convert(): SourceFile {
+fun Fmi2ModelDescription.ModelExchange.SourceFiles.File.convert(): SourceFile {
     return SourceFile(
             name = this@convert.name
     )
