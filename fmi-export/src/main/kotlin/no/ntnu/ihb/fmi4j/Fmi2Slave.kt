@@ -2,59 +2,52 @@ package no.ntnu.ihb.fmi4j
 
 import no.ntnu.ihb.fmi4j.modeldescription.fmi2.*
 import java.util.*
-import java.util.concurrent.atomic.AtomicLong
 
-@Target(AnnotationTarget.CLASS)
-@Retention(AnnotationRetention.RUNTIME)
-annotation class FmiSlaveInfo(
-        val name: String = "",
-        val author: String = "",
-        val version: String = "",
-        val description: String = "",
-        val copyright: String = "",
-        val license: String = ""
-)
-
-@Target(AnnotationTarget.FIELD)
-@Retention(AnnotationRetention.RUNTIME)
-annotation class ScalarVariable(
-        val causality: Fmi2Causality = Fmi2Causality.local,
-        val variability: Fmi2Variability = Fmi2Variability.continuous,
-        val initial: Fmi2Initial = Fmi2Initial.undefined
-)
-
-@Target(AnnotationTarget.FIELD)
-@Retention(AnnotationRetention.RUNTIME)
-annotation class ScalarVariables(
-        val size: Int,
-        val causality: Fmi2Causality = Fmi2Causality.local,
-        val variability: Fmi2Variability = Fmi2Variability.continuous,
-        val initial: Fmi2Initial = Fmi2Initial.undefined
-)
-
-abstract class FmiSlave {
+abstract class Fmi2Slave {
 
     private val variables = mutableMapOf<Long, Var<*>>()
 
-    val modelDescription: FmiModelDescription by lazy {
+    val modelDescription: Fmi2ModelDescription by lazy {
 
-        val slaveInfo = javaClass.getAnnotation(FmiSlaveInfo::class.java)
-                ?: throw IllegalStateException("No ${FmiSlaveInfo::class.java.simpleName} present!")
-
-        FmiModelDescription().also { md ->
+        Fmi2ModelDescription().also { md ->
 
             md.fmiVersion = "2.0"
-            md.guid = UUID.randomUUID().toString()
-            md.modelName = slaveInfo.name
-            md.author = if (slaveInfo.author.isNotEmpty()) slaveInfo.author else null
-            md.version = if (slaveInfo.version.isNotEmpty()) slaveInfo.version else null
-            md.copyright = if (slaveInfo.copyright.isNotEmpty()) slaveInfo.copyright else null
-            md.license = if (slaveInfo.license.isNotEmpty()) slaveInfo.license else null
-            md.description = if (slaveInfo.description.isNotEmpty()) slaveInfo.description else null
-            md.modelVariables = FmiModelDescription.ModelVariables()
-            md.coSimulation = FmiModelDescription.CoSimulation()
             md.generationTool = "fmi4j"
             md.variableNamingConvention = "structured"
+            md.guid = UUID.randomUUID().toString()
+
+            val slaveInfo = javaClass.getAnnotation(SlaveInfo::class.java)
+
+            md.modelName = slaveInfo?.modelName ?: javaClass.simpleName
+            if (slaveInfo != null) {
+                md.author = if (slaveInfo.author.isNotEmpty()) slaveInfo.author else null
+                md.version = if (slaveInfo.version.isNotEmpty()) slaveInfo.version else null
+                md.copyright = if (slaveInfo.copyright.isNotEmpty()) slaveInfo.copyright else null
+                md.license = if (slaveInfo.license.isNotEmpty()) slaveInfo.license else null
+                md.description = if (slaveInfo.description.isNotEmpty()) slaveInfo.description else null
+            }
+
+            md.modelVariables = Fmi2ModelDescription.ModelVariables()
+            md.coSimulation = Fmi2ModelDescription.CoSimulation().also { cs ->
+                cs.isCanGetAndSetFMUstate = false
+                cs.isCanSerializeFMUstate = false
+                cs.isCanInterpolateInputs = false
+                cs.modelIdentifier = md.modelName
+                if (slaveInfo != null) {
+                    cs.isNeedsExecutionTool = slaveInfo.needsExecutionTool
+                    cs.isCanBeInstantiatedOnlyOncePerProcess = slaveInfo.canBeInstantiatedOnlyOncePerProcess
+                    cs.isCanHandleVariableCommunicationStepSize = slaveInfo.canHandleVariableCommunicationStepSize
+                }
+            }
+
+            javaClass.getAnnotation(DefaultExperiment::class.java)?.also { de ->
+                md.defaultExperiment = Fmi2ModelDescription.DefaultExperiment().apply {
+                    if (de.startTime >= 0) startTime = de.startTime
+                    if (de.stepSize > 0) stepSize = de.stepSize
+                    if (de.stopTime > startTime) stopTime = de.stopTime
+                }
+            }
+
 
             var vr = 0L
 
@@ -77,7 +70,7 @@ abstract class FmiSlave {
 
                     when (val type = field.type) {
                         Int::class, Int::class.java -> {
-                            variables[vr] = IntVar({field.getInt(this)}, {field.setInt(this, it)})
+                            variables[vr] = IntVar({ field.getInt(this) }, { field.setInt(this, it) })
                             apply { v ->
                                 v.integer = Fmi2ScalarVariable.Integer().also { i ->
                                     (field.get(this) as? Int)?.also { i.start = it }
@@ -85,7 +78,7 @@ abstract class FmiSlave {
                             }
                         }
                         Double::class, Double::class.java -> {
-                            variables[vr] = RealVar({field.getDouble(this)}, {field.setDouble(this, it)})
+                            variables[vr] = RealVar({ field.getDouble(this) }, { field.setDouble(this, it) })
                             apply { v ->
                                 v.real = Fmi2ScalarVariable.Real().also { i ->
                                     (field.get(this) as? Double)?.also { i.start = it }
@@ -93,7 +86,7 @@ abstract class FmiSlave {
                             }
                         }
                         Boolean::class, Boolean::class.java -> {
-                            variables[vr] = BoolVar({field.getBoolean(this)}, {field.setBoolean(this, it)})
+                            variables[vr] = BoolVar({ field.getBoolean(this) }, { field.setBoolean(this, it) })
                             apply { v ->
                                 v.boolean = Fmi2ScalarVariable.Boolean().also { i ->
                                     (field.get(this) as? Boolean)?.also { i.isStart = it }
@@ -101,7 +94,7 @@ abstract class FmiSlave {
                             }
                         }
                         String::class, String::class.java -> {
-                            variables[vr] = StringVar({field.get(this) as String}, {field.set(this, it)})
+                            variables[vr] = StringVar({ field.get(this) as String }, { field.set(this, it) })
                             apply { v ->
                                 v.string = Fmi2ScalarVariable.String().also { i ->
                                     (field.get(this) as? String)?.also { i.start = it }
@@ -131,44 +124,49 @@ abstract class FmiSlave {
                     when (val type = field.type) {
                         IntArray::class, IntArray::class.java -> {
                             val array = field.get(this) as? IntArray
+                                    ?: throw IllegalStateException("${field.name} cannot be null!")
                             for (i in 0 until annotation.size) {
-                                variables[vr] = IntVar({(field.get(this) as IntArray)[i]}, {(field.get(this) as IntArray)[i] = it})
+                                variables[vr] = IntVar({ array[i] }, { array[i] = it })
                                 apply(i) { v ->
-                                    v.integer = Fmi2ScalarVariable.Integer().also { v ->
-                                        array?.also { v.start = it[i] }
+                                    v.integer = Fmi2ScalarVariable.Integer().also { integer ->
+                                        array.also { integer.start = it[i] }
                                     }
                                 }
                             }
                         }
                         DoubleArray::class, DoubleArray::class.java -> {
                             val array = field.get(this) as? DoubleArray
+                                    ?: throw IllegalStateException("${field.name} cannot be null!")
                             for (i in 0 until annotation.size) {
-                                variables[vr] = RealVar({(field.get(this) as DoubleArray)[i]}, {(field.get(this) as DoubleArray)[i] = it})
+                                variables[vr] = RealVar({ array[i] }, { array[i] = it })
                                 apply(i) { v ->
-                                    v.real = Fmi2ScalarVariable.Real().also { v ->
-                                        array?.also { v.start = it[i] }
+                                    v.real = Fmi2ScalarVariable.Real().also { real ->
+                                        array.also { real.start = it[i] }
                                     }
                                 }
                             }
                         }
                         BooleanArray::class, BooleanArray::class.java -> {
                             val array = field.get(this) as? BooleanArray
+                                    ?: throw IllegalStateException("${field.name} cannot be null!")
                             for (i in 0 until annotation.size) {
-                                variables[vr] = BoolVar({(field.get(this) as BooleanArray)[i]}, {(field.get(this) as BooleanArray)[i] = it})
+                                variables[vr] = BoolVar({ array[i] }, { array[i] = it })
                                 apply(i) { v ->
-                                    v.boolean = Fmi2ScalarVariable.Boolean().also { v ->
-                                        array?.also { v.isStart = it[i] }
+                                    v.boolean = Fmi2ScalarVariable.Boolean().also { boolean ->
+                                        array.also { boolean.isStart = it[i] }
                                     }
                                 }
                             }
                         }
                         Array<String>::class, Array<String>::class.java -> {
+                            @Suppress("UNCHECKED_CAST")
                             val array = field.get(this) as? Array<String>
+                                    ?: throw IllegalStateException("${field.name} cannot be null!")
                             for (i in 0 until annotation.size) {
-                                variables[vr] = StringVar({(field.get(this) as Array<String>)[i]}, {(field.get(this) as Array<String>)[i] = it})
+                                variables[vr] = StringVar({ array[i] }, { array[i] = it })
                                 apply(i) { v ->
-                                    v.string = Fmi2ScalarVariable.String().also { v ->
-                                        array?.also { v.start = it[i] }
+                                    v.string = Fmi2ScalarVariable.String().also { string ->
+                                        array.also { string.start = it[i] }
                                     }
                                 }
                             }
