@@ -24,6 +24,9 @@
 
 package no.ntnu.ihb.fmi4j.modeldescription.variables
 
+import no.ntnu.ihb.fmi4j.modeldescription.fmi1.FmiCausality
+import no.ntnu.ihb.fmi4j.modeldescription.fmi1.FmiVariability
+
 
 /**
  * Enumeration that defines the causality of the variable.
@@ -70,20 +73,30 @@ enum class Causality {
      */
     LOCAL,
 
+    /**
+     * The independent variable (usually "time"). All variables are a
+     * function of this independent variable. variability must be "continuous". At
+     * most one ScalarVariable of an FMU can be defined as "independent". If no
+     * variable is defined as "independent", it is implicitly present with name = "time"
+     * and unit = "s". If one variable is defined as "independent", it must be defined as
+     *  "Real" without a "start" attribute. It is not allowed to call function fmi2SetReal
+     * on an "independent" variable. Instead, its value is initialized with
+     * fmi2SetupExperiment and after initialization set by fmi2SetTime for
+     * ModelExchange and by arguments currentCommunicationPoint and
+     * communicationStepSize of fmi2DoStep for CoSimulation. [The actual value can
+     * be inquired with fmi2GetReal.]
+     */
     INDEPENDENT;
 
     companion object {
 
         @JvmStatic
-        fun fmi1ValueOf(c: String, v: String?): Causality {
+        fun fmi1ValueOf(c: FmiCausality, v: FmiVariability?): Causality {
 
-            val causality = c.toLowerCase().trim()
-            val variablity = v?.toLowerCase()?.trim()
-
-            return when (causality) {
-                "input" -> if (variablity == "parameter") PARAMETER else INPUT
-                "output" -> OUTPUT
-                "internal", "none" -> LOCAL
+            return when (c) {
+                FmiCausality.input -> if (v == FmiVariability.parameter) PARAMETER else INPUT
+                FmiCausality.output -> OUTPUT
+                FmiCausality.internal, FmiCausality.none -> LOCAL
                 else -> UNKNOWN
             }
 
@@ -115,12 +128,12 @@ enum class Causality {
  * • "discrete":
  * ModelExchange: The value of the variable is constant between external and internal
  * events (= time, state, step events defined implicitly in the FMU).
- * CoSimulation: By convention, the variable is from a “real” sampled data system and
+ * CoSimulation: By convention, the variable is from a "real" sampled data system and
  * its value is only changed at Communication Points (also inside the slave).
- * • "continuous": Only a variable of type = “Real” can be “continuous”.
+ * • "continuous": Only a variable of type = "Real" can be "continuous".
  * ModelExchange: No restrictions on value changes.
  * CoSimulation: By convention, the variable is from a differential
- * The default is “continuous”.
+ * The default is "continuous".
  * [Note, the information about continuous states is defined with element
  * fmiModelDescription.ModelStructure.Derivatives]
  *
@@ -157,14 +170,14 @@ enum class Variability {
     /**
      * ModelExchange: The value of the variable is constant between external and
      * internal events (= time, state, step events defined implicitly in the
-     * FMU). CoSimulation: By convention, the variable is from a “realAttribute” sampled
+     * FMU). CoSimulation: By convention, the variable is from a "realAttribute" sampled
      * data system and its value is only changed at Communication Points (also
      * inside the slave).
      */
     DISCRETE,
 
     /**
-     * Only a variable of type = “Real” can be “continuous”. ModelExchange: No
+     * Only a variable of type = "Real" can be "continuous". ModelExchange: No
      * restrictions on value changes. CoSimulation: By convention, the variable
      * is from a differential
      */
@@ -173,13 +186,13 @@ enum class Variability {
     companion object {
 
         @JvmStatic
-        fun fmi1ValueOf(value: String): Variability {
+        fun fmi1ValueOf(value: FmiVariability): Variability {
 
-            return when (value.toLowerCase().trim()) {
-                "parameter" -> FIXED
-                "tunable" -> TUNABLE
-                "discrete" -> DISCRETE
-                "continuous" -> CONTINUOUS
+            return when (value) {
+                FmiVariability.constant -> CONSTANT
+                FmiVariability.parameter -> FIXED
+                FmiVariability.discrete -> DISCRETE
+                FmiVariability.continuous -> CONTINUOUS
                 else -> UNKNOWN
             }
 
@@ -198,7 +211,7 @@ enum class Variability {
  * • = "approx": The variable is an iteration variable of an algebraic loop and the
  * iteration at initialization starts with the start value.
  * • = "calculated": The variable is calculated from other categories during initialization.
- * It is not allowed to provide a “start” value.
+ * It is not allowed to provide a "start" value.
  * If initial is not present, it is defined by the table below based on causality and
  * variability. If initial = exact or approx, or causality = ″input″ a start
  * value must be provided. If initial = calculated, or causality = ″independent″ it is
@@ -229,7 +242,7 @@ enum class Initial {
 
     /**
      * The variable is calculated from other categories during initialization. It
-     * is not allowed to provide a “start” value.
+     * is not allowed to provide a "start" value.
      */
     CALCULATED,
 

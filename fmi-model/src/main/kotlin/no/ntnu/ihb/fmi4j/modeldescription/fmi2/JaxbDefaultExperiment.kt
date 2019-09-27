@@ -26,7 +26,7 @@ package no.ntnu.ihb.fmi4j.modeldescription.fmi2
 
 import no.ntnu.ihb.fmi4j.modeldescription.DefaultExperiment
 
-fun FmiModelDescription.DefaultExperiment.convert(): DefaultExperiment {
+fun Fmi2ModelDescription.DefaultExperiment.convert(): DefaultExperiment {
     return DefaultExperiment(
             startTime = this@convert.startTime ?: 0.0,
             stopTime = this@convert.stopTime ?: 0.0,

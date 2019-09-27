@@ -1,6 +1,7 @@
 
 package no.ntnu.ihb.fmi4j.modeldescription.fmi1;
 
+
 import javax.xml.bind.annotation.*;
 import javax.xml.bind.annotation.adapters.NormalizedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
@@ -174,11 +175,9 @@ public class FmiScalarVariable {
     @XmlAttribute(name = "description")
     protected java.lang.String description;
     @XmlAttribute(name = "variability")
-    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
-    protected java.lang.String variability;
+    protected FmiVariability variability;
     @XmlAttribute(name = "causality")
-    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
-    protected java.lang.String causality;
+    protected FmiCausality causality;
     @XmlAttribute(name = "alias")
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     protected java.lang.String alias;
@@ -396,12 +395,12 @@ public class FmiScalarVariable {
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link FmiVariability}
      *     
      */
-    public java.lang.String getVariability() {
+    public FmiVariability getVariability() {
         if (variability == null) {
-            return "continuous";
+            return FmiVariability.continuous;
         } else {
             return variability;
         }
@@ -412,10 +411,10 @@ public class FmiScalarVariable {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link FmiVariability }
      *     
      */
-    public void setVariability(java.lang.String value) {
+    public void setVariability(FmiVariability value) {
         this.variability = value;
     }
 
@@ -424,12 +423,12 @@ public class FmiScalarVariable {
      * 
      * @return
      *     possible object is
-     *     {@link java.lang.String }
+     *     {@link FmiCausality }
      *     
      */
-    public java.lang.String getCausality() {
+    public FmiCausality getCausality() {
         if (causality == null) {
-            return "internal";
+            return FmiCausality.internal;
         } else {
             return causality;
         }
@@ -440,10 +439,10 @@ public class FmiScalarVariable {
      * 
      * @param value
      *     allowed object is
-     *     {@link java.lang.String }
+     *     {@link FmiCausality }
      *     
      */
-    public void setCausality(java.lang.String value) {
+    public void setCausality(FmiCausality value) {
         this.causality = value;
     }
 
