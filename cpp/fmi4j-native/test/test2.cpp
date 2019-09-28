@@ -51,7 +51,7 @@ int main()
 
     try {
         std::cout << "version: " << fmi2GetVersion() << std::endl;
-        auto c = fmi2Instantiate("", fmi2CoSimulation, "guid", R"(D:\Development\FMI4j\java\fmi4j\fmi-export\build\libs)", &callback, 0, 0);
+        auto c = fmi2Instantiate("", fmi2CoSimulation, "guid", R"(file://D:\Development\FMI4j\java\fmi4j\fmi-export\build\libs)", &callback, 0, 0);
         if (c == nullptr) {
             return -1;
         }

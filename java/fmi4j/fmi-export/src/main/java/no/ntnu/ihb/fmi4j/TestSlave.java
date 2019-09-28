@@ -25,6 +25,7 @@ public class TestSlave extends Fmi2Slave {
 
     @Override
     public boolean doStep(double currentTime, double dt) {
+        realOut += dt;
         System.out.println("doStep: currentTime=" + currentTime + ", stepSize=" + dt);
         return true;
     }

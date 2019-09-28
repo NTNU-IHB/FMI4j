@@ -388,17 +388,25 @@ cppfmu::UniquePtr<cppfmu::SlaveInstance> CppfmuInstantiateSlave(
     cppfmu::Memory memory,
     cppfmu::Logger logger)
 {
+    
+    std::string resources =  std::string(fmuResourceLocation);
+    auto find = resources.find("file:///");
+    if (find != std::string::npos) {
+        resources.replace(find, 8, "");
+    }
+
+    std::cout << "fmuResourceLocation=" << resources << std::endl;
 
     JNIEnv* env;
     JavaVM* jvm;
-    env = create_jvm(&jvm, std::string(fmuResourceLocation));
+    env = create_jvm(&jvm, resources);
 
     if (env == nullptr) {
         throw cppfmu::FatalError("Unable to setup the JVM!");
     }
 
     std::string mainClass;
-    std::ifstream infile(std::string(fmuResourceLocation) + "/mainclass.txt");
+    std::ifstream infile(resources + "/mainclass.txt");
     std::getline(infile, mainClass);
 
     std::replace(mainClass.begin(), mainClass.end(), '.', '/');
