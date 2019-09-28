@@ -270,7 +270,7 @@ abstract class Fmi2Slave {
         md.modelStructure = Fmi2ModelDescription.ModelStructure().also { ms ->
             if (outputs.isNotEmpty()) {
                 ms.outputs = Fmi2VariableDependency()
-                outputs.forEachIndexed {i, v ->
+                outputs.forEachIndexed {i, _ ->
                     ms.outputs.unknown.add(Fmi2VariableDependency.Unknown().also { u -> u.index = i.toLong() })
                 }
             }

@@ -25,7 +25,7 @@ class GsonTest {
                 .create().also { gson ->
 
                     gson.toJson(modelDescription).also { json ->
-                        LOG.info("$json")
+                        LOG.info(json)
                         gson.fromJson(json, JaxbModelDescription::class.java).also { md ->
                             LOG.info("${md.modelVariables}")
                         }
