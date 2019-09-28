@@ -21,7 +21,7 @@ jobs:
       # Download and cache dependencies
       - restore_cache:
           keys:
-          - v1-dependencies-{{ checksum "build.gradle" }}
+          - v1-dependencies-{{ checksum "java/fmi4j/build.gradle" }}
           # fallback to using the latest cache if no exact match is found
           - v1-dependencies-
 
@@ -30,12 +30,12 @@ jobs:
       - save_cache:
           paths:
             - ~/.gradle
-          key: v1-dependencies-{{ checksum "build.gradle" }}
+          key: v1-dependencies-{{ checksum "java/fmi4j/build.gradle" }}
 
-      - run: gradle clean test
+      - run: cd java/fmi4j && ./gradlew clean build
 
-      - run: gradle shadowJar
+      - run: cd java/fmi4j && ./gradlew shadowJar
 
       - store_artifacts:
-          path: fmu-driver/build/libs/fmu-driver.jar
+          path: java/fmi4j/fmu-driver/build/libs/fmu-driver.jar
           destination: fmu-driver.jar
