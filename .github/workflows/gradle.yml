@@ -13,4 +13,4 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: Build
-      run: ./gradlew clean build
+      run: cd java/fmi4j && ./gradlew clean build
