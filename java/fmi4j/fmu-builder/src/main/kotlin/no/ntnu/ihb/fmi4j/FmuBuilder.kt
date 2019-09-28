@@ -41,7 +41,7 @@ object FmuBuilder {
             val bos = ByteArrayOutputStream()
             JAXB.marshal(md, bos)
 
-            ZipOutputStream(BufferedOutputStream(FileOutputStream("${jarFile.nameWithoutExtension}.fmu"))).use { zos ->
+            ZipOutputStream(BufferedOutputStream(FileOutputStream("${modelIdentifier}.fmu"))).use { zos ->
 
                 zos.putNextEntry(ZipEntry("modelDescription.xml"))
                 zos.write(bos.toByteArray())

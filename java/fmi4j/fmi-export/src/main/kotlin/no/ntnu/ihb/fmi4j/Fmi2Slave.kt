@@ -266,6 +266,16 @@ abstract class Fmi2Slave {
 
         }
 
+        val outputs = md.modelVariables.scalarVariable.filter { it.causality == Fmi2Causality.output }
+        md.modelStructure = Fmi2ModelDescription.ModelStructure().also { ms ->
+            if (outputs.isNotEmpty()) {
+                ms.outputs = Fmi2VariableDependency()
+                outputs.forEachIndexed {i, v ->
+                    ms.outputs.unknown.add(Fmi2VariableDependency.Unknown().also { u -> u.index = i.toLong() })
+                }
+            }
+        }
+
         check(md.modelVariables.scalarVariable.isNotEmpty()) { "No variables has been defined!" }
 
         return this
