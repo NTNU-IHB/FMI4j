@@ -1,23 +1,19 @@
 package no.ntnu.ihb.fmi4j
 
 import no.ntnu.ihb.fmi4j.modeldescription.fmi2.*
+import java.lang.Exception
 import java.util.*
+import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicLong
 
 abstract class Fmi2Slave {
 
+    private val defined = AtomicBoolean(false)
     private val vrRef = AtomicLong(0L)
-    private val variables = mutableMapOf<Long, Var<*>>()
-    val modelDescription by lazy { define() }
-
-    protected fun addVariable(v: Var<*>): Long {
-        return vrRef.getAndIncrement().also {
-            variables[it] = v;
-        }
-    }
+    private val accessors = mutableMapOf<Long, Accessor<*>>()
+    protected val modelDescription = Fmi2ModelDescription()
 
     fun setupExperiment(startTime: Double): Boolean {
-        modelDescription
         println("setupExperiment, startTime=$startTime")
         return true
     }
@@ -44,9 +40,8 @@ abstract class Fmi2Slave {
 
     @Suppress("UNCHECKED_CAST")
     fun getReal(vr: LongArray): DoubleArray {
-        println("getReal, ${vr.contentToString()}")
         return DoubleArray(vr.size) { i ->
-            (variables.getValue(vr[i]) as RealVar).let {
+            (accessors.getValue(vr[i]) as RealAccessor).let {
                 it.getter()
             }
         }
@@ -55,7 +50,7 @@ abstract class Fmi2Slave {
     @Suppress("UNCHECKED_CAST")
     fun setReal(vr: LongArray, values: DoubleArray) {
         for (i in vr.indices) {
-            (variables.getValue(vr[i]) as RealVar).apply {
+            (accessors.getValue(vr[i]) as RealAccessor).apply {
                 setter?.invoke(values[i])
             }
         }
@@ -64,7 +59,7 @@ abstract class Fmi2Slave {
     @Suppress("UNCHECKED_CAST")
     fun getInteger(vr: LongArray): IntArray {
         return IntArray(vr.size) { i ->
-            (variables.getValue(vr[i]) as IntVar).let {
+            (accessors.getValue(vr[i]) as IntAccessor).let {
                 it.getter()
             }
         }
@@ -73,7 +68,7 @@ abstract class Fmi2Slave {
     @Suppress("UNCHECKED_CAST")
     fun setInteger(vr: LongArray, values: IntArray) {
         for (i in vr.indices) {
-            (variables.getValue(vr[i]) as IntVar).apply {
+            (accessors.getValue(vr[i]) as IntAccessor).apply {
                 setter?.invoke(values[i])
             }
         }
@@ -82,7 +77,7 @@ abstract class Fmi2Slave {
     @Suppress("UNCHECKED_CAST")
     fun getBoolean(vr: LongArray): BooleanArray {
         return BooleanArray(vr.size) { i ->
-            (variables.getValue(vr[i]) as BoolVar).let {
+            (accessors.getValue(vr[i]) as BoolAccessor).let {
                 it.getter()
             }
         }
@@ -91,7 +86,7 @@ abstract class Fmi2Slave {
     @Suppress("UNCHECKED_CAST")
     fun setBoolean(vr: LongArray, values: BooleanArray) {
         for (i in vr.indices) {
-            (variables.getValue(vr[i]) as BoolVar).apply {
+            (accessors.getValue(vr[i]) as BoolAccessor).apply {
                 setter?.invoke(values[i])
             }
         }
@@ -100,7 +95,7 @@ abstract class Fmi2Slave {
     @Suppress("UNCHECKED_CAST")
     fun getString(vr: LongArray): Array<String> {
         return Array(vr.size) { i ->
-            (variables.getValue(vr[i]) as StringVar).let {
+            (accessors.getValue(vr[i]) as StringAccessor).let {
                 it.getter()
             }
         }
@@ -109,200 +104,196 @@ abstract class Fmi2Slave {
     @Suppress("UNCHECKED_CAST")
     fun setString(vr: LongArray, values: Array<String>) {
         for (i in vr.indices) {
-            (variables.getValue(vr[i]) as StringVar).apply {
+            (accessors.getValue(vr[i]) as StringAccessor).apply {
                 setter?.invoke(values[i])
             }
         }
     }
 
-    private fun define(): Fmi2ModelDescription {
+    fun define(): Fmi2Slave {
 
-       return Fmi2ModelDescription().also { md->
+        if (defined.getAndSet(true)) {
+            return this
+        }
 
-           md.fmiVersion = "2.0"
-           md.generationTool = "fmi4j"
-           md.variableNamingConvention = "structured"
-           md.guid = UUID.randomUUID().toString()
+        val md = modelDescription
+        md.fmiVersion = "2.0"
+        md.generationTool = "fmi4j"
+        md.variableNamingConvention = "structured"
+        md.guid = UUID.randomUUID().toString()
 
-           val slaveInfo = javaClass.getAnnotation(SlaveInfo::class.java)
+        val slaveInfo = javaClass.getAnnotation(SlaveInfo::class.java)
 
-           md.modelName = slaveInfo?.modelName ?: javaClass.simpleName
-           if (slaveInfo != null) {
-               md.author = if (slaveInfo.author.isNotEmpty()) slaveInfo.author else null
-               md.version = if (slaveInfo.version.isNotEmpty()) slaveInfo.version else null
-               md.copyright = if (slaveInfo.copyright.isNotEmpty()) slaveInfo.copyright else null
-               md.license = if (slaveInfo.license.isNotEmpty()) slaveInfo.license else null
-               md.description = if (slaveInfo.description.isNotEmpty()) slaveInfo.description else null
-           }
+        md.modelName = slaveInfo?.modelName ?: javaClass.simpleName
+        if (slaveInfo != null) {
+            md.author = if (slaveInfo.author.isNotEmpty()) slaveInfo.author else null
+            md.version = if (slaveInfo.version.isNotEmpty()) slaveInfo.version else null
+            md.copyright = if (slaveInfo.copyright.isNotEmpty()) slaveInfo.copyright else null
+            md.license = if (slaveInfo.license.isNotEmpty()) slaveInfo.license else null
+            md.description = if (slaveInfo.description.isNotEmpty()) slaveInfo.description else null
+        }
 
-           md.modelVariables = Fmi2ModelDescription.ModelVariables()
-           md.coSimulation = Fmi2ModelDescription.CoSimulation().also { cs ->
-               cs.isCanGetAndSetFMUstate = false
-               cs.isCanSerializeFMUstate = false
-               cs.isCanInterpolateInputs = false
-               cs.modelIdentifier = md.modelName
-               if (slaveInfo != null) {
-                   cs.isNeedsExecutionTool = slaveInfo.needsExecutionTool
-                   cs.isCanBeInstantiatedOnlyOncePerProcess = slaveInfo.canBeInstantiatedOnlyOncePerProcess
-                   cs.isCanHandleVariableCommunicationStepSize = slaveInfo.canHandleVariableCommunicationStepSize
-               }
-           }
+        md.modelVariables = Fmi2ModelDescription.ModelVariables()
+        md.coSimulation = Fmi2ModelDescription.CoSimulation().also { cs ->
+            cs.isCanGetAndSetFMUstate = false
+            cs.isCanSerializeFMUstate = false
+            cs.isCanInterpolateInputs = false
+            cs.modelIdentifier = md.modelName
+            if (slaveInfo != null) {
+                cs.isNeedsExecutionTool = slaveInfo.needsExecutionTool
+                cs.isCanBeInstantiatedOnlyOncePerProcess = slaveInfo.canBeInstantiatedOnlyOncePerProcess
+                cs.isCanHandleVariableCommunicationStepSize = slaveInfo.canHandleVariableCommunicationStepSize
+            }
+        }
 
-           javaClass.getAnnotation(DefaultExperiment::class.java)?.also { de ->
-               md.defaultExperiment = Fmi2ModelDescription.DefaultExperiment().apply {
-                   if (de.startTime >= 0) startTime = de.startTime
-                   if (de.stepSize > 0) stepSize = de.stepSize
-                   if (de.stopTime > startTime) stopTime = de.stopTime
-               }
-           }
+        javaClass.getAnnotation(DefaultExperiment::class.java)?.also { de ->
+            md.defaultExperiment = Fmi2ModelDescription.DefaultExperiment().apply {
+                if (de.startTime >= 0) startTime = de.startTime
+                if (de.stepSize > 0) stepSize = de.stepSize
+                if (de.stopTime > startTime) stopTime = de.stopTime
+            }
+        }
 
-           javaClass.declaredFields.forEach { field ->
+        javaClass.declaredFields.forEach { field ->
 
-               field.getAnnotation(ScalarVariable::class.java)?.also { annotation ->
+            field.getAnnotation(ScalarVariable::class.java)?.also { annotation ->
 
-                   field.isAccessible = true
+                field.isAccessible = true
 
-                   fun apply(f: (Fmi2ScalarVariable) -> Unit) {
-                       md.modelVariables.scalarVariable.add(Fmi2ScalarVariable().also { v ->
-                           v.name = field.name
-                           v.causality = annotation.causality
-                           v.variability = annotation.variability
-                           v.initial = if (annotation.initial == Fmi2Initial.undefined) null else (annotation.initial)
-                           f.invoke(v)
-                       })
-                   }
+                fun apply(f: (Fmi2ScalarVariable) -> Unit): Fmi2ScalarVariable {
+                    return Fmi2ScalarVariable().apply {
+                        name = field.name
+                        valueReference = vrRef.getAndIncrement()
+                        causality = annotation.causality
+                        variability = annotation.variability
+                        initial = if (annotation.initial == Fmi2Initial.undefined) null else (annotation.initial)
+                        f.invoke(this)
+                    }.also { md.modelVariables.scalarVariable.add(it) }
+                }
 
-                   when (val type = field.type) {
-                       Int::class, Int::class.java -> {
-                           val vr = addVariable(IntVar({ field.getInt(this) }, { field.setInt(this, it) }))
-                           apply { v ->
-                               v.valueReference = vr
-                               v.integer = Fmi2ScalarVariable.Integer().also { i ->
-                                   (field.get(this) as? Int)?.also { i.start = it }
-                               }
-                           }
-                       }
-                       Double::class, Double::class.java -> {
-                           val vr = addVariable(RealVar({ field.getDouble(this) }, { field.setDouble(this, it) }))
-                           apply { v ->
-                               v.valueReference = vr
-                               v.real = Fmi2ScalarVariable.Real().also { i ->
-                                   (field.get(this) as? Double)?.also { i.start = it }
-                               }
-                           }
-                       }
-                       Boolean::class, Boolean::class.java -> {
-                           val vr = addVariable(BoolVar({ field.getBoolean(this) }, { field.setBoolean(this, it) }))
-                           apply { v ->
-                               v.valueReference = vr
-                               v.boolean = Fmi2ScalarVariable.Boolean().also { i ->
-                                   (field.get(this) as? Boolean)?.also { i.isStart = it }
-                               }
-                           }
-                       }
-                       String::class, String::class.java -> {
-                           val vr = addVariable(StringVar({ field.get(this) as String }, { field.set(this, it) }))
-                           apply { v ->
-                               v.valueReference = vr
-                               v.string = Fmi2ScalarVariable.String().also { i ->
-                                   (field.get(this) as? String)?.also { i.start = it }
-                               }
-                           }
-                       }
-                       else -> throw IllegalStateException("Unsupported variable type: $type")
-                   }
+                fun apply(index: Int, f: (Fmi2ScalarVariable) -> Unit) {
+                    apply(f).apply {
+                        name = "${field.name}[$index]"
+                    }
+                }
 
-               }
+                when (val type = field.type) {
+                    Int::class, Int::class.java -> {
+                        apply { v ->
+                            v.integer = Fmi2ScalarVariable.Integer().also { i ->
+                                (field.get(this) as? Int)?.also { i.start = it }
+                            }
+                            accessors[v.valueReference] = IntAccessor({ field.getInt(this) }, { field.setInt(this, it) })
+                        }
+                    }
+                    Double::class, Double::class.java -> {
+                        apply { v ->
+                            v.real = Fmi2ScalarVariable.Real().also { i ->
+                                (field.get(this) as? Double)?.also { i.start = it }
+                            }
+                            accessors[v.valueReference] = RealAccessor({ field.getDouble(this) }, { field.setDouble(this, it) })
+                        }
+                    }
+                    Boolean::class, Boolean::class.java -> {
+                        apply { v ->
+                            v.boolean = Fmi2ScalarVariable.Boolean().also { i ->
+                                (field.get(this) as? Boolean)?.also { i.isStart = it }
+                            }
+                            accessors[v.valueReference] = BoolAccessor({ field.getBoolean(this) }, { field.setBoolean(this, it) })
+                        }
+                    }
+                    String::class, String::class.java -> {
+                        apply { v ->
+                            v.string = Fmi2ScalarVariable.String().also { i ->
+                                (field.get(this) as? String)?.also { i.start = it }
+                            }
+                            accessors[v.valueReference] = StringAccessor({ field.get(this) as String }, { field.set(this, it) })
+                        }
+                    }
+                    IntArray::class, IntArray::class.java -> {
+                        val array = field.get(this) as? IntArray
+                                ?: throw IllegalStateException("${field.name} cannot be null!")
+                        for (i in array.indices) {
+                            apply(i) { v ->
+                                v.integer = Fmi2ScalarVariable.Integer().also { integer ->
+                                    array.also { integer.start = it[i] }
+                                }
+                                accessors[v.valueReference] = IntAccessor({ array[i] }, { array[i] = it })
+                            }
+                        }
+                    }
+                    DoubleArray::class, DoubleArray::class.java -> {
+                        val array = field.get(this) as? DoubleArray
+                                ?: throw IllegalStateException("${field.name} cannot be null!")
+                        for (i in array.indices) {
+                            apply(i) { v ->
+                                v.real = Fmi2ScalarVariable.Real().also { real ->
+                                    array.also { real.start = it[i] }
+                                }
+                                accessors[v.valueReference] = RealAccessor({ array[i] }, { array[i] = it })
+                            }
+                        }
+                    }
+                    BooleanArray::class, BooleanArray::class.java -> {
+                        val array = field.get(this) as? BooleanArray
+                                ?: throw IllegalStateException("${field.name} cannot be null!")
+                        for (i in array.indices) {
+                            apply(i) { v ->
+                                v.boolean = Fmi2ScalarVariable.Boolean().also { boolean ->
+                                    array.also { boolean.isStart = it[i] }
+                                }
+                                accessors[v.valueReference] = BoolAccessor({ array[i] }, { array[i] = it })
+                            }
+                        }
+                    }
+                    Array<String>::class, Array<String>::class.java -> {
+                        @Suppress("UNCHECKED_CAST")
+                        val array = field.get(this) as? Array<String>
+                                ?: throw IllegalStateException("${field.name} cannot be null!")
+                        for (i in array.indices) {
+                            apply(i) { v ->
+                                v.string = Fmi2ScalarVariable.String().also { string ->
+                                    array.also { string.start = it[i] }
+                                }
+                                accessors[v.valueReference] = StringAccessor({ array[i] }, { array[i] = it })
+                            }
+                        }
+                    }
+                    else -> throw IllegalStateException("Unsupported variable type: $type")
+                }
 
-               field.getAnnotation(ScalarVariables::class.java)?.also { annotation ->
+            }
 
-                   field.isAccessible = true
+        }
 
-                   fun apply(index: Int, f: (Fmi2ScalarVariable) -> Unit) {
-                       md.modelVariables.scalarVariable.add(Fmi2ScalarVariable().also { v ->
-                           v.name = "${field.name}[$index]"
-                           v.causality = annotation.causality
-                           v.variability = annotation.variability
-                           v.initial = if (annotation.initial == Fmi2Initial.undefined) null else (annotation.initial)
-                           f.invoke(v)
-                       })
-                   }
+        check(md.modelVariables.scalarVariable.isNotEmpty()) { "No variables has been defined!" }
 
-                   when (val type = field.type) {
-                       IntArray::class, IntArray::class.java -> {
-                           val array = field.get(this) as? IntArray
-                                   ?: throw IllegalStateException("${field.name} cannot be null!")
-                           for (i in 0 until annotation.size) {
-                               val vr = addVariable(IntVar({ array[i] }, { array[i] = it }))
-                               apply(i) { v ->
-                                   v.valueReference = vr
-                                   v.integer = Fmi2ScalarVariable.Integer().also { integer ->
-                                       array.also { integer.start = it[i] }
-                                   }
-                               }
-                           }
-                       }
-                       DoubleArray::class, DoubleArray::class.java -> {
-                           val array = field.get(this) as? DoubleArray
-                                   ?: throw IllegalStateException("${field.name} cannot be null!")
-                           for (i in 0 until annotation.size) {
-                               val vr = addVariable(RealVar({ array[i] }, { array[i] = it }))
-                               apply(i) { v ->
-                                   v.valueReference = vr
-                                   v.real = Fmi2ScalarVariable.Real().also { real ->
-                                       array.also { real.start = it[i] }
-                                   }
-                               }
-                           }
-                       }
-                       BooleanArray::class, BooleanArray::class.java -> {
-                           val array = field.get(this) as? BooleanArray
-                                   ?: throw IllegalStateException("${field.name} cannot be null!")
-                           for (i in 0 until annotation.size) {
-                               val vr = addVariable(BoolVar({ array[i] }, { array[i] = it }))
-                               apply(i) { v ->
-                                   v.valueReference = vr
-                                   v.boolean = Fmi2ScalarVariable.Boolean().also { boolean ->
-                                       array.also { boolean.isStart = it[i] }
-                                   }
-                               }
-                           }
-                       }
-                       Array<String>::class, Array<String>::class.java -> {
-                           @Suppress("UNCHECKED_CAST")
-                           val array = field.get(this) as? Array<String>
-                                   ?: throw IllegalStateException("${field.name} cannot be null!")
-                           for (i in 0 until annotation.size) {
-                               val vr = addVariable(StringVar({ array[i] }, { array[i] = it }))
-                               apply(i) { v ->
-                                   v.valueReference = vr
-                                   v.string = Fmi2ScalarVariable.String().also { string ->
-                                       array.also { string.start = it[i] }
-                                   }
-                               }
-                           }
-                       }
-                       else -> throw IllegalStateException("Unsupported variable type: $type")
-                   }
-
-               }
-
-           }
-
-           check(md.modelVariables.scalarVariable.isNotEmpty()) { "No variables has been defined!" }
-
-       }
+        return this
     }
-
-
 }
 
-class Var<T>(
+
+sealed class Accessor<T>(
         val getter: () -> T,
         val setter: ((T) -> Unit)?
 )
 
-typealias IntVar = Var<Int>
-typealias RealVar = Var<Double>
-typealias BoolVar = Var<Boolean>
-typealias StringVar = Var<String>
+class IntAccessor(
+        getter: () -> Int,
+        setter: ((Int) -> Unit)?
+) : Accessor<Int>(getter, setter)
+
+class RealAccessor(
+        getter: () -> Double,
+        setter: ((Double) -> Unit)?
+) : Accessor<Double>(getter, setter)
+
+class BoolAccessor(
+        getter: () -> Boolean,
+        setter: ((Boolean) -> Unit)?
+) : Accessor<Boolean>(getter, setter)
+
+class StringAccessor(
+        getter: () -> String,
+        setter: ((String) -> Unit)?
+) : Accessor<String>(getter, setter)

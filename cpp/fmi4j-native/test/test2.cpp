@@ -50,22 +50,31 @@ int main()
 {
 
     try {
-        std::cout << fmi2GetVersion() << std::endl;
-        auto c = fmi2Instantiate("", fmi2CoSimulation, "guid", "D:\\Development\\FMI4j\\java\\fmi4j\\fmi-export\\build\\libs\\fmi-export-0.23.0.jar", &callback, 0, 0);
+        std::cout << "version: " << fmi2GetVersion() << std::endl;
+        auto c = fmi2Instantiate("", fmi2CoSimulation, "guid", R"(D:\Development\FMI4j\java\fmi4j\fmi-export\build\libs)", &callback, 0, 0);
         if (c == nullptr) {
             return -1;
         }
+
         fmi2SetupExperiment(c, false, 0.0, 0.0, false, 0.0);
         fmi2EnterInitializationMode(c);
         fmi2ExitInitializationMode(c);
         fmi2DoStep(c, 0, 0.1, true);
 
-        std::vector<fmi2ValueReference >vr = {0};
-        std::vector<fmi2Real > ref(1);
+        {
+            std::vector<fmi2ValueReference >vr = {0};
+            std::vector<fmi2Real > ref(1);
+            fmi2GetReal(c, vr.data(), vr.size(), ref.data());
+            std::cout << ref[0] << std::endl;
+        }
 
-        fmi2GetReal(c, vr.data(), vr.size(), ref.data());
+        {
+            std::vector<fmi2ValueReference >vr = {1};
+            std::vector<fmi2Integer > ref(1);
+            fmi2GetInteger(c, vr.data(), vr.size(), ref.data());
+            std::cout << ref[0] << std::endl;
+        }
 
-        std::cout << ref[0] << std::endl;
 
     } catch (const std::exception& e) {
         std::cout << e.what() << std::endl;

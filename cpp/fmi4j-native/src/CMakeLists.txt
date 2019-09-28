@@ -31,14 +31,14 @@ target_link_libraries(fmi4j-export
         "${JNI_LIBRARIES}"
         )
 
-#if (WIN32)
-#  set_target_properties(fmi4j-export
-#          PROPERTIES
-#          RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_SOURCE_DIR}/../../java/fmi4j/fmu-builder/src/main/resources/native/win"
-#          )
-#elseif (UNIX)
-#  set_target_properties(fmi4j-export
-#          PROPERTIES
-#          LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/../../java/fmi4j/fmu-builder/src/main/resources/native/linux"
-#          )
-#endif ()
+if (WIN32)
+  set_target_properties(fmi4j-export
+          PROPERTIES
+          RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_SOURCE_DIR}/../../java/fmi4j/fmu-builder/src/main/resources/binaries/win"
+          )
+elseif (UNIX)
+  set_target_properties(fmi4j-export
+          PROPERTIES
+          LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/../../java/fmi4j/fmu-builder/src/main/resources/binaries/linux"
+          )
+endif ()

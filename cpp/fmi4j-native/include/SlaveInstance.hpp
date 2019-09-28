@@ -2,16 +2,18 @@
 #ifndef FMI4J_SLAVEINSTANCE_HPP
 #define FMI4J_SLAVEINSTANCE_HPP
 
-#include <jni.h>
 #include <cppfmu_cs.hpp>
+#include <jni.h>
+#include <string>
 
-namespace fmi4j {
+namespace fmi4j
+{
 
-class SlaveInstance: public cppfmu::SlaveInstance {
+class SlaveInstance : public cppfmu::SlaveInstance
+{
 
 public:
-
-    SlaveInstance(const cppfmu::Memory& memory, JNIEnv* env, const char* slaveClass);
+    SlaveInstance(const cppfmu::Memory& memory, JNIEnv* env, std::string slaveClass);
 
     void SetupExperiment(cppfmu::FMIBoolean toleranceDefined, cppfmu::FMIReal tolerance, cppfmu::FMIReal tStart, cppfmu::FMIBoolean stopTimeDefined, cppfmu::FMIReal tStop) override;
     void EnterInitializationMode() override;
@@ -19,6 +21,14 @@ public:
     void Terminate() override;
     void Reset() override;
     bool DoStep(cppfmu::FMIReal currentCommunicationPoint, cppfmu::FMIReal communicationStepSize, cppfmu::FMIBoolean newStep, cppfmu::FMIReal& endOfStep) override;
+
+    void SetReal(const cppfmu::FMIValueReference* vr, std::size_t nvr, const cppfmu::FMIReal* value) override;
+    void SetInteger(const cppfmu::FMIValueReference* vr, std::size_t nvr, const cppfmu::FMIInteger* value) override;
+    void SetBoolean(const cppfmu::FMIValueReference* vr, std::size_t nvr, const cppfmu::FMIBoolean* value) override;
+    void SetString(const cppfmu::FMIValueReference* vr, std::size_t nvr, cppfmu::FMIString const* value) override;
+    void GetInteger(const cppfmu::FMIValueReference* vr, std::size_t nvr, cppfmu::FMIInteger* value) const override;
+    void GetBoolean(const cppfmu::FMIValueReference* vr, std::size_t nvr, cppfmu::FMIBoolean* value) const override;
+    void GetString(const cppfmu::FMIValueReference* vr, std::size_t nvr, cppfmu::FMIString* value) const override;
 
     ~SlaveInstance() override;
     void GetReal(const cppfmu::FMIValueReference* vr, std::size_t nvr, cppfmu::FMIReal* value) const override;
@@ -46,9 +56,8 @@ private:
 
     jmethodID getStringId_;
     jmethodID setStringId_;
-
 };
 
-}
+} // namespace fmi4j
 
 #endif

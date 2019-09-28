@@ -1,13 +1,35 @@
 plugins {
-    id 'java'
+    id 'application'
+    id "com.github.johnrengelman.shadow" version "4.0.4"
 }
 
+apply plugin: 'java'
 apply plugin: 'kotlin'
 
 apply from: rootProject.file("gradle/junit.gradle")
 
+def group = "no.ntnu.ihb.fmi4j"
+mainClassName = "${group}.FmuBuilder"
+
 dependencies {
 
-    api project(':fmi-export')
+    compile project(':fmi-export')
+    compile group: 'info.picocli', name: 'picocli', version: '3.9.2'
 
+}
+
+shadowJar {
+    archiveBaseName.set("fmu-builder")
+    archiveClassifier.set(null)
+    archiveVersion.set(null)
+}
+
+distributions {
+    main {
+        baseName = 'fmu-builder'
+    }
+}
+
+startScripts {
+    applicationName = 'fmu-builder'
 }

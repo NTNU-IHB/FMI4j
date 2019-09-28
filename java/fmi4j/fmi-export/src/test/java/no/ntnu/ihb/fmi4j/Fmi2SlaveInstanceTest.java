@@ -11,7 +11,7 @@ class Fmi2SlaveInstanceTest {
     @BeforeAll
     static void setUp() {
         slave = new MyTestSlave();
-        slave.getModelDescription();
+        slave.define();
     }
 
     @Test

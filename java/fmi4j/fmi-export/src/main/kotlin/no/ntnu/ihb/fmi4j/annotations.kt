@@ -34,12 +34,11 @@ annotation class ScalarVariable(
         val initial: Fmi2Initial = Fmi2Initial.undefined
 )
 
-@Target(AnnotationTarget.FIELD)
-@Retention(AnnotationRetention.RUNTIME)
-annotation class ScalarVariables(
-        val size: Int,
-        val causality: Fmi2Causality = Fmi2Causality.local,
-        val variability: Fmi2Variability = Fmi2Variability.continuous,
-        val initial: Fmi2Initial = Fmi2Initial.undefined
-)
-
+//@Target(AnnotationTarget.FIELD)
+//@Retention(AnnotationRetention.RUNTIME)
+//annotation class ScalarVariables(
+//        val size: Int,
+//        val causality: Fmi2Causality = Fmi2Causality.local,
+//        val variability: Fmi2Variability = Fmi2Variability.continuous,
+//        val initial: Fmi2Initial = Fmi2Initial.undefined
+//)
