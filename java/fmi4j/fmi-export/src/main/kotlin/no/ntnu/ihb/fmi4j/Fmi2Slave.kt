@@ -1,7 +1,6 @@
 package no.ntnu.ihb.fmi4j
 
 import no.ntnu.ihb.fmi4j.modeldescription.fmi2.*
-import java.lang.Exception
 import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicLong
@@ -216,7 +215,7 @@ abstract class Fmi2Slave {
                         for (i in array.indices) {
                             apply(i) { v ->
                                 v.integer = Fmi2ScalarVariable.Integer().also { integer ->
-                                    array.also { integer.start = it[i] }
+                                    integer.start = array[i]
                                 }
                                 accessors[v.valueReference] = IntAccessor({ array[i] }, { array[i] = it })
                             }
@@ -228,7 +227,7 @@ abstract class Fmi2Slave {
                         for (i in array.indices) {
                             apply(i) { v ->
                                 v.real = Fmi2ScalarVariable.Real().also { real ->
-                                    array.also { real.start = it[i] }
+                                    real.start = array[i]
                                 }
                                 accessors[v.valueReference] = RealAccessor({ array[i] }, { array[i] = it })
                             }
@@ -240,7 +239,7 @@ abstract class Fmi2Slave {
                         for (i in array.indices) {
                             apply(i) { v ->
                                 v.boolean = Fmi2ScalarVariable.Boolean().also { boolean ->
-                                    array.also { boolean.isStart = it[i] }
+                                    boolean.isStart = array[i]
                                 }
                                 accessors[v.valueReference] = BoolAccessor({ array[i] }, { array[i] = it })
                             }
@@ -253,13 +252,47 @@ abstract class Fmi2Slave {
                         for (i in array.indices) {
                             apply(i) { v ->
                                 v.string = Fmi2ScalarVariable.String().also { string ->
-                                    array.also { string.start = it[i] }
+                                    string.start = array[i]
                                 }
                                 accessors[v.valueReference] = StringAccessor({ array[i] }, { array[i] = it })
                             }
                         }
                     }
-                    else -> throw IllegalStateException("Unsupported variable type: $type")
+
+                    else -> {
+
+                        when {
+                            IntVector::class.java.isAssignableFrom(type) -> {
+                                val vector = field.get(this) as? IntVector
+                                        ?: throw IllegalStateException("${field.name} cannot be null!")
+                                for (i in 0 until vector.size) {
+                                    apply(i) { v ->
+                                        v.integer = Fmi2ScalarVariable.Integer().also { integer ->
+                                            integer.start = vector[i]
+                                        }
+                                        accessors[v.valueReference] = IntAccessor({ vector[i] }, { vector[i] = it })
+                                    }
+
+                                }
+                            }
+                            RealVector::class.java.isAssignableFrom(type) -> {
+
+                                val vector = field.get(this) as? RealVector
+                                        ?: throw IllegalStateException("${field.name} cannot be null!")
+                                for (i in 0 until vector.size) {
+                                    apply(i) { v ->
+                                        v.real = Fmi2ScalarVariable.Real().also { real ->
+                                            real.start = vector[i]
+                                        }
+                                        accessors[v.valueReference] = RealAccessor({ vector[i] }, { vector[i] = it })
+                                    }
+
+                                }
+
+                            }
+                            else -> throw IllegalStateException("Unsupported variable type: $type")
+                        }
+                    }
                 }
 
             }
@@ -270,7 +303,7 @@ abstract class Fmi2Slave {
         md.modelStructure = Fmi2ModelDescription.ModelStructure().also { ms ->
             if (outputs.isNotEmpty()) {
                 ms.outputs = Fmi2VariableDependency()
-                outputs.forEachIndexed {i, _ ->
+                outputs.forEachIndexed { i, _ ->
                     ms.outputs.unknown.add(Fmi2VariableDependency.Unknown().also { u -> u.index = i.toLong() })
                 }
             }

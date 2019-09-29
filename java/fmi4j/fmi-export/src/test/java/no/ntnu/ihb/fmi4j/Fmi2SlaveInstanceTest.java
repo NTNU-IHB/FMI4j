@@ -22,4 +22,19 @@ class Fmi2SlaveInstanceTest {
         Assertions.assertEquals(newValue, slave.getReal(new long[]{0})[0]);
     }
 
+    @Test
+    void testVector() {
+        double x = 1;
+        double y = 5;
+        double z = 99;
+
+        int startIndex = 5;
+        long[] vr = new long[]{startIndex, startIndex + 1, startIndex + 2};
+        slave.setReal(vr, new double[]{x, y, z});
+
+        double[] result = slave.getReal(vr);
+
+        Assertions.assertArrayEquals(new double[]{x, y, z}, result);
+    }
+
 }

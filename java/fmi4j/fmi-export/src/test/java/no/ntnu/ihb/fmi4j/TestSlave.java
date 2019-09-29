@@ -18,10 +18,54 @@ public class TestSlave extends Fmi2Slave {
     @ScalarVariable(causality = Fmi2Causality.local)
     protected String[] string = {"Hello", "world!"};
 
+    @ScalarVariable
+    protected Vector3 vector3 = new Vector3();
+
     @Override
     public boolean doStep(double currentTime, double dt) {
         System.out.println("per " + dt);
         return true;
+    }
+
+    static class Vector3 implements RealVector {
+
+        @ScalarVariable
+        double x;
+        @ScalarVariable
+        double y;
+        @ScalarVariable
+        double z;
+
+        @Override
+        public int getSize() {
+            return 3;
+        }
+
+        @Override
+        public double get(int index) {
+            if (index == 0) {
+                return x;
+            } else if (index == 1) {
+                return y;
+            } else if (index == 2) {
+                return z;
+            } else {
+                throw new IndexOutOfBoundsException();
+            }
+        }
+
+        @Override
+        public void set(int index, double value) {
+            if (index == 0) {
+                x = value;
+            } else if (index == 1) {
+                y = value;
+            } else if (index == 2) {
+                z = value;
+            } else {
+                throw new IndexOutOfBoundsException();
+            }
+        }
     }
 
 }
