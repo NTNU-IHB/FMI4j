@@ -67,6 +67,7 @@ inline jmethodID GetMethodID(JNIEnv* env, jclass cls, const char* name, const ch
         std::string msg = "Unable to locate method '" + std::string(name) + "'!";
         throw cppfmu::FatalError(msg.c_str());
     }
+    return id;
 }
 
 inline jmethodID GetStaticMethodID(JNIEnv* env, jclass cls, const char* name, const char* sig)
@@ -76,6 +77,7 @@ inline jmethodID GetStaticMethodID(JNIEnv* env, jclass cls, const char* name, co
         std::string msg = "Unable to locate method static '" + std::string(name) + "'!";
         throw cppfmu::FatalError(msg.c_str());
     }
+    return id;
 }
 
 } // namespace
