@@ -34,6 +34,10 @@ annotation class ScalarVariable(
         val initial: Fmi2Initial = Fmi2Initial.undefined
 )
 
+@Target(AnnotationTarget.FIELD)
+@Retention(AnnotationRetention.RUNTIME)
+annotation class VariableContainer
+
 //@Target(AnnotationTarget.FIELD)
 //@Retention(AnnotationRetention.RUNTIME)
 //annotation class ScalarVariables(
