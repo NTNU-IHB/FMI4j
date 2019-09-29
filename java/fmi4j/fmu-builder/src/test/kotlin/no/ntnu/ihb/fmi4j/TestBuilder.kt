@@ -20,10 +20,6 @@ class TestBuilder {
                 .append("C:\\Users\\LarsIvar\\Documents\\IdeaProjects\\FMI4j\\java\\fmi4j\\fmu-slaves\\build\\libs\\fmu-slaves.jar;")
                 .append(System.getProperty("java.class.path"))
 
-//        System.setProperty("java.class.path", modifiedClasspath.toString())
-
-        println(System.getProperty("java.class.path"))
-
         FmuBuilder.main(arrayOf("-f", jar, "-m", "$group.JavaTestSlave", "-d", dest))
 //        testFmu(File(dest, "Test.fmu"))
     }
