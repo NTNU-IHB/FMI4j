@@ -13,8 +13,10 @@ mainClassName = "${group}.FmuBuilder"
 
 dependencies {
 
-    compile project(':fmi-export')
+    compile project(':fmi-md')
     compile group: 'info.picocli', name: 'picocli', version: '3.9.2'
+
+    testCompile project(':fmi-import')
 
 }
 
@@ -33,3 +35,5 @@ distributions {
 startScripts {
     applicationName = 'fmu-builder'
 }
+
+test.dependsOn(':fmu-slaves:build')

@@ -17,7 +17,7 @@ class Fmi2SlaveModelDescriptionTest {
     @BeforeAll
     static void setUp() {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        JAXB.marshal(new MyTestSlave().define().getModelDescription(), bos);
+        JAXB.marshal(new TestSlave().define().getModelDescription(), bos);
         System.out.println(new String(bos.toByteArray()));
         md = JAXB.unmarshal(new ByteArrayInputStream(bos.toByteArray()), Fmi2ModelDescription.class);
     }

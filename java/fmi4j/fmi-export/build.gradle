@@ -21,4 +21,4 @@ jar {
     }
 }
 
-jar.dependsOn(":fmi-md:build")
+jar.dependsOn(":fmi-md:jar")

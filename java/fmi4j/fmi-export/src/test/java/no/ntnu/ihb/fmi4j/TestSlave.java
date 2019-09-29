@@ -7,7 +7,7 @@ import no.ntnu.ihb.fmi4j.modeldescription.fmi2.Fmi2Causality;
         author = "Lars Ivar Hatledal",
         license = "MIT"
 )
-public class MyTestSlave extends Fmi2Slave {
+public class TestSlave extends Fmi2Slave {
 
     @ScalarVariable(causality = Fmi2Causality.output)
     protected double realOut = 2.0;

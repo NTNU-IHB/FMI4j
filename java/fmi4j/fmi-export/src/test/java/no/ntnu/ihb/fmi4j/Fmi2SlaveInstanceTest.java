@@ -6,11 +6,11 @@ import org.junit.jupiter.api.Test;
 
 class Fmi2SlaveInstanceTest {
 
-    private static MyTestSlave slave;
+    private static TestSlave slave;
 
     @BeforeAll
     static void setUp() {
-        slave = new MyTestSlave();
+        slave = new TestSlave();
         slave.define();
     }
 
