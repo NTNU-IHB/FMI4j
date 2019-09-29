@@ -3,8 +3,11 @@ package no.ntnu.ihb.fmi4j
 import no.ntnu.ihb.fmi4j.importer.fmi2.Fmu
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.condition.EnabledOnOs
+import org.junit.jupiter.api.condition.OS
 import java.io.File
 
+@EnabledOnOs(OS.WINDOWS)
 class TestBuilder {
 
     companion object {
