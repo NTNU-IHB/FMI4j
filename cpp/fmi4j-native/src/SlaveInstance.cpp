@@ -28,36 +28,14 @@ void jvm_invoke(JavaVM* jvm, const std::function<void(JNIEnv*)>& f)
     }
 }
 
-JNIEnv* create_jvm(JavaVM** jvm, const std::string& classpath)
+inline jclass FindClass(JNIEnv* env, const char* name)
 {
-    JNIEnv* env;
-
-    jint rc;
-    jsize nVms;
-    rc = JNI_GetCreatedJavaVMs(jvm, 1, &nVms);
-    if (rc == JNI_OK && nVms == 1) {
-        rc = (*jvm)->GetEnv(reinterpret_cast<void**>(&env), JNI_VERSION_1_8);
-        if (rc == JNI_OK) {
-            std::cout << "Reusing already created JMV" << std::endl;
-            return env;
-        }
+    auto cls = env->FindClass(name);
+    if (cls == nullptr) {
+        std::string msg = "Unable to find class '" + std::string(name) + "'!";
+        throw cppfmu::FatalError(msg.c_str());
     }
-
-    JavaVMInitArgs args;
-    JavaVMOption options[1];
-    options[0].optionString = _strdup(std::string("-Djava.class.path=" + classpath + "/model.jar").c_str());
-    args.version = JNI_VERSION_1_8;
-    args.nOptions = 1;
-    args.options = options;
-    args.ignoreUnrecognized = false;
-
-    rc = JNI_CreateJavaVM(jvm, (void**)&env, &args);
-    if (rc == JNI_OK) {
-        std::cout << "Creating a new JVM. classpath=" << classpath << std::endl;
-    } else {
-        std::cout << "Unable to Launch JVM: " << rc << std::endl;
-    }
-    return env;
+    return cls;
 }
 
 inline jmethodID GetMethodID(JNIEnv* env, jclass cls, const char* name, const char* sig)
@@ -80,56 +58,107 @@ inline jmethodID GetStaticMethodID(JNIEnv* env, jclass cls, const char* name, co
     return id;
 }
 
+void add_path(JNIEnv* env, const std::string& path)
+{
+    const std::string urlPath = "file:/" + path;
+    jclass classLoaderCls = FindClass(env, "java/lang/ClassLoader");
+    jmethodID getSystemClassLoaderMethod = GetStaticMethodID(env, classLoaderCls, "getSystemClassLoader", "()Ljava/lang/ClassLoader;");
+    jobject classLoaderInstance = env->CallStaticObjectMethod(classLoaderCls, getSystemClassLoaderMethod);
+    jclass urlClassLoaderCls = FindClass(env, "java/net/URLClassLoader");
+    jmethodID addUrlMethod = GetMethodID(env, urlClassLoaderCls, "addURL", "(Ljava/net/URL;)V");
+    jclass urlCls = FindClass(env, "java/net/URL");
+    jmethodID urlConstructor = GetMethodID(env, urlCls, "<init>", "(Ljava/lang/String;)V");
+    jobject urlInstance = env->NewObject(urlCls, urlConstructor, env->NewStringUTF(urlPath.c_str()));
+    env->CallVoidMethod(classLoaderInstance, addUrlMethod, urlInstance);
+    std::cout << "Added " << urlPath << " to the classpath." << std::endl;
+}
+
+JNIEnv* create_or_get_jvm(JavaVM** jvm, const std::string& resources)
+{
+    JNIEnv* env;
+    const std::string classpath = resources + "/model.jar";
+
+    jint rc;
+    jsize nVms;
+    rc = JNI_GetCreatedJavaVMs(jvm, 1, &nVms);
+    if (rc == JNI_OK && nVms == 1) {
+        rc = (*jvm)->GetEnv(reinterpret_cast<void**>(&env), JNI_VERSION_1_8);
+        if (rc == JNI_OK) {
+            std::cout << "Reusing already created JMV." << std::endl;
+            add_path(env, classpath);
+            return env;
+        }
+    }
+
+    JavaVMInitArgs args;
+    JavaVMOption options[1];
+    options[0].optionString = _strdup(std::string("-Djava.class.path=" + classpath).c_str());
+    args.version = JNI_VERSION_1_8;
+    args.nOptions = 1;
+    args.options = options;
+    args.ignoreUnrecognized = false;
+
+    rc = JNI_CreateJavaVM(jvm, (void**)&env, &args);
+    if (rc == JNI_OK) {
+        std::cout << "Created a new JVM." << std::endl;
+    } else {
+        std::cout << "Unable to Launch JVM: " << rc << std::endl;
+    }
+    return env;
+}
+
 } // namespace
 
 
 namespace fmi4j
 {
 
-SlaveInstance::SlaveInstance(const cppfmu::Memory& memory, JNIEnv* env, std::string slaveClass)
+SlaveInstance::SlaveInstance(const cppfmu::Memory& memory, JNIEnv* env, const std::string& slaveName)
 {
 
     env->GetJavaVM(&jvm_);
 
-    jclass cls = env->FindClass(slaveClass.c_str());
-    if (cls == nullptr) {
-        std::string msg = "Unable to locate slave class '" + std::string(slaveClass) + "'!";
+    jclass slaveCls = FindClass(env, slaveName.c_str());
+    if (slaveCls == nullptr) {
+        std::string msg = "Unable to locate slave class '" + slaveName + "'!";
         throw cppfmu::FatalError(msg.c_str());
     }
 
-    jmethodID mid = env->GetMethodID(cls, "<init>", "()V");
+    jmethodID mid = env->GetMethodID(slaveCls, "<init>", "()V");
     if (mid == nullptr) {
-        std::string msg = "Unable to locate noargs constructor for slave class '" + std::string(slaveClass) + "'!";
+        std::string msg = "Unable to locate noargs constructor for slave class '" + slaveName + "'!";
         throw cppfmu::FatalError(msg.c_str());
     }
 
-    slave_ = env->NewObject(cls, mid);
+    slave_ = env->NewGlobalRef(env->NewObject(slaveCls, mid));
     if (slave_ == nullptr) {
-        std::string msg = "Unable to instantiate a new instance of '" + std::string(slaveClass) + "'!";
+        std::string msg = "Unable to instantiate a new instance of '" + slaveName + "'!";
         throw cppfmu::FatalError(msg.c_str());
     }
+    std::cout << "Instantiated " << slaveName << std::endl;
 
-    env->CallObjectMethod(slave_, GetMethodID(env, cls, "define", "()Lno/ntnu/ihb/fmi4j/Fmi2Slave;"));
+//    jclass superCls = FindClass(env, "no/ntnu/ihb/fmi4j/Fmi2Slave");
+    env->CallObjectMethod(slave_, GetMethodID(env, slaveCls, "define", "()Lno/ntnu/ihb/fmi4j/Fmi2Slave;"));
 
-    setupExperimentId_ = GetMethodID(env, cls, "setupExperiment", "(D)Z");
-    enterInitialisationModeId_ = GetMethodID(env, cls, "enterInitialisationMode", "()Z");
-    exitInitializationModeId_ = GetMethodID(env, cls, "exitInitialisationMode", "()Z");
+    setupExperimentId_ = GetMethodID(env, slaveCls, "setupExperiment", "(D)Z");
+    enterInitialisationModeId_ = GetMethodID(env, slaveCls, "enterInitialisationMode", "()Z");
+    exitInitializationModeId_ = GetMethodID(env, slaveCls, "exitInitialisationMode", "()Z");
 
-    doStepId_ = GetMethodID(env, cls, "doStep", "(DD)Z");
-    resetId_ = GetMethodID(env, cls, "reset", "()Z");
-    terminateId_ = GetMethodID(env, cls, "terminate", "()Z");
+    doStepId_ = GetMethodID(env, slaveCls, "doStep", "(DD)Z");
+    resetId_ = GetMethodID(env, slaveCls, "reset", "()Z");
+    terminateId_ = GetMethodID(env, slaveCls, "terminate", "()Z");
 
-    getRealId_ = GetMethodID(env, cls, "getReal", "([J)[D");
-    setRealId_ = GetMethodID(env, cls, "setReal", "([J[D)V");
+    getRealId_ = GetMethodID(env, slaveCls, "getReal", "([J)[D");
+    setRealId_ = GetMethodID(env, slaveCls, "setReal", "([J[D)V");
 
-    getIntegerId_ = GetMethodID(env, cls, "getInteger", "([J)[I");
-    setIntegerId_ = GetMethodID(env, cls, "setInteger", "([J[I)V");
+    getIntegerId_ = GetMethodID(env, slaveCls, "getInteger", "([J)[I");
+    setIntegerId_ = GetMethodID(env, slaveCls, "setInteger", "([J[I)V");
 
-    getBooleanId_ = GetMethodID(env, cls, "getBoolean", "([J)[Z");
-    setBooleanId_ = GetMethodID(env, cls, "setBoolean", "([J[Z)V");
+    getBooleanId_ = GetMethodID(env, slaveCls, "getBoolean", "([J)[Z");
+    setBooleanId_ = GetMethodID(env, slaveCls, "setBoolean", "([J[Z)V");
 
-    getStringId_ = GetMethodID(env, cls, "getString", "([J)[Ljava/lang/String;");
-    setStringId_ = GetMethodID(env, cls, "setString", "([J[Ljava/lang/String;)V");
+    getStringId_ = GetMethodID(env, slaveCls, "getString", "([J)[Ljava/lang/String;");
+    setStringId_ = GetMethodID(env, slaveCls, "setString", "([J[Ljava/lang/String;)V");
 }
 
 void SlaveInstance::SetupExperiment(cppfmu::FMIBoolean toleranceDefined, cppfmu::FMIReal tolerance, cppfmu::FMIReal tStart, cppfmu::FMIBoolean stopTimeDefined, cppfmu::FMIReal tStop)
@@ -161,7 +190,6 @@ bool SlaveInstance::DoStep(cppfmu::FMIReal currentCommunicationPoint, cppfmu::FM
     });
     return status;
 }
-
 
 void SlaveInstance::Reset()
 {
@@ -390,28 +418,25 @@ cppfmu::UniquePtr<cppfmu::SlaveInstance> CppfmuInstantiateSlave(
     cppfmu::Memory memory,
     cppfmu::Logger logger)
 {
-    
-    std::string resources =  std::string(fmuResourceLocation);
+
+    std::string resources = std::string(fmuResourceLocation);
     auto find = resources.find("file:///");
     if (find != std::string::npos) {
         resources.replace(find, 8, "");
     }
 
-    std::cout << "fmuResourceLocation=" << resources << std::endl;
+    std::string mainClass;
+    std::ifstream infile(resources + "/mainclass.txt");
+    std::getline(infile, mainClass);
+    std::replace(mainClass.begin(), mainClass.end(), '.', '/');
 
     JNIEnv* env;
     JavaVM* jvm;
-    env = create_jvm(&jvm, resources);
+    env = create_or_get_jvm(&jvm, resources);
 
     if (env == nullptr) {
         throw cppfmu::FatalError("Unable to setup the JVM!");
     }
-
-    std::string mainClass;
-    std::ifstream infile(resources + "/mainclass.txt");
-    std::getline(infile, mainClass);
-
-    std::replace(mainClass.begin(), mainClass.end(), '.', '/');
 
     return cppfmu::AllocateUnique<fmi4j::SlaveInstance>(memory, memory, env, mainClass);
 }

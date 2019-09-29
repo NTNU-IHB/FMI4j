@@ -15,19 +15,14 @@ class TestBuilder {
 
     @Test
     fun testJavaClass() {
-
-        val modifiedClasspath = StringBuilder()
-                .append("C:\\Users\\LarsIvar\\Documents\\IdeaProjects\\FMI4j\\java\\fmi4j\\fmu-slaves\\build\\libs\\fmu-slaves.jar;")
-                .append(System.getProperty("java.class.path"))
-
         FmuBuilder.main(arrayOf("-f", jar, "-m", "$group.JavaTestSlave", "-d", dest))
-//        testFmu(File(dest, "Test.fmu"))
+        testFmu(File(dest, "Test.fmu"))
     }
 
     @Test
     fun testKotlinClass() {
         FmuBuilder.main(arrayOf("-f", jar, "-m", "$group.KotlinTestSlave", "-d", dest))
-//        testFmu(File(dest, "KotlinTestSlave.fmu"))
+        testFmu(File(dest, "KotlinTestSlave.fmu"))
     }
 
     private fun testFmu(fmuFile: File) {
@@ -36,6 +31,7 @@ class TestBuilder {
         Fmu.from(fmuFile).use { fmu ->
             fmu.asCoSimulationFmu().newInstance().use { slave ->
 
+                println(slave.simpleSetup())
                 slave.doStep(0.1)
 
             }
