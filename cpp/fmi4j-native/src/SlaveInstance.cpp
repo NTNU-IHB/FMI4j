@@ -51,10 +51,6 @@ inline jclass FindClass(JNIEnv* env, jobject classLoaderInstance, const char* na
 {
 
     jclass URLClassLoader = env->FindClass("java/net/URLClassLoader");
-    if (URLClassLoader == nullptr) {
-        std::string msg = "Unable to find class 'java/net/URLClassLoader'!";
-        throw cppfmu::FatalError(msg.c_str());
-    }
     jmethodID loadClass = GetMethodID(env, URLClassLoader, "loadClass", "(Ljava/lang/String;)Ljava/lang/Class;");
     auto cls = reinterpret_cast<jclass >(env->CallObjectMethod(classLoaderInstance, loadClass, env->NewStringUTF(name)));
     if (cls == nullptr) {
@@ -134,9 +130,7 @@ SlaveInstance::SlaveInstance(const cppfmu::Memory& memory, JNIEnv* env, jobject 
         std::string msg = "Unable to instantiate a new instance of '" + slaveName + "'!";
         throw cppfmu::FatalError(msg.c_str());
     }
-    std::cout << "Instantiated " << slaveName << std::endl;
 
-//    jclass superCls = FindClass(env, "no/ntnu/ihb/fmi4j/Fmi2Slave");
     env->CallObjectMethod(slave_, GetMethodID(env, slaveCls, "define", "()Lno/ntnu/ihb/fmi4j/Fmi2Slave;"));
 
     setupExperimentId_ = GetMethodID(env, slaveCls, "setupExperiment", "(D)Z");
