@@ -34,12 +34,19 @@ class TestBuilder {
         Assertions.assertTrue(fmuFile.exists())
 
         Fmu.from(fmuFile).use { fmu ->
-            fmu.asCoSimulationFmu().newInstance().use { slave ->
 
-                println(slave.simpleSetup())
-                slave.doStep(0.1)
+            val slave1 = fmu.asCoSimulationFmu().newInstance()
+            val slave2 = fmu.asCoSimulationFmu().newInstance()
 
-            }
+            Assertions.assertTrue(slave1.simpleSetup())
+            Assertions.assertTrue(slave2.simpleSetup())
+
+            Assertions.assertTrue(slave1.doStep(0.1))
+            Assertions.assertTrue(slave2.doStep(0.1))
+
+            slave1.close()
+            slave2.close()
+
         }
 
     }
