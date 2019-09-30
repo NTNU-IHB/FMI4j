@@ -433,7 +433,6 @@ cppfmu::UniquePtr<cppfmu::SlaveInstance> CppfmuInstantiateSlave(
     std::string mainClass;
     std::ifstream infile(resources + "/mainclass.txt");
     std::getline(infile, mainClass);
-//    std::replace(mainClass.begin(), mainClass.end(), '.', '/');
 
     JNIEnv* env;
     JavaVM* jvm;
