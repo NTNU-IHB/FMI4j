@@ -9,7 +9,7 @@
 namespace
 {
 
-void jvm_invoke(JavaVM* jvm, const std::function<void(JNIEnv*)>& f)
+inline void jvm_invoke(JavaVM* jvm, const std::function<void(JNIEnv*)>& f)
 {
     JNIEnv* env;
     bool attach = false;
