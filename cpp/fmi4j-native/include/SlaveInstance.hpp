@@ -13,7 +13,7 @@ class SlaveInstance : public cppfmu::SlaveInstance
 {
 
 public:
-    SlaveInstance(const cppfmu::Memory& memory, JNIEnv* env, jobject classLoader, const std::string& slaveName);
+    SlaveInstance(const cppfmu::Memory& memory, JNIEnv* env, const std::string& resources);
 
     void SetupExperiment(cppfmu::FMIBoolean toleranceDefined, cppfmu::FMIReal tolerance, cppfmu::FMIReal tStart, cppfmu::FMIBoolean stopTimeDefined, cppfmu::FMIReal tStop) override;
     void EnterInitializationMode() override;
@@ -22,6 +22,7 @@ public:
     void Reset() override;
     bool DoStep(cppfmu::FMIReal currentCommunicationPoint, cppfmu::FMIReal communicationStepSize, cppfmu::FMIBoolean newStep, cppfmu::FMIReal& endOfStep) override;
 
+    void GetReal(const cppfmu::FMIValueReference* vr, std::size_t nvr, cppfmu::FMIReal* value) const override;
     void SetReal(const cppfmu::FMIValueReference* vr, std::size_t nvr, const cppfmu::FMIReal* value) override;
     void SetInteger(const cppfmu::FMIValueReference* vr, std::size_t nvr, const cppfmu::FMIInteger* value) override;
     void SetBoolean(const cppfmu::FMIValueReference* vr, std::size_t nvr, const cppfmu::FMIBoolean* value) override;
@@ -31,7 +32,7 @@ public:
     void GetString(const cppfmu::FMIValueReference* vr, std::size_t nvr, cppfmu::FMIString* value) const override;
 
     ~SlaveInstance() override;
-    void GetReal(const cppfmu::FMIValueReference* vr, std::size_t nvr, cppfmu::FMIReal* value) const override;
+
 
 private:
     JavaVM* jvm_;

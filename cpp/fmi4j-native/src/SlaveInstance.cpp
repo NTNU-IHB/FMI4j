@@ -51,7 +51,7 @@ inline jclass FindClass(JNIEnv* env, jobject classLoaderInstance, const char* na
 {
     jclass URLClassLoader = env->FindClass("java/net/URLClassLoader");
     jmethodID loadClass = GetMethodID(env, URLClassLoader, "loadClass", "(Ljava/lang/String;)Ljava/lang/Class;");
-    auto cls = reinterpret_cast<jclass >(env->CallObjectMethod(classLoaderInstance, loadClass, env->NewStringUTF(name)));
+    auto cls = reinterpret_cast<jclass>(env->CallObjectMethod(classLoaderInstance, loadClass, env->NewStringUTF(name)));
     if (cls == nullptr) {
         std::string msg = "Unable to find class '" + std::string(name) + "'!";
         throw cppfmu::FatalError(msg.c_str());
@@ -69,11 +69,10 @@ jobject create_classloader(JNIEnv* env, const std::string& classpath)
     jobject urlInstance = env->NewObject(urlCls, urlCtor, env->NewStringUTF(classpath.c_str()));
     jobjectArray urls = env->NewObjectArray(1, urlCls, urlInstance);
 
-    jobject classLoaderInstance = env->NewObject(classLoaderCls, classLoaderCtor, urls);
-    return env->NewGlobalRef(classLoaderInstance);
+    return env->NewObject(classLoaderCls, classLoaderCtor, urls);
 }
 
-JNIEnv* create_or_get_jvm(JavaVM** jvm)
+JNIEnv* get_or_create_jvm(JavaVM** jvm)
 {
     JNIEnv* env;
 
@@ -108,16 +107,26 @@ namespace fmi4j
 {
 
 #ifdef _MSC_VER
-#pragma warning( push )
-#pragma warning (disable : 4267 ) //conversion from 'size_t' to 'jsize', possible loss of data
+#    pragma warning(push)
+#    pragma warning(disable : 4267) //conversion from 'size_t' to 'jsize', possible loss of data
 #endif
 
-SlaveInstance::SlaveInstance(const cppfmu::Memory& memory, JNIEnv* env, jobject classLoader, const std::string& slaveName): classLoader_(classLoader)
+SlaveInstance::SlaveInstance(
+    const cppfmu::Memory& memory,
+    JNIEnv* env,
+    const std::string& resources)
 {
 
     env->GetJavaVM(&jvm_);
 
-    jclass slaveCls = FindClass(env, classLoader, slaveName.c_str());
+    std::string slaveName;
+    std::ifstream infile(resources + "/mainclass.txt");
+    std::getline(infile, slaveName);
+
+    std::string classpath = "file:/" + resources + "/model.jar";
+    classLoader_ = env->NewGlobalRef(create_classloader(env, classpath));
+
+    jclass slaveCls = FindClass(env, classLoader_, slaveName.c_str());
     if (slaveCls == nullptr) {
         std::string msg = "Unable to locate slave class '" + slaveName + "'!";
         throw cppfmu::FatalError(msg.c_str());
@@ -371,7 +380,6 @@ void SlaveInstance::GetBoolean(const cppfmu::FMIValueReference* vr, std::size_t 
 
 void SlaveInstance::GetString(const cppfmu::FMIValueReference* vr, std::size_t nvr, cppfmu::FMIString* value) const
 {
-
     jvm_invoke(jvm_, [this, vr, nvr, value](JNIEnv* env) {
         auto vrArray = env->NewLongArray(nvr);
         auto vrArrayElements = reinterpret_cast<jlong*>(malloc(sizeof(jlong) * nvr));
@@ -395,6 +403,7 @@ void SlaveInstance::GetString(const cppfmu::FMIValueReference* vr, std::size_t n
     });
 }
 
+
 SlaveInstance::~SlaveInstance()
 {
     jvm_invoke(jvm_, [this](JNIEnv* env) {
@@ -405,11 +414,12 @@ SlaveInstance::~SlaveInstance()
         env->CallVoidMethod(classLoader_, closeId);
 
         env->DeleteGlobalRef(classLoader_);
+
     });
 }
 
 #ifdef _MSC_VER
-#pragma warning( pop )
+#    pragma warning(pop)
 #endif
 
 } // namespace fmi4j
@@ -432,20 +442,13 @@ cppfmu::UniquePtr<cppfmu::SlaveInstance> CppfmuInstantiateSlave(
         resources.replace(find, 8, "");
     }
 
-    std::string mainClass;
-    std::ifstream infile(resources + "/mainclass.txt");
-    std::getline(infile, mainClass);
-
     JNIEnv* env;
     JavaVM* jvm;
-    env = create_or_get_jvm(&jvm);
+    env = get_or_create_jvm(&jvm);
 
     if (env == nullptr) {
         throw cppfmu::FatalError("Unable to setup the JVM!");
     }
 
-    std::string classpath = "file:/" + resources + "/model.jar";
-    jobject classLoader = create_classloader(env, classpath);
-
-    return cppfmu::AllocateUnique<fmi4j::SlaveInstance>(memory, memory, env, classLoader, mainClass);
+    return cppfmu::AllocateUnique<fmi4j::SlaveInstance>(memory, memory, env, resources);
 }
