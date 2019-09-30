@@ -21,10 +21,20 @@ public class TestSlave extends Fmi2Slave {
     @ScalarVariable
     protected Vector3 vector3 = new Vector3();
 
+    @VariableContainer
+    protected Container container = new Container();
+
     @Override
     public boolean doStep(double currentTime, double dt) {
-        System.out.println("per " + dt);
+        System.out.println("currentTime=" + dt + ", dt=" + dt);
         return true;
+    }
+
+    static class Container {
+
+        @ScalarVariable
+        double speed = 0;
+
     }
 
     static class Vector3 implements RealVector {

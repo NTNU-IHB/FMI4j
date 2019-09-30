@@ -37,4 +37,17 @@ class Fmi2SlaveInstanceTest {
         Assertions.assertArrayEquals(new double[]{x, y, z}, result);
     }
 
+    @Test
+    void testContainer() {
+
+        long vr = slave.getModelDescription().getModelVariables().getScalarVariable().stream()
+                .filter(fmi2ScalarVariable -> fmi2ScalarVariable.getName().equals("container.speed")).findFirst().get().getValueReference();
+
+        double[] write = new double[]{123.0};
+        slave.setReal(new long[]{vr}, write);
+
+        Assertions.assertArrayEquals(write, slave.getReal(new long[]{vr}));
+
+    }
+
 }
