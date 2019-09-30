@@ -1,11 +1,9 @@
 
 #include <SlaveInstance.hpp>
 #include <cppfmu_cs.hpp>
-#include <cstring>
 #include <fstream>
 #include <iostream>
 #include <jni.h>
-#include <sstream>
 #include <string>
 
 namespace
@@ -28,16 +26,6 @@ void jvm_invoke(JavaVM* jvm, const std::function<void(JNIEnv*)>& f)
     }
 }
 
-inline jclass FindClass(JNIEnv* env, const char* name)
-{
-    auto cls = env->FindClass(name);
-    if (cls == nullptr) {
-        std::string msg = "Unable to find class '" + std::string(name) + "'!";
-        throw cppfmu::FatalError(msg.c_str());
-    }
-    return cls;
-}
-
 inline jmethodID GetMethodID(JNIEnv* env, jclass cls, const char* name, const char* sig)
 {
     auto id = env->GetMethodID(cls, name, sig);
@@ -58,25 +46,41 @@ inline jmethodID GetStaticMethodID(JNIEnv* env, jclass cls, const char* name, co
     return id;
 }
 
-void add_path(JNIEnv* env, const std::string& path)
+
+inline jclass FindClass(JNIEnv* env, jobject classLoaderInstance, const char* name)
 {
-    const std::string urlPath = "file:/" + path;
-    jclass classLoaderCls = FindClass(env, "java/lang/ClassLoader");
-    jmethodID getSystemClassLoaderMethod = GetStaticMethodID(env, classLoaderCls, "getSystemClassLoader", "()Ljava/lang/ClassLoader;");
-    jobject classLoaderInstance = env->CallStaticObjectMethod(classLoaderCls, getSystemClassLoaderMethod);
-    jclass urlClassLoaderCls = FindClass(env, "java/net/URLClassLoader");
-    jmethodID addUrlMethod = GetMethodID(env, urlClassLoaderCls, "addURL", "(Ljava/net/URL;)V");
-    jclass urlCls = FindClass(env, "java/net/URL");
-    jmethodID urlConstructor = GetMethodID(env, urlCls, "<init>", "(Ljava/lang/String;)V");
-    jobject urlInstance = env->NewObject(urlCls, urlConstructor, env->NewStringUTF(urlPath.c_str()));
-    env->CallVoidMethod(classLoaderInstance, addUrlMethod, urlInstance);
-    std::cout << "Added " << urlPath << " to the classpath." << std::endl;
+
+    jclass URLClassLoader = env->FindClass("java/net/URLClassLoader");
+    if (URLClassLoader == nullptr) {
+        std::string msg = "Unable to find class 'java/net/URLClassLoader'!";
+        throw cppfmu::FatalError(msg.c_str());
+    }
+    jmethodID loadClass = GetMethodID(env, URLClassLoader, "loadClass", "(Ljava/lang/String;)Ljava/lang/Class;");
+    auto cls = reinterpret_cast<jclass >(env->CallObjectMethod(classLoaderInstance, loadClass, env->NewStringUTF(name)));
+    if (cls == nullptr) {
+        std::string msg = "Unable to find class '" + std::string(name) + "'!";
+        throw cppfmu::FatalError(msg.c_str());
+    }
+    return cls;
 }
 
-JNIEnv* create_or_get_jvm(JavaVM** jvm, const std::string& resources)
+jobject create_classloader(JNIEnv* env, const std::string& classpath)
+{
+    jclass classLoaderCls = env->FindClass("java/net/URLClassLoader");
+    jmethodID classLoaderCtor = GetMethodID(env, classLoaderCls, "<init>", "([Ljava/net/URL;)V");
+
+    jclass urlCls = env->FindClass("java/net/URL");
+    jmethodID urlCtor = GetMethodID(env, urlCls, "<init>", "(Ljava/lang/String;)V");
+    jobject urlInstance = env->NewObject(urlCls, urlCtor, env->NewStringUTF(classpath.c_str()));
+    jobjectArray urls = env->NewObjectArray(1, urlCls, urlInstance);
+
+    jobject classLoaderInstance = env->NewObject(classLoaderCls, classLoaderCtor, urls);
+    return env->NewGlobalRef(classLoaderInstance);
+}
+
+JNIEnv* create_or_get_jvm(JavaVM** jvm)
 {
     JNIEnv* env;
-    const std::string classpath = resources + "/model.jar";
 
     jint rc;
     jsize nVms;
@@ -85,18 +89,13 @@ JNIEnv* create_or_get_jvm(JavaVM** jvm, const std::string& resources)
         rc = (*jvm)->GetEnv(reinterpret_cast<void**>(&env), JNI_VERSION_1_8);
         if (rc == JNI_OK) {
             std::cout << "Reusing already created JMV." << std::endl;
-            add_path(env, classpath);
             return env;
         }
     }
 
     JavaVMInitArgs args;
-    JavaVMOption options[1];
-    options[0].optionString = _strdup(std::string("-Djava.class.path=" + classpath).c_str());
     args.version = JNI_VERSION_1_8;
-    args.nOptions = 1;
-    args.options = options;
-    args.ignoreUnrecognized = false;
+    args.nOptions = 0;
 
     rc = JNI_CreateJavaVM(jvm, (void**)&env, &args);
     if (rc == JNI_OK) {
@@ -113,12 +112,12 @@ JNIEnv* create_or_get_jvm(JavaVM** jvm, const std::string& resources)
 namespace fmi4j
 {
 
-SlaveInstance::SlaveInstance(const cppfmu::Memory& memory, JNIEnv* env, const std::string& slaveName)
+SlaveInstance::SlaveInstance(const cppfmu::Memory& memory, JNIEnv* env, jobject classLoader, const std::string& slaveName): classLoader_(classLoader)
 {
 
     env->GetJavaVM(&jvm_);
 
-    jclass slaveCls = FindClass(env, slaveName.c_str());
+    jclass slaveCls = FindClass(env, classLoader, slaveName.c_str());
     if (slaveCls == nullptr) {
         std::string msg = "Unable to locate slave class '" + slaveName + "'!";
         throw cppfmu::FatalError(msg.c_str());
@@ -402,6 +401,12 @@ SlaveInstance::~SlaveInstance()
 {
     jvm_invoke(jvm_, [this](JNIEnv* env) {
         env->DeleteGlobalRef(slave_);
+
+        jclass URLClassLoader = env->FindClass("java/net/URLClassLoader");
+        jmethodID closeId = env->GetMethodID(URLClassLoader, "close", "()V");
+        env->CallVoidMethod(classLoader_, closeId);
+
+        env->DeleteGlobalRef(classLoader_);
     });
 }
 
@@ -428,15 +433,18 @@ cppfmu::UniquePtr<cppfmu::SlaveInstance> CppfmuInstantiateSlave(
     std::string mainClass;
     std::ifstream infile(resources + "/mainclass.txt");
     std::getline(infile, mainClass);
-    std::replace(mainClass.begin(), mainClass.end(), '.', '/');
+//    std::replace(mainClass.begin(), mainClass.end(), '.', '/');
 
     JNIEnv* env;
     JavaVM* jvm;
-    env = create_or_get_jvm(&jvm, resources);
+    env = create_or_get_jvm(&jvm);
 
     if (env == nullptr) {
         throw cppfmu::FatalError("Unable to setup the JVM!");
     }
 
-    return cppfmu::AllocateUnique<fmi4j::SlaveInstance>(memory, memory, env, mainClass);
+    std::string classpath = "file:/" + resources + "/model.jar";
+    jobject classLoader = create_classloader(env, classpath);
+
+    return cppfmu::AllocateUnique<fmi4j::SlaveInstance>(memory, memory, env, classLoader, mainClass);
 }

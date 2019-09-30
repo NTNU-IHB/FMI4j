@@ -6,6 +6,8 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.condition.EnabledOnOs
 import org.junit.jupiter.api.condition.OS
 import java.io.File
+import java.net.URL
+import java.net.URLClassLoader
 
 @EnabledOnOs(OS.WINDOWS)
 class TestBuilder {
@@ -19,7 +21,9 @@ class TestBuilder {
     @Test
     fun testJavaClass() {
         FmuBuilder.main(arrayOf("-f", jar, "-m", "$group.JavaTestSlave", "-d", dest))
-        testFmu(File(dest, "Test.fmu"))
+        for (i in 0..2) {
+            testFmu(File(dest, "Test.fmu"))
+        }
     }
 
     @Test
