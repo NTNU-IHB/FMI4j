@@ -269,6 +269,7 @@ abstract class Fmi2Slave {
                         }
                     }
                     Array<String>::class.java -> {
+                        @Suppress("UNCHECKED_CAST")
                         val array = field.get(this) as? Array<String>
                                 ?: throw IllegalStateException("Field $field.name cannot be null!")
                         for (i in array.indices) {
