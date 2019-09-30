@@ -23,7 +23,7 @@ Compared to other FMI libraries targeting the JVM, FMI4j is **considerably faste
 A significant speedup (2-5x) compared to other FMI implementations for the JVM, such as JFMI and JavaFMI, should be expected. 
 
 
-### <a name="api"></a> Software API 
+### <a name="api"></a> FMI import
 
 ```java
 
@@ -56,19 +56,37 @@ class Demo {
 }
 ```
 
-Due to how cumbersome it is to publish artifacts to Maven Central, new releases can only be obtained using __jitpack__.
+### <a name="api"></a> FMI export
 
-```groovy
-repositories {
-    /*...*/
-    maven { url 'https://jitpack.io' }
-}
+```java
+@SlaveInfo(
+        modelName = "MySlave",
+        author = "John Doe"
+)
+public class MySlave extends Fmi2Slave {
 
-dependencies {
-    def fmi4j_version = "..."
-    implementation "com.github.NTNU-IHB.FMI4j:fmi-import:${fmi4j_version}"
+    @ScalarVariable(causality = Fmi2Causality.output)
+    protected double realOut = 2.0;
+
+    @ScalarVariable(causality = Fmi2Causality.output)
+    protected int intOut = 99;
+
+    @ScalarVariable(causality = Fmi2Causality.output)
+    protected double[] realsOut = {50.0, 200.0};
+
+    @ScalarVariable(causality = Fmi2Causality.local)
+    protected String[] string = {"Hello", "world!"};
+
+    @Override
+    public boolean doStep(double currentTime, double dt) {
+        realOut += dt;
+        return true;
+    }
+
 }
 ```
+
+Artifacts are available through [JitPack](https://jitpack.io/#NTNU-IHB/FMI4j) and [Bintray](https://bintray.com/ntnu-ihb/mvn/FMI4j).
 
 ___
 
