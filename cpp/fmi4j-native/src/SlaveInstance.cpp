@@ -28,7 +28,7 @@ inline void jvm_invoke(JavaVM* jvm, const std::function<void(JNIEnv*)>& f)
 
 inline jmethodID GetMethodID(JNIEnv* env, jclass cls, const char* name, const char* sig)
 {
-    auto id = env->GetMethodID(cls, name, sig);
+    jmethodID id = env->GetMethodID(cls, name, sig);
     if (id == nullptr) {
         std::string msg = "Unable to locate method '" + std::string(name) + "'!";
         throw cppfmu::FatalError(msg.c_str());
@@ -38,7 +38,7 @@ inline jmethodID GetMethodID(JNIEnv* env, jclass cls, const char* name, const ch
 
 inline jmethodID GetStaticMethodID(JNIEnv* env, jclass cls, const char* name, const char* sig)
 {
-    auto id = env->GetStaticMethodID(cls, name, sig);
+    jmethodID id = env->GetStaticMethodID(cls, name, sig);
     if (id == nullptr) {
         std::string msg = "Unable to locate method static '" + std::string(name) + "'!";
         throw cppfmu::FatalError(msg.c_str());
@@ -49,7 +49,6 @@ inline jmethodID GetStaticMethodID(JNIEnv* env, jclass cls, const char* name, co
 
 inline jclass FindClass(JNIEnv* env, jobject classLoaderInstance, const char* name)
 {
-
     jclass URLClassLoader = env->FindClass("java/net/URLClassLoader");
     jmethodID loadClass = GetMethodID(env, URLClassLoader, "loadClass", "(Ljava/lang/String;)Ljava/lang/Class;");
     auto cls = reinterpret_cast<jclass >(env->CallObjectMethod(classLoaderInstance, loadClass, env->NewStringUTF(name)));
@@ -107,6 +106,11 @@ JNIEnv* create_or_get_jvm(JavaVM** jvm)
 
 namespace fmi4j
 {
+
+#ifdef _MSC_VER
+#pragma warning( push )
+#pragma warning (disable : 4267 ) //conversion from 'size_t' to 'jsize', possible loss of data
+#endif
 
 SlaveInstance::SlaveInstance(const cppfmu::Memory& memory, JNIEnv* env, jobject classLoader, const std::string& slaveName): classLoader_(classLoader)
 {
@@ -403,6 +407,10 @@ SlaveInstance::~SlaveInstance()
         env->DeleteGlobalRef(classLoader_);
     });
 }
+
+#ifdef _MSC_VER
+#pragma warning( pop )
+#endif
 
 } // namespace fmi4j
 
