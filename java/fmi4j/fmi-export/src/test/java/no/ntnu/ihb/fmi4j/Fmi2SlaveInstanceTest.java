@@ -12,7 +12,7 @@ class Fmi2SlaveInstanceTest {
 
     @BeforeAll
     static void setUp() {
-        slave = new TestSlave();
+        slave = (TestSlave) new TestSlave().define();
     }
 
     @Test

@@ -14,19 +14,17 @@ abstract class Fmi2Slave {
     private val accessors_ = mutableListOf<Accessor<*>>()
     private val accessors: MutableList<Accessor<*>>
         get() {
-            if (!defined.getAndSet(true)) {
-                define()
-            }
+            check(defined.get()) { "Model has not been defined!" }
             return accessors_
         }
     private val modelDescription_ = Fmi2ModelDescription()
     val modelDescription: Fmi2ModelDescription
     get() {
-        if (!defined.getAndSet(true)) {
-            define()
-        }
+        check(defined.get()) { "Model has not been defined!" }
         return modelDescription_
     }
+
+    protected open fun initialize() {}
 
     open fun setupExperiment(startTime: Double): Boolean {
         return true
@@ -339,7 +337,13 @@ abstract class Fmi2Slave {
 
     }
 
-    private fun define() {
+    protected fun define(): Fmi2Slave {
+
+        if (defined.getAndSet(true)) {
+            return this
+        }
+
+        initialize()
 
         modelDescription.fmiVersion = "2.0"
         modelDescription.generationTool = "fmi4j"
@@ -391,6 +395,8 @@ abstract class Fmi2Slave {
         }
 
         check(modelDescription.modelVariables.scalarVariable.isNotEmpty()) { "No variables has been defined!" }
+
+        return this
 
     }
 

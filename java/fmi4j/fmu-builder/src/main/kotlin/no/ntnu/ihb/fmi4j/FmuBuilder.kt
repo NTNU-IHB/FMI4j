@@ -35,6 +35,9 @@ object FmuBuilder {
             val subClass = classLoader.loadClass(mainClass)
             val instance = subClass.newInstance()
 
+            val define = superClass.getDeclaredMethod("define")
+            define.isAccessible = true
+            define.invoke(instance)
             val getModelDescription = superClass.getDeclaredMethod("getModelDescription")
             getModelDescription.isAccessible = true
             val md = getModelDescription.invoke(instance) as Fmi2ModelDescription
