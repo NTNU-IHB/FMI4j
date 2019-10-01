@@ -4,6 +4,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
+
 class Fmi2SlaveInstanceTest {
 
     private static TestSlave slave;
@@ -11,15 +13,15 @@ class Fmi2SlaveInstanceTest {
     @BeforeAll
     static void setUp() {
         slave = new TestSlave();
-        slave.define();
     }
 
     @Test
     void testReal() {
-        Assertions.assertEquals(slave.realOut, slave.getReal(new long[]{0})[0]);
+        long vr = slave.getValueReference("realOut");
+        Assertions.assertEquals(slave.realOut, slave.getReal(new long[]{vr}[0]));
         double newValue = 10;
-        slave.setReal(new long[]{0}, new double[]{newValue});
-        Assertions.assertEquals(newValue, slave.getReal(new long[]{0})[0]);
+        slave.setReal(new long[]{vr}, new double[]{newValue});
+        Assertions.assertEquals(newValue, slave.getReal(new long[]{vr}[0]));
     }
 
     @Test
@@ -28,7 +30,7 @@ class Fmi2SlaveInstanceTest {
         double y = 5;
         double z = 99;
 
-        int startIndex = 5;
+        long startIndex = slave.getValueReference("vector3[0]");
         long[] vr = new long[]{startIndex, startIndex + 1, startIndex + 2};
         slave.setReal(vr, new double[]{x, y, z});
 
@@ -40,8 +42,7 @@ class Fmi2SlaveInstanceTest {
     @Test
     void testContainer() {
 
-        long vr = slave.getModelDescription().getModelVariables().getScalarVariable().stream()
-                .filter(fmi2ScalarVariable -> fmi2ScalarVariable.getName().equals("container.speed")).findFirst().get().getValueReference();
+        long vr = slave.getValueReference("container.speed");
 
         double[] write = new double[]{123.0};
         slave.setReal(new long[]{vr}, write);

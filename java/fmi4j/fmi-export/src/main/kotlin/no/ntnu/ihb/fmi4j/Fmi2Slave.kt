@@ -1,6 +1,8 @@
 package no.ntnu.ihb.fmi4j
 
 import no.ntnu.ihb.fmi4j.modeldescription.fmi2.*
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import java.lang.reflect.Modifier
 import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
@@ -8,21 +10,33 @@ import java.util.concurrent.atomic.AtomicBoolean
 abstract class Fmi2Slave {
 
     private val defined = AtomicBoolean(false)
-    private val accessors = mutableListOf<Accessor<*>>()
-    protected val modelDescription = Fmi2ModelDescription()
+
+    private val accessors_ = mutableListOf<Accessor<*>>()
+    private val accessors: MutableList<Accessor<*>>
+        get() {
+            if (!defined.getAndSet(true)) {
+                define()
+            }
+            return accessors_
+        }
+    private val modelDescription_ = Fmi2ModelDescription()
+    val modelDescription: Fmi2ModelDescription
+    get() {
+        if (!defined.getAndSet(true)) {
+            define()
+        }
+        return modelDescription_
+    }
 
     open fun setupExperiment(startTime: Double): Boolean {
-        println("setupExperiment, startTime=$startTime")
         return true
     }
 
     open fun enterInitialisationMode(): Boolean {
-        println("enterInitialisationMode")
         return true
     }
 
     open fun exitInitialisationMode(): Boolean {
-        println("exitInitialisationMode")
         return true
     }
 
@@ -37,9 +51,14 @@ abstract class Fmi2Slave {
     }
 
     @Suppress("UNCHECKED_CAST")
+    fun getReal(vr: Long): Double {
+        return (accessors[vr.toInt()] as RealAccessor).getter()
+    }
+
+    @Suppress("UNCHECKED_CAST")
     fun getReal(vr: LongArray): DoubleArray {
         return DoubleArray(vr.size) { i ->
-            (accessors[i] as RealAccessor).let {
+            (accessors[vr[i].toInt()] as RealAccessor).let {
                 it.getter()
             }
         }
@@ -48,16 +67,22 @@ abstract class Fmi2Slave {
     @Suppress("UNCHECKED_CAST")
     fun setReal(vr: LongArray, values: DoubleArray) {
         for (i in vr.indices) {
-            (accessors[i] as RealAccessor).apply {
-                setter?.invoke(values[i])
+            (accessors[vr[i].toInt()] as RealAccessor).apply {
+                setter?.invoke(values[i]) ?: LOG.warn("Trying to set value of " +
+                        "${getName(vr[i], Fmi2VariableType.REAL)} on variable without a specified setter!")
             }
         }
     }
 
     @Suppress("UNCHECKED_CAST")
+    fun getInteger(vr: Long): Int {
+        return (accessors[vr.toInt()] as IntAccessor).getter()
+    }
+
+    @Suppress("UNCHECKED_CAST")
     fun getInteger(vr: LongArray): IntArray {
         return IntArray(vr.size) { i ->
-            (accessors[i] as IntAccessor).let {
+            (accessors[vr[i].toInt()] as IntAccessor).let {
                 it.getter()
             }
         }
@@ -66,16 +91,22 @@ abstract class Fmi2Slave {
     @Suppress("UNCHECKED_CAST")
     fun setInteger(vr: LongArray, values: IntArray) {
         for (i in vr.indices) {
-            (accessors[i] as IntAccessor).apply {
-                setter?.invoke(values[i])
+            (accessors[vr[i].toInt()] as IntAccessor).apply {
+                setter?.invoke(values[i]) ?: LOG.warn("Trying to set value of " +
+                        "${getName(vr[i], Fmi2VariableType.INTEGER)} on variable without a specified setter!")
             }
         }
     }
 
     @Suppress("UNCHECKED_CAST")
+    fun getBoolean(vr: Long): Boolean {
+        return (accessors[vr.toInt()] as BoolAccessor).getter()
+    }
+
+    @Suppress("UNCHECKED_CAST")
     fun getBoolean(vr: LongArray): BooleanArray {
         return BooleanArray(vr.size) { i ->
-            (accessors[i] as BoolAccessor).let {
+            (accessors[vr[i].toInt()] as BoolAccessor).let {
                 it.getter()
             }
         }
@@ -84,16 +115,22 @@ abstract class Fmi2Slave {
     @Suppress("UNCHECKED_CAST")
     fun setBoolean(vr: LongArray, values: BooleanArray) {
         for (i in vr.indices) {
-            (accessors[i] as BoolAccessor).apply {
-                setter?.invoke(values[i])
+            (accessors[vr[i].toInt()] as BoolAccessor).apply {
+                setter?.invoke(values[i]) ?: LOG.warn("Trying to set value of " +
+                        "${getName(vr[i], Fmi2VariableType.BOOLEAN)} on variable without a specified setter!")
             }
         }
     }
 
     @Suppress("UNCHECKED_CAST")
+    fun getString(vr: Long): String {
+        return (accessors[vr.toInt()] as StringAccessor).getter()
+    }
+
+    @Suppress("UNCHECKED_CAST")
     fun getString(vr: LongArray): Array<String> {
         return Array(vr.size) { i ->
-            (accessors[i] as StringAccessor).let {
+            (accessors[vr[i].toInt()] as StringAccessor).let {
                 it.getter()
             }
         }
@@ -102,10 +139,23 @@ abstract class Fmi2Slave {
     @Suppress("UNCHECKED_CAST")
     fun setString(vr: LongArray, values: Array<String>) {
         for (i in vr.indices) {
-            (accessors[i] as StringAccessor).apply {
-                setter?.invoke(values[i])
+            (accessors[vr[i].toInt()] as StringAccessor).apply {
+                setter?.invoke(values[i]) ?: LOG.warn("Trying to set value of " +
+                        "${getName(vr[i], Fmi2VariableType.STRING)} on variable without a specified setter!")
             }
         }
+    }
+
+    fun getName(vr: Long, type: Fmi2VariableType): Long {
+        return modelDescription.modelVariables.scalarVariable
+                .firstOrNull { it.valueReference == vr && Fmi2VariableType.getType(it) == type }?.valueReference
+                ?: throw IllegalArgumentException("No such variable with valueReference $vr and type $type!")
+    }
+
+    fun getValueReference(name: String): Long {
+        return modelDescription.modelVariables.scalarVariable
+                .firstOrNull { it.name == name }?.valueReference
+                ?: throw IllegalArgumentException("No such variable with name $name!")
     }
 
     private fun internalRegister(v: Variable<*>): Fmi2ScalarVariable {
@@ -289,11 +339,7 @@ abstract class Fmi2Slave {
 
     }
 
-    fun define(): Fmi2Slave {
-
-        if (defined.getAndSet(true)) {
-            return this
-        }
+    private fun define() {
 
         modelDescription.fmiVersion = "2.0"
         modelDescription.generationTool = "fmi4j"
@@ -346,7 +392,10 @@ abstract class Fmi2Slave {
 
         check(modelDescription.modelVariables.scalarVariable.isNotEmpty()) { "No variables has been defined!" }
 
-        return this
+    }
+
+    private companion object {
+        private val LOG: Logger = LoggerFactory.getLogger(Fmi2Slave::class.java)
     }
 
 }
