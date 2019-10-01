@@ -69,7 +69,7 @@ abstract class Fmi2Slave {
         for (i in vr.indices) {
             (accessors[vr[i].toInt()] as RealAccessor).apply {
                 setter?.invoke(values[i]) ?: LOG.warn("Trying to set value of " +
-                        "${getName(vr[i], Fmi2VariableType.REAL)} on variable without a specified setter!")
+                        "${getName(vr[i])} on variable without a specified setter!")
             }
         }
     }
@@ -93,7 +93,7 @@ abstract class Fmi2Slave {
         for (i in vr.indices) {
             (accessors[vr[i].toInt()] as IntAccessor).apply {
                 setter?.invoke(values[i]) ?: LOG.warn("Trying to set value of " +
-                        "${getName(vr[i], Fmi2VariableType.INTEGER)} on variable without a specified setter!")
+                        "${getName(vr[i])} on variable without a specified setter!")
             }
         }
     }
@@ -117,7 +117,7 @@ abstract class Fmi2Slave {
         for (i in vr.indices) {
             (accessors[vr[i].toInt()] as BoolAccessor).apply {
                 setter?.invoke(values[i]) ?: LOG.warn("Trying to set value of " +
-                        "${getName(vr[i], Fmi2VariableType.BOOLEAN)} on variable without a specified setter!")
+                        "${getName(vr[i])} on variable without a specified setter!")
             }
         }
     }
@@ -141,15 +141,15 @@ abstract class Fmi2Slave {
         for (i in vr.indices) {
             (accessors[vr[i].toInt()] as StringAccessor).apply {
                 setter?.invoke(values[i]) ?: LOG.warn("Trying to set value of " +
-                        "${getName(vr[i], Fmi2VariableType.STRING)} on variable without a specified setter!")
+                        "${getName(vr[i])} on variable without a specified setter!")
             }
         }
     }
 
-    fun getName(vr: Long, type: Fmi2VariableType): Long {
+    fun getName(vr: Long): Long {
         return modelDescription.modelVariables.scalarVariable
-                .firstOrNull { it.valueReference == vr && Fmi2VariableType.getType(it) == type }?.valueReference
-                ?: throw IllegalArgumentException("No such variable with valueReference $vr and type $type!")
+                .firstOrNull { it.valueReference == vr }?.valueReference
+                ?: throw IllegalArgumentException("No such variable with valueReference $vr!")
     }
 
     fun getValueReference(name: String): Long {
