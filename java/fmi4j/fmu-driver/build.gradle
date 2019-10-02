@@ -7,6 +7,7 @@ plugins {
 apply plugin: 'java'
 apply plugin: 'kotlin'
 
+apply from: rootProject.file("gradle/log4j.gradle")
 apply from: rootProject.file(("gradle/junit.gradle"))
 
 def group = "no.ntnu.ihb.fmi4j.driver"

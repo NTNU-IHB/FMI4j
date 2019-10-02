@@ -13,13 +13,15 @@ dependencies {
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
 
-    compile project(':fmi-md')
+    api project(':fmi-md')
 
 }
 
 jar {
     from {
-        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+        configurations.compile.collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
     }
 }
 

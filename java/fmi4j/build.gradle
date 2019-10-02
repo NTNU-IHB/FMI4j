@@ -13,20 +13,12 @@ wrapper {
 subprojects { sub ->
 
     group = 'no.ntnu.ihb.fmi4j'
-    version = '0.24.1'
+    version = '0.24.2'
 
     pluginManager.withPlugin('java') {
 
         repositories {
             mavenCentral()
-        }
-
-        dependencies {
-
-            def slf4j_version = '1.7.25'
-            implementation group: 'org.slf4j', name: 'slf4j-api', version: slf4j_version
-            runtimeOnly group: 'org.slf4j', name: 'slf4j-log4j12', version: slf4j_version
-
         }
 
         pluginManager.withPlugin('kotlin') {
