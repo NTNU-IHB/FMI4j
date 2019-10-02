@@ -24,40 +24,43 @@
 
 package no.ntnu.ihb.fmi4j
 
-import no.ntnu.ihb.fmi4j.importer.fmi1.jni.Fmi1Library
 import no.ntnu.ihb.fmi4j.util.OsUtil
 import java.io.File
 import java.io.FileOutputStream
 import java.nio.file.Files
 import java.util.concurrent.atomic.AtomicBoolean
 
-object FMI4j {
+internal class FMI4j {
 
-    private val initialized = AtomicBoolean(false)
+    companion object {
 
-    private val fileName = "${OsUtil.libPrefix}fmi4j-import.${OsUtil.libExtension}"
+        private val initialized = AtomicBoolean(false)
+        private val fileName = "${OsUtil.libPrefix}fmi4j-import.${OsUtil.libExtension}"
 
-    internal fun init() {
-        if (!initialized.getAndSet(true)) {
+        fun init() {
+            if (!initialized.getAndSet(true)) {
 
-            val tempFolder = Files.createTempDirectory("fmi4j_dll").toFile()
-            val fmi4jdll = File(tempFolder, fileName)
-            try {
-                FMI4j::class.java.classLoader
-                        .getResourceAsStream("native/fmi/${OsUtil.currentOS}/$fileName").use { `is` ->
-                            FileOutputStream(fmi4jdll).use { fos ->
-                                `is`.copyTo(fos)
-                            }
-                        }
-                System.load(fmi4jdll.absolutePath)
-            } catch (ex: Exception) {
-                tempFolder.deleteRecursively()
-                throw RuntimeException(ex)
-            } finally {
-                fmi4jdll.deleteOnExit()
-                tempFolder.deleteOnExit()
+                val tempFolder = Files.createTempDirectory("fmi4j_dll").toFile()
+                val fmi4jdll = File(tempFolder, fileName)
+                try {
+                    val resourceName = "native/fmi/${OsUtil.currentOS}/$fileName"
+                    FMI4j::class.java.classLoader
+                            .getResourceAsStream(resourceName)?.use { `is` ->
+                                FileOutputStream(fmi4jdll).use { fos ->
+                                    `is`.copyTo(fos)
+                                }
+                            } ?: throw IllegalStateException("NO such resource '$resourceName'!")
+                    System.load(fmi4jdll.absolutePath)
+                } catch (ex: Exception) {
+                    tempFolder.deleteRecursively()
+                    throw RuntimeException(ex)
+                } finally {
+                    fmi4jdll.deleteOnExit()
+                    tempFolder.deleteOnExit()
+                }
             }
         }
+
     }
 
 }
