@@ -35,7 +35,7 @@ object FMI4j {
 
     private val initialized = AtomicBoolean(false)
 
-    private val fileName = "${OsUtil.libPrefix}fmi4j.${OsUtil.libExtension}"
+    private val fileName = "${OsUtil.libPrefix}fmi4j-import.${OsUtil.libExtension}"
 
     internal fun init() {
         if (!initialized.getAndSet(true)) {
@@ -43,7 +43,7 @@ object FMI4j {
             val tempFolder = Files.createTempDirectory("fmi4j_dll").toFile()
             val fmi4jdll = File(tempFolder, fileName)
             try {
-                Fmi1Library::class.java.classLoader
+                FMI4j::class.java.classLoader
                         .getResourceAsStream("native/fmi/${OsUtil.currentOS}/$fileName").use { `is` ->
                             FileOutputStream(fmi4jdll).use { fos ->
                                 `is`.copyTo(fos)
