@@ -61,7 +61,7 @@ if (!project.getProperties().get("skipBuildNative", false)) {
 
                 if (OperatingSystem.current().isLinux()) {
                     into("linux64") {
-                        from "$buildDir/lib/main/release/linux/x86-64"
+                        from "$buildDir/lib/main/release/linux"
                         include "*.so"
                     }
                 } else if (OperatingSystem.current().isWindows()) {
