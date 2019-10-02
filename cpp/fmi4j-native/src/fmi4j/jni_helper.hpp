@@ -29,7 +29,7 @@ inline jmethodID GetMethodID(JNIEnv* env, jclass cls, const char* name, const ch
 {
     jmethodID id = env->GetMethodID(cls, name, sig);
     if (id == nullptr) {
-        std::string msg = "Unable to locate method '" + std::string(name) + "'!";
+        std::string msg = "[FMI4j native]Unable to locate method '" + std::string(name) + "'!";
         throw cppfmu::FatalError(msg.c_str());
     }
     return id;
@@ -39,7 +39,7 @@ inline jmethodID GetStaticMethodID(JNIEnv* env, jclass cls, const char* name, co
 {
     jmethodID id = env->GetStaticMethodID(cls, name, sig);
     if (id == nullptr) {
-        std::string msg = "Unable to locate method static '" + std::string(name) + "'!";
+        std::string msg = "[FMI4j native] Unable to locate method static '" + std::string(name) + "'!";
         throw cppfmu::FatalError(msg.c_str());
     }
     return id;
@@ -52,7 +52,7 @@ inline jclass FindClass(JNIEnv* env, jobject classLoaderInstance, const char* na
     jmethodID loadClass = GetMethodID(env, URLClassLoader, "loadClass", "(Ljava/lang/String;)Ljava/lang/Class;");
     auto cls = reinterpret_cast<jclass>(env->CallObjectMethod(classLoaderInstance, loadClass, env->NewStringUTF(name)));
     if (cls == nullptr) {
-        std::string msg = "Unable to find class '" + std::string(name) + "'!";
+        std::string msg = "[FMI4j native] Unable to find class '" + std::string(name) + "'!";
         throw cppfmu::FatalError(msg.c_str());
     }
     return cls;
@@ -81,7 +81,7 @@ JNIEnv* get_or_create_jvm(JavaVM** jvm)
     if (rc == JNI_OK && nVms == 1) {
         rc = (*jvm)->GetEnv(reinterpret_cast<void**>(&env), JNI_VERSION_1_8);
         if (rc == JNI_OK) {
-            std::cout << "Reusing already created JMV." << std::endl;
+            std::cout << "[FMI4j native] Reusing already created JMV." << std::endl;
             return env;
         }
     }
@@ -92,9 +92,9 @@ JNIEnv* get_or_create_jvm(JavaVM** jvm)
 
     rc = JNI_CreateJavaVM(jvm, (void**)&env, &args);
     if (rc == JNI_OK) {
-        std::cout << "Created a new JVM." << std::endl;
+        std::cout << "[FMI4j native] Created a new JVM." << std::endl;
     } else {
-        std::cout << "Unable to Launch JVM: " << rc << std::endl;
+        std::cout << "[FMI4j native] Unable to Launch JVM: " << rc << std::endl;
     }
     return env;
 }
