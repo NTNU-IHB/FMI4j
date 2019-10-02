@@ -16,7 +16,6 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: 11.0.3
-    
 
     - name: Build
       run: ./gradlew clean build
