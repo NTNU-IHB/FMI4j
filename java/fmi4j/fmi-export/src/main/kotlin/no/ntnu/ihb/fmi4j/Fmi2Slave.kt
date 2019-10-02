@@ -1,11 +1,10 @@
 package no.ntnu.ihb.fmi4j
 
 import no.ntnu.ihb.fmi4j.modeldescription.fmi2.*
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import java.lang.reflect.Modifier
 import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
+import java.util.logging.Logger
 
 abstract class Fmi2Slave {
 
@@ -66,7 +65,7 @@ abstract class Fmi2Slave {
     fun setReal(vr: LongArray, values: DoubleArray) {
         for (i in vr.indices) {
             (accessors[vr[i].toInt()] as RealAccessor).apply {
-                setter?.invoke(values[i]) ?: LOG.warn("Trying to set value of " +
+                setter?.invoke(values[i]) ?: LOG.warning("Trying to set value of " +
                         "${getName(vr[i])} on variable without a specified setter!")
             }
         }
@@ -90,7 +89,7 @@ abstract class Fmi2Slave {
     fun setInteger(vr: LongArray, values: IntArray) {
         for (i in vr.indices) {
             (accessors[vr[i].toInt()] as IntAccessor).apply {
-                setter?.invoke(values[i]) ?: LOG.warn("Trying to set value of " +
+                setter?.invoke(values[i]) ?: LOG.warning("Trying to set value of " +
                         "${getName(vr[i])} on variable without a specified setter!")
             }
         }
@@ -114,7 +113,7 @@ abstract class Fmi2Slave {
     fun setBoolean(vr: LongArray, values: BooleanArray) {
         for (i in vr.indices) {
             (accessors[vr[i].toInt()] as BoolAccessor).apply {
-                setter?.invoke(values[i]) ?: LOG.warn("Trying to set value of " +
+                setter?.invoke(values[i]) ?: LOG.warning("Trying to set value of " +
                         "${getName(vr[i])} on variable without a specified setter!")
             }
         }
@@ -138,7 +137,7 @@ abstract class Fmi2Slave {
     fun setString(vr: LongArray, values: Array<String>) {
         for (i in vr.indices) {
             (accessors[vr[i].toInt()] as StringAccessor).apply {
-                setter?.invoke(values[i]) ?: LOG.warn("Trying to set value of " +
+                setter?.invoke(values[i]) ?: LOG.warning("Trying to set value of " +
                         "${getName(vr[i])} on variable without a specified setter!")
             }
         }
@@ -389,7 +388,7 @@ abstract class Fmi2Slave {
             if (outputs.isNotEmpty()) {
                 ms.outputs = Fmi2VariableDependency()
                 outputs.forEachIndexed { i, _ ->
-                    ms.outputs.unknown.add(Fmi2VariableDependency.Unknown().also { u -> u.index = i.toLong() })
+                    ms.outputs.unknown.add(Fmi2VariableDependency.Unknown().also { u -> u.index = i.toLong() +1 })
                 }
             }
         }
@@ -401,7 +400,7 @@ abstract class Fmi2Slave {
     }
 
     private companion object {
-        private val LOG: Logger = LoggerFactory.getLogger(Fmi2Slave::class.java)
+        private val LOG: Logger = Logger.getLogger(Fmi2Slave::class.java.name)
     }
 
 }
