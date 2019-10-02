@@ -1,20 +1,14 @@
 
-file(GLOB public_headers "${CMAKE_SOURCE_DIR}/include/*.h|*.hpp")
-file(GLOB private_headers "${CMAKE_CURRENT_SOURCE_DIR}/fmi4j/*.hpp")
+file(GLOB headers
+        "${CMAKE_CURRENT_SOURCE_DIR}/fmi/*.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/cppfmu/*.hpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/fmi4j/*.h|*.hpp"
+        )
 file(GLOB sources
         "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
-        "${CMAKE_CURRENT_SOURCE_DIR}/fmi4j/*.cpp"
         )
 
-set(publicHeadersFull)
-foreach (h IN LISTS publicHeaders)
-  list(APPEND publicHeadersFull "${publicHeaderDir}/${h}")
-endforeach ()
-set(privateHeadersFull)
-foreach (h IN LISTS privateHeaders)
-  list(APPEND privateHeadersFull "${privateHeaderDir}/${h}")
-endforeach ()
-set(allSources ${publicHeadersFull} ${privateHeadersFull} ${sources})
+set(allSources ${headers} ${sources})
 
 add_library(fmi4j-export ${allSources})
 target_compile_features(fmi4j-export PUBLIC "cxx_std_17")
@@ -30,6 +24,7 @@ target_link_libraries(fmi4j-export
         PRIVATE
         "${JNI_LIBRARIES}"
         )
+
 if (WIN32)
 
   if (CMAKE_SIZEOF_VOID_P EQUAL 4)

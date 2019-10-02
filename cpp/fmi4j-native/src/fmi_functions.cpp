@@ -3,44 +3,43 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
+#include "cppfmu/cppfmu_cs.hpp"
+
 #include <exception>
 #include <limits>
-
-#include "cppfmu_cs.hpp"
 
 
 namespace
 {
-    // A struct that holds all the data for one model instance.
-    struct Component
+// A struct that holds all the data for one model instance.
+struct Component
+{
+    Component(
+        cppfmu::FMIString instanceName,
+        cppfmu::FMICallbackFunctions callbackFunctions,
+        cppfmu::FMIBoolean loggingOn)
+        : memory{callbackFunctions}
+        , loggerSettings{std::make_shared<cppfmu::Logger::Settings>(memory)}
+        , logger{this, cppfmu::CopyString(memory, instanceName), callbackFunctions, loggerSettings}
+        , lastSuccessfulTime{std::numeric_limits<cppfmu::FMIReal>::quiet_NaN()}
     {
-        Component(
-            cppfmu::FMIString instanceName,
-            cppfmu::FMICallbackFunctions callbackFunctions,
-            cppfmu::FMIBoolean loggingOn)
-            : memory{callbackFunctions}
-            , loggerSettings{std::make_shared<cppfmu::Logger::Settings>(memory)}
-            , logger{this, cppfmu::CopyString(memory, instanceName), callbackFunctions, loggerSettings}
-            , lastSuccessfulTime{std::numeric_limits<cppfmu::FMIReal>::quiet_NaN()}
-        {
-            loggerSettings->debugLoggingEnabled = (loggingOn == cppfmu::FMITrue);
-        }
+        loggerSettings->debugLoggingEnabled = (loggingOn == cppfmu::FMITrue);
+    }
 
-        // General
-        cppfmu::Memory memory;
-        std::shared_ptr<cppfmu::Logger::Settings> loggerSettings;
-        cppfmu::Logger logger;
+    // General
+    cppfmu::Memory memory;
+    std::shared_ptr<cppfmu::Logger::Settings> loggerSettings;
+    cppfmu::Logger logger;
 
-        // Co-simulation
-        cppfmu::UniquePtr<cppfmu::SlaveInstance> slave;
-        cppfmu::FMIReal lastSuccessfulTime;
-    };
-}
+    // Co-simulation
+    cppfmu::UniquePtr<cppfmu::SlaveInstance> slave;
+    cppfmu::FMIReal lastSuccessfulTime;
+};
+} // namespace
 
 
 // FMI functions
-extern "C"
-{
+extern "C" {
 
 // =============================================================================
 // FMI 2.0 functions
@@ -116,7 +115,7 @@ fmi2Status fmi2SetDebugLogging(
     const auto component = reinterpret_cast<Component*>(c);
 
     std::vector<cppfmu::String, cppfmu::Allocator<cppfmu::String>> newCategories(
-            cppfmu::Allocator<cppfmu::String>(component->memory));
+        cppfmu::Allocator<cppfmu::String>(component->memory));
     for (size_t i = 0; i < nCategories; ++i) {
         newCategories.push_back(cppfmu::CopyString(component->memory, categories[i]));
     }
@@ -129,11 +128,11 @@ fmi2Status fmi2SetDebugLogging(
 
 fmi2Status fmi2SetupExperiment(
     fmi2Component c,
-    fmi2Boolean   toleranceDefined,
-    fmi2Real      tolerance,
-    fmi2Real      startTime,
-    fmi2Boolean   stopTimeDefined,
-    fmi2Real      stopTime)
+    fmi2Boolean toleranceDefined,
+    fmi2Real tolerance,
+    fmi2Real startTime,
+    fmi2Boolean stopTimeDefined,
+    fmi2Real stopTime)
 {
     const auto component = reinterpret_cast<Component*>(c);
     try {
@@ -476,7 +475,7 @@ fmi2Status fmi2SetRealInputDerivatives(
 
 fmi2Status fmi2GetRealOutputDerivatives(
     fmi2Component c,
-    const fmi2ValueReference [],
+    const fmi2ValueReference[],
     size_t,
     const fmi2Integer[],
     fmi2Real[])
@@ -556,7 +555,7 @@ fmi2Status fmi2GetRealStatus(
             fmi2Error,
             "cppfmu",
             "Invalid status inquiry for fmi2GetRealStatus");
-       return fmi2Error;
+        return fmi2Error;
     }
 }
 
@@ -595,5 +594,4 @@ fmi2Status fmi2GetStringStatus(
         "FMI function not supported: fmi2GetStringStatus");
     return fmi2Error;
 }
-
 }

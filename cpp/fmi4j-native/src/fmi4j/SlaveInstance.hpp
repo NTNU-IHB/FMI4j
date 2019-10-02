@@ -2,7 +2,8 @@
 #ifndef FMI4J_SLAVEINSTANCE_HPP
 #define FMI4J_SLAVEINSTANCE_HPP
 
-#include <cppfmu_cs.hpp>
+#include <cppfmu/cppfmu_cs.hpp>
+
 #include <jni.h>
 #include <string>
 

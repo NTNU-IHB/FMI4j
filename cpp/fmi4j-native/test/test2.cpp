@@ -1,7 +1,10 @@
 
-#include <SlaveInstance.hpp>
+#include "../src/fmi/fmi2Functions.h"
+#include "../src/fmi4j/SlaveInstance.hpp"
+
 #include <iostream>
 #include <string>
+#include <vector>
 
 namespace
 {
@@ -51,7 +54,7 @@ int main()
 
     try {
         std::cout << "version: " << fmi2GetVersion() << std::endl;
-        auto c = fmi2Instantiate("", fmi2CoSimulation, "guid", R"(file://D:\Development\FMI4j\java\fmi4j\fmi-export\build\libs)", &callback, 0, 0);
+        auto c = fmi2Instantiate("", fmi2CoSimulation, "guid", R"(file://D:\Development\FMI4j\java\fmi4j\fmu-slaves\build\libs)", &callback, 0, 0);
         if (c == nullptr) {
             return -1;
         }

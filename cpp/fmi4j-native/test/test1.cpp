@@ -43,14 +43,12 @@ int main(int argc, char** argv)
 
     JavaVM* jvm; /* denotes a Java VM */
     JNIEnv* env; /* pointer to native method interface */
-    env = create_jvm(&jvm, "D:\\Development\\FMI4j\\java\\fmi4j\\fmi-export\\build\\libs\\fmi-export-0.23.0.jar");
+    env = create_jvm(&jvm, R"(D:\Development\FMI4j\java\fmi4j\fmu-slaves\build\libs\fmu-slaves.jar)");
 
     /* invoke the Main.test method using the JNI */
-    jclass cls = env->FindClass("no/ntnu/ihb/fmi4j/TestSlave");
+    jclass cls = env->FindClass("no/ntnu/ihb/fmi4j/JavaTestSlave");
     std::cout << env->GetMethodID(cls, "setupExperiment", "(D)Z") << std::endl;
-//    jmethodID mid = env->GetStaticMethodID(cls, "test", "(I)V");
-//    env->CallStaticVoidMethod(cls, mid, 100);
-    /* We are done. */
+
     jvm->DestroyJavaVM();
 
     return 0;
