@@ -7,27 +7,30 @@ plugins {
 
 if (!project.getProperties().get("skipBuildNative", false)) {
 
+    def javaHome = Jvm.current().javaHome
+
     library { CppLibrary lib ->
 
-        baseName = "fmi4j"
+        baseName.set("fmi4j-export")
 
-        linkage = [Linkage.SHARED]
-
-        targetMachines = [
-                machines.windows.x86,
+        targetMachines.set([
                 machines.windows.x86_64,
                 machines.linux.x86_64,
-        ]
+        ])
 
         lib.binaries.whenElementFinalized { CppBinary binary ->
             project.dependencies {
 
-                add(binary.includePathConfiguration.name, files("${Jvm.current().javaHome}/include"))
+                def libjvm = OperatingSystem.current().getLinkLibraryName("$javaHome/lib/jvm")
+
+                add(binary.linkLibraries.name, files(libjvm))
+                add(binary.runtimeLibraries.name, files("$javaHome/jre/bin/server"))
+                add(binary.includePathConfiguration.name, files("$javaHome/include"))
 
                 if (OperatingSystem.current().isLinux()) {
-                    add(binary.includePathConfiguration.name, files("${Jvm.current().javaHome}/include/linux"))
+                    add(binary.includePathConfiguration.name, files("$javaHome/include/linux"))
                 } else if (OperatingSystem.current().isWindows()) {
-                    add(binary.includePathConfiguration.name, files("${Jvm.current().javaHome}/include/win32"))
+                    add(binary.includePathConfiguration.name, files("$javaHome/include/win32"))
                 } else {
                     throw new IllegalStateException("Unsupported OS: " + OperatingSystem.current().name)
                 }
@@ -53,7 +56,7 @@ if (!project.getProperties().get("skipBuildNative", false)) {
         doLast {
             copy {
 
-                into "$rootDir/fmi-import/src/main/resources/native/fmi"
+                into "$rootDir/fmu-builder/src/main/resources/binaries/"
 
                 if (OperatingSystem.current().isLinux()) {
                     into("linux64") {
@@ -61,12 +64,8 @@ if (!project.getProperties().get("skipBuildNative", false)) {
                         include "*.so"
                     }
                 } else if (OperatingSystem.current().isWindows()) {
-                    into("win32") {
-                        from "$buildDir/lib/main/release/windows/x86"
-                        include "*.dll"
-                    }
                     into("win64") {
-                        from "$buildDir/lib/main/release/windows/x86-64"
+                        from "$buildDir/lib/main/release/windows/"
                         include "*.dll"
                     }
                 } else {
