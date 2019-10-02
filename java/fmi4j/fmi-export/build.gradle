@@ -11,6 +11,8 @@ apply from: rootProject.file("gradle/bintraypublish.gradle")
 
 dependencies {
 
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+
     compile project(':fmi-md')
 
 }

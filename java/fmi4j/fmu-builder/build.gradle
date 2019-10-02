@@ -13,6 +13,8 @@ mainClassName = "${group}.FmuBuilder"
 
 dependencies {
 
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+
     compile project(':fmi-md')
     compile group: 'info.picocli', name: 'picocli', version: '3.9.2'
 

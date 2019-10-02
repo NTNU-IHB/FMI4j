@@ -17,8 +17,12 @@ repositories {
 }
 
 dependencies {
+
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+
     compile project(':fmi-import')
     compile group: 'info.picocli', name: 'picocli', version: '3.9.2'
+
 }
 
 shadowJar {
