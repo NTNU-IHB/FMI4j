@@ -6,7 +6,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: circleci/openjdk:8-jdk
+      - image: circleci/openjdk:11.0.3-jdk-stretch
 
     working_directory: ~/repo
 
@@ -21,7 +21,7 @@ jobs:
       # Download and cache dependencies
       - restore_cache:
           keys:
-          - v1-dependencies-{{ checksum "java/fmi4j/build.gradle" }}
+          - v1-dependencies-{{ checksum "build.gradle" }}
           # fallback to using the latest cache if no exact match is found
           - v1-dependencies-
 
@@ -30,12 +30,16 @@ jobs:
       - save_cache:
           paths:
             - ~/.gradle
-          key: v1-dependencies-{{ checksum "java/fmi4j/build.gradle" }}
+          key: v1-dependencies-{{ checksum "build.gradle" }}
 
-      - run: cd java/fmi4j && ./gradlew clean build
+      - run: ./gradlew clean build
 
-      - run: cd java/fmi4j && ./gradlew shadowJar
+      - run: ./gradlew shadowJar
 
       - store_artifacts:
-          path: java/fmi4j/fmu-driver/build/libs/fmu-driver.jar
+          path: fmu-driver/build/libs/fmu-driver.jar
           destination: fmu-driver.jar
+          
+      - store_artifacts:
+          path: fmu-builder/build/libs/fmu-builder.jar
+          destination: fmu-builder.jar
