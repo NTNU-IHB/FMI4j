@@ -26,7 +26,7 @@ if (!project.getProperties().get("skipBuildNative", false)) {
 
                 if (OperatingSystem.current().isLinux()) {
                     add(binary.includePathConfiguration.name, files("$javaHome/include/linux"))
-                    add(binary.linkLibraries.name, files(OperatingSystem.current().getLinkLibraryName("$javaHome/lib/server")))
+                    add(binary.linkLibraries.name, files(OperatingSystem.current().getLinkLibraryName("$javaHome/lib/server/jvm")))
                 } else if (OperatingSystem.current().isWindows()) {
                     add(binary.includePathConfiguration.name, files("$javaHome/include/win32"))
                     add(binary.linkLibraries.name, files(OperatingSystem.current().getLinkLibraryName("$javaHome/lib/jvm")))
