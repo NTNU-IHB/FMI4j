@@ -19,8 +19,8 @@ For Model Exchange, solvers from [Apache Commons Math](http://commons.apache.org
 
 Export of FMI 2.0 for **Co-simulation** is also supported.
 
-Compared to other FMI libraries targeting the JVM, FMI4j is **considerably faster** due to the fact that we use JNI with manually optimized C++-code instead of JNA or SWIG generated bindings. 
-A significant speedup (2-5x) compared to other FMI implementations for the JVM, such as JFMI and JavaFMI, should be expected. 
+Compared to other FMI libraries targeting the JVM, FMI4j is **considerably faster** due to the fact that we use JNI instead of JNA. 
+Considering FMI-import, a significant speedup (2-5x) compared to other open-source FMI implementations for the JVM should be expected. For FMI-export FMI4j is multiple orders of magniutude faster than any open source alternative today.
 
 
 ### <a name="api"></a> FMI import
@@ -60,10 +60,10 @@ class Demo {
 
 ```java
 @SlaveInfo(
-        modelName = "MySlave",
+        modelName = "JavaSlave",
         author = "John Doe"
 )
-public class MySlave extends Fmi2Slave {
+public class JavaSlave extends Fmi2Slave {
 
     @ScalarVariable(causality = Fmi2Causality.output)
     protected double realOut = 2.0;
@@ -76,7 +76,7 @@ public class MySlave extends Fmi2Slave {
 
     @ScalarVariable(causality = Fmi2Causality.local)
     protected String[] string = {"Hello", "world!"};
-
+    
     @Override
     public boolean doStep(double currentTime, double dt) {
         realOut += dt;
