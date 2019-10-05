@@ -16,12 +16,13 @@ abstract class Fmi2Slave {
             check(defined.get()) { "Model has not been defined!" }
             return accessors_
         }
+
     private val modelDescription_ = Fmi2ModelDescription()
     val modelDescription: Fmi2ModelDescription
-    get() {
-        check(defined.get()) { "Model has not been defined!" }
-        return modelDescription_
-    }
+        get() {
+            check(defined.get()) { "Model has not been defined!" }
+            return modelDescription_
+        }
 
     protected open fun initialize() {}
 
@@ -173,7 +174,7 @@ abstract class Fmi2Slave {
         val build = int.build()
         internalRegister(build).also { v ->
             v.integer = Fmi2ScalarVariable.Integer().also { type ->
-//                type.start = build.accessor.getter.invoke()
+                //                type.start = build.accessor.getter.invoke()
             }
         }
     }
@@ -182,7 +183,7 @@ abstract class Fmi2Slave {
         val build = real.build()
         internalRegister(build).also { v ->
             v.real = Fmi2ScalarVariable.Real().also { type ->
-//                type.start = build.accessor.getter.invoke()
+                //                type.start = build.accessor.getter.invoke()
             }
         }
     }
@@ -191,7 +192,7 @@ abstract class Fmi2Slave {
         val build = real.build()
         internalRegister(build).also { v ->
             v.boolean = Fmi2ScalarVariable.Boolean().also { type ->
-//                type.isStart = build.accessor.getter.invoke()
+                //                type.isStart = build.accessor.getter.invoke()
             }
         }
     }
@@ -200,7 +201,7 @@ abstract class Fmi2Slave {
         val build = real.build()
         internalRegister(build).also { v ->
             v.string = Fmi2ScalarVariable.String().also { real ->
-//                real.start = build.accessor.getter.invoke()
+                //                real.start = build.accessor.getter.invoke()
             }
         }
     }
@@ -388,7 +389,7 @@ abstract class Fmi2Slave {
             if (outputs.isNotEmpty()) {
                 ms.outputs = Fmi2VariableDependency()
                 outputs.forEachIndexed { i, _ ->
-                    ms.outputs.unknown.add(Fmi2VariableDependency.Unknown().also { u -> u.index = i.toLong() +1 })
+                    ms.outputs.unknown.add(Fmi2VariableDependency.Unknown().also { u -> u.index = i.toLong() + 1 })
                 }
             }
         }
