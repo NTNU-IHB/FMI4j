@@ -3,6 +3,7 @@ package no.ntnu.ihb.fmi4j.importer.fmi2
 import no.ntnu.ihb.fmi4j.importer.TestFMUs
 import no.ntnu.ihb.fmi4j.modeldescription.variables.*
 import no.ntnu.ihb.fmi4j.read
+import no.ntnu.ihb.fmi4j.readString
 import no.ntnu.ihb.fmi4j.readBoolean
 import no.ntnu.ihb.fmi4j.readInteger
 import no.ntnu.ihb.fmi4j.readReal
@@ -43,7 +44,7 @@ class FmuVariableAccessorTest {
                     is RealVariable -> Assertions.assertEquals(
                             variable.read(slave), slave.readReal(variable.valueReference))
                     is StringVariable -> Assertions.assertEquals(
-                            variable.read(slave), slave.read(variable.valueReference))
+                            variable.read(slave), slave.readString(variable.valueReference))
                     is BooleanVariable -> Assertions.assertEquals(
                             variable.read(slave), slave.readBoolean(variable.valueReference))
                     is EnumerationVariable -> Assertions.assertEquals(
@@ -71,8 +72,8 @@ class FmuVariableAccessorTest {
                             slave.readReal(variable.valueReference),
                             slave.readReal(variable.name))
                     is StringVariable -> Assertions.assertEquals(
-                            slave.read(variable.valueReference),
-                            slave.read(variable.name))
+                            slave.readString(variable.valueReference),
+                            slave.readString(variable.name))
                     is BooleanVariable -> Assertions.assertEquals(
                             slave.readBoolean(variable.valueReference),
                             slave.readBoolean(variable.name))

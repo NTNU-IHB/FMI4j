@@ -52,15 +52,15 @@ fun SimpleModelInstance.readReal(name: String): RealRead {
     return readReal(modelVariables.getValueReference(name))
 }
 
-fun VariableReader.read(vr: ValueReference): StringRead {
+fun VariableReader.readString(vr: ValueReference): StringRead {
     val values = StringArray(1) { "" }
     return this.read(longArrayOf(vr), values).let {
         StringRead(values[0], it)
     }
 }
 
-fun SimpleModelInstance.read(name: String): StringRead {
-    return this.read(modelVariables.getValueReference(name))
+fun SimpleModelInstance.readString(name: String): StringRead {
+    return this.readString(modelVariables.getValueReference(name))
 }
 
 fun VariableReader.readBoolean(vr: ValueReference): BooleanRead {
@@ -100,7 +100,7 @@ fun RealVariable.read(reader: VariableReader): VariableRead<Real> {
 }
 
 fun StringVariable.read(reader: VariableReader): VariableRead<String> {
-    return reader.read(valueReference)
+    return reader.readString(valueReference)
 }
 
 fun BooleanVariable.read(reader: VariableReader): VariableRead<Boolean> {
