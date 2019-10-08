@@ -89,7 +89,7 @@ object FmuBuilder {
                     zos.closeEntry()
                 }
 
-                FmuBuilder::class.java.classLoader.getResourceAsStream("binaries/linux64/fmi4j-export.so")?.use { `is` ->
+                FmuBuilder::class.java.classLoader.getResourceAsStream("binaries/linux64/libfmi4j-export.so")?.use { `is` ->
                     zos.putNextEntry(ZipEntry("binaries/linux64/"))
                     zos.putNextEntry(ZipEntry("binaries/linux64/$modelIdentifier.so"))
                     zos.write(`is`.readBytes())
