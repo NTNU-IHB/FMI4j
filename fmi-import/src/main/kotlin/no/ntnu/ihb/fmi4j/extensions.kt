@@ -88,7 +88,7 @@ fun VariableWriter.writeReal(vr: ValueReference, value: Real): FmiStatus {
     return write(longArrayOf(vr), realArrayOf(value))
 }
 
-fun SimpleModelInstance.writeInteger(name: String, value: Real): FmiStatus {
+fun SimpleModelInstance.writeReal(name: String, value: Real): FmiStatus {
     return writeReal(modelVariables.getValueReference(name), value)
 }
 
