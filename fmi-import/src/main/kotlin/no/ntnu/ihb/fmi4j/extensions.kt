@@ -74,22 +74,41 @@ fun SimpleModelInstance.readBoolean(name: String): BooleanRead {
     return readBoolean(modelVariables.getValueReference(name))
 }
 
+/////////////////////////////////////////////////////////////////////////////
 
-fun VariableWriter.write(vr: ValueReference, value: Int): FmiStatus {
+fun VariableWriter.writeInteger(vr: ValueReference, value: Int): FmiStatus {
     return this.write(longArrayOf(vr), intArrayOf(value))
 }
 
-fun VariableWriter.write(vr: ValueReference, value: Real): FmiStatus {
+fun SimpleModelInstance.writeInteger(name: String, value: Int): FmiStatus {
+    return writeInteger(modelVariables.getValueReference(name), value)
+}
+
+fun VariableWriter.writeReal(vr: ValueReference, value: Real): FmiStatus {
     return write(longArrayOf(vr), realArrayOf(value))
 }
 
-fun VariableWriter.write(vr: ValueReference, value: String): FmiStatus {
+fun SimpleModelInstance.writeInteger(name: String, value: Real): FmiStatus {
+    return writeReal(modelVariables.getValueReference(name), value)
+}
+
+fun VariableWriter.writeString(vr: ValueReference, value: String): FmiStatus {
     return this.write(longArrayOf(vr), stringArrayOf(value))
 }
 
-fun VariableWriter.write(vr: ValueReference, value: Boolean): FmiStatus {
+fun SimpleModelInstance.writeString(name: String, value: String): FmiStatus {
+    return writeString(modelVariables.getValueReference(name), value)
+}
+
+fun VariableWriter.writeBoolean(vr: ValueReference, value: Boolean): FmiStatus {
     return this.write(longArrayOf(vr), booleanArrayOf(value))
 }
+
+fun SimpleModelInstance.writeBoolean(name: String, value: Boolean): FmiStatus {
+    return writeBoolean(modelVariables.getValueReference(name), value)
+}
+
+/////////////////////////////////////////////////////////////////////////////////////
 
 fun IntegerVariable.read(reader: VariableReader): VariableRead<Int> {
     return reader.readInteger(valueReference)
@@ -125,23 +144,23 @@ fun TypedScalarVariable<*>.read(reader: VariableReader): VariableRead<*> {
 }
 
 fun IntegerVariable.write(writer: VariableWriter, value: Int): FmiStatus {
-    return writer.write(valueReference, value)
+    return writer.writeInteger(valueReference, value)
 }
 
 fun RealVariable.write(writer: VariableWriter, value: Real): FmiStatus {
-    return writer.write(valueReference, value)
+    return writer.writeReal(valueReference, value)
 }
 
 fun StringVariable.write(writer: VariableWriter, value: String): FmiStatus {
-    return writer.write(valueReference, value)
+    return writer.writeString(valueReference, value)
 }
 
 fun BooleanVariable.write(writer: VariableWriter, value: Boolean): FmiStatus {
-    return writer.write(valueReference, value)
+    return writer.writeBoolean(valueReference, value)
 }
 
 fun EnumerationVariable.write(writer: VariableWriter, value: Int): FmiStatus {
-    return writer.write(valueReference, value)
+    return writer.writeInteger(valueReference, value)
 }
 
 fun TypedScalarVariable<*>.write(writer: VariableWriter, value: Any): FmiStatus {
