@@ -151,7 +151,6 @@ JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi2_jni_Fmi2Library_getI
     jint* __ref = (jint*) malloc(sizeof(jint) * size);
     for (unsigned int i = 0; i < size; ++i) {
         __ref[i] = static_cast<int>(_ref[i]);
-        std::cout << "__ref" << __ref[i]  << std::endl;
     }
 
     env->SetIntArrayRegion(ref, 0, size, __ref);
