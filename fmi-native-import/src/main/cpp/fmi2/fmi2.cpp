@@ -140,7 +140,7 @@ JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi2_jni_Fmi2Library_getI
 
     fmi2ValueReference* __vr = (fmi2ValueReference*) malloc(sizeof(fmi2ValueReference) * size);
     for (unsigned int i = 0; i < size; ++i) {
-        __vr[i] = (fmi2ValueReference) _vr[i];
+        __vr[i] = static_cast<fmi2ValueReference>(_vr[i]);
     }
 
     fmi2GetIntegerTYPE* fmi2GetInteger = fmu->fmi2GetInteger_;
@@ -148,9 +148,17 @@ JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi2_jni_Fmi2Library_getI
     fmi2Integer* _ref = (fmi2Integer*) malloc(sizeof(fmi2Integer) * size);
     fmi2Status status = (*fmi2GetInteger)((void*) c, __vr, size, _ref);
 
-    env->SetIntArrayRegion(ref, 0, size, (jint*)_ref);
+    jint* __ref = (jint*) malloc(sizeof(jint) * size);
+    for (unsigned int i = 0; i < size; ++i) {
+        __ref[i] = static_cast<int>(_ref[i]);
+        std::cout << "__ref" << __ref[i]  << std::endl;
+    }
+
+    env->SetIntArrayRegion(ref, 0, size, __ref);
+
     free(_ref);
-    free(_vr);
+    free(__ref);
+    free(__vr);
     env->ReleaseLongArrayElements(vr, _vr, 0);
 
     return status;
