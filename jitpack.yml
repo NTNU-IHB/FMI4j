@@ -1,2 +1,2 @@
 install:
-  - cd java/fmi4j && ./gradlew -PskipBuildNative=true clean publishToMavenLocal
+  - ./gradlew -PskipBuildNative=true clean publishToMavenLocal
