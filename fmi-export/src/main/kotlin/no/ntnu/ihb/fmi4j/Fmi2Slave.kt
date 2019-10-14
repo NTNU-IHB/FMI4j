@@ -173,7 +173,7 @@ abstract class Fmi2Slave {
     protected fun registerInteger(int: IntBuilder) {
         val build = int.build()
         internalRegister(build).also { v ->
-            v.integer = Fmi2ScalarVariable.Integer().also { type ->
+            v.integer = Fmi2ScalarVariable.Integer().also { _ ->
                 //                type.start = build.accessor.getter.invoke()
             }
         }
@@ -182,7 +182,7 @@ abstract class Fmi2Slave {
     protected fun registerReal(real: RealBuilder) {
         val build = real.build()
         internalRegister(build).also { v ->
-            v.real = Fmi2ScalarVariable.Real().also { type ->
+            v.real = Fmi2ScalarVariable.Real().also { _ ->
                 //                type.start = build.accessor.getter.invoke()
             }
         }
@@ -191,7 +191,7 @@ abstract class Fmi2Slave {
     protected fun registerBoolean(real: BooleanBuilder) {
         val build = real.build()
         internalRegister(build).also { v ->
-            v.boolean = Fmi2ScalarVariable.Boolean().also { type ->
+            v.boolean = Fmi2ScalarVariable.Boolean().also { _ ->
                 //                type.isStart = build.accessor.getter.invoke()
             }
         }
@@ -200,7 +200,7 @@ abstract class Fmi2Slave {
     protected fun registerString(real: StringBuilder) {
         val build = real.build()
         internalRegister(build).also { v ->
-            v.string = Fmi2ScalarVariable.String().also { real ->
+            v.string = Fmi2ScalarVariable.String().also { _ ->
                 //                real.start = build.accessor.getter.invoke()
             }
         }
