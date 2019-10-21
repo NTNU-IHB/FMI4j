@@ -25,6 +25,8 @@
 package no.ntnu.ihb.fmi4j.importer.fmi1
 
 import no.ntnu.ihb.fmi4j.Model
+import no.ntnu.ihb.fmi4j.ModelExchangeModel
+import no.ntnu.ihb.fmi4j.ModelInstance
 import no.ntnu.ihb.fmi4j.SlaveInstance
 import no.ntnu.ihb.fmi4j.importer.fmi1.jni.Fmi1ModelExchangeLibrary
 import no.ntnu.ihb.fmi4j.importer.fmi1.jni.FmiComponent
@@ -38,7 +40,7 @@ import java.io.Closeable
  */
 class ModelExchangeFmu(
         private val fmu: Fmu
-) : Model, Closeable by fmu {
+) : ModelExchangeModel, Closeable by fmu {
 
     override val modelDescription: ModelExchangeModelDescription by lazy {
         fmu.modelDescription.asModelExchangeModelDescription()
@@ -56,7 +58,10 @@ class ModelExchangeFmu(
         return lib.instantiateModel(modelDescription.attributes.modelIdentifier, modelDescription.guid, loggingOn)
     }
 
-    @JvmOverloads
+    override fun newInstance(): ModelExchangeInstance {
+        return newInstance(false)
+    }
+
     fun newInstance(loggingOn: Boolean = false): ModelExchangeInstance {
         val c = instantiate(loggingOn)
         val wrapper = ModelExchangeLibraryWrapper(c, lib)
@@ -64,19 +69,5 @@ class ModelExchangeFmu(
             fmu.registerInstance(it)
         }
     }
-
-    override fun newInstance(): SlaveInstance {
-        throw IllegalStateException("Not supported (yet)")
-    }
-
-//    fun newInstance(solver: Solver): ModelExchangeSlave {
-//        return newInstance(solver, visible = false, loggingOn = false)
-//    }
-//
-//    fun newInstance(solver: Solver, visible: Boolean = false, loggingOn: Boolean = false): ModelExchangeSlave {
-//        return newInstance(visible, loggingOn).let {
-//            ModelExchangeSlave(it, solver)
-//        }
-//    }
 
 }

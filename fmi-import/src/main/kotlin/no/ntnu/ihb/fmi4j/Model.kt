@@ -24,13 +24,19 @@
 
 package no.ntnu.ihb.fmi4j
 
+import no.ntnu.ihb.fmi4j.modeldescription.CoSimulationModelDescription
+import no.ntnu.ihb.fmi4j.modeldescription.CommonModelDescription
 import no.ntnu.ihb.fmi4j.modeldescription.ModelDescription
+import no.ntnu.ihb.fmi4j.modeldescription.ModelExchangeModelDescription
 import java.io.Closeable
 
-interface Model : Closeable {
+typealias CosimulationModel = Model<CoSimulationModelDescription>
+typealias ModelExchangeModel = Model<ModelExchangeModelDescription>
+
+interface Model<E: CommonModelDescription> : Closeable {
 
     val modelDescription: ModelDescription
 
-    fun newInstance(): SlaveInstance
+    fun newInstance(): ModelInstance<E>
 
 }

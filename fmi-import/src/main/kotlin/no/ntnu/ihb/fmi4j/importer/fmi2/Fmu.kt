@@ -67,16 +67,12 @@ class Fmu internal constructor(
 
 
     override fun asCoSimulationFmu(): CoSimulationFmu {
-        if (!supportsCoSimulation) {
-            throw IllegalStateException("FMU does not support Co-simulation!")
-        }
+        check(supportsCoSimulation) { "FMU does not support Co-simulation!" }
         return coSimulationFmu
     }
 
     override fun asModelExchangeFmu(): ModelExchangeFmu {
-        if (!supportsModelExchange) {
-            throw IllegalStateException("FMU does not support Model Exchange!")
-        }
+        check(supportsModelExchange) { "FMU does not support Model Exchange!" }
         return modelExchangeFmu
     }
 
