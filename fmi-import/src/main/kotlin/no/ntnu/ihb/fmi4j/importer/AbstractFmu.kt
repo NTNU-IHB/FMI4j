@@ -24,8 +24,7 @@
 
 package no.ntnu.ihb.fmi4j.importer
 
-import no.ntnu.ihb.fmi4j.CosimulationModel
-import no.ntnu.ihb.fmi4j.Model
+import no.ntnu.ihb.fmi4j.CoSimulationModel
 import no.ntnu.ihb.fmi4j.ModelExchangeModel
 import no.ntnu.ihb.fmi4j.modeldescription.ModelDescriptionParser
 import no.ntnu.ihb.fmi4j.modeldescription.ModelDescriptionProvider
@@ -89,7 +88,7 @@ abstract class AbstractFmu internal constructor(
         }
     }
 
-    abstract fun asCoSimulationFmu(): CosimulationModel
+    abstract fun asCoSimulationFmu(): CoSimulationModel
 
     abstract fun asModelExchangeFmu(): ModelExchangeModel
 

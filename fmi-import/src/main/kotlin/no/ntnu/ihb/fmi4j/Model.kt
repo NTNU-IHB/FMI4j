@@ -30,9 +30,6 @@ import no.ntnu.ihb.fmi4j.modeldescription.ModelDescription
 import no.ntnu.ihb.fmi4j.modeldescription.ModelExchangeModelDescription
 import java.io.Closeable
 
-typealias CosimulationModel = Model<CoSimulationModelDescription>
-typealias ModelExchangeModel = Model<ModelExchangeModelDescription>
-
 interface Model<E: CommonModelDescription> : Closeable {
 
     val modelDescription: ModelDescription
@@ -40,3 +37,19 @@ interface Model<E: CommonModelDescription> : Closeable {
     fun newInstance(): ModelInstance<E>
 
 }
+
+
+interface CoSimulationModel: Model<CoSimulationModelDescription> {
+
+    override val modelDescription: CoSimulationModelDescription
+
+    override fun newInstance(): SlaveInstance
+
+}
+
+interface ModelExchangeModel: Model<ModelExchangeModelDescription> {
+
+    override val modelDescription: ModelExchangeModelDescription
+
+}
+
