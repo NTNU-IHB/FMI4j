@@ -3,7 +3,6 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/NTNU-IHB/FMI4j/issues)
 
-[![](https://jitpack.io/v/NTNU-IHB/FMI4j.svg)](https://jitpack.io/#NTNU-IHB/FMI4j) 
 [ ![Bintray](https://api.bintray.com/packages/ntnu-ihb/mvn/FMI4j/images/download.svg) ](https://bintray.com/ntnu-ihb/mvn/FMI4j/_latestVersion)
 
 [![CircleCI](https://circleci.com/gh/NTNU-IHB/FMI4j/tree/master.svg?style=svg)](https://circleci.com/gh/NTNU-IHB/FMI4j/tree/master)
@@ -86,8 +85,5 @@ public class JavaSlave extends Fmi2Slave {
 }
 ```
 
-Artifacts are available through [JitPack](https://jitpack.io/#NTNU-IHB/FMI4j) and [Bintray](https://bintray.com/ntnu-ihb/mvn/FMI4j).
+Artifacts are available through [Bintray](https://bintray.com/ntnu-ihb/mvn/FMI4j).
 
-___
-
-To get started head over to the [Wiki](https://github.com/NTNU-IHB/FMI4j/wiki)!
