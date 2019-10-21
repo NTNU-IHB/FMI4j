@@ -31,12 +31,7 @@ class Demo {
         
         Fmu fmu = Fmu.from(new File("path/to/fmu.fmu")); //URLs are also supported
         FmuSlave slave = fmu.asCoSimulationFmu().newInstance();
-        
-        // Model Exchange is also supported:
-        //
-        // Solver solver = ApacheSolvers.euler(1E-3);
-        // FmuSlave slave = fmu.asModelExchangeFmu(solver).newInstance(); 
-        
+
         slave.simpleSetup();
         
         double stop = 10;
