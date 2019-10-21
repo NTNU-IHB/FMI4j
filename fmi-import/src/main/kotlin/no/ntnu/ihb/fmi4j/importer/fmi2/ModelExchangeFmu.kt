@@ -25,20 +25,20 @@
 package no.ntnu.ihb.fmi4j.importer.fmi2
 
 import no.ntnu.ihb.fmi4j.Model
+import no.ntnu.ihb.fmi4j.ModelExchangeModel
+import no.ntnu.ihb.fmi4j.ModelInstance
 import no.ntnu.ihb.fmi4j.importer.fmi2.jni.Fmi2ModelExchangeLibrary
 import no.ntnu.ihb.fmi4j.importer.fmi2.jni.ModelExchangeLibraryWrapper
 import no.ntnu.ihb.fmi4j.modeldescription.ModelExchangeModelDescription
-import no.ntnu.ihb.fmi4j.solvers.Solver
 import java.io.Closeable
 
 /**
  *
  * @author Lars Ivar Hatledal
  */
-class ModelExchangeFmu @JvmOverloads constructor(
-        private val fmu: Fmu,
-        private val solver: Solver? = null
-) : Model, Closeable by fmu {
+class ModelExchangeFmu(
+        private val fmu: Fmu
+) : ModelExchangeModel, Closeable by fmu {
 
     override val modelDescription: ModelExchangeModelDescription by lazy {
         fmu.modelDescription.asModelExchangeModelDescription()
@@ -52,28 +52,15 @@ class ModelExchangeFmu @JvmOverloads constructor(
         }
     }
 
+    override fun newInstance(): ModelExchangeInstance {
+        return newInstance(visible = false, loggingOn = false)
+    }
 
-    @JvmOverloads
     fun newInstance(visible: Boolean = false, loggingOn: Boolean = false): ModelExchangeInstance {
         val c = fmu.instantiate(modelDescription, lib, 0, visible, loggingOn)
         val wrapper = ModelExchangeLibraryWrapper(c, lib)
         return ModelExchangeInstance(wrapper, modelDescription).also {
             fmu.registerInstance(it)
-        }
-    }
-
-    override fun newInstance(): ModelExchangeSlave {
-        val solver = solver ?: throw IllegalStateException("Class instantiated with no solver!")
-        return newInstance(solver, visible = false, loggingOn = false)
-    }
-
-    fun newInstance(solver: Solver): ModelExchangeSlave {
-        return newInstance(solver, visible = false, loggingOn = false)
-    }
-
-    fun newInstance(solver: Solver, visible: Boolean = false, loggingOn: Boolean = false): ModelExchangeSlave {
-        return newInstance(visible, loggingOn).let {
-            ModelExchangeSlave(it, solver)
         }
     }
 

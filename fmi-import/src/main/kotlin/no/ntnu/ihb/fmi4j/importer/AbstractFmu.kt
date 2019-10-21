@@ -24,7 +24,9 @@
 
 package no.ntnu.ihb.fmi4j.importer
 
+import no.ntnu.ihb.fmi4j.CosimulationModel
 import no.ntnu.ihb.fmi4j.Model
+import no.ntnu.ihb.fmi4j.ModelExchangeModel
 import no.ntnu.ihb.fmi4j.modeldescription.ModelDescriptionParser
 import no.ntnu.ihb.fmi4j.modeldescription.ModelDescriptionProvider
 import no.ntnu.ihb.fmi4j.util.extractContentTo
@@ -57,7 +59,6 @@ abstract class AbstractFmu internal constructor(
     val modelDescriptionXml: String
         get() = modelDescriptionFile.readText()
 
-
     /**
      * Does the FMU support Co-simulation?
      */
@@ -88,9 +89,9 @@ abstract class AbstractFmu internal constructor(
         }
     }
 
-    abstract fun asCoSimulationFmu(): Model
+    abstract fun asCoSimulationFmu(): CosimulationModel
 
-    abstract fun asModelExchangeFmu(): Model
+    abstract fun asModelExchangeFmu(): ModelExchangeModel
 
 
     protected abstract fun terminateInstances()
@@ -173,9 +174,7 @@ abstract class AbstractFmu internal constructor(
         fun from(file: File): AbstractFmu {
 
             val extension = file.extension.toLowerCase()
-            if (extension != FMU_EXTENSION) {
-                throw IllegalArgumentException("File '${file.absolutePath}' is not an FMU! Invalid extension found: .$extension")
-            }
+            require(extension == FMU_EXTENSION) { "File '${file.absolutePath}' is not an FMU! Invalid extension found: .$extension" }
 
             if (!file.exists()) {
                 throw FileNotFoundException("No such file: '$file'!")
@@ -200,9 +199,7 @@ abstract class AbstractFmu internal constructor(
         fun from(url: URL): AbstractFmu {
 
             val extension = File(url.file).extension
-            if (extension != FMU_EXTENSION) {
-                throw IllegalArgumentException("URL '$url' does not point to an FMU! Invalid extension found: .$extension")
-            }
+            require(extension == FMU_EXTENSION) { "URL '$url' does not point to an FMU! Invalid extension found: .$extension" }
 
             val fmuName = File(url.file).nameWithoutExtension
             return createTempDir(fmuName).let { temp ->
