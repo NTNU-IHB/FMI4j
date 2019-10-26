@@ -20,6 +20,10 @@ Compared to other FMI libraries targeting the JVM, FMI4j is **considerably faste
 Considering FMI-import, a significant speedup (2-5x) compared to other open-source FMI implementations for the JVM should be expected. 
 For FMI-export FMI4j is multiple orders of magnitude faster than any existing open source alternative.
 
+***
+
+Artifacts are available through [Bintray](https://bintray.com/ntnu-ihb/mvn/FMI4j).
+
 
 ### <a name="api"></a> FMI import
 
@@ -51,6 +55,8 @@ class Demo {
 
 ### <a name="api"></a> FMI export
 
+###### Write the code
+
 ```java
 @SlaveInfo(
         modelName = "JavaSlave",
@@ -78,8 +84,15 @@ public class JavaSlave extends Fmi2Slave {
 
 }
 ```
+###### Build the FMU
 
-Artifacts are available through [Bintray](https://bintray.com/ntnu-ihb/mvn/FMI4j).
+```
+Usage: fmu-builder [-h] [-d=<destFile>] -f=<jarFile> -m=<mainClass>
+  -d, --dest=<destFile>    Where to save the FMU.
+  -f, --file=<jarFile>     Path to the Jar.
+  -h, --help               Print this message and quits.
+  -m, --main=<mainClass>   Fully qualified name if the main class.
+```
 
 *** 
 
