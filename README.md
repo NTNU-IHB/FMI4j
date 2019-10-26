@@ -83,7 +83,7 @@ Artifacts are available through [Bintray](https://bintray.com/ntnu-ihb/mvn/FMI4j
 
 *** 
 
-Would you rather build FMUs in Python? Check out [PythonFMU](https://github.com/NTNU-IHB/PythonFMU)!
-Or would you rather simulate FMUs using C++? Check out [FMI4cpp](https://github.com/NTNU-IHB/FMI4cpp)!
+Would you rather build FMUs using Python? Check out [PythonFMU](https://github.com/NTNU-IHB/PythonFMU)! <br>
+Or would you rather simulate FMUs using C++? Check out [FMI4cpp](https://github.com/NTNU-IHB/FMI4cpp)! <br>
 Need to distribute your FMUs? [FMU-proxy](https://github.com/NTNU-IHB/FMU-proxy) to the rescue! 
 
