@@ -81,3 +81,9 @@ public class JavaSlave extends Fmi2Slave {
 
 Artifacts are available through [Bintray](https://bintray.com/ntnu-ihb/mvn/FMI4j).
 
+*** 
+
+Would you rather build FMUs in Python? Check out [PythonFMU](https://github.com/NTNU-IHB/PythonFMU)!
+Or would you rather simulate FMUs using C++? Check out [FMI4cpp](https://github.com/NTNU-IHB/FMI4cpp)!
+Need to distribute your FMUs? [FMU-proxy](https://github.com/NTNU-IHB/FMU-proxy) to the rescue! 
+
