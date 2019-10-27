@@ -366,6 +366,7 @@ abstract class Fmi2Slave {
             cs.isCanGetAndSetFMUstate = false
             cs.isCanSerializeFMUstate = false
             cs.isCanInterpolateInputs = false
+            cs.isCanNotUseMemoryManagementFunctions = true
             cs.modelIdentifier = modelDescription.modelName
             if (slaveInfo != null) {
                 cs.isNeedsExecutionTool = slaveInfo.needsExecutionTool
