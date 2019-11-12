@@ -218,6 +218,7 @@ abstract class Fmi2Slave {
         cls.declaredFields.forEach { field ->
 
             field.getAnnotation(VariableContainer::class.java)?.also {
+                field.isAccessible = true
                 checkFields(field.type, field.get(owner), "$prepend${field.name}.")
             }
 
@@ -350,6 +351,8 @@ abstract class Fmi2Slave {
         val timeFormat = DateTimeFormatter.ofPattern("HH:mm:ss").format(now)
         return "${dateFormat}T${timeFormat}Z"
     }
+
+    internal fun definekt() = define()
 
     protected fun define(): Fmi2Slave {
 
