@@ -2,6 +2,8 @@ package no.ntnu.ihb.fmi4j
 
 import no.ntnu.ihb.fmi4j.modeldescription.fmi2.*
 import java.lang.reflect.Modifier
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.logging.Logger
@@ -337,6 +339,13 @@ abstract class Fmi2Slave {
 
     }
 
+    private fun getDateAndTime(): String {
+        val now = LocalDateTime.now()
+        val dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(now)
+        val timeFormat = DateTimeFormatter.ofPattern("HH:mm:ss").format(now)
+        return "${dateFormat}T${timeFormat}Z"
+    }
+
     protected fun define(): Fmi2Slave {
 
         if (defined.getAndSet(true)) {
@@ -349,6 +358,7 @@ abstract class Fmi2Slave {
         modelDescription.generationTool = "fmi4j"
         modelDescription.variableNamingConvention = "structured"
         modelDescription.guid = UUID.randomUUID().toString()
+        modelDescription.generationDateAndTime = getDateAndTime()
 
         val slaveInfo = javaClass.getAnnotation(SlaveInfo::class.java)
 
@@ -366,6 +376,7 @@ abstract class Fmi2Slave {
             cs.isCanGetAndSetFMUstate = false
             cs.isCanSerializeFMUstate = false
             cs.isCanInterpolateInputs = false
+            cs.isCanNotUseMemoryManagementFunctions = true
             cs.modelIdentifier = modelDescription.modelName
             if (slaveInfo != null) {
                 cs.isNeedsExecutionTool = slaveInfo.needsExecutionTool
