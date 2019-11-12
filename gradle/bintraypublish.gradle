@@ -4,6 +4,7 @@ if (hasProperty("bintrayUser") && hasProperty("bintrayKey")) {
     bintray {
         user = bintrayUser
         key = bintrayKey
+        publish = true
         setPublications("maven")
         pkg {
             userOrg = "ntnu-ihb"
