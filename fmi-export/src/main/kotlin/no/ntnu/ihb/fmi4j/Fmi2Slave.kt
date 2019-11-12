@@ -1,6 +1,7 @@
 package no.ntnu.ihb.fmi4j
 
 import no.ntnu.ihb.fmi4j.modeldescription.fmi2.*
+import java.io.File
 import java.lang.reflect.Modifier
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -26,7 +27,11 @@ abstract class Fmi2Slave {
             return modelDescription_
         }
 
-    protected open fun initialize() {}
+    private lateinit var resourceLocation: String
+
+    fun getFmuResource(name: String): File {
+        return File(resourceLocation, name)
+    }
 
     open fun setupExperiment(startTime: Double): Boolean {
         return true
@@ -351,8 +356,6 @@ abstract class Fmi2Slave {
         if (defined.getAndSet(true)) {
             return this
         }
-
-        initialize()
 
         modelDescription.fmiVersion = "2.0"
         modelDescription.generationTool = "fmi4j"

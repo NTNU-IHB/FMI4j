@@ -25,11 +25,21 @@ inline void jvm_invoke(JavaVM* jvm, const std::function<void(JNIEnv*)>& f)
     }
 }
 
+inline jfieldID GetFieldID(JNIEnv* env, jclass cls, const char* name, const char* sig)
+{
+  jfieldID id = env->GetFieldID(cls, name, sig);
+  if (id == nullptr) {
+    std::string msg = "[FMI4j native] Unable to locate method '" + std::string(name) + "'!";
+    throw cppfmu::FatalError(msg.c_str());
+  }
+  return id;
+}
+
 inline jmethodID GetMethodID(JNIEnv* env, jclass cls, const char* name, const char* sig)
 {
     jmethodID id = env->GetMethodID(cls, name, sig);
     if (id == nullptr) {
-        std::string msg = "[FMI4j native]Unable to locate method '" + std::string(name) + "'!";
+        std::string msg = "[FMI4j native] Unable to locate method '" + std::string(name) + "'!";
         throw cppfmu::FatalError(msg.c_str());
     }
     return id;

@@ -50,6 +50,7 @@ SlaveInstance::SlaveInstance(
         throw cppfmu::FatalError(msg.c_str());
     }
 
+    env->SetObjectField(slave_, GetFieldID(env, slaveCls, "resourceLocation", "Ljava/lang/String;"), env->NewStringUTF(resources.c_str()));
     env->CallObjectMethod(slave_, GetMethodID(env, slaveCls, "define", "()Lno/ntnu/ihb/fmi4j/Fmi2Slave;"));
 
     setupExperimentId_ = GetMethodID(env, slaveCls, "setupExperiment", "(D)Z");
