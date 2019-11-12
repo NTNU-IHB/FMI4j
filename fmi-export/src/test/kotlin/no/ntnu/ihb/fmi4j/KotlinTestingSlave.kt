@@ -17,5 +17,15 @@ class TestContainer {
     @ScalarVariable
     val value: Double = 5.0
 
+    @VariableContainer
+    val container2 = TestContainer2()
 
 }
+
+class TestContainer2 {
+
+    @ScalarVariable
+    val value2: Int = 1
+
+}
+
