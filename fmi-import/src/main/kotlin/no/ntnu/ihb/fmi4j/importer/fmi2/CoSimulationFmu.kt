@@ -48,7 +48,7 @@ class CoSimulationFmu(
         }
     }
 
-    override fun newInstance(): SlaveInstance {
+    override fun newInstance(): CoSimulationSlave {
         return newInstance(visible = false, loggingOn = false)
     }
 

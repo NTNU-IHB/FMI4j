@@ -95,10 +95,6 @@ class CoSimulationSlave internal constructor(
         return wrapper.reset().isOK()
     }
 
-    override fun terminate(): Boolean {
-        return super.terminate(freeInstance = true)
-    }
-
     fun setRealInputDerivatives(vr: ValueReferences, order: IntArray, value: DoubleArray): FmiStatus {
         return wrapper.setRealInputDerivatives(vr, order, value)
     }

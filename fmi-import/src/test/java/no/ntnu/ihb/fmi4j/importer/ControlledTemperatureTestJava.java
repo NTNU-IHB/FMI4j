@@ -61,7 +61,7 @@ public class ControlledTemperatureTestJava {
     }
 
     @Test
-    public void test() {
+    public void test() throws IOException {
 
         try (SlaveInstance slave = fmu.newInstance()) {
 

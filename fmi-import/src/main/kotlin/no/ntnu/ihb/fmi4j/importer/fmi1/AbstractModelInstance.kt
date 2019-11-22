@@ -87,6 +87,10 @@ abstract class AbstractModelInstance<out E : CommonModelDescription, out T : Fmi
         }
     }
 
+    override fun close() {
+        terminate(true)
+    }
+
     protected fun finalize() {
         if (!isTerminated) {
             LOG.warn("Instance ${modelDescription.modelName} was not terminated before garbage collection. Doing it for you..")

@@ -94,17 +94,6 @@ interface SimpleModelInstance : VariableAccessor, Closeable {
     fun deSerializeFMUstate(state: ByteArray): FmuState
     fun getDirectionalDerivative(vUnknownRef: ValueReferences, vKnownRef: ValueReferences, dvKnown: RealArray): RealArray
 
-    /**
-     * Calls terminate()
-     *
-     * @see Closeable
-     */
-    override fun close() {
-        if (!isTerminated) {
-            terminate()
-        }
-    }
-
 }
 
 /**

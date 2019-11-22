@@ -134,6 +134,10 @@ abstract class AbstractModelInstance<out E : CommonModelDescription, out T : Fmi
         return wrapper.reset().isOK()
     }
 
+    override fun close() {
+        terminate(true)
+    }
+
     protected fun finalize() {
         if (!isTerminated) {
             LOG.warn("Instance ${modelDescription.modelName} was not terminated before garbage collection. Doing it for you..")
@@ -142,9 +146,7 @@ abstract class AbstractModelInstance<out E : CommonModelDescription, out T : Fmi
     }
 
     override fun getDirectionalDerivative(vUnknownRef: ValueReferences, vKnownRef: ValueReferences, dvKnown: RealArray): RealArray {
-        if (!modelDescription.attributes.providesDirectionalDerivative) {
-            throw IllegalStateException("Illegal call. FMU does not provide directional derivatives!")
-        }
+        check(modelDescription.attributes.providesDirectionalDerivative) { "Illegal call. FMU does not provide directional derivatives!" }
         return RealArray(vUnknownRef.size).also { dvUnknown ->
             wrapper.getDirectionalDerivative(vUnknownRef, vKnownRef, dvKnown, dvUnknown)
         }
