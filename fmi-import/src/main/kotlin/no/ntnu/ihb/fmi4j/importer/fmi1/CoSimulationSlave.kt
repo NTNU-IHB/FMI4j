@@ -38,9 +38,10 @@ import org.slf4j.LoggerFactory
  * @author Lars Ivar Hatledal
  */
 class CoSimulationSlave internal constructor(
+        instanceName: String,
         wrapper: CoSimulationLibraryWrapper,
         modelDescription: CoSimulationModelDescription
-) : SlaveInstance, AbstractModelInstance<CoSimulationModelDescription, CoSimulationLibraryWrapper>(wrapper, modelDescription) {
+) : SlaveInstance, AbstractModelInstance<CoSimulationModelDescription, CoSimulationLibraryWrapper>(instanceName, wrapper, modelDescription) {
 
     /**
      * Call init with provided start and stop

@@ -89,12 +89,10 @@ class Fmu internal constructor(
         instances.add(instance)
     }
 
-    internal fun instantiate(modelDescription: CommonModelDescription, library: Fmi2Library,
+    internal fun instantiate(library: Fmi2Library, instanceName: String, guid: String,
                              fmiType: Int, visible: Boolean, loggingOn: Boolean): Long {
         LOG.trace("Calling instantiate: visible=$visible, loggingOn=$loggingOn")
-
-        return library.instantiate(modelDescription.attributes.modelIdentifier,
-                fmiType, modelDescription.guid, resourcesPath, visible, loggingOn)
+        return library.instantiate(instanceName, fmiType, guid, resourcesPath, visible, loggingOn)
     }
 
 

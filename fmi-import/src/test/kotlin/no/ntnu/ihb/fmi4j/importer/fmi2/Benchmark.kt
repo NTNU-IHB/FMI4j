@@ -62,13 +62,13 @@ object Benchmark {
 
     fun runFmi4j(option: TestOptions) {
 
-        Fmu.from(option.fmuFile).use { fmu ->
+        Fmu.from(option.fmuFile).asCoSimulationFmu().use { fmu ->
 
             val iter = 1
             var elapsed: Long
             for (i in 0..iter) {
 
-                fmu.asCoSimulationFmu().newInstance(loggingOn = false).use { slave ->
+                fmu.newInstance(fmu.modelDescription.attributes.modelIdentifier, loggingOn = false).use { slave ->
 
                     val h = slave.modelVariables.getByValueReference(option.vr)[0] as RealVariable
                     slave.simpleSetup(0.0, option.stopTime)

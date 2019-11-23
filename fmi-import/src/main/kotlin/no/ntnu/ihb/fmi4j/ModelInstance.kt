@@ -38,6 +38,8 @@ typealias FmuState = Long
  */
 interface SimpleModelInstance : VariableAccessor, Closeable {
 
+    val instanceName: String
+
     /**
      * Has terminate been called?
      */

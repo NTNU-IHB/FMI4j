@@ -76,7 +76,7 @@ class CompareWithJavaFmi {
 
         }
 
-        fmu.newInstance().also { slave ->
+        fmu.newInstance(fmu.modelDescription.attributes.modelIdentifier).also { slave ->
 
             duration2 = measureTimeMillis {
                 slave.simpleSetup()

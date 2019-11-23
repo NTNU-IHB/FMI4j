@@ -22,9 +22,9 @@ class ControlledTemperatureTest {
 
         TestFMUs.fmi20().cs()
                 .vendor("MapleSim").version("2017")
-                .name("ControlledTemperature").fmu().use { fmu ->
+                .name("ControlledTemperature").fmu().asCoSimulationFmu().use { fmu ->
 
-                    fmu.asCoSimulationFmu().newInstance().use { slave ->
+                    fmu.newInstance(fmu.modelDescription.attributes.modelIdentifier).use { slave ->
 
                         Assertions.assertEquals("2.0", slave.modelDescription.fmiVersion)
 

@@ -41,6 +41,7 @@ import org.slf4j.LoggerFactory
  * @author Lars Ivar Hatledal
  */
 abstract class AbstractModelInstance<out E : CommonModelDescription, out T : Fmi2LibraryWrapper<*>> internal constructor(
+        override val instanceName: String,
         val wrapper: T,
         override val modelDescription: E
 ) : ModelInstance<E> {
