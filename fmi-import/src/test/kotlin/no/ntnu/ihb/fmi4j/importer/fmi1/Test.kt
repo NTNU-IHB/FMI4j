@@ -1,6 +1,7 @@
 package no.ntnu.ihb.fmi4j.importer.fmi1
 
 import no.ntnu.ihb.fmi4j.importer.AbstractFmu
+import no.ntnu.ihb.fmi4j.importer.ControlledTemperatureTestJava
 import no.ntnu.ihb.fmi4j.modeldescription.ModelDescriptionParser
 import no.ntnu.ihb.fmi4j.readReal
 import org.junit.jupiter.api.Assertions
@@ -23,7 +24,7 @@ class Test {
             Assertions.assertEquals("{8c4e810f-3df3-4a00-8276-176fa3c9f003}", fmu.modelDescription.guid)
             Assertions.assertEquals("BouncingBall", fmu.modelDescription.attributes.modelIdentifier)
 
-            fmu.newInstance().use { slave ->
+            fmu.newInstance(fmu.modelDescription.attributes.modelIdentifier).use { slave ->
 
                 slave.setup()
                 Assertions.assertEquals(1.0, slave.readReal("h").value)
@@ -47,7 +48,7 @@ class Test {
         val file = File(Test::class.java.classLoader.getResource("fmus/1.0/cs/BouncingBall.fmu").file)
         AbstractFmu.from(file).asCoSimulationFmu().use { fmu ->
 
-            fmu.newInstance().use { slave ->
+            fmu.newInstance(fmu.modelDescription.attributes.modelIdentifier).use { slave ->
                 Assertions.assertTrue(slave.setup())
             }
 

@@ -33,10 +33,10 @@ class TestBuilder {
     private fun testFmu(fmuFile: File) {
         Assertions.assertTrue(fmuFile.exists())
 
-        Fmu.from(fmuFile).use { fmu ->
+        Fmu.from(fmuFile).asCoSimulationFmu().use { fmu ->
 
-            val slave1 = fmu.asCoSimulationFmu().newInstance()
-            val slave2 = fmu.asCoSimulationFmu().newInstance()
+            val slave1 = fmu.newInstance(fmu.modelDescription.attributes.modelIdentifier + "_1")
+            val slave2 = fmu.newInstance(fmu.modelDescription.attributes.modelIdentifier + "_2")
 
             Assertions.assertTrue(slave1.simpleSetup())
             Assertions.assertTrue(slave2.simpleSetup())

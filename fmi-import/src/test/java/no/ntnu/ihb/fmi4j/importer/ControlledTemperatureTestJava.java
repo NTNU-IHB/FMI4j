@@ -63,7 +63,7 @@ public class ControlledTemperatureTestJava {
     @Test
     public void test() throws IOException {
 
-        try (SlaveInstance slave = fmu.newInstance()) {
+        try (SlaveInstance slave = fmu.newInstance(fmu.getModelDescription().getAttributes().getModelIdentifier())) {
 
             Assertions.assertEquals("2.0", slave.getModelDescription().getFmiVersion());
 

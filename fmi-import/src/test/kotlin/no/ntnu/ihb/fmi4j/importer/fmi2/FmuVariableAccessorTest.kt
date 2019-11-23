@@ -33,7 +33,7 @@ class FmuVariableAccessorTest {
     @Test
     fun test1() {
 
-        fmu.newInstance().use { slave ->
+        fmu.newInstance(fmu.modelDescription.attributes.modelIdentifier).use { slave ->
 
             Assertions.assertTrue(slave.simpleSetup())
 
@@ -59,7 +59,7 @@ class FmuVariableAccessorTest {
     @Test
     fun test2() {
 
-        fmu.newInstance().use { slave ->
+        fmu.newInstance(fmu.modelDescription.attributes.modelIdentifier).use { slave ->
 
             Assertions.assertTrue(slave.simpleSetup())
 

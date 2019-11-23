@@ -54,18 +54,18 @@ class ModelExchangeFmu(
         }
     }
 
-    private fun instantiate(loggingOn: Boolean): FmiComponent {
-        return lib.instantiateModel(modelDescription.attributes.modelIdentifier, modelDescription.guid, loggingOn)
+    private fun instantiate(instanceName: String, loggingOn: Boolean): FmiComponent {
+        return lib.instantiateModel(instanceName, fmu.guid, loggingOn)
     }
 
-    override fun newInstance(): ModelExchangeInstance {
-        return newInstance(false)
+    override fun newInstance(instanceName: String): ModelExchangeInstance {
+        return newInstance(instanceName, false)
     }
 
-    fun newInstance(loggingOn: Boolean = false): ModelExchangeInstance {
-        val c = instantiate(loggingOn)
+    fun newInstance(instanceName: String, loggingOn: Boolean = false): ModelExchangeInstance {
+        val c = instantiate(instanceName, loggingOn)
         val wrapper = ModelExchangeLibraryWrapper(c, lib)
-        return ModelExchangeInstance(wrapper, modelDescription).also {
+        return ModelExchangeInstance(instanceName, wrapper, modelDescription).also {
             fmu.registerInstance(it)
         }
     }

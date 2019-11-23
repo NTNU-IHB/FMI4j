@@ -21,7 +21,7 @@ class VanDerPolTest {
                 .vendor("Test-FMUs").version("0.0.1")
                 .name("VanDerPol").fmu().asCoSimulationFmu()
 
-        fmu.newInstance(loggingOn = false).use { slave ->
+        fmu.newInstance(fmu.modelDescription.attributes.modelIdentifier, loggingOn = false).use { slave ->
 
             Assertions.assertTrue(slave.simpleSetup())
 

@@ -34,7 +34,7 @@ interface Model<E: CommonModelDescription> : Closeable {
 
     val modelDescription: ModelDescription
 
-    fun newInstance(): ModelInstance<E>
+    fun newInstance(instanceName: String): ModelInstance<E>
 
 }
 
@@ -43,7 +43,7 @@ interface CoSimulationModel: Model<CoSimulationModelDescription> {
 
     override val modelDescription: CoSimulationModelDescription
 
-    override fun newInstance(): SlaveInstance
+    override fun newInstance(instanceName: String): SlaveInstance
 
 }
 

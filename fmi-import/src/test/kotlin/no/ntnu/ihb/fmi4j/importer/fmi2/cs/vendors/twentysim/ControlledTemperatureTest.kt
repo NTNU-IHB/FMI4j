@@ -20,9 +20,9 @@ class ControlledTemperatureTest {
 
         TestFMUs.fmi20().cs()
                 .vendor("20sim").version("4.6.4.8004")
-                .name("ControlledTemperature").fmu().use { fmu ->
+                .name("ControlledTemperature").fmu().asCoSimulationFmu().use { fmu ->
 
-            fmu.asCoSimulationFmu().newInstance(loggingOn = true).use { slave ->
+            fmu.newInstance(fmu.modelDescription.attributes.modelIdentifier, loggingOn = true).use { slave ->
 
                 Assertions.assertEquals("2.0", slave.modelDescription.fmiVersion)
 
