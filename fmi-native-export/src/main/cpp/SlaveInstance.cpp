@@ -52,15 +52,15 @@ SlaveInstance::SlaveInstance(
     }
 
     env->SetObjectField(slave_, GetFieldID(env, slaveCls, "resourceLocation", "Ljava/lang/String;"), env->NewStringUTF(resources.c_str()));
-    env->CallObjectMethod(slave_, GetMethodID(env, slaveCls, "define", "()Lno/ntnu/ihb/fmi4j/Fmi2Slave;"));
+    env->CallObjectMethod(slave_, GetMethodID(env, slaveCls, "define", "()Lno/ntnu/ihb/fmi4j/export/fmi2/Slave;"));
 
-    setupExperimentId_ = GetMethodID(env, slaveCls, "setupExperiment", "(D)Z");
-    enterInitialisationModeId_ = GetMethodID(env, slaveCls, "enterInitialisationMode", "()Z");
-    exitInitializationModeId_ = GetMethodID(env, slaveCls, "exitInitialisationMode", "()Z");
+    setupExperimentId_ = GetMethodID(env, slaveCls, "setupExperiment", "(D)V");
+    enterInitialisationModeId_ = GetMethodID(env, slaveCls, "enterInitialisationMode", "()V");
+    exitInitializationModeId_ = GetMethodID(env, slaveCls, "exitInitialisationMode", "()V");
 
-    doStepId_ = GetMethodID(env, slaveCls, "doStep", "(DD)Z");
-    resetId_ = GetMethodID(env, slaveCls, "reset", "()Z");
-    terminateId_ = GetMethodID(env, slaveCls, "terminate", "()Z");
+    doStepId_ = GetMethodID(env, slaveCls, "doStep", "(DD)V");
+    resetId_ = GetMethodID(env, slaveCls, "reset", "()V");
+    terminateId_ = GetMethodID(env, slaveCls, "terminate", "()V");
 
     getRealId_ = GetMethodID(env, slaveCls, "getReal", "([J)[D");
     setRealId_ = GetMethodID(env, slaveCls, "setReal", "([J[D)V");
