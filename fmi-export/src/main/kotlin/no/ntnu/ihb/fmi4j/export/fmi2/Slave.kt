@@ -1,5 +1,7 @@
-package no.ntnu.ihb.fmi4j
+package no.ntnu.ihb.fmi4j.export.fmi2
 
+import no.ntnu.ihb.fmi4j.export.IntVector
+import no.ntnu.ihb.fmi4j.export.RealVector
 import no.ntnu.ihb.fmi4j.modeldescription.fmi2.*
 import java.io.File
 import java.lang.reflect.Modifier
@@ -9,7 +11,9 @@ import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.logging.Logger
 
-abstract class Fmi2Slave {
+abstract class Slave(
+        val instanceName: String
+) {
 
     private val defined = AtomicBoolean(false)
 
@@ -27,33 +31,20 @@ abstract class Fmi2Slave {
             return modelDescription_
         }
 
+
     private lateinit var resourceLocation: String
 
     fun getFmuResource(name: String): File {
         return File(resourceLocation, name)
     }
 
-    open fun setupExperiment(startTime: Double): Boolean {
-        return true
-    }
+    open fun setupExperiment(startTime: Double) {}
+    open fun enterInitialisationMode() {}
+    open fun exitInitialisationMode() {}
 
-    open fun enterInitialisationMode(): Boolean {
-        return true
-    }
-
-    open fun exitInitialisationMode(): Boolean {
-        return true
-    }
-
-    abstract fun doStep(currentTime: Double, dt: Double): Boolean
-
-    open fun reset(): Boolean {
-        return false
-    }
-
-    open fun terminate(): Boolean {
-        return true
-    }
+    abstract fun doStep(currentTime: Double, dt: Double)
+    open fun reset() {}
+    open fun terminate() {}
 
     @Suppress("UNCHECKED_CAST")
     fun getReal(vr: Long): Double {
@@ -221,7 +212,7 @@ abstract class Fmi2Slave {
 
             field.getAnnotation(VariableContainer::class.java)?.also {
                 field.isAccessible = true
-                checkFields(field.type, field.get(owner), "$prepend${field.name}.", level+1)
+                checkFields(field.type, field.get(owner), "$prepend${field.name}.", level + 1)
             }
 
             field.getAnnotation(ScalarVariable::class.java)?.also { annotation ->
@@ -356,7 +347,7 @@ abstract class Fmi2Slave {
 
     internal fun definekt() = define()
 
-    protected fun define(): Fmi2Slave {
+    protected fun define(): Slave {
 
         if (defined.getAndSet(true)) {
             return this
@@ -420,7 +411,7 @@ abstract class Fmi2Slave {
     }
 
     private companion object {
-        private val LOG: Logger = Logger.getLogger(Fmi2Slave::class.java.name)
+        private val LOG: Logger = Logger.getLogger(Slave::class.java.name)
     }
 
 }

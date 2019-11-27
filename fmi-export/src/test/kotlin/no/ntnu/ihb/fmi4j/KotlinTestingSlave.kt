@@ -1,13 +1,17 @@
 package no.ntnu.ihb.fmi4j
 
-class KotlinTestingSlave: Fmi2Slave() {
+import no.ntnu.ihb.fmi4j.export.fmi2.Slave
+import no.ntnu.ihb.fmi4j.export.fmi2.ScalarVariable
+import no.ntnu.ihb.fmi4j.export.fmi2.VariableContainer
+
+class KotlinTestingSlave(
+        instanceName: String
+): Slave(instanceName) {
 
     @VariableContainer
     val container = TestContainer()
 
-    override fun doStep(currentTime: Double, dt: Double): Boolean {
-        return true
-    }
+    override fun doStep(currentTime: Double, dt: Double) {}
 
 }
 

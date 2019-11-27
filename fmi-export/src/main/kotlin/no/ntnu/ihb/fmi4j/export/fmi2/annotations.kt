@@ -1,4 +1,4 @@
-package no.ntnu.ihb.fmi4j
+package no.ntnu.ihb.fmi4j.export.fmi2
 
 import no.ntnu.ihb.fmi4j.modeldescription.fmi2.Fmi2Causality
 import no.ntnu.ihb.fmi4j.modeldescription.fmi2.Fmi2Initial

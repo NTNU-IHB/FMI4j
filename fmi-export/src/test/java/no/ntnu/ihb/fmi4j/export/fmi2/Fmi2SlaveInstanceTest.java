@@ -1,4 +1,4 @@
-package no.ntnu.ihb.fmi4j;
+package no.ntnu.ihb.fmi4j.export.fmi2;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -10,7 +10,7 @@ class Fmi2SlaveInstanceTest {
 
     @BeforeAll
     static void setUp() {
-        slave = (JavaTestingSlave) new JavaTestingSlave().define();
+        slave = (JavaTestingSlave) new JavaTestingSlave("").define();
     }
 
     @Test

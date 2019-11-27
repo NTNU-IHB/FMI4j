@@ -1,4 +1,4 @@
-package no.ntnu.ihb.fmi4j
+package no.ntnu.ihb.fmi4j.export
 
 
 interface IntVector {

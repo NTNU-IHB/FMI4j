@@ -20,6 +20,7 @@ namespace fmi4j
 SlaveInstance::SlaveInstance(
     const cppfmu::Memory& memory,
     JNIEnv* env,
+    const std::string& instanceName,
     const std::string& resources)
 {
 
@@ -38,13 +39,13 @@ SlaveInstance::SlaveInstance(
         throw cppfmu::FatalError(msg.c_str());
     }
 
-    jmethodID mid = env->GetMethodID(slaveCls, "<init>", "()V");
+    jmethodID mid = env->GetMethodID(slaveCls, "<init>", "(Ljava/lang/String;)V");
     if (mid == nullptr) {
-        std::string msg = "Unable to locate noargs constructor for slave class '" + slaveName + "'!";
+        std::string msg = "Unable to locate 1 arg constructor that takes a String for slave class '" + slaveName + "'!";
         throw cppfmu::FatalError(msg.c_str());
     }
 
-    slave_ = env->NewGlobalRef(env->NewObject(slaveCls, mid));
+    slave_ = env->NewGlobalRef(env->NewObject(slaveCls, mid, env->NewStringUTF(instanceName.c_str())));
     if (slave_ == nullptr) {
         std::string msg = "Unable to instantiate a new instance of '" + slaveName + "'!";
         throw cppfmu::FatalError(msg.c_str());
@@ -356,5 +357,5 @@ cppfmu::UniquePtr<cppfmu::SlaveInstance> CppfmuInstantiateSlave(
         throw cppfmu::FatalError("Unable to setup the JVM!");
     }
 
-    return cppfmu::AllocateUnique<fmi4j::SlaveInstance>(memory, memory, env, resources);
+    return cppfmu::AllocateUnique<fmi4j::SlaveInstance>(memory, memory, env, instanceName, resources);
 }

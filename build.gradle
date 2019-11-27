@@ -8,12 +8,12 @@ println "Gradle version is ${gradle.getGradleVersion()}"
 
 wrapper {
     distributionType = Wrapper.DistributionType.ALL
+    gradleVersion = '6.0.1'
 }
 
 subprojects { sub ->
 
     group = 'no.ntnu.ihb.fmi4j'
-    version = '0.26.0'
 
     pluginManager.withPlugin('java') {
 

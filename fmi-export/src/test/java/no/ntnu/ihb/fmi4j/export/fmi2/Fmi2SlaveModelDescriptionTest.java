@@ -1,4 +1,4 @@
-package no.ntnu.ihb.fmi4j;
+package no.ntnu.ihb.fmi4j.export.fmi2;
 
 import no.ntnu.ihb.fmi4j.modeldescription.fmi2.Fmi2ScalarVariable;
 import no.ntnu.ihb.fmi4j.modeldescription.fmi2.Fmi2ModelDescription;
@@ -17,7 +17,7 @@ class Fmi2SlaveModelDescriptionTest {
     @BeforeAll
     static void setUp() {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        JAXB.marshal(new JavaTestingSlave().define().getModelDescription(), bos);
+        JAXB.marshal(new JavaTestingSlave("").define().getModelDescription(), bos);
 //        System.out.println(new String(bos.toByteArray()));
         md = JAXB.unmarshal(new ByteArrayInputStream(bos.toByteArray()), Fmi2ModelDescription.class);
     }

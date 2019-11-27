@@ -14,7 +14,7 @@ class SlaveInstance : public cppfmu::SlaveInstance
 {
 
 public:
-    SlaveInstance(const cppfmu::Memory& memory, JNIEnv* env, const std::string& resources);
+    SlaveInstance(const cppfmu::Memory& memory, JNIEnv* env, const std::string& instanceName, const std::string& resources);
 
     void SetupExperiment(cppfmu::FMIBoolean toleranceDefined, cppfmu::FMIReal tolerance, cppfmu::FMIReal tStart, cppfmu::FMIBoolean stopTimeDefined, cppfmu::FMIReal tStop) override;
     void EnterInitializationMode() override;

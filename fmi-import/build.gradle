@@ -6,6 +6,8 @@ plugins {
 
 apply plugin: 'kotlin'
 
+version = '0.26.0'
+
 apply from: rootProject.file("gradle/log4j.gradle")
 apply from: rootProject.file("gradle/junit.gradle")
 apply from: rootProject.file("gradle/copyfmus.gradle")

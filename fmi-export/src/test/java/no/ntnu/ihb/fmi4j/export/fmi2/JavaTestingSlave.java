@@ -1,13 +1,20 @@
-package no.ntnu.ihb.fmi4j;
+package no.ntnu.ihb.fmi4j.export.fmi2;
 
+import no.ntnu.ihb.fmi4j.export.RealVector;
 import no.ntnu.ihb.fmi4j.modeldescription.fmi2.Fmi2Causality;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @SlaveInfo(
         modelName = "Test",
         author = "Lars Ivar Hatledal",
         license = "MIT"
 )
-class JavaTestingSlave extends Fmi2Slave {
+class JavaTestingSlave extends Slave {
+
+    private static final Logger LOG = Logger.getLogger(JavaTestingSlave.class.getName());
 
     @ScalarVariable(causality = Fmi2Causality.output)
     protected double realOut = 2.0;
@@ -24,10 +31,13 @@ class JavaTestingSlave extends Fmi2Slave {
     @VariableContainer
     protected Container container = new Container();
 
+    public JavaTestingSlave(@NotNull String instanceName) {
+        super(instanceName);
+    }
+
     @Override
-    public boolean doStep(double currentTime, double dt) {
-        System.out.println("currentTime=" + dt + ", dt=" + dt);
-        return true;
+    public void doStep(double currentTime, double dt) {
+        LOG.log(Level.INFO, "currentTime=" + dt + ", dt=" + dt);
     }
 
     static class Container {
