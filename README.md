@@ -62,7 +62,7 @@ class Demo {
         modelName = "JavaSlave",
         author = "John Doe"
 )
-public class JavaSlave extends Fmi2Slave {
+public class JavaSlave extends Slave {
 
     @ScalarVariable(causality = Fmi2Causality.output)
     protected double realOut = 2.0;
@@ -75,11 +75,14 @@ public class JavaSlave extends Fmi2Slave {
 
     @ScalarVariable(causality = Fmi2Causality.local)
     protected String[] string = {"Hello", "world!"};
-    
+
+    public JaveSlave(String instanceName) {
+        super(instanceName);
+    }   
+
     @Override
-    public boolean doStep(double currentTime, double dt) {
+    public void doStep(double currentTime, double dt) {
         realOut += dt;
-        return true;
     }
 
 }
