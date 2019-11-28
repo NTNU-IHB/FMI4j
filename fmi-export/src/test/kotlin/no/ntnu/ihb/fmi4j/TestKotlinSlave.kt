@@ -9,9 +9,10 @@ internal class TestKotlinSlave {
     fun testKotlinSlave() {
 
         val slave = KotlinTestingSlave("instance").definekt()
-        val md = KotlinTestingSlave("instance").definekt().modelDescription
-        Assertions.assertEquals("container.value", md.modelVariables.scalarVariable[0].name)
-        Assertions.assertEquals("container.container2.value2", md.modelVariables.scalarVariable[1].name)
+        with(slave.modelDescription) {
+            Assertions.assertEquals("container.value", modelVariables.scalarVariable[0].name)
+            Assertions.assertEquals("container.container2.value2", modelVariables.scalarVariable[1].name)
+        }
 
     }
 

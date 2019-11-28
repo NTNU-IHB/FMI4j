@@ -51,7 +51,7 @@ class CoSimulationSlave internal constructor(
      */
     override fun setup(start: Double, stop: Double, tolerance: Double): Boolean {
 
-        LOG.debug("FMU '${modelDescription.modelName}' setup with start=$start, stop=$stop")
+        LOG.trace("FMU '${modelDescription.modelName}' setup with start=$start, stop=$stop")
 
         if (start < 0) {
             LOG.error("Start must be a positive value, was $start!")
