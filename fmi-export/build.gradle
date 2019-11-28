@@ -5,8 +5,6 @@ plugins {
 
 apply plugin: 'kotlin'
 
-version = '0.1.0'
-
 apply from: rootProject.file("gradle/junit.gradle")
 apply from: rootProject.file("gradle/mavenpublish.gradle")
 apply from: rootProject.file("gradle/bintraypublish.gradle")
