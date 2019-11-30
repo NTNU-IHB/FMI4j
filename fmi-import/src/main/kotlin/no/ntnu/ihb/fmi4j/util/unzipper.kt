@@ -1,3 +1,4 @@
+@file:JvmName("Unzipper")
 /*
  * The MIT License
  *
@@ -34,7 +35,7 @@ import java.util.zip.ZipInputStream
  *
  * @param directory folder to extract to
  */
-internal fun File.extractContentTo(directory: File) {
+fun File.extractContentTo(directory: File) {
     inputStream().extractContentTo(directory)
 }
 
@@ -43,7 +44,7 @@ internal fun File.extractContentTo(directory: File) {
  *
  * @param directory folder to extract to
  */
-internal fun URL.extractContentTo(directory: File) {
+fun URL.extractContentTo(directory: File) {
     openStream().extractContentTo(directory)
 }
 
@@ -52,7 +53,7 @@ internal fun URL.extractContentTo(directory: File) {
  *
  * @param directory folder to extract to
  */
-internal fun InputStream.extractContentTo(directory: File) {
+fun InputStream.extractContentTo(directory: File) {
 
     ZipInputStream(this).use { zis ->
         var zipEntry = zis.nextEntry
