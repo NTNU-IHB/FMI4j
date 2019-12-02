@@ -114,19 +114,16 @@ abstract class AbstractModelInstance<out E : CommonModelDescription, out T : Fmi
         return wrapper.exitInitializationMode().isOK()
     }
 
-    override fun terminate(): Boolean {
-        return terminate(true)
-    }
-
     /**
      * Terminates the FMU
      *
      * @param freeInstance true if you are completely finished with the fmuInstance
      *
      */
-    fun terminate(freeInstance: Boolean): Boolean {
-        return wrapper.terminate(freeInstance).let { status ->
-            LOG.debug("FMU '${modelDescription.modelName}' terminated with status $status! #${hashCode()}")
+    override fun terminate(): Boolean {
+        if (isTerminated) return false
+        return wrapper.terminate().let { status ->
+            LOG.debug("${modelDescription.modelName} instance '${instanceName}' terminated with status $status!}")
             status.isOK()
         }
     }
@@ -136,7 +133,8 @@ abstract class AbstractModelInstance<out E : CommonModelDescription, out T : Fmi
     }
 
     override fun close() {
-        terminate(true)
+        terminate()
+        wrapper.freeInstance()
     }
 
     override fun getDirectionalDerivative(vUnknownRef: ValueReferences, vKnownRef: ValueReferences, dvKnown: RealArray): RealArray {

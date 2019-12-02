@@ -187,11 +187,10 @@ abstract class Fmi1LibraryWrapper<E : Fmi1Library>(
     val version: String
         get() = library.getVersion()
 
-    @JvmOverloads
-    fun terminate(freeInstance: Boolean = true): FmiStatus {
-
-        if (!isTerminated) {
-
+    fun terminate(): FmiStatus {
+        if (isTerminated) {
+            return FmiStatus.OK
+        } else {
             return try {
                 updateStatus(library.terminate(c))
             } catch (ex: Error) {
@@ -199,14 +198,8 @@ abstract class Fmi1LibraryWrapper<E : Fmi1Library>(
                 updateStatus(FmiStatus.OK)
             } finally {
                 isTerminated = true
-                if (freeInstance) {
-                    freeInstance()
-                }
             }
 
-        } else {
-            LOG.warn("Terminated has already been called..")
-            return FmiStatus.OK
         }
     }
 

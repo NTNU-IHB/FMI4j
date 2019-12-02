@@ -78,18 +78,16 @@ abstract class AbstractModelInstance<out E : CommonModelDescription, out T : Fmi
     }
 
     override fun terminate(): Boolean {
-        return terminate(true)
-    }
-
-    fun terminate(freeInstance: Boolean): Boolean {
-        return wrapper.terminate(freeInstance).let { status ->
-            LOG.debug("FMU '${modelDescription.modelName}' terminated with status $status! #${hashCode()}")
+        if (isTerminated) return false
+        return wrapper.terminate().let { status ->
+            LOG.debug("${modelDescription.modelName} instance '${instanceName}' terminated with status $status!")
             status.isOK()
         }
     }
 
     override fun close() {
-        terminate(true)
+        terminate()
+        wrapper.freeInstance()
     }
 
     override fun read(vr: ValueReferences, ref: IntArray): FmiStatus {

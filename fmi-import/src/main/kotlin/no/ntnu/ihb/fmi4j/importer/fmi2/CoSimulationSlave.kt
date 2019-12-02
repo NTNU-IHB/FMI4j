@@ -66,13 +66,6 @@ class CoSimulationSlave internal constructor(
     }
 
     /**
-     * Terminates and frees the FMU instance
-     */
-    override fun terminate(): Boolean {
-        return super.terminate(freeInstance = true)
-    }
-
-    /**
      * @see CoSimulationLibraryWrapper.setRealInputDerivatives
      */
     fun setRealInputDerivatives(vr: ValueReferences, order: IntArray, value: DoubleArray): FmiStatus {

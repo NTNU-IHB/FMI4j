@@ -328,11 +328,10 @@ abstract class Fmi2LibraryWrapper<E : Fmi2Library>(
     /**
      * @see Fmi2Library.terminate
      */
-    @JvmOverloads
-    fun terminate(freeInstance: Boolean = true): FmiStatus {
-
-        return if (!isTerminated) {
-
+    fun terminate(): FmiStatus {
+        return if (isTerminated) {
+            return FmiStatus.OK
+        } else {
             try {
                 updateStatus(library.terminate(c))
             } catch (ex: Error) {
@@ -340,14 +339,6 @@ abstract class Fmi2LibraryWrapper<E : Fmi2Library>(
                 updateStatus(FmiStatus.OK)
             } finally {
                 isTerminated = true
-            }
-
-        } else {
-            LOG.warn("Terminated has already been called..")
-            FmiStatus.OK
-        }.also {
-            if (freeInstance) {
-                freeInstance()
             }
         }
     }
