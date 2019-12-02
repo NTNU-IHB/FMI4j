@@ -58,13 +58,6 @@ abstract class Fmi1Library(
         }
     }
 
-    protected fun finalize() {
-        if (!isClosed) {
-            LOG.warn("FMU was not closed prior do garbage collection! Doing it for you..")
-            close()
-        }
-    }
-
     private external fun load(dir: String, libName: String, modelIdentifier: String): Long
 
     private external fun free(p: Long): Boolean

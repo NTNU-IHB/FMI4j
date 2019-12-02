@@ -139,13 +139,6 @@ abstract class AbstractModelInstance<out E : CommonModelDescription, out T : Fmi
         terminate(true)
     }
 
-    protected fun finalize() {
-        if (!isTerminated) {
-            LOG.warn("Instance ${modelDescription.modelName} was not terminated before garbage collection. Doing it for you..")
-            close()
-        }
-    }
-
     override fun getDirectionalDerivative(vUnknownRef: ValueReferences, vKnownRef: ValueReferences, dvKnown: RealArray): RealArray {
         check(modelDescription.attributes.providesDirectionalDerivative) { "Illegal call. FMU does not provide directional derivatives!" }
         return RealArray(vUnknownRef.size).also { dvUnknown ->
