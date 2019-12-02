@@ -16,7 +16,7 @@ class Test {
     @EnabledOnOs(OS.WINDOWS)
     fun TestFmi1() {
 
-        val file = File(Test::class.java.classLoader.getResource("fmus/1.0/cs/BouncingBall.fmu").file)
+        val file = File(Test::class.java.classLoader.getResource("fmus/1.0/cs/BouncingBall.fmu")!!.file)
         Assertions.assertEquals("1.0", ModelDescriptionParser.extractVersion(file))
 
         Fmu.from(file).asCoSimulationFmu().use { fmu ->
@@ -26,14 +26,16 @@ class Test {
 
             fmu.newInstance(fmu.modelDescription.attributes.modelIdentifier).use { slave ->
 
-                slave.setup()
+                slave.simpleSetup()
                 Assertions.assertEquals(1.0, slave.readReal("h").value)
 
-                for (i in 0..10) {
-                    slave.doStep(1E-3)
+                while (slave.simulationTime < 3.0) {
+                    slave.doStep(1E-2)
                 }
 
-                Assertions.assertTrue(slave.readReal("h").value < 1.0)
+                Assertions.assertEquals(0.014, slave.readReal("h").value, 1e-3)
+
+                slave.terminate()
 
             }
 
@@ -45,7 +47,7 @@ class Test {
     @EnabledOnOs(OS.WINDOWS)
     fun testAbstractFmuLoad() {
 
-        val file = File(Test::class.java.classLoader.getResource("fmus/1.0/cs/BouncingBall.fmu").file)
+        val file = File(Test::class.java.classLoader.getResource("fmus/1.0/cs/BouncingBall.fmu")!!.file)
         AbstractFmu.from(file).asCoSimulationFmu().use { fmu ->
 
             fmu.newInstance(fmu.modelDescription.attributes.modelIdentifier).use { slave ->
