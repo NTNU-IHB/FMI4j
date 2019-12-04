@@ -151,6 +151,7 @@ abstract class AbstractFmu internal constructor(
                         //mutableList because the list is modified during call
                         it.close()
                     }
+                    fmus.clear()
                 }
             })
         }
@@ -160,7 +161,7 @@ abstract class AbstractFmu internal constructor(
         }
 
         private fun getModelDescriptionFileFromExtractedFmuDir(folder: File): File {
-            return folder.listFiles().find {
+            return folder.listFiles()?.find {
                 it.name == MODEL_DESC
             } ?: throw IllegalArgumentException("Folder '$folder' does not contain a file named '$MODEL_DESC'!")
         }

@@ -30,6 +30,7 @@ import no.ntnu.ihb.fmi4j.importer.fmi2.jni.CoSimulationLibraryWrapper
 import no.ntnu.ihb.fmi4j.importer.fmi2.jni.Fmi2CoSimulationLibrary
 import no.ntnu.ihb.fmi4j.modeldescription.CoSimulationModelDescription
 import java.io.Closeable
+import java.util.*
 
 
 class CoSimulationFmu(

@@ -51,7 +51,7 @@ class Test {
         AbstractFmu.from(file).asCoSimulationFmu().use { fmu ->
 
             fmu.newInstance(fmu.modelDescription.attributes.modelIdentifier).use { slave ->
-                Assertions.assertTrue(slave.setup())
+                Assertions.assertTrue(slave.simpleSetup())
             }
 
         }

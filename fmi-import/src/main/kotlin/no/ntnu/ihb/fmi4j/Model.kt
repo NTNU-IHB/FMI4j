@@ -29,10 +29,13 @@ import no.ntnu.ihb.fmi4j.modeldescription.CommonModelDescription
 import no.ntnu.ihb.fmi4j.modeldescription.ModelDescription
 import no.ntnu.ihb.fmi4j.modeldescription.ModelExchangeModelDescription
 import java.io.Closeable
+import java.util.*
 
 interface Model<E: CommonModelDescription> : Closeable {
 
     val modelDescription: ModelDescription
+
+    fun newInstance(): ModelInstance<E>
 
     fun newInstance(instanceName: String): ModelInstance<E>
 
@@ -43,6 +46,12 @@ interface CoSimulationModel: Model<CoSimulationModelDescription> {
 
     override val modelDescription: CoSimulationModelDescription
 
+    @JvmDefault
+    override fun newInstance(): SlaveInstance {
+        val modelIdentifier = modelDescription.attributes.modelIdentifier
+        return newInstance("${modelIdentifier}_${UUID.randomUUID()}")
+    }
+
     override fun newInstance(instanceName: String): SlaveInstance
 
 }
@@ -51,5 +60,10 @@ interface ModelExchangeModel: Model<ModelExchangeModelDescription> {
 
     override val modelDescription: ModelExchangeModelDescription
 
+    @JvmDefault
+    override fun newInstance(): ModelInstance<ModelExchangeModelDescription> {
+        val modelIdentifier = modelDescription.attributes.modelIdentifier
+        return newInstance("${modelIdentifier}_${UUID.randomUUID()}")
+    }
 }
 
