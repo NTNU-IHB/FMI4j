@@ -12,9 +12,9 @@ import java.util.logging.Logger;
         author = "Lars Ivar Hatledal",
         license = "MIT"
 )
-class JavaTestingSlave extends Slave {
+class JavaTestingFmi2Slave extends Fmi2Slave {
 
-    private static final Logger LOG = Logger.getLogger(JavaTestingSlave.class.getName());
+    private static final Logger LOG = Logger.getLogger(JavaTestingFmi2Slave.class.getName());
 
     @ScalarVariable(causality = Fmi2Causality.output)
     protected double realOut = 2.0;
@@ -31,7 +31,7 @@ class JavaTestingSlave extends Slave {
     @VariableContainer
     protected Container container = new Container();
 
-    public JavaTestingSlave(@NotNull String instanceName) {
+    public JavaTestingFmi2Slave(@NotNull String instanceName) {
         super(instanceName);
     }
 

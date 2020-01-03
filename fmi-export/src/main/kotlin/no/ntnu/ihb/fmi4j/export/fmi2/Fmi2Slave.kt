@@ -11,7 +11,7 @@ import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.logging.Logger
 
-abstract class Slave(
+abstract class Fmi2Slave(
         val instanceName: String
 ) {
 
@@ -20,14 +20,14 @@ abstract class Slave(
     private val accessors_ = mutableListOf<Accessor<*>>()
     private val accessors: MutableList<Accessor<*>>
         get() {
-            check(defined.get()) { "Model has not been defined!" }
+            if(!defined.getAndSet(true)) { define() }
             return accessors_
         }
 
     private val modelDescription_ = Fmi2ModelDescription()
     val modelDescription: Fmi2ModelDescription
         get() {
-            check(defined.get()) { "Model has not been defined!" }
+            if(!defined.getAndSet(true)) { define() }
             return modelDescription_
         }
 
@@ -212,7 +212,9 @@ abstract class Slave(
 
             field.getAnnotation(VariableContainer::class.java)?.also {
                 field.isAccessible = true
-                checkFields(field.type, field.get(owner), "$prepend${field.name}.", level + 1)
+                field.get(owner)?.also {
+                    checkFields(field.type, it, "$prepend${field.name}.", level + 1)
+                }
             }
 
             field.getAnnotation(ScalarVariable::class.java)?.also { annotation ->
@@ -345,13 +347,7 @@ abstract class Slave(
         return "${dateFormat}T${timeFormat}Z"
     }
 
-    internal fun definekt() = define()
-
-    protected fun define(): Slave {
-
-        if (defined.getAndSet(true)) {
-            return this
-        }
+    private fun define(): Fmi2Slave {
 
         modelDescription.fmiVersion = "2.0"
         modelDescription.generationTool = "fmi4j"
@@ -411,7 +407,7 @@ abstract class Slave(
     }
 
     private companion object {
-        private val LOG: Logger = Logger.getLogger(Slave::class.java.name)
+        private val LOG: Logger = Logger.getLogger(Fmi2Slave::class.java.name)
     }
 
 }

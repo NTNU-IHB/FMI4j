@@ -31,7 +31,7 @@ object FmuBuilder {
             require(jarFile.exists()) {"No such File '$jarFile'"}
 
             val classLoader = URLClassLoader(arrayOf(jarFile.toURI().toURL()))
-            val superClass = classLoader.loadClass("no.ntnu.ihb.fmi4j.export.fmi2.Slave")
+            val superClass = classLoader.loadClass("no.ntnu.ihb.fmi4j.export.fmi2.Fmi2Slave")
             val subClass = classLoader.loadClass(mainClass)
             val instance = subClass.getConstructor(String::class.java).newInstance("dummyInstance")
 

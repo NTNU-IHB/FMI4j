@@ -1,15 +1,22 @@
 package no.ntnu.ihb.fmi4j
 
-import no.ntnu.ihb.fmi4j.export.fmi2.Slave
+import no.ntnu.ihb.fmi4j.export.fmi2.Fmi2Slave
 import no.ntnu.ihb.fmi4j.export.fmi2.ScalarVariable
 import no.ntnu.ihb.fmi4j.export.fmi2.VariableContainer
 
-class KotlinTestingSlave(
+class KotlinTestingFmi2Slave(
         instanceName: String
-): Slave(instanceName) {
+): Fmi2Slave(instanceName) {
 
     @VariableContainer
     val container = TestContainer()
+
+    @ScalarVariable
+    var str: String? = null
+
+    override fun setupExperiment(startTime: Double) {
+        str = startTime.toString()
+    }
 
     override fun doStep(currentTime: Double, dt: Double) {}
 

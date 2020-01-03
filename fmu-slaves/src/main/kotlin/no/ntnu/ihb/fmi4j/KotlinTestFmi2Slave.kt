@@ -1,12 +1,12 @@
 package no.ntnu.ihb.fmi4j
 
-import no.ntnu.ihb.fmi4j.export.fmi2.Slave
+import no.ntnu.ihb.fmi4j.export.fmi2.Fmi2Slave
 import no.ntnu.ihb.fmi4j.export.fmi2.ScalarVariable
 import no.ntnu.ihb.fmi4j.export.fmi2.VariableContainer
 
-class KotlinTestSlave(
+class KotlinTestFmi2Slave(
         instanceName: String
-): Slave(instanceName) {
+): Fmi2Slave(instanceName) {
 
     @ScalarVariable
     private val speed: Double = 10.0

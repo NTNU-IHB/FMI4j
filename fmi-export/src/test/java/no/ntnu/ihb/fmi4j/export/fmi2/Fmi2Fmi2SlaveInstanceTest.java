@@ -4,13 +4,13 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-class Fmi2SlaveInstanceTest {
+class Fmi2Fmi2SlaveInstanceTest {
 
-    private static JavaTestingSlave slave;
+    private static JavaTestingFmi2Slave slave;
 
     @BeforeAll
     static void setUp() {
-        slave = (JavaTestingSlave) new JavaTestingSlave("").define();
+        slave = new JavaTestingFmi2Slave("");
     }
 
     @Test

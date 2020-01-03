@@ -10,14 +10,14 @@ import javax.xml.bind.JAXB;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
-class Fmi2SlaveModelDescriptionTest {
+class Fmi2Fmi2SlaveModelDescriptionTest {
 
     private static Fmi2ModelDescription md;
 
     @BeforeAll
     static void setUp() {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        JAXB.marshal(new JavaTestingSlave("").define().getModelDescription(), bos);
+        JAXB.marshal(new JavaTestingFmi2Slave("").getModelDescription(), bos);
 //        System.out.println(new String(bos.toByteArray()));
         md = JAXB.unmarshal(new ByteArrayInputStream(bos.toByteArray()), Fmi2ModelDescription.class);
     }

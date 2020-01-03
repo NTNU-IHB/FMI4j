@@ -18,7 +18,7 @@ class TestBuilder {
 
     @Test
     fun testJavaClass() {
-        FmuBuilder.main(arrayOf("-f", jar, "-m", "$group.JavaTestSlave", "-d", dest))
+        FmuBuilder.main(arrayOf("-f", jar, "-m", "$group.JavaTestFmi2Slave", "-d", dest))
         for (i in 0..2) {
             testFmu(File(dest, "Test.fmu"))
         }
@@ -26,8 +26,8 @@ class TestBuilder {
 
     @Test
     fun testKotlinClass() {
-        FmuBuilder.main(arrayOf("-f", jar, "-m", "$group.KotlinTestSlave", "-d", dest))
-        testFmu(File(dest, "KotlinTestSlave.fmu"))
+        FmuBuilder.main(arrayOf("-f", jar, "-m", "$group.KotlinTestFmi2Slave", "-d", dest))
+        testFmu(File(dest, "KotlinTestFmi2Slave.fmu"))
     }
 
     private fun testFmu(fmuFile: File) {
