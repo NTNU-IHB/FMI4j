@@ -46,8 +46,9 @@ open class Fmi2Library(
         lib: File
 ) : Closeable {
 
-    protected val p: Long = load(lib.parent, lib.name)
     private var isClosed = false
+    internal lateinit var instanceName: String
+    protected val p: Long = load(lib.parent, lib.name)
 
     override fun close() {
         if (!isClosed) {
@@ -136,7 +137,9 @@ open class Fmi2Library(
 
     fun instantiate(instanceName: String, type: Int, guid: String,
                     resourceLocation: String, visible: Boolean, loggingOn: Boolean): Long {
-        return instantiate(p, instanceName, type, guid, resourceLocation, visible, loggingOn)
+        return instantiate(p, instanceName, type, guid, resourceLocation, visible, loggingOn).also {
+            this.instanceName = instanceName
+        }
     }
 
     fun setDebugLogging(c: Fmi2Component, loggingOn: Boolean, categories: Array<String>): FmiStatus {
@@ -356,7 +359,7 @@ abstract class Fmi2LibraryWrapper<E : Fmi2Library>(
                 LOG.error("Error caught on fmi2FreeInstance: ${ex.javaClass.simpleName}")
             } finally {
                 val msg = if (success) "successfully" else "unsuccessfully"
-                LOG.debug("Instance freed $msg")
+                LOG.debug("FMU instance '${library.instanceName}' freed $msg!")
                 _library = null
                 System.gc()
             }

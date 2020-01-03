@@ -58,7 +58,9 @@ class Fmi1ModelExchangeLibrary(
     private external fun getStateValueReferences(p: Long, c: FmiComponent, vrx: ValueReferences): NativeStatus
 
     fun instantiateModel(instanceName: String, guid: String, loggingOn: Boolean): FmiComponent {
-        return instantiateModel(p, instanceName, guid, loggingOn)
+        return instantiateModel(p, instanceName, guid, loggingOn).also {
+            this.instanceName = instanceName
+        }
     }
 
     fun initialize(c: FmiComponent, toleranceControlled: Boolean, relativeTolerance: Double): FmiStatus {

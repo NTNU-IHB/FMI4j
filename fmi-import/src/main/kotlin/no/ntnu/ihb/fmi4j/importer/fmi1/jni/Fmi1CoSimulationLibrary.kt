@@ -72,9 +72,10 @@ class Fmi1CoSimulationLibrary(
 
     private external fun getBooleanStatus(p: Long, c: FmiComponent, s: Int, value: BooleanByReference): NativeStatus
 
-    fun instantiateSlave(instanceName: String, guid: String,
-                         fmuLocation: String, loggingOn: Boolean): Long {
-        return instantiateSlave(p, instanceName, guid, fmuLocation, loggingOn)
+    fun instantiateSlave(instanceName: String, guid: String, fmuLocation: String, loggingOn: Boolean): Long {
+        return instantiateSlave(p, instanceName, guid, fmuLocation, loggingOn).also {
+            this.instanceName = instanceName
+        }
     }
 
     fun initializeSlave(c: FmiComponent, startTime: Double, stopTime: Double): FmiStatus {

@@ -45,8 +45,9 @@ abstract class Fmi1Library(
         modelIdentifier: String
 ) : Closeable {
 
-    protected val p: Long = load(lib.parent, lib.name, modelIdentifier)
+    internal lateinit var instanceName: String
     private var isClosed = false
+    protected val p: Long = load(lib.parent, lib.name, modelIdentifier)
 
     override fun close() {
         if (!isClosed) {
@@ -213,7 +214,7 @@ abstract class Fmi1LibraryWrapper<E : Fmi1Library>(
                 LOG.error("Error caught on fmiFreeInstance: ${ex.javaClass.simpleName}")
             } finally {
                 val msg = if (success) "successfully" else "unsuccessfully"
-                LOG.debug("Instance freed $msg")
+                LOG.debug("FMU instance ${library.instanceName} freed $msg!")
                 _library = null
                 System.gc()
             }
