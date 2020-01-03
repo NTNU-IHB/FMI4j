@@ -3,6 +3,7 @@ package no.ntnu.ihb.fmi4j.export.fmi2
 import no.ntnu.ihb.fmi4j.export.IntVector
 import no.ntnu.ihb.fmi4j.export.RealVector
 import no.ntnu.ihb.fmi4j.modeldescription.fmi2.*
+import java.io.ByteArrayOutputStream
 import java.io.File
 import java.lang.reflect.Modifier
 import java.time.LocalDateTime
@@ -10,32 +11,36 @@ import java.time.format.DateTimeFormatter
 import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.logging.Logger
+import javax.xml.bind.JAXB
 
-abstract class Fmi2Slave(
+abstract class Fmi2Slave (
         val instanceName: String
 ) {
 
-    private val defined = AtomicBoolean(false)
+    private val isDefined = AtomicBoolean(false)
 
     private val accessors_ = mutableListOf<Accessor<*>>()
     private val accessors: MutableList<Accessor<*>>
         get() {
-            if(!defined.getAndSet(true)) { define() }
             return accessors_
         }
 
     private val modelDescription_ = Fmi2ModelDescription()
     val modelDescription: Fmi2ModelDescription
         get() {
-            if(!defined.getAndSet(true)) { define() }
             return modelDescription_
         }
-
 
     private lateinit var resourceLocation: String
 
     fun getFmuResource(name: String): File {
         return File(resourceLocation, name)
+    }
+
+    val modelDescriptionXml by lazy {
+        val bos = ByteArrayOutputStream()
+        JAXB.marshal(modelDescription, bos)
+        String((bos.toByteArray()))
     }
 
     open fun setupExperiment(startTime: Double) {}
@@ -154,14 +159,21 @@ abstract class Fmi2Slave(
                 ?: throw IllegalArgumentException("No such variable with name $name!")
     }
 
+    private fun requiresStart(v: Fmi2ScalarVariable): Boolean {
+        return v.initial == Fmi2Initial.exact ||
+                v.initial == Fmi2Initial.approx ||
+                v.causality == Fmi2Causality.input ||
+                v.causality == Fmi2Causality.parameter ||
+                v.variability == Fmi2Variability.constant
+    }
+
     private fun internalRegister(v: Variable<*>): Fmi2ScalarVariable {
         return Fmi2ScalarVariable().also { s ->
             s.name = v.name
             s.valueReference = accessors.size.toLong()
             v.causality?.also { s.causality = it }
             v.variability?.also { s.variability = it }
-            v.initial?.also { if (s.initial != Fmi2Initial.undefined) s.initial = it }
-
+            v.initial?.also { if (v.initial != Fmi2Initial.undefined) s.initial = it }
             accessors.add(v.accessor)
             modelDescription.modelVariables.scalarVariable.add(s)
         }
@@ -171,8 +183,12 @@ abstract class Fmi2Slave(
     protected fun registerInteger(int: IntBuilder) {
         val build = int.build()
         internalRegister(build).also { v ->
-            v.integer = Fmi2ScalarVariable.Integer().also { _ ->
-                //                type.start = build.accessor.getter.invoke()
+            v.integer = Fmi2ScalarVariable.Integer().also { type ->
+                if (requiresStart(v)) {
+                    build.accessor.getter.invoke().also {
+                        type.start = it
+                    }
+                }
             }
         }
     }
@@ -180,8 +196,12 @@ abstract class Fmi2Slave(
     protected fun registerReal(real: RealBuilder) {
         val build = real.build()
         internalRegister(build).also { v ->
-            v.real = Fmi2ScalarVariable.Real().also { _ ->
-                //                type.start = build.accessor.getter.invoke()
+            if (requiresStart(v)) {
+                v.real = Fmi2ScalarVariable.Real().also { type ->
+                    build.accessor.getter.invoke().also {
+                        type.start = it
+                    }
+                }
             }
         }
     }
@@ -189,8 +209,12 @@ abstract class Fmi2Slave(
     protected fun registerBoolean(real: BooleanBuilder) {
         val build = real.build()
         internalRegister(build).also { v ->
-            v.boolean = Fmi2ScalarVariable.Boolean().also { _ ->
-                //                type.isStart = build.accessor.getter.invoke()
+            if (requiresStart(v)) {
+                v.boolean = Fmi2ScalarVariable.Boolean().also { type ->
+                    build.accessor.getter.invoke().also {
+                        type.isStart = it
+                    }
+                }
             }
         }
     }
@@ -198,8 +222,12 @@ abstract class Fmi2Slave(
     protected fun registerString(real: StringBuilder) {
         val build = real.build()
         internalRegister(build).also { v ->
-            v.string = Fmi2ScalarVariable.String().also { _ ->
-                //                real.start = build.accessor.getter.invoke()
+            if (requiresStart(v)) {
+                v.string = Fmi2ScalarVariable.String().also { type ->
+                    build.accessor.getter.invoke().also {
+                        type.start = it
+                    }
+                }
             }
         }
     }
@@ -347,7 +375,15 @@ abstract class Fmi2Slave(
         return "${dateFormat}T${timeFormat}Z"
     }
 
-    private fun define(): Fmi2Slave {
+    protected open fun define() {}
+
+    fun __define__(): Fmi2Slave {
+
+        if (isDefined.getAndSet(true)) {
+            return this
+        }
+
+        define()
 
         modelDescription.fmiVersion = "2.0"
         modelDescription.generationTool = "fmi4j"

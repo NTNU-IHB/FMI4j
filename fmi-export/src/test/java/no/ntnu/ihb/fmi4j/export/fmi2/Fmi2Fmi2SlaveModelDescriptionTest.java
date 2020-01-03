@@ -17,8 +17,10 @@ class Fmi2Fmi2SlaveModelDescriptionTest {
     @BeforeAll
     static void setUp() {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        JAXB.marshal(new JavaTestingFmi2Slave("").getModelDescription(), bos);
-//        System.out.println(new String(bos.toByteArray()));
+        JavaTestingFmi2Slave slave = new JavaTestingFmi2Slave("");
+        slave.__define__();
+        System.out.println(slave.getModelDescriptionXml());
+        JAXB.marshal(slave.getModelDescription(), bos);
         md = JAXB.unmarshal(new ByteArrayInputStream(bos.toByteArray()), Fmi2ModelDescription.class);
     }
 
@@ -34,7 +36,7 @@ class Fmi2Fmi2SlaveModelDescriptionTest {
                 .stream().filter(v -> v.getValueReference() == 0).findFirst().get();
 
         Assertions.assertNotNull(var);
-//        Assertions.assertEquals(2.0, (double) var.getReal().getStart());
+        Assertions.assertEquals(2.0, (double) var.getReal().getStart());
     }
 
     @Test
@@ -43,13 +45,13 @@ class Fmi2Fmi2SlaveModelDescriptionTest {
                 .stream().filter(v -> v.getValueReference() == 1).findFirst().get();
 
         Assertions.assertNotNull(v1);
-//        Assertions.assertEquals(50.0, (double) v1.getReal().getStart());
+        Assertions.assertEquals(50.0, (double) v1.getReal().getStart());
 
         Fmi2ScalarVariable v2 = md.getModelVariables().getScalarVariable()
                 .stream().filter(v -> v.getValueReference() == 2).findFirst().get();
 
         Assertions.assertNotNull(v2);
-//        Assertions.assertEquals(200.0, (double) v2.getReal().getStart());
+        Assertions.assertEquals(200.0, (double) v2.getReal().getStart());
     }
 
     @Test
@@ -58,13 +60,13 @@ class Fmi2Fmi2SlaveModelDescriptionTest {
                 .stream().filter(v -> v.getValueReference() == 3).findFirst().get();
 
         Assertions.assertNotNull(v1);
-//        Assertions.assertEquals("Hello", v1.getString().getStart());
+        Assertions.assertEquals("Hello", v1.getString().getStart());
 
         Fmi2ScalarVariable v2 = md.getModelVariables().getScalarVariable()
                 .stream().filter(v -> v.getValueReference() == 4).findFirst().get();
 
         Assertions.assertNotNull(v2);
-//        Assertions.assertEquals("world!", v2.getString().getStart());
+        Assertions.assertEquals("world!", v2.getString().getStart());
     }
 
 }

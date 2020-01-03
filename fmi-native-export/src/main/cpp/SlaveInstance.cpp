@@ -52,7 +52,7 @@ SlaveInstance::SlaveInstance(
     }
 
     env->SetObjectField(slave_, GetFieldID(env, slaveCls, "resourceLocation", "Ljava/lang/String;"), env->NewStringUTF(resources.c_str()));
-    env->CallObjectMethod(slave_, GetMethodID(env, slaveCls, "define", "()Lno/ntnu/ihb/fmi4j/export/fmi2/Fmi2Slave;"));
+    env->CallObjectMethod(slave_, GetMethodID(env, slaveCls, "__define__", "()Lno/ntnu/ihb/fmi4j/export/fmi2/Fmi2Slave;"));
 
     setupExperimentId_ = GetMethodID(env, slaveCls, "setupExperiment", "(D)V");
     enterInitialisationModeId_ = GetMethodID(env, slaveCls, "enterInitialisationMode", "()V");

@@ -35,7 +35,7 @@ object FmuBuilder {
             val subClass = classLoader.loadClass(mainClass)
             val instance = subClass.getConstructor(String::class.java).newInstance("dummyInstance")
 
-            val define = superClass.getDeclaredMethod("define")
+            val define = superClass.getDeclaredMethod("__define__")
             define.isAccessible = true
             define.invoke(instance)
             val getModelDescription = superClass.getDeclaredMethod("getModelDescription")

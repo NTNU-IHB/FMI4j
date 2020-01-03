@@ -3,6 +3,8 @@ package no.ntnu.ihb.fmi4j
 import no.ntnu.ihb.fmi4j.export.fmi2.Fmi2Slave
 import no.ntnu.ihb.fmi4j.export.fmi2.ScalarVariable
 import no.ntnu.ihb.fmi4j.export.fmi2.VariableContainer
+import no.ntnu.ihb.fmi4j.modeldescription.fmi2.Fmi2Causality
+import no.ntnu.ihb.fmi4j.modeldescription.fmi2.Fmi2Variability
 
 class KotlinTestingFmi2Slave(
         instanceName: String
@@ -13,6 +15,9 @@ class KotlinTestingFmi2Slave(
 
     @ScalarVariable
     var str: String? = null
+
+    @ScalarVariable(causality = Fmi2Causality.parameter, variability = Fmi2Variability.constant)
+    var start: Double = 5.0
 
     override fun setupExperiment(startTime: Double) {
         str = startTime.toString()

@@ -2,6 +2,8 @@ package no.ntnu.ihb.fmi4j.export.fmi2;
 
 import no.ntnu.ihb.fmi4j.export.RealVector;
 import no.ntnu.ihb.fmi4j.modeldescription.fmi2.Fmi2Causality;
+import no.ntnu.ihb.fmi4j.modeldescription.fmi2.Fmi2Initial;
+import no.ntnu.ihb.fmi4j.modeldescription.fmi2.Fmi2Variability;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.logging.Level;
@@ -16,13 +18,13 @@ class JavaTestingFmi2Slave extends Fmi2Slave {
 
     private static final Logger LOG = Logger.getLogger(JavaTestingFmi2Slave.class.getName());
 
-    @ScalarVariable(causality = Fmi2Causality.output)
-    protected double realOut = 2.0;
+    @ScalarVariable(causality = Fmi2Causality.input)
+    protected double realIn = 2.0;
 
-    @ScalarVariable(causality = Fmi2Causality.output)
-    protected double[] realsOut = {50.0, 200.0};
+    @ScalarVariable(causality = Fmi2Causality.parameter)
+    protected double[] realsParams = {50.0, 200.0};
 
-    @ScalarVariable(causality = Fmi2Causality.local)
+    @ScalarVariable(causality = Fmi2Causality.local, initial = Fmi2Initial.exact)
     protected String[] string = {"Hello", "world!"};
 
     @ScalarVariable

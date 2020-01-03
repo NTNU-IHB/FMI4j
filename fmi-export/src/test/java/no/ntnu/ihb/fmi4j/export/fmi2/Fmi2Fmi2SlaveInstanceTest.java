@@ -11,12 +11,13 @@ class Fmi2Fmi2SlaveInstanceTest {
     @BeforeAll
     static void setUp() {
         slave = new JavaTestingFmi2Slave("");
+        slave.__define__();
     }
 
     @Test
     void testReal() {
-        long vr = slave.getValueReference("realOut");
-        Assertions.assertEquals(slave.realOut, slave.getReal(new long[]{vr}[0]));
+        long vr = slave.getValueReference("realIn");
+        Assertions.assertEquals(slave.realIn, slave.getReal(new long[]{vr}[0]));
         double newValue = 10;
         slave.setReal(new long[]{vr}, new double[]{newValue});
         Assertions.assertEquals(newValue, slave.getReal(new long[]{vr}[0]));
