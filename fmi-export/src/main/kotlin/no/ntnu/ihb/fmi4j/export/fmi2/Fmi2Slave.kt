@@ -13,7 +13,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 import java.util.logging.Logger
 import javax.xml.bind.JAXB
 
-abstract class Fmi2Slave (
+abstract class Fmi2Slave(
         val instanceName: String
 ) {
 
@@ -196,8 +196,8 @@ abstract class Fmi2Slave (
     protected fun registerReal(real: RealBuilder) {
         val build = real.build()
         internalRegister(build).also { v ->
-            if (requiresStart(v)) {
-                v.real = Fmi2ScalarVariable.Real().also { type ->
+            v.real = Fmi2ScalarVariable.Real().also { type ->
+                if (requiresStart(v)) {
                     build.accessor.getter.invoke().also {
                         type.start = it
                     }
@@ -209,8 +209,8 @@ abstract class Fmi2Slave (
     protected fun registerBoolean(real: BooleanBuilder) {
         val build = real.build()
         internalRegister(build).also { v ->
-            if (requiresStart(v)) {
-                v.boolean = Fmi2ScalarVariable.Boolean().also { type ->
+            v.boolean = Fmi2ScalarVariable.Boolean().also { type ->
+                if (requiresStart(v)) {
                     build.accessor.getter.invoke().also {
                         type.isStart = it
                     }
@@ -222,8 +222,8 @@ abstract class Fmi2Slave (
     protected fun registerString(real: StringBuilder) {
         val build = real.build()
         internalRegister(build).also { v ->
-            if (requiresStart(v)) {
-                v.string = Fmi2ScalarVariable.String().also { type ->
+            v.string = Fmi2ScalarVariable.String().also { type ->
+                if (requiresStart(v)) {
                     build.accessor.getter.invoke().also {
                         type.start = it
                     }
