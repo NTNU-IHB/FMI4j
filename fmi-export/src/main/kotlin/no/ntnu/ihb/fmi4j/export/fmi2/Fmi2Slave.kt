@@ -12,25 +12,18 @@ import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.logging.Logger
 import javax.xml.bind.JAXB
+import kotlin.properties.Delegates
+
+private const val MAX_LEVEL = 5
 
 abstract class Fmi2Slave(
         val instanceName: String
 ) {
 
+    val modelDescription = Fmi2ModelDescription()
+    private val accessors = mutableListOf<Accessor<*>>()
+
     private val isDefined = AtomicBoolean(false)
-
-    private val accessors_ = mutableListOf<Accessor<*>>()
-    private val accessors: MutableList<Accessor<*>>
-        get() {
-            return accessors_
-        }
-
-    private val modelDescription_ = Fmi2ModelDescription()
-    val modelDescription: Fmi2ModelDescription
-        get() {
-            return modelDescription_
-        }
-
     private lateinit var resourceLocation: String
 
     fun getFmuResource(name: String): File {
@@ -234,7 +227,7 @@ abstract class Fmi2Slave(
 
     private fun checkFields(cls: Class<*>, owner: Any = this, prepend: String = "", level: Int = 0) {
 
-        if (level > 5) return
+        if (level > MAX_LEVEL) return
 
         cls.declaredFields.forEach { field ->
 
@@ -287,6 +280,7 @@ abstract class Fmi2Slave(
                             if (!isFinal) {
                                 it.setter { field.set(owner, it) }
                             }
+                            it.apply(annotation)
                         })
                     }
                     IntArray::class.java -> {

@@ -384,9 +384,7 @@ abstract class Fmi2LibraryWrapper<E : Fmi2Library>(
     fun readInteger(valueReference: ValueReference): IntegerRead {
         return with(buffers) {
             vr[0] = valueReference
-            library.getInteger(c, vr, iv).let {
-                IntegerRead(iv[0], updateStatus(it))
-            }
+            IntegerRead(iv[0], updateStatus(library.getInteger(c, vr, iv)))
         }
     }
 
@@ -394,7 +392,7 @@ abstract class Fmi2LibraryWrapper<E : Fmi2Library>(
      * @see Fmi2Library.getInteger
      */
     override fun read(vr: ValueReferences, ref: IntArray): FmiStatus {
-        return library.getInteger(c, vr, ref).let { updateStatus(it) }
+        return updateStatus(library.getInteger(c, vr, ref))
     }
 
     /**
@@ -404,9 +402,7 @@ abstract class Fmi2LibraryWrapper<E : Fmi2Library>(
     fun readReal(valueReference: ValueReference): RealRead {
         return with(buffers) {
             vr[0] = valueReference
-            library.getReal(c, vr, rv).let {
-                RealRead(rv[0], updateStatus(it))
-            }
+            RealRead(rv[0], updateStatus(library.getReal(c, vr, rv)))
         }
     }
 
@@ -414,7 +410,7 @@ abstract class Fmi2LibraryWrapper<E : Fmi2Library>(
      * @see Fmi2Library.getReal
      */
     override fun read(vr: ValueReferences, ref: DoubleArray): FmiStatus {
-        return library.getReal(c, vr, ref).let { updateStatus(it) }
+        return updateStatus(library.getReal(c, vr, ref))
     }
 
     /**
@@ -424,9 +420,7 @@ abstract class Fmi2LibraryWrapper<E : Fmi2Library>(
     fun readString(valueReference: ValueReference): StringRead {
         return with(buffers) {
             vr[0] = valueReference
-            library.getString(c, vr, sv).let {
-                StringRead(sv[0], updateStatus(it))
-            }
+            StringRead(sv[0], updateStatus(library.getString(c, vr, sv)))
         }
     }
 
@@ -434,7 +428,7 @@ abstract class Fmi2LibraryWrapper<E : Fmi2Library>(
      * @see Fmi2Library.getString
      */
     override fun read(vr: ValueReferences, ref: StringArray): FmiStatus {
-        return library.getString(c, vr, ref).let { updateStatus(it) }
+        return updateStatus(library.getString(c, vr, ref))
     }
 
     /**
@@ -444,9 +438,7 @@ abstract class Fmi2LibraryWrapper<E : Fmi2Library>(
     fun readBoolean(valueReference: ValueReference): BooleanRead {
         return with(buffers) {
             vr[0] = valueReference
-            library.getBoolean(c, vr, bv).let {
-                BooleanRead(bv[0], updateStatus(it))
-            }
+            BooleanRead(bv[0], updateStatus(library.getBoolean(c, vr, bv)))
         }
     }
 
@@ -454,7 +446,7 @@ abstract class Fmi2LibraryWrapper<E : Fmi2Library>(
      * @see Fmi2Library.getBoolean
      */
     override fun read(vr: ValueReferences, ref: BooleanArray): FmiStatus {
-        return library.getBoolean(c, vr, ref).let { updateStatus(it) }
+        return updateStatus(library.getBoolean(c, vr, ref))
     }
 
     /**

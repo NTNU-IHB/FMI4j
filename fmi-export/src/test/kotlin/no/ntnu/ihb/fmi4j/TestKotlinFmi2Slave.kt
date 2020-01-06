@@ -15,7 +15,7 @@ internal class TestKotlinFmi2Slave {
         with(slave.modelDescription) {
             Assertions.assertEquals("container.value", modelVariables.scalarVariable[0].name)
             Assertions.assertEquals("container.container2.value2", modelVariables.scalarVariable[1].name)
-            Assertions.assertEquals(slave.getString(2), "1.0")
+            Assertions.assertEquals(slave.getString(slave.getValueReference("str")), "1.0")
         }
 
     }

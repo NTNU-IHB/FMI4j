@@ -17,6 +17,4 @@ dependencies {
     compile project(':fmi-md')
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
 
-    testImplementation group: 'org.siani.javafmi', name: 'fmu-wrapper', version: '2.25.1'
-
 }

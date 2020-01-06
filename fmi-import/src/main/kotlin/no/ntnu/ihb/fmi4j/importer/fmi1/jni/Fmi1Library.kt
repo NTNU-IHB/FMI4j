@@ -214,7 +214,7 @@ abstract class Fmi1LibraryWrapper<E : Fmi1Library>(
                 LOG.error("Error caught on fmiFreeInstance: ${ex.javaClass.simpleName}")
             } finally {
                 val msg = if (success) "successfully" else "unsuccessfully"
-                LOG.debug("FMU instance ${library.instanceName} freed $msg!")
+                LOG.debug("FMU instance '${library.instanceName}' freed $msg!")
                 _library = null
                 System.gc()
             }
@@ -226,56 +226,48 @@ abstract class Fmi1LibraryWrapper<E : Fmi1Library>(
     fun readInteger(valueReference: ValueReference): IntegerRead {
         return with(buffers) {
             vr[0] = valueReference
-            library.getInteger(c, vr, iv).let {
-                IntegerRead(iv[0], updateStatus(it))
-            }
+            IntegerRead(iv[0], updateStatus(library.getInteger(c, vr, iv)))
         }
     }
 
     override fun read(vr: ValueReferences, ref: IntArray): FmiStatus {
-        return library.getInteger(c, vr, ref).let { updateStatus(it) }
+        return updateStatus(library.getInteger(c, vr, ref))
     }
 
     @Synchronized
     fun readReal(valueReference: ValueReference): RealRead {
         return with(buffers) {
             vr[0] = valueReference
-            library.getReal(c, vr, rv).let {
-                RealRead(rv[0], updateStatus(it))
-            }
+            RealRead(rv[0], updateStatus(library.getReal(c, vr, rv)))
         }
     }
 
     override fun read(vr: ValueReferences, ref: DoubleArray): FmiStatus {
-        return library.getReal(c, vr, ref).let { updateStatus(it) }
+        return updateStatus(library.getReal(c, vr, ref))
     }
 
     @Synchronized
     fun readString(valueReference: ValueReference): StringRead {
         return with(buffers) {
             vr[0] = valueReference
-            library.getString(c, vr, sv).let {
-                StringRead(sv[0], updateStatus(it))
-            }
+            StringRead(sv[0], updateStatus(library.getString(c, vr, sv)))
         }
     }
 
     override fun read(vr: ValueReferences, ref: StringArray): FmiStatus {
-        return library.getString(c, vr, ref).let { updateStatus(it) }
+        return updateStatus(library.getString(c, vr, ref))
     }
 
     @Synchronized
     fun readBoolean(valueReference: ValueReference): BooleanRead {
         return with(buffers) {
             vr[0] = valueReference
-            library.getBoolean(c, vr, bv).let {
-                BooleanRead(bv[0], updateStatus(it))
-            }
+            BooleanRead(bv[0], updateStatus(library.getBoolean(c, vr, bv)))
         }
     }
 
     override fun read(vr: ValueReferences, ref: BooleanArray): FmiStatus {
-        return library.getBoolean(c, vr, ref).let { updateStatus(it) }
+        return updateStatus(library.getBoolean(c, vr, ref))
     }
 
     @Synchronized
