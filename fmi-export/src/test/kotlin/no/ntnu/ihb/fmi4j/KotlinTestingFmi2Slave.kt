@@ -44,4 +44,3 @@ class TestContainer2 {
     val value2: Int = 1
 
 }
-
