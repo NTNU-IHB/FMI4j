@@ -78,29 +78,32 @@ SlaveInstance::SlaveInstance(
 void SlaveInstance::SetupExperiment(cppfmu::FMIBoolean toleranceDefined, cppfmu::FMIReal tolerance, cppfmu::FMIReal tStart, cppfmu::FMIBoolean stopTimeDefined, cppfmu::FMIReal tStop)
 {
     jvm_invoke(jvm_, [this, tStart](JNIEnv* env) {
-        env->CallBooleanMethod(slave_, setupExperimentId_, tStart);
+        env->CallVoidMethod(slave_, setupExperimentId_, tStart);
     });
 }
 
 void SlaveInstance::EnterInitializationMode()
 {
     jvm_invoke(jvm_, [this](JNIEnv* env) {
-        env->CallBooleanMethod(slave_, enterInitialisationModeId_);
+        env->CallVoidMethod(slave_, enterInitialisationModeId_);
     });
 }
 
 void SlaveInstance::ExitInitializationMode()
 {
     jvm_invoke(jvm_, [this](JNIEnv* env) {
-        env->CallBooleanMethod(slave_, exitInitializationModeId_);
+        env->CallVoidMethod(slave_, exitInitializationModeId_);
     });
 }
 
 bool SlaveInstance::DoStep(cppfmu::FMIReal currentCommunicationPoint, cppfmu::FMIReal communicationStepSize, cppfmu::FMIBoolean newStep, cppfmu::FMIReal& endOfStep)
 {
-    bool status;
+    bool status = true;
     jvm_invoke(jvm_, [this, &status, currentCommunicationPoint, communicationStepSize](JNIEnv* env) {
-        status = env->CallBooleanMethod(slave_, doStepId_, currentCommunicationPoint, communicationStepSize);
+        env->CallVoidMethod(slave_, doStepId_, currentCommunicationPoint, communicationStepSize);
+        if (env->ExceptionCheck()) {
+            status = false;
+        }
     });
     return status;
 }
@@ -108,7 +111,7 @@ bool SlaveInstance::DoStep(cppfmu::FMIReal currentCommunicationPoint, cppfmu::FM
 void SlaveInstance::Reset()
 {
     jvm_invoke(jvm_, [this](JNIEnv* env) {
-        env->CallBooleanMethod(slave_, resetId_);
+        env->CallVoidMethod(slave_, resetId_);
     });
 }
 
