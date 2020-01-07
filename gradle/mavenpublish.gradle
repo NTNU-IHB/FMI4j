@@ -2,15 +2,31 @@
 apply plugin: "maven-publish"
 
 task sourcesJar(type: Jar, dependsOn: classes) {
-    archiveClassifier = 'sources'
+    archiveClassifier.set('sources')
     from sourceSets.main.allSource
 }
 
 publishing {
+
     publications {
         maven(MavenPublication) {
             from components.java
             artifact sourcesJar
         }
     }
+
+    if (project.hasProperty("mvnUser") && project.hasProperty("mvnPw")) {
+
+        repositories {
+            maven {
+                credentials {
+                    username mvnUser
+                    password mvnPw
+                }
+                url "sftp://login.stud.ntnu.no:22/web/folk/laht/mvn"
+            }
+        }
+
+    }
+
 }
