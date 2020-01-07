@@ -30,6 +30,18 @@ abstract class Fmi2Slave(
         return File(resourceLocation, name)
     }
 
+    fun getVariableName(vr: Long): Long {
+        return modelDescription.modelVariables.scalarVariable
+                .firstOrNull { it.valueReference == vr }?.valueReference
+                ?: throw IllegalArgumentException("No such variable with valueReference $vr!")
+    }
+
+    fun getValueReference(name: String): Long {
+        return modelDescription.modelVariables.scalarVariable
+                .firstOrNull { it.name == name }?.valueReference
+                ?: throw IllegalArgumentException("No such variable with name $name!")
+    }
+
     val modelDescriptionXml by lazy {
         val bos = ByteArrayOutputStream()
         JAXB.marshal(modelDescription, bos)
@@ -50,7 +62,7 @@ abstract class Fmi2Slave(
     }
 
     @Suppress("UNCHECKED_CAST")
-    fun getReal(vr: LongArray): DoubleArray {
+    open fun getReal(vr: LongArray): DoubleArray {
         return DoubleArray(vr.size) { i ->
             (accessors[vr[i].toInt()] as RealAccessor).let {
                 it.getter()
@@ -59,11 +71,11 @@ abstract class Fmi2Slave(
     }
 
     @Suppress("UNCHECKED_CAST")
-    fun setReal(vr: LongArray, values: DoubleArray) {
+    open fun setReal(vr: LongArray, values: DoubleArray) {
         for (i in vr.indices) {
             (accessors[vr[i].toInt()] as RealAccessor).apply {
                 setter?.invoke(values[i]) ?: LOG.warning("Trying to set value of " +
-                        "${getName(vr[i])} on variable without a specified setter!")
+                        "${getVariableName(vr[i])} on variable without a specified setter!")
             }
         }
     }
@@ -74,7 +86,7 @@ abstract class Fmi2Slave(
     }
 
     @Suppress("UNCHECKED_CAST")
-    fun getInteger(vr: LongArray): IntArray {
+    open fun getInteger(vr: LongArray): IntArray {
         return IntArray(vr.size) { i ->
             (accessors[vr[i].toInt()] as IntAccessor).let {
                 it.getter()
@@ -83,11 +95,11 @@ abstract class Fmi2Slave(
     }
 
     @Suppress("UNCHECKED_CAST")
-    fun setInteger(vr: LongArray, values: IntArray) {
+    open fun setInteger(vr: LongArray, values: IntArray) {
         for (i in vr.indices) {
             (accessors[vr[i].toInt()] as IntAccessor).apply {
                 setter?.invoke(values[i]) ?: LOG.warning("Trying to set value of " +
-                        "${getName(vr[i])} on variable without a specified setter!")
+                        "${getVariableName(vr[i])} on variable without a specified setter!")
             }
         }
     }
@@ -98,7 +110,7 @@ abstract class Fmi2Slave(
     }
 
     @Suppress("UNCHECKED_CAST")
-    fun getBoolean(vr: LongArray): BooleanArray {
+    open fun getBoolean(vr: LongArray): BooleanArray {
         return BooleanArray(vr.size) { i ->
             (accessors[vr[i].toInt()] as BoolAccessor).let {
                 it.getter()
@@ -107,11 +119,11 @@ abstract class Fmi2Slave(
     }
 
     @Suppress("UNCHECKED_CAST")
-    fun setBoolean(vr: LongArray, values: BooleanArray) {
+    open fun setBoolean(vr: LongArray, values: BooleanArray) {
         for (i in vr.indices) {
             (accessors[vr[i].toInt()] as BoolAccessor).apply {
                 setter?.invoke(values[i]) ?: LOG.warning("Trying to set value of " +
-                        "${getName(vr[i])} on variable without a specified setter!")
+                        "${getVariableName(vr[i])} on variable without a specified setter!")
             }
         }
     }
@@ -122,7 +134,7 @@ abstract class Fmi2Slave(
     }
 
     @Suppress("UNCHECKED_CAST")
-    fun getString(vr: LongArray): Array<String> {
+    open fun getString(vr: LongArray): Array<String> {
         return Array(vr.size) { i ->
             (accessors[vr[i].toInt()] as StringAccessor).let {
                 it.getter()
@@ -131,25 +143,13 @@ abstract class Fmi2Slave(
     }
 
     @Suppress("UNCHECKED_CAST")
-    fun setString(vr: LongArray, values: Array<String>) {
+    open fun setString(vr: LongArray, values: Array<String>) {
         for (i in vr.indices) {
             (accessors[vr[i].toInt()] as StringAccessor).apply {
                 setter?.invoke(values[i]) ?: LOG.warning("Trying to set value of " +
-                        "${getName(vr[i])} on variable without a specified setter!")
+                        "${getVariableName(vr[i])} on variable without a specified setter!")
             }
         }
-    }
-
-    fun getName(vr: Long): Long {
-        return modelDescription.modelVariables.scalarVariable
-                .firstOrNull { it.valueReference == vr }?.valueReference
-                ?: throw IllegalArgumentException("No such variable with valueReference $vr!")
-    }
-
-    fun getValueReference(name: String): Long {
-        return modelDescription.modelVariables.scalarVariable
-                .firstOrNull { it.name == name }?.valueReference
-                ?: throw IllegalArgumentException("No such variable with name $name!")
     }
 
     private fun requiresStart(v: Fmi2ScalarVariable): Boolean {
