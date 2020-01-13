@@ -14,7 +14,7 @@ import java.util.logging.Logger
 import javax.xml.bind.JAXB
 import kotlin.properties.Delegates
 
-private const val MAX_LEVEL = 5
+private const val MAX_LEVEL = 8
 
 abstract class Fmi2Slave(
         val instanceName: String
