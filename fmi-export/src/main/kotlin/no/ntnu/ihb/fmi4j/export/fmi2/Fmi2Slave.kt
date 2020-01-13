@@ -418,7 +418,11 @@ abstract class Fmi2Slave(
             }
         }
 
-        checkFields(javaClass)
+        var cls: Class<*>? = javaClass
+        do {
+            checkFields(cls!!)
+            cls = cls.superclass
+        } while (cls != null)
 
         val outputs = modelDescription.modelVariables.scalarVariable.filter { it.causality == Fmi2Causality.output }
         modelDescription.modelStructure = Fmi2ModelDescription.ModelStructure().also { ms ->

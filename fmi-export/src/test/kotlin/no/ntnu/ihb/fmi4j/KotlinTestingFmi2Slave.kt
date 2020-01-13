@@ -6,7 +6,7 @@ import no.ntnu.ihb.fmi4j.export.fmi2.VariableContainer
 import no.ntnu.ihb.fmi4j.modeldescription.fmi2.Fmi2Causality
 import no.ntnu.ihb.fmi4j.modeldescription.fmi2.Fmi2Variability
 
-class KotlinTestingFmi2Slave(
+open class KotlinTestingFmi2Slave(
         instanceName: String
 ): Fmi2Slave(instanceName) {
 
@@ -27,6 +27,13 @@ class KotlinTestingFmi2Slave(
 
 }
 
+open class KotlinTestingExtendingFmi2Slave(
+        instanceName: String
+): KotlinTestingFmi2Slave(instanceName) {
+
+    override fun doStep(currentTime: Double, dt: Double) {}
+
+}
 
 class TestContainer {
 
