@@ -31,68 +31,36 @@ import no.ntnu.ihb.fmi4j.modeldescription.Real
  */
 interface TypedScalarVariable<E> : ScalarVariable, TypedAttribute<E> {
 
-    /**
-     * Get the type name
-     *
-     * IntegerVariable -> "Integer"
-     * RealVariable -> "Real"
-     * StringVariable -> "String"
-     * BooleanVariable -> "Boolean"
-     * EnumerationVariable -> "Enumeration"
-     */
-    val typeName: String
-        get() = when (this) {
-            is IntegerVariable -> ScalarVariable.INTEGER_TYPE
-            is RealVariable -> ScalarVariable.REAL_TYPE
-            is StringVariable -> ScalarVariable.STRING_TYPE
-            is BooleanVariable -> ScalarVariable.BOOLEAN_TYPE
-            is EnumerationVariable -> ScalarVariable.ENUMERATION_TYPE
-            else -> throw IllegalStateException("Instance $this is not a valid type!")
-        }
-
-    val isInteger: Boolean
-        get() = this is IntegerVariable
-
-    val isReal: Boolean
-        get() = this is RealVariable
-
-    val isString: Boolean
-        get() = this is StringVariable
-
-    val isBoolean: Boolean
-        get() = this is BooleanVariable
-
-    val isEnumeration: Boolean
-        get() = this is EnumerationVariable
+    val type: VariableType
 
     fun asIntegerVariable(): IntegerVariable = when {
         this is IntegerVariable -> this
         else -> throw IllegalAccessException(
-                "Variable is not an ${ScalarVariable.INTEGER_TYPE}, but an $typeName!")
+                "Variable is not an ${VariableType.INTEGER.typeName}, but an ${type.typeName}!")
     }
 
     fun asRealVariable(): RealVariable = when {
         this is RealVariable -> this
         else -> throw throw IllegalAccessException(
-                "Variable is not an ${ScalarVariable.REAL_TYPE}, but an $typeName!")
-    }
-
-    fun asStringVariable(): StringVariable = when {
-        this is StringVariable -> this
-        else -> throw IllegalAccessException(
-                "Variable is not an ${ScalarVariable.STRING_TYPE}, but an $typeName!")
+                "Variable is not an ${VariableType.REAL.typeName}, but an ${type.typeName}!")
     }
 
     fun asBooleanVariable(): BooleanVariable = when {
         this is BooleanVariable -> this
         else -> throw IllegalAccessException(
-                "Variable is not an ${ScalarVariable.BOOLEAN_TYPE}, but an $typeName!")
+                "Variable is not an ${VariableType.BOOLEAN.typeName}, but an ${type.typeName}!")
+    }
+
+    fun asStringVariable(): StringVariable = when {
+        this is StringVariable -> this
+        else -> throw IllegalAccessException(
+                "Variable is not an ${VariableType.STRING.typeName}, but an ${type.typeName}!")
     }
 
     fun asEnumerationVariable(): EnumerationVariable = when {
         this is EnumerationVariable -> this
         else -> throw IllegalAccessException(
-                "Variable is not an ${ScalarVariable.ENUMERATION_TYPE}, but an $typeName!")
+                "Variable is not an ${VariableType.ENUMERATION.typeName}, but an ${type.typeName}!")
     }
 
 }
@@ -106,6 +74,9 @@ class IntegerVariable (
         v: ScalarVariable,
         a: IntegerAttribute
 ) : BoundedScalarVariable<Int>, ScalarVariable by v, IntegerAttribute by a {
+
+    override val type: VariableType
+        get() = VariableType.INTEGER
 
     override fun toString(): String {
         val entries = mutableListOf<String>().apply {
@@ -133,6 +104,9 @@ class RealVariable (
         v: ScalarVariable,
         a: RealAttribute
 ) : BoundedScalarVariable<Real>, ScalarVariable by v, RealAttribute by a {
+
+    override val type: VariableType
+        get() = VariableType.REAL
 
     override fun toString(): String {
 
@@ -166,37 +140,13 @@ class RealVariable (
 /**
  * @author Lars Ivar Hatledal
  */
-class StringVariable (
-        v: ScalarVariable,
-        a: StringAttribute
-) : TypedScalarVariable<String>, ScalarVariable by v, StringAttribute by a {
-
-    override fun toString(): String {
-
-        val entries = mutableListOf<String>().apply {
-            add("name=$name")
-            add("valueReference=$valueReference")
-            start?.also { add("start=$start") }
-            causality?.also { add("causality=$causality") }
-            variability?.also { add("variability=$variability") }
-            initial?.also { add("initial=$initial") }
-            description?.also { add("description=$description") }
-            declaredType?.also { add("declaredType=$declaredType") }
-        }.joinToString(", ")
-
-        return "${StringVariable::class.java.simpleName}($entries)"
-
-    }
-
-}
-
-/**
- * @author Lars Ivar Hatledal
- */
 class BooleanVariable (
         v: ScalarVariable,
         a: BooleanAttribute
 ) : TypedScalarVariable<Boolean>, ScalarVariable by v, BooleanAttribute by a {
+
+    override val type: VariableType
+        get() = VariableType.BOOLEAN
 
     override fun toString(): String {
 
@@ -220,10 +170,43 @@ class BooleanVariable (
 /**
  * @author Lars Ivar Hatledal
  */
+class StringVariable (
+        v: ScalarVariable,
+        a: StringAttribute
+) : TypedScalarVariable<String>, ScalarVariable by v, StringAttribute by a {
+
+    override val type: VariableType
+        get() = VariableType.STRING
+
+    override fun toString(): String {
+
+        val entries = mutableListOf<String>().apply {
+            add("name=$name")
+            add("valueReference=$valueReference")
+            start?.also { add("start=$start") }
+            causality?.also { add("causality=$causality") }
+            variability?.also { add("variability=$variability") }
+            initial?.also { add("initial=$initial") }
+            description?.also { add("description=$description") }
+            declaredType?.also { add("declaredType=$declaredType") }
+        }.joinToString(", ")
+
+        return "${StringVariable::class.java.simpleName}($entries)"
+
+    }
+
+}
+
+/**
+ * @author Lars Ivar Hatledal
+ */
 class EnumerationVariable (
         v: ScalarVariable,
         a: EnumerationAttribute
 ) : BoundedScalarVariable<Int>, ScalarVariable by v, EnumerationAttribute by a {
+
+    override val type: VariableType
+        get() = VariableType.ENUMERATION
 
     override fun toString(): String {
 

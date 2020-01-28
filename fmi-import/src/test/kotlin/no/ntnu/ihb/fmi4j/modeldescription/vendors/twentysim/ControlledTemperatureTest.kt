@@ -28,6 +28,7 @@ import no.ntnu.ihb.fmi4j.modeldescription.DefaultExperiment
 import no.ntnu.ihb.fmi4j.modeldescription.TestFMUs
 import no.ntnu.ihb.fmi4j.modeldescription.variables.ModelVariables
 import no.ntnu.ihb.fmi4j.modeldescription.variables.RealVariable
+import no.ntnu.ihb.fmi4j.modeldescription.variables.VariableType
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
@@ -65,7 +66,7 @@ class ControlledTemperatureTest {
     @Test
     fun testGetByValueReference() {
         val result = modelDescription.modelVariables
-                .getByValueReference(19)
+                .getByValueReference(19, VariableType.REAL)
         Assertions.assertEquals(5, result.size)
     }
 

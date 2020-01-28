@@ -67,12 +67,13 @@ interface ScalarVariable {
      */
     val initial: Initial?
 
-    companion object {
-        const val INTEGER_TYPE = "Integer"
-        const val REAL_TYPE = "Real"
-        const val STRING_TYPE = "String"
-        const val BOOLEAN_TYPE = "Boolean"
-        const val ENUMERATION_TYPE = "Enumeration"
-    }
+}
+
+enum class VariableType {
+
+    INTEGER, REAL, BOOLEAN, STRING, ENUMERATION;
+
+    val typeName: String
+        get() = name.toLowerCase().capitalize()
 
 }

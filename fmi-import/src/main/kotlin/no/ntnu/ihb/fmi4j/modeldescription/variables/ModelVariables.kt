@@ -95,7 +95,7 @@ interface ModelVariables : Iterable<TypedScalarVariable<*>> {
      * @vr valueReference
      * @throws IllegalArgumentException if there are no variables with the provided value reference
      */
-    fun getByValueReference(vr: ValueReference): List<TypedScalarVariable<*>> {
+    fun getByValueReference(vr: ValueReference, type: VariableType): List<TypedScalarVariable<*>> {
         return filter { it.valueReference == vr }
     }
 
