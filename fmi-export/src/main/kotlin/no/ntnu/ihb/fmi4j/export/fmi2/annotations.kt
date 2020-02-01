@@ -36,4 +36,12 @@ annotation class ScalarVariable(
 
 @Target(AnnotationTarget.FIELD)
 @Retention(AnnotationRetention.RUNTIME)
+annotation class Real(
+        val unit: Array<String> = [],
+        val min: DoubleArray = [],
+        val max: DoubleArray = []
+)
+
+@Target(AnnotationTarget.FIELD)
+@Retention(AnnotationRetention.RUNTIME)
 annotation class VariableContainer
