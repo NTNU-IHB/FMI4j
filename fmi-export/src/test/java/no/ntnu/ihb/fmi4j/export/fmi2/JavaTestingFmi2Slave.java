@@ -44,18 +44,15 @@ class JavaTestingFmi2Slave extends Fmi2Slave {
 
     static class Container {
 
-        @ScalarVariable
+        @ScalarVariable(name = "speed1")
         double speed = 0;
 
     }
 
     static class Vector3 implements RealVector {
 
-        @ScalarVariable
         double x;
-        @ScalarVariable
         double y;
-        @ScalarVariable
         double z;
 
         @Override

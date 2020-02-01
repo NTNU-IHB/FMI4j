@@ -41,7 +41,7 @@ class Fmi2Fmi2SlaveInstanceTest {
     @Test
     void testContainer() {
 
-        long vr = slave.getValueReference("container.speed");
+        long vr = slave.getValueReference("container.speed1");
 
         double[] write = new double[]{123.0};
         slave.setReal(new long[]{vr}, write);

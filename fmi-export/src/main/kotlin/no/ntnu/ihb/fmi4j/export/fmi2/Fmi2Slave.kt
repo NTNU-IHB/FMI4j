@@ -7,6 +7,7 @@ import no.ntnu.ihb.fmi4j.export.StringVector
 import no.ntnu.ihb.fmi4j.modeldescription.fmi2.*
 import java.io.ByteArrayOutputStream
 import java.io.File
+import java.lang.reflect.Field
 import java.lang.reflect.Modifier
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -14,7 +15,6 @@ import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.logging.Logger
 import javax.xml.bind.JAXB
-import kotlin.properties.Delegates
 
 private const val MAX_LEVEL = 8
 
@@ -227,6 +227,157 @@ abstract class Fmi2Slave(
         }
     }
 
+    private fun processAnnotatedField(owner: Any, field: Field, annotation: ScalarVariable, prepend: String) {
+
+        field.isAccessible = true
+        val isFinal = Modifier.isFinal(field.modifiers)
+
+        check(!(isFinal && annotation.causality == Fmi2Causality.input))
+        { "${field.name}: Illegal combination: final modifier and causality=input " }
+
+        when (val type = field.type) {
+            Int::class, Int::class.java -> {
+                val variableName = if (annotation.name.isNotEmpty()) annotation.name else field.name
+                registerInteger(IntBuilder("$prepend$variableName").also {
+                    it.getter { field.getInt(owner) }
+                    if (!isFinal) {
+                        it.setter { field.setInt(owner, it) }
+                    }
+                    it.apply(annotation)
+                })
+            }
+            Double::class, Double::class.java -> {
+                val variableName = if (annotation.name.isNotEmpty()) annotation.name else field.name
+                registerReal(RealBuilder("$prepend$variableName").also {
+                    it.getter { field.getDouble(owner) }
+                    if (!isFinal) {
+                        it.setter { field.setDouble(owner, it) }
+                    }
+                    it.apply(annotation)
+                })
+            }
+            Boolean::class, Boolean::class.java -> {
+                val variableName = if (annotation.name.isNotEmpty()) annotation.name else field.name
+                registerBoolean(BooleanBuilder("$prepend$variableName").also {
+                    it.getter { field.getBoolean(owner) }
+                    if (!isFinal) {
+                        it.setter { field.setBoolean(owner, it) }
+                    }
+                    it.apply(annotation)
+                })
+            }
+            String::class, String::class.java -> {
+                val variableName = if (annotation.name.isNotEmpty()) annotation.name else field.name
+                registerString(StringBuilder("$prepend$variableName").also {
+                    it.getter { field.get(owner) as? String ?: "" }
+                    if (!isFinal) {
+                        it.setter { field.set(owner, it) }
+                    }
+                    it.apply(annotation)
+                })
+            }
+            IntArray::class.java -> {
+                val array = field.get(owner) as? IntArray
+                        ?: throw IllegalStateException("Field ${field.name} cannot be null!")
+                val variableName = if (annotation.name.isNotEmpty()) annotation.name else field.name
+                for (i in array.indices) {
+                    registerInteger(IntBuilder("$prepend$variableName[$i]").also {
+                        it.getter { array[i] }
+                        it.setter { array[i] = it }
+                        it.apply(annotation)
+                    })
+                }
+            }
+            DoubleArray::class.java -> {
+                val array = field.get(this) as? DoubleArray
+                        ?: throw IllegalStateException("Field ${field.name} cannot be null!")
+                val variableName = if (annotation.name.isNotEmpty()) annotation.name else field.name
+                for (i in array.indices) {
+                    registerReal(RealBuilder("$prepend$variableName[$i]").also {
+                        it.getter { array[i] }
+                        it.setter { array[i] = it }
+                        it.apply(annotation)
+                    })
+                }
+            }
+            BooleanArray::class.java -> {
+                val array = field.get(owner) as? BooleanArray
+                        ?: throw IllegalStateException("Field ${field.name} cannot be null!")
+                val variableName = if (annotation.name.isNotEmpty()) annotation.name else field.name
+                for (i in array.indices) {
+                    registerBoolean(BooleanBuilder("$prepend$variableName[$i]").also {
+                        it.getter { array[i] }
+                        it.setter { array[i] = it }
+                        it.apply(annotation)
+                    })
+                }
+            }
+            Array<String>::class.java -> {
+                @Suppress("UNCHECKED_CAST")
+                val array = field.get(owner) as? Array<String>
+                        ?: throw IllegalStateException("Field ${field.name} cannot be null!")
+                val variableName = if (annotation.name.isNotEmpty()) annotation.name else field.name
+                for (i in array.indices) {
+                    registerString(StringBuilder("$prepend$variableName[$i]").also {
+                        it.getter { array[i] }
+                        it.setter { array[i] = it }
+                        it.apply(annotation)
+                    })
+                }
+            }
+            else -> {
+                when {
+                    IntVector::class.java.isAssignableFrom(type) -> {
+                        val vector = field.get(owner) as? IntVector
+                                ?: throw IllegalStateException("Field ${field.name} cannot be null!")
+                        val variableName = if (annotation.name.isNotEmpty()) annotation.name else field.name
+                        for (i in 0 until vector.size) {
+                            registerInteger(IntBuilder("$prepend$variableName[$i]").also {
+                                it.getter { vector[i] }
+                                it.setter { vector[i] = it }
+                            })
+                        }
+                    }
+                    RealVector::class.java.isAssignableFrom(type) -> {
+                        val vector = field.get(owner) as? RealVector
+                                ?: throw IllegalStateException("Field ${field.name} cannot be null!")
+                        val variableName = if (annotation.name.isNotEmpty()) annotation.name else field.name
+                        for (i in 0 until vector.size) {
+                            registerReal(RealBuilder("$prepend$variableName[$i]").also {
+                                it.getter { vector[i] }
+                                it.setter { vector[i] = it }
+                            })
+                        }
+                    }
+                    BooleanVector::class.java.isAssignableFrom(type) -> {
+                        val vector = field.get(owner) as? BooleanVector
+                                ?: throw IllegalStateException("Field ${field.name} cannot be null!")
+                        val variableName = if (annotation.name.isNotEmpty()) annotation.name else field.name
+                        for (i in 0 until vector.size) {
+                            registerBoolean(BooleanBuilder("$prepend$variableName[$i]").also {
+                                it.getter { vector[i] }
+                                it.setter { vector[i] = it }
+                            })
+                        }
+                    }
+                    StringVector::class.java.isAssignableFrom(type) -> {
+                        val vector = field.get(owner) as? StringVector
+                                ?: throw IllegalStateException("Field ${field.name} cannot be null!")
+                        val variableName = if (annotation.name.isNotEmpty()) annotation.name else field.name
+                        for (i in 0 until vector.size) {
+                            registerString(StringBuilder("$prepend$variableName[$i]").also {
+                                it.getter { vector[i] }
+                                it.setter { vector[i] = it }
+                            })
+                        }
+                    }
+                    else -> throw IllegalStateException("Unsupported variable type: $type")
+                }
+            }
+        }
+
+    }
+
     private fun checkFields(cls: Class<*>, owner: Any = this, prepend: String = "", level: Int = 0) {
 
         if (level > MAX_LEVEL) return
@@ -241,147 +392,9 @@ abstract class Fmi2Slave(
             }
 
             field.getAnnotation(ScalarVariable::class.java)?.also { annotation ->
-
-                field.isAccessible = true
-                val isFinal = Modifier.isFinal(field.modifiers)
-
-                check(!(isFinal && annotation.causality == Fmi2Causality.input))
-                { "${field.name}: Illegal combination: final modifier and causality=input " }
-
-                when (val type = field.type) {
-                    Int::class, Int::class.java -> {
-                        registerInteger(IntBuilder("$prepend${field.name}").also {
-                            it.getter { field.getInt(owner) }
-                            if (!isFinal) {
-                                it.setter { field.setInt(owner, it) }
-                            }
-                            it.apply(annotation)
-                        })
-                    }
-                    Double::class, Double::class.java -> {
-                        registerReal(RealBuilder("$prepend${field.name}").also {
-                            it.getter { field.getDouble(owner) }
-                            if (!isFinal) {
-                                it.setter { field.setDouble(owner, it) }
-                            }
-                            it.apply(annotation)
-                        })
-                    }
-                    Boolean::class, Boolean::class.java -> {
-                        registerBoolean(BooleanBuilder("$prepend${field.name}").also {
-                            it.getter { field.getBoolean(owner) }
-                            if (!isFinal) {
-                                it.setter { field.setBoolean(owner, it) }
-                            }
-                            it.apply(annotation)
-                        })
-                    }
-                    String::class, String::class.java -> {
-                        registerString(StringBuilder("$prepend${field.name}").also {
-                            it.getter { field.get(owner) as? String ?: "" }
-                            if (!isFinal) {
-                                it.setter { field.set(owner, it) }
-                            }
-                            it.apply(annotation)
-                        })
-                    }
-                    IntArray::class.java -> {
-                        val array = field.get(owner) as? IntArray
-                                ?: throw IllegalStateException("Field $field.name cannot be null!")
-                        for (i in array.indices) {
-                            registerInteger(IntBuilder("$prepend${field.name}[$i]").also {
-                                it.getter { array[i] }
-                                it.setter { array[i] = it }
-                                it.apply(annotation)
-                            })
-                        }
-                    }
-                    DoubleArray::class.java -> {
-                        val array = field.get(this) as? DoubleArray
-                                ?: throw IllegalStateException("Field $field.name cannot be null!")
-
-                        for (i in array.indices) {
-                            registerReal(RealBuilder("$prepend${field.name}[$i]").also {
-                                it.getter { array[i] }
-                                it.setter { array[i] = it }
-                                it.apply(annotation)
-                            })
-                        }
-                    }
-                    BooleanArray::class.java -> {
-                        val array = field.get(owner) as? BooleanArray
-                                ?: throw IllegalStateException("Field $field.name cannot be null!")
-                        for (i in array.indices) {
-                            registerBoolean(BooleanBuilder("$prepend${field.name}[$i]").also {
-                                it.getter { array[i] }
-                                it.setter { array[i] = it }
-                                it.apply(annotation)
-                            })
-                        }
-                    }
-                    Array<String>::class.java -> {
-                        @Suppress("UNCHECKED_CAST")
-                        val array = field.get(owner) as? Array<String>
-                                ?: throw IllegalStateException("Field $field.name cannot be null!")
-                        for (i in array.indices) {
-                            registerString(StringBuilder("$prepend${field.name}[$i]").also {
-                                it.getter { array[i] }
-                                it.setter { array[i] = it }
-                                it.apply(annotation)
-                            })
-                        }
-                    }
-                    else -> {
-                        when {
-                            IntVector::class.java.isAssignableFrom(type) -> {
-                                val vector = field.get(owner) as? IntVector
-                                        ?: throw IllegalStateException("Field $field.name cannot be null!")
-                                for (i in 0 until vector.size) {
-                                    registerInteger(IntBuilder("$prepend${field.name}[$i]").also {
-                                        it.getter { vector[i] }
-                                        it.setter { vector[i] = it }
-                                    })
-                                }
-                            }
-                            RealVector::class.java.isAssignableFrom(type) -> {
-                                val vector = field.get(owner) as? RealVector
-                                        ?: throw IllegalStateException("Field $field.name cannot be null!")
-                                for (i in 0 until vector.size) {
-                                    registerReal(RealBuilder("$prepend${field.name}[$i]").also {
-                                        it.getter { vector[i] }
-                                        it.setter { vector[i] = it }
-                                    })
-                                }
-                            }
-                            BooleanVector::class.java.isAssignableFrom(type) -> {
-                                val vector = field.get(owner) as? BooleanVector
-                                        ?: throw IllegalStateException("Field $field.name cannot be null!")
-                                for (i in 0 until vector.size) {
-                                    registerBoolean(BooleanBuilder("$prepend${field.name}[$i]").also {
-                                        it.getter { vector[i] }
-                                        it.setter { vector[i] = it }
-                                    })
-                                }
-                            }
-                            StringVector::class.java.isAssignableFrom(type) -> {
-                                val vector = field.get(owner) as? StringVector
-                                        ?: throw IllegalStateException("Field $field.name cannot be null!")
-                                for (i in 0 until vector.size) {
-                                    registerString(StringBuilder("$prepend${field.name}[$i]").also {
-                                        it.getter { vector[i] }
-                                        it.setter { vector[i] = it }
-                                    })
-                                }
-                            }
-                            else -> throw IllegalStateException("Unsupported variable type: $type")
-                        }
-                    }
-                }
-
+                processAnnotatedField(owner, field, annotation, prepend)
             }
-
         }
-
     }
 
     private fun getDateAndTime(): String {
