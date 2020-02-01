@@ -20,3 +20,23 @@ interface RealVector {
     operator fun set(index: Int, value: Double)
 
 }
+
+interface BooleanVector {
+
+    val size: Int
+
+    operator fun get(index: Int): Boolean
+
+    operator fun set(index: Int, value: Boolean)
+
+}
+
+interface StringVector {
+
+    val size: Int
+
+    operator fun get(index: Int): String
+
+    operator fun set(index: Int, value: String)
+
+}

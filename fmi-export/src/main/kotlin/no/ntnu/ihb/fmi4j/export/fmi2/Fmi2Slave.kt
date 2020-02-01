@@ -1,7 +1,9 @@
 package no.ntnu.ihb.fmi4j.export.fmi2
 
+import no.ntnu.ihb.fmi4j.export.BooleanVector
 import no.ntnu.ihb.fmi4j.export.IntVector
 import no.ntnu.ihb.fmi4j.export.RealVector
+import no.ntnu.ihb.fmi4j.export.StringVector
 import no.ntnu.ihb.fmi4j.modeldescription.fmi2.*
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -346,6 +348,26 @@ abstract class Fmi2Slave(
                                         ?: throw IllegalStateException("Field $field.name cannot be null!")
                                 for (i in 0 until vector.size) {
                                     registerReal(RealBuilder("$prepend${field.name}[$i]").also {
+                                        it.getter { vector[i] }
+                                        it.setter { vector[i] = it }
+                                    })
+                                }
+                            }
+                            BooleanVector::class.java.isAssignableFrom(type) -> {
+                                val vector = field.get(owner) as? BooleanVector
+                                        ?: throw IllegalStateException("Field $field.name cannot be null!")
+                                for (i in 0 until vector.size) {
+                                    registerBoolean(BooleanBuilder("$prepend${field.name}[$i]").also {
+                                        it.getter { vector[i] }
+                                        it.setter { vector[i] = it }
+                                    })
+                                }
+                            }
+                            StringVector::class.java.isAssignableFrom(type) -> {
+                                val vector = field.get(owner) as? StringVector
+                                        ?: throw IllegalStateException("Field $field.name cannot be null!")
+                                for (i in 0 until vector.size) {
+                                    registerString(StringBuilder("$prepend${field.name}[$i]").also {
                                         it.getter { vector[i] }
                                         it.setter { vector[i] = it }
                                     })
