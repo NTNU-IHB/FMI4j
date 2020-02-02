@@ -46,7 +46,7 @@ class Demo {
             }
         }
         slave.terminate(); //or close, try with resources is also supported
-        fmu.close(); // <- also done automatically by the library if you forget to do it yourself
+        fmu.close();
         
     }
     
@@ -59,10 +59,10 @@ class Demo {
 
 ```java
 @SlaveInfo(
-        modelName = "JavaSlave",
+        modelName = "MyJavaSlave",
         author = "John Doe"
 )
-public class JavaSlave extends Slave {
+public class JavaSlave extends Fmi2Slave {
 
     @ScalarVariable(causality = Fmi2Causality.output)
     protected double realOut = 2.0;
