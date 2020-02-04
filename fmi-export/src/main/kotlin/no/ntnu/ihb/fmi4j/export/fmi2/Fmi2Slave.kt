@@ -228,36 +228,83 @@ abstract class Fmi2Slave(
         }
     }
 
-    private fun processAnnotatedMethod(owner: Any, method: Method, annotation: ScalarVariable, prepend: String) {
+    private fun processMethods(owner: Any, methods: List<Method>) {
 
-        method.isAccessible = true
-
-        val methodName = method.name
-        if (!methodName.startsWith("get") || !methodName.startsWith("set")) {
-            throw IllegalStateException("Method names must start with get or set!")
+        fun variableName(method: Method): String? {
+            val methodName = method.name
+            return when {
+                methodName.startsWith("get") -> {
+                    methodName.replaceFirst("get", "").decapitalize()
+                }
+                methodName.startsWith("set") -> {
+                    methodName.replaceFirst("set", "").decapitalize()
+                }
+                else -> null
+            }
         }
+        methods.forEach { getterMethod ->
+            getterMethod.annotations.mapNotNull {
+                if (it is ScalarVariableGetter) it else null
+            }.forEach { getterAnnotation ->
 
-        val niceMethodName = if (methodName.startsWith("get")) {
-            methodName.replaceFirst("get", "").decapitalize()
-        } else {
-            methodName.replaceFirst("set", "").decapitalize()
+                val variableName = variableName(getterMethod) ?: throw IllegalStateException("")
+
+                val causality = getterAnnotation.causality
+                val variability = getterAnnotation.variability
+                val hasSetter = causality == Fmi2Causality.input || (causality == Fmi2Causality.parameter && variability != Fmi2Variability.constant)
+                val setterMethod = methods.find {
+                    variableName(it) == variableName && it.getAnnotation(ScalarVariableSetter::class.java) != null
+                }
+
+                if (hasSetter) {
+                    setterMethod!!
+                    check(setterMethod.parameterCount == 1)
+                    check(setterMethod.parameterTypes[0] == getterMethod.returnType)
+                }
+
+                when (val type = getterMethod.returnType) {
+                    Int::class, Int::class.java -> {
+                        registerInteger(IntBuilder(variableName).also {
+                            it.getter { getterMethod.invoke(owner) as Int }
+                            if (hasSetter) {
+                                it.setter { value -> setterMethod!!.invoke(owner, value) }
+                            }
+                            it.apply(getterAnnotation)
+                        })
+                    }
+                    Double::class, Double::class.java -> {
+                        registerReal(RealBuilder(variableName).also {
+                            it.getter { getterMethod.invoke(owner) as Double }
+                            if (hasSetter) {
+                                it.setter { value -> setterMethod!!.invoke(owner, value) }
+                            }
+                            it.apply(getterAnnotation)
+                        })
+                    }
+                    Boolean::class, Boolean::class.java -> {
+                        registerBoolean(BooleanBuilder(variableName).also {
+                            it.getter { getterMethod.invoke(owner) as Boolean }
+                            if (hasSetter) {
+                                it.setter { value -> setterMethod!!.invoke(owner, value) }
+                            }
+                            it.apply(getterAnnotation)
+                        })
+                    }
+                    String::class, String::class.java -> {
+                        registerString(StringBuilder(variableName).also {
+                            it.getter { getterMethod.invoke(owner) as String }
+                            if (hasSetter) {
+                                it.setter { value -> setterMethod!!.invoke(owner, value) }
+                            }
+                            it.apply(getterAnnotation)
+                        })
+                    }
+                    else -> throw UnsupportedOperationException()
+                }
+
+            }
+
         }
-
-        TODO()
-
-//        when(val type = method.returnType) {
-//                Int::class, Int::class.java -> {
-//                    val variableName = if (annotation.name.isNotEmpty()) annotation.name else nice
-//                    registerInteger(IntBuilder("$prepend$variableName").also {
-//                        it.getter { method.invoke(owner) as Int }
-//                        if (!isFinal) {
-//                            it.setter { field.setInt(owner, it) }
-//                        }
-//                        it.apply(annotation)
-//                    })
-//                }
-//                else -> throw UnsupportedOperationException()
-//        }
 
     }
 
@@ -416,7 +463,7 @@ abstract class Fmi2Slave(
 
     }
 
-    private fun checkFields(cls: Class<*>, owner: Any = this, prepend: String = "", level: Int = 0) {
+    private fun searchForVariables(cls: Class<*>, owner: Any = this, prepend: String = "", level: Int = 0) {
 
         if (level > MAX_LEVEL) return
 
@@ -425,14 +472,18 @@ abstract class Fmi2Slave(
             field.getAnnotation(VariableContainer::class.java)?.also {
                 field.isAccessible = true
                 field.get(owner)?.also {
-                    checkFields(field.type, it, "$prepend${field.name}.", level + 1)
+                    searchForVariables(field.type, it, "$prepend${field.name}.", level + 1)
                 }
             }
 
             field.getAnnotation(ScalarVariable::class.java)?.also { annotation ->
                 processAnnotatedField(owner, field, annotation, prepend)
             }
+
         }
+
+        processMethods(owner, cls.declaredMethods.toList())
+
     }
 
     private fun getDateAndTime(): String {
@@ -493,7 +544,7 @@ abstract class Fmi2Slave(
 
         var cls: Class<*>? = javaClass
         do {
-            checkFields(cls!!)
+            searchForVariables(cls!!)
             cls = cls.superclass
         } while (cls != null)
 
@@ -557,6 +608,12 @@ class VariableBuilder<E>(
     }
 
     internal fun apply(annotation: ScalarVariable) {
+        causality = annotation.causality
+        variability = annotation.variability
+        initial = annotation.initial
+    }
+
+    internal fun apply(annotation: ScalarVariableGetter) {
         causality = annotation.causality
         variability = annotation.variability
         initial = annotation.initial

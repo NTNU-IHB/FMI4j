@@ -26,7 +26,7 @@ annotation class DefaultExperiment(
         val stopTime: Double = -1.0
 )
 
-@Target(AnnotationTarget.FIELD, AnnotationTarget.FUNCTION)
+@Target(AnnotationTarget.FIELD)
 @Retention(AnnotationRetention.RUNTIME)
 annotation class ScalarVariable(
         val name: String = "",
@@ -34,6 +34,18 @@ annotation class ScalarVariable(
         val variability: Fmi2Variability = Fmi2Variability.continuous,
         val initial: Fmi2Initial = Fmi2Initial.undefined
 )
+
+@Target(AnnotationTarget.FUNCTION)
+@Retention(AnnotationRetention.RUNTIME)
+annotation class ScalarVariableGetter(
+        val causality: Fmi2Causality = Fmi2Causality.local,
+        val variability: Fmi2Variability = Fmi2Variability.continuous,
+        val initial: Fmi2Initial = Fmi2Initial.undefined
+)
+
+@Target(AnnotationTarget.FUNCTION)
+@Retention(AnnotationRetention.RUNTIME)
+annotation class ScalarVariableSetter
 
 @Target(AnnotationTarget.FIELD)
 @Retention(AnnotationRetention.RUNTIME)
