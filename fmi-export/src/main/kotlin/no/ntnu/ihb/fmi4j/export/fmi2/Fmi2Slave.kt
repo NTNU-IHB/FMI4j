@@ -299,7 +299,7 @@ abstract class Fmi2Slave(
                             it.apply(getterAnnotation)
                         })
                     }
-                    else -> throw UnsupportedOperationException()
+                    else -> throw IllegalStateException("Unsupported variable type: $type")
                 }
 
             }
