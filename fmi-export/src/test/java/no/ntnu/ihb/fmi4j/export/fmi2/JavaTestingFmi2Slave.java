@@ -33,6 +33,8 @@ class JavaTestingFmi2Slave extends Fmi2Slave {
     @VariableContainer
     protected Container container = new Container();
 
+    private double aParameter = 123;
+
     public JavaTestingFmi2Slave(@NotNull String instanceName) {
         super(instanceName);
     }
@@ -40,6 +42,21 @@ class JavaTestingFmi2Slave extends Fmi2Slave {
     @Override
     public void doStep(double currentTime, double dt) {
         LOG.log(Level.INFO, "currentTime=" + dt + ", dt=" + dt);
+    }
+
+    @ScalarVariableGetter(causality = Fmi2Causality.parameter, variability = Fmi2Variability.constant)
+    public int getSomeParameter() {
+        return 30;
+    }
+
+    @ScalarVariableGetter(causality = Fmi2Causality.parameter, variability = Fmi2Variability.tunable)
+    public double getAParameter() {
+        return aParameter;
+    }
+
+    @ScalarVariableSetter
+    public void setAParameter(double value) {
+        aParameter = value;
     }
 
     static class Container {
