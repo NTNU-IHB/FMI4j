@@ -8,6 +8,7 @@ import no.ntnu.ihb.fmi4j.modeldescription.fmi2.*
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.lang.reflect.Field
+import java.lang.reflect.Method
 import java.lang.reflect.Modifier
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -227,6 +228,39 @@ abstract class Fmi2Slave(
         }
     }
 
+    private fun processAnnotatedMethod(owner: Any, method: Method, annotation: ScalarVariable, prepend: String) {
+
+        method.isAccessible = true
+
+        val methodName = method.name
+        if (!methodName.startsWith("get") || !methodName.startsWith("set")) {
+            throw IllegalStateException("Method names must start with get or set!")
+        }
+
+        val niceMethodName = if (methodName.startsWith("get")) {
+            methodName.replaceFirst("get", "").decapitalize()
+        } else {
+            methodName.replaceFirst("set", "").decapitalize()
+        }
+
+        TODO()
+
+//        when(val type = method.returnType) {
+//                Int::class, Int::class.java -> {
+//                    val variableName = if (annotation.name.isNotEmpty()) annotation.name else nice
+//                    registerInteger(IntBuilder("$prepend$variableName").also {
+//                        it.getter { method.invoke(owner) as Int }
+//                        if (!isFinal) {
+//                            it.setter { field.setInt(owner, it) }
+//                        }
+//                        it.apply(annotation)
+//                    })
+//                }
+//                else -> throw UnsupportedOperationException()
+//        }
+
+    }
+
     private fun processAnnotatedField(owner: Any, field: Field, annotation: ScalarVariable, prepend: String) {
 
         field.isAccessible = true
@@ -234,6 +268,10 @@ abstract class Fmi2Slave(
 
         check(!(isFinal && annotation.causality == Fmi2Causality.input))
         { "${field.name}: Illegal combination: final modifier and causality=input " }
+        check(!(isFinal && annotation.causality == Fmi2Causality.parameter))
+        { "${field.name}: Illegal combination: final modifier and causality=parameter " }
+        check(!(isFinal && annotation.causality == Fmi2Causality.calculatedParameter))
+        { "${field.name}: Illegal combination: final modifier and causality=calculatedParameter " }
 
         when (val type = field.type) {
             Int::class, Int::class.java -> {

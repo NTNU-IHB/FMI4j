@@ -26,7 +26,7 @@ annotation class DefaultExperiment(
         val stopTime: Double = -1.0
 )
 
-@Target(AnnotationTarget.FIELD)
+@Target(AnnotationTarget.FIELD, AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.RUNTIME)
 annotation class ScalarVariable(
         val name: String = "",

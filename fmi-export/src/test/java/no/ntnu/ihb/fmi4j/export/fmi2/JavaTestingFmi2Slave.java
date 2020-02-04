@@ -42,6 +42,11 @@ class JavaTestingFmi2Slave extends Fmi2Slave {
         LOG.log(Level.INFO, "currentTime=" + dt + ", dt=" + dt);
     }
 
+    @ScalarVariable(causality = Fmi2Causality.parameter, variability = Fmi2Variability.constant)
+    public int functionVariable() {
+        return 30;
+    }
+
     static class Container {
 
         @ScalarVariable(name = "speed1")
