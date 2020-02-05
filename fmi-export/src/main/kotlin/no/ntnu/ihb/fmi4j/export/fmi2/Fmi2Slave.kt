@@ -242,6 +242,17 @@ abstract class Fmi2Slave(
                 else -> null
             }
         }
+
+        fun hasSetter(method: Method, getterAnnotation: ScalarVariableGetter): Boolean {
+            val causality = getterAnnotation.causality
+            val variability = getterAnnotation.variability
+
+            if (!method.returnType.isPrimitive) return false
+
+            return (causality == Fmi2Causality.input) ||
+                    (causality == Fmi2Causality.parameter && variability != Fmi2Variability.constant)
+        }
+
         methods.forEach { getterMethod ->
             getterMethod.annotations.mapNotNull {
                 if (it is ScalarVariableGetter) it else null
@@ -249,9 +260,7 @@ abstract class Fmi2Slave(
 
                 val variableName = variableName(getterMethod) ?: throw IllegalStateException("")
 
-                val causality = getterAnnotation.causality
-                val variability = getterAnnotation.variability
-                val hasSetter = causality == Fmi2Causality.input || (causality == Fmi2Causality.parameter && variability != Fmi2Variability.constant)
+                val hasSetter = hasSetter(getterMethod, getterAnnotation)
                 val setterMethod = methods.find {
                     variableName(it) == variableName && it.getAnnotation(ScalarVariableSetter::class.java) != null
                 }
@@ -299,7 +308,29 @@ abstract class Fmi2Slave(
                             it.apply(getterAnnotation)
                         })
                     }
-                    else -> throw IllegalStateException("Unsupported variable type: $type")
+                    else -> when {
+                        IntVector::class.java.isAssignableFrom(type) -> {
+                            val vector = getterMethod.invoke(owner) as? IntVector
+                                    ?: throw IllegalStateException("Invoking $getterMethod resulted in a NPE!")
+                            for (i in 0 until vector.size) {
+                                registerInteger(IntBuilder("$variableName[$i]").also {
+                                    it.getter { vector[i] }
+                                    it.setter { value -> vector[i] = value }
+                                })
+                            }
+                        }
+                        RealVector::class.java.isAssignableFrom(type) -> {
+                            val vector = getterMethod.invoke(owner) as? RealVector
+                                    ?: throw IllegalStateException("Invoking $getterMethod resulted in a NPE!")
+                            for (i in 0 until vector.size) {
+                                registerReal(RealBuilder("$variableName[$i]").also {
+                                    it.getter { vector[i] }
+                                    it.setter { value -> vector[i] = value }
+                                })
+                            }
+                        }
+                        else -> throw IllegalStateException("Unsupported variable type: $type")
+                    }
                 }
 
             }
@@ -326,7 +357,7 @@ abstract class Fmi2Slave(
                 registerInteger(IntBuilder("$prepend$variableName").also {
                     it.getter { field.getInt(owner) }
                     if (!isFinal) {
-                        it.setter { field.setInt(owner, it) }
+                        it.setter { value -> field.setInt(owner, value) }
                     }
                     it.apply(annotation)
                 })
@@ -336,7 +367,7 @@ abstract class Fmi2Slave(
                 registerReal(RealBuilder("$prepend$variableName").also {
                     it.getter { field.getDouble(owner) }
                     if (!isFinal) {
-                        it.setter { field.setDouble(owner, it) }
+                        it.setter { value -> field.setDouble(owner, value) }
                     }
                     it.apply(annotation)
                 })
@@ -346,7 +377,7 @@ abstract class Fmi2Slave(
                 registerBoolean(BooleanBuilder("$prepend$variableName").also {
                     it.getter { field.getBoolean(owner) }
                     if (!isFinal) {
-                        it.setter { field.setBoolean(owner, it) }
+                        it.setter { value -> field.setBoolean(owner, value) }
                     }
                     it.apply(annotation)
                 })
@@ -356,7 +387,7 @@ abstract class Fmi2Slave(
                 registerString(StringBuilder("$prepend$variableName").also {
                     it.getter { field.get(owner) as? String ?: "" }
                     if (!isFinal) {
-                        it.setter { field.set(owner, it) }
+                        it.setter { value -> field.set(owner, value) }
                     }
                     it.apply(annotation)
                 })
@@ -368,7 +399,7 @@ abstract class Fmi2Slave(
                 for (i in array.indices) {
                     registerInteger(IntBuilder("$prepend$variableName[$i]").also {
                         it.getter { array[i] }
-                        it.setter { array[i] = it }
+                        it.setter { value -> array[i] = value }
                         it.apply(annotation)
                     })
                 }
@@ -380,7 +411,7 @@ abstract class Fmi2Slave(
                 for (i in array.indices) {
                     registerReal(RealBuilder("$prepend$variableName[$i]").also {
                         it.getter { array[i] }
-                        it.setter { array[i] = it }
+                        it.setter { value -> array[i] = value }
                         it.apply(annotation)
                     })
                 }
@@ -392,7 +423,7 @@ abstract class Fmi2Slave(
                 for (i in array.indices) {
                     registerBoolean(BooleanBuilder("$prepend$variableName[$i]").also {
                         it.getter { array[i] }
-                        it.setter { array[i] = it }
+                        it.setter { value -> array[i] = value }
                         it.apply(annotation)
                     })
                 }
@@ -405,7 +436,7 @@ abstract class Fmi2Slave(
                 for (i in array.indices) {
                     registerString(StringBuilder("$prepend$variableName[$i]").also {
                         it.getter { array[i] }
-                        it.setter { array[i] = it }
+                        it.setter { value -> array[i] = value }
                         it.apply(annotation)
                     })
                 }
@@ -419,7 +450,7 @@ abstract class Fmi2Slave(
                         for (i in 0 until vector.size) {
                             registerInteger(IntBuilder("$prepend$variableName[$i]").also {
                                 it.getter { vector[i] }
-                                it.setter { vector[i] = it }
+                                it.setter { value -> vector[i] = value }
                             })
                         }
                     }
@@ -430,7 +461,7 @@ abstract class Fmi2Slave(
                         for (i in 0 until vector.size) {
                             registerReal(RealBuilder("$prepend$variableName[$i]").also {
                                 it.getter { vector[i] }
-                                it.setter { vector[i] = it }
+                                it.setter { value -> vector[i] = value }
                             })
                         }
                     }
@@ -441,7 +472,7 @@ abstract class Fmi2Slave(
                         for (i in 0 until vector.size) {
                             registerBoolean(BooleanBuilder("$prepend$variableName[$i]").also {
                                 it.getter { vector[i] }
-                                it.setter { vector[i] = it }
+                                it.setter { value -> vector[i] = value }
                             })
                         }
                     }
@@ -452,7 +483,7 @@ abstract class Fmi2Slave(
                         for (i in 0 until vector.size) {
                             registerString(StringBuilder("$prepend$variableName[$i]").also {
                                 it.getter { vector[i] }
-                                it.setter { vector[i] = it }
+                                it.setter { value -> vector[i] = value }
                             })
                         }
                     }

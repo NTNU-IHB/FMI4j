@@ -27,11 +27,11 @@ class JavaTestingFmi2Slave extends Fmi2Slave {
     @ScalarVariable(causality = Fmi2Causality.local, initial = Fmi2Initial.exact)
     protected String[] string = {"Hello", "world!"};
 
-    @ScalarVariable
-    protected Vector3 vector3 = new Vector3();
+    @ScalarVariable(causality = Fmi2Causality.local)
+    protected final Vector3 vector3 = new Vector3(1, 2, 3);
 
     @VariableContainer
-    protected Container container = new Container();
+    protected final Container container = new Container();
 
     private double aParameter = 123;
 
@@ -47,6 +47,11 @@ class JavaTestingFmi2Slave extends Fmi2Slave {
     @ScalarVariableGetter(causality = Fmi2Causality.parameter, variability = Fmi2Variability.constant)
     public int getSomeParameter() {
         return 30;
+    }
+
+    @ScalarVariableGetter(causality = Fmi2Causality.parameter, variability = Fmi2Variability.tunable)
+    public Vector3 getAVector() {
+        return vector3;
     }
 
     @ScalarVariableGetter(causality = Fmi2Causality.parameter, variability = Fmi2Variability.tunable)
@@ -71,6 +76,12 @@ class JavaTestingFmi2Slave extends Fmi2Slave {
         double x;
         double y;
         double z;
+
+        public Vector3(double x, double y, double z) {
+            this.x = x;
+            this.y = y;
+            this.z = z;
+        }
 
         @Override
         public int getSize() {

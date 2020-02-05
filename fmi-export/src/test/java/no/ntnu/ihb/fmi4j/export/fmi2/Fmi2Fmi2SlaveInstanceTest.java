@@ -25,29 +25,22 @@ class Fmi2Fmi2SlaveInstanceTest {
 
     @Test
     void testVector() {
-        double x = 1;
-        double y = 5;
-        double z = 99;
-
         long startIndex = slave.getValueReference("vector3[0]");
         long[] vr = new long[]{startIndex, startIndex + 1, startIndex + 2};
-        slave.setReal(vr, new double[]{x, y, z});
 
-        double[] result = slave.getReal(vr);
-
-        Assertions.assertArrayEquals(new double[]{x, y, z}, result);
+        double[] write = {1, 5, 99};
+        slave.setReal(vr, write);
+        Assertions.assertArrayEquals(write, slave.getReal(vr));
     }
 
     @Test
     void testContainer() {
-
         long vr = slave.getValueReference("container.speed1");
 
         double[] write = new double[]{123.0};
         slave.setReal(new long[]{vr}, write);
 
         Assertions.assertEquals(write[0], slave.getReal(vr));
-
     }
 
     @Test
@@ -63,6 +56,17 @@ class Fmi2Fmi2SlaveInstanceTest {
         double[] write = new double[]{-99};
         slave.setReal(new long[]{vr}, write);
         Assertions.assertEquals(write[0], slave.getReal(vr));
+    }
+
+    @Test
+    void testMethodVariable3() {
+        long startIndex = slave.getValueReference("aVector[0]");
+        long[] vr = new long[]{startIndex, startIndex + 1, startIndex + 2};
+        Assertions.assertArrayEquals(new double[]{1, 2, 3}, slave.getReal(vr));
+
+        double[] write = {1, 5, 99};
+        slave.setReal(vr, write);
+        Assertions.assertArrayEquals(write, slave.getReal(vr));
     }
 
 }
