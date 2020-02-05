@@ -18,7 +18,6 @@ namespace fmi4j
 #endif
 
 SlaveInstance::SlaveInstance(
-    const cppfmu::Memory& memory,
     JNIEnv* env,
     const std::string& instanceName,
     const std::string& resources)
@@ -360,5 +359,5 @@ cppfmu::UniquePtr<cppfmu::SlaveInstance> CppfmuInstantiateSlave(
         throw cppfmu::FatalError("Unable to setup the JVM!");
     }
 
-    return cppfmu::AllocateUnique<fmi4j::SlaveInstance>(memory, memory, env, instanceName, resources);
+    return cppfmu::AllocateUnique<fmi4j::SlaveInstance>(memory, env, instanceName, resources);
 }
