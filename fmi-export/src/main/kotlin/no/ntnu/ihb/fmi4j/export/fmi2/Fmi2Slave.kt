@@ -316,6 +316,7 @@ abstract class Fmi2Slave(
                                 registerInteger(IntBuilder("$variableName[$i]").also {
                                     it.getter { vector[i] }
                                     it.setter { value -> vector[i] = value }
+                                    it.apply(getterAnnotation)
                                 })
                             }
                         }
@@ -326,6 +327,7 @@ abstract class Fmi2Slave(
                                 registerReal(RealBuilder("$variableName[$i]").also {
                                     it.getter { vector[i] }
                                     it.setter { value -> vector[i] = value }
+                                    it.apply(getterAnnotation)
                                 })
                             }
                         }
@@ -451,6 +453,7 @@ abstract class Fmi2Slave(
                             registerInteger(IntBuilder("$prepend$variableName[$i]").also {
                                 it.getter { vector[i] }
                                 it.setter { value -> vector[i] = value }
+                                it.apply(annotation)
                             })
                         }
                     }
@@ -462,6 +465,7 @@ abstract class Fmi2Slave(
                             registerReal(RealBuilder("$prepend$variableName[$i]").also {
                                 it.getter { vector[i] }
                                 it.setter { value -> vector[i] = value }
+                                it.apply(annotation)
                             })
                         }
                     }
@@ -473,6 +477,7 @@ abstract class Fmi2Slave(
                             registerBoolean(BooleanBuilder("$prepend$variableName[$i]").also {
                                 it.getter { vector[i] }
                                 it.setter { value -> vector[i] = value }
+                                it.apply(annotation)
                             })
                         }
                     }
@@ -484,6 +489,7 @@ abstract class Fmi2Slave(
                             registerString(StringBuilder("$prepend$variableName[$i]").also {
                                 it.getter { vector[i] }
                                 it.setter { value -> vector[i] = value }
+                                it.apply(annotation)
                             })
                         }
                     }
