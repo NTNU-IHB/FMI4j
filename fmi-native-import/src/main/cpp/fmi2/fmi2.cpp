@@ -351,8 +351,8 @@ JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi2_jni_Fmi2Library_getF
 
     FmuInstance* fmu = (FmuInstance*) p;
 
-    jclass cls = env->FindClass("no/ntnu/ihb/fmi4j/importer/jni/FmuState");
-    jfieldID id = env->GetFieldID(cls, "pointer", "J");
+    jclass cls = env->FindClass("no/ntnu/ihb/fmi4j/util/LongByReference");
+    jfieldID id = env->GetFieldID(cls, "value", "J");
 
     fmi2FMUstate _state;
     fmi2GetFMUstateTYPE* fmi2GetFMUstate = fmu->fmi2GetFMUstate_;
