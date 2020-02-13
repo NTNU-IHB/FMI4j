@@ -25,6 +25,8 @@
 #include "../util.hpp"
 #include "fmi2FunctionTypes.h"
 
+#include <cstdarg>
+
 namespace
 {
 
@@ -41,11 +43,9 @@ const char* status_to_string(fmi2Status status)
     }
 }
 
-void logger(void* fmi2ComponentEnvironment, fmi2String instance_name, fmi2Status status, fmi2String category, fmi2String message, ...)
+void logger(void*, fmi2String instance_name, fmi2Status status, fmi2String category, fmi2String message, ...)
 {
-
     char msg[1000];
-    char* copy;
     va_list argp;
 
     va_start(argp, message);
@@ -191,5 +191,4 @@ public:
         fmi2CompletedIntegratorStep_ = load_function<fmi2CompletedIntegratorStepTYPE*>(handle_, "fmi2CompletedIntegratorStep");
         fmi2NewDiscreteStates_ = load_function<fmi2NewDiscreteStatesTYPE*>(handle_, "fmi2NewDiscreteStates");
     };
-
 };

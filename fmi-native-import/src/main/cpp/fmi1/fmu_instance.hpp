@@ -25,6 +25,8 @@
 #include "../util.hpp"
 #include "fmiFunctionTypes.h"
 
+#include <cstdarg>
+
 namespace
 {
 
@@ -43,9 +45,7 @@ const char* status_to_string(fmiStatus status)
 
 void logger(fmiComponent, fmiString instance_name, fmiStatus status, fmiString category, fmiString message, ...)
 {
-
     char msg[1000];
-    char* copy;
     va_list argp;
 
     va_start(argp, message);
