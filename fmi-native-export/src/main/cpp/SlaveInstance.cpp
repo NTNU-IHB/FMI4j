@@ -1,9 +1,7 @@
 
+#include <cppfmu/cppfmu_cs.hpp>
 #include <fmi4j/SlaveInstance.hpp>
 #include <fmi4j/jni_helper.hpp>
-
-#include <cppfmu/cppfmu_cs.hpp>
-
 #include <fstream>
 #include <iostream>
 #include <jni.h>
@@ -21,44 +19,34 @@ SlaveInstance::SlaveInstance(
     JNIEnv* env,
     const std::string& instanceName,
     const std::string& resources)
+    : resources_(resources)
+    , instanceName_(instanceName)
 {
-
     env->GetJavaVM(&jvm_);
 
-    std::string slaveName;
     std::ifstream infile(resources + "/mainclass.txt");
-    std::getline(infile, slaveName);
+    std::getline(infile, slaveName_);
 
     std::string classpath = "file:/" + resources + "/model.jar";
     classLoader_ = env->NewGlobalRef(create_classloader(env, classpath));
 
-    jclass slaveCls = FindClass(env, classLoader_, slaveName.c_str());
+    jclass slaveCls = FindClass(env, classLoader_, slaveName_.c_str());
     if (slaveCls == nullptr) {
-        std::string msg = "Unable to locate slave class '" + slaveName + "'!";
+        std::string msg = "Unable to locate slave class '" + slaveName_ + "'!";
         throw cppfmu::FatalError(msg.c_str());
     }
 
-    jmethodID mid = env->GetMethodID(slaveCls, "<init>", "(Ljava/lang/String;)V");
-    if (mid == nullptr) {
-        std::string msg = "Unable to locate 1 arg constructor that takes a String for slave class '" + slaveName + "'!";
+    jmethodID ctorId = env->GetMethodID(slaveCls, "<init>", "(Ljava/lang/String;)V");
+    if (ctorId == nullptr) {
+        std::string msg = "Unable to locate 1 arg constructor that takes a String for slave class '" + slaveName_ + "'!";
         throw cppfmu::FatalError(msg.c_str());
     }
-
-    slave_ = env->NewGlobalRef(env->NewObject(slaveCls, mid, env->NewStringUTF(instanceName.c_str())));
-    if (slave_ == nullptr) {
-        std::string msg = "Unable to instantiate a new instance of '" + slaveName + "'!";
-        throw cppfmu::FatalError(msg.c_str());
-    }
-
-    env->SetObjectField(slave_, GetFieldID(env, slaveCls, "resourceLocation", "Ljava/lang/String;"), env->NewStringUTF(resources.c_str()));
-    env->CallObjectMethod(slave_, GetMethodID(env, slaveCls, "__define__", "()Lno/ntnu/ihb/fmi4j/export/fmi2/Fmi2Slave;"));
 
     setupExperimentId_ = GetMethodID(env, slaveCls, "setupExperiment", "(D)V");
     enterInitialisationModeId_ = GetMethodID(env, slaveCls, "enterInitialisationMode", "()V");
     exitInitializationModeId_ = GetMethodID(env, slaveCls, "exitInitialisationMode", "()V");
 
     doStepId_ = GetMethodID(env, slaveCls, "doStep", "(DD)V");
-    resetId_ = GetMethodID(env, slaveCls, "reset", "()V");
     terminateId_ = GetMethodID(env, slaveCls, "terminate", "()V");
 
     getRealId_ = GetMethodID(env, slaveCls, "getReal", "([J)[D");
@@ -72,34 +60,68 @@ SlaveInstance::SlaveInstance(
 
     getStringId_ = GetMethodID(env, slaveCls, "getString", "([J)[Ljava/lang/String;");
     setStringId_ = GetMethodID(env, slaveCls, "setString", "([J[Ljava/lang/String;)V");
+
+    initialize();
+}
+
+void SlaveInstance::initialize()
+{
+    jvm_invoke(jvm_, [this](JNIEnv* env) {
+
+        env->DeleteGlobalRef(slaveInstance_);
+
+        jclass slaveCls = FindClass(env, classLoader_, slaveName_.c_str());
+        if (slaveCls == nullptr) {
+            std::string msg = "Unable to locate slave class '" + slaveName_ + "'!";
+            throw cppfmu::FatalError(msg.c_str());
+        }
+
+        jmethodID ctorId = env->GetMethodID(slaveCls, "<init>", "(Ljava/lang/String;)V");
+        if (ctorId == nullptr) {
+            std::string msg = "Unable to locate 1 arg constructor that takes a String for slave class '" + slaveName_ + "'!";
+            throw cppfmu::FatalError(msg.c_str());
+        }
+
+        slaveInstance_ = env->NewGlobalRef(env->NewObject(slaveCls, ctorId, env->NewStringUTF(instanceName_.c_str())));
+        if (slaveInstance_ == nullptr) {
+            std::string msg = "Unable to instantiate a new instance of '" + slaveName_ + "'!";
+            throw cppfmu::FatalError(msg.c_str());
+        }
+
+        jfieldID resourceLocationId = GetFieldID(env, slaveCls, "resourceLocation", "Ljava/lang/String;");
+        env->SetObjectField(slaveInstance_, resourceLocationId, env->NewStringUTF(resources_.c_str()));
+
+        jmethodID defineId = GetMethodID(env, slaveCls, "__define__", "()Lno/ntnu/ihb/fmi4j/export/fmi2/Fmi2Slave;");
+        env->CallObjectMethod(slaveInstance_, defineId);
+    });
 }
 
 void SlaveInstance::SetupExperiment(cppfmu::FMIBoolean toleranceDefined, cppfmu::FMIReal tolerance, cppfmu::FMIReal tStart, cppfmu::FMIBoolean stopTimeDefined, cppfmu::FMIReal tStop)
 {
     jvm_invoke(jvm_, [this, tStart](JNIEnv* env) {
-        env->CallVoidMethod(slave_, setupExperimentId_, tStart);
+        env->CallVoidMethod(slaveInstance_, setupExperimentId_, tStart);
     });
 }
 
 void SlaveInstance::EnterInitializationMode()
 {
     jvm_invoke(jvm_, [this](JNIEnv* env) {
-        env->CallVoidMethod(slave_, enterInitialisationModeId_);
+        env->CallVoidMethod(slaveInstance_, enterInitialisationModeId_);
     });
 }
 
 void SlaveInstance::ExitInitializationMode()
 {
     jvm_invoke(jvm_, [this](JNIEnv* env) {
-        env->CallVoidMethod(slave_, exitInitializationModeId_);
+        env->CallVoidMethod(slaveInstance_, exitInitializationModeId_);
     });
 }
 
-bool SlaveInstance::DoStep(cppfmu::FMIReal currentCommunicationPoint, cppfmu::FMIReal communicationStepSize, cppfmu::FMIBoolean newStep, cppfmu::FMIReal& endOfStep)
+bool SlaveInstance::DoStep(cppfmu::FMIReal currentCommunicationPoint, cppfmu::FMIReal communicationStepSize, cppfmu::FMIBoolean, cppfmu::FMIReal& endOfStep)
 {
     bool status = true;
     jvm_invoke(jvm_, [this, &status, currentCommunicationPoint, communicationStepSize](JNIEnv* env) {
-        env->CallVoidMethod(slave_, doStepId_, currentCommunicationPoint, communicationStepSize);
+        env->CallVoidMethod(slaveInstance_, doStepId_, currentCommunicationPoint, communicationStepSize);
         if (env->ExceptionCheck()) {
             status = false;
         }
@@ -109,16 +131,13 @@ bool SlaveInstance::DoStep(cppfmu::FMIReal currentCommunicationPoint, cppfmu::FM
 
 void SlaveInstance::Reset()
 {
-    jvm_invoke(jvm_, [this](JNIEnv* env) {
-        env->CallVoidMethod(slave_, resetId_);
-    });
+    initialize();
 }
-
 
 void SlaveInstance::Terminate()
 {
     jvm_invoke(jvm_, [this](JNIEnv* env) {
-        env->CallBooleanMethod(slave_, terminateId_);
+        env->CallBooleanMethod(slaveInstance_, terminateId_);
     });
 }
 
@@ -139,7 +158,7 @@ void SlaveInstance::SetReal(const cppfmu::FMIValueReference* vr, std::size_t nvr
         env->SetLongArrayRegion(vrArray, 0, nvr, vrArrayElements);
         env->SetDoubleArrayRegion(valueArray, 0, nvr, valueArrayElements);
 
-        env->CallVoidMethod(slave_, setRealId_, vrArray, valueArray);
+        env->CallVoidMethod(slaveInstance_, setRealId_, vrArray, valueArray);
 
         free(vrArrayElements);
         free(valueArrayElements);
@@ -163,7 +182,7 @@ void SlaveInstance::SetInteger(const cppfmu::FMIValueReference* vr, std::size_t 
         env->SetLongArrayRegion(vrArray, 0, nvr, vrArrayElements);
         env->SetIntArrayRegion(valueArray, 0, nvr, valueArrayElements);
 
-        env->CallVoidMethod(slave_, setIntegerId_, vrArray, valueArray);
+        env->CallVoidMethod(slaveInstance_, setIntegerId_, vrArray, valueArray);
 
         free(vrArrayElements);
         free(valueArrayElements);
@@ -187,7 +206,7 @@ void SlaveInstance::SetBoolean(const cppfmu::FMIValueReference* vr, std::size_t 
         env->SetLongArrayRegion(vrArray, 0, nvr, vrArrayElements);
         env->SetBooleanArrayRegion(valueArray, 0, nvr, valueArrayElements);
 
-        env->CallVoidMethod(slave_, setBooleanId_, vrArray, valueArray);
+        env->CallVoidMethod(slaveInstance_, setBooleanId_, vrArray, valueArray);
 
         free(vrArrayElements);
         free(valueArrayElements);
@@ -209,7 +228,7 @@ void SlaveInstance::SetString(const cppfmu::FMIValueReference* vr, std::size_t n
 
         env->SetLongArrayRegion(vrArray, 0, nvr, vrArrayElements);
 
-        env->CallVoidMethod(slave_, setStringId_, vrArray, valueArray);
+        env->CallVoidMethod(slaveInstance_, setStringId_, vrArray, valueArray);
 
         free(vrArrayElements);
     });
@@ -227,7 +246,7 @@ void SlaveInstance::GetReal(const cppfmu::FMIValueReference* vr, std::size_t nvr
 
         env->SetLongArrayRegion(vrArray, 0, nvr, vrArrayElements);
 
-        auto valueArray = reinterpret_cast<jdoubleArray>(env->CallObjectMethod(slave_, getRealId_, vrArray));
+        auto valueArray = reinterpret_cast<jdoubleArray>(env->CallObjectMethod(slaveInstance_, getRealId_, vrArray));
         auto valueArrayElements = env->GetDoubleArrayElements(valueArray, nullptr);
 
         for (int i = 0; i < nvr; i++) {
@@ -252,7 +271,7 @@ void SlaveInstance::GetInteger(const cppfmu::FMIValueReference* vr, std::size_t 
 
         env->SetLongArrayRegion(vrArray, 0, nvr, vrArrayElements);
 
-        auto valueArray = reinterpret_cast<jintArray>(env->CallObjectMethod(slave_, getIntegerId_, vrArray));
+        auto valueArray = reinterpret_cast<jintArray>(env->CallObjectMethod(slaveInstance_, getIntegerId_, vrArray));
         auto valueArrayElements = env->GetIntArrayElements(valueArray, nullptr);
 
         for (int i = 0; i < nvr; i++) {
@@ -276,7 +295,7 @@ void SlaveInstance::GetBoolean(const cppfmu::FMIValueReference* vr, std::size_t 
 
         env->SetLongArrayRegion(vrArray, 0, nvr, vrArrayElements);
 
-        auto valueArray = reinterpret_cast<jbooleanArray>(env->CallObjectMethod(slave_, getBooleanId_, vrArray));
+        auto valueArray = reinterpret_cast<jbooleanArray>(env->CallObjectMethod(slaveInstance_, getBooleanId_, vrArray));
         auto valueArrayElements = env->GetBooleanArrayElements(valueArray, nullptr);
 
         for (int i = 0; i < nvr; i++) {
@@ -300,7 +319,7 @@ void SlaveInstance::GetString(const cppfmu::FMIValueReference* vr, std::size_t n
 
         env->SetLongArrayRegion(vrArray, 0, nvr, vrArrayElements);
 
-        auto valueArray = reinterpret_cast<jobjectArray>(env->CallObjectMethod(slave_, getStringId_, vrArray));
+        auto valueArray = reinterpret_cast<jobjectArray>(env->CallObjectMethod(slaveInstance_, getStringId_, vrArray));
 
         for (int i = 0; i < nvr; i++) {
             auto jstr = reinterpret_cast<jstring>(env->GetObjectArrayElement(valueArray, i));
@@ -317,7 +336,7 @@ void SlaveInstance::GetString(const cppfmu::FMIValueReference* vr, std::size_t n
 SlaveInstance::~SlaveInstance()
 {
     jvm_invoke(jvm_, [this](JNIEnv* env) {
-        env->DeleteGlobalRef(slave_);
+        env->DeleteGlobalRef(slaveInstance_);
 
         jclass URLClassLoader = env->FindClass("java/net/URLClassLoader");
         jmethodID closeId = env->GetMethodID(URLClassLoader, "close", "()V");
@@ -335,16 +354,15 @@ SlaveInstance::~SlaveInstance()
 
 cppfmu::UniquePtr<cppfmu::SlaveInstance> CppfmuInstantiateSlave(
     cppfmu::FMIString instanceName,
-    cppfmu::FMIString fmuGUID,
+    cppfmu::FMIString,
     cppfmu::FMIString fmuResourceLocation,
-    cppfmu::FMIString mimeType,
-    cppfmu::FMIReal timeout,
+    cppfmu::FMIString,
+    cppfmu::FMIReal,
     cppfmu::FMIBoolean visible,
-    cppfmu::FMIBoolean interactive,
+    cppfmu::FMIBoolean,
     cppfmu::Memory memory,
-    cppfmu::Logger logger)
+    const cppfmu::Logger& logger)
 {
-
     std::string resources = std::string(fmuResourceLocation);
     auto find = resources.find("file:///");
     if (find != std::string::npos) {

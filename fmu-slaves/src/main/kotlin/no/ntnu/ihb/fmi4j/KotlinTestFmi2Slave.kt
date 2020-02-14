@@ -9,12 +9,13 @@ class KotlinTestFmi2Slave(
 ): Fmi2Slave(instanceName) {
 
     @ScalarVariable
-    private val speed: Double = 10.0
+    private var speed: Double = 10.0
 
     @VariableContainer
     private val data = Data()
 
     override fun doStep(currentTime: Double, dt: Double) {
+        speed = -1.0
     }
 
 }
