@@ -20,14 +20,49 @@ class TestBuilder {
     fun testJavaClass() {
         FmuBuilder.main(arrayOf("-f", jar, "-m", "$group.JavaTestFmi2Slave", "-d", dest))
         for (i in 0..2) {
-            testFmu(File(dest, "Test.fmu"))
+
+            val fmuFile = File(dest, "Test.fmu")
+            Assertions.assertTrue(fmuFile.exists())
+
+            Fmu.from(fmuFile).asCoSimulationFmu().use { fmu ->
+
+                val dt = 0.1
+                val modelIdentifier = fmu.modelDescription.attributes.modelIdentifier
+                List(2) { i -> fmu.newInstance("${modelIdentifier}_$i") }.forEach { slave ->
+
+                    Assertions.assertTrue(slave.simpleSetup())
+                    Assertions.assertEquals(2.0, slave.readReal("realOut").value)
+                    Assertions.assertTrue(slave.doStep(dt))
+                    Assertions.assertEquals(2.0 + dt, slave.readReal("realOut").value)
+                    slave.reset()
+                    Assertions.assertEquals(2.0, slave.readReal("realOut").value)
+                    slave.close()
+
+                }
+
+            }
         }
     }
 
     @Test
     fun testKotlinClass() {
         FmuBuilder.main(arrayOf("-f", jar, "-m", "$group.KotlinTestFmi2Slave", "-d", dest))
-        testFmu(File(dest, "KotlinTestFmi2Slave.fmu"))
+
+        val fmuFile = File(dest, "KotlinTestFmi2Slave.fmu")
+        Assertions.assertTrue(fmuFile.exists())
+
+        Fmu.from(fmuFile).asCoSimulationFmu().use { fmu ->
+
+            val modelIdentifier = fmu.modelDescription.attributes.modelIdentifier
+            List(2) { i -> fmu.newInstance("${modelIdentifier}_$i") }.forEach { slave ->
+                Assertions.assertTrue(slave.simpleSetup())
+                Assertions.assertEquals(10.0, slave.readReal("speed").value)
+                slave.doStep(0.1)
+                Assertions.assertEquals(-1.0, slave.readReal("speed").value)
+                slave.reset()
+                Assertions.assertEquals(10.0, slave.readReal("speed").value)
+            }
+        }
     }
 
     private fun testFmu(fmuFile: File) {
@@ -35,17 +70,19 @@ class TestBuilder {
 
         Fmu.from(fmuFile).asCoSimulationFmu().use { fmu ->
 
-            val slave1 = fmu.newInstance(fmu.modelDescription.attributes.modelIdentifier + "_1")
-            val slave2 = fmu.newInstance(fmu.modelDescription.attributes.modelIdentifier + "_2")
+            val dt = 0.1
+            val modelIdentifier = fmu.modelDescription.attributes.modelIdentifier
+            List(2) { i -> fmu.newInstance("${modelIdentifier}_$i") }.forEach { slave ->
 
-            Assertions.assertTrue(slave1.simpleSetup())
-            Assertions.assertTrue(slave2.simpleSetup())
+                Assertions.assertTrue(slave.simpleSetup())
+                Assertions.assertEquals(2.0, slave.readReal("realOut").value)
+                Assertions.assertTrue(slave.doStep(dt))
+                Assertions.assertEquals(2.0 + dt, slave.readReal("realOut").value)
+                slave.reset()
+                Assertions.assertEquals(2.0, slave.readReal("realOut").value)
+                slave.close()
 
-            Assertions.assertTrue(slave1.doStep(0.1))
-            Assertions.assertTrue(slave2.doStep(0.1))
-
-            slave1.close()
-            slave2.close()
+            }
 
         }
 

@@ -56,7 +56,6 @@ abstract class Fmi2Slave(
     open fun exitInitialisationMode() {}
 
     abstract fun doStep(currentTime: Double, dt: Double)
-    open fun reset() {}
     open fun terminate() {}
 
     @Suppress("UNCHECKED_CAST")
@@ -530,18 +529,14 @@ abstract class Fmi2Slave(
         return "${dateFormat}T${timeFormat}Z"
     }
 
-    protected open fun define() {}
-
     fun __define__(): Fmi2Slave {
 
         if (isDefined.getAndSet(true)) {
             return this
         }
 
-        define()
-
         modelDescription.fmiVersion = "2.0"
-        modelDescription.generationTool = "fmi4j"
+        modelDescription.generationTool = "FMI4j"
         modelDescription.variableNamingConvention = "structured"
         modelDescription.guid = UUID.randomUUID().toString()
         modelDescription.generationDateAndTime = getDateAndTime()
