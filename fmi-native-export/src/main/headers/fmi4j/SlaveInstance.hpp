@@ -16,6 +16,8 @@ class SlaveInstance : public cppfmu::SlaveInstance
 public:
     SlaveInstance(JNIEnv* env, const std::string& instanceName, const std::string& resources);
 
+    void initialize();
+
     void SetupExperiment(cppfmu::FMIBoolean toleranceDefined, cppfmu::FMIReal tolerance, cppfmu::FMIReal tStart, cppfmu::FMIBoolean stopTimeDefined, cppfmu::FMIReal tStop) override;
     void EnterInitializationMode() override;
     void ExitInitializationMode() override;
@@ -37,15 +39,19 @@ public:
 
 private:
     JavaVM* jvm_;
-    jobject slave_;
+
     jobject classLoader_;
+    jobject slaveInstance_;
+
+    std::string slaveName_;
+    const std::string resources_;
+    const std::string instanceName_;
 
     jmethodID setupExperimentId_;
     jmethodID enterInitialisationModeId_;
     jmethodID exitInitializationModeId_;
 
     jmethodID doStepId_;
-    jmethodID resetId_;
     jmethodID terminateId_;
 
     jmethodID getRealId_;
