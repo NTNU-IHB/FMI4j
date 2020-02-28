@@ -13,8 +13,14 @@ import org.jetbrains.annotations.NotNull;
 )
 public class JavaTestFmi2Slave extends Fmi2Slave {
 
-    @ScalarVariable(causality = Fmi2Causality.output, variability = Fmi2Variability.constant)
+    @ScalarVariable(causality = Fmi2Causality.output)
     protected double realOut = 2.0;
+
+    @ScalarVariable(causality = Fmi2Causality.parameter, variability = Fmi2Variability.constant)
+    protected double param = 1.0;
+
+    @ScalarVariable(causality = Fmi2Causality.output, variability = Fmi2Variability.discrete)
+    protected double intOut = 1.0;
 
     public JavaTestFmi2Slave(@NotNull String instanceName) {
         super(instanceName);

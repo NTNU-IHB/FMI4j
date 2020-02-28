@@ -587,12 +587,14 @@ abstract class Fmi2Slave(
             cls = cls.superclass
         } while (cls != null)
 
-        val outputs = modelDescription.modelVariables.scalarVariable.filter { it.causality == Fmi2Causality.output }
+        val outputs = modelDescription.modelVariables.scalarVariable.mapIndexedNotNull { i, v ->
+            if (v.causality == Fmi2Causality.output ) i.toLong() else null
+        }
         modelDescription.modelStructure = Fmi2ModelDescription.ModelStructure().also { ms ->
             if (outputs.isNotEmpty()) {
                 ms.outputs = Fmi2VariableDependency()
-                outputs.forEachIndexed { i, _ ->
-                    ms.outputs.unknown.add(Fmi2VariableDependency.Unknown().also { u -> u.index = i.toLong() + 1 })
+                outputs.forEach {
+                    ms.outputs.unknown.add(Fmi2VariableDependency.Unknown().also { u -> u.index = it})
                 }
             }
         }
