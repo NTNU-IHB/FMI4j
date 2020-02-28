@@ -2,6 +2,7 @@ package no.ntnu.ihb.fmi4j
 
 import no.ntnu.ihb.fmi4j.export.fmi2.Fmi2Slave
 import no.ntnu.ihb.fmi4j.export.fmi2.ScalarVariable
+import no.ntnu.ihb.fmi4j.export.fmi2.ScalarVariableGetter
 import no.ntnu.ihb.fmi4j.export.fmi2.VariableContainer
 import no.ntnu.ihb.fmi4j.modeldescription.fmi2.Fmi2Causality
 import no.ntnu.ihb.fmi4j.modeldescription.fmi2.Fmi2Variability
@@ -24,6 +25,9 @@ open class KotlinTestingFmi2Slave(
     }
 
     override fun doStep(currentTime: Double, dt: Double) {}
+
+    @ScalarVariableGetter(causality = Fmi2Causality.output)
+    fun getSubModel_out() = 99.0
 
 }
 

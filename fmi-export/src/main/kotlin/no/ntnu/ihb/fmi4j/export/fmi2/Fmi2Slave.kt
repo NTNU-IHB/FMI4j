@@ -233,10 +233,16 @@ abstract class Fmi2Slave(
             val methodName = method.name
             return when {
                 methodName.startsWith("get") -> {
-                    methodName.replaceFirst("get", "").decapitalize()
+                    methodName
+                            .replaceFirst("get", "")
+                            .replace("_", ".")
+                            .decapitalize()
                 }
                 methodName.startsWith("set") -> {
-                    methodName.replaceFirst("set", "").decapitalize()
+                    methodName
+                            .replaceFirst("set", "")
+                            .replace("_", ".")
+                            .decapitalize()
                 }
                 else -> null
             }
@@ -257,7 +263,8 @@ abstract class Fmi2Slave(
                 if (it is ScalarVariableGetter) it else null
             }.forEach { getterAnnotation ->
 
-                val variableName = variableName(getterMethod) ?: throw IllegalStateException("")
+                val variableName = variableName(getterMethod)
+                        ?: throw IllegalStateException("Illegal method name: ${getterMethod.name}")
 
                 val hasSetter = hasSetter(getterMethod, getterAnnotation)
                 val setterMethod = methods.find {
