@@ -44,7 +44,9 @@ class Fmi2Fmi2SlaveInstanceTest {
     @Test
     void testMethodVariable1() {
         long vr = slave.getValueReference("someParameter");
-        Assertions.assertEquals(30, slave.getInteger(vr));
+        for (int i = 0; i < 10; i++) {
+            Assertions.assertEquals(30, slave.getInteger(vr));
+        }
     }
 
     @Test
@@ -53,7 +55,9 @@ class Fmi2Fmi2SlaveInstanceTest {
         Assertions.assertEquals(123, slave.getReal(vr));
         double[] write = new double[]{-99};
         slave.setReal(new long[]{vr}, write);
-        Assertions.assertEquals(write[0], slave.getReal(vr));
+        for (int i = 0; i < 10; i++) {
+            Assertions.assertEquals(write[0], slave.getReal(vr));
+        }
     }
 
     @Test

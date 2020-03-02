@@ -1,9 +1,6 @@
 package no.ntnu.ihb.fmi4j.export.fmi2
 
-import no.ntnu.ihb.fmi4j.export.BooleanVector
-import no.ntnu.ihb.fmi4j.export.IntVector
-import no.ntnu.ihb.fmi4j.export.RealVector
-import no.ntnu.ihb.fmi4j.export.StringVector
+import no.ntnu.ihb.fmi4j.export.*
 import no.ntnu.ihb.fmi4j.modeldescription.fmi2.*
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -24,7 +21,10 @@ abstract class Fmi2Slave(
 ) {
 
     val modelDescription = Fmi2ModelDescription()
-    private val accessors = mutableListOf<Accessor<*>>()
+    private val intAccessors: MutableList<IntAccessor> = mutableListOf()
+    private val realAccessors: MutableList<RealAccessor> = mutableListOf()
+    private val boolAccessors: MutableList<BoolAccessor> = mutableListOf()
+    private val stringAccessors: MutableList<StringAccessor> = mutableListOf()
 
     private val isDefined = AtomicBoolean(false)
     private lateinit var resourceLocation: String
@@ -33,9 +33,9 @@ abstract class Fmi2Slave(
         return File(resourceLocation, name)
     }
 
-    fun getVariableName(vr: Long): Long {
+    fun getVariableName(vr: Long, type: Fmi2VariableType): Long {
         return modelDescription.modelVariables.scalarVariable
-                .firstOrNull { it.valueReference == vr }?.valueReference
+                .firstOrNull { it.valueReference == vr && it.type() == type }?.valueReference
                 ?: throw IllegalArgumentException("No such variable with valueReference $vr!")
     }
 
@@ -60,96 +60,88 @@ abstract class Fmi2Slave(
 
     @Suppress("UNCHECKED_CAST")
     fun getReal(vr: Long): Double {
-        return (accessors[vr.toInt()] as RealAccessor).getter()
+        return realAccessors[vr.toInt()].getter()
     }
 
     @Suppress("UNCHECKED_CAST")
     open fun getReal(vr: LongArray): DoubleArray {
         return DoubleArray(vr.size) { i ->
-            (accessors[vr[i].toInt()] as RealAccessor).let {
-                it.getter()
-            }
+            realAccessors[vr[i].toInt()].getter()
         }
     }
 
     @Suppress("UNCHECKED_CAST")
     open fun setReal(vr: LongArray, values: DoubleArray) {
         for (i in vr.indices) {
-            (accessors[vr[i].toInt()] as RealAccessor).apply {
+            realAccessors[vr[i].toInt()].apply {
                 setter?.invoke(values[i]) ?: LOG.warning("Trying to set value of " +
-                        "${getVariableName(vr[i])} on variable without a specified setter!")
+                        "${getVariableName(vr[i], Fmi2VariableType.REAL)} on variable without a specified setter!")
             }
         }
     }
 
     @Suppress("UNCHECKED_CAST")
     fun getInteger(vr: Long): Int {
-        return (accessors[vr.toInt()] as IntAccessor).getter()
+        return intAccessors[vr.toInt()].getter()
     }
 
     @Suppress("UNCHECKED_CAST")
     open fun getInteger(vr: LongArray): IntArray {
         return IntArray(vr.size) { i ->
-            (accessors[vr[i].toInt()] as IntAccessor).let {
-                it.getter()
-            }
+            intAccessors[vr[i].toInt()].getter()
         }
     }
 
     @Suppress("UNCHECKED_CAST")
     open fun setInteger(vr: LongArray, values: IntArray) {
         for (i in vr.indices) {
-            (accessors[vr[i].toInt()] as IntAccessor).apply {
+            intAccessors[vr[i].toInt()].apply {
                 setter?.invoke(values[i]) ?: LOG.warning("Trying to set value of " +
-                        "${getVariableName(vr[i])} on variable without a specified setter!")
+                        "${getVariableName(vr[i], Fmi2VariableType.INTEGER)} on variable without a specified setter!")
             }
         }
     }
 
     @Suppress("UNCHECKED_CAST")
     fun getBoolean(vr: Long): Boolean {
-        return (accessors[vr.toInt()] as BoolAccessor).getter()
+        return boolAccessors[vr.toInt()].getter()
     }
 
     @Suppress("UNCHECKED_CAST")
     open fun getBoolean(vr: LongArray): BooleanArray {
         return BooleanArray(vr.size) { i ->
-            (accessors[vr[i].toInt()] as BoolAccessor).let {
-                it.getter()
-            }
+            boolAccessors[vr[i].toInt()].getter()
         }
     }
 
     @Suppress("UNCHECKED_CAST")
     open fun setBoolean(vr: LongArray, values: BooleanArray) {
         for (i in vr.indices) {
-            (accessors[vr[i].toInt()] as BoolAccessor).apply {
+            boolAccessors[vr[i].toInt()].apply {
                 setter?.invoke(values[i]) ?: LOG.warning("Trying to set value of " +
-                        "${getVariableName(vr[i])} on variable without a specified setter!")
+                        "${getVariableName(vr[i], Fmi2VariableType.BOOLEAN)} on variable without a specified setter!")
             }
         }
     }
 
     @Suppress("UNCHECKED_CAST")
     fun getString(vr: Long): String {
-        return (accessors[vr.toInt()] as StringAccessor).getter()
+        return stringAccessors[vr.toInt()].getter()
     }
 
     @Suppress("UNCHECKED_CAST")
     open fun getString(vr: LongArray): Array<String> {
         return Array(vr.size) { i ->
-            (accessors[vr[i].toInt()] as StringAccessor).let {
-                it.getter()
-            }
+            stringAccessors[vr[i].toInt()].getter()
         }
     }
 
     @Suppress("UNCHECKED_CAST")
     open fun setString(vr: LongArray, values: Array<String>) {
         for (i in vr.indices) {
-            (accessors[vr[i].toInt()] as StringAccessor).apply {
+            stringAccessors[vr[i].toInt()].apply {
                 setter?.invoke(values[i]) ?: LOG.warning("Trying to set value of " +
-                        "${getVariableName(vr[i])} on variable without a specified setter!")
+                        "${getVariableName(vr[i], Fmi2VariableType.STRING)} on variable without a specified setter!")
             }
         }
     }
@@ -165,11 +157,9 @@ abstract class Fmi2Slave(
     private fun internalRegister(v: Variable<*>): Fmi2ScalarVariable {
         return Fmi2ScalarVariable().also { s ->
             s.name = v.name
-            s.valueReference = accessors.size.toLong()
             v.causality?.also { s.causality = it }
             v.variability?.also { s.variability = it }
             v.initial?.also { if (v.initial != Fmi2Initial.undefined) s.initial = it }
-            accessors.add(v.accessor)
             modelDescription.modelVariables.scalarVariable.add(s)
         }
 
@@ -178,6 +168,9 @@ abstract class Fmi2Slave(
     protected fun registerInteger(int: IntBuilder) {
         val build = int.build()
         internalRegister(build).also { v ->
+            v.valueReference = intAccessors.size.toLong().also {
+                intAccessors.add(build.accessor)
+            }
             v.integer = Fmi2ScalarVariable.Integer().also { type ->
                 if (requiresStart(v)) {
                     build.accessor.getter.invoke().also {
@@ -191,6 +184,8 @@ abstract class Fmi2Slave(
     protected fun registerReal(real: RealBuilder) {
         val build = real.build()
         internalRegister(build).also { v ->
+            v.valueReference = realAccessors.size.toLong()
+            realAccessors.add(build.accessor)
             v.real = Fmi2ScalarVariable.Real().also { type ->
                 if (requiresStart(v)) {
                     build.accessor.getter.invoke().also {
@@ -204,6 +199,8 @@ abstract class Fmi2Slave(
     protected fun registerBoolean(real: BooleanBuilder) {
         val build = real.build()
         internalRegister(build).also { v ->
+            v.valueReference = boolAccessors.size.toLong()
+            boolAccessors.add(build.accessor)
             v.boolean = Fmi2ScalarVariable.Boolean().also { type ->
                 if (requiresStart(v)) {
                     build.accessor.getter.invoke().also {
@@ -217,6 +214,8 @@ abstract class Fmi2Slave(
     protected fun registerString(real: StringBuilder) {
         val build = real.build()
         internalRegister(build).also { v ->
+            v.valueReference = stringAccessors.size.toLong()
+            stringAccessors.add(build.accessor)
             v.string = Fmi2ScalarVariable.String().also { type ->
                 if (requiresStart(v)) {
                     build.accessor.getter.invoke().also {
@@ -227,7 +226,7 @@ abstract class Fmi2Slave(
         }
     }
 
-    private fun processMethods(owner: Any, methods: List<Method>) {
+    private fun processMethods(owner: Any, methods: Array<Method>) {
 
         fun variableName(method: Method): String? {
             val methodName = method.name
@@ -267,14 +266,15 @@ abstract class Fmi2Slave(
                         ?: throw IllegalStateException("Illegal method name: ${getterMethod.name}")
 
                 val hasSetter = hasSetter(getterMethod, getterAnnotation)
-                val setterMethod = methods.find {
-                    variableName(it) == variableName && it.getAnnotation(ScalarVariableSetter::class.java) != null
-                }
-
-                if (hasSetter) {
-                    setterMethod!!
-                    check(setterMethod.parameterCount == 1)
-                    check(setterMethod.parameterTypes[0] == getterMethod.returnType)
+                val setterMethod = if (hasSetter) {
+                    methods.find {
+                        variableName(it) == variableName && it.getAnnotation(ScalarVariableSetter::class.java) != null
+                    }!!.also {
+                        check(it.parameterCount == 1)
+                        check(it.parameterTypes[0] == getterMethod.returnType)
+                    }
+                } else {
+                    null
                 }
 
                 when (val type = getterMethod.returnType) {
@@ -525,7 +525,7 @@ abstract class Fmi2Slave(
 
         }
 
-        processMethods(owner, cls.declaredMethods.toList())
+        processMethods(owner, cls.declaredMethods.apply { sortBy { it.name } })
 
     }
 
@@ -588,13 +588,13 @@ abstract class Fmi2Slave(
         } while (cls != null)
 
         val outputs = modelDescription.modelVariables.scalarVariable.mapIndexedNotNull { i, v ->
-            if (v.causality == Fmi2Causality.output ) i.toLong() else null
+            if (v.causality == Fmi2Causality.output) i.toLong() else null
         }
         modelDescription.modelStructure = Fmi2ModelDescription.ModelStructure().also { ms ->
             if (outputs.isNotEmpty()) {
                 ms.outputs = Fmi2VariableDependency()
                 outputs.forEach {
-                    ms.outputs.unknown.add(Fmi2VariableDependency.Unknown().also { u -> u.index = it + 1})
+                    ms.outputs.unknown.add(Fmi2VariableDependency.Unknown().also { u -> u.index = it + 1 })
                 }
             }
         }
@@ -610,68 +610,3 @@ abstract class Fmi2Slave(
     }
 
 }
-
-internal class Accessor<T>(
-        val getter: () -> T,
-        val setter: ((T) -> Unit)?
-)
-internal typealias IntAccessor = Accessor<Int>
-internal typealias RealAccessor = Accessor<Double>
-internal typealias BoolAccessor = Accessor<Boolean>
-internal typealias StringAccessor = Accessor<String>
-
-internal class Variable<E>(
-        val name: String,
-        val accessor: Accessor<E>,
-        val causality: Fmi2Causality?,
-        val variability: Fmi2Variability?,
-        val initial: Fmi2Initial?
-)
-
-class VariableBuilder<E>(
-        private val name: String
-) {
-
-    private var getter: (() -> E)? = null
-    private var setter: ((E) -> Unit)? = null
-    private var causality: Fmi2Causality? = null
-    private var variability: Fmi2Variability? = null
-    private var initial: Fmi2Initial? = null
-
-    fun getter(getter: () -> E): VariableBuilder<E> {
-        this.getter = getter
-        return this
-    }
-
-    fun setter(setter: (E) -> Unit): VariableBuilder<E> {
-        this.setter = setter
-        return this
-    }
-
-    internal fun apply(annotation: ScalarVariable) {
-        causality = annotation.causality
-        variability = annotation.variability
-        initial = annotation.initial
-    }
-
-    internal fun apply(annotation: ScalarVariableGetter) {
-        causality = annotation.causality
-        variability = annotation.variability
-        initial = annotation.initial
-    }
-
-    internal fun build(): Variable<E> {
-
-        val getter = getter
-        checkNotNull(getter) { "getter cannot be null!" }
-
-        return Variable(name, Accessor(getter, setter), causality, variability, initial)
-
-    }
-
-}
-
-internal typealias IntBuilder = VariableBuilder<Int>
-internal typealias RealBuilder = VariableBuilder<Double>
-internal typealias BooleanBuilder = VariableBuilder<Boolean>
-internal typealias StringBuilder = VariableBuilder<String>

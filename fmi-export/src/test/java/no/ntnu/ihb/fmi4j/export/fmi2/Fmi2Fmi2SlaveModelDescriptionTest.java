@@ -57,13 +57,13 @@ class Fmi2Fmi2SlaveModelDescriptionTest {
     @Test
     void testStrings() {
         Fmi2ScalarVariable v1 = md.getModelVariables().getScalarVariable()
-                .stream().filter(v -> v.getValueReference() == 3).findFirst().get();
+                .stream().filter(v -> v.getName().equals("string[0]")).findFirst().get();
 
         Assertions.assertNotNull(v1);
         Assertions.assertEquals("Hello", v1.getString().getStart());
 
         Fmi2ScalarVariable v2 = md.getModelVariables().getScalarVariable()
-                .stream().filter(v -> v.getValueReference() == 4).findFirst().get();
+                .stream().filter(v -> v.getName().equals("string[1]")).findFirst().get();
 
         Assertions.assertNotNull(v2);
         Assertions.assertEquals("world!", v2.getString().getStart());
