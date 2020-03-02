@@ -594,7 +594,7 @@ abstract class Fmi2Slave(
             if (outputs.isNotEmpty()) {
                 ms.outputs = Fmi2VariableDependency()
                 outputs.forEach {
-                    ms.outputs.unknown.add(Fmi2VariableDependency.Unknown().also { u -> u.index = it})
+                    ms.outputs.unknown.add(Fmi2VariableDependency.Unknown().also { u -> u.index = it + 1})
                 }
             }
         }
