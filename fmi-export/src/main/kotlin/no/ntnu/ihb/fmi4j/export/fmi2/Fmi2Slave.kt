@@ -45,10 +45,10 @@ abstract class Fmi2Slave(
                 ?: throw IllegalArgumentException("No such variable with name $name!")
     }
 
-    val modelDescriptionXml by lazy {
-        val bos = ByteArrayOutputStream()
-        JAXB.marshal(modelDescription, bos)
-        String((bos.toByteArray()))
+    val modelDescriptionXml: String by lazy {
+        String(ByteArrayOutputStream().also { bos ->
+            JAXB.marshal(modelDescription, bos)
+        }.toByteArray())
     }
 
     open fun setupExperiment(startTime: Double) {}
