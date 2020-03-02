@@ -14,7 +14,7 @@ wrapper {
 subprojects { sub ->
 
     group = 'no.ntnu.ihb.fmi4j'
-    version = '0.29.6'
+    version = rootProject.file("VERSION").newReader().readLine()
 
     pluginManager.withPlugin('java') {
 
