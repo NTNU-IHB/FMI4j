@@ -1,6 +1,7 @@
 package no.ntnu.ihb.fmi4j;
 
 import no.ntnu.ihb.fmi4j.export.fmi2.ScalarVariable;
+import no.ntnu.ihb.fmi4j.export.fmi2.ScalarVariableGetter;
 import no.ntnu.ihb.fmi4j.export.fmi2.SlaveInfo;
 import no.ntnu.ihb.fmi4j.export.fmi2.Fmi2Slave;
 import no.ntnu.ihb.fmi4j.modeldescription.fmi2.Fmi2Causality;
@@ -29,6 +30,11 @@ public class JavaTestFmi2Slave extends Fmi2Slave {
     @Override
     public void doStep(double currentTime, double dt) {
         realOut += dt;
+    }
+
+    @ScalarVariableGetter
+    public double getSpeed() {
+        return 99;
     }
 
 }

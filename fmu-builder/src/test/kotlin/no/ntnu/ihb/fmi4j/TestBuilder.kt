@@ -34,6 +34,7 @@ class TestBuilder {
                     Assertions.assertEquals(2.0, slave.readReal("realOut").value)
                     Assertions.assertTrue(slave.doStep(dt))
                     Assertions.assertEquals(2.0 + dt, slave.readReal("realOut").value)
+                    Assertions.assertEquals(99.0, slave.readReal("speed").value)
                     slave.reset()
                     Assertions.assertEquals(2.0, slave.readReal("realOut").value)
                     slave.close()
@@ -63,29 +64,6 @@ class TestBuilder {
                 Assertions.assertEquals(10.0, slave.readReal("speed").value)
             }
         }
-    }
-
-    private fun testFmu(fmuFile: File) {
-        Assertions.assertTrue(fmuFile.exists())
-
-        Fmu.from(fmuFile).asCoSimulationFmu().use { fmu ->
-
-            val dt = 0.1
-            val modelIdentifier = fmu.modelDescription.attributes.modelIdentifier
-            List(2) { i -> fmu.newInstance("${modelIdentifier}_$i") }.forEach { slave ->
-
-                Assertions.assertTrue(slave.simpleSetup())
-                Assertions.assertEquals(2.0, slave.readReal("realOut").value)
-                Assertions.assertTrue(slave.doStep(dt))
-                Assertions.assertEquals(2.0 + dt, slave.readReal("realOut").value)
-                slave.reset()
-                Assertions.assertEquals(2.0, slave.readReal("realOut").value)
-                slave.close()
-
-            }
-
-        }
-
     }
 
 }
