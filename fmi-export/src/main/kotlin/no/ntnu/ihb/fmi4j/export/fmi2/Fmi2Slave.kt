@@ -17,10 +17,12 @@ import javax.xml.bind.JAXB
 private const val MAX_LEVEL = 8
 
 abstract class Fmi2Slave(
-        val instanceName: String
+        args: Map<String, Any>
 ) {
 
     val modelDescription = Fmi2ModelDescription()
+    val instanceName: String = args["instanceName"] as? String ?: throw IllegalStateException("Missing 'instanceName'")
+
     private val intAccessors: MutableList<IntAccessor> = mutableListOf()
     private val realAccessors: MutableList<RealAccessor> = mutableListOf()
     private val boolAccessors: MutableList<BoolAccessor> = mutableListOf()

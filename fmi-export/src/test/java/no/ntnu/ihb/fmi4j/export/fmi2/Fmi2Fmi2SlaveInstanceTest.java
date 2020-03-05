@@ -4,13 +4,19 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import java.util.HashMap;
+import java.util.Map;
+
 class Fmi2Fmi2SlaveInstanceTest {
 
     private static JavaTestingFmi2Slave slave;
 
     @BeforeAll
     static void setUp() {
-        slave = new JavaTestingFmi2Slave("");
+        Map<String, Object> args = new HashMap<String, Object>(){{
+            put("instanceName", "instance");
+        }};
+        slave = new JavaTestingFmi2Slave(args);
         slave.__define__();
     }
 

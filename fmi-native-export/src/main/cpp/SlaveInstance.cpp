@@ -36,9 +36,9 @@ SlaveInstance::SlaveInstance(
         throw cppfmu::FatalError(msg.c_str());
     }
 
-    jmethodID ctorId = env->GetMethodID(slaveCls, "<init>", "(Ljava/lang/String;)V");
-    if (ctorId == nullptr) {
-        std::string msg = "Unable to locate 1 arg constructor that takes a String for slave class '" + slaveName_ + "'!";
+    ctorId_ = env->GetMethodID(slaveCls, "<init>", "(Ljava/util/Map;)V");
+    if (ctorId_ == nullptr) {
+        std::string msg = "Unable to locate 1 arg constructor that takes a Map for slave class '" + slaveName_ + "'!";
         throw cppfmu::FatalError(msg.c_str());
     }
 
@@ -76,13 +76,13 @@ void SlaveInstance::initialize()
             throw cppfmu::FatalError(msg.c_str());
         }
 
-        jmethodID ctorId = env->GetMethodID(slaveCls, "<init>", "(Ljava/lang/String;)V");
-        if (ctorId == nullptr) {
-            std::string msg = "Unable to locate 1 arg constructor that takes a String for slave class '" + slaveName_ + "'!";
-            throw cppfmu::FatalError(msg.c_str());
-        }
+        jclass mapCls = env->FindClass("java/util/HashMap");
+        jmethodID mapCtor = GetMethodID(env, mapCls, "<init>", "()V");
+        jmethodID putId = GetMethodID(env, mapCls, "put", "(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;");
+        jobject map = env->NewObject(mapCls, mapCtor);
+        env->CallObjectMethod(map, putId, env->NewStringUTF("instanceName"), env->NewStringUTF(instanceName_.c_str()));
 
-        slaveInstance_ = env->NewGlobalRef(env->NewObject(slaveCls, ctorId, env->NewStringUTF(instanceName_.c_str())));
+        slaveInstance_ = env->NewGlobalRef(env->NewObject(slaveCls, ctorId_, map));
         if (slaveInstance_ == nullptr) {
             std::string msg = "Unable to instantiate a new instance of '" + slaveName_ + "'!";
             throw cppfmu::FatalError(msg.c_str());
