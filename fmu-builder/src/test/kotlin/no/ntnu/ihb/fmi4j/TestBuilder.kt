@@ -6,14 +6,18 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.condition.EnabledOnOs
 import org.junit.jupiter.api.condition.OS
 import java.io.File
+import java.io.FileFilter
 
 @EnabledOnOs(OS.WINDOWS)
-class TestBuilder {
+internal class TestBuilder {
 
-    companion object {
-        val group = "no.ntnu.ihb.fmi4j"
+    private companion object {
+        val group = "no.ntnu.ihb.fmi4j.slaves"
+        val version = File("../VERSION").readText()
         val dest = File("build/generated").absolutePath
-        val jar = File("../fmu-slaves/build/libs/fmu-slaves.jar").absolutePath
+        val jar = File("build/libs").listFiles(FileFilter {
+            it.name == "fmu-builder-$version.jar"
+        })!![0].absolutePath
     }
 
     @Test
