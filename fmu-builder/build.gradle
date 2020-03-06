@@ -24,19 +24,20 @@ dependencies {
 }
 
 task testJar(type: Jar) {
-    archiveClassifier.set(null)
+    classifier = null
+    archiveBaseName.set("fmu-slaves")
     from sourceSets.test.output.classesDirs
 }
 
 shadowJar {
     archiveBaseName.set("fmu-builder")
-    archiveClassifier.set(null)
-    archiveVersion.set(null)
+    classifier = null
+    version = null
 }
 
 distributions {
     main {
-        distributionBaseName.set('fmu-builder')
+        baseName = 'fmu-builder'
     }
 }
 

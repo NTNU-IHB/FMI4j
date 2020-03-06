@@ -16,7 +16,7 @@ internal class TestBuilder {
         val version = File("../VERSION").readText()
         val dest = File("build/generated").absolutePath
         val jar = File("build/libs").listFiles(FileFilter {
-            it.name == "fmu-builder-$version.jar"
+            it.name == "fmu-slaves-$version.jar"
         })!![0].absolutePath
     }
 
