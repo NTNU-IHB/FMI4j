@@ -19,13 +19,20 @@ dependencies {
     compile group: 'info.picocli', name: 'picocli', version: '3.9.2'
 
     testCompile project(':fmi-import')
+    testCompile project(':fmi-export')
 
+}
+
+task testJar(type: Jar) {
+    classifier = null
+    archiveBaseName.set("fmu-slaves")
+    from sourceSets.test.output.classesDirs
 }
 
 shadowJar {
     archiveBaseName.set("fmu-builder")
-    archiveClassifier.set(null)
-    archiveVersion.set(null)
+    classifier = null
+    version = null
 }
 
 distributions {
@@ -38,4 +45,4 @@ startScripts {
     applicationName = 'fmu-builder'
 }
 
-test.dependsOn(':fmu-slaves:build')
+test.dependsOn(testJar)

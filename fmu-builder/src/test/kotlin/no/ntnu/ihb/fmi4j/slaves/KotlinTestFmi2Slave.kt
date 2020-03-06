@@ -1,4 +1,4 @@
-package no.ntnu.ihb.fmi4j
+package no.ntnu.ihb.fmi4j.slaves
 
 import no.ntnu.ihb.fmi4j.export.fmi2.Fmi2Slave
 import no.ntnu.ihb.fmi4j.export.fmi2.ScalarVariable
