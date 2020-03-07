@@ -75,8 +75,8 @@ public class JavaSlave extends Fmi2Slave {
     @ScalarVariable(causality = Fmi2Causality.local)
     protected String[] string = {"Hello", "world!"};
 
-    public JaveSlave(String instanceName) {
-        super(instanceName);
+    public JaveSlave(Map<String, Object> args) {
+        super(args);
     }   
 
     @Override

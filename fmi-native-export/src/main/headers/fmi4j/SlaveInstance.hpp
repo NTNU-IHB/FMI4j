@@ -47,6 +47,8 @@ private:
     const std::string resources_;
     const std::string instanceName_;
 
+    jmethodID ctorId_;
+
     jmethodID setupExperimentId_;
     jmethodID enterInitialisationModeId_;
     jmethodID exitInitializationModeId_;

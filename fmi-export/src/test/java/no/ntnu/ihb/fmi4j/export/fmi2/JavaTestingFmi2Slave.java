@@ -6,6 +6,7 @@ import no.ntnu.ihb.fmi4j.modeldescription.fmi2.Fmi2Initial;
 import no.ntnu.ihb.fmi4j.modeldescription.fmi2.Fmi2Variability;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -35,8 +36,8 @@ class JavaTestingFmi2Slave extends Fmi2Slave {
 
     private double aParameter = 123;
 
-    public JavaTestingFmi2Slave(@NotNull String instanceName) {
-        super(instanceName);
+    public JavaTestingFmi2Slave(@NotNull Map<String, Object> args) {
+        super(args);
     }
 
     @Override

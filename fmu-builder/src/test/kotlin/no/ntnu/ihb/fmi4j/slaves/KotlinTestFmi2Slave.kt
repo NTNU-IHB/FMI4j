@@ -5,8 +5,8 @@ import no.ntnu.ihb.fmi4j.export.fmi2.ScalarVariable
 import no.ntnu.ihb.fmi4j.export.fmi2.VariableContainer
 
 class KotlinTestFmi2Slave(
-        instanceName: String
-): Fmi2Slave(instanceName) {
+        args: Map<String, Any>
+): Fmi2Slave(args) {
 
     @ScalarVariable
     private var speed: Double = 10.0

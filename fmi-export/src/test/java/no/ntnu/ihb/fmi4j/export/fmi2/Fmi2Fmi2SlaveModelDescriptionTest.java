@@ -9,6 +9,8 @@ import org.junit.jupiter.api.Test;
 import javax.xml.bind.JAXB;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 class Fmi2Fmi2SlaveModelDescriptionTest {
 
@@ -16,8 +18,11 @@ class Fmi2Fmi2SlaveModelDescriptionTest {
 
     @BeforeAll
     static void setUp() {
+        Map<String, Object> args = new HashMap<String, Object>(){{
+            put("instanceName", "instance");
+        }};
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        JavaTestingFmi2Slave slave = new JavaTestingFmi2Slave("");
+        JavaTestingFmi2Slave slave = new JavaTestingFmi2Slave(args);
         slave.__define__();
         System.out.println(slave.getModelDescriptionXml());
         JAXB.marshal(slave.getModelDescription(), bos);

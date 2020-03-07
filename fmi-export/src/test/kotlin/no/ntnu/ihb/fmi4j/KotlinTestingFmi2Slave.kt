@@ -8,8 +8,8 @@ import no.ntnu.ihb.fmi4j.modeldescription.fmi2.Fmi2Causality
 import no.ntnu.ihb.fmi4j.modeldescription.fmi2.Fmi2Variability
 
 open class KotlinTestingFmi2Slave(
-        instanceName: String
-): Fmi2Slave(instanceName) {
+        args: Map<String, Any>
+): Fmi2Slave(args) {
 
     @VariableContainer
     val container = TestContainer()
@@ -32,8 +32,8 @@ open class KotlinTestingFmi2Slave(
 }
 
 open class KotlinTestingExtendingFmi2Slave(
-        instanceName: String
-): KotlinTestingFmi2Slave(instanceName) {
+        args: Map<String, Any>
+): KotlinTestingFmi2Slave(args) {
 
     override fun doStep(currentTime: Double, dt: Double) {}
 

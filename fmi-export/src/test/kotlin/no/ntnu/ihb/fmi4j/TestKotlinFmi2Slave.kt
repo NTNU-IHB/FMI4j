@@ -8,7 +8,7 @@ internal class TestKotlinFmi2Slave {
     @Test
     fun testKotlinSlave() {
 
-        val slave = KotlinTestingFmi2Slave("instance")
+        val slave = KotlinTestingFmi2Slave(mapOf("instanceName" to "instance"))
         slave.__define__()
         slave.setupExperiment(1.0)
         slave.modelDescription.modelVariables.scalarVariable
@@ -23,7 +23,7 @@ internal class TestKotlinFmi2Slave {
     @Test
     fun testExtendingKotlinSlave() {
 
-        val slave = KotlinTestingExtendingFmi2Slave("instance")
+        val slave = KotlinTestingExtendingFmi2Slave(mapOf("instanceName" to "instance"))
         slave.__define__()
         slave.setupExperiment(1.0)
         slave.modelDescription.modelVariables.scalarVariable
