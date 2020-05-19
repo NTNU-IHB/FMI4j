@@ -22,7 +22,7 @@ object FmuBuilder {
         @CommandLine.Option(names = ["-d", "--dest"], description = ["Where to save the FMU."], required = false)
         var destFile: File? = null
 
-        @CommandLine.Option(names = ["-m", "--main"], description = ["Fully qualified name if the main class."], required = true)
+        @CommandLine.Option(names = ["-m", "--main"], description = ["Fully qualified name of the main class."], required = true)
         lateinit var mainClass: String
 
         override fun run() {

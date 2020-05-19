@@ -93,7 +93,7 @@ Usage: fmu-builder [-h] [-d=<destFile>] -f=<jarFile> -m=<mainClass>
   -d, --dest=<destFile>    Where to save the FMU.
   -f, --file=<jarFile>     Path to the Jar.
   -h, --help               Print this message and quits.
-  -m, --main=<mainClass>   Fully qualified name if the main class.
+  -m, --main=<mainClass>   Fully qualified name of the main class.
 ```
 
 *** 
