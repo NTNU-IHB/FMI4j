@@ -26,7 +26,7 @@ dependencies {
 task testJar(type: Jar) {
     classifier = null
     archiveBaseName.set("fmu-slaves")
-    from sourceSets.test.output.classesDirs
+    from sourceSets.test.output.classesDirs + configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } + configurations.testCompile.collect { it.isDirectory() ? it : zipTree(it) }
 }
 
 shadowJar {
