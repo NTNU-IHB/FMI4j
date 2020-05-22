@@ -67,6 +67,8 @@ interface ScalarVariable {
      */
     val initial: Initial?
 
+    val type: VariableType
+
 }
 
 enum class VariableType {

@@ -28,7 +28,6 @@ import no.ntnu.ihb.fmi4j.CoSimulationModel
 import no.ntnu.ihb.fmi4j.importer.fmi1.jni.CoSimulationLibraryWrapper
 import no.ntnu.ihb.fmi4j.importer.fmi1.jni.Fmi1CoSimulationLibrary
 import no.ntnu.ihb.fmi4j.modeldescription.CoSimulationModelDescription
-import no.ntnu.ihb.fmi4j.modeldescription.CommonModelDescription
 import java.io.Closeable
 
 

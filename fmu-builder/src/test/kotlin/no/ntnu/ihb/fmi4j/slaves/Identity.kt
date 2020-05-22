@@ -9,16 +9,19 @@ import java.io.FileFilter
 
 class Identity(
         args: Map<String, Any>
-): Fmi2Slave(args) {
+) : Fmi2Slave(args) {
 
     @ScalarVariable(causality = Fmi2Causality.output)
-    private var real = 0.0
+    private var real: Double = 0.0
+
     @ScalarVariable(causality = Fmi2Causality.output)
-    private var integer = 0
+    private var integer: Int = 0
+
     @ScalarVariable(causality = Fmi2Causality.output)
-    private var boolean = false
+    private var boolean: Boolean = false
+
     @ScalarVariable(causality = Fmi2Causality.output)
-    private var string = ""
+    private var string: String = ""
 
     override fun doStep(currentTime: Double, dt: Double) {
     }
@@ -28,7 +31,7 @@ class Identity(
 
 fun main() {
     val group = "no.ntnu.ihb.fmi4j.slaves"
-    val version = File("VERSION").readText()
+    val version = File("VERSION").readLines()[0]
     val dest = File("build/generated").absolutePath
     val jar = File("fmu-builder/build/libs").listFiles(FileFilter {
         it.name == "fmu-slaves-$version.jar"

@@ -24,9 +24,7 @@
 
 package no.ntnu.ihb.fmi4j.importer.fmi2
 
-import no.ntnu.ihb.fmi4j.Model
 import no.ntnu.ihb.fmi4j.ModelExchangeModel
-import no.ntnu.ihb.fmi4j.ModelInstance
 import no.ntnu.ihb.fmi4j.importer.fmi2.jni.Fmi2ModelExchangeLibrary
 import no.ntnu.ihb.fmi4j.importer.fmi2.jni.ModelExchangeLibraryWrapper
 import no.ntnu.ihb.fmi4j.modeldescription.ModelExchangeModelDescription

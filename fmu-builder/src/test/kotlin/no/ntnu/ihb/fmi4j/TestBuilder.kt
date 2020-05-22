@@ -12,11 +12,11 @@ import java.io.FileFilter
 internal class TestBuilder {
 
     private companion object {
-        val group = "no.ntnu.ihb.fmi4j.slaves"
-        val version = File("../VERSION").readText()
-        val dest = File("build/generated").absolutePath
-        val jar = File("build/libs").listFiles(FileFilter {
-            it.name == "fmu-slaves-$version.jar"
+        private val group = "no.ntnu.ihb.fmi4j.slaves"
+        private val version = File("../VERSION").readLines()[0]
+        private val dest = File("build/generated").absolutePath
+        private val jar = File("build/libs").listFiles(FileFilter {
+            it.name.trim() == "fmu-slaves-$version.jar"
         })!![0].absolutePath
     }
 

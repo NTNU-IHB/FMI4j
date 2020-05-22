@@ -50,20 +50,27 @@ class JaxbScalarVariable internal constructor(
     override val initial: Initial?
         get() = v.initial?.let { Initial.valueOf(it.name.toUpperCase()) }
 
+    override val type: VariableType
+        get() = when {
+            v.integer != null -> VariableType.INTEGER
+            v.real != null -> VariableType.REAL
+            v.string != null -> VariableType.STRING
+            v._boolean != null -> VariableType.BOOLEAN
+            v.enumeration != null -> VariableType.ENUMERATION
+            else -> throw IllegalStateException()
+        }
+
     /**
      * Return a typed version of this variable.
      */
     fun toTyped(): TypedScalarVariable<*> {
-        
-        return when {
-            v.integer != null -> IntegerVariable(this, JaxbIntegerAttribute(v.integer))
-            v.real != null -> RealVariable(this, JaxbRealAttribute(v.real))
-            v.string != null -> StringVariable(this, JaxbStringAttribute(v.string))
-            v._boolean != null -> BooleanVariable(this, JaxbBooleanAttribute(v._boolean))
-            v.enumeration != null -> EnumerationVariable(this, JaxbEnumerationAttribute(v.enumeration))
-            else -> throw IllegalStateException()
+        return when (type) {
+            VariableType.INTEGER -> IntegerVariable(this, JaxbIntegerAttribute(v.integer))
+            VariableType.REAL -> RealVariable(this, JaxbRealAttribute(v.real))
+            VariableType.STRING -> StringVariable(this, JaxbStringAttribute(v.string))
+            VariableType.BOOLEAN -> BooleanVariable(this, JaxbBooleanAttribute(v._boolean))
+            VariableType.ENUMERATION -> EnumerationVariable(this, JaxbEnumerationAttribute(v.enumeration))
         }
-
     }
 
 }

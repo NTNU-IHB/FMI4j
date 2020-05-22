@@ -1,7 +1,7 @@
 package no.ntnu.ihb.fmi4j.export.fmi2;
 
-import no.ntnu.ihb.fmi4j.modeldescription.fmi2.Fmi2ScalarVariable;
 import no.ntnu.ihb.fmi4j.modeldescription.fmi2.Fmi2ModelDescription;
+import no.ntnu.ihb.fmi4j.modeldescription.fmi2.Fmi2ScalarVariable;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;

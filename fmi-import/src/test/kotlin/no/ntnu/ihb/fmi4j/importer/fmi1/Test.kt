@@ -1,7 +1,6 @@
 package no.ntnu.ihb.fmi4j.importer.fmi1
 
 import no.ntnu.ihb.fmi4j.importer.AbstractFmu
-import no.ntnu.ihb.fmi4j.importer.ControlledTemperatureTestJava
 import no.ntnu.ihb.fmi4j.modeldescription.ModelDescriptionParser
 import no.ntnu.ihb.fmi4j.readReal
 import org.junit.jupiter.api.Assertions

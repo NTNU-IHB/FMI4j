@@ -25,7 +25,6 @@
 package no.ntnu.ihb.fmi4j.importer.fmi1
 
 import no.ntnu.ihb.fmi4j.FmiStatus
-import no.ntnu.ihb.fmi4j.importer.fmi1.jni.EventInfo
 import no.ntnu.ihb.fmi4j.importer.fmi1.jni.ModelExchangeLibraryWrapper
 import no.ntnu.ihb.fmi4j.modeldescription.ModelExchangeModelDescription
 import no.ntnu.ihb.fmi4j.modeldescription.ValueReferences

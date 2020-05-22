@@ -24,10 +24,7 @@
 
 package no.ntnu.ihb.fmi4j.importer.fmi1
 
-import no.ntnu.ihb.fmi4j.Model
 import no.ntnu.ihb.fmi4j.ModelExchangeModel
-import no.ntnu.ihb.fmi4j.ModelInstance
-import no.ntnu.ihb.fmi4j.SlaveInstance
 import no.ntnu.ihb.fmi4j.importer.fmi1.jni.Fmi1ModelExchangeLibrary
 import no.ntnu.ihb.fmi4j.importer.fmi1.jni.FmiComponent
 import no.ntnu.ihb.fmi4j.importer.fmi1.jni.ModelExchangeLibraryWrapper

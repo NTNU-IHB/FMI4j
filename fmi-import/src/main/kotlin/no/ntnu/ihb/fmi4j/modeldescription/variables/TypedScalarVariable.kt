@@ -31,8 +31,6 @@ import no.ntnu.ihb.fmi4j.modeldescription.Real
  */
 interface TypedScalarVariable<E> : ScalarVariable, TypedAttribute<E> {
 
-    val type: VariableType
-
     fun asIntegerVariable(): IntegerVariable = when {
         this is IntegerVariable -> this
         else -> throw IllegalAccessException(

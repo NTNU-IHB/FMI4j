@@ -1,9 +1,9 @@
 package no.ntnu.ihb.fmi4j.slaves;
 
+import no.ntnu.ihb.fmi4j.export.fmi2.Fmi2Slave;
 import no.ntnu.ihb.fmi4j.export.fmi2.ScalarVariable;
 import no.ntnu.ihb.fmi4j.export.fmi2.ScalarVariableGetter;
 import no.ntnu.ihb.fmi4j.export.fmi2.SlaveInfo;
-import no.ntnu.ihb.fmi4j.export.fmi2.Fmi2Slave;
 import no.ntnu.ihb.fmi4j.modeldescription.fmi2.Fmi2Causality;
 import no.ntnu.ihb.fmi4j.modeldescription.fmi2.Fmi2Variability;
 import org.jetbrains.annotations.NotNull;
