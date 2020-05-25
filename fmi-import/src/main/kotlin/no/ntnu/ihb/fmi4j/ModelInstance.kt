@@ -71,14 +71,14 @@ interface SimpleModelInstance : VariableAccessor, Closeable {
     }
 
     fun simpleSetup(start: Double = 0.0, stop: Double = 0.0, tolerance: Double = 0.0): Boolean {
-        return setup(start, stop, tolerance) && enterInitializationMode() && exitInitializationMode()
+        return setupExperiment(start, stop, tolerance) && enterInitializationMode() && exitInitializationMode()
     }
 
-    fun setup(): Boolean {
-        return setup(0.0, 0.0, 0.0)
+    fun setupExperiment(): Boolean {
+        return setupExperiment(0.0, 0.0, 0.0)
     }
 
-    fun setup(start: Double = 0.0, stop: Double = 0.0, tolerance: Double = 0.0): Boolean
+    fun setupExperiment(start: Double = 0.0, stop: Double = 0.0, tolerance: Double = 0.0): Boolean
 
     fun enterInitializationMode(): Boolean
 

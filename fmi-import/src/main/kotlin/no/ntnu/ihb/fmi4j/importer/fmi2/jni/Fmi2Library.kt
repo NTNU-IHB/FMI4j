@@ -74,8 +74,8 @@ open class Fmi2Library(
     private external fun setDebugLogging(p: Long, c: Fmi2Component,
                                          loggingOn: Boolean, categories: Array<String>): NativeStatus
 
-    private external fun setup(p: Long, c: Fmi2Component,
-                               tolerance: Double, startTime: Double, stopTime: Double): NativeStatus
+    private external fun setupExperiment(p: Long, c: Fmi2Component,
+                                         tolerance: Double, startTime: Double, stopTime: Double): NativeStatus
 
     private external fun enterInitializationMode(p: Long, c: Fmi2Component): NativeStatus
 
@@ -146,9 +146,9 @@ open class Fmi2Library(
         return setDebugLogging(p, c, loggingOn, categories).transform()
     }
 
-    fun setup(c: Fmi2Component,
-              tolerance: Double, startTime: Double, stopTime: Double): FmiStatus {
-        return setup(p, c, tolerance, startTime, stopTime).transform()
+    fun setupExperiment(c: Fmi2Component,
+                        tolerance: Double, startTime: Double, stopTime: Double): FmiStatus {
+        return setupExperiment(p, c, tolerance, startTime, stopTime).transform()
     }
 
     fun enterInitializationMode(c: Fmi2Component): FmiStatus {
@@ -308,10 +308,10 @@ abstract class Fmi2LibraryWrapper<E : Fmi2Library>(
     }
 
     /**
-     * @see Fmi2Library.setup
+     * @see Fmi2Library.setupExperiment
      */
-    fun setup(tolerance: Double, startTime: Double, stopTime: Double): FmiStatus {
-        return updateStatus(library.setup(c, tolerance, startTime, stopTime))
+    fun setupExperiment(tolerance: Double, startTime: Double, stopTime: Double): FmiStatus {
+        return updateStatus(library.setupExperiment(c, tolerance, startTime, stopTime))
     }
 
     /**
