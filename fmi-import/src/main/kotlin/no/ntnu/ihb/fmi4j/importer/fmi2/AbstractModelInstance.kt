@@ -34,6 +34,7 @@ import no.ntnu.ihb.fmi4j.modeldescription.StringArray
 import no.ntnu.ihb.fmi4j.modeldescription.ValueReferences
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import java.lang.StringBuilder
 
 /**
  * Base class for FMU instances
@@ -85,9 +86,9 @@ abstract class AbstractModelInstance<out E : CommonModelDescription, out T : Fmi
      *
      * @throws IllegalArgumentException if start < 0
      */
-    override fun setup(start: Double, stop: Double, tolerance: Double): Boolean {
+    override fun setupExperiment(start: Double, stop: Double, tolerance: Double): Boolean {
 
-        LOG.debug("FMU '${modelDescription.modelName}' setup with start=$start, stop=$stop, tolerance=$tolerance")
+        LOG.debug("FMU '${modelDescription.modelName}' setupExperiment with start=$start, stop=$stop, tolerance=$tolerance")
 
         if (start < 0) {
             LOG.error("Start must be a positive value, was $start!")
@@ -98,7 +99,7 @@ abstract class AbstractModelInstance<out E : CommonModelDescription, out T : Fmi
             stopTime = stop
         }
 
-        return (wrapper.setup(tolerance, startTime, stopTime).isOK()).also {
+        return (wrapper.setupExperiment(tolerance, startTime, stopTime).isOK()).also {
             simulationTime = start
         }
 

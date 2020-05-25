@@ -95,7 +95,7 @@ JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi2_jni_Fmi2Library_setD
     return status;
 }
 
-JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi2_jni_Fmi2Library_setup(JNIEnv* env, jobject obj, jlong p, jlong c, jdouble tolerance, jdouble startTime, jdouble stopTime)
+JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi2_jni_Fmi2Library_setupExperiment(JNIEnv* env, jobject obj, jlong p, jlong c, jdouble tolerance, jdouble startTime, jdouble stopTime)
 {
     auto fmu = reinterpret_cast<FmuInstance*>(p);
     fmi2Boolean toleranceDefined = tolerance > 0;

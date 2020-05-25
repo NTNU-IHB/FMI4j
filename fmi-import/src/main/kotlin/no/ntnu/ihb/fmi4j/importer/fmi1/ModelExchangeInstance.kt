@@ -44,7 +44,7 @@ open class ModelExchangeInstance internal constructor(
 
     private var relativeTolerance: Double = 0.0
 
-    override fun setup(start: Double, stop: Double, tolerance: Double): Boolean {
+    override fun setupExperiment(start: Double, stop: Double, tolerance: Double): Boolean {
 
         LOG.trace("FMU '${modelDescription.modelName}' setup with start=$start, stop=$stop")
 
