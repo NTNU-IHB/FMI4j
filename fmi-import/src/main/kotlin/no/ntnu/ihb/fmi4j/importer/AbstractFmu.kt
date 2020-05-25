@@ -182,21 +182,9 @@ abstract class AbstractFmu internal constructor(
 
             return createTempDir(file.nameWithoutExtension).let { temp ->
                 file.extractContentTo(temp)
-                when (val version = ModelDescriptionParser.extractVersion(getModelDescriptionFileFromExtractedFmuDir(temp).readText())) {
-                    "1.0" -> no.ntnu.ihb.fmi4j.importer.fmi1.Fmu(file.nameWithoutExtension, temp)
-                    "2.0" -> no.ntnu.ihb.fmi4j.importer.fmi2.Fmu(file.nameWithoutExtension, temp)
-                    else -> throw UnsupportedOperationException("Unsupported FMI version: '$version'")
-                }
+                returnCorrectFmuType(file.nameWithoutExtension, temp)
             }
 
-        }
-
-        private fun returnCorrectFmuType(fmuName: String, temp: File, version: String): AbstractFmu {
-            return when (version) {
-                "1.0" -> no.ntnu.ihb.fmi4j.importer.fmi1.Fmu(fmuName, temp)
-                "2.0" -> no.ntnu.ihb.fmi4j.importer.fmi2.Fmu(fmuName, temp)
-                else -> throw UnsupportedOperationException("Unsupported FMI version: '$version'")
-            }
         }
 
         /**
@@ -212,8 +200,7 @@ abstract class AbstractFmu internal constructor(
             val fmuName = File(url.file).nameWithoutExtension
             return createTempDir(fmuName).let { temp ->
                 url.extractContentTo(temp)
-                val version = ModelDescriptionParser.extractVersion(getModelDescriptionFileFromExtractedFmuDir(temp).readText())
-                returnCorrectFmuType(fmuName, temp, version)
+                returnCorrectFmuType(fmuName, temp)
             }
         }
 
@@ -224,8 +211,18 @@ abstract class AbstractFmu internal constructor(
         fun from(fmuName: String, data: ByteArray): AbstractFmu {
             return createTempDir(fmuName).let { temp ->
                 ByteArrayInputStream(data).extractContentTo(temp)
-                val version = ModelDescriptionParser.extractVersion(getModelDescriptionFileFromExtractedFmuDir(temp).readText())
-                returnCorrectFmuType(fmuName, temp, version)
+                returnCorrectFmuType(fmuName, temp)
+            }
+        }
+
+        private fun returnCorrectFmuType(fmuName: String, temp: File): AbstractFmu {
+            return when (val version = ModelDescriptionParser.extractVersion(getModelDescriptionFileFromExtractedFmuDir(temp).readText())) {
+                "1.0" -> no.ntnu.ihb.fmi4j.importer.fmi1.Fmu(fmuName, temp)
+                "2.0" -> no.ntnu.ihb.fmi4j.importer.fmi2.Fmu(fmuName, temp)
+                else -> {
+                    temp.deleteRecursively()
+                    throw UnsupportedOperationException("Unsupported FMI version: '$version'")
+                }
             }
         }
     }
