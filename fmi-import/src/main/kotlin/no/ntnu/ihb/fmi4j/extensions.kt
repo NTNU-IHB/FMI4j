@@ -32,7 +32,7 @@ import no.ntnu.ihb.fmi4j.modeldescription.variables.*
 
 fun VariableReader.readInteger(vr: ValueReference): IntegerRead {
     val values = IntArray(1)
-    return read(longArrayOf(vr), values).let {
+    return readInteger(longArrayOf(vr), values).let {
         IntegerRead(values[0], it)
     }
 }
@@ -43,7 +43,7 @@ fun SimpleModelInstance.readInteger(name: String): IntegerRead {
 
 fun VariableReader.readReal(vr: ValueReference): RealRead {
     val values = RealArray(1)
-    return read(longArrayOf(vr), values).let {
+    return readReal(longArrayOf(vr), values).let {
         RealRead(values[0], it)
     }
 }
@@ -54,7 +54,7 @@ fun SimpleModelInstance.readReal(name: String): RealRead {
 
 fun VariableReader.readString(vr: ValueReference): StringRead {
     val values = StringArray(1) { "" }
-    return this.read(longArrayOf(vr), values).let {
+    return this.readString(longArrayOf(vr), values).let {
         StringRead(values[0], it)
     }
 }
@@ -65,7 +65,7 @@ fun SimpleModelInstance.readString(name: String): StringRead {
 
 fun VariableReader.readBoolean(vr: ValueReference): BooleanRead {
     val values = BooleanArray(1)
-    return read(longArrayOf(vr), values).let {
+    return readBoolean(longArrayOf(vr), values).let {
         BooleanRead(values[0], it)
     }
 }
@@ -77,7 +77,7 @@ fun SimpleModelInstance.readBoolean(name: String): BooleanRead {
 /////////////////////////////////////////////////////////////////////////////
 
 fun VariableWriter.writeInteger(vr: ValueReference, value: Int): FmiStatus {
-    return this.write(longArrayOf(vr), intArrayOf(value))
+    return this.writeInteger(longArrayOf(vr), intArrayOf(value))
 }
 
 fun SimpleModelInstance.writeInteger(name: String, value: Int): FmiStatus {
@@ -85,7 +85,7 @@ fun SimpleModelInstance.writeInteger(name: String, value: Int): FmiStatus {
 }
 
 fun VariableWriter.writeReal(vr: ValueReference, value: Real): FmiStatus {
-    return write(longArrayOf(vr), realArrayOf(value))
+    return writeReal(longArrayOf(vr), realArrayOf(value))
 }
 
 fun SimpleModelInstance.writeReal(name: String, value: Real): FmiStatus {
@@ -93,7 +93,7 @@ fun SimpleModelInstance.writeReal(name: String, value: Real): FmiStatus {
 }
 
 fun VariableWriter.writeString(vr: ValueReference, value: String): FmiStatus {
-    return this.write(longArrayOf(vr), stringArrayOf(value))
+    return this.writeString(longArrayOf(vr), stringArrayOf(value))
 }
 
 fun SimpleModelInstance.writeString(name: String, value: String): FmiStatus {
@@ -101,7 +101,7 @@ fun SimpleModelInstance.writeString(name: String, value: String): FmiStatus {
 }
 
 fun VariableWriter.writeBoolean(vr: ValueReference, value: Boolean): FmiStatus {
-    return this.write(longArrayOf(vr), booleanArrayOf(value))
+    return this.writeBoolean(longArrayOf(vr), booleanArrayOf(value))
 }
 
 fun SimpleModelInstance.writeBoolean(name: String, value: Boolean): FmiStatus {

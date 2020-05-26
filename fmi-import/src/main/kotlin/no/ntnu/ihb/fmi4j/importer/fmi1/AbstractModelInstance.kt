@@ -90,36 +90,36 @@ abstract class AbstractModelInstance<out E : CommonModelDescription, out T : Fmi
         wrapper.freeInstance()
     }
 
-    override fun read(vr: ValueReferences, ref: IntArray): FmiStatus {
-        return wrapper.read(vr, ref)
+    override fun readInteger(vr: ValueReferences, ref: IntArray): FmiStatus {
+        return wrapper.readInteger(vr, ref)
     }
 
-    override fun read(vr: ValueReferences, ref: RealArray): FmiStatus {
-        return wrapper.read(vr, ref)
+    override fun readReal(vr: ValueReferences, ref: RealArray): FmiStatus {
+        return wrapper.readReal(vr, ref)
     }
 
-    override fun read(vr: ValueReferences, ref: StringArray): FmiStatus {
-        return wrapper.read(vr, ref)
+    override fun readString(vr: ValueReferences, ref: StringArray): FmiStatus {
+        return wrapper.readString(vr, ref)
     }
 
-    override fun read(vr: ValueReferences, ref: BooleanArray): FmiStatus {
-        return wrapper.read(vr, ref)
+    override fun readBoolean(vr: ValueReferences, ref: BooleanArray): FmiStatus {
+        return wrapper.readBoolean(vr, ref)
     }
 
-    override fun write(vr: ValueReferences, value: IntArray): FmiStatus {
-        return wrapper.write(vr, value)
+    override fun writeInteger(vr: ValueReferences, value: IntArray): FmiStatus {
+        return wrapper.writeInteger(vr, value)
     }
 
-    override fun write(vr: ValueReferences, value: RealArray): FmiStatus {
-        return wrapper.write(vr, value)
+    override fun writeReal(vr: ValueReferences, value: RealArray): FmiStatus {
+        return wrapper.writeReal(vr, value)
     }
 
-    override fun write(vr: ValueReferences, value: StringArray): FmiStatus {
-        return wrapper.write(vr, value)
+    override fun writeString(vr: ValueReferences, value: StringArray): FmiStatus {
+        return wrapper.writeString(vr, value)
     }
 
-    override fun write(vr: ValueReferences, value: BooleanArray): FmiStatus {
-        return wrapper.write(vr, value)
+    override fun writeBoolean(vr: ValueReferences, value: BooleanArray): FmiStatus {
+        return wrapper.writeBoolean(vr, value)
     }
 
     override fun getFMUstate(): FmuState {
