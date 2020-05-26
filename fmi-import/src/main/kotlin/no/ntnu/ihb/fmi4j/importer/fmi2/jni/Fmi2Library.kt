@@ -391,7 +391,7 @@ abstract class Fmi2LibraryWrapper<E : Fmi2Library>(
     /**
      * @see Fmi2Library.getInteger
      */
-    override fun read(vr: ValueReferences, ref: IntArray): FmiStatus {
+    override fun readInteger(vr: ValueReferences, ref: IntArray): FmiStatus {
         return updateStatus(library.getInteger(c, vr, ref))
     }
 
@@ -409,7 +409,7 @@ abstract class Fmi2LibraryWrapper<E : Fmi2Library>(
     /**
      * @see Fmi2Library.getReal
      */
-    override fun read(vr: ValueReferences, ref: DoubleArray): FmiStatus {
+    override fun readReal(vr: ValueReferences, ref: DoubleArray): FmiStatus {
         return updateStatus(library.getReal(c, vr, ref))
     }
 
@@ -427,7 +427,7 @@ abstract class Fmi2LibraryWrapper<E : Fmi2Library>(
     /**
      * @see Fmi2Library.getString
      */
-    override fun read(vr: ValueReferences, ref: StringArray): FmiStatus {
+    override fun readString(vr: ValueReferences, ref: StringArray): FmiStatus {
         return updateStatus(library.getString(c, vr, ref))
     }
 
@@ -445,7 +445,7 @@ abstract class Fmi2LibraryWrapper<E : Fmi2Library>(
     /**
      * @see Fmi2Library.getBoolean
      */
-    override fun read(vr: ValueReferences, ref: BooleanArray): FmiStatus {
+    override fun readBoolean(vr: ValueReferences, ref: BooleanArray): FmiStatus {
         return updateStatus(library.getBoolean(c, vr, ref))
     }
 
@@ -457,14 +457,14 @@ abstract class Fmi2LibraryWrapper<E : Fmi2Library>(
         return with(buffers) {
             vr[0] = valueReference
             iv[0] = ref
-            write(vr, iv)
+            writeInteger(vr, iv)
         }
     }
 
     /**
      * @see Fmi2Library.setInteger
      */
-    override fun write(vr: ValueReferences, value: IntArray): FmiStatus {
+    override fun writeInteger(vr: ValueReferences, value: IntArray): FmiStatus {
         return updateStatus((library.setInteger(c, vr, value)))
     }
 
@@ -476,14 +476,14 @@ abstract class Fmi2LibraryWrapper<E : Fmi2Library>(
         return with(buffers) {
             vr[0] = valueReference
             rv[0] = value
-            write(vr, rv)
+            writeReal(vr, rv)
         }
     }
 
     /**
      * @see Fmi2Library.setReal
      */
-    override fun write(vr: ValueReferences, value: DoubleArray): FmiStatus {
+    override fun writeReal(vr: ValueReferences, value: DoubleArray): FmiStatus {
         return updateStatus((library.setReal(c, vr, value)))
     }
 
@@ -495,14 +495,14 @@ abstract class Fmi2LibraryWrapper<E : Fmi2Library>(
         return with(buffers) {
             vr[0] = valueReference
             sv[0] = value
-            write(vr, sv)
+            writeString(vr, sv)
         }
     }
 
     /**
      * @see Fmi2Library.setString
      */
-    override fun write(vr: ValueReferences, value: StringArray): FmiStatus {
+    override fun writeString(vr: ValueReferences, value: StringArray): FmiStatus {
         return updateStatus((library.setString(c, vr, value)))
     }
 
@@ -514,14 +514,14 @@ abstract class Fmi2LibraryWrapper<E : Fmi2Library>(
         return with(buffers) {
             vr[0] = valueReference
             bv[0] = value
-            write(vr, bv)
+            writeBoolean(vr, bv)
         }
     }
 
     /**
      * @see Fmi2Library.setBoolean
      */
-    override fun write(vr: ValueReferences, value: BooleanArray): FmiStatus {
+    override fun writeBoolean(vr: ValueReferences, value: BooleanArray): FmiStatus {
         return updateStatus(library.setBoolean(c, vr, value))
     }
 
