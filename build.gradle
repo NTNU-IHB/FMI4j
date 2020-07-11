@@ -1,4 +1,3 @@
-
 plugins {
     id "base"
     id "org.jetbrains.kotlin.jvm" version "1.3.72" apply false
@@ -8,13 +7,16 @@ println "Gradle version is ${gradle.getGradleVersion()}"
 
 wrapper {
     distributionType = Wrapper.DistributionType.ALL
-    gradleVersion = '6.4'
+    gradleVersion = '6.5.1'
 }
+
+version = rootProject.file("VERSION").readLines()[0]
+println("Building ${rootProject.name} v$version")
 
 subprojects { sub ->
 
-    group = 'no.ntnu.ihb.fmi4j'
-    version = rootProject.file("VERSION").newReader().readLine()
+    group = rootProject.group
+    version = rootProject.version
 
     pluginManager.withPlugin('java') {
 
@@ -23,6 +25,10 @@ subprojects { sub ->
         }
 
         pluginManager.withPlugin('kotlin') {
+
+            dependencies {
+                compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+            }
 
             compileKotlin {
                 kotlinOptions {

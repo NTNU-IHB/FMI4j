@@ -1,20 +1,15 @@
 plugins {
     id 'java-library'
+    id 'kotlin'
     id "com.jfrog.bintray" version "1.8.4"
 }
-
-apply plugin: 'kotlin'
 
 apply from: rootProject.file("gradle/junit.gradle")
 apply from: rootProject.file("gradle/mavenpublish.gradle")
 apply from: rootProject.file("gradle/bintraypublish.gradle")
 
 dependencies {
-
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
-
     api project(':fmi-md')
-
 }
 
 jar {

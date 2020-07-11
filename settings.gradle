@@ -1,11 +1,3 @@
-
-pluginManagement {
-    repositories {
-        gradlePluginPortal()
-        maven { url 'https://jitpack.io' }
-    }
-}
-
 rootProject.name = 'FMI4j'
 
 def subDirs = rootDir.listFiles(new FileFilter() {
