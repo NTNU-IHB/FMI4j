@@ -10,6 +10,7 @@ wrapper {
     gradleVersion = '6.5.1'
 }
 
+group = "no.ntnu.ihb.fmi4j"
 version = rootProject.file("VERSION").readLines()[0]
 println("Building ${rootProject.name} v$version")
 

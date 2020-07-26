@@ -2,13 +2,14 @@ plugins {
     id 'java'
     id 'kotlin'
     id 'application'
-    id 'distribution'
+    id "com.jfrog.bintray" version "1.8.4"
     id "com.github.johnrengelman.shadow" version "4.0.4"
 }
 
 apply from: rootProject.file("gradle/junit.gradle")
+apply from: rootProject.file("gradle/mavenpublish.gradle")
+apply from: rootProject.file("gradle/bintraypublish.gradle")
 
-def group = "no.ntnu.ihb.fmi4j"
 mainClassName = "${group}.FmuBuilder"
 
 dependencies {
@@ -31,12 +32,6 @@ shadowJar {
     archiveBaseName.set("fmu-builder")
     classifier = null
     version = null
-}
-
-distributions {
-    main {
-        baseName = 'fmu-builder'
-    }
 }
 
 startScripts {

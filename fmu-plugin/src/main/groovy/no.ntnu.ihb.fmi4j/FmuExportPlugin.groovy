@@ -20,9 +20,9 @@ class FatJarTask extends Jar {
 }
 
 class FmuExportConfiguration {
+
     String outputDir = "."
     String mainClass = null
-
 
     @Override
     String toString() {
@@ -35,14 +35,8 @@ class FmuExportConfiguration {
 
 class FmuExportPluginExt {
 
-    protected List<FmuExportConfiguration> configurations = []
-
-    def fmu(Closure<FmuExportConfiguration> closure) {
-        def conf = new FmuExportConfiguration()
-        closure.delegate = conf
-        closure()
-        configurations.add(conf)
-    }
+    String outputDir = "."
+    List<String> mainClasses = []
 
 }
 
@@ -51,21 +45,21 @@ class FmuExportPlugin implements Plugin<Project> {
     @Override
     void apply(Project project) {
 
-        def ext = project.extensions.create("fmuExport", FmuExportPluginExt)
+        def ext = project.extensions.create("fmi4jExport", FmuExportPluginExt)
 
         project.task("invoke") {
             doLast {
 
-                for (conf in ext.configurations) {
+                if (ext.mainClasses == null && ext.mainClasses.isEmpty()) {
+                    throw new GradleException("No mainClass(es) defined!")
+                }
 
-                    if (conf.mainClass == null) {
-                        throw new GradleException("No mainClass defined!")
-                    }
+                for (mainClass in ext.outputDir) {
 
                     String[] args = [
                             "-f", "${project.buildDir}/libs/${project.name}_shadow.jar",
-                            "-m", conf.mainClass,
-                            "-d", conf.outputDir
+                            "-m", mainClass,
+                            "-d", ext.outputDir
                     ]
                     FmuBuilder.main(args)
 

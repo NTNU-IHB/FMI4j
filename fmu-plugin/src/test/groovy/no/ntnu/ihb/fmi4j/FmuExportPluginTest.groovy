@@ -19,13 +19,12 @@ class FmuExportPluginTest {
     @Test
     void testExt() {
         def ext = new FmuExportPluginExt()
-        ext.fmu {
-            outputDir = "out"
-            mainClass = "main"
-        }
-        Assertions.assertEquals(1, ext.configurations.size())
-        Assertions.assertEquals("out", ext.configurations[0].outputDir)
-        Assertions.assertEquals("main", ext.configurations[0].mainClass)
+        ext.outputDir = "out"
+        ext.mainClasses += "main"
+
+        Assertions.assertEquals(1, ext.mainClasses.size())
+        Assertions.assertEquals("out", ext.outputDir)
+        Assertions.assertEquals("main", ext.mainClasses[0])
     }
 
 }
