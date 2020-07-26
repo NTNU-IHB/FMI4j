@@ -12,7 +12,7 @@ dependencies {
 
 gradlePlugin {
     plugins {
-        sspgenPlugin {
+        fmuExportPlugin {
             id = 'no.ntnu.ihb.fmi4j'
             implementationClass = 'no.ntnu.ihb.fmi4j.FmuExportPlugin'
         }
@@ -25,7 +25,7 @@ pluginBundle {
     description = "A plugin for exporting FMUs from Java code"
     tags = ["gradle", "fmi4j"]
     plugins {
-        fmi4jPlugin {
+        fmuExportPlugin {
             displayName = "Gradle fmi4j-export plugin"
         }
     }
