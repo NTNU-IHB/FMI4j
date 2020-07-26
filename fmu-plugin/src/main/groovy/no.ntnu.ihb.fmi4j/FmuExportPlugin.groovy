@@ -22,15 +22,25 @@ class FatJarTask extends Jar {
 class FmuExportConfiguration {
     String outputDir = "."
     String mainClass = null
+
+
+    @Override
+    String toString() {
+        return "FmuExportConfiguration{" +
+                "outputDir='" + outputDir + '\'' +
+                ", mainClass='" + mainClass + '\'' +
+                '}';
+    }
 }
 
 class FmuExportPluginExt {
 
-    List<FmuExportConfiguration> configurations = []
+    protected List<FmuExportConfiguration> configurations = []
 
     def fmu(Closure<FmuExportConfiguration> closure) {
         def conf = new FmuExportConfiguration()
-        closure(conf)
+        closure.delegate = conf
+        closure()
         configurations.add(conf)
     }
 

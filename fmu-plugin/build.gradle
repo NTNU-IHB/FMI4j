@@ -5,6 +5,7 @@ plugins {
 }
 
 apply from: rootProject.file("gradle/junit.gradle")
+apply from: rootProject.file("gradle/mavenpublish.gradle")
 
 dependencies {
     implementation project(':fmu-builder')
