@@ -8,11 +8,11 @@ import org.junit.jupiter.api.Test
 class FmuExportPluginTest {
 
     @Test
-    void fmuExportPluginAddsInvokeTaskToProject() {
+    void fmuExportPluginAddsTaskToProject() {
         Project project = ProjectBuilder.builder().build()
         project.getPluginManager().apply("no.ntnu.ihb.fmi4j.fmu-export")
 
-        def invokeTask = project.getTasks().getByName("invoke")
+        def invokeTask = project.getTasks().getByName("exportFmu")
         Assertions.assertTrue(invokeTask != null)
     }
 

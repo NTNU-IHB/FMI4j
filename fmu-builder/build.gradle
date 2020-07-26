@@ -1,16 +1,12 @@
 plugins {
     id 'java'
     id 'kotlin'
-    id 'application'
     id "com.jfrog.bintray" version "1.8.4"
-    id "com.github.johnrengelman.shadow" version "4.0.4"
 }
 
 apply from: rootProject.file("gradle/junit.gradle")
 apply from: rootProject.file("gradle/mavenpublish.gradle")
 apply from: rootProject.file("gradle/bintraypublish.gradle")
-
-mainClassName = "${group}.FmuBuilder"
 
 dependencies {
 
@@ -26,16 +22,6 @@ task testJar(type: Jar) {
     classifier = null
     archiveBaseName.set("fmu-slaves")
     from sourceSets.test.output.classesDirs + configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } + configurations.testCompile.collect { it.isDirectory() ? it : zipTree(it) }
-}
-
-shadowJar {
-    archiveBaseName.set("fmu-builder")
-    classifier = null
-    version = null
-}
-
-startScripts {
-    applicationName = 'fmu-builder'
 }
 
 test.dependsOn(testJar)

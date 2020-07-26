@@ -3,41 +3,13 @@ package no.ntnu.ihb.fmi4j
 import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.tasks.TaskAction
+import org.gradle.api.file.CopySpec
+import org.gradle.api.tasks.AbstractCopyTask
 import org.gradle.jvm.tasks.Jar
 
-class FatJarTask extends Jar {
-
-    @TaskAction
-    def invoke() {
-
-        archiveBaseName.set("${project.name}_shadow")
-        from { project.configurations.compile.collect { it.isDirectory() ? it : project.zipTree(it) } }
-        with jar
-
-    }
-
-}
-
-class FmuExportConfiguration {
-
-    String outputDir = "."
-    String mainClass = null
-
-    @Override
-    String toString() {
-        return "FmuExportConfiguration{" +
-                "outputDir='" + outputDir + '\'' +
-                ", mainClass='" + mainClass + '\'' +
-                '}';
-    }
-}
-
 class FmuExportPluginExt {
-
     String outputDir = "."
     List<String> mainClasses = []
-
 }
 
 class FmuExportPlugin implements Plugin<Project> {
@@ -47,7 +19,19 @@ class FmuExportPlugin implements Plugin<Project> {
 
         def ext = project.extensions.create("fmi4jExport", FmuExportPluginExt)
 
-        project.task("invoke") {
+        project.tasks.create("fatJar", Jar) {
+            doLast {
+                archiveBaseName.set("${project.name}_shadow")
+                from { project.configurations.compile.collect { it.isDirectory() ? it : project.zipTree(it) } }
+                with project.tasks.getByName("jar") as AbstractCopyTask
+            }
+        }
+
+        project.task("exportFmu") {
+
+            group = "fmi4j"
+            dependsOn "fatJar"
+
             doLast {
 
                 if (ext.mainClasses == null && ext.mainClasses.isEmpty()) {
