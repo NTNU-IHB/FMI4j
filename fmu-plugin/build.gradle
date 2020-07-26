@@ -1,5 +1,5 @@
 plugins {
-    id 'kotlin'
+    id 'groovy'
     id 'java-gradle-plugin'
     id 'com.gradle.plugin-publish' version "0.12.0"
 }
@@ -13,7 +13,7 @@ dependencies {
 gradlePlugin {
     plugins {
         fmuExportPlugin {
-            id = 'no.ntnu.ihb.fmi4j'
+            id = 'no.ntnu.ihb.fmi4j.fmu-export'
             implementationClass = 'no.ntnu.ihb.fmi4j.FmuExportPlugin'
         }
     }
