@@ -19,11 +19,9 @@ class FmuExportPlugin implements Plugin<Project> {
         def ext = project.extensions.create("fmi4jExport", FmuExportPluginExt)
 
         project.tasks.create("fatJar", Jar.class) {
-            doLast {
-                archiveBaseName.set("${project.name}_shadow")
-                from { project.configurations.compile.collect { it.isDirectory() ? it : project.zipTree(it) } }
-                with jar
-            }
+            archiveBaseName.set("${project.name}_shadow")
+            from { project.configurations.compile.collect { it.isDirectory() ? it : project.zipTree(it) } }
+            //with jar
         }
 
         project.task("exportFmu") {
@@ -37,26 +35,27 @@ class FmuExportPlugin implements Plugin<Project> {
                     throw new GradleException("No mainClass(es) defined!")
                 }
 
-                for (mainClass in ext.outputDir) {
+                for (mainClass in ext.mainClasses) {
 
                     String[] args = [
                             "-f", "${project.buildDir}/libs/${project.name}_shadow.jar",
                             "-m", mainClass,
                             "-d", ext.outputDir
                     ]
+                    println args.toList()
                     FmuBuilder.main(args)
 
                 }
             }
         }
 
-        project.repositories.maven {
+       /* project.repositories.maven {
             url "https://dl.bintray.com/ntnu-ihb/mvn"
-        }
-        def compileDefs = project.getConfigurations().getByName("compile").getDependencies()
+        }*/
         project.getGradle().addListener(new DependencyResolutionListener() {
             @Override
             void beforeResolve(ResolvableDependencies deps) {
+                def compileDefs = project.getConfigurations().getByName("compile").getDependencies()
                 compileDefs.add(project.getDependencies().create("no.ntnu.ihb.fmi4j:fmi-export:0.31.2"))
                 project.getGradle().removeListener(this)
             }
