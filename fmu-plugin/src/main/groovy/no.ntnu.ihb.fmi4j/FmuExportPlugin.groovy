@@ -18,10 +18,10 @@ class FmuExportPlugin implements Plugin<Project> {
     void apply(Project project) {
         def ext = project.extensions.create("fmi4jExport", FmuExportPluginExt)
 
-        project.tasks.create("fatJar", Jar.class) {
+        project.tasks.register("fatJar", Jar) {
             archiveBaseName.set("${project.name}_shadow")
             from { project.configurations.compile.collect { it.isDirectory() ? it : project.zipTree(it) } }
-            //with jar
+            with project.tasks.getByName('jar')
         }
 
         project.task("exportFmu") {
@@ -43,20 +43,21 @@ class FmuExportPlugin implements Plugin<Project> {
                             "-d", ext.outputDir
                     ]
                     println args.toList()
+                    println Class.forName("no.ntnu.ihb.fmi4j.FmuBuilder") == null
                     FmuBuilder.main(args)
 
                 }
             }
         }
 
-       /* project.repositories.maven {
+        /*project.repositories.maven {
             url "https://dl.bintray.com/ntnu-ihb/mvn"
         }*/
         project.getGradle().addListener(new DependencyResolutionListener() {
             @Override
             void beforeResolve(ResolvableDependencies deps) {
                 def compileDefs = project.getConfigurations().getByName("compile").getDependencies()
-                compileDefs.add(project.getDependencies().create("no.ntnu.ihb.fmi4j:fmi-export:0.31.2"))
+                compileDefs.add(project.getDependencies().create("no.ntnu.ihb.fmi4j:fmi-export:0.31.3"))
                 project.getGradle().removeListener(this)
             }
 

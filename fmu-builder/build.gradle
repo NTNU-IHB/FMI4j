@@ -10,8 +10,8 @@ apply from: rootProject.file("gradle/bintraypublish.gradle")
 
 dependencies {
 
-    compile project(':fmi-md')
-    compile group: 'info.picocli', name: 'picocli', version: '3.9.2'
+    implementation project(':fmi-md')
+    implementation group: 'info.picocli', name: 'picocli', version: '3.9.2'
 
     testCompile project(':fmi-import')
     testCompile project(':fmi-export')

@@ -2,6 +2,8 @@ package no.ntnu.ihb.fmi4j
 
 import org.gradle.internal.impldep.org.junit.rules.TemporaryFolder
 import org.gradle.testkit.runner.GradleRunner
+import org.gradle.testkit.runner.TaskOutcome
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.io.File
@@ -9,7 +11,6 @@ import java.io.File
 internal class ApplyPluginTest {
 
     @Test
-    @Disabled
     fun testApplyPlugin() {
 
         val testProjectDir = TemporaryFolder().apply { create() }
@@ -18,8 +19,9 @@ internal class ApplyPluginTest {
             writeText("""
                 pluginManagement {
                     repositories {
-                        mavenLocal()
                         mavenCentral()
+                        gradlePluginPortal()
+                        //maven { url "https://dl.bintray.com/ntnu-ihb/mvn" }
                     }
                 }
                 rootProject.name = "testPlugin"
@@ -29,14 +31,14 @@ internal class ApplyPluginTest {
             writeText("""
                 plugins {
                     id "java-library" 
-                    id "no.ntnu.ihb.fmi4j.fmu-export" version "0.31.2"
+                    id "no.ntnu.ihb.fmi4j.fmu-export" version "0.31.3"
                 }
                 
                 repositories {
                     mavenCentral()
-                    mavenLocal()
+                    maven { url "https://dl.bintray.com/ntnu-ihb/mvn" }
                 }
-                
+   
                 configurations.all {
                     // Check for updates every build
                     resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
@@ -57,12 +59,15 @@ internal class ApplyPluginTest {
             writeText("""
                 package no.ntnu.ihb;
                 
-                import no.ntnu.ihb.fmi4j.export.fmi2.*;
+                import java.util.Map;
+                import no.ntnu.ihb.fmi4j.export.fmi2.Fmi2Slave;
+                import no.ntnu.ihb.fmi4j.export.fmi2.ScalarVariable;
+                import no.ntnu.ihb.fmi4j.modeldescription.fmi2.Fmi2Causality;
                 
                 public class MySlave extends Fmi2Slave {
                 
                     @ScalarVariable(causality = Fmi2Causality.output)
-                    double realOut = 1.0
+                    double realOut = 1.0;
                     
                     public MySlave(Map<String, Object> args) {
                         super(args);
@@ -70,20 +75,20 @@ internal class ApplyPluginTest {
                 
                     @Override
                     public void doStep(double t, double dt) {
-                        double currentTime, double dt
                     }
                 
                 }
             """.trimIndent())
         }
 
+        val taskName = "exportFmu"
         val result = GradleRunner.create()
                 .withProjectDir(testProjectDir.root)
-                .withArguments("exportFmu")
+                .withArguments(taskName)
                 .build()
+
+        Assertions.assertEquals(TaskOutcome.SUCCESS, result.task(":$taskName")?.outcome)
 
     }
 
-
 }
-

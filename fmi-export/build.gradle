@@ -11,13 +11,3 @@ apply from: rootProject.file("gradle/bintraypublish.gradle")
 dependencies {
     api project(':fmi-md')
 }
-
-jar {
-    from {
-        configurations.compile.collect {
-            it.isDirectory() ? it : zipTree(it)
-        }
-    }
-}
-
-jar.dependsOn(":fmi-md:jar")

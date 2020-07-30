@@ -11,5 +11,5 @@ apply from: rootProject.file("gradle/mavenpublish.gradle")
 apply from: rootProject.file("gradle/bintraypublish.gradle")
 
 dependencies {
-    compile project(':fmi-md')
+    api project(':fmi-md')
 }
