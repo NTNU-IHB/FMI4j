@@ -21,7 +21,7 @@ internal class ApplyPluginTest {
                     repositories {
                         mavenCentral()
                         gradlePluginPortal()
-                        //maven { url "https://dl.bintray.com/ntnu-ihb/mvn" }
+                        maven { url "https://dl.bintray.com/ntnu-ihb/mvn" }
                     }
                 }
                 rootProject.name = "testPlugin"
@@ -38,14 +38,9 @@ internal class ApplyPluginTest {
                     mavenCentral()
                     maven { url "https://dl.bintray.com/ntnu-ihb/mvn" }
                 }
-   
-                configurations.all {
-                    // Check for updates every build
-                    resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
-                }
-                
+
                 dependencies {
-                    compile group: 'com.google.code.gson', name: 'gson', version: '2.8.6'
+                    implementation group: 'com.google.code.gson', name: 'gson', version: '2.8.6'
                 }
                 
                 fmi4jExport {

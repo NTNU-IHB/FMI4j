@@ -8,8 +8,12 @@ plugins {
 
 apply from: rootProject.file("gradle/junit.gradle")
 
+repositories {
+    maven { url "https://dl.bintray.com/ntnu-ihb/mvn" }
+}
+
 dependencies {
-    compile project(':fmu-builder')
+    compile 'no.ntnu.ihb.fmi4j:fmu-builder:0.31.4'
 
     testImplementation gradleTestKit()
 }
