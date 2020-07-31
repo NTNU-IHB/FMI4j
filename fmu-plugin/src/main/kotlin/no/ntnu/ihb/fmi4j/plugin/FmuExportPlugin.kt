@@ -8,9 +8,11 @@ import org.gradle.api.artifacts.DependencyResolutionListener
 import org.gradle.api.artifacts.ResolvableDependencies
 import org.gradle.api.file.CopySpec
 import org.gradle.jvm.tasks.Jar
+import java.io.File
+import java.net.URI
 
 open class FmuExportPluginExt {
-    var outputDir = "."
+    var outputDir: String? = null
     var mainClasses: MutableList<String> = mutableListOf()
 }
 
@@ -40,24 +42,33 @@ class FmuExportPlugin: Plugin<Project> {
                     throw GradleException("No mainClass(es) defined!")
                 }
 
+                val defaultOutputDir by lazy {
+                    File(project.buildDir, "fmus").apply {
+                        mkdirs()
+                    }
+                }
+                val outputDir = ext.outputDir ?: defaultOutputDir.absolutePath
+
                 for (mainClass in ext.mainClasses) {
 
                     val args = arrayOf(
                             "-f", "${project.buildDir}/libs/${project.name}_shadow.jar",
                             "-m", mainClass,
-                            "-d", ext.outputDir
+                            "-d", outputDir
                     )
-                    println(args.toList())
                     FmuBuilder.main(args)
 
                 }
             }
         }
 
+        project.repositories.maven {
+            it.url=URI("https://dl.bintray.com/ntnu-ihb/mvn")
+        }
         project.gradle.addListener(object: DependencyResolutionListener {
 
             override fun beforeResolve(deps: ResolvableDependencies) {
-                val compileDefs = project.configurations.getByName("implementation").dependencies
+                val compileDefs = project.configurations.getByName("compile").dependencies
                 compileDefs.add(project.dependencies.create("no.ntnu.ihb.fmi4j:fmi-export:0.31.3"))
                 project.gradle.removeListener(this)
             }

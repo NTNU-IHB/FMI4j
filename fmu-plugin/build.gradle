@@ -13,7 +13,7 @@ repositories {
 }
 
 dependencies {
-    compile 'no.ntnu.ihb.fmi4j:fmu-builder:0.31.4'
+    implementation project(':fmu-builder')
 
     testImplementation gradleTestKit()
 }

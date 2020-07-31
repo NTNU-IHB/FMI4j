@@ -20,8 +20,7 @@ internal class ApplyPluginTest {
                 pluginManagement {
                     repositories {
                         mavenCentral()
-                        gradlePluginPortal()
-                        maven { url "https://dl.bintray.com/ntnu-ihb/mvn" }
+                        mavenLocal()
                     }
                 }
                 rootProject.name = "testPlugin"
@@ -34,9 +33,14 @@ internal class ApplyPluginTest {
                     id "no.ntnu.ihb.fmi4j.fmu-export" version "0.31.3"
                 }
                 
+                configurations.all {
+                    // Check for updates every build
+                    resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+                }
+                
                 repositories {
                     mavenCentral()
-                    maven { url "https://dl.bintray.com/ntnu-ihb/mvn" }
+                    mavenLocal()
                 }
 
                 dependencies {
@@ -83,6 +87,7 @@ internal class ApplyPluginTest {
                 .build()
 
         Assertions.assertEquals(TaskOutcome.SUCCESS, result.task(":$taskName")?.outcome)
+        Assertions.assertTrue(File(testProjectDir.root, "build/fmus/MySlave.fmu").exists())
 
     }
 

@@ -31,17 +31,24 @@ object FmuBuilder {
             require(jarFile.exists()) {"No such File '$jarFile'"}
 
             val classLoader = URLClassLoader(arrayOf(jarFile.toURI().toURL()))
+
             val superClass = classLoader.loadClass("no.ntnu.ihb.fmi4j.export.fmi2.Fmi2Slave")
             val subClass = classLoader.loadClass(mainClass)
             val instance = subClass.getConstructor(Map::class.java).newInstance(mapOf("instanceName" to "dummyInstance"))
+
+            val mdClass = classLoader.loadClass("no.ntnu.ihb.fmi4j.modeldescription.fmi2.Fmi2ModelDescription")
+            val mdCsClass = classLoader.loadClass("no.ntnu.ihb.fmi4j.modeldescription.fmi2.Fmi2ModelDescription\$CoSimulation")
+            val mdCsMethod = mdClass.getMethod("getCoSimulation")
+            val mdCsModelIdentifierMethod = mdCsClass.getMethod("getModelIdentifier")
 
             val define = superClass.getDeclaredMethod("__define__")
             define.isAccessible = true
             define.invoke(instance)
             val getModelDescription = superClass.getDeclaredMethod("getModelDescription")
             getModelDescription.isAccessible = true
-            val md = getModelDescription.invoke(instance) as Fmi2ModelDescription
-            val modelIdentifier = md.coSimulation.modelIdentifier
+            val md = getModelDescription.invoke(instance)
+            val mdCs = mdCsMethod.invoke(md)
+            val modelIdentifier = mdCsModelIdentifierMethod.invoke(mdCs) as String
 
             val bos = ByteArrayOutputStream()
             JAXB.marshal(md, bos)
