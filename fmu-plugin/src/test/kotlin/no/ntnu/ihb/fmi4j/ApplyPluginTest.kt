@@ -4,13 +4,15 @@ import org.gradle.internal.impldep.org.junit.rules.TemporaryFolder
 import org.gradle.testkit.runner.GradleRunner
 import org.gradle.testkit.runner.TaskOutcome
 import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.condition.DisabledOnOs
+import org.junit.jupiter.api.condition.OS
 import java.io.File
 
 internal class ApplyPluginTest {
 
     @Test
+    @DisabledOnOs(OS.LINUX)
     fun testApplyPlugin() {
 
         val testProjectDir = TemporaryFolder().apply { create() }
