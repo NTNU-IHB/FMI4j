@@ -1,20 +1,17 @@
 plugins {
-    id 'java'
+    id 'java-library'
     id 'kotlin'
-    id 'application'
-    id 'distribution'
-    id "com.github.johnrengelman.shadow" version "4.0.4"
+    id "com.jfrog.bintray" version "1.8.4"
 }
 
 apply from: rootProject.file("gradle/junit.gradle")
-
-def group = "no.ntnu.ihb.fmi4j"
-mainClassName = "${group}.FmuBuilder"
+apply from: rootProject.file("gradle/mavenpublish.gradle")
+apply from: rootProject.file("gradle/bintraypublish.gradle")
 
 dependencies {
 
-    compile project(':fmi-md')
-    compile group: 'info.picocli', name: 'picocli', version: '3.9.2'
+    implementation project(':fmi-md')
+    implementation group: 'info.picocli', name: 'picocli', version: '3.9.2'
 
     testCompile project(':fmi-import')
     testCompile project(':fmi-export')
@@ -25,22 +22,6 @@ task testJar(type: Jar) {
     classifier = null
     archiveBaseName.set("fmu-slaves")
     from sourceSets.test.output.classesDirs + configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } + configurations.testCompile.collect { it.isDirectory() ? it : zipTree(it) }
-}
-
-shadowJar {
-    archiveBaseName.set("fmu-builder")
-    classifier = null
-    version = null
-}
-
-distributions {
-    main {
-        baseName = 'fmu-builder'
-    }
-}
-
-startScripts {
-    applicationName = 'fmu-builder'
 }
 
 test.dependsOn(testJar)

@@ -1,0 +1,42 @@
+plugins {
+    id 'java'
+    id 'kotlin'
+    id 'maven-publish'
+    id 'java-gradle-plugin'
+    id 'com.gradle.plugin-publish' version "0.12.0"
+}
+
+apply from: rootProject.file("gradle/junit.gradle")
+
+repositories {
+    maven { url "https://dl.bintray.com/ntnu-ihb/mvn" }
+}
+
+dependencies {
+    implementation project(':fmu-builder')
+
+    testImplementation gradleTestKit()
+}
+
+gradlePlugin {
+    plugins {
+        fmuExportPlugin {
+            id = 'no.ntnu.ihb.fmi4j.fmu-export'
+            implementationClass = 'no.ntnu.ihb.fmi4j.plugin.FmuExportPlugin'
+        }
+    }
+}
+
+pluginBundle {
+    website = "https://github.com/NTNU-IHB/FMI4j"
+    vcsUrl = "https://github.com/NTNU-IHB/FMI4j"
+    description = "A plugin for exporting FMUs from Java code"
+    tags = ["gradle", "fmi4j"]
+    plugins {
+        fmuExportPlugin {
+            displayName = "Gradle fmi4j-export plugin"
+        }
+    }
+}
+
+testClasses.dependsOn(publishToMavenLocal)

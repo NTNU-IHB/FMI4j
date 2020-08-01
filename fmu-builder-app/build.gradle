@@ -1,0 +1,21 @@
+plugins {
+    id 'java'
+    id 'application'
+    id "com.github.johnrengelman.shadow" version "4.0.4"
+}
+
+mainClassName = "${group}.FmuBuilder"
+
+dependencies {
+    compile project(':fmu-builder')
+}
+
+shadowJar {
+    archiveBaseName.set("fmu-builder")
+    classifier = null
+    version = null
+}
+
+startScripts {
+    applicationName = 'fmu-builder'
+}
