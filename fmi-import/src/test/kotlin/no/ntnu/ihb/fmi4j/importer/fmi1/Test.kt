@@ -12,7 +12,6 @@ import java.io.File
 class Test {
 
     @Test
-    @EnabledOnOs(OS.WINDOWS)
     fun TestFmi1() {
 
         val file = File(Test::class.java.classLoader.getResource("fmus/1.0/cs/BouncingBall.fmu")!!.file)
@@ -43,7 +42,6 @@ class Test {
     }
 
     @Test
-    @EnabledOnOs(OS.WINDOWS)
     fun testAbstractFmuLoad() {
 
         val file = File(Test::class.java.classLoader.getResource("fmus/1.0/cs/BouncingBall.fmu")!!.file)
