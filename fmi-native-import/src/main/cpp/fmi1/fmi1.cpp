@@ -457,6 +457,11 @@ JNIEXPORT jlong JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi1_jni_Fmi1CoSimulatio
     const char* _fmuLocation = env->GetStringUTFChars(fmuLocation, nullptr);
     const char* _instanceName = env->GetStringUTFChars(instanceName, nullptr);
 
+    std::cout << _guid << std::endl;
+    std::cout << _fmuLocation << std::endl;
+    std::cout << _instanceName << std::endl;
+    std::cout << "loggingOn: " << (fmiBoolean)loggingOn << std::endl;
+
     fmiInstantiateSlaveTYPE* fmiInstantiate = fmu->fmiInstantiateSlave_;
     fmiComponent c = (*fmiInstantiate)(_instanceName, _guid, _fmuLocation, "application/x-fmu-sharedlibrary", 0, 0, 0, fmu->csCallback_, (fmiBoolean)loggingOn);
 
