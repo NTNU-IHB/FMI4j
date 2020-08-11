@@ -463,7 +463,7 @@ JNIEXPORT jlong JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi1_jni_Fmi1CoSimulatio
     if (find != std::string::npos) {
 
             path.replace(find, 8, "");
-
+}
 
     std::cout << path << std::endl;
 
