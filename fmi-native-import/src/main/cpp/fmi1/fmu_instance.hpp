@@ -26,9 +26,9 @@
 #include "fmiFunctionTypes.h"
 
 #include <cstdarg>
-#include <utility>
-#include <string>
 #include <iostream>
+#include <string>
+#include <utility>
 
 namespace
 {
@@ -178,5 +178,4 @@ public:
         fmiTerminate_ = load_function<fmiTerminateTYPE*>(handle_, full_function_name(modelIdentifier, "fmiTerminate"));
         fmiFreeModelInstance_ = load_function<fmiFreeModelInstanceTYPE*>(handle_, full_function_name(modelIdentifier, "fmiFreeModelInstance"));
     };
-
 };

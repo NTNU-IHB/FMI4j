@@ -62,7 +62,7 @@ class Fmu internal constructor(
     }
 
     internal val fmuPath: String
-        get() = extractedFmu.toURI().path
+        get() = extractedFmu.toURI().toASCIIString()
 
     override fun asCoSimulationFmu(): CoSimulationFmu {
         if (!supportsCoSimulation) {
