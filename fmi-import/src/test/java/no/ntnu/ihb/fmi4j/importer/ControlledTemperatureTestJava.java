@@ -27,7 +27,9 @@ package no.ntnu.ihb.fmi4j.importer;
 import no.ntnu.ihb.fmi4j.Fmi4jVariableUtils;
 import no.ntnu.ihb.fmi4j.FmiStatus;
 import no.ntnu.ihb.fmi4j.SlaveInstance;
+import no.ntnu.ihb.fmi4j.TestFMUs;
 import no.ntnu.ihb.fmi4j.importer.fmi2.CoSimulationFmu;
+import no.ntnu.ihb.fmi4j.importer.fmi2.Fmu;
 import no.ntnu.ihb.fmi4j.modeldescription.variables.RealVariable;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
@@ -38,9 +40,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
-/**
- * @author Lars Ivar Hatledal
- */
 
 public class ControlledTemperatureTestJava {
 
@@ -50,9 +49,8 @@ public class ControlledTemperatureTestJava {
 
     @BeforeAll
     public static void setUp() throws IOException {
-        fmu = TestFMUs.fmi20().cs()
-                .vendor("20sim").version("4.6.4.8004")
-                .name("ControlledTemperature").fmu().asCoSimulationFmu();
+        fmu = Fmu.from(TestFMUs.get("2.0/cs/20sim/4.6.4.8004/ControlledTemperature/ControlledTemperature.fmu")).asCoSimulationFmu();
+
     }
 
     @AfterAll

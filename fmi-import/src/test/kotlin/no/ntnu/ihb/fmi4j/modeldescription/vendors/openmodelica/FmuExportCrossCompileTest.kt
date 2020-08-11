@@ -1,6 +1,7 @@
 package no.ntnu.ihb.fmi4j.modeldescription.vendors.openmodelica
 
-import no.ntnu.ihb.fmi4j.modeldescription.TestFMUs
+import no.ntnu.ihb.fmi4j.TestFMUs
+import no.ntnu.ihb.fmi4j.modeldescription.ModelDescriptionParser
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
@@ -14,9 +15,9 @@ class FmuExportCrossCompileTest {
 
         val LOG: Logger = LoggerFactory.getLogger(FmuExportCrossCompileTest::class.java)
 
-        val modelDescription = TestFMUs.fmi20().cs()
-                .vendor("OpenModelica").version("v1.11.0")
-                .name("FmuExportCrossCompile").modelDescription()
+        val modelDescription = TestFMUs.get("2.0/cs/OpenModelica/v1.11.0/FmuExportCrossCompile/FmuExportCrossCompile.fmu").let {
+            ModelDescriptionParser.parseModelDescription(it)
+        }
 
     }
 
@@ -41,7 +42,7 @@ class FmuExportCrossCompileTest {
     fun testVariableNamingConvention() {
         val variableNamingConvention = modelDescription.variableNamingConvention
         LOG.info("variableNamingConvention=$variableNamingConvention")
-        Assertions.assertTrue(modelDescription.variableNamingConvention == "structured")
+        Assertions.assertEquals(modelDescription.variableNamingConvention, "structured")
     }
 
 }

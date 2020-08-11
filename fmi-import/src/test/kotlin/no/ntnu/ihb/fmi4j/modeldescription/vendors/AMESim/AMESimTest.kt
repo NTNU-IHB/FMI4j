@@ -1,6 +1,7 @@
 package no.ntnu.ihb.fmi4j.modeldescription.vendors.AMESim
 
-import no.ntnu.ihb.fmi4j.modeldescription.TestFMUs
+import no.ntnu.ihb.fmi4j.TestFMUs
+import no.ntnu.ihb.fmi4j.modeldescription.ModelDescriptionParser
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
@@ -10,11 +11,9 @@ class AMESimTest {
 
     companion object {
 
-        val md = TestFMUs.fmi20().cs()
-                .vendor("AMESim").version("15")
-                .name("MIS_cs").modelDescription().let {
-                    it.asCoSimulationModelDescription()
-                }
+        val md = TestFMUs.get("2.0/cs/AMESim/15/MIS_cs/MIS_cs.fmu").let {
+            ModelDescriptionParser.parseModelDescription(it).asCoSimulationModelDescription()
+        }
 
     }
 

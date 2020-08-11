@@ -1,7 +1,8 @@
 package no.ntnu.ihb.fmi4j.importer.fmi2.cs.vendors.testfmus
 
 import no.ntnu.ihb.fmi4j.FmiStatus
-import no.ntnu.ihb.fmi4j.importer.TestFMUs
+import no.ntnu.ihb.fmi4j.TestFMUs
+import no.ntnu.ihb.fmi4j.importer.fmi2.Fmu
 import no.ntnu.ihb.fmi4j.read
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
@@ -17,9 +18,9 @@ class VanDerPolTest {
     @Test
     fun testInstance() {
 
-        val fmu = TestFMUs.fmi20().both()
-                .vendor("Test-FMUs").version("0.0.1")
-                .name("VanDerPol").fmu().asCoSimulationFmu()
+        val fmu = TestFMUs.get("2.0/both/Test-FMUs/0.0.1/VanDerPol/VanDerPol.fmu").let {
+            Fmu.from(it).asCoSimulationFmu()
+        }
 
         fmu.newInstance(fmu.modelDescription.attributes.modelIdentifier, loggingOn = false).use { slave ->
 
