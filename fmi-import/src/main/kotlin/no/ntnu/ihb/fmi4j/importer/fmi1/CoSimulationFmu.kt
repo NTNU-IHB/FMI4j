@@ -48,7 +48,6 @@ class CoSimulationFmu(
     }
 
     private fun instantiate(instanceName: String, loggingOn: Boolean): Long {
-        println(fmu.fmuPath)
         return lib.instantiateSlave(instanceName, fmu.guid, fmu.fmuPath, loggingOn)
     }
 
