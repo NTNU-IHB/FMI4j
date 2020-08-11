@@ -24,10 +24,9 @@
 
 #include "fmu_instance.hpp"
 
-#include <jni.h>
 #include <cstdlib>
+#include <jni.h>
 #include <vector>
-#include <string>
 
 #ifdef __cplusplus
 extern "C" {
@@ -76,14 +75,14 @@ JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi1_jni_Fmi1Library_getI
     const jsize size = env->GetArrayLength(vr);
     jlong* _vr = env->GetLongArrayElements(vr, nullptr);
 
-    fmiValueReference* __vr = (fmiValueReference*)malloc(sizeof(fmiValueReference) * size);
+    auto* __vr = (fmiValueReference*)malloc(sizeof(fmiValueReference) * size);
     for (unsigned int i = 0; i < size; ++i) {
         __vr[i] = (fmiValueReference)_vr[i];
     }
 
     fmiGetIntegerTYPE* fmiGetInteger = fmu->fmiGetInteger_;
 
-    fmiInteger* _ref = (fmiInteger*)malloc(sizeof(fmiInteger) * size);
+    auto* _ref = (fmiInteger*)malloc(sizeof(fmiInteger) * size);
     fmiStatus status = (*fmiGetInteger)((void*)c, __vr, size, _ref);
 
     env->SetIntArrayRegion(ref, 0, size, (jint*)_ref);
@@ -102,14 +101,14 @@ JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi1_jni_Fmi1Library_getR
     const jsize size = env->GetArrayLength(vr);
     jlong* _vr = env->GetLongArrayElements(vr, nullptr);
 
-    fmiValueReference* __vr = (fmiValueReference*)malloc(sizeof(fmiValueReference) * size);
+    auto* __vr = (fmiValueReference*)malloc(sizeof(fmiValueReference) * size);
     for (unsigned int i = 0; i < size; ++i) {
         __vr[i] = (fmiValueReference)_vr[i];
     }
 
     fmiGetRealTYPE* fmiGetReal = fmu->fmiGetReal_;
 
-    fmiReal* _ref = (fmiReal*)malloc(sizeof(fmiReal) * size);
+    auto* _ref = (fmiReal*)malloc(sizeof(fmiReal) * size);
     fmiStatus status = (*fmiGetReal)((void*)c, __vr, size, _ref);
 
     env->SetDoubleArrayRegion(ref, 0, size, _ref);
@@ -128,7 +127,7 @@ JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi1_jni_Fmi1Library_getS
     const jsize size = env->GetArrayLength(vr);
     jlong* _vr = env->GetLongArrayElements(vr, nullptr);
 
-    fmiValueReference* __vr = (fmiValueReference*)malloc(sizeof(fmiValueReference) * size);
+    auto* __vr = (fmiValueReference*)malloc(sizeof(fmiValueReference) * size);
     for (unsigned int i = 0; i < size; ++i) {
         __vr[i] = (fmiValueReference)_vr[i];
     }
@@ -137,7 +136,7 @@ JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi1_jni_Fmi1Library_getS
 
     std::vector<const char*> _ref(size);
     for (int i = 0; i < size; i++) {
-        jstring str = (jstring)env->GetObjectArrayElement(ref, i);
+        auto str = (jstring)env->GetObjectArrayElement(ref, i);
         _ref[i] = env->GetStringUTFChars(str, nullptr);
     }
 
@@ -162,18 +161,18 @@ JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi1_jni_Fmi1Library_getB
     const jsize size = env->GetArrayLength(vr);
     jlong* _vr = env->GetLongArrayElements(vr, nullptr);
 
-    fmiValueReference* __vr = (fmiValueReference*)malloc(sizeof(fmiValueReference) * size);
+    auto* __vr = (fmiValueReference*)malloc(sizeof(fmiValueReference) * size);
     for (unsigned int i = 0; i < size; ++i) {
         __vr[i] = (fmiValueReference)_vr[i];
     }
 
-    fmiBoolean* _ref = (fmiBoolean*)malloc(sizeof(fmiBoolean*) * size);
+    auto* _ref = (fmiBoolean*)malloc(sizeof(fmiBoolean*) * size);
 
     fmiGetBooleanTYPE* fmiGetBoolean = fmu->fmiGetBoolean_;
     fmiStatus status = (*fmiGetBoolean)((void*)c, __vr, size, _ref);
 
     for (int i = 0; i < size; i++) {
-        jboolean value = (jboolean)_ref[i];
+        auto value = (jboolean)_ref[i];
         env->SetBooleanArrayRegion(ref, i, 1, &value);
     }
 
@@ -192,7 +191,7 @@ JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi1_jni_Fmi1Library_setI
     jlong* _vr = env->GetLongArrayElements(vr, nullptr);
     jint* _values = env->GetIntArrayElements(values, nullptr);
 
-    fmiValueReference* __vr = (fmiValueReference*)malloc(sizeof(fmiValueReference) * size);
+    auto* __vr = (fmiValueReference*)malloc(sizeof(fmiValueReference) * size);
     for (unsigned int i = 0; i < size; ++i) {
         __vr[i] = (fmiValueReference)_vr[i];
     }
@@ -239,14 +238,14 @@ JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi1_jni_Fmi1Library_setS
     const jsize size = env->GetArrayLength(vr);
     jlong* _vr = env->GetLongArrayElements(vr, nullptr);
 
-    fmiValueReference* __vr = (fmiValueReference*)malloc(sizeof(fmiValueReference) * size);
+    auto* __vr = (fmiValueReference*)malloc(sizeof(fmiValueReference) * size);
     for (unsigned int i = 0; i < size; ++i) {
         __vr[i] = (fmiValueReference)_vr[i];
     }
 
     std::vector<const char*> _values(size);
     for (int i = 0; i < size; i++) {
-        jstring str = (jstring)env->GetObjectArrayElement(values, i);
+        auto str = (jstring)env->GetObjectArrayElement(values, i);
         _values[i] = env->GetStringUTFChars(str, nullptr);
     }
 
@@ -268,7 +267,7 @@ JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi1_jni_Fmi1Library_setB
     jlong* _vr = env->GetLongArrayElements(vr, 0);
     jboolean* _values = env->GetBooleanArrayElements(values, 0);
 
-    fmiValueReference* __vr = (fmiValueReference*)malloc(sizeof(fmiValueReference) * size);
+    auto* __vr = (fmiValueReference*)malloc(sizeof(fmiValueReference) * size);
     for (unsigned int i = 0; i < size; ++i) {
         __vr[i] = (fmiValueReference)_vr[i];
     }
@@ -352,7 +351,7 @@ JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi1_jni_Fmi1ModelExchang
     auto fmu = reinterpret_cast<FmuInstance*>(p);
 
     const jsize size = env->GetArrayLength(derivatives);
-    fmiReal* _derivatives = (fmiReal*)malloc(sizeof(fmiReal) * size);
+    auto* _derivatives = (fmiReal*)malloc(sizeof(fmiReal) * size);
 
     fmiGetDerivativesTYPE* fmiGetDerivatives = fmu->fmiGetDerivatives_;
     fmiStatus status = (*fmiGetDerivatives)((void*)c, _derivatives, size);
@@ -369,7 +368,7 @@ JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi_jni_Fmi1ModelExchange
     auto fmu = reinterpret_cast<FmuInstance*>(p);
 
     const jsize size = env->GetArrayLength(eventIndicators);
-    fmiReal* _eventIndicators = (fmiReal*)malloc(sizeof(fmiReal) * size);
+    auto* _eventIndicators = (fmiReal*)malloc(sizeof(fmiReal) * size);
 
     fmiGetEventIndicatorsTYPE* fmiGetEventIndicators = fmu->fmiGetEventIndicators_;
     fmiStatus status = (*fmiGetEventIndicators)((void*)c, _eventIndicators, size);
@@ -386,7 +385,7 @@ JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi1_jni_Fmi1ModelExchang
     auto fmu = reinterpret_cast<FmuInstance*>(p);
 
     const jsize size = env->GetArrayLength(x);
-    fmiReal* _x = (fmiReal*)malloc(sizeof(fmiReal) * size);
+    auto* _x = (fmiReal*)malloc(sizeof(fmiReal) * size);
 
     fmiGetContinuousStatesTYPE* fmiGetContinuousStates = fmu->fmiGetContinuousStates_;
     fmiStatus status = (*fmiGetContinuousStates)((void*)c, _x, size);
@@ -403,7 +402,7 @@ JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi1_jni_Fmi1ModelExchang
     auto fmu = reinterpret_cast<FmuInstance*>(p);
 
     const jsize size = env->GetArrayLength(xNominal);
-    fmiReal* _xNominal = (fmiReal*)malloc(sizeof(fmiReal) * size);
+    auto* _xNominal = (fmiReal*)malloc(sizeof(fmiReal) * size);
 
     fmiGetNominalContinuousStatesTYPE* fmiGetNominalContinuousStates = fmu->fmiGetNominalContinuousStates_;
     fmiStatus status = (*fmiGetNominalContinuousStates)((void*)c, _xNominal, size);
@@ -420,7 +419,7 @@ JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi1_jni_Fmi1ModelExchang
     auto fmu = reinterpret_cast<FmuInstance*>(p);
 
     const jsize size = env->GetArrayLength(vrx);
-    jlong* _vrx = (jlong*)malloc(sizeof(jlong) * size);
+    auto* _vrx = (jlong*)malloc(sizeof(jlong) * size);
 
     fmiGetStateValueReferencesTYPE* fmiGetStateValueReferences = fmu->fmiGetStateValueReferences_;
     fmiStatus status = (*fmiGetStateValueReferences)((void*)c, (fmiValueReference*)_vrx, size);
@@ -459,8 +458,7 @@ JNIEXPORT jlong JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi1_jni_Fmi1CoSimulatio
     const char* _instanceName = env->GetStringUTFChars(instanceName, nullptr);
 
     fmiInstantiateSlaveTYPE* fmiInstantiate = fmu->fmiInstantiateSlave_;
-    std::cout << _fmuLocation << std::endl;
-    fmiComponent c = (*fmiInstantiate)(_instanceName, _guid, "", "application/x-fmu-sharedlibrary", 0, 0, 0, fmu->csCallback_, 0);
+    fmiComponent c = (*fmiInstantiate)(_instanceName, _guid, _fmuLocation, "application/x-fmu-sharedlibrary", 0, 0, 0, fmu->csCallback_, (fmiBoolean)loggingOn);
 
     env->ReleaseStringUTFChars(guid, _guid);
     env->ReleaseStringUTFChars(fmuLocation, _fmuLocation);
