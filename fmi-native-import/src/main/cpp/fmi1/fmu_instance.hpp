@@ -28,6 +28,7 @@
 #include <cstdarg>
 #include <utility>
 #include <string>
+#include <iostream>
 
 namespace
 {
@@ -60,7 +61,7 @@ void logger(fmiComponent, fmiString instance_name, fmiStatus status, fmiString c
     printf("[FMI native bridge] status = %s, instanceName = %s, category = %s: %s\n", status_to_string(status), instance_name, category, msg);
 }
 
-const char* full_function_name(const std::string& modelIdentifier, const std::string& function_name)
+inline const char* full_function_name(const std::string modelIdentifier, const std::string function_name)
 {
     return (modelIdentifier + "_" + function_name).c_str();
 }
@@ -132,6 +133,8 @@ public:
         handle_ = load_library(dir, libName);
 
         std::string modelIdentifier_ = std::move(modelIdentifier);
+
+        std::cout << "id=" << modelIdentifier_ << std::endl;
 
         fmiGetVersion_ = load_function<fmiGetVersionTYPE*>(handle_, full_function_name(modelIdentifier_, "_fmiGetVersion"));
         fmiGetTypesPlatform_ = load_function<fmiGetTypesPlatformTYPE*>(handle_, full_function_name(modelIdentifier_, "fmiGetTypesPlatform"));
