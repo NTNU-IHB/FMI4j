@@ -458,17 +458,8 @@ JNIEXPORT jlong JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi1_jni_Fmi1CoSimulatio
     const char* _fmuLocation = env->GetStringUTFChars(fmuLocation, nullptr);
     const char* _instanceName = env->GetStringUTFChars(instanceName, nullptr);
 
-    auto path = std::string(_fmuLocation);
-    auto find = path.find("file://");
-    if (find != std::string::npos) {
-
-            path.replace(find, 8, "");
-}
-
-    std::cout << path << std::endl;
-
     fmiInstantiateSlaveTYPE* fmiInstantiate = fmu->fmiInstantiateSlave_;
-    fmiComponent c = (*fmiInstantiate)(_instanceName, _guid, path.c_str(), "application/x-fmu-sharedlibrary", 0, 0, 0, fmu->csCallback_, (fmiBoolean)loggingOn);
+    fmiComponent c = (*fmiInstantiate)(_instanceName, _guid, _fmuLocation, "application/x-fmu-sharedlibrary", 0, 0, 0, fmu->csCallback_, (fmiBoolean)loggingOn);
 
     env->ReleaseStringUTFChars(guid, _guid);
     env->ReleaseStringUTFChars(fmuLocation, _fmuLocation);
