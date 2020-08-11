@@ -125,7 +125,7 @@ public:
     fmiTerminateTYPE* fmiTerminate_;
     fmiFreeModelInstanceTYPE* fmiFreeModelInstance_;
 
-    FmuInstance(const char* dir, const char* libName, const std::string& modelIdentifier)
+    FmuInstance(const char* dir, const char* libName, const std::string modelIdentifier)
     {
         handle_ = load_library(dir, libName);
 
