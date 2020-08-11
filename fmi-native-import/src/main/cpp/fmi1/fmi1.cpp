@@ -461,12 +461,9 @@ JNIEXPORT jlong JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi1_jni_Fmi1CoSimulatio
     auto path = std::string(_fmuLocation);
     auto find = path.find("file://");
     if (find != std::string::npos) {
-    #ifdef _MSC_VER
+
             path.replace(find, 8, "");
-    #else
-            path.replace(find, 7, "");
-    #endif
-        }
+
 
     std::cout << path << std::endl;
 
