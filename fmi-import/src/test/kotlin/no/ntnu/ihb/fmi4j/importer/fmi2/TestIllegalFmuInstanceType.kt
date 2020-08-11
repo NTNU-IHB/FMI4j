@@ -1,6 +1,6 @@
 package no.ntnu.ihb.fmi4j.importer.fmi2
 
-import no.ntnu.ihb.fmi4j.importer.TestFMUs
+import no.ntnu.ihb.fmi4j.TestFMUs
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import java.io.File
@@ -11,13 +11,14 @@ class TestIllegalFmuInstanceType {
     @Test
     fun testNewInstanceME() {
         Assertions.assertThrows(IllegalStateException::class.java) {
-            TestFMUs.fmi20().cs()
-                    .vendor("20sim").version("4.6.4.8004")
-                    .name("ControlledTemperature").fmu().use {
-                it.asModelExchangeFmu()
+            TestFMUs.get("2.0/cs/20sim/4.6.4.8004/ControlledTemperature/ControlledTemperature.fmu").let {
+                Fmu.from(it).use { fmu ->
+                    fmu.asModelExchangeFmu()
+                }
             }
         }
     }
+
 
 //    @Test
 //    fun testNewInstanceCS() {

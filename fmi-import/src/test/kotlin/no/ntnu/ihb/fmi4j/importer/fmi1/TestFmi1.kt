@@ -1,20 +1,24 @@
 package no.ntnu.ihb.fmi4j.importer.fmi1
 
+import no.ntnu.ihb.fmi4j.TestFMUs
 import no.ntnu.ihb.fmi4j.importer.AbstractFmu
 import no.ntnu.ihb.fmi4j.modeldescription.ModelDescriptionParser
 import no.ntnu.ihb.fmi4j.readReal
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.condition.EnabledOnOs
-import org.junit.jupiter.api.condition.OS
+import org.junit.jupiter.api.TestInstance
 import java.io.File
 
-class Test {
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+internal class TestFmi1 {
+
+    private companion object {
+        private val file = TestFMUs.get("1.0/cs/BouncingBall.fmu")
+    }
 
     @Test
     fun TestFmi1() {
 
-        val file = File(Test::class.java.classLoader.getResource("fmus/1.0/cs/BouncingBall.fmu")!!.file)
         Assertions.assertEquals("1.0", ModelDescriptionParser.extractVersion(file))
 
         Fmu.from(file).asCoSimulationFmu().use { fmu ->
@@ -44,7 +48,6 @@ class Test {
     @Test
     fun testAbstractFmuLoad() {
 
-        val file = File(Test::class.java.classLoader.getResource("fmus/1.0/cs/BouncingBall.fmu")!!.file)
         AbstractFmu.from(file).asCoSimulationFmu().use { fmu ->
 
             fmu.newInstance(fmu.modelDescription.attributes.modelIdentifier).use { slave ->

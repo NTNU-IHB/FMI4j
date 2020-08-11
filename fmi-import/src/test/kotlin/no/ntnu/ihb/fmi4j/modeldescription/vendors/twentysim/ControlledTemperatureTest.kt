@@ -24,8 +24,9 @@
 
 package no.ntnu.ihb.fmi4j.modeldescription.vendors.twentysim
 
+import no.ntnu.ihb.fmi4j.TestFMUs
 import no.ntnu.ihb.fmi4j.modeldescription.DefaultExperiment
-import no.ntnu.ihb.fmi4j.modeldescription.TestFMUs
+import no.ntnu.ihb.fmi4j.modeldescription.ModelDescriptionParser
 import no.ntnu.ihb.fmi4j.modeldescription.variables.ModelVariables
 import no.ntnu.ihb.fmi4j.modeldescription.variables.RealVariable
 import no.ntnu.ihb.fmi4j.modeldescription.variables.VariableType
@@ -43,10 +44,10 @@ class ControlledTemperatureTest {
 
         private val LOG: Logger = LoggerFactory.getLogger(ControlledTemperatureTest::class.java)
 
-        private val modelDescription = TestFMUs.fmi20().cs()
-                .vendor("20sim").version("4.6.4.8004")
-                .name("ControlledTemperature").modelDescription()
-                .asCoSimulationModelDescription()
+        private val modelDescription = TestFMUs.get("2.0/cs/20sim/4.6.4.8004/ControlledTemperature/ControlledTemperature.fmu").let {
+            ModelDescriptionParser.parseModelDescription(it).asCoSimulationModelDescription()
+        }
+
     }
 
     @Test

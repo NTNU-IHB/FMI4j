@@ -1,7 +1,6 @@
 package no.ntnu.ihb.fmi4j.importer.fmi2
 
 import no.ntnu.ihb.fmi4j.*
-import no.ntnu.ihb.fmi4j.importer.TestFMUs
 import no.ntnu.ihb.fmi4j.modeldescription.variables.*
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Assertions
@@ -17,9 +16,9 @@ class FmuVariableAccessorTest {
         private val LOG: Logger = LoggerFactory.getLogger(FmuVariableAccessorTest::class.java)
     }
 
-    private val fmu = TestFMUs.fmi20().cs()
-            .vendor("20sim").version("4.6.4.8004")
-            .name("ControlledTemperature").fmu().asCoSimulationFmu()
+    private val fmu = TestFMUs.get("2.0/cs/20sim/4.6.4.8004/ControlledTemperature/ControlledTemperature.fmu").let {
+        Fmu.from(it).asCoSimulationFmu()
+    }
 
     @AfterAll
     fun tearDown() {

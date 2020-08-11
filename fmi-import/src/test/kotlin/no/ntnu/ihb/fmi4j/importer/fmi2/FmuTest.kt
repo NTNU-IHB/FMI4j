@@ -1,6 +1,6 @@
 package no.ntnu.ihb.fmi4j.importer.fmi2
 
-import no.ntnu.ihb.fmi4j.importer.TestFMUs
+import no.ntnu.ihb.fmi4j.TestFMUs
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import java.io.File
@@ -25,9 +25,7 @@ class FmuTest {
     @Test
     fun testFromBinary() {
         val fmuName = "ControlledTemperature"
-        val file = TestFMUs.fmi20().cs()
-                .vendor("20sim").version("4.6.4.8004")
-                .name(fmuName).file()
+        val file = TestFMUs.get("2.0/cs/20sim/4.6.4.8004/$fmuName/${fmuName}.fmu")
 
         val bytes = file.readBytes()
         Fmu.from(fmuName, bytes).use {
@@ -38,9 +36,7 @@ class FmuTest {
     @Test
     fun testFromUrl() {
         val fmuName = "ControlledTemperature"
-        Fmu.from(TestFMUs.fmi20().cs()
-                .vendor("20sim").version("4.6.4.8004")
-                .name(fmuName).file()).use {
+        Fmu.from(TestFMUs.get("2.0/cs/20sim/4.6.4.8004/$fmuName/${fmuName}.fmu")).use {
             Assertions.assertEquals("ControlledTemperature", it.modelDescription.modelName)
         }
     }
@@ -48,7 +44,7 @@ class FmuTest {
     @Test
     fun testIllegalFmu() {
         Assertions.assertThrows(IllegalArgumentException::class.java) {
-            Fmu.from(FmuTest::class.java.classLoader.getResource("illegal.fmu"))
+            Fmu.from(FmuTest::class.java.classLoader.getResource("illegal.fmu")!!)
         }
     }
 

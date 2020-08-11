@@ -1,6 +1,7 @@
 package no.ntnu.ihb.fmi4j.modeldescription.vendors.fmusdk
 
-import no.ntnu.ihb.fmi4j.modeldescription.TestFMUs
+import no.ntnu.ihb.fmi4j.TestFMUs
+import no.ntnu.ihb.fmi4j.modeldescription.ModelDescriptionParser
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
@@ -17,10 +18,10 @@ class VanDerPolTest {
 
         val LOG: Logger = LoggerFactory.getLogger(VanDerPolTest::class.java)
 
-        val modelDescription = TestFMUs.fmi20().me()
-                .vendor("FMUSDK").version("2.0.4")
-                .name("vanDerPol").modelDescription()
-                .asModelExchangeModelDescription()
+        val modelDescription = TestFMUs.get("2.0/me/FMUSDK/2.0.4/vanDerPol/vanDerPol.fmu").let {
+            ModelDescriptionParser.parseModelDescription(it).asModelExchangeModelDescription()
+        }
+
     }
 
     @Test
