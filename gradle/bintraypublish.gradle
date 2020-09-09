@@ -1,6 +1,8 @@
 
 if (hasProperty("bintrayUser") && hasProperty("bintrayKey")) {
 
+    apply plugin: "com.jfrog.bintray"
+
     bintray {
         user = bintrayUser
         key = bintrayKey

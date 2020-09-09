@@ -1,7 +1,5 @@
-
 plugins {
     id "java-library"
-    id "com.jfrog.bintray" version "1.8.4"
 }
 
 apply from: rootProject.file("gradle/junit.gradle")
