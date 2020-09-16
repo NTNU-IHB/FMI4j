@@ -21,14 +21,12 @@ class JavaTestingFmi2Slave extends Fmi2Slave {
 
     protected double realIn = 2.0;
     protected double[] realsParams = {50.0, 200.0};
-
     protected String[] stringParams = {"Hello", "world!"};
-
     protected final Vector3 vector3 = new Vector3(1, 2, 3);
-
     protected final Container container = new Container();
 
     private double aParameter = 123;
+    private int someParameter = 30;
 
     public JavaTestingFmi2Slave(@NotNull Map<String, Object> args) {
         super(args);
@@ -38,20 +36,28 @@ class JavaTestingFmi2Slave extends Fmi2Slave {
     protected void registerVariables() {
         register(real("realIn")
                 .causality(Fmi2Causality.input)
-                .getter(() -> realIn));
+                .getter(() -> realIn)
+                .setter((value) -> realIn = value));
         register(real("realsParams", realsParams)
                 .causality(Fmi2Causality.parameter));
-        register(string("realsParams", stringParams)
+        register(string("string", stringParams)
                 .causality(Fmi2Causality.local)
                 .initial(Fmi2Initial.exact));
         register(real("vector3", vector3)
                 .causality(Fmi2Causality.local));
         register(real("container.speed")
                 .getter(() -> container.speed)
+                .setter((value) -> container.speed = value)
                 .causality(Fmi2Causality.local));
         register(real("aParameter")
                 .getter(() -> aParameter)
-                .causality(Fmi2Causality.local));
+                .setter((value) -> aParameter = value)
+                .causality(Fmi2Causality.parameter)
+                .variability(Fmi2Variability.tunable));
+        register(integer("someParameter")
+                .getter(() -> someParameter)
+                .causality(Fmi2Causality.local)
+                .variability(Fmi2Variability.constant));
     }
 
     @Override

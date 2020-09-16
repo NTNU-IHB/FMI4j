@@ -68,7 +68,7 @@ class Fmi2Fmi2SlaveInstanceTest {
 
     @Test
     void testMethodVariable3() {
-        long startIndex = slave.getValueReference("aVector[0]");
+        long startIndex = slave.getValueReference("vector3[0]");
         long[] vr = new long[]{startIndex, startIndex + 1, startIndex + 2};
         Assertions.assertArrayEquals(new double[]{1, 2, 3}, slave.getReal(vr));
 

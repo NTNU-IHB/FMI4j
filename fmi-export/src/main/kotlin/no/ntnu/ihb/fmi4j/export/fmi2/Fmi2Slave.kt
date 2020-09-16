@@ -57,13 +57,13 @@ abstract class Fmi2Slave(
 
     @Suppress("UNCHECKED_CAST")
     fun getReal(vr: Long): Double {
-        return realAccessors[vr.toInt()].getter()
+        return realAccessors[vr.toInt()].getter.get()
     }
 
     @Suppress("UNCHECKED_CAST")
     open fun getReal(vr: LongArray): DoubleArray {
         return DoubleArray(vr.size) { i ->
-            realAccessors[vr[i].toInt()].getter()
+            realAccessors[vr[i].toInt()].getter.get()
         }
     }
 
@@ -71,7 +71,7 @@ abstract class Fmi2Slave(
     open fun setReal(vr: LongArray, values: DoubleArray) {
         for (i in vr.indices) {
             realAccessors[vr[i].toInt()].apply {
-                setter?.invoke(values[i]) ?: LOG.warning("Trying to set value of " +
+                setter?.set(values[i]) ?: LOG.warning("Trying to set value of " +
                         "${getVariableName(vr[i], Fmi2VariableType.REAL)} on variable without a specified setter!")
             }
         }
@@ -79,13 +79,13 @@ abstract class Fmi2Slave(
 
     @Suppress("UNCHECKED_CAST")
     fun getInteger(vr: Long): Int {
-        return intAccessors[vr.toInt()].getter()
+        return intAccessors[vr.toInt()].getter.get()
     }
 
     @Suppress("UNCHECKED_CAST")
     open fun getInteger(vr: LongArray): IntArray {
         return IntArray(vr.size) { i ->
-            intAccessors[vr[i].toInt()].getter()
+            intAccessors[vr[i].toInt()].getter.get()
         }
     }
 
@@ -93,7 +93,7 @@ abstract class Fmi2Slave(
     open fun setInteger(vr: LongArray, values: IntArray) {
         for (i in vr.indices) {
             intAccessors[vr[i].toInt()].apply {
-                setter?.invoke(values[i]) ?: LOG.warning("Trying to set value of " +
+                setter?.set(values[i]) ?: LOG.warning("Trying to set value of " +
                         "${getVariableName(vr[i], Fmi2VariableType.INTEGER)} on variable without a specified setter!")
             }
         }
@@ -101,13 +101,13 @@ abstract class Fmi2Slave(
 
     @Suppress("UNCHECKED_CAST")
     fun getBoolean(vr: Long): Boolean {
-        return boolAccessors[vr.toInt()].getter()
+        return boolAccessors[vr.toInt()].getter.get()
     }
 
     @Suppress("UNCHECKED_CAST")
     open fun getBoolean(vr: LongArray): BooleanArray {
         return BooleanArray(vr.size) { i ->
-            boolAccessors[vr[i].toInt()].getter()
+            boolAccessors[vr[i].toInt()].getter.get()
         }
     }
 
@@ -115,7 +115,7 @@ abstract class Fmi2Slave(
     open fun setBoolean(vr: LongArray, values: BooleanArray) {
         for (i in vr.indices) {
             boolAccessors[vr[i].toInt()].apply {
-                setter?.invoke(values[i]) ?: LOG.warning("Trying to set value of " +
+                setter?.set(values[i]) ?: LOG.warning("Trying to set value of " +
                         "${getVariableName(vr[i], Fmi2VariableType.BOOLEAN)} on variable without a specified setter!")
             }
         }
@@ -123,13 +123,13 @@ abstract class Fmi2Slave(
 
     @Suppress("UNCHECKED_CAST")
     fun getString(vr: Long): String {
-        return stringAccessors[vr.toInt()].getter()
+        return stringAccessors[vr.toInt()].getter.get()
     }
 
     @Suppress("UNCHECKED_CAST")
     open fun getString(vr: LongArray): Array<String> {
         return Array(vr.size) { i ->
-            stringAccessors[vr[i].toInt()].getter()
+            stringAccessors[vr[i].toInt()].getter.get()
         }
     }
 
@@ -137,7 +137,7 @@ abstract class Fmi2Slave(
     open fun setString(vr: LongArray, values: Array<String>) {
         for (i in vr.indices) {
             stringAccessors[vr[i].toInt()].apply {
-                setter?.invoke(values[i]) ?: LOG.warning("Trying to set value of " +
+                setter?.set(values[i]) ?: LOG.warning("Trying to set value of " +
                         "${getVariableName(vr[i], Fmi2VariableType.STRING)} on variable without a specified setter!")
             }
         }
@@ -184,7 +184,7 @@ abstract class Fmi2Slave(
         internalRegister(v, vr).apply {
             integer = Fmi2ScalarVariable.Integer().also { type ->
                 if (requiresStart()) {
-                    type.start = v.getter()
+                    type.start = v.getter.get()
                 }
             }
         }
@@ -200,7 +200,7 @@ abstract class Fmi2Slave(
         internalRegister(v, vr).apply {
             real = Fmi2ScalarVariable.Real().also { type ->
                 if (requiresStart()) {
-                    type.start = v.getter()
+                    type.start = v.getter.get()
                 }
             }
         }
@@ -217,7 +217,7 @@ abstract class Fmi2Slave(
         internalRegister(v, vr).apply {
             boolean = Fmi2ScalarVariable.Boolean().also { type ->
                 if (requiresStart()) {
-                    type.isStart = v.getter()
+                    type.isStart = v.getter.get()
                 }
             }
         }
@@ -233,7 +233,7 @@ abstract class Fmi2Slave(
         internalRegister(v, vr).apply {
             string = Fmi2ScalarVariable.String().also { type ->
                 if (requiresStart()) {
-                    type.start = v.getter()
+                    type.start = v.getter.get()
                 }
             }
         }
