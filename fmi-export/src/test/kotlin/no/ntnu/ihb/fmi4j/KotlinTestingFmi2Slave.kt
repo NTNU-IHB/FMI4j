@@ -8,24 +8,33 @@ open class KotlinTestingFmi2Slave(
 ): Fmi2Slave(args) {
 
 
-    var str: String? = null
+    lateinit var str: String
     var start: Double = 5.0
 
     private val container = TestContainer()
 
     override fun registerVariables() {
-        registerReal("start") {
-            causality = Fmi2Causality.local
-            getter { start }
-        }
-        registerReal("subModel_out") {
+
+        register(string("str").apply {
+            getter {str}
+        })
+
+        register(real("start").apply {
+            causality(Fmi2Causality.input)
+            getter {start}
+        })
+
+        register(real("subModel.out").apply {
             getter { 99.0 }
-        }
-        registerReal("container.value") {
-            getter {
-                container.value
-            }
-        }
+        })
+
+        register(real("container.value").apply {
+            getter { container.value }
+        })
+
+        register(integer("container.container.value").apply {
+            getter { container.container.value }
+        })
     }
 
     override fun setupExperiment(startTime: Double) {
@@ -33,8 +42,6 @@ open class KotlinTestingFmi2Slave(
     }
 
     override fun doStep(currentTime: Double, dt: Double) {}
-
-    fun getSubModel_out() = 99.0
 
 }
 
@@ -49,12 +56,12 @@ open class KotlinTestingExtendingFmi2Slave(
 class TestContainer {
 
     val value: Double = 5.0
-    val container2 = TestContainer2()
+    val container = TestContainer2()
 
 }
 
 class TestContainer2 {
 
-    val value2: Int = 1
+    val value: Int = 1
 
 }

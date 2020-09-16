@@ -19,19 +19,13 @@ class JavaTestingFmi2Slave extends Fmi2Slave {
 
     private static final Logger LOG = Logger.getLogger(JavaTestingFmi2Slave.class.getName());
 
-    @ScalarVariable(causality = Fmi2Causality.input)
     protected double realIn = 2.0;
-
-    @ScalarVariable(causality = Fmi2Causality.parameter)
     protected double[] realsParams = {50.0, 200.0};
 
-    @ScalarVariable(causality = Fmi2Causality.local, initial = Fmi2Initial.exact)
-    protected String[] string = {"Hello", "world!"};
+    protected String[] stringParams = {"Hello", "world!"};
 
-    @ScalarVariable(causality = Fmi2Causality.local)
     protected final Vector3 vector3 = new Vector3(1, 2, 3);
 
-    @VariableContainer
     protected final Container container = new Container();
 
     private double aParameter = 123;
@@ -41,33 +35,32 @@ class JavaTestingFmi2Slave extends Fmi2Slave {
     }
 
     @Override
+    protected void registerVariables() {
+        register(real("realIn")
+                .causality(Fmi2Causality.input)
+                .getter(() -> realIn));
+        register(real("realsParams", realsParams)
+                .causality(Fmi2Causality.parameter));
+        register(string("realsParams", stringParams)
+                .causality(Fmi2Causality.local)
+                .initial(Fmi2Initial.exact));
+        register(real("vector3", vector3)
+                .causality(Fmi2Causality.local));
+        register(real("container.speed")
+                .getter(() -> container.speed)
+                .causality(Fmi2Causality.local));
+        register(real("aParameter")
+                .getter(() -> aParameter)
+                .causality(Fmi2Causality.local));
+    }
+
+    @Override
     public void doStep(double currentTime, double dt) {
         LOG.log(Level.INFO, "currentTime=" + dt + ", dt=" + dt);
     }
 
-    @ScalarVariableGetter(causality = Fmi2Causality.parameter, variability = Fmi2Variability.constant)
-    public int getSomeParameter() {
-        return 30;
-    }
-
-    @ScalarVariableGetter(causality = Fmi2Causality.parameter, variability = Fmi2Variability.tunable)
-    public Vector3 getAVector() {
-        return vector3;
-    }
-
-    @ScalarVariableGetter(causality = Fmi2Causality.parameter, variability = Fmi2Variability.tunable)
-    public double getAParameter() {
-        return aParameter;
-    }
-
-    @ScalarVariableSetter
-    public void setAParameter(double value) {
-        aParameter = value;
-    }
-
     static class Container {
 
-        @ScalarVariable(name = "speed1")
         double speed = 0;
 
     }

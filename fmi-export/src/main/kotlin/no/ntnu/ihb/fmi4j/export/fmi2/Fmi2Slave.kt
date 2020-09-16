@@ -1,17 +1,15 @@
 package no.ntnu.ihb.fmi4j.export.fmi2
 
+import no.ntnu.ihb.fmi4j.export.*
 import no.ntnu.ihb.fmi4j.modeldescription.fmi2.*
 import java.io.ByteArrayOutputStream
 import java.io.File
-import java.lang.reflect.Method
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.logging.Logger
 import javax.xml.bind.JAXB
-
-private const val MAX_LEVEL = 8
 
 abstract class Fmi2Slave(
         args: Map<String, Any>
@@ -20,10 +18,10 @@ abstract class Fmi2Slave(
     val modelDescription = Fmi2ModelDescription()
     val instanceName: String = args["instanceName"] as? String ?: throw IllegalStateException("Missing 'instanceName'")
 
-    private val intAccessors: MutableList<IntAccessor> = mutableListOf()
-    private val realAccessors: MutableList<RealAccessor> = mutableListOf()
-    private val boolAccessors: MutableList<BoolAccessor> = mutableListOf()
-    private val stringAccessors: MutableList<StringAccessor> = mutableListOf()
+    private val intAccessors: MutableList<IntVariable> = mutableListOf()
+    private val realAccessors: MutableList<RealVariable> = mutableListOf()
+    private val boolAccessors: MutableList<BooleanVariable> = mutableListOf()
+    private val stringAccessors: MutableList<StringVariable> = mutableListOf()
 
     private val isDefined = AtomicBoolean(false)
     private lateinit var resourceLocation: String
@@ -145,112 +143,105 @@ abstract class Fmi2Slave(
         }
     }
 
-    private fun requiresStart(v: Fmi2ScalarVariable): Boolean {
-        return v.initial == Fmi2Initial.exact ||
-                v.initial == Fmi2Initial.approx ||
-                v.causality == Fmi2Causality.input ||
-                v.causality == Fmi2Causality.parameter ||
-                v.variability == Fmi2Variability.constant
+    private fun Fmi2ScalarVariable.requiresStart(): Boolean {
+        return initial == Fmi2Initial.exact ||
+                initial == Fmi2Initial.approx ||
+                causality == Fmi2Causality.input ||
+                causality == Fmi2Causality.parameter ||
+                variability == Fmi2Variability.constant
     }
 
-    private fun internalRegister(v: Variable<*>): Fmi2ScalarVariable {
+    private fun internalRegister(v: Variable<*>, vr: Long): Fmi2ScalarVariable {
         return Fmi2ScalarVariable().also { s ->
             s.name = v.name
+            s.valueReference = vr
             v.causality?.also { s.causality = it }
             v.variability?.also { s.variability = it }
             v.initial?.also { if (v.initial != Fmi2Initial.undefined) s.initial = it }
             modelDescription.modelVariables.scalarVariable.add(s)
         }
-
     }
 
-    protected fun registerInteger(int: IntBuilder) {
-        val build = int.build()
-        internalRegister(build).also { v ->
-            v.valueReference = intAccessors.size.toLong().also {
-                intAccessors.add(build.accessor)
-            }
-            v.integer = Fmi2ScalarVariable.Integer().also { type ->
-                if (requiresStart(v)) {
-                    build.accessor.getter.invoke().also {
-                        type.start = it
-                    }
+
+    protected fun integer(name: String) = IntVariable(name)
+    protected fun integer(name: String, values: IntVector) = IntVariables(name, values)
+    protected fun integer(name: String, values: IntArray) = IntVariables(name, IntVectorArray(values))
+
+    protected fun real(name: String) = RealVariable(name)
+    protected fun real(name: String, values: RealVector) = RealVariables(name, values)
+    protected fun real(name: String, values: DoubleArray) = RealVariables(name, RealVectorArray(values))
+
+    protected fun string(name: String) = StringVariable(name)
+    protected fun string(name: String, values: StringVector) = StringVariables(name, values)
+    protected fun string(name: String, values: Array<String>) = StringVariables(name, StringVectorArray(values))
+
+    protected fun boolean(name: String) = BooleanVariable(name)
+    protected fun boolean(name: String, values: BooleanVector) = BooleanVariables(name, values)
+    protected fun boolean(name: String, values: BooleanArray) = BooleanVariables(name, BooleanVectorArray(values))
+
+    protected fun register(v: IntVariable) {
+        val vr = intAccessors.size.toLong()
+        internalRegister(v, vr).apply {
+            integer = Fmi2ScalarVariable.Integer().also { type ->
+                if (requiresStart()) {
+                    type.start = v.getter()
                 }
             }
         }
+        intAccessors.add(v)
     }
 
-    protected fun registerReal(name: String, ctx: RealBuilder.() -> Unit) {
-        val builder = RealBuilder(name)
-        ctx.invoke(builder)
+    protected fun register(v: IntVariables) {
+        v.build().forEach { register(it) }
     }
 
-    protected fun registerReal(real: RealBuilder) {
-        val build = real.build()
-        internalRegister(build).also { v ->
-            v.valueReference = realAccessors.size.toLong()
-            realAccessors.add(build.accessor)
-            v.real = Fmi2ScalarVariable.Real().also { type ->
-                if (requiresStart(v)) {
-                    build.accessor.getter.invoke().also {
-                        type.start = it
-                    }
+    protected fun register(v: RealVariable) {
+        val vr = realAccessors.size.toLong()
+        internalRegister(v, vr).apply {
+            real = Fmi2ScalarVariable.Real().also { type ->
+                if (requiresStart()) {
+                    type.start = v.getter()
                 }
             }
         }
+        realAccessors.add(v)
     }
 
-    protected fun registerBoolean(real: BooleanBuilder) {
-        val build = real.build()
-        internalRegister(build).also { v ->
-            v.valueReference = boolAccessors.size.toLong()
-            boolAccessors.add(build.accessor)
-            v.boolean = Fmi2ScalarVariable.Boolean().also { type ->
-                if (requiresStart(v)) {
-                    build.accessor.getter.invoke().also {
-                        type.isStart = it
-                    }
+    protected fun register(v: RealVariables) {
+        v.build().forEach { register(it) }
+    }
+
+
+    protected fun register(v: BooleanVariable) {
+        val vr = boolAccessors.size.toLong()
+        internalRegister(v, vr).apply {
+            boolean = Fmi2ScalarVariable.Boolean().also { type ->
+                if (requiresStart()) {
+                    type.isStart = v.getter()
                 }
             }
         }
+        boolAccessors.add(v)
     }
 
-    protected fun registerString(real: StringBuilder) {
-        val build = real.build()
-        internalRegister(build).also { v ->
-            v.valueReference = stringAccessors.size.toLong()
-            stringAccessors.add(build.accessor)
-            v.string = Fmi2ScalarVariable.String().also { type ->
-                if (requiresStart(v)) {
-                    build.accessor.getter.invoke().also {
-                        type.start = it
-                    }
+    protected fun register(v: BooleanVariables) {
+        v.build().forEach { register(it) }
+    }
+
+    protected fun register(v: StringVariable) {
+        val vr = stringAccessors.size.toLong()
+        internalRegister(v, vr).apply {
+            string = Fmi2ScalarVariable.String().also { type ->
+                if (requiresStart()) {
+                    type.start = v.getter()
                 }
             }
         }
+        stringAccessors.add(v)
     }
 
-    private fun processMethods(owner: Any, methods: Array<Method>) {
-
-        fun variableName(method: Method): String? {
-            val methodName = method.name
-            return when {
-                methodName.startsWith("get") -> {
-                    methodName
-                            .replaceFirst("get", "")
-                            .replace("_", ".")
-                            .decapitalize()
-                }
-                methodName.startsWith("set") -> {
-                    methodName
-                            .replaceFirst("set", "")
-                            .replace("_", ".")
-                            .decapitalize()
-                }
-                else -> null
-            }
-        }
-
+    protected fun register(v: StringVariables) {
+        v.build().forEach { register(it) }
     }
 
     protected abstract fun registerVariables()
