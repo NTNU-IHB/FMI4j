@@ -17,13 +17,13 @@ sealed class VariableBuilder<E>(
         private val name: String
 ) {
 
-    private var getter: (() -> E)? = null
-    private var setter: ((E) -> Unit)? = null
-    private var causality: Fmi2Causality? = null
-    private var variability: Fmi2Variability? = null
-    private var initial: Fmi2Initial? = null
+    protected var getter: (() -> E)? = null
+    protected var setter: ((E) -> Unit)? = null
+    var causality: Fmi2Causality? = null
+    var variability: Fmi2Variability? = null
+    var initial: Fmi2Initial? = null
 
-    fun getter(getter: () -> E): VariableBuilder<E> {
+   /* fun getter(getter: () -> E): VariableBuilder<E> {
         this.getter = getter
         return this
     }
@@ -31,8 +31,9 @@ sealed class VariableBuilder<E>(
     fun setter(setter: (E) -> Unit): VariableBuilder<E> {
         this.setter = setter
         return this
-    }
+    }*/
 
+/*
     internal fun apply(annotation: ScalarVariable) {
         causality = annotation.causality
         variability = annotation.variability
@@ -44,6 +45,7 @@ sealed class VariableBuilder<E>(
         variability = annotation.variability
         initial = annotation.initial
     }
+*/
 
     internal fun build(): Variable<E> {
         val getter = getter
@@ -55,6 +57,13 @@ sealed class VariableBuilder<E>(
 }
 
 class IntBuilder(name: String) : VariableBuilder<Int>(name)
-class RealBuilder(name: String) : VariableBuilder<Double>(name)
+class RealBuilder(name: String) : VariableBuilder<Double>(name) {
+
+    fun getter(getter: () -> Double) {
+        this.getter = getter
+    }
+
+
+}
 class BooleanBuilder(name: String) : VariableBuilder<Boolean>(name)
 class StringBuilder(name: String) : VariableBuilder<String>(name)
