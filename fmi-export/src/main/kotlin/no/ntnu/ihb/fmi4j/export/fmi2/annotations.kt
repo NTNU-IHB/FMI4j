@@ -1,9 +1,5 @@
 package no.ntnu.ihb.fmi4j.export.fmi2
 
-import no.ntnu.ihb.fmi4j.modeldescription.fmi2.Fmi2Causality
-import no.ntnu.ihb.fmi4j.modeldescription.fmi2.Fmi2Initial
-import no.ntnu.ihb.fmi4j.modeldescription.fmi2.Fmi2Variability
-
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.RUNTIME)
 annotation class SlaveInfo(
@@ -25,36 +21,3 @@ annotation class DefaultExperiment(
         val stepSize: Double = -1.0,
         val stopTime: Double = -1.0
 )
-
-@Target(AnnotationTarget.FIELD)
-@Retention(AnnotationRetention.RUNTIME)
-annotation class ScalarVariable(
-        val name: String = "",
-        val causality: Fmi2Causality = Fmi2Causality.local,
-        val variability: Fmi2Variability = Fmi2Variability.continuous,
-        val initial: Fmi2Initial = Fmi2Initial.undefined
-)
-
-@Target(AnnotationTarget.FUNCTION)
-@Retention(AnnotationRetention.RUNTIME)
-annotation class ScalarVariableGetter(
-        val causality: Fmi2Causality = Fmi2Causality.local,
-        val variability: Fmi2Variability = Fmi2Variability.continuous,
-        val initial: Fmi2Initial = Fmi2Initial.undefined
-)
-
-@Target(AnnotationTarget.FUNCTION)
-@Retention(AnnotationRetention.RUNTIME)
-annotation class ScalarVariableSetter
-
-@Target(AnnotationTarget.FIELD)
-@Retention(AnnotationRetention.RUNTIME)
-annotation class Real(
-        val unit: Array<String> = [],
-        val min: DoubleArray = [],
-        val max: DoubleArray = []
-)
-
-@Target(AnnotationTarget.FIELD)
-@Retention(AnnotationRetention.RUNTIME)
-annotation class VariableContainer

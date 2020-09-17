@@ -41,7 +41,7 @@ class Fmi2Fmi2SlaveInstanceTest {
 
     @Test
     void testContainer() {
-        long vr = slave.getValueReference("container.speed1");
+        long vr = slave.getValueReference("container.speed");
         double[] write = new double[]{123.0};
         slave.setReal(new long[]{vr}, write);
         Assertions.assertEquals(write[0], slave.getReal(vr));
@@ -68,7 +68,7 @@ class Fmi2Fmi2SlaveInstanceTest {
 
     @Test
     void testMethodVariable3() {
-        long startIndex = slave.getValueReference("aVector[0]");
+        long startIndex = slave.getValueReference("vector3[0]");
         long[] vr = new long[]{startIndex, startIndex + 1, startIndex + 2};
         Assertions.assertArrayEquals(new double[]{1, 2, 3}, slave.getReal(vr));
 

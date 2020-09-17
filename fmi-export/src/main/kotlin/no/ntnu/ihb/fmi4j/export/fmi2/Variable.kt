@@ -1,60 +1,214 @@
 package no.ntnu.ihb.fmi4j.export.fmi2
 
+import no.ntnu.ihb.fmi4j.export.BooleanVector
+import no.ntnu.ihb.fmi4j.export.IntVector
+import no.ntnu.ihb.fmi4j.export.RealVector
+import no.ntnu.ihb.fmi4j.export.StringVector
 import no.ntnu.ihb.fmi4j.modeldescription.fmi2.Fmi2Causality
 import no.ntnu.ihb.fmi4j.modeldescription.fmi2.Fmi2Initial
 import no.ntnu.ihb.fmi4j.modeldescription.fmi2.Fmi2Variability
 
 
-internal class Variable<E>(
-        val name: String,
-        val accessor: Accessor<E>,
-        val causality: Fmi2Causality?,
-        val variability: Fmi2Variability?,
-        val initial: Fmi2Initial?
-)
+fun interface Getter<E> {
+    fun get(): E
+}
 
-sealed class VariableBuilder<E>(
-        private val name: String
+fun interface Setter<E> {
+    fun set(value: E)
+}
+
+sealed class Variable<E>(
+        val name: String
 ) {
 
-    private var getter: (() -> E)? = null
-    private var setter: ((E) -> Unit)? = null
-    private var causality: Fmi2Causality? = null
-    private var variability: Fmi2Variability? = null
-    private var initial: Fmi2Initial? = null
+    var causality: Fmi2Causality? = null
+    var variability: Fmi2Variability? = null
+    var initial: Fmi2Initial? = null
 
-    fun getter(getter: () -> E): VariableBuilder<E> {
-        this.getter = getter
-        return this
+    fun causality(causality: Fmi2Causality?): E {
+        this.causality = causality
+        return this as E
     }
 
-    fun setter(setter: (E) -> Unit): VariableBuilder<E> {
-        this.setter = setter
-        return this
+    fun variability(variability: Fmi2Variability?): E {
+        this.variability = variability
+        return this as E
     }
 
-    internal fun apply(annotation: ScalarVariable) {
-        causality = annotation.causality
-        variability = annotation.variability
-        initial = annotation.initial
-    }
-
-    internal fun apply(annotation: ScalarVariableGetter) {
-        causality = annotation.causality
-        variability = annotation.variability
-        initial = annotation.initial
-    }
-
-    internal fun build(): Variable<E> {
-        val getter = getter
-        checkNotNull(getter) { "getter cannot be null!" }
-
-        return Variable(name, Accessor(getter, setter), causality, variability, initial)
+    fun initial(initial: Fmi2Initial?): E {
+        this.initial = initial
+        return this as E
     }
 
 }
 
-class IntBuilder(name: String) : VariableBuilder<Int>(name)
-class RealBuilder(name: String) : VariableBuilder<Double>(name)
-class BooleanBuilder(name: String) : VariableBuilder<Boolean>(name)
-class StringBuilder(name: String) : VariableBuilder<String>(name)
+class IntVariable(
+        name: String,
+        val getter: Getter<Int>
+) : Variable<IntVariable>(name) {
+
+    var setter: Setter<Int>? = null
+        private set
+
+    fun setter(setter: Setter<Int>) = apply {
+        this.setter = setter
+    }
+}
+
+class IntVariables(
+        name: String,
+        private val values: IntVector
+) : Variable<IntVariables>(name) {
+
+    internal fun build(): List<IntVariable> {
+
+        return IntRange(0, values.size - 1).map { i ->
+            IntVariable("$name[$i]", {values[i]}).also { v ->
+                v.causality(causality)
+                v.variability(variability)
+                v.initial(initial)
+                if (variability != Fmi2Variability.constant) {
+                    v.setter { values[i] = it }
+                }
+            }
+        }
+
+    }
+
+}
+
+class RealVariable(
+        name: String,
+        val getter: Getter<Double>
+) : Variable<RealVariable>(name) {
+
+    var setter: Setter<Double>? = null
+        private set
+
+    var min: Double? = null
+        private set
+
+    var max: Double? = null
+        private set
+
+    fun min(value: Double?) = apply {
+        this.min = value
+    }
+
+    fun max(value: Double?) = apply {
+        this.min = value
+    }
+
+    fun setter(setter: Setter<Double>) = apply {
+        this.setter = setter
+    }
+
+}
+
+class RealVariables(
+        name: String,
+        private val values: RealVector
+) : Variable<RealVariables>(name) {
+
+    var min: Double? = null
+        private set
+
+    var max: Double? = null
+        private set
+
+    fun min(value: Double?) = apply {
+        this.min = value
+    }
+
+    fun max(value: Double?) = apply {
+        this.min = value
+    }
+
+    internal fun build(): List<RealVariable> {
+
+        return IntRange(0, values.size - 1).map { i ->
+            RealVariable("$name[$i]", {values[i]}).also { v ->
+                v.causality(causality)
+                v.variability(variability)
+                v.initial(initial)
+                if (variability != Fmi2Variability.constant) {
+                    v.setter { values[i] = it }
+                }
+            }
+        }
+
+    }
+
+}
+
+class BooleanVariable(
+        name: String,
+        val getter: Getter<Boolean>
+) : Variable<BooleanVariable>(name) {
+
+    var setter: Setter<Boolean>? = null
+        private set
+
+    fun setter(setter: Setter<Boolean>) = apply {
+        this.setter = setter
+    }
+
+}
+
+class BooleanVariables(
+        name: String,
+        private val values: BooleanVector
+) : Variable<BooleanVariables>(name) {
+
+    internal fun build(): List<BooleanVariable> {
+
+        return IntRange(0, values.size - 1).map { i ->
+            BooleanVariable("$name[$i]") { values[i] }.also { v ->
+                v.causality(causality)
+                v.variability(variability)
+                v.initial(initial)
+                if (variability != Fmi2Variability.constant) {
+                    v.setter { values[i] = it }
+                }
+            }
+        }
+
+    }
+
+}
+
+class StringVariable(
+        name: String,
+        val getter: Getter<String>
+) : Variable<StringVariable>(name) {
+
+    var setter: Setter<String>? = null
+        private set
+
+    fun setter(setter: Setter<String>) = apply {
+        this.setter = setter
+    }
+
+}
+
+class StringVariables(
+        name: String,
+        private val values: StringVector
+) : Variable<StringVariables>(name) {
+
+    internal fun build(): List<StringVariable> {
+
+        return IntRange(0, values.size - 1).map { i ->
+            StringVariable("$name[$i]") {values[i]}.also { v ->
+                v.causality(causality)
+                v.variability(variability)
+                v.initial(initial)
+                if (variability != Fmi2Variability.constant) {
+                    v.setter { values[i] = it }
+                }
+            }
+        }
+
+    }
+
+}

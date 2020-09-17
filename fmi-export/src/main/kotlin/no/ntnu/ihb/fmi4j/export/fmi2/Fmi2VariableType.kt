@@ -10,7 +10,7 @@ enum class Fmi2VariableType {
     ENUMERATION
 }
 
-fun Fmi2ScalarVariable.type(): Fmi2VariableType {
+internal fun Fmi2ScalarVariable.type(): Fmi2VariableType {
     return when {
         integer != null -> Fmi2VariableType.INTEGER
         real != null -> Fmi2VariableType.REAL
