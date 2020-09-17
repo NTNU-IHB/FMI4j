@@ -43,17 +43,12 @@ sealed class Variable<E>(
 }
 
 class IntVariable(
-        name: String
+        name: String,
+        val getter: Getter<Int>
 ) : Variable<IntVariable>(name) {
 
-    lateinit var getter: Getter<Int>
-        private set
     var setter: Setter<Int>? = null
         private set
-
-    fun getter(getter: Getter<Int>) = apply {
-        this.getter = getter
-    }
 
     fun setter(setter: Setter<Int>) = apply {
         this.setter = setter
@@ -65,29 +60,13 @@ class IntVariables(
         private val values: IntVector
 ) : Variable<IntVariables>(name) {
 
-    lateinit var getter: Getter<Int>
-        private set
-    var setter: Setter<Int>? = null
-        private set
-
-    fun getter(getter: Getter<Int>) = apply {
-        this.getter = getter
-    }
-
-    fun setter(setter: Setter<Int>) = apply {
-        this.setter = setter
-    }
-
     internal fun build(): List<IntVariable> {
 
         return IntRange(0, values.size - 1).map { i ->
-            IntVariable("$name[$i]").also { v ->
+            IntVariable("$name[$i]", {values[i]}).also { v ->
                 v.causality(causality)
                 v.variability(variability)
                 v.initial(initial)
-                v.getter {
-                    values[i]
-                }
                 if (variability != Fmi2Variability.constant) {
                     v.setter { values[i] = it }
                 }
@@ -99,11 +78,10 @@ class IntVariables(
 }
 
 class RealVariable(
-        name: String
+        name: String,
+        val getter: Getter<Double>
 ) : Variable<RealVariable>(name) {
 
-    lateinit var getter: Getter<Double>
-        private set
     var setter: Setter<Double>? = null
         private set
 
@@ -123,10 +101,6 @@ class RealVariable(
 
     fun setter(setter: Setter<Double>) = apply {
         this.setter = setter
-    }
-
-    fun getter(getter: Getter<Double>) = apply {
-        this.getter = getter
     }
 
 }
@@ -153,13 +127,10 @@ class RealVariables(
     internal fun build(): List<RealVariable> {
 
         return IntRange(0, values.size - 1).map { i ->
-            RealVariable("$name[$i]").also { v ->
+            RealVariable("$name[$i]", {values[i]}).also { v ->
                 v.causality(causality)
                 v.variability(variability)
                 v.initial(initial)
-                v.getter {
-                    values[i]
-                }
                 if (variability != Fmi2Variability.constant) {
                     v.setter { values[i] = it }
                 }
@@ -170,16 +141,13 @@ class RealVariables(
 
 }
 
-class BooleanVariable(name: String) : Variable<BooleanVariable>(name) {
+class BooleanVariable(
+        name: String,
+        val getter: Getter<Boolean>
+) : Variable<BooleanVariable>(name) {
 
-    lateinit var getter: Getter<Boolean>
-        private set
     var setter: Setter<Boolean>? = null
         private set
-
-    fun getter(getter: Getter<Boolean>) = apply {
-        this.getter = getter
-    }
 
     fun setter(setter: Setter<Boolean>) = apply {
         this.setter = setter
@@ -192,29 +160,13 @@ class BooleanVariables(
         private val values: BooleanVector
 ) : Variable<BooleanVariables>(name) {
 
-    lateinit var getter: Getter<Boolean>
-        private set
-    var setter: Setter<Boolean>? = null
-        private set
-
-    fun getter(getter: Getter<Boolean>) = apply {
-        this.getter = getter
-    }
-
-    fun setter(setter: Setter<Boolean>) = apply {
-        this.setter = setter
-    }
-
     internal fun build(): List<BooleanVariable> {
 
         return IntRange(0, values.size - 1).map { i ->
-            BooleanVariable("$name[$i]").also { v ->
+            BooleanVariable("$name[$i]") { values[i] }.also { v ->
                 v.causality(causality)
                 v.variability(variability)
                 v.initial(initial)
-                v.getter {
-                    values[i]
-                }
                 if (variability != Fmi2Variability.constant) {
                     v.setter { values[i] = it }
                 }
@@ -225,16 +177,13 @@ class BooleanVariables(
 
 }
 
-class StringVariable(name: String) : Variable<StringVariable>(name) {
+class StringVariable(
+        name: String,
+        val getter: Getter<String>
+) : Variable<StringVariable>(name) {
 
-    lateinit var getter: Getter<String>
-        private set
     var setter: Setter<String>? = null
         private set
-
-    fun getter(getter: Getter<String>) = apply {
-        this.getter = getter
-    }
 
     fun setter(setter: Setter<String>) = apply {
         this.setter = setter
@@ -247,29 +196,13 @@ class StringVariables(
         private val values: StringVector
 ) : Variable<StringVariables>(name) {
 
-    lateinit var getter: Getter<String>
-        private set
-    var setter: Setter<String>? = null
-        private set
-
-    fun getter(getter: Getter<String>) = apply {
-        this.getter = getter
-    }
-
-    fun setter(setter: Setter<String>) = apply {
-        this.setter = setter
-    }
-
     internal fun build(): List<StringVariable> {
 
         return IntRange(0, values.size - 1).map { i ->
-            StringVariable("$name[$i]").also { v ->
+            StringVariable("$name[$i]") {values[i]}.also { v ->
                 v.causality(causality)
                 v.variability(variability)
                 v.initial(initial)
-                v.getter {
-                    values[i]
-                }
                 if (variability != Fmi2Variability.constant) {
                     v.setter { values[i] = it }
                 }

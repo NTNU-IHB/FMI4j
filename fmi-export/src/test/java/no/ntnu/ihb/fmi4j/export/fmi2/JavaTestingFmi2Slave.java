@@ -34,9 +34,8 @@ class JavaTestingFmi2Slave extends Fmi2Slave {
 
     @Override
     protected void registerVariables() {
-        register(real("realIn")
+        register(real("realIn", () -> realIn)
                 .causality(Fmi2Causality.input)
-                .getter(() -> realIn)
                 .setter((value) -> realIn = value));
         register(real("realsParams", realsParams)
                 .causality(Fmi2Causality.parameter));
@@ -45,17 +44,14 @@ class JavaTestingFmi2Slave extends Fmi2Slave {
                 .initial(Fmi2Initial.exact));
         register(real("vector3", vector3)
                 .causality(Fmi2Causality.local));
-        register(real("container.speed")
-                .getter(() -> container.speed)
+        register(real("container.speed", () -> container.speed)
                 .setter((value) -> container.speed = value)
                 .causality(Fmi2Causality.local));
-        register(real("aParameter")
-                .getter(() -> aParameter)
+        register(real("aParameter", () -> aParameter)
                 .setter((value) -> aParameter = value)
                 .causality(Fmi2Causality.parameter)
                 .variability(Fmi2Variability.tunable));
-        register(integer("someParameter")
-                .getter(() -> someParameter)
+        register(integer("someParameter", () -> someParameter)
                 .causality(Fmi2Causality.local)
                 .variability(Fmi2Variability.constant));
     }

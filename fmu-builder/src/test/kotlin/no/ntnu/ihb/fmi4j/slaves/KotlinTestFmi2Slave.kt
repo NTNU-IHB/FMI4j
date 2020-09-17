@@ -10,10 +10,8 @@ class KotlinTestFmi2Slave(
     private var speed: Double = 10.0
 
     override fun registerVariables() {
-        register(real("speed")
-                .getter({ speed }))
-        register(real("data.x")
-                .getter({ data.x }))
+        register(real("speed") { speed })
+        register(real("data.x") { data.x })
     }
 
     override fun doStep(currentTime: Double, dt: Double) {

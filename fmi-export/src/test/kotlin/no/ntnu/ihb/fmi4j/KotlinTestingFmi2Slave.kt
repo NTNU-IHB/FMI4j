@@ -5,7 +5,7 @@ import no.ntnu.ihb.fmi4j.modeldescription.fmi2.Fmi2Causality
 
 open class KotlinTestingFmi2Slave(
         args: Map<String, Any>
-): Fmi2Slave(args) {
+) : Fmi2Slave(args) {
 
 
     lateinit var str: String
@@ -15,26 +15,15 @@ open class KotlinTestingFmi2Slave(
 
     override fun registerVariables() {
 
-        register(string("str").apply {
-            getter {str}
-        })
+        register(string("str") { str })
 
-        register(real("start").apply {
-            causality(Fmi2Causality.input)
-            getter {start}
-        })
 
-        register(real("subModel.out").apply {
-            getter { 99.0 }
-        })
+        register(real("start") { start }
+                .causality(Fmi2Causality.input))
 
-        register(real("container.value").apply {
-            getter { container.value }
-        })
-
-        register(integer("container.container.value").apply {
-            getter { container.container.value }
-        })
+        register(real("subModel.out") { 99.0 })
+        register(real("container.value") { container.value })
+        register(integer("container.container.value") { container.container.value })
     }
 
     override fun setupExperiment(startTime: Double) {
@@ -47,7 +36,7 @@ open class KotlinTestingFmi2Slave(
 
 open class KotlinTestingExtendingFmi2Slave(
         args: Map<String, Any>
-): KotlinTestingFmi2Slave(args) {
+) : KotlinTestingFmi2Slave(args) {
 
     override fun doStep(currentTime: Double, dt: Double) {}
 

@@ -163,19 +163,19 @@ abstract class Fmi2Slave(
     }
 
 
-    protected fun integer(name: String) = IntVariable(name)
+    protected fun integer(name: String, getter: Getter<Int>) = IntVariable(name, getter)
     protected fun integer(name: String, values: IntVector) = IntVariables(name, values)
     protected fun integer(name: String, values: IntArray) = IntVariables(name, IntVectorArray(values))
 
-    protected fun real(name: String) = RealVariable(name)
+    protected fun real(name: String, getter: Getter<Double>) = RealVariable(name, getter)
     protected fun real(name: String, values: RealVector) = RealVariables(name, values)
     protected fun real(name: String, values: DoubleArray) = RealVariables(name, RealVectorArray(values))
 
-    protected fun string(name: String) = StringVariable(name)
+    protected fun string(name: String, getter: Getter<String>) = StringVariable(name, getter)
     protected fun string(name: String, values: StringVector) = StringVariables(name, values)
     protected fun string(name: String, values: Array<String>) = StringVariables(name, StringVectorArray(values))
 
-    protected fun boolean(name: String) = BooleanVariable(name)
+    protected fun boolean(name: String, getter: Getter<Boolean>) = BooleanVariable(name, getter)
     protected fun boolean(name: String, values: BooleanVector) = BooleanVariables(name, values)
     protected fun boolean(name: String, values: BooleanArray) = BooleanVariables(name, BooleanVectorArray(values))
 

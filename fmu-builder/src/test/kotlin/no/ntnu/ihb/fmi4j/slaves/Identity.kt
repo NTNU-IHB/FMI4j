@@ -17,18 +17,14 @@ class Identity(
     private var string: String = ""
 
     override fun registerVariables() {
-        register(real("real")
-                .causality(Fmi2Causality.output)
-                .getter({ real }))
-        register(integer("integer")
-                .causality(Fmi2Causality.output)
-                .getter({ integer }))
-        register(boolean("boolean")
-                .causality(Fmi2Causality.output)
-                .getter({ boolean }))
-        register(string("string")
-                .causality(Fmi2Causality.output)
-                .getter { string })
+        register(real("real") { real }
+                .causality(Fmi2Causality.output))
+        register(integer("integer") { integer }
+                .causality(Fmi2Causality.output))
+        register(boolean("boolean") { boolean }
+                .causality(Fmi2Causality.output))
+        register(string("string") { string }
+                .causality(Fmi2Causality.output))
     }
 
     override fun doStep(currentTime: Double, dt: Double) {
