@@ -11,6 +11,7 @@ import java.io.File
 internal class ApplyPluginTest {
 
     @Test
+    @Disabled
     fun testApplyPlugin() {
 
         val testProjectDir = TemporaryFolder().apply { create() }
