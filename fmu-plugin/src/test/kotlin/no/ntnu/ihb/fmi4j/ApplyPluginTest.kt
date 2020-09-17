@@ -11,7 +11,6 @@ import java.io.File
 internal class ApplyPluginTest {
 
     @Test
-    @Disabled
     fun testApplyPlugin() {
 
         val testProjectDir = TemporaryFolder().apply { create() }
@@ -31,7 +30,7 @@ internal class ApplyPluginTest {
             writeText("""
                 plugins {
                     id "java-library" 
-                    id "no.ntnu.ihb.fmi4j.fmu-export" version "0.31.3"
+                    id "no.ntnu.ihb.fmi4j.fmu-export" version "0.32.0"
                 }
                 
                 configurations.all {
@@ -61,18 +60,22 @@ internal class ApplyPluginTest {
                 
                 import java.util.Map;
                 import no.ntnu.ihb.fmi4j.export.fmi2.Fmi2Slave;
-                import no.ntnu.ihb.fmi4j.export.fmi2.ScalarVariable;
                 import no.ntnu.ihb.fmi4j.modeldescription.fmi2.Fmi2Causality;
                 
                 public class MySlave extends Fmi2Slave {
-                
-                    @ScalarVariable(causality = Fmi2Causality.output)
+
                     double realOut = 1.0;
                     
                     public MySlave(Map<String, Object> args) {
                         super(args);
                     }
-                
+                    
+                    @Override
+                    protected void registerVariables() {
+                        register(real("realOut", () -> realOut)
+                                .causality(Fmi2Causality.output));
+                    }
+                    
                     @Override
                     public void doStep(double t, double dt) {
                     }
