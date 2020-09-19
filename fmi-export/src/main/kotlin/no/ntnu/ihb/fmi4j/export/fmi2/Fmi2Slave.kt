@@ -16,7 +16,8 @@ abstract class Fmi2Slave(
 ) {
 
     val modelDescription = Fmi2ModelDescription()
-    val instanceName: String = args["instanceName"] as? String ?: throw IllegalStateException("Missing 'instanceName'")
+    val instanceName: String = args["instanceName"] as? String
+            ?: throw IllegalStateException("Missing 'instanceName'")
 
     private val intAccessors: MutableList<IntVariable> = mutableListOf()
     private val realAccessors: MutableList<RealVariable> = mutableListOf()
