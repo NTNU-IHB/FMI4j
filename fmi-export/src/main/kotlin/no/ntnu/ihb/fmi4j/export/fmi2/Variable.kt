@@ -17,6 +17,7 @@ fun interface Setter<E> {
     fun set(value: E)
 }
 
+@Suppress("UNCHECKED_CAST")
 sealed class Variable<E>(
         val name: String
 ) {
