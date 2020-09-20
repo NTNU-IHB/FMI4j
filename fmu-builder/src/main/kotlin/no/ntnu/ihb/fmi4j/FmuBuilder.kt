@@ -110,7 +110,7 @@ object FmuBuilder {
 
     @JvmStatic
     fun main(args: Array<String>) {
-        CommandLine.run(Args(), System.out, *args)
+        CommandLine(Args()).execute(*args)
     }
 
 }

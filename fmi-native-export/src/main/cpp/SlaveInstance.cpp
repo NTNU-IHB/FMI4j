@@ -81,6 +81,7 @@ void SlaveInstance::initialize()
         jmethodID putId = GetMethodID(env, mapCls, "put", "(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;");
         jobject map = env->NewObject(mapCls, mapCtor);
         env->CallObjectMethod(map, putId, env->NewStringUTF("instanceName"), env->NewStringUTF(instanceName_.c_str()));
+        env->CallObjectMethod(map, putId, env->NewStringUTF("resourceLocation"), env->NewStringUTF(resources_.c_str()));
 
         slaveInstance_ = env->NewGlobalRef(env->NewObject(slaveCls, ctorId_, map));
         if (slaveInstance_ == nullptr) {
@@ -88,11 +89,9 @@ void SlaveInstance::initialize()
             throw cppfmu::FatalError(msg.c_str());
         }
 
-        jfieldID resourceLocationId = GetFieldID(env, slaveCls, "resourceLocation", "Ljava/lang/String;");
-        env->SetObjectField(slaveInstance_, resourceLocationId, env->NewStringUTF(resources_.c_str()));
+        jmethodID defineId = GetMethodID(env, slaveCls, "__define__", "()V");
+                env->CallObjectMethod(slaveInstance_, defineId);
 
-        jmethodID defineId = GetMethodID(env, slaveCls, "__define__", "()Lno/ntnu/ihb/fmi4j/export/fmi2/Fmi2Slave;");
-        env->CallObjectMethod(slaveInstance_, defineId);
     });
 }
 

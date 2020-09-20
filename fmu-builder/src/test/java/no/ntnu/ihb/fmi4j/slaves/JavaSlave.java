@@ -12,10 +12,10 @@ import java.util.Map;
 )
 public class JavaSlave extends Fmi2Slave {
 
-    private int intOut = 99;
+    private final int intOut = 99;
     private double realOut = 2.0;
-    private double[] realsOut = {50.0, 200.0};
-    private String[] string = {"Hello", "world!"};
+    private final double[] realsOut = {50.0, 200.0};
+    private final String[] string = {"Hello", "world!"};
 
     public JavaSlave(Map<String, Object> args) {
         super(args);

@@ -17,7 +17,6 @@ open class KotlinTestingFmi2Slave(
 
         register(string("str") { str })
 
-
         register(real("start") { start }
                 .causality(Fmi2Causality.input))
 

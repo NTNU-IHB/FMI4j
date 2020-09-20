@@ -4,10 +4,7 @@ import no.ntnu.ihb.fmi4j.export.*
 import no.ntnu.ihb.fmi4j.modeldescription.fmi2.*
 import java.io.ByteArrayOutputStream
 import java.io.File
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import java.util.*
-import java.util.concurrent.atomic.AtomicBoolean
 import java.util.logging.Logger
 import javax.xml.bind.JAXB
 
@@ -18,16 +15,14 @@ abstract class Fmi2Slave(
     val modelDescription = Fmi2ModelDescription()
     val instanceName: String = args["instanceName"] as? String
             ?: throw IllegalStateException("Missing 'instanceName'")
+    private val resourceLocation: String? = args["resourceLocation"] as? String
 
     private val intAccessors: MutableList<IntVariable> = mutableListOf()
     private val realAccessors: MutableList<RealVariable> = mutableListOf()
     private val boolAccessors: MutableList<BooleanVariable> = mutableListOf()
     private val stringAccessors: MutableList<StringVariable> = mutableListOf()
 
-    private val isDefined = AtomicBoolean(false)
-    private lateinit var resourceLocation: String
-
-    fun getFmuResource(name: String): File {
+    fun getFmuResource(name: String): File? {
         return File(resourceLocation, name)
     }
 
@@ -37,7 +32,7 @@ abstract class Fmi2Slave(
                 ?: throw IllegalArgumentException("No such variable with valueReference $vr!")
     }
 
-    fun getValueReference(name: String): Long {
+    fun getValueRef(name: String): Long {
         return modelDescription.modelVariables.scalarVariable
                 .firstOrNull { it.name == name }?.valueReference
                 ?: throw IllegalArgumentException("No such variable with name $name!")
@@ -56,41 +51,12 @@ abstract class Fmi2Slave(
     abstract fun doStep(currentTime: Double, dt: Double)
     open fun terminate() {}
 
-    @Suppress("UNCHECKED_CAST")
-    fun getReal(vr: Long): Double {
-        return realAccessors[vr.toInt()].getter.get()
-    }
-
-    @Suppress("UNCHECKED_CAST")
-    open fun getReal(vr: LongArray): DoubleArray {
-        return DoubleArray(vr.size) { i ->
-            realAccessors[vr[i].toInt()].getter.get()
-        }
-    }
-
-    @Suppress("UNCHECKED_CAST")
-    open fun setReal(vr: LongArray, values: DoubleArray) {
-        for (i in vr.indices) {
-            realAccessors[vr[i].toInt()].apply {
-                setter?.set(values[i]) ?: LOG.warning("Trying to set value of " +
-                        "${getVariableName(vr[i], Fmi2VariableType.REAL)} on variable without a specified setter!")
-            }
-        }
-    }
-
-    @Suppress("UNCHECKED_CAST")
-    fun getInteger(vr: Long): Int {
-        return intAccessors[vr.toInt()].getter.get()
-    }
-
-    @Suppress("UNCHECKED_CAST")
     open fun getInteger(vr: LongArray): IntArray {
         return IntArray(vr.size) { i ->
             intAccessors[vr[i].toInt()].getter.get()
         }
     }
 
-    @Suppress("UNCHECKED_CAST")
     open fun setInteger(vr: LongArray, values: IntArray) {
         for (i in vr.indices) {
             intAccessors[vr[i].toInt()].apply {
@@ -100,19 +66,27 @@ abstract class Fmi2Slave(
         }
     }
 
-    @Suppress("UNCHECKED_CAST")
-    fun getBoolean(vr: Long): Boolean {
-        return boolAccessors[vr.toInt()].getter.get()
+    open fun getReal(vr: LongArray): DoubleArray {
+        return DoubleArray(vr.size) { i ->
+            realAccessors[vr[i].toInt()].getter.get()
+        }
     }
 
-    @Suppress("UNCHECKED_CAST")
+    open fun setReal(vr: LongArray, values: DoubleArray) {
+        for (i in vr.indices) {
+            realAccessors[vr[i].toInt()].apply {
+                setter?.set(values[i]) ?: LOG.warning("Trying to set value of " +
+                        "${getVariableName(vr[i], Fmi2VariableType.REAL)} on variable without a specified setter!")
+            }
+        }
+    }
+
     open fun getBoolean(vr: LongArray): BooleanArray {
         return BooleanArray(vr.size) { i ->
             boolAccessors[vr[i].toInt()].getter.get()
         }
     }
 
-    @Suppress("UNCHECKED_CAST")
     open fun setBoolean(vr: LongArray, values: BooleanArray) {
         for (i in vr.indices) {
             boolAccessors[vr[i].toInt()].apply {
@@ -122,19 +96,12 @@ abstract class Fmi2Slave(
         }
     }
 
-    @Suppress("UNCHECKED_CAST")
-    fun getString(vr: Long): String {
-        return stringAccessors[vr.toInt()].getter.get()
-    }
-
-    @Suppress("UNCHECKED_CAST")
     open fun getString(vr: LongArray): Array<String> {
         return Array(vr.size) { i ->
             stringAccessors[vr[i].toInt()].getter.get()
         }
     }
 
-    @Suppress("UNCHECKED_CAST")
     open fun setString(vr: LongArray, values: Array<String>) {
         for (i in vr.indices) {
             stringAccessors[vr[i].toInt()].apply {
@@ -181,15 +148,18 @@ abstract class Fmi2Slave(
     protected fun boolean(name: String, values: BooleanArray) = BooleanVariables(name, BooleanVectorArray(values))
 
     protected fun register(v: IntVariable) {
+
         val vr = intAccessors.size.toLong()
+        intAccessors.add(v)
+
         internalRegister(v, vr).apply {
             integer = Fmi2ScalarVariable.Integer().also { type ->
                 if (requiresStart()) {
-                    type.start = v.getter.get()
+                    type.start = getInteger(longArrayOf(vr)).first()
                 }
             }
         }
-        intAccessors.add(v)
+
     }
 
     protected fun register(v: IntVariables) {
@@ -197,15 +167,17 @@ abstract class Fmi2Slave(
     }
 
     protected fun register(v: RealVariable) {
+
         val vr = realAccessors.size.toLong()
+        realAccessors.add(v)
+
         internalRegister(v, vr).apply {
             real = Fmi2ScalarVariable.Real().also { type ->
                 if (requiresStart()) {
-                    type.start = v.getter.get()
+                    type.start = getReal(longArrayOf(vr)).first()
                 }
             }
         }
-        realAccessors.add(v)
     }
 
     protected fun register(v: RealVariables) {
@@ -214,15 +186,17 @@ abstract class Fmi2Slave(
 
 
     protected fun register(v: BooleanVariable) {
+
         val vr = boolAccessors.size.toLong()
+        boolAccessors.add(v)
+
         internalRegister(v, vr).apply {
             boolean = Fmi2ScalarVariable.Boolean().also { type ->
                 if (requiresStart()) {
-                    type.isStart = v.getter.get()
+                    type.isStart = getBoolean(longArrayOf(vr)).first()
                 }
             }
         }
-        boolAccessors.add(v)
     }
 
     protected fun register(v: BooleanVariables) {
@@ -230,15 +204,18 @@ abstract class Fmi2Slave(
     }
 
     protected fun register(v: StringVariable) {
+
         val vr = stringAccessors.size.toLong()
+        stringAccessors.add(v)
+
         internalRegister(v, vr).apply {
             string = Fmi2ScalarVariable.String().also { type ->
                 if (requiresStart()) {
-                    type.start = v.getter.get()
+                    type.start = getString(longArrayOf(vr)).first()
                 }
             }
         }
-        stringAccessors.add(v)
+
     }
 
     protected fun register(v: StringVariables) {
@@ -247,18 +224,7 @@ abstract class Fmi2Slave(
 
     protected abstract fun registerVariables()
 
-    private fun getDateAndTime(): String {
-        val now = LocalDateTime.now()
-        val dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(now)
-        val timeFormat = DateTimeFormatter.ofPattern("HH:mm:ss").format(now)
-        return "${dateFormat}T${timeFormat}Z"
-    }
-
-    fun __define__(): Fmi2Slave {
-
-        if (isDefined.getAndSet(true)) {
-            return this
-        }
+    fun __define__() {
 
         modelDescription.fmiVersion = "2.0"
         modelDescription.generationTool = "FMI4j"
@@ -299,6 +265,8 @@ abstract class Fmi2Slave(
             }
         }
 
+        registerVariables()
+
         val outputs = modelDescription.modelVariables.scalarVariable.mapIndexedNotNull { i, v ->
             if (v.causality == Fmi2Causality.output) i.toLong() else null
         }
@@ -311,11 +279,7 @@ abstract class Fmi2Slave(
             }
         }
 
-        registerVariables()
-
         check(modelDescription.modelVariables.scalarVariable.isNotEmpty()) { "No variables has been defined!" }
-
-        return this
 
     }
 
