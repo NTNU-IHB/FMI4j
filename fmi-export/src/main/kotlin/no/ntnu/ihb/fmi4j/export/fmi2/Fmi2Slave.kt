@@ -224,7 +224,7 @@ abstract class Fmi2Slave(
 
     protected abstract fun registerVariables()
 
-    fun __define__() {
+    open fun __define__() {
 
         modelDescription.fmiVersion = "2.0"
         modelDescription.generationTool = "FMI4j"
