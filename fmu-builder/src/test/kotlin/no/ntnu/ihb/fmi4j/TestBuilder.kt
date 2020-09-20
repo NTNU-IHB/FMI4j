@@ -22,10 +22,14 @@ internal class TestBuilder {
 
     @Test
     fun testJavaClass() {
+
+        val testFile = File(javaClass.classLoader.getResource("TestFile.txt")!!.file)
+
         FmuBuilder.main(arrayOf(
                 "-m", "$group.JavaTestFmi2Slave",
                 "-f", jar,
-                "-d", dest))
+                "-d", dest,
+                "-r", testFile.absolutePath))
 
         for (i in 0..2) {
 
@@ -43,8 +47,13 @@ internal class TestBuilder {
                     Assertions.assertTrue(slave.doStep(dt))
                     Assertions.assertEquals(2.0 + dt, slave.readReal("realOut").value)
                     Assertions.assertEquals(99.0, slave.readReal("speed").value)
+
                     slave.reset()
+                    Assertions.assertTrue(slave.simpleSetup())
+
                     Assertions.assertEquals(2.0, slave.readReal("realOut").value)
+                    Assertions.assertEquals("123", slave.readString(0L).value)
+
                     slave.close()
 
                 }

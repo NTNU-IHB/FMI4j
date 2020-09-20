@@ -9,7 +9,8 @@ import javax.xml.bind.JAXB
 
 class FmuBuilder(
         private val mainClass: String,
-        private val jarFile: File
+        private val jarFile: File,
+        private val resources: Array<File>?
 ) {
 
     @JvmOverloads
@@ -58,10 +59,18 @@ class FmuBuilder(
             zos.putNextEntry(ZipEntry("resources/"))
             zos.putNextEntry(ZipEntry("resources/model.jar"))
 
-            FileInputStream(jarFile).use { fis ->
+            FileInputStream(jarFile).buffered().use { fis ->
                 zos.write(fis.readBytes())
             }
             zos.closeEntry()
+
+            resources?.forEach { file ->
+                FileInputStream(file).buffered().use {
+                    zos.putNextEntry(ZipEntry("resources/${file.name}"))
+                    zos.write(it.readBytes())
+                    zos.closeEntry()
+                }
+            }
 
             zos.putNextEntry(ZipEntry("resources/mainclass.txt"))
             zos.write(mainClass.toByteArray())
@@ -77,14 +86,14 @@ class FmuBuilder(
                 zos.closeEntry()
             }
 
-            FmuBuilder::class.java.classLoader.getResourceAsStream("binaries/win64/fmi4j-export.dll")?.use { `is` ->
+            FmuBuilder::class.java.classLoader.getResourceAsStream("binaries/win64/fmi4j-export.dll")?.buffered()?.use { `is` ->
                 zos.putNextEntry(ZipEntry("binaries/win64/"))
                 zos.putNextEntry(ZipEntry("binaries/win64/$modelIdentifier.dll"))
                 zos.write(`is`.readBytes())
                 zos.closeEntry()
             }
 
-            FmuBuilder::class.java.classLoader.getResourceAsStream("binaries/linux64/libfmi4j-export.so")?.use { `is` ->
+            FmuBuilder::class.java.classLoader.getResourceAsStream("binaries/linux64/libfmi4j-export.so")?.buffered()?.use { `is` ->
                 zos.putNextEntry(ZipEntry("binaries/linux64/"))
                 zos.putNextEntry(ZipEntry("binaries/linux64/$modelIdentifier.so"))
                 zos.write(`is`.readBytes())
@@ -111,8 +120,11 @@ class FmuBuilder(
         @CommandLine.Option(names = ["-d", "--dest"], description = ["Where to save the FMU."], required = false)
         var destFile: File? = null
 
+        @CommandLine.Option(names = ["-r", "--res"], arity= "0..*", description = ["resources."], required = false)
+        var resources: Array<File>? = null
+
         override fun run() {
-            FmuBuilder(mainClass, jarFile).build(destFile)
+            FmuBuilder(mainClass, jarFile, resources).build(destFile)
         }
 
     }
