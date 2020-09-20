@@ -22,7 +22,7 @@ abstract class Fmi2Slave(
     private val boolAccessors: MutableList<BooleanVariable> = mutableListOf()
     private val stringAccessors: MutableList<StringVariable> = mutableListOf()
 
-    fun getFmuResource(name: String): File? {
+    fun getFmuResource(name: String): File {
         return File(resourceLocation, name)
     }
 
