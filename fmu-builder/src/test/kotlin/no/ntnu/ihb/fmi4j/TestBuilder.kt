@@ -22,7 +22,11 @@ internal class TestBuilder {
 
     @Test
     fun testJavaClass() {
-        FmuBuilder.main(arrayOf("-f", jar, "-m", "$group.JavaTestFmi2Slave", "-d", dest))
+        FmuBuilder.main(arrayOf(
+                "-m", "$group.JavaTestFmi2Slave",
+                "-f", jar,
+                "-d", dest))
+
         for (i in 0..2) {
 
             val fmuFile = File(dest, "Test.fmu")
@@ -51,7 +55,10 @@ internal class TestBuilder {
 
     @Test
     fun testKotlinClass() {
-        FmuBuilder.main(arrayOf("-f", jar, "-m", "$group.KotlinTestFmi2Slave", "-d", dest))
+        FmuBuilder.main(arrayOf(
+                "-m", "$group.KotlinTestFmi2Slave",
+                "-f", jar,
+                "-d", dest))
 
         val fmuFile = File(dest, "KotlinTestFmi2Slave.fmu")
         Assertions.assertTrue(fmuFile.exists())

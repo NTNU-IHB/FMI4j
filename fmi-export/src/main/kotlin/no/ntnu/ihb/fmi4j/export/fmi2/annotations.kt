@@ -9,9 +9,10 @@ annotation class SlaveInfo(
         val description: String = "",
         val copyright: String = "",
         val license: String = "",
+        val canInterpolateInputs: Boolean = false,
         val canHandleVariableCommunicationStepSize: Boolean = true,
         val canBeInstantiatedOnlyOncePerProcess: Boolean = false,
-        val needsExecutionTool: Boolean = false
+        val needsExecutionTool: Boolean = false,
 )
 
 @Target(AnnotationTarget.CLASS)

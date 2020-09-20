@@ -245,10 +245,11 @@ abstract class Fmi2Slave(
 
         modelDescription.modelVariables = Fmi2ModelDescription.ModelVariables()
         modelDescription.coSimulation = Fmi2ModelDescription.CoSimulation().also { cs ->
+            cs.isCanRunAsynchronuously = false
             cs.isCanGetAndSetFMUstate = false
             cs.isCanSerializeFMUstate = false
-            cs.isCanInterpolateInputs = false
             cs.isCanNotUseMemoryManagementFunctions = true
+            cs.isCanInterpolateInputs = slaveInfo?.canInterpolateInputs ?: false
             cs.modelIdentifier = modelDescription.modelName
             if (slaveInfo != null) {
                 cs.isNeedsExecutionTool = slaveInfo.needsExecutionTool
