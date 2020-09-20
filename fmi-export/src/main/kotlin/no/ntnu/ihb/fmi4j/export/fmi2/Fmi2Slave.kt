@@ -23,6 +23,8 @@ abstract class Fmi2Slave(
     private val boolAccessors: MutableList<BooleanVariable> = mutableListOf()
     private val stringAccessors: MutableList<StringVariable> = mutableListOf()
 
+    protected val automaticallyAssignStartValues = true
+
     val modelDescriptionXml: String by lazy {
         String(ByteArrayOutputStream().also { bos ->
             JAXB.marshal(modelDescription, bos)
@@ -132,7 +134,6 @@ abstract class Fmi2Slave(
         }
     }
 
-
     protected fun integer(name: String, getter: Getter<Int>) = IntVariable(name, getter)
     protected fun integer(name: String, values: IntVector) = IntVariables(name, values)
     protected fun integer(name: String, values: IntArray) = IntVariables(name, IntVectorArray(values))
@@ -156,7 +157,7 @@ abstract class Fmi2Slave(
 
         internalRegister(v, vr).apply {
             integer = Fmi2ScalarVariable.Integer().also { type ->
-                if (requiresStart()) {
+                if (automaticallyAssignStartValues && requiresStart()) {
                     type.start = getInteger(longArrayOf(vr)).first()
                 }
             }
@@ -175,7 +176,7 @@ abstract class Fmi2Slave(
 
         internalRegister(v, vr).apply {
             real = Fmi2ScalarVariable.Real().also { type ->
-                if (requiresStart()) {
+                if (automaticallyAssignStartValues && requiresStart()) {
                     type.start = getReal(longArrayOf(vr)).first()
                 }
             }
@@ -194,7 +195,7 @@ abstract class Fmi2Slave(
 
         internalRegister(v, vr).apply {
             boolean = Fmi2ScalarVariable.Boolean().also { type ->
-                if (requiresStart()) {
+                if (automaticallyAssignStartValues && requiresStart()) {
                     type.isStart = getBoolean(longArrayOf(vr)).first()
                 }
             }
@@ -212,7 +213,7 @@ abstract class Fmi2Slave(
 
         internalRegister(v, vr).apply {
             string = Fmi2ScalarVariable.String().also { type ->
-                if (requiresStart()) {
+                if (automaticallyAssignStartValues && requiresStart()) {
                     type.start = getString(longArrayOf(vr)).first()
                 }
             }
@@ -270,14 +271,17 @@ abstract class Fmi2Slave(
 
         registerVariables()
 
-        val outputs = modelDescription.modelVariables.scalarVariable.mapIndexedNotNull { i, v ->
+        val variables = modelDescription.modelVariables.scalarVariable
+        val outputs = variables.mapIndexedNotNull { i, v ->
             if (v.causality == Fmi2Causality.output) i.toLong() else null
         }
         modelDescription.modelStructure = Fmi2ModelDescription.ModelStructure().also { ms ->
             if (outputs.isNotEmpty()) {
                 ms.outputs = Fmi2VariableDependency()
                 outputs.forEach {
-                    ms.outputs.unknown.add(Fmi2VariableDependency.Unknown().also { u -> u.index = it + 1 })
+                    ms.outputs.unknown.add(Fmi2VariableDependency.Unknown().also {
+                        u -> u.index = it + 1
+                    })
                 }
             }
         }
