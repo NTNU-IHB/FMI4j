@@ -54,9 +54,11 @@ class FmuBuilder(
         val mdCs = mdCsMethod.invoke(md)
         val modelIdentifier = mdCsModelIdentifierMethod.invoke(mdCs) as String
 
+        val close = superClass.getDeclaredMethod("close")
+        close.invoke(instance)
+
         val bos = ByteArrayOutputStream()
         JAXB.marshal(md, bos)
-
 
         val destDir = dest ?: File(".")
         val destFile = File(destDir, "${modelIdentifier}.fmu").apply {

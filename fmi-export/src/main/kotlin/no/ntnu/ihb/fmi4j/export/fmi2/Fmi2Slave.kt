@@ -3,6 +3,7 @@ package no.ntnu.ihb.fmi4j.export.fmi2
 import no.ntnu.ihb.fmi4j.export.*
 import no.ntnu.ihb.fmi4j.modeldescription.fmi2.*
 import java.io.ByteArrayOutputStream
+import java.io.Closeable
 import java.io.File
 import java.util.*
 import java.util.logging.Logger
@@ -10,7 +11,7 @@ import javax.xml.bind.JAXB
 
 abstract class Fmi2Slave(
         args: Map<String, Any>
-) {
+): Closeable {
 
     val modelDescription = Fmi2ModelDescription()
     val instanceName: String = args["instanceName"] as? String
@@ -44,12 +45,13 @@ abstract class Fmi2Slave(
                 ?: throw IllegalArgumentException("No such variable with name $name!")
     }
 
-    open fun setupExperiment(startTime: Double) {}
+    open fun setupExperiment(startTime: Double, stopTime: Double, tolerance: Double) {}
     open fun enterInitialisationMode() {}
     open fun exitInitialisationMode() {}
 
     abstract fun doStep(currentTime: Double, dt: Double)
     open fun terminate() {}
+    override fun close() {}
 
     open fun getInteger(vr: LongArray): IntArray {
         return IntArray(vr.size) { i ->

@@ -42,12 +42,13 @@ SlaveInstance::SlaveInstance(
         throw cppfmu::FatalError(msg.c_str());
     }
 
-    setupExperimentId_ = GetMethodID(env, slaveCls, "setupExperiment", "(D)V");
+    setupExperimentId_ = GetMethodID(env, slaveCls, "setupExperiment", "(DDD)V");
     enterInitialisationModeId_ = GetMethodID(env, slaveCls, "enterInitialisationMode", "()V");
     exitInitializationModeId_ = GetMethodID(env, slaveCls, "exitInitialisationMode", "()V");
 
     doStepId_ = GetMethodID(env, slaveCls, "doStep", "(DD)V");
     terminateId_ = GetMethodID(env, slaveCls, "terminate", "()V");
+    closeId_ = GetMethodID(env, slaveCls, "close", "()V");
 
     getRealId_ = GetMethodID(env, slaveCls, "getReal", "([J)[D");
     setRealId_ = GetMethodID(env, slaveCls, "setReal", "([J[D)V");
@@ -97,8 +98,10 @@ void SlaveInstance::initialize()
 
 void SlaveInstance::SetupExperiment(cppfmu::FMIBoolean toleranceDefined, cppfmu::FMIReal tolerance, cppfmu::FMIReal tStart, cppfmu::FMIBoolean stopTimeDefined, cppfmu::FMIReal tStop)
 {
-    jvm_invoke(jvm_, [this, tStart](JNIEnv* env) {
-        env->CallVoidMethod(slaveInstance_, setupExperimentId_, tStart);
+    double stop = stopTimeDefined ? tStop : -1;
+    double tol = toleranceDefined ? tolerance : -1;
+    jvm_invoke(jvm_, [this, tStart, stop, tol](JNIEnv* env) {
+        env->CallVoidMethod(slaveInstance_, setupExperimentId_, tStart, stop, tol);
     });
 }
 
@@ -130,6 +133,7 @@ bool SlaveInstance::DoStep(cppfmu::FMIReal currentCommunicationPoint, cppfmu::FM
 
 void SlaveInstance::Reset()
 {
+    onClose();
     initialize();
 }
 
@@ -137,6 +141,13 @@ void SlaveInstance::Terminate()
 {
     jvm_invoke(jvm_, [this](JNIEnv* env) {
         env->CallBooleanMethod(slaveInstance_, terminateId_);
+    });
+}
+
+void SlaveInstance::onClose()
+{
+    jvm_invoke(jvm_, [this](JNIEnv* env) {
+        env->CallVoidMethod(slaveInstance_, closeId_);
     });
 }
 
@@ -334,6 +345,7 @@ void SlaveInstance::GetString(const cppfmu::FMIValueReference* vr, std::size_t n
 
 SlaveInstance::~SlaveInstance()
 {
+    onClose();
     jvm_invoke(jvm_, [this](JNIEnv* env) {
         env->DeleteGlobalRef(slaveInstance_);
 

@@ -50,7 +50,6 @@ internal class TestBuilder {
 
                     slave.reset()
 
-
                     Assertions.assertEquals(2.0, slave.readReal("realOut").value)
                     Assertions.assertEquals("123", slave.readString(0L).value)
 

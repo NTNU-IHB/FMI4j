@@ -11,7 +11,7 @@ internal class TestKotlinFmi2Slave {
         val slave = KotlinTestingFmi2Slave(mapOf("instanceName" to "instance")).apply {
             __define__()
         }
-        slave.setupExperiment(1.0)
+        slave.setupExperiment(1.0, -1.0, -1.0)
 
         with(slave.modelDescription) {
             Assertions.assertEquals("str", modelVariables.scalarVariable[0].name)
@@ -29,7 +29,7 @@ internal class TestKotlinFmi2Slave {
         val slave = KotlinTestingExtendingFmi2Slave(mapOf("instanceName" to "instance")).apply {
             __define__()
         }
-        slave.setupExperiment(1.0)
+        slave.setupExperiment(1.0, -1.0, -1.0)
         slave.modelDescription.modelVariables.scalarVariable
         slave.modelDescription.apply {
             Assertions.assertEquals("container.value", modelVariables.scalarVariable[3].name)
