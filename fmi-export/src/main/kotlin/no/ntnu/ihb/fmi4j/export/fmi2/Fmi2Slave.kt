@@ -23,7 +23,7 @@ abstract class Fmi2Slave(
     private val boolAccessors: MutableList<BooleanVariable> = mutableListOf()
     private val stringAccessors: MutableList<StringVariable> = mutableListOf()
 
-    protected val automaticallyAssignStartValues = true
+    protected open val automaticallyAssignStartValues = true
 
     val modelDescriptionXml: String by lazy {
         String(ByteArrayOutputStream().also { bos ->
@@ -186,7 +186,6 @@ abstract class Fmi2Slave(
     protected fun register(v: RealVariables) {
         v.build().forEach { register(it) }
     }
-
 
     protected fun register(v: BooleanVariable) {
 
