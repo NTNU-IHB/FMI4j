@@ -22,6 +22,12 @@ abstract class Fmi2Slave(
     private val boolAccessors: MutableList<BooleanVariable> = mutableListOf()
     private val stringAccessors: MutableList<StringVariable> = mutableListOf()
 
+    val modelDescriptionXml: String by lazy {
+        String(ByteArrayOutputStream().also { bos ->
+            JAXB.marshal(modelDescription, bos)
+        }.toByteArray())
+    }
+
     fun getFmuResource(name: String): File {
         return File(resourceLocation, name)
     }
@@ -36,12 +42,6 @@ abstract class Fmi2Slave(
         return modelDescription.modelVariables.scalarVariable
                 .firstOrNull { it.name == name }?.valueReference
                 ?: throw IllegalArgumentException("No such variable with name $name!")
-    }
-
-    val modelDescriptionXml: String by lazy {
-        String(ByteArrayOutputStream().also { bos ->
-            JAXB.marshal(modelDescription, bos)
-        }.toByteArray())
     }
 
     open fun setupExperiment(startTime: Double) {}
@@ -139,13 +139,13 @@ abstract class Fmi2Slave(
     protected fun real(name: String, values: RealVector) = RealVariables(name, values)
     protected fun real(name: String, values: DoubleArray) = RealVariables(name, RealVectorArray(values))
 
-    protected fun string(name: String, getter: Getter<String>) = StringVariable(name, getter)
-    protected fun string(name: String, values: StringVector) = StringVariables(name, values)
-    protected fun string(name: String, values: Array<String>) = StringVariables(name, StringVectorArray(values))
-
     protected fun boolean(name: String, getter: Getter<Boolean>) = BooleanVariable(name, getter)
     protected fun boolean(name: String, values: BooleanVector) = BooleanVariables(name, values)
     protected fun boolean(name: String, values: BooleanArray) = BooleanVariables(name, BooleanVectorArray(values))
+
+    protected fun string(name: String, getter: Getter<String>) = StringVariable(name, getter)
+    protected fun string(name: String, values: StringVector) = StringVariables(name, values)
+    protected fun string(name: String, values: Array<String>) = StringVariables(name, StringVectorArray(values))
 
     protected fun register(v: IntVariable) {
 

@@ -25,16 +25,14 @@ public class JavaTestFmi2Slave extends Fmi2Slave {
 
     public JavaTestFmi2Slave(@NotNull Map<String, Object> args) {
         super(args);
-    }
 
-    @Override
-    public void enterInitialisationMode() {
         File testFile = getFmuResource("TestFile.txt");
         try {
             testContent = Files.readAllLines(testFile.toPath()).get(0);
         } catch (IOException e) {
             e.printStackTrace();
         }
+
     }
 
     @Override

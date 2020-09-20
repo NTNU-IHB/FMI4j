@@ -49,7 +49,7 @@ internal class TestBuilder {
                     Assertions.assertEquals(99.0, slave.readReal("speed").value)
 
                     slave.reset()
-                    Assertions.assertTrue(slave.simpleSetup())
+
 
                     Assertions.assertEquals(2.0, slave.readReal("realOut").value)
                     Assertions.assertEquals("123", slave.readString(0L).value)

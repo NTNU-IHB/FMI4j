@@ -3,6 +3,7 @@ package no.ntnu.ihb.fmi4j
 import picocli.CommandLine
 import java.io.*
 import java.net.URLClassLoader
+import java.nio.file.Files
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 import javax.xml.bind.JAXB
@@ -19,11 +20,26 @@ class FmuBuilder(
         require(jarFile.exists()) { "No such File '$jarFile'" }
         require(jarFile.name.endsWith(".jar")) { "File $jarFile is not a .jar!" }
 
+        var tempResourcesDir: File? = null
+
+        val fmuArgs = mutableMapOf<String, Any>("instanceName" to "dummyInstance")
+        if (resources != null) {
+            tempResourcesDir = Files.createTempDirectory("fmu-resources").toFile()
+            for (file in resources) {
+                if (file.isDirectory) {
+                    file.copyRecursively(tempResourcesDir)
+                } else {
+                    file.copyTo(File(tempResourcesDir, file.name))
+                }
+            }
+            fmuArgs["resourceLocation"] = tempResourcesDir.absolutePath
+        }
+
         val classLoader = URLClassLoader(arrayOf(jarFile.toURI().toURL()))
 
         val superClass = classLoader.loadClass("no.ntnu.ihb.fmi4j.export.fmi2.Fmi2Slave")
         val subClass = classLoader.loadClass(mainClass)
-        val instance = subClass.getConstructor(Map::class.java).newInstance(mapOf("instanceName" to "dummyInstance"))
+        val instance = subClass.getConstructor(Map::class.java).newInstance(fmuArgs)
 
         val mdClass = classLoader.loadClass("no.ntnu.ihb.fmi4j.modeldescription.fmi2.Fmi2ModelDescription")
         val mdCsClass = classLoader.loadClass("no.ntnu.ihb.fmi4j.modeldescription.fmi2.Fmi2ModelDescription\$CoSimulation")
@@ -31,16 +47,16 @@ class FmuBuilder(
         val mdCsModelIdentifierMethod = mdCsClass.getMethod("getModelIdentifier")
 
         val define = superClass.getDeclaredMethod("__define__")
-        define.isAccessible = true
         define.invoke(instance)
+
         val getModelDescription = superClass.getDeclaredMethod("getModelDescription")
-        getModelDescription.isAccessible = true
         val md = getModelDescription.invoke(instance)
         val mdCs = mdCsMethod.invoke(md)
         val modelIdentifier = mdCsModelIdentifierMethod.invoke(mdCs) as String
 
         val bos = ByteArrayOutputStream()
         JAXB.marshal(md, bos)
+
 
         val destDir = dest ?: File(".")
         val destFile = File(destDir, "${modelIdentifier}.fmu").apply {
@@ -102,6 +118,10 @@ class FmuBuilder(
 
         }
 
+        tempResourcesDir?.also {
+            it.deleteRecursively()
+        }
+
     }
 
     @CommandLine.Command(name = "fmu-builder")
@@ -120,7 +140,7 @@ class FmuBuilder(
         @CommandLine.Option(names = ["-d", "--dest"], description = ["Where to save the FMU."], required = false)
         var destFile: File? = null
 
-        @CommandLine.Option(names = ["-r", "--res"], arity= "0..*", description = ["resources."], required = false)
+        @CommandLine.Option(names = ["-r", "--res"], arity = "0..*", description = ["resources."], required = false)
         var resources: Array<File>? = null
 
         override fun run() {
