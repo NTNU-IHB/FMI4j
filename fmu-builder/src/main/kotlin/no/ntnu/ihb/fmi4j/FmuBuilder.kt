@@ -15,7 +15,7 @@ class FmuBuilder(
 ) {
 
     @JvmOverloads
-    fun build(dest: File? = null) {
+    fun build(dest: File? = null): File {
 
         require(jarFile.exists()) { "No such File '$jarFile'" }
         require(jarFile.name.endsWith(".jar")) { "File $jarFile is not a .jar!" }
@@ -124,13 +124,14 @@ class FmuBuilder(
             it.deleteRecursively()
         }
 
+        return destFile
+
     }
 
     @CommandLine.Command(name = "fmu-builder")
     class Args : Runnable {
 
-        @CommandLine.Option(names = ["-h", "--help"],
-                description = ["Print this message and quits."], usageHelp = true)
+        @CommandLine.Option(names = ["-h", "--help"], description = ["Print this message and quits."], usageHelp = true)
         var showHelp = false
 
         @CommandLine.Option(names = ["-m", "--main"], description = ["Fully qualified name of the main class."], required = true)
