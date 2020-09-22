@@ -336,7 +336,7 @@ void SlaveInstance::GetString(const cppfmu::FMIValueReference* vr, std::size_t n
             auto jstr = reinterpret_cast<jstring>(env->GetObjectArrayElement(valueArray, i));
             auto cStr = env->GetStringUTFChars(jstr, nullptr);
             value[i] = cStr;
-            env->ReleaseStringUTFChars(jstr, cStr);
+           // env->ReleaseStringUTFChars(jstr, cStr);
         }
 
         free(vrArrayElements);
