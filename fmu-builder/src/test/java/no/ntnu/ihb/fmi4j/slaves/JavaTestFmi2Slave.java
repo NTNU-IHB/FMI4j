@@ -27,12 +27,12 @@ public class JavaTestFmi2Slave extends Fmi2Slave {
         super(args);
 
         File testFile = getFmuResource("TestFile.txt");
-       // try {
-            testContent = testFile.getAbsolutePath();
-       /* } catch (IOException e) {
+        try {
+            testContent = Files.readAllLines(testFile.toPath()).get(0);
+        } catch (IOException e) {
             testContent = "fail1";
             e.printStackTrace();
-        }*/
+        }
 
     }
 
