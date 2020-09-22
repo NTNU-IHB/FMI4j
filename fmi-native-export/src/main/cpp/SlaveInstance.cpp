@@ -381,9 +381,7 @@ cppfmu::UniquePtr<cppfmu::SlaveInstance> CppfmuInstantiateSlave(
 {
     std::string resources(fmuResourceLocation);
 
-    if (resources.find("file:////") != std::string::npos) {
-        resources.replace(0, 9, "");
-    } else if (resources.find("file:///") != std::string::npos) {
+    if (resources.find("file:///") != std::string::npos) {
         resources.replace(0, 8, "");
     } else if (resources.find("file://") != std::string::npos) {
         resources.replace(0, 7, "");
