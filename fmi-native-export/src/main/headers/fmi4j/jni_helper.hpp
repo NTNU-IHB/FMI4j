@@ -108,6 +108,7 @@ JNIEnv* get_or_create_jvm(JavaVM** jvm)
     return env;
 }
 
+
 } // namespace
 
 #endif //FMI4J_NATIVE_JNI_HELPER_HPP

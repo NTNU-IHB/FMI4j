@@ -69,7 +69,6 @@ SlaveInstance::SlaveInstance(
 void SlaveInstance::initialize()
 {
     jvm_invoke(jvm_, [this](JNIEnv* env) {
-
         env->DeleteGlobalRef(slaveInstance_);
 
         jclass slaveCls = FindClass(env, classLoader_, slaveName_);
@@ -92,8 +91,7 @@ void SlaveInstance::initialize()
         }
 
         jmethodID defineId = GetMethodID(env, slaveCls, "__define__", "()V");
-                env->CallObjectMethod(slaveInstance_, defineId);
-
+        env->CallObjectMethod(slaveInstance_, defineId);
     });
 }
 
@@ -142,13 +140,6 @@ void SlaveInstance::Terminate()
 {
     jvm_invoke(jvm_, [this](JNIEnv* env) {
         env->CallBooleanMethod(slaveInstance_, terminateId_);
-    });
-}
-
-void SlaveInstance::onClose()
-{
-    jvm_invoke(jvm_, [this](JNIEnv* env) {
-        env->CallVoidMethod(slaveInstance_, closeId_);
     });
 }
 
@@ -321,6 +312,8 @@ void SlaveInstance::GetBoolean(const cppfmu::FMIValueReference* vr, std::size_t 
 void SlaveInstance::GetString(const cppfmu::FMIValueReference* vr, std::size_t nvr, cppfmu::FMIString* value) const
 {
     jvm_invoke(jvm_, [this, vr, nvr, value](JNIEnv* env) {
+        clearStrBuffer(env);
+
         auto vrArray = env->NewLongArray(nvr);
         auto vrArrayElements = reinterpret_cast<jlong*>(malloc(sizeof(jlong) * nvr));
 
@@ -333,13 +326,25 @@ void SlaveInstance::GetString(const cppfmu::FMIValueReference* vr, std::size_t n
         auto valueArray = reinterpret_cast<jobjectArray>(env->CallObjectMethod(slaveInstance_, getStringId_, vrArray));
 
         for (int i = 0; i < nvr; i++) {
-            auto jstr = reinterpret_cast<jstring>(env->GetObjectArrayElement(valueArray, i));
-            auto cStr = env->GetStringUTFChars(jstr, nullptr);
+            auto jStr = reinterpret_cast<jstring>(env->GetObjectArrayElement(valueArray, i));
+            auto cStr = env->GetStringUTFChars(jStr, nullptr);
             value[i] = cStr;
-           // env->ReleaseStringUTFChars(jstr, cStr);
+            jstring_ref ref{
+                cStr = cStr,
+                jStr = jStr};
+            strBuffer.push_back(ref);
         }
 
         free(vrArrayElements);
+    });
+
+}
+
+void SlaveInstance::onClose()
+{
+    jvm_invoke(jvm_, [this](JNIEnv* env) {
+        clearStrBuffer(env);
+        env->CallVoidMethod(slaveInstance_, closeId_);
     });
 }
 

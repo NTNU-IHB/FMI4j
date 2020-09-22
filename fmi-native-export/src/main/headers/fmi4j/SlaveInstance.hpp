@@ -10,6 +10,12 @@
 namespace fmi4j
 {
 
+
+struct jstring_ref {
+    const char* c_str;
+    jstring j_str;
+};
+
 class SlaveInstance : public cppfmu::SlaveInstance
 {
 
@@ -70,6 +76,18 @@ private:
 
     void initialize();
     void onClose();
+
+    mutable std::vector<jstring_ref> strBuffer;
+
+    inline void clearStrBuffer(JNIEnv *env) const {
+        if (!strBuffer.empty()) {
+            for (auto obj: strBuffer) {
+                env->ReleaseStringUTFChars(obj.j_str, obj.c_str);
+            }
+            strBuffer.clear();
+        }
+    }
+
 };
 
 } // namespace fmi4j
