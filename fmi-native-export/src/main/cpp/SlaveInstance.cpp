@@ -28,7 +28,7 @@ SlaveInstance::SlaveInstance(
     std::ifstream infile(resources_ + "/mainclass.txt");
     std::getline(infile, slaveName_);
 
-    std::string classpath("file:/" + resources_ + "/model.jar");
+    std::string classpath("file:///" + resources_ + "/model.jar");
     classLoader_ = env->NewGlobalRef(create_classloader(env, classpath));
 
     jclass slaveCls = FindClass(env, classLoader_, slaveName_);
@@ -337,7 +337,6 @@ void SlaveInstance::GetString(const cppfmu::FMIValueReference* vr, std::size_t n
 
         free(vrArrayElements);
     });
-
 }
 
 void SlaveInstance::onClose()
@@ -381,10 +380,21 @@ cppfmu::UniquePtr<cppfmu::SlaveInstance> CppfmuInstantiateSlave(
     const cppfmu::Logger& logger)
 {
     std::string resources(fmuResourceLocation);
-    auto find = resources.find("file:///");
+    auto find = resources.find("file://");
+
+
+    std::cout << "resources= " << resources << std::endl;
+
     if (find != std::string::npos) {
+#ifdef _MSC_VER
         resources.replace(find, 8, "");
+#else
+        resources.replace(find, 7, "");
+#endif
     }
+
+
+    std::cout << "resources= " << resources << std::endl;
 
     JNIEnv* env;
     JavaVM* jvm;
