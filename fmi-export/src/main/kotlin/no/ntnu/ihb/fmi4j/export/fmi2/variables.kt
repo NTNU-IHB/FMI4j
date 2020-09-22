@@ -44,9 +44,15 @@ sealed class Variable<E>(
 ) {
 
     var causality: Fmi2Causality? = null
+        private set
     var variability: Fmi2Variability? = null
+        private set
     var initial: Fmi2Initial? = null
+        private set
     var description: String? = null
+        private set
+
+    var __overrideValueReference: Long? = null
 
     fun description(description: String?): E {
         this.description = description

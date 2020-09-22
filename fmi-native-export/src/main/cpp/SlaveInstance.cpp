@@ -6,6 +6,7 @@
 #include <iostream>
 #include <jni.h>
 #include <string>
+#include <utility>
 
 namespace fmi4j
 {
@@ -17,10 +18,10 @@ namespace fmi4j
 
 SlaveInstance::SlaveInstance(
     JNIEnv* env,
-    const std::string& instanceName,
+    std::string instanceName,
     const std::string& resources)
     : resources_(resources)
-    , instanceName_(instanceName)
+    , instanceName_(std::move(instanceName))
 {
     env->GetJavaVM(&jvm_);
 
@@ -30,7 +31,7 @@ SlaveInstance::SlaveInstance(
     std::string classpath = "file:/" + resources + "/model.jar";
     classLoader_ = env->NewGlobalRef(create_classloader(env, classpath));
 
-    jclass slaveCls = FindClass(env, classLoader_, slaveName_.c_str());
+    jclass slaveCls = FindClass(env, classLoader_, slaveName_);
     if (slaveCls == nullptr) {
         std::string msg = "Unable to locate slave class '" + slaveName_ + "'!";
         throw cppfmu::FatalError(msg.c_str());
@@ -71,7 +72,7 @@ void SlaveInstance::initialize()
 
         env->DeleteGlobalRef(slaveInstance_);
 
-        jclass slaveCls = FindClass(env, classLoader_, slaveName_.c_str());
+        jclass slaveCls = FindClass(env, classLoader_, slaveName_);
         if (slaveCls == nullptr) {
             std::string msg = "Unable to locate slave class '" + slaveName_ + "'!";
             throw cppfmu::FatalError(msg.c_str());
@@ -369,7 +370,7 @@ cppfmu::UniquePtr<cppfmu::SlaveInstance> CppfmuInstantiateSlave(
     cppfmu::FMIString fmuResourceLocation,
     cppfmu::FMIString,
     cppfmu::FMIReal,
-    cppfmu::FMIBoolean visible,
+    cppfmu::FMIBoolean,
     cppfmu::FMIBoolean,
     cppfmu::Memory memory,
     const cppfmu::Logger& logger)

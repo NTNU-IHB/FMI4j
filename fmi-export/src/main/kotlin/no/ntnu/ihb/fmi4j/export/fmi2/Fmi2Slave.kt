@@ -156,7 +156,7 @@ abstract class Fmi2Slave(
 
     protected fun register(v: IntVariable) {
 
-        val vr = intAccessors.size.toLong()
+        val vr = v.__overrideValueReference ?: intAccessors.size.toLong()
         intAccessors.add(v)
 
         internalRegister(v, vr).apply {
@@ -179,7 +179,7 @@ abstract class Fmi2Slave(
 
     protected fun register(v: RealVariable) {
 
-        val vr = realAccessors.size.toLong()
+        val vr = v.__overrideValueReference ?: realAccessors.size.toLong()
         realAccessors.add(v)
 
         internalRegister(v, vr).apply {
@@ -203,7 +203,7 @@ abstract class Fmi2Slave(
 
     protected fun register(v: BooleanVariable) {
 
-        val vr = boolAccessors.size.toLong()
+        val vr = v.__overrideValueReference ?: boolAccessors.size.toLong()
         boolAccessors.add(v)
 
         internalRegister(v, vr).apply {
@@ -223,7 +223,7 @@ abstract class Fmi2Slave(
 
     protected fun register(v: StringVariable) {
 
-        val vr = stringAccessors.size.toLong()
+        val vr = v.__overrideValueReference ?: stringAccessors.size.toLong()
         stringAccessors.add(v)
 
         internalRegister(v, vr).apply {
