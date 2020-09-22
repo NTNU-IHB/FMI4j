@@ -6,6 +6,7 @@ import no.ntnu.ihb.fmi4j.export.RealVector
 import no.ntnu.ihb.fmi4j.export.StringVector
 import no.ntnu.ihb.fmi4j.modeldescription.fmi2.Fmi2Causality
 import no.ntnu.ihb.fmi4j.modeldescription.fmi2.Fmi2Initial
+import no.ntnu.ihb.fmi4j.modeldescription.fmi2.Fmi2ScalarVariable
 import no.ntnu.ihb.fmi4j.modeldescription.fmi2.Fmi2Variability
 
 
@@ -17,6 +18,26 @@ fun interface Setter<E> {
     fun set(value: E)
 }
 
+enum class Fmi2VariableType {
+    INTEGER,
+    REAL,
+    BOOLEAN,
+    STRING,
+    ENUMERATION
+}
+
+internal fun Fmi2ScalarVariable.type(): Fmi2VariableType {
+    return when {
+        integer != null -> Fmi2VariableType.INTEGER
+        real != null -> Fmi2VariableType.REAL
+        boolean != null -> Fmi2VariableType.BOOLEAN
+        string != null -> Fmi2VariableType.STRING
+        enumeration != null -> Fmi2VariableType.ENUMERATION
+        else -> throw IllegalStateException()
+    }
+}
+
+
 @Suppress("UNCHECKED_CAST")
 sealed class Variable<E>(
         val name: String
@@ -25,6 +46,12 @@ sealed class Variable<E>(
     var causality: Fmi2Causality? = null
     var variability: Fmi2Variability? = null
     var initial: Fmi2Initial? = null
+    var description: String? = null
+
+    fun description(description: String?): E {
+        this.description = description
+        return this as E
+    }
 
     fun causality(causality: Fmi2Causality?): E {
         this.causality = causality
@@ -83,14 +110,18 @@ class RealVariable(
         val getter: Getter<Double>
 ) : Variable<RealVariable>(name) {
 
-    var setter: Setter<Double>? = null
-        private set
-
     var min: Double? = null
         private set
 
     var max: Double? = null
         private set
+
+    var start: Double? = null
+        private set
+
+    var setter: Setter<Double>? = null
+        private set
+
 
     fun min(value: Double?) = apply {
         this.min = value
@@ -102,6 +133,10 @@ class RealVariable(
 
     fun setter(setter: Setter<Double>) = apply {
         this.setter = setter
+    }
+
+    fun start(value: Double?) = apply {
+        this.start = start
     }
 
 }

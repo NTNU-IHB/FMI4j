@@ -178,6 +178,8 @@ abstract class Fmi2Slave(
             real = Fmi2ScalarVariable.Real().also { type ->
                 if (automaticallyAssignStartValues && requiresStart()) {
                     type.start = getReal(longArrayOf(vr)).first()
+                } else {
+                    type.start = v.start
                 }
             }
         }
