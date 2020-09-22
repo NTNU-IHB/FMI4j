@@ -21,32 +21,23 @@ public class JavaTestFmi2Slave extends Fmi2Slave {
     protected double param = 1.0;
     protected int intOut = 1;
     protected double speed = 99.0;
-    protected String testContent = "";
+    protected String testContent = "per";
 
     public JavaTestFmi2Slave(@NotNull Map<String, Object> args) {
         super(args);
 
         File testFile = getFmuResource("TestFile.txt");
-        try {
-            testContent = Files.readAllLines(testFile.toPath()).get(0);
-        } catch (IOException e) {
+       // try {
+            testContent = testFile.getAbsolutePath();
+       /* } catch (IOException e) {
             testContent = "fail1";
             e.printStackTrace();
-        }
+        }*/
 
     }
 
     @Override
     protected void registerVariables() {
-
-        File testFile = getFmuResource("TestFile.txt");
-        try {
-            testContent = Files.readAllLines(testFile.toPath()).get(0);
-        } catch (IOException e) {
-            testContent = "fail2";
-            e.printStackTrace();
-        }
-
 
         register(real("realOut", () -> realOut)
                 .causality(Fmi2Causality.output));
