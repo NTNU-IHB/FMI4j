@@ -10,7 +10,6 @@
 namespace fmi4j
 {
 
-
 struct jstring_ref {
     const char* c_str;
     jstring j_str;
@@ -20,7 +19,7 @@ class SlaveInstance : public cppfmu::SlaveInstance
 {
 
 public:
-    SlaveInstance(JNIEnv* env, std::string instanceName, const std::string& resources);
+    SlaveInstance(JNIEnv* env, std::string instanceName, std::string resources);
 
     void SetupExperiment(cppfmu::FMIBoolean toleranceDefined, cppfmu::FMIReal tolerance, cppfmu::FMIReal tStart, cppfmu::FMIBoolean stopTimeDefined, cppfmu::FMIReal tStop) override;
     void EnterInitializationMode() override;
@@ -43,10 +42,10 @@ public:
 
 
 private:
-    JavaVM* jvm_;
+    JavaVM* jvm_{};
 
     jobject classLoader_;
-    jobject slaveInstance_;
+    jobject slaveInstance_{};
 
     std::string slaveName_;
     const std::string resources_;

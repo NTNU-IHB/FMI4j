@@ -19,16 +19,16 @@ namespace fmi4j
 SlaveInstance::SlaveInstance(
     JNIEnv* env,
     std::string instanceName,
-    const std::string& resources)
-    : resources_(resources)
+    std::string resources)
+    : resources_(std::move(resources))
     , instanceName_(std::move(instanceName))
 {
     env->GetJavaVM(&jvm_);
 
-    std::ifstream infile(resources + "/mainclass.txt");
+    std::ifstream infile(resources_ + "/mainclass.txt");
     std::getline(infile, slaveName_);
 
-    std::string classpath = "file:/" + resources + "/model.jar";
+    std::string classpath("file:/" + resources_ + "/model.jar");
     classLoader_ = env->NewGlobalRef(create_classloader(env, classpath));
 
     jclass slaveCls = FindClass(env, classLoader_, slaveName_);
@@ -380,7 +380,7 @@ cppfmu::UniquePtr<cppfmu::SlaveInstance> CppfmuInstantiateSlave(
     cppfmu::Memory memory,
     const cppfmu::Logger& logger)
 {
-    std::string resources = std::string(fmuResourceLocation);
+    std::string resources(fmuResourceLocation);
     auto find = resources.find("file:///");
     if (find != std::string::npos) {
         resources.replace(find, 8, "");

@@ -57,25 +57,39 @@ jmethodID GetStaticMethodID(JNIEnv* env, jclass cls, const char* name, const cha
 
 jclass FindClass(JNIEnv* env, jobject classLoaderInstance, const std::string& name)
 {
+    const char* cName = name.c_str();
+    jstring jName = env->NewStringUTF(cName);
+
     jclass URLClassLoader = env->FindClass("java/net/URLClassLoader");
     jmethodID loadClass = GetMethodID(env, URLClassLoader, "loadClass", "(Ljava/lang/String;)Ljava/lang/Class;");
-    auto cls = reinterpret_cast<jclass>(env->CallObjectMethod(classLoaderInstance, loadClass, env->NewStringUTF(name.c_str())));
+
+    auto cls = reinterpret_cast<jclass>(env->CallObjectMethod(classLoaderInstance, loadClass, jName));
     if (cls == nullptr) {
         std::string msg = "[FMI4j native] Unable to find class '" + name + "'!";
         throw cppfmu::FatalError(msg.c_str());
     }
+
+    env->DeleteLocalRef(jName);
+
     return cls;
 }
 
 jobject create_classloader(JNIEnv* env, const std::string& classpath)
 {
+    const char* cClasspath = classpath.c_str();
+    jstring jClasspath =  env->NewStringUTF(cClasspath);
+
     jclass classLoaderCls = env->FindClass("java/net/URLClassLoader");
     jmethodID classLoaderCtor = GetMethodID(env, classLoaderCls, "<init>", "([Ljava/net/URL;)V");
 
     jclass urlCls = env->FindClass("java/net/URL");
     jmethodID urlCtor = GetMethodID(env, urlCls, "<init>", "(Ljava/lang/String;)V");
-    jobject urlInstance = env->NewObject(urlCls, urlCtor, env->NewStringUTF(classpath.c_str()));
+    jobject urlInstance = env->NewObject(urlCls, urlCtor, jClasspath);
     jobjectArray urls = env->NewObjectArray(1, urlCls, urlInstance);
+
+    env->DeleteLocalRef(jClasspath);
+
+    std::cout << "[FMI4j native] Created ClassLoader from path: '" << classpath << "'" << std::endl;
 
     return env->NewObject(classLoaderCls, classLoaderCtor, urls);
 }
@@ -103,7 +117,7 @@ JNIEnv* get_or_create_jvm(JavaVM** jvm)
     if (rc == JNI_OK) {
         std::cout << "[FMI4j native] Created a new JVM." << std::endl;
     } else {
-        std::cout << "[FMI4j native] Unable to Launch JVM: " << rc << std::endl;
+        std::cout << "[FMI4j native] Unable to launch JVM: " << rc << std::endl;
     }
     return env;
 }
