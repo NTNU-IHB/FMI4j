@@ -37,6 +37,15 @@ public class JavaTestFmi2Slave extends Fmi2Slave {
 
     @Override
     protected void registerVariables() {
+
+        File testFile = getFmuResource("TestFile.txt");
+        try {
+            testContent = Files.readAllLines(testFile.toPath()).get(0);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
         register(real("realOut", () -> realOut)
                 .causality(Fmi2Causality.output));
         register(real("param", () -> param)
