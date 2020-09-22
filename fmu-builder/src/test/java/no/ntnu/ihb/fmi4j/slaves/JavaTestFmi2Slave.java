@@ -30,6 +30,7 @@ public class JavaTestFmi2Slave extends Fmi2Slave {
         try {
             testContent = Files.readAllLines(testFile.toPath()).get(0);
         } catch (IOException e) {
+            testContent = "fail1";
             e.printStackTrace();
         }
 
@@ -42,6 +43,7 @@ public class JavaTestFmi2Slave extends Fmi2Slave {
         try {
             testContent = Files.readAllLines(testFile.toPath()).get(0);
         } catch (IOException e) {
+            testContent = "fail2";
             e.printStackTrace();
         }
 
