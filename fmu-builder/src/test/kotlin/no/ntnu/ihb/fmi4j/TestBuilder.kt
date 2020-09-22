@@ -8,7 +8,6 @@ import org.junit.jupiter.api.condition.OS
 import java.io.File
 import java.io.FileFilter
 
-@EnabledOnOs(OS.WINDOWS)
 internal class TestBuilder {
 
     private companion object {
