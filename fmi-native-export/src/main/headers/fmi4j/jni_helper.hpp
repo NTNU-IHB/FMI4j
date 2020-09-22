@@ -89,8 +89,6 @@ jobject create_classloader(JNIEnv* env, const std::string& classpath)
 
     env->DeleteLocalRef(jClasspath);
 
-    std::cout << "[FMI4j native] Created ClassLoader from path: '" << classpath << "'" << std::endl;
-
     return env->NewObject(classLoaderCls, classLoaderCtor, urls);
 }
 
