@@ -11,7 +11,7 @@ import javax.xml.bind.JAXB
 
 abstract class Fmi2Slave(
         args: Map<String, Any>
-): Closeable {
+) : Closeable {
 
     val modelDescription = Fmi2ModelDescription()
     val instanceName: String = args["instanceName"] as? String
@@ -123,17 +123,6 @@ abstract class Fmi2Slave(
                 variability == Fmi2Variability.constant
     }
 
-    private fun internalRegister(v: Variable<*>, vr: Long): Fmi2ScalarVariable {
-        return Fmi2ScalarVariable().also { s ->
-            s.name = v.name
-            s.valueReference = vr
-            v.causality?.also { s.causality = it }
-            v.variability?.also { s.variability = it }
-            v.initial?.also { if (v.initial != Fmi2Initial.undefined) s.initial = it }
-            modelDescription.modelVariables.scalarVariable.add(s)
-        }
-    }
-
     protected fun integer(name: String, getter: Getter<Int>) = IntVariable(name, getter)
     protected fun integer(name: String, values: IntVector) = IntVariables(name, values)
     protected fun integer(name: String, values: IntArray) = IntVariables(name, IntVectorArray(values))
@@ -150,6 +139,21 @@ abstract class Fmi2Slave(
     protected fun string(name: String, values: StringVector) = StringVariables(name, values)
     protected fun string(name: String, values: Array<String>) = StringVariables(name, StringVectorArray(values))
 
+
+    private fun internalRegister(v: Variable<*>, vr: Long): Fmi2ScalarVariable {
+        return Fmi2ScalarVariable().also { s ->
+            s.name = v.name
+            s.valueReference = vr
+            s.description = v.description
+
+            v.causality?.also { s.causality = it }
+            v.variability?.also { s.variability = it }
+            v.initial?.also { if (v.initial != Fmi2Initial.undefined) s.initial = it }
+
+            modelDescription.modelVariables.scalarVariable.add(s)
+        }
+    }
+
     protected fun register(v: IntVariable) {
 
         val vr = intAccessors.size.toLong()
@@ -159,7 +163,11 @@ abstract class Fmi2Slave(
             integer = Fmi2ScalarVariable.Integer().also { type ->
                 if (automaticallyAssignStartValues && requiresStart()) {
                     type.start = getInteger(longArrayOf(vr)).first()
+                } else {
+                    type.start = v.start
                 }
+                type.min = v.min
+                type.max = v.max
             }
         }
 
@@ -181,6 +189,10 @@ abstract class Fmi2Slave(
                 } else {
                     type.start = v.start
                 }
+                type.min = v.min
+                type.max = v.max
+                type.unit = v.unit
+                type.nominal = v.nominal
             }
         }
     }
@@ -198,6 +210,8 @@ abstract class Fmi2Slave(
             boolean = Fmi2ScalarVariable.Boolean().also { type ->
                 if (automaticallyAssignStartValues && requiresStart()) {
                     type.isStart = getBoolean(longArrayOf(vr)).first()
+                } else {
+                    type.isStart = v.start
                 }
             }
         }
@@ -216,6 +230,8 @@ abstract class Fmi2Slave(
             string = Fmi2ScalarVariable.String().also { type ->
                 if (automaticallyAssignStartValues && requiresStart()) {
                     type.start = getString(longArrayOf(vr)).first()
+                } else {
+                    type.start = v.start
                 }
             }
         }
@@ -280,8 +296,8 @@ abstract class Fmi2Slave(
             if (outputs.isNotEmpty()) {
                 ms.outputs = Fmi2VariableDependency()
                 outputs.forEach {
-                    ms.outputs.unknown.add(Fmi2VariableDependency.Unknown().also {
-                        u -> u.index = it + 1
+                    ms.outputs.unknown.add(Fmi2VariableDependency.Unknown().also { u ->
+                        u.index = it + 1
                     })
                 }
             }

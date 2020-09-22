@@ -75,6 +75,28 @@ class IntVariable(
         val getter: Getter<Int>
 ) : Variable<IntVariable>(name) {
 
+    var min: Int? = null
+        private set
+
+    var max: Int? = null
+        private set
+
+    var start: Int? = null
+        private set
+
+
+    fun min(value: Int?) = apply {
+        this.min = value
+    }
+
+    fun max(value: Int?) = apply {
+        this.max = value
+    }
+
+    fun start(value: Int?) = apply {
+        this.start = value
+    }
+
     var setter: Setter<Int>? = null
         private set
 
@@ -91,7 +113,7 @@ class IntVariables(
     internal fun build(): List<IntVariable> {
 
         return IntRange(0, values.size - 1).map { i ->
-            IntVariable("$name[$i]", {values[i]}).also { v ->
+            IntVariable("$name[$i]", { values[i] }).also { v ->
                 v.causality(causality)
                 v.variability(variability)
                 v.initial(initial)
@@ -116,8 +138,13 @@ class RealVariable(
     var max: Double? = null
         private set
 
+    var nominal: Double? = null
+        private set
+
     var start: Double? = null
         private set
+
+    var unit: String? = null
 
     var setter: Setter<Double>? = null
         private set
@@ -128,16 +155,25 @@ class RealVariable(
     }
 
     fun max(value: Double?) = apply {
-        this.min = value
+        this.max = value
+    }
+
+    fun nominal(value: Double?) = apply {
+        this.nominal = value
+    }
+
+    fun unit(value: String?) = apply {
+        this.unit = value
+    }
+
+    fun start(value: Double?) = apply {
+        this.start = value
     }
 
     fun setter(setter: Setter<Double>) = apply {
         this.setter = setter
     }
 
-    fun start(value: Double?) = apply {
-        this.start = start
-    }
 
 }
 
@@ -157,13 +193,13 @@ class RealVariables(
     }
 
     fun max(value: Double?) = apply {
-        this.min = value
+        this.max = value
     }
 
     internal fun build(): List<RealVariable> {
 
         return IntRange(0, values.size - 1).map { i ->
-            RealVariable("$name[$i]", {values[i]}).also { v ->
+            RealVariable("$name[$i]", { values[i] }).also { v ->
                 v.causality(causality)
                 v.variability(variability)
                 v.initial(initial)
@@ -181,6 +217,13 @@ class BooleanVariable(
         name: String,
         val getter: Getter<Boolean>
 ) : Variable<BooleanVariable>(name) {
+
+    var start: Boolean? = null
+        private set
+
+    fun start(value: Boolean?) = apply {
+        this.start = value
+    }
 
     var setter: Setter<Boolean>? = null
         private set
@@ -218,6 +261,13 @@ class StringVariable(
         val getter: Getter<String>
 ) : Variable<StringVariable>(name) {
 
+    var start: String? = null
+        private set
+
+    fun start(value: String?) = apply {
+        this.start = value
+    }
+
     var setter: Setter<String>? = null
         private set
 
@@ -235,7 +285,7 @@ class StringVariables(
     internal fun build(): List<StringVariable> {
 
         return IntRange(0, values.size - 1).map { i ->
-            StringVariable("$name[$i]") {values[i]}.also { v ->
+            StringVariable("$name[$i]") { values[i] }.also { v ->
                 v.causality(causality)
                 v.variability(variability)
                 v.initial(initial)
