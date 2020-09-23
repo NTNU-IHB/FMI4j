@@ -20,13 +20,13 @@ class JavaTestingFmi2Slave extends Fmi2Slave {
     private static final Logger LOG = Logger.getLogger(JavaTestingFmi2Slave.class.getName());
 
     protected double realIn = 2.0;
-    protected double[] realsParams = {50.0, 200.0};
-    protected String[] stringParams = {"Hello", "world!"};
+    protected final double[] realsParams = {50.0, 200.0};
+    protected final String[] stringParams = {"Hello", "world!"};
     protected final Vector3 vector3 = new Vector3(1, 2, 3);
     protected final Container container = new Container();
 
     private double aParameter = 123;
-    private int someParameter = 30;
+    private final int someParameter = 30;
 
     public JavaTestingFmi2Slave(@NotNull Map<String, Object> args) {
         super(args);
@@ -34,6 +34,7 @@ class JavaTestingFmi2Slave extends Fmi2Slave {
 
     @Override
     protected void registerVariables() {
+
         register(real("realIn", () -> realIn)
                 .causality(Fmi2Causality.input)
                 .setter((value) -> realIn = value));

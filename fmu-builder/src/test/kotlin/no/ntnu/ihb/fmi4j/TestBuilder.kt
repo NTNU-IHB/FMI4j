@@ -8,21 +8,28 @@ import org.junit.jupiter.api.condition.OS
 import java.io.File
 import java.io.FileFilter
 
-@EnabledOnOs(OS.WINDOWS)
 internal class TestBuilder {
 
     private companion object {
         private val group = "no.ntnu.ihb.fmi4j.slaves"
-        private val version = File("../VERSION").readLines()[0]
+        private val version = File("../VERSION").readLines().first()
         private val dest = File("build/generated").absolutePath
-        private val jar = File("build/libs").listFiles(FileFilter {
+        private val jar = File("../fmu-slaves/build/libs").listFiles(FileFilter {
             it.name.trim() == "fmu-slaves-$version.jar"
-        })!![0].absolutePath
+        })!!.first().absolutePath
     }
 
     @Test
     fun testJavaClass() {
-        FmuBuilder.main(arrayOf("-f", jar, "-m", "$group.JavaTestFmi2Slave", "-d", dest))
+
+        val testFile = File(javaClass.classLoader.getResource("TestFile.txt")!!.file)
+
+        FmuBuilder.main(arrayOf(
+                "-m", "$group.JavaTestFmi2Slave",
+                "-f", jar,
+                "-d", dest,
+                "-r", testFile.absolutePath))
+
         for (i in 0..2) {
 
             val fmuFile = File(dest, "Test.fmu")
@@ -39,8 +46,12 @@ internal class TestBuilder {
                     Assertions.assertTrue(slave.doStep(dt))
                     Assertions.assertEquals(2.0 + dt, slave.readReal("realOut").value)
                     Assertions.assertEquals(99.0, slave.readReal("speed").value)
+
                     slave.reset()
+
                     Assertions.assertEquals(2.0, slave.readReal("realOut").value)
+                    Assertions.assertEquals("123", slave.readString(0L).value)
+
                     slave.close()
 
                 }
@@ -51,7 +62,10 @@ internal class TestBuilder {
 
     @Test
     fun testKotlinClass() {
-        FmuBuilder.main(arrayOf("-f", jar, "-m", "$group.KotlinTestFmi2Slave", "-d", dest))
+        FmuBuilder.main(arrayOf(
+                "-m", "$group.KotlinTestFmi2Slave",
+                "-f", jar,
+                "-d", dest))
 
         val fmuFile = File(dest, "KotlinTestFmi2Slave.fmu")
         Assertions.assertTrue(fmuFile.exists())

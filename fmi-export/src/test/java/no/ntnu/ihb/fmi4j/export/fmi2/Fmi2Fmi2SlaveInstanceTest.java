@@ -22,16 +22,16 @@ class Fmi2Fmi2SlaveInstanceTest {
 
     @Test
     void testReal() {
-        long vr = slave.getValueReference("realIn");
-        Assertions.assertEquals(slave.realIn, slave.getReal(new long[]{vr}[0]));
+        long[] vr = new long[]{slave.getValueRef("realIn")};
+        Assertions.assertEquals(slave.realIn, slave.getReal(vr)[0]);
         double newValue = 10;
-        slave.setReal(new long[]{vr}, new double[]{newValue});
-        Assertions.assertEquals(newValue, slave.getReal(new long[]{vr}[0]));
+        slave.setReal(vr, new double[]{newValue});
+        Assertions.assertEquals(newValue, slave.getReal(vr)[0]);
     }
 
     @Test
     void testVector() {
-        long startIndex = slave.getValueReference("vector3[0]");
+        long startIndex = slave.getValueRef("vector3[0]");
         long[] vr = new long[]{startIndex, startIndex + 1, startIndex + 2};
 
         double[] write = {1, 5, 99};
@@ -41,34 +41,34 @@ class Fmi2Fmi2SlaveInstanceTest {
 
     @Test
     void testContainer() {
-        long vr = slave.getValueReference("container.speed");
+        long[] vr = new long[]{slave.getValueRef("container.speed")};
         double[] write = new double[]{123.0};
-        slave.setReal(new long[]{vr}, write);
-        Assertions.assertEquals(write[0], slave.getReal(vr));
+        slave.setReal(vr, write);
+        Assertions.assertEquals(write[0], slave.getReal(vr)[0]);
     }
 
     @Test
     void testMethodVariable1() {
-        long vr = slave.getValueReference("someParameter");
+        long[] vr = new long[]{slave.getValueRef("someParameter")};
         for (int i = 0; i < 10; i++) {
-            Assertions.assertEquals(30, slave.getInteger(vr));
+            Assertions.assertEquals(30, slave.getInteger(vr)[0]);
         }
     }
 
     @Test
     void testMethodVariable2() {
-        long vr = slave.getValueReference("aParameter");
-        Assertions.assertEquals(123, slave.getReal(vr));
+        long[] vr = new long[]{slave.getValueRef("aParameter")};
+        Assertions.assertEquals(123, slave.getReal(vr)[0]);
         double[] write = new double[]{-99};
-        slave.setReal(new long[]{vr}, write);
+        slave.setReal(vr, write);
         for (int i = 0; i < 10; i++) {
-            Assertions.assertEquals(write[0], slave.getReal(vr));
+            Assertions.assertEquals(write[0], slave.getReal(vr)[0]);
         }
     }
 
     @Test
     void testMethodVariable3() {
-        long startIndex = slave.getValueReference("vector3[0]");
+        long startIndex = slave.getValueRef("vector3[0]");
         long[] vr = new long[]{startIndex, startIndex + 1, startIndex + 2};
         Assertions.assertArrayEquals(new double[]{1, 2, 3}, slave.getReal(vr));
 

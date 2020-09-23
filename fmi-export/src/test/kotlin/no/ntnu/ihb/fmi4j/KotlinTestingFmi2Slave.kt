@@ -15,8 +15,8 @@ open class KotlinTestingFmi2Slave(
 
     override fun registerVariables() {
 
-        register(string("str") { str })
-
+        register(string("str") { str }
+                .causality(Fmi2Causality.output))
 
         register(real("start") { start }
                 .causality(Fmi2Causality.input))
@@ -26,7 +26,7 @@ open class KotlinTestingFmi2Slave(
         register(integer("container.container.value") { container.container.value })
     }
 
-    override fun setupExperiment(startTime: Double) {
+    override fun setupExperiment(startTime: Double, stopTime: Double, tolerance: Double) {
         str = startTime.toString()
     }
 
