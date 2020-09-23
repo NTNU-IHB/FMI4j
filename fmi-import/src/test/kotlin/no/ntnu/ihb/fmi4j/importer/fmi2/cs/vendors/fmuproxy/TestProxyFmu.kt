@@ -3,10 +3,13 @@ package no.ntnu.ihb.fmi4j.importer.fmi2.cs.vendors.fmuproxy
 import no.ntnu.ihb.fmi4j.TestFMUs
 import no.ntnu.ihb.fmi4j.importer.fmi2.Fmu
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.condition.EnabledOnOs
+import org.junit.jupiter.api.condition.OS
 
 internal class TestProxyFmu {
 
     @Test
+    @EnabledOnOs(OS.WINDOWS)
     fun testProxyFmu() {
 
         val fmuFile = TestFMUs.get("2.0/cs/fmuproxy/identity-proxy.fmu")
