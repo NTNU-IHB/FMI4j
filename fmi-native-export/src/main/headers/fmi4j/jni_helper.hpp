@@ -97,7 +97,7 @@ jobject create_classloader(JNIEnv* env, const std::string& classpath)
     jobject urlInstance = env->NewObject(urlCls, urlCtor, jClasspath);
     jobjectArray urls = env->NewObjectArray(1, urlCls, urlInstance);
 
-    //env->DeleteLocalRef(jClasspath);
+    env->DeleteLocalRef(jClasspath);
 
     return env->NewObject(classLoaderCls, classLoaderCtor, urls);
 }
