@@ -88,7 +88,7 @@ jobject create_classloader(JNIEnv* env, const std::string& classpath)
 
     std::string path = classpath;
 #ifdef __linux__
-    path.replace(5, 6, "");
+    path.replace(5, 5, "");
 #endif
 
     std::cout << "[FMI native] Loading ClassLoader with classpath: " << path << std::endl;
