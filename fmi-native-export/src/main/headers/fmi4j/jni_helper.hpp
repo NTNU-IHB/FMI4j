@@ -87,14 +87,13 @@ jobject create_classloader(JNIEnv* env, const std::string& classpath)
 {
 
     std::string path = classpath;
-#ifdef __linux__
-    path.replace(0, 7, "file:/");
-#endif
+    if (classpath.rfind('/', 0) == 0) {
+        path.erase(0, 1);
+    }
 
     std::cout << "[FMI native] Loading ClassLoader with classpath: " << path << std::endl;
 
     const char* cClasspath = path.c_str();
-
     jstring jClasspath = env->NewStringUTF(cClasspath);
 
     jclass classLoaderCls = env->FindClass("java/net/URLClassLoader");
