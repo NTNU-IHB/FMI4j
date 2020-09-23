@@ -83,6 +83,9 @@ jclass FindClass(JNIEnv* env, jobject classLoaderInstance, const std::string& na
 
 jobject create_classloader(JNIEnv* env, const std::string& classpath)
 {
+
+    std::cout << "[FMI native] Loading ClassLoader with classpath: " << classpath << std::endl;
+
     const char* cClasspath = classpath.c_str();
     jstring jClasspath =  env->NewStringUTF(cClasspath);
 
@@ -94,7 +97,7 @@ jobject create_classloader(JNIEnv* env, const std::string& classpath)
     jobject urlInstance = env->NewObject(urlCls, urlCtor, jClasspath);
     jobjectArray urls = env->NewObjectArray(1, urlCls, urlInstance);
 
-    env->DeleteLocalRef(jClasspath);
+    //env->DeleteLocalRef(jClasspath);
 
     return env->NewObject(classLoaderCls, classLoaderCtor, urls);
 }
