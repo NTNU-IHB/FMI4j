@@ -2,6 +2,8 @@
 #ifndef FMI4J_NATIVE_JNI_HELPER_HPP
 #define FMI4J_NATIVE_JNI_HELPER_HPP
 
+#include "cppfmu/cppfmu_common.hpp"
+
 #include <iostream>
 #include <jni.h>
 
@@ -84,10 +86,17 @@ jclass FindClass(JNIEnv* env, jobject classLoaderInstance, const std::string& na
 jobject create_classloader(JNIEnv* env, const std::string& classpath)
 {
 
-    std::cout << "[FMI native] Loading ClassLoader with classpath: " << classpath << std::endl;
+    std::string path = classpath;
+#ifdef __linux__
+    path.replace(5, 6, "")
+#endif
 
-    const char* cClasspath = classpath.c_str();
-    jstring jClasspath =  env->NewStringUTF(cClasspath);
+            std::cout
+        << "[FMI native] Loading ClassLoader with classpath: " << path << std::endl;
+
+    const char* cClasspath = path.c_str();
+
+    jstring jClasspath = env->NewStringUTF(cClasspath);
 
     jclass classLoaderCls = env->FindClass("java/net/URLClassLoader");
     jmethodID classLoaderCtor = GetMethodID(env, classLoaderCls, "<init>", "([Ljava/net/URL;)V");
