@@ -86,14 +86,14 @@ jclass FindClass(JNIEnv* env, jobject classLoaderInstance, const std::string& na
 jobject create_classloader(JNIEnv* env, const std::string& classpath)
 {
 
-    /*    std::string path = classpath;
+    std::string path = classpath;
 #ifdef __linux__
-    path.replace(5, 5, "//");
-#endif*/
+    path.replace(0, 6, "file:/");
+#endif
 
-    std::cout << "[FMI native] Loading ClassLoader with classpath: " << classpath << std::endl;
+    std::cout << "[FMI native] Loading ClassLoader with classpath: " << path << std::endl;
 
-    const char* cClasspath = classpath.c_str();
+    const char* cClasspath = path.c_str();
 
     jstring jClasspath = env->NewStringUTF(cClasspath);
 
