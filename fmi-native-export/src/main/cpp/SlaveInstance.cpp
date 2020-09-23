@@ -28,7 +28,7 @@ SlaveInstance::SlaveInstance(
     std::ifstream infile(resources_ + "/mainclass.txt");
     std::getline(infile, slaveName_);
 
-    std::string classpath("file:/" + resources_ + "/model.jar");
+    std::string classpath(resources_ + "/model.jar");
     classLoader_ = env->NewGlobalRef(create_classloader(env, classpath));
 
     jclass slaveCls = FindClass(env, classLoader_, slaveName_);
