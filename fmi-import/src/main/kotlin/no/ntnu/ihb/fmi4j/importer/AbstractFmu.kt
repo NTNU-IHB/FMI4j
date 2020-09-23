@@ -177,7 +177,7 @@ abstract class AbstractFmu internal constructor(
             require(extension == FMU_EXTENSION) { "File '${file.absolutePath}' is not an FMU! Invalid extension found: .$extension" }
 
             if (!file.exists()) {
-                throw FileNotFoundException("No such file: '$file'!")
+                throw FileNotFoundException("No such file: '${file.absolutePath}'!")
             }
 
             return createTempDir(file.nameWithoutExtension).let { temp ->

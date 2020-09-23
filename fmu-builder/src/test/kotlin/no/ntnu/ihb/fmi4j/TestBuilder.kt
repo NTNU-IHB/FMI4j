@@ -3,8 +3,6 @@ package no.ntnu.ihb.fmi4j
 import no.ntnu.ihb.fmi4j.importer.fmi2.Fmu
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.condition.EnabledOnOs
-import org.junit.jupiter.api.condition.OS
 import java.io.File
 import java.io.FileFilter
 
@@ -12,11 +10,11 @@ internal class TestBuilder {
 
     private companion object {
         private val group = "no.ntnu.ihb.fmi4j.slaves"
-        private val version = File("../VERSION").readLines()[0]
+        private val version = File("../VERSION").readLines().first()
         private val dest = File("build/generated").absolutePath
-        private val jar = File("build/libs").listFiles(FileFilter {
+        private val jar = File("../fmu-slaves/build/libs").listFiles(FileFilter {
             it.name.trim() == "fmu-slaves-$version.jar"
-        })!![0].absolutePath
+        })!!.first().absolutePath
     }
 
     @Test
@@ -82,21 +80,6 @@ internal class TestBuilder {
                 Assertions.assertEquals(10.0, slave.readReal("speed").value)
             }
         }
-    }
-
-    @Test
-    fun testFmi4jFmu() {
-
-        val fmuFile = TestFMUs.get("2.0/cs/fmi4j/KotlinTestFmi2Slave.fmu")
-
-        Fmu.from(fmuFile).use { fmu ->
-            fmu.asCoSimulationFmu().newInstance().use { slave ->
-                slave.simpleSetup()
-                slave.doStep(0.1)
-                slave.terminate()
-            }
-        }
-
     }
 
 }

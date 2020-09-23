@@ -13,16 +13,7 @@ dependencies {
     implementation group: 'info.picocli', name: 'picocli', version: '4.5.0'
 
     testCompile project(':fmi-import')
-    testCompile project(':fmi-export')
-
-    testImplementation project(':test-fmus')
 
 }
 
-task testJar(type: Jar) {
-    classifier = null
-    archiveBaseName.set("fmu-slaves")
-    from sourceSets.test.output.classesDirs + configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } + configurations.testCompile.collect { it.isDirectory() ? it : zipTree(it) }
-}
-
-test.dependsOn(testJar)
+test.dependsOn ':fmu-slaves:shadowJar'
