@@ -88,9 +88,9 @@ jobject create_classloader(JNIEnv* env, const std::string& classpath)
 
     std::string path = classpath;
     if (classpath.rfind('/', 0) == 0) {
-        path.insert(0, "file:/");
-    } else {
         path.insert(0, "file:");
+    } else {
+        path.insert(0, "file:/");
     }
 
 
