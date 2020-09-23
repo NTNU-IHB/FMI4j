@@ -9,7 +9,6 @@ import org.junit.jupiter.api.condition.OS
 internal class TestFmi4jFmu {
 
     @Test
-    @EnabledOnOs(OS.WINDOWS)
     fun testFmi4jFmu() {
 
         val fmuFile = TestFMUs.get("2.0/cs/fmi4j/KotlinTestFmi2Slave.fmu")
