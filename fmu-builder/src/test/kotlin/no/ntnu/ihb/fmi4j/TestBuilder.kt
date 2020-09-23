@@ -84,4 +84,19 @@ internal class TestBuilder {
         }
     }
 
+    @Test
+    fun testFmi4jFmu() {
+
+        val fmuFile = TestFMUs.get("2.0/cs/fmi4j/KotlinTestFmi2Slave.fmu")
+
+        Fmu.from(fmuFile).use { fmu ->
+            fmu.asCoSimulationFmu().newInstance().use { slave ->
+                slave.simpleSetup()
+                slave.doStep(0.1)
+                slave.terminate()
+            }
+        }
+
+    }
+
 }

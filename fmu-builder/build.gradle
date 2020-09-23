@@ -15,6 +15,8 @@ dependencies {
     testCompile project(':fmi-import')
     testCompile project(':fmi-export')
 
+    testImplementation project(':test-fmus')
+
 }
 
 task testJar(type: Jar) {

@@ -12,6 +12,4 @@ apply from: rootProject.file("gradle/bintraypublish.gradle")
 dependencies {
     api project(':fmi-md')
     testImplementation project(':test-fmus')
-
-    testCompile project(':fmi-export')
 }
