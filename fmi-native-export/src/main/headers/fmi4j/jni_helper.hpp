@@ -64,6 +64,13 @@ jclass FindClass(JNIEnv* env, jobject classLoaderInstance, const std::string& na
     jmethodID loadClass = GetMethodID(env, URLClassLoader, "loadClass", "(Ljava/lang/String;Z)Ljava/lang/Class;");
 
     auto cls = reinterpret_cast<jclass>(env->CallObjectMethod(classLoaderInstance, loadClass, jName, true));
+
+    jboolean flag = env->ExceptionCheck();
+    if (flag) {
+        env->ExceptionDescribe();
+        env->ExceptionClear();
+    }
+
     if (cls == nullptr) {
         std::string msg = "[FMI4j native] Unable to find class '" + name + "'!";
         throw cppfmu::FatalError(msg.c_str());
