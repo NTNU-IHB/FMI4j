@@ -27,16 +27,6 @@ inline void jvm_invoke(JavaVM* jvm, const std::function<void(JNIEnv*)>& f)
     }
 }
 
-jfieldID GetFieldID(JNIEnv* env, jclass cls, const char* name, const char* sig)
-{
-    jfieldID id = env->GetFieldID(cls, name, sig);
-    if (id == nullptr) {
-        std::string msg = "[FMI4j native] Unable to locate method '" + std::string(name) + "'!";
-        throw cppfmu::FatalError(msg.c_str());
-    }
-    return id;
-}
-
 jmethodID GetMethodID(JNIEnv* env, jclass cls, const char* name, const char* sig)
 {
     jmethodID id = env->GetMethodID(cls, name, sig);
@@ -63,9 +53,9 @@ jclass FindClass(JNIEnv* env, jobject classLoaderInstance, const std::string& na
     jstring jName = env->NewStringUTF(cName);
 
     jclass URLClassLoader = env->FindClass("java/net/URLClassLoader");
-    jmethodID loadClass = GetMethodID(env, URLClassLoader, "loadClass", "(Ljava/lang/String;Z)Ljava/lang/Class;");
+    jmethodID loadClass = GetMethodID(env, URLClassLoader, "loadClass", "(Ljava/lang/String;)Ljava/lang/Class;");
 
-    auto cls = reinterpret_cast<jclass>(env->CallObjectMethod(classLoaderInstance, loadClass, jName, true));
+    auto cls = reinterpret_cast<jclass>(env->CallObjectMethod(classLoaderInstance, loadClass, jName));
 
     jboolean flag = env->ExceptionCheck();
     if (flag) {
@@ -85,16 +75,12 @@ jclass FindClass(JNIEnv* env, jobject classLoaderInstance, const std::string& na
 
 jobject create_classloader(JNIEnv* env, const std::string& classpath)
 {
-
     std::string path = classpath;
     if (classpath.rfind('/', 0) == 0) {
         path.insert(0, "file:");
     } else {
         path.insert(0, "file:/");
     }
-
-
-    std::cout << "[FMI native] Loading ClassLoader with classpath: " << path << std::endl;
 
     const char* cClasspath = path.c_str();
     jstring jClasspath = env->NewStringUTF(cClasspath);
