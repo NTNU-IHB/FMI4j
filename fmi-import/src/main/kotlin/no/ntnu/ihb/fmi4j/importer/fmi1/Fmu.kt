@@ -62,7 +62,7 @@ class Fmu internal constructor(
     }
 
     internal val fmuPath: String
-        get() = extractedFmu.toURI().toASCIIString()
+        get() = "file:///${extractedFmu.absolutePath.replace("\\", "/")}"
 
     override fun asCoSimulationFmu(): CoSimulationFmu {
         if (!supportsCoSimulation) {
