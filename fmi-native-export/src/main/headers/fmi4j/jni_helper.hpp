@@ -86,7 +86,7 @@ jobject create_classloader(JNIEnv* env, const std::string& classpath)
     jstring jClasspath = env->NewStringUTF(cClasspath);
 
     jclass classLoaderCls = env->FindClass("java/net/URLClassLoader");
-    jmethodID classLoaderCtor = GetMethodID(env, classLoaderCls, "<init>", "([Ljava/net/URL;)V");
+    jmethodID classLoaderCtor = GetMethodID(env, classLoaderCls, "<init>", "([Ljava/net/URL;Ljava/lang/ClassLoader;)V");
 
     jclass urlCls = env->FindClass("java/net/URL");
     jmethodID urlCtor = GetMethodID(env, urlCls, "<init>", "(Ljava/lang/String;)V");
@@ -95,7 +95,7 @@ jobject create_classloader(JNIEnv* env, const std::string& classpath)
 
     env->DeleteLocalRef(jClasspath);
 
-    return env->NewObject(classLoaderCls, classLoaderCtor, urls);
+    return env->NewObject(classLoaderCls, classLoaderCtor, urls, nullptr);
 }
 
 JNIEnv* get_or_create_jvm(JavaVM** jvm)

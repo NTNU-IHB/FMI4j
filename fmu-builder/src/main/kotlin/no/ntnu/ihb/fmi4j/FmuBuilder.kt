@@ -8,6 +8,8 @@ import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 import javax.xml.bind.JAXB
 
+private const val DUMMY_INSTANCE_NAME = "dummyInstance"
+
 class FmuBuilder(
         private val mainClass: String,
         private val jarFile: File,
@@ -22,7 +24,7 @@ class FmuBuilder(
 
         var tempResourcesDir: File? = null
 
-        val fmuArgs = mutableMapOf<String, Any>("instanceName" to "dummyInstance")
+        val fmuArgs = mutableMapOf<String, Any>("instanceName" to DUMMY_INSTANCE_NAME)
         if (resources != null) {
             tempResourcesDir = Files.createTempDirectory("fmu-resources").toFile()
             for (file in resources) {
@@ -35,7 +37,7 @@ class FmuBuilder(
             fmuArgs["resourceLocation"] = tempResourcesDir.absolutePath
         }
 
-        val classLoader = URLClassLoader(arrayOf(jarFile.toURI().toURL()))
+        val classLoader = URLClassLoader(arrayOf(jarFile.toURI().toURL()), null)
 
         val superClass = classLoader.loadClass("no.ntnu.ihb.fmi4j.export.fmi2.Fmi2Slave")
         val subClass = classLoader.loadClass(mainClass)
