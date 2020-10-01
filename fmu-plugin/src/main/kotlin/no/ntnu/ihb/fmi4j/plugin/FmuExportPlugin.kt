@@ -65,17 +65,18 @@ class FmuExportPlugin: Plugin<Project> {
         project.repositories.maven {
             it.url=URI("https://dl.bintray.com/ntnu-ihb/mvn")
         }
-        project.gradle.addListener(object: DependencyResolutionListener {
+        project.gradle.addListener(object : DependencyResolutionListener {
 
             override fun beforeResolve(deps: ResolvableDependencies) {
                 val compileDefs = project.configurations.getByName("compile").dependencies
-                compileDefs.add(project.dependencies.create("no.ntnu.ihb.fmi4j:fmi-export:0.32.0"))
+                compileDefs.add(project.dependencies.create("no.ntnu.ihb.fmi4j:fmi-export:0.33.2"))
                 project.gradle.removeListener(this)
             }
 
             override fun afterResolve(deps: ResolvableDependencies) {
 
             }
+
         })
     }
 }

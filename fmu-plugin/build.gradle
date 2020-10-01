@@ -16,6 +16,7 @@ dependencies {
     implementation project(':fmu-builder')
 
     testImplementation gradleTestKit()
+    testImplementation project(":fmi-import")
 }
 
 gradlePlugin {

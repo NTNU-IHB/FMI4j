@@ -1,19 +1,19 @@
 package no.ntnu.ihb.fmi4j
 
+import no.ntnu.ihb.fmi4j.importer.fmi2.Fmu
 import org.gradle.internal.impldep.org.junit.rules.TemporaryFolder
 import org.gradle.testkit.runner.GradleRunner
 import org.gradle.testkit.runner.TaskOutcome
 import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.io.File
 
 internal class ApplyPluginTest {
 
     @Test
-    @Disabled
     fun testApplyPlugin() {
 
+        val realOut = 2.0
         val testProjectDir = TemporaryFolder().apply { create() }
 
         testProjectDir.newFile("settings.gradle").apply {
@@ -31,7 +31,7 @@ internal class ApplyPluginTest {
             writeText("""
                 plugins {
                     id "java-library" 
-                    id "no.ntnu.ihb.fmi4j.fmu-export" version "0.32.0"
+                    id "no.ntnu.ihb.fmi4j.fmu-export" version "0.33.2"
                 }
                 
                 configurations.all {
@@ -65,7 +65,7 @@ internal class ApplyPluginTest {
                 
                 public class MySlave extends Fmi2Slave {
 
-                    double realOut = 1.0;
+                    double realOut = ${realOut};
                     
                     public MySlave(Map<String, Object> args) {
                         super(args);
@@ -92,7 +92,15 @@ internal class ApplyPluginTest {
                 .build()
 
         Assertions.assertEquals(TaskOutcome.SUCCESS, result.task(":$taskName")?.outcome)
-        Assertions.assertTrue(File(testProjectDir.root, "build/fmus/MySlave.fmu").exists())
+
+        val generatedFmu = File(testProjectDir.root, "build/fmus/MySlave.fmu")
+        Assertions.assertTrue(generatedFmu.exists())
+
+        Fmu.from(generatedFmu).asCoSimulationFmu().use { fmu ->
+            fmu.newInstance().use {
+                Assertions.assertEquals(realOut, it.readReal(0).value)
+            }
+        }
 
     }
 
