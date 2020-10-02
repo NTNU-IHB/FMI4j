@@ -7,7 +7,8 @@ apply from: rootProject.file("gradle/mavenpublish.gradle")
 apply from: rootProject.file("gradle/bintraypublish.gradle")
 
 dependencies {
-    api group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.1'
-    implementation group: 'com.sun.xml.bind', name: 'jaxb-impl', version: '2.3.2'
-    implementation group: 'com.sun.xml.bind', name: 'jaxb-core', version: '2.3.0.1'
+    api group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.0'
+    implementation group: 'com.sun.xml.bind', name: 'jaxb-impl', version: '2.3.0'
+    implementation group: 'com.sun.xml.bind', name: 'jaxb-core', version: '2.3.0'
+    implementation group: 'com.sun.activation', name: 'javax.activation', version: '1.2.0'
 }
