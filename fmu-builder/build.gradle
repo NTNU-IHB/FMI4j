@@ -9,9 +9,8 @@ apply from: rootProject.file("gradle/bintraypublish.gradle")
 
 dependencies {
 
-    implementation group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.0'
-    implementation group: 'com.sun.xml.bind', name: 'jaxb-impl', version: '2.3.0'
-    implementation group: 'com.sun.activation', name: 'javax.activation', version: '1.2.0'
+    implementation group: 'org.glassfish.jaxb', name: 'jaxb-runtime', version: '2.3.3'
+    implementation group: 'jakarta.activation', name: 'jakarta.activation-api', version: '1.2.2'
 
     implementation group: 'info.picocli', name: 'picocli', version: '4.5.0'
 
