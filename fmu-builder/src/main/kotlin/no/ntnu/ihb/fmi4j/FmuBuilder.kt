@@ -77,12 +77,12 @@ class FmuBuilder(
             zos.closeEntry()
 
             zos.putNextEntry(ZipEntry("resources/"))
-            zos.putNextEntry(ZipEntry("resources/model.jar"))
 
+            zos.putNextEntry(ZipEntry("resources/model.jar"))
             FileInputStream(jarFile).buffered().use { fis ->
                 zos.write(fis.readBytes())
+                zos.closeEntry()
             }
-            zos.closeEntry()
 
             resources?.forEach { file ->
                 FileInputStream(file).buffered().use {
@@ -96,6 +96,7 @@ class FmuBuilder(
             zos.write(mainClass.toByteArray())
             zos.closeEntry()
 
+            zos.closeEntry() //resources
 
             zos.putNextEntry(ZipEntry("binaries/"))
 
@@ -104,12 +105,14 @@ class FmuBuilder(
                 zos.putNextEntry(ZipEntry("binaries/win32/$modelIdentifier.dll"))
                 zos.write(`is`.readBytes())
                 zos.closeEntry()
+                zos.closeEntry()
             }
 
             FmuBuilder::class.java.classLoader.getResourceAsStream("binaries/win64/fmi4j-export.dll")?.buffered()?.use { `is` ->
                 zos.putNextEntry(ZipEntry("binaries/win64/"))
                 zos.putNextEntry(ZipEntry("binaries/win64/$modelIdentifier.dll"))
                 zos.write(`is`.readBytes())
+                zos.closeEntry()
                 zos.closeEntry()
             }
 
@@ -118,7 +121,10 @@ class FmuBuilder(
                 zos.putNextEntry(ZipEntry("binaries/linux64/$modelIdentifier.so"))
                 zos.write(`is`.readBytes())
                 zos.closeEntry()
+                zos.closeEntry()
             }
+
+            zos.closeEntry() //binaries
 
         }
 
