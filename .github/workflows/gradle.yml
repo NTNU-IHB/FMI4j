@@ -26,9 +26,9 @@ jobs:
           java-version: 1.8
 
       - name: search for livjvm.so
-          if: startsWith(runner.os, 'Linux')
-          run: |
-            find /opt/hostedtoolcache/jdk/8.0.265/x64/ -name "libjvm.so"
+        if: startsWith(runner.os, 'Linux')
+        run: |
+          find /opt/hostedtoolcache/jdk/8.0.265/x64/ -name "libjvm.so"
 
 
 #      - name: Build
