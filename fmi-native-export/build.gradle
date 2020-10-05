@@ -28,6 +28,9 @@ if (!project.getProperties().get("skipBuildNative", false)) {
                 if (os.isLinux()) {
                     add(binary.includePathConfiguration.name, files("$javaHome/include/linux"))
                     def libjvm = os.getLinkLibraryName("$javaHome/lib/server/jvm")
+                    if (!new File(libjvm).exists()) {
+                        libjvm = os.getLinkLibraryName("$javaHome/lib/amd64/server/jvm")
+                    }
                     Runtime.getRuntime().exec("sh", "-c", "sudo chmod +x $libjvm")
                     add(binary.linkLibraries.name, files(libjvm))
                 } else if (os.isWindows()) {

@@ -30,10 +30,9 @@ jobs:
         run: |
           find /opt/hostedtoolcache/jdk/8.0.265/x64/ -name "libjvm.so"
 
-
-#      - name: Build
-#        run: ./gradlew clean build shadowJar
-#        shell: bash
+      - name: Build
+        run: ./gradlew clean build shadowJar
+        shell: bash
 #
 #      - uses: actions/upload-artifact@master
 #        with:
