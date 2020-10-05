@@ -25,16 +25,16 @@ jobs:
         with:
           java-version: 1.8
 
-      - name: search for livjvm.so
-        if: startsWith(runner.os, 'Linux')
-        run: |
-          find /opt/hostedtoolcache/jdk/8.0.265/x64/ -name "libjvm.so"
+      #      - name: search for livjvm.so
+      #        if: startsWith(runner.os, 'Linux')
+      #        run: |
+      #          find /opt/hostedtoolcache/jdk/8.0.265/x64/ -name "libjvm.so"
 
       - name: Build
         run: ./gradlew clean build shadowJar
         shell: bash
-#
-#      - uses: actions/upload-artifact@master
-#        with:
-#          name: fmu-builder
-#          path: fmu-builder/build/libs/
+
+      - uses: actions/upload-artifact@master
+        with:
+          name: fmu-builder
+          path: fmu-builder/build/libs/
