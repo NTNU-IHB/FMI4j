@@ -7,7 +7,9 @@ plugins {
 
 if (!project.getProperties().get("skipBuildNative", false)) {
 
+    def os = OperatingSystem.current()
     def javaHome = Jvm.current().javaHome
+    print("JavaHome=$javaHome")
 
     library { CppLibrary lib ->
 
@@ -24,16 +26,19 @@ if (!project.getProperties().get("skipBuildNative", false)) {
                 add(binary.runtimeLibraries.name, files("$javaHome/jre/bin/server"))
                 add(binary.includePathConfiguration.name, files("$javaHome/include"))
 
-                if (OperatingSystem.current().isLinux()) {
+                if (os.isLinux()) {
                     add(binary.includePathConfiguration.name, files("$javaHome/include/linux"))
-                    def libjvm = OperatingSystem.current().getLinkLibraryName("$javaHome/lib/server/jvm")
+                    def libjvm = os.getLinkLibraryName("$javaHome/lib/server/jvm")
+                    if (!new File(libjvm).exists()) {
+                        libjvm = os.getLinkLibraryName("$javaHome/jre/lib/amd64/server/jvm")
+                    }
                     Runtime.getRuntime().exec("sh", "-c", "sudo chmod +x $libjvm")
                     add(binary.linkLibraries.name, files(libjvm))
-                } else if (OperatingSystem.current().isWindows()) {
+                } else if (os.isWindows()) {
                     add(binary.includePathConfiguration.name, files("$javaHome/include/win32"))
-                    add(binary.linkLibraries.name, files(OperatingSystem.current().getLinkLibraryName("$javaHome/lib/jvm")))
+                    add(binary.linkLibraries.name, files(os.getLinkLibraryName("$javaHome/lib/jvm")))
                 } else {
-                    throw new IllegalStateException("Unsupported OS: " + OperatingSystem.current().name)
+                    throw new IllegalStateException("Unsupported OS: " + os.name)
                 }
 
             }
@@ -59,18 +64,18 @@ if (!project.getProperties().get("skipBuildNative", false)) {
 
                 into "$rootDir/fmu-builder/src/main/resources/binaries/"
 
-                if (OperatingSystem.current().isLinux()) {
+                if (os.isLinux()) {
                     into("linux64") {
                         from "$buildDir/lib/main/release/linux"
                         include "*.so"
                     }
-                } else if (OperatingSystem.current().isWindows()) {
+                } else if (os.isWindows()) {
                     into("win64") {
                         from "$buildDir/lib/main/release/windows/"
                         include "*.dll"
                     }
                 } else {
-                    throw new Exception("Unsupported OS: " + OperatingSystem.current().name)
+                    throw new Exception("Unsupported OS: " + os.name)
                 }
 
             }
