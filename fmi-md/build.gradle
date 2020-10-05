@@ -5,8 +5,3 @@ plugins {
 apply from: rootProject.file("gradle/junit.gradle")
 apply from: rootProject.file("gradle/mavenpublish.gradle")
 apply from: rootProject.file("gradle/bintraypublish.gradle")
-
-dependencies {
-    implementation group: 'org.glassfish.jaxb', name: 'jaxb-runtime', version: '2.3.3'
-    implementation group: 'jakarta.activation', name: 'jakarta.activation-api', version: '1.2.2'
-}

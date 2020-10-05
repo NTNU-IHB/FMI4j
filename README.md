@@ -1,4 +1,4 @@
-# FMI4j #
+# FMI4j
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/NTNU-IHB/FMI4j/issues)
@@ -18,6 +18,8 @@ Export of FMI 2.0 for **Co-simulation** is also supported.
 Compared to other FMI libraries targeting the JVM, FMI4j is **considerably faster** due to the fact that we use JNI instead of JNA. 
 Considering FMI-import, a significant speedup (2-5x) compared to other open-source FMI implementations for the JVM should be expected. 
 For FMI-export FMI4j is multiple orders of magnitude faster than any existing open source alternative.
+
+Only __JDK 1.8__ is supported.
 
 ***
 

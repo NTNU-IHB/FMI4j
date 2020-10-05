@@ -9,9 +9,6 @@ apply from: rootProject.file("gradle/bintraypublish.gradle")
 
 dependencies {
 
-    implementation group: 'org.glassfish.jaxb', name: 'jaxb-runtime', version: '2.3.3'
-    implementation group: 'jakarta.activation', name: 'jakarta.activation-api', version: '1.2.2'
-
     implementation group: 'info.picocli', name: 'picocli', version: '4.5.0'
 
     testImplementation project(':fmi-import')
