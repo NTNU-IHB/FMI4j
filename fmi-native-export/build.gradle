@@ -9,7 +9,6 @@ if (!project.getProperties().get("skipBuildNative", false)) {
 
     def os = OperatingSystem.current()
     def javaHome = Jvm.current().javaHome
-    print("JavaHome=$javaHome")
 
     library { CppLibrary lib ->
 
