@@ -2,9 +2,10 @@ package no.ntnu.ihb.fmi4j.export
 
 interface ScalarVector {
     val size: Int
-    val lastIndex: Int
-        get() = size - 1
 }
+
+val ScalarVector.lastIndex: Int
+    get() = size - 1
 
 interface IntVector : ScalarVector {
     operator fun get(index: Int): Int

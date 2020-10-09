@@ -1,9 +1,6 @@
 package no.ntnu.ihb.fmi4j.export.fmi2
 
-import no.ntnu.ihb.fmi4j.export.BooleanVector
-import no.ntnu.ihb.fmi4j.export.IntVector
-import no.ntnu.ihb.fmi4j.export.RealVector
-import no.ntnu.ihb.fmi4j.export.StringVector
+import no.ntnu.ihb.fmi4j.export.*
 import no.ntnu.ihb.fmi4j.modeldescription.fmi2.Fmi2Causality
 import no.ntnu.ihb.fmi4j.modeldescription.fmi2.Fmi2Initial
 import no.ntnu.ihb.fmi4j.modeldescription.fmi2.Fmi2ScalarVariable
