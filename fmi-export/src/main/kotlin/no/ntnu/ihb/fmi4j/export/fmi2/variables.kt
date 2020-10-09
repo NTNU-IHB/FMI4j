@@ -43,13 +43,13 @@ sealed class Variable<E>(
         val name: String
 ) {
 
-    var causality: Fmi2Causality? = null
+    internal var causality: Fmi2Causality? = null
         private set
-    var variability: Fmi2Variability? = null
+    internal var variability: Fmi2Variability? = null
         private set
-    var initial: Fmi2Initial? = null
+    internal var initial: Fmi2Initial? = null
         private set
-    var description: String? = null
+    internal var description: String? = null
         private set
 
     var __overrideValueReference: Long? = null
@@ -81,15 +81,17 @@ class IntVariable(
         val getter: Getter<Int>
 ) : Variable<IntVariable>(name) {
 
-    var min: Int? = null
+    internal var min: Int? = null
         private set
 
-    var max: Int? = null
+    internal var max: Int? = null
         private set
 
-    var start: Int? = null
+    internal var start: Int? = null
         private set
 
+    internal var setter: Setter<Int>? = null
+        private set
 
     fun min(value: Int?) = apply {
         this.min = value
@@ -103,12 +105,10 @@ class IntVariable(
         this.start = value
     }
 
-    var setter: Setter<Int>? = null
-        private set
-
     fun setter(setter: Setter<Int>) = apply {
         this.setter = setter
     }
+
 }
 
 class IntVariables(
@@ -116,16 +116,29 @@ class IntVariables(
         private val values: IntVector
 ) : Variable<IntVariables>(name) {
 
+    private var min: Int? = null
+    private var max: Int? = null
+
+    fun min(value: Int?) = apply {
+        this.min = value
+    }
+
+    fun max(value: Int?) = apply {
+        this.max = value
+    }
+
     internal fun build(): List<IntVariable> {
 
-        return IntRange(0, values.size - 1).map { i ->
-            IntVariable("$name[$i]", { values[i] }).also { v ->
+        return IntRange(0, values.lastIndex).map { i ->
+            IntVariable("$name[$i]") { values[i] }.also { v ->
                 v.causality(causality)
                 v.variability(variability)
                 v.initial(initial)
                 if (variability != Fmi2Variability.constant) {
                     v.setter { values[i] = it }
                 }
+                v.min(min)
+                v.max(max)
             }
         }
 
@@ -138,21 +151,21 @@ class RealVariable(
         val getter: Getter<Double>
 ) : Variable<RealVariable>(name) {
 
-    var min: Double? = null
+    internal var min: Double? = null
         private set
 
-    var max: Double? = null
+    internal var max: Double? = null
         private set
 
-    var nominal: Double? = null
+    internal var nominal: Double? = null
         private set
 
-    var start: Double? = null
+    internal var start: Double? = null
         private set
 
-    var unit: String? = null
+    internal var unit: String? = null
 
-    var setter: Setter<Double>? = null
+    internal var setter: Setter<Double>? = null
         private set
 
 
@@ -180,7 +193,6 @@ class RealVariable(
         this.setter = setter
     }
 
-
 }
 
 class RealVariables(
@@ -188,11 +200,9 @@ class RealVariables(
         private val values: RealVector
 ) : Variable<RealVariables>(name) {
 
-    var min: Double? = null
-        private set
-
-    var max: Double? = null
-        private set
+    private var min: Double? = null
+    private var max: Double? = null
+    private var unit: String? = null
 
     fun min(value: Double?) = apply {
         this.min = value
@@ -202,16 +212,23 @@ class RealVariables(
         this.max = value
     }
 
+    fun unit(value: String?) = apply {
+        this.unit = value
+    }
+
     internal fun build(): List<RealVariable> {
 
-        return IntRange(0, values.size - 1).map { i ->
-            RealVariable("$name[$i]", { values[i] }).also { v ->
+        return IntRange(0, values.lastIndex).map { i ->
+            RealVariable("$name[$i]") { values[i] }.also { v ->
                 v.causality(causality)
                 v.variability(variability)
                 v.initial(initial)
                 if (variability != Fmi2Variability.constant) {
                     v.setter { values[i] = it }
                 }
+                v.unit(unit)
+                v.min(min)
+                v.max(max)
             }
         }
 
@@ -224,15 +241,15 @@ class BooleanVariable(
         val getter: Getter<Boolean>
 ) : Variable<BooleanVariable>(name) {
 
-    var start: Boolean? = null
+    internal var start: Boolean? = null
+        private set
+
+    internal var setter: Setter<Boolean>? = null
         private set
 
     fun start(value: Boolean?) = apply {
         this.start = value
     }
-
-    var setter: Setter<Boolean>? = null
-        private set
 
     fun setter(setter: Setter<Boolean>) = apply {
         this.setter = setter
@@ -247,7 +264,7 @@ class BooleanVariables(
 
     internal fun build(): List<BooleanVariable> {
 
-        return IntRange(0, values.size - 1).map { i ->
+        return IntRange(0, values.lastIndex).map { i ->
             BooleanVariable("$name[$i]") { values[i] }.also { v ->
                 v.causality(causality)
                 v.variability(variability)
@@ -267,15 +284,15 @@ class StringVariable(
         val getter: Getter<String>
 ) : Variable<StringVariable>(name) {
 
-    var start: String? = null
+    internal var start: String? = null
+        private set
+
+    internal var setter: Setter<String>? = null
         private set
 
     fun start(value: String?) = apply {
         this.start = value
     }
-
-    var setter: Setter<String>? = null
-        private set
 
     fun setter(setter: Setter<String>) = apply {
         this.setter = setter
@@ -290,7 +307,7 @@ class StringVariables(
 
     internal fun build(): List<StringVariable> {
 
-        return IntRange(0, values.size - 1).map { i ->
+        return IntRange(0, values.lastIndex).map { i ->
             StringVariable("$name[$i]") { values[i] }.also { v ->
                 v.causality(causality)
                 v.variability(variability)

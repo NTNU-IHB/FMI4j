@@ -2,31 +2,33 @@ package no.ntnu.ihb.fmi4j.export
 
 interface ScalarVector {
     val size: Int
+    val lastIndex: Int
+        get() = size - 1
 }
 
-interface IntVector: ScalarVector {
+interface IntVector : ScalarVector {
     operator fun get(index: Int): Int
     operator fun set(index: Int, value: Int)
 }
 
-interface RealVector: ScalarVector {
+interface RealVector : ScalarVector {
     operator fun get(index: Int): Double
     operator fun set(index: Int, value: Double)
 }
 
-interface BooleanVector: ScalarVector {
+interface BooleanVector : ScalarVector {
     operator fun get(index: Int): Boolean
     operator fun set(index: Int, value: Boolean)
 }
 
-interface StringVector: ScalarVector {
+interface StringVector : ScalarVector {
     operator fun get(index: Int): String
     operator fun set(index: Int, value: String)
 }
 
 class IntVectorArray(
         private val array: IntArray
-): IntVector {
+) : IntVector {
 
     override val size: Int
         get() = array.size
@@ -42,7 +44,7 @@ class IntVectorArray(
 
 class RealVectorArray(
         private val array: DoubleArray
-): RealVector {
+) : RealVector {
 
     override val size: Int
         get() = array.size
@@ -58,7 +60,7 @@ class RealVectorArray(
 
 class BooleanVectorArray(
         private val array: BooleanArray
-): BooleanVector {
+) : BooleanVector {
 
     override val size: Int
         get() = array.size
@@ -74,7 +76,7 @@ class BooleanVectorArray(
 
 class StringVectorArray(
         private val array: Array<String>
-): StringVector {
+) : StringVector {
 
     override val size: Int
         get() = array.size
