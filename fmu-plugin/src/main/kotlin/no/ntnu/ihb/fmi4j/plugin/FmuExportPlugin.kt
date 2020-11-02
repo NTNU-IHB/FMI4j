@@ -69,7 +69,7 @@ class FmuExportPlugin: Plugin<Project> {
 
             override fun beforeResolve(deps: ResolvableDependencies) {
                 val compileDefs = project.configurations.getByName("compile").dependencies
-                compileDefs.add(project.dependencies.create("no.ntnu.ihb.fmi4j:fmi-export:0.33.2"))
+                compileDefs.add(project.dependencies.create("no.ntnu.ihb.fmi4j:fmi-export:0.33.3"))
                 project.gradle.removeListener(this)
             }
 
