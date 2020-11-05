@@ -26,7 +26,7 @@ class FmuBuilder(
 
         val fmuArgs = mutableMapOf<String, Any>("instanceName" to DUMMY_INSTANCE_NAME)
         if (resources != null) {
-            tempResourcesDir = Files.createTempDirectory("fmu-resources").toFile()
+            tempResourcesDir = Files.createTempDirectory("fmi4j_resourceDir").toFile()
             for (file in resources) {
                 if (file.isDirectory) {
                     file.copyRecursively(tempResourcesDir)
