@@ -218,6 +218,8 @@ void SlaveInstance::SetBoolean(const cppfmu::FMIValueReference* vr, std::size_t 
 void SlaveInstance::SetString(const cppfmu::FMIValueReference* vr, std::size_t nvr, cppfmu::FMIString const* value)
 {
     jvm_invoke(jvm_, [this, vr, nvr, value](JNIEnv* env) {
+        clearStrBuffer(env);
+
         auto vrArray = env->NewLongArray(nvr);
         auto vrArrayElements = reinterpret_cast<jlong*>(malloc(sizeof(jlong) * nvr));
 
@@ -225,7 +227,16 @@ void SlaveInstance::SetString(const cppfmu::FMIValueReference* vr, std::size_t n
 
         for (int i = 0; i < nvr; i++) {
             vrArrayElements[i] = static_cast<jlong>(vr[i]);
-            env->SetObjectArrayElement(valueArray, i, env->NewStringUTF(value[i]));
+
+            const char* cStr = value[i];
+            jstring jStr = env->NewStringUTF(cStr);
+            jstring_ref ref{
+                cStr = cStr,
+                jStr = jStr
+            };
+            strBuffer.push_back(ref);
+
+            env->SetObjectArrayElement(valueArray, i, jStr);
         }
 
         env->SetLongArrayRegion(vrArray, 0, nvr, vrArrayElements);
@@ -331,7 +342,8 @@ void SlaveInstance::GetString(const cppfmu::FMIValueReference* vr, std::size_t n
             value[i] = cStr;
             jstring_ref ref{
                 cStr = cStr,
-                jStr = jStr};
+                jStr = jStr
+            };
             strBuffer.push_back(ref);
         }
 
