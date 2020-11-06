@@ -198,6 +198,19 @@ JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi2_jni_Fmi2Library_getR
     return status;
 }
 
+JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi2_jni_Fmi2Library_getRealDirect(JNIEnv* env, jobject obj, jlong p, jlong c, jint size, jobject vr, jdoubleArray ref)
+{
+    auto fmu = reinterpret_cast<FmuInstance*>(p);
+
+    auto _vr = reinterpret_cast<fmi2ValueReference*>(env->GetDirectBufferAddress(vr));
+    auto _ref = reinterpret_cast<fmi2Real *>(env->GetDirectBufferAddress(ref));
+
+    fmi2GetRealTYPE* fmi2GetReal = fmu->fmi2GetReal_;
+    fmi2Status status = (*fmi2GetReal)((void*)c, _vr, size, _ref);
+
+    return status;
+}
+
 JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi2_jni_Fmi2Library_getString(JNIEnv* env, jobject obj, jlong p, jlong c, jlongArray vr, jobjectArray ref)
 {
     auto fmu = reinterpret_cast<FmuInstance*>(p);
@@ -301,6 +314,19 @@ JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi2_jni_Fmi2Library_setR
 
     free(__vr);
 
+    return status;
+}
+
+JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi2_jni_Fmi2Library_setRealDirect(JNIEnv* env, jobject obj, jlong p, jlong c, jint size, jobject vr, jobject values)
+{
+    auto fmu = reinterpret_cast<FmuInstance*>(p);
+
+    auto _vr = reinterpret_cast<fmi2ValueReference*>(env->GetDirectBufferAddress(vr));
+    auto _values = reinterpret_cast<fmi2Real *>(env->GetDirectBufferAddress(values));
+
+    fmi2SetRealTYPE* fmi2SetReal = fmu->fmi2SetReal_;
+    fmi2Status status = (*fmi2SetReal)((void*)c, _vr, size, _values);
+    
     return status;
 }
 

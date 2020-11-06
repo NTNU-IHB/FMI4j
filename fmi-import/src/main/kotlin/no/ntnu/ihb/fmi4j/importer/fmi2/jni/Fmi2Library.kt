@@ -35,6 +35,10 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.Closeable
 import java.io.File
+import java.nio.ByteBuffer
+import java.nio.ByteOrder
+import java.nio.DoubleBuffer
+import java.nio.LongBuffer
 
 internal typealias NativeStatus = Int
 internal typealias Fmi2Component = Long
@@ -95,12 +99,14 @@ open class Fmi2Library(
 
     private external fun getInteger(p: Long, c: Fmi2Component, vr: ValueReferences, ref: IntArray): NativeStatus
     private external fun getReal(p: Long, c: Fmi2Component, vr: ValueReferences, ref: DoubleArray): NativeStatus
+    private external fun getRealDirect(p: Long, c: Fmi2Component, size: Int, vr: ByteBuffer, ref: ByteBuffer): NativeStatus
     private external fun getString(p: Long, c: Fmi2Component, vr: ValueReferences, ref: Array<String>): NativeStatus
     private external fun getBoolean(p: Long, c: Fmi2Component, vr: ValueReferences, ref: BooleanArray): NativeStatus
 
 
     private external fun setInteger(p: Long, c: Fmi2Component, vr: ValueReferences, values: IntArray): NativeStatus
     private external fun setReal(p: Long, c: Fmi2Component, vr: ValueReferences, values: DoubleArray): NativeStatus
+    private external fun setRealDirect(p: Long, c: Fmi2Component, size: Int, vr: ByteBuffer, values: ByteBuffer): NativeStatus
     private external fun setString(p: Long, c: Fmi2Component, vr: ValueReferences, values: Array<String>): NativeStatus
     private external fun setBoolean(p: Long, c: Fmi2Component, vr: ValueReferences, values: BooleanArray): NativeStatus
 
@@ -185,6 +191,10 @@ open class Fmi2Library(
         return getReal(p, c, vr, ref).transform()
     }
 
+    fun getRealDirect(c: Fmi2Component, size: Int, vr: ByteBuffer, ref: ByteBuffer): FmiStatus {
+        return getRealDirect(p, c, size, vr, ref).transform()
+    }
+
     fun getString(c: Fmi2Component, vr: ValueReferences, ref: Array<String>): FmiStatus {
         return getString(p, c, vr, ref).transform()
     }
@@ -200,6 +210,10 @@ open class Fmi2Library(
 
     fun setReal(c: Fmi2Component, vr: ValueReferences, values: DoubleArray): FmiStatus {
         return setReal(p, c, vr, values).transform()
+    }
+
+    fun setRealDirect(c: Fmi2Component, size: Int, vr: ByteBuffer, values: ByteBuffer): FmiStatus {
+        return setRealDirect(p, c, size, vr, values).transform()
     }
 
     fun setString(c: Fmi2Component, vr: ValueReferences, values: Array<String>): FmiStatus {
@@ -402,7 +416,7 @@ abstract class Fmi2LibraryWrapper<E : Fmi2Library>(
     fun readReal(valueReference: ValueReference): RealRead {
         return with(buffers) {
             vr[0] = valueReference
-            RealRead(rv[0], updateStatus(library.getReal(c, vr, rv)))
+            RealRead(rv[0], updateStatus(readReal(vr, rv)))
         }
     }
 
@@ -410,7 +424,16 @@ abstract class Fmi2LibraryWrapper<E : Fmi2Library>(
      * @see Fmi2Library.getReal
      */
     override fun readReal(vr: ValueReferences, ref: DoubleArray): FmiStatus {
-        return updateStatus(library.getReal(c, vr, ref))
+        val vrBuf = ByteBuffer.allocateDirect(vr.size * Long.SIZE_BYTES).apply {
+            order(ByteOrder.nativeOrder())
+            asLongBuffer().put(vr)
+        }
+        val refBuf = ByteBuffer.allocateDirect(vr.size * Double.SIZE_BYTES).apply {
+            order(ByteOrder.nativeOrder())
+        }
+        return updateStatus(library.getRealDirect(c, vr.size, vrBuf, refBuf)).also {
+            refBuf.asDoubleBuffer().get(ref)
+        }
     }
 
     /**
@@ -484,7 +507,15 @@ abstract class Fmi2LibraryWrapper<E : Fmi2Library>(
      * @see Fmi2Library.setReal
      */
     override fun writeReal(vr: ValueReferences, value: DoubleArray): FmiStatus {
-        return updateStatus((library.setReal(c, vr, value)))
+        val vrBuf = ByteBuffer.allocateDirect(vr.size * Long.SIZE_BYTES).apply {
+            order(ByteOrder.nativeOrder())
+            asLongBuffer().put(vr)
+        }
+        val valueBuf = ByteBuffer.allocateDirect(vr.size * Double.SIZE_BYTES).apply {
+            order(ByteOrder.nativeOrder())
+            asDoubleBuffer().put(value)
+        }
+        return updateStatus((library.setRealDirect(c, vr.size, vrBuf, valueBuf)))
     }
 
     /**
