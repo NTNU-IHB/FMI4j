@@ -120,15 +120,22 @@ JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi1_jni_Fmi1Library_getR
     return status;
 }
 
-JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi1_jni_Fmi2Library_getRealDirect(JNIEnv* env, jobject obj, jlong p, jlong c, jint size, jobject vr, jdoubleArray ref)
+JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi1_jni_Fmi1Library_getRealDirect(JNIEnv* env, jobject obj, jlong p, jlong c, jint size, jobject vr, jdoubleArray ref)
 {
     auto fmu = reinterpret_cast<FmuInstance*>(p);
 
     auto _vr = reinterpret_cast<fmiValueReference*>(env->GetDirectBufferAddress(vr));
     auto _ref = reinterpret_cast<fmiReal *>(env->GetDirectBufferAddress(ref));
 
+    auto __vr = (fmiValueReference*)malloc(sizeof(fmiValueReference) * size);
+    for (unsigned int i = 0; i < size; ++i) {
+        __vr[i] = (fmiValueReference)_vr[i];
+    }
+
     fmiGetRealTYPE* fmiGetReal = fmu->fmiGetReal_;
-    fmiStatus status = (*fmiGetReal)((void*)c, _vr, size, _ref);
+    fmiStatus status = (*fmiGetReal)((void*)c, __vr, size, _ref);
+
+    free(__vr);
 
     return status;
 }
@@ -244,15 +251,22 @@ JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi1_jni_Fmi1Library_setR
     return status;
 }
 
-JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi1_jni_Fmi2Library_setRealDirect(JNIEnv* env, jobject obj, jlong p, jlong c, jint size, jobject vr, jobject values)
+JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi1_jni_Fmi1Library_setRealDirect(JNIEnv* env, jobject obj, jlong p, jlong c, jint size, jobject vr, jobject values)
 {
     auto fmu = reinterpret_cast<FmuInstance*>(p);
 
     auto _vr = reinterpret_cast<fmiValueReference*>(env->GetDirectBufferAddress(vr));
     auto _values = reinterpret_cast<fmiReal *>(env->GetDirectBufferAddress(values));
 
+    auto __vr = (fmiValueReference*)malloc(sizeof(fmiValueReference) * size);
+    for (unsigned int i = 0; i < size; ++i) {
+        __vr[i] = (fmiValueReference)_vr[i];
+    }
+
     fmiSetRealTYPE* fmiSetReal = fmu->fmiSetReal_;
-    fmiStatus status = (*fmiSetReal)((void*)c, _vr, size, _values);
+    fmiStatus status = (*fmiSetReal)((void*)c, __vr, size, _values);
+
+    free(__vr);
 
     return status;
 }
