@@ -326,7 +326,7 @@ JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi2_jni_Fmi2Library_setR
 
     fmi2SetRealTYPE* fmi2SetReal = fmu->fmi2SetReal_;
     fmi2Status status = (*fmi2SetReal)((void*)c, _vr, size, _values);
-    
+
     return status;
 }
 
