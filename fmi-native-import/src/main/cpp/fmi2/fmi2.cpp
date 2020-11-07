@@ -24,8 +24,8 @@
 
 #include "fmu_instance.hpp"
 
-#include <jni.h>
 #include <cstdlib>
+#include <jni.h>
 #include <vector>
 
 #ifdef __cplusplus
@@ -147,18 +147,18 @@ JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi2_jni_Fmi2Library_getI
     const jsize size = env->GetArrayLength(vr);
     jlong* _vr = env->GetLongArrayElements(vr, nullptr);
 
-    fmi2ValueReference* __vr = (fmi2ValueReference*)malloc(sizeof(fmi2ValueReference) * size);
-    for (unsigned int i = 0; i < size; ++i) {
+    auto __vr = (fmi2ValueReference*)malloc(sizeof(fmi2ValueReference) * size);
+    for (auto i = 0; i < size; ++i) {
         __vr[i] = static_cast<fmi2ValueReference>(_vr[i]);
     }
 
     fmi2GetIntegerTYPE* fmi2GetInteger = fmu->fmi2GetInteger_;
 
-    fmi2Integer* _ref = (fmi2Integer*)malloc(sizeof(fmi2Integer) * size);
+    auto _ref = (fmi2Integer*)malloc(sizeof(fmi2Integer) * size);
     fmi2Status status = (*fmi2GetInteger)((void*)c, __vr, size, _ref);
 
     jint* __ref = (jint*)malloc(sizeof(jint) * size);
-    for (unsigned int i = 0; i < size; ++i) {
+    for (auto i = 0; i < size; ++i) {
         __ref[i] = static_cast<int>(_ref[i]);
     }
 
@@ -179,14 +179,14 @@ JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi2_jni_Fmi2Library_getR
     const jsize size = env->GetArrayLength(vr);
     jlong* _vr = env->GetLongArrayElements(vr, nullptr);
 
-    fmi2ValueReference* __vr = (fmi2ValueReference*)malloc(sizeof(fmi2ValueReference) * size);
-    for (unsigned int i = 0; i < size; ++i) {
+    auto __vr = (fmi2ValueReference*)malloc(sizeof(fmi2ValueReference) * size);
+    for (auto i = 0; i < size; ++i) {
         __vr[i] = (fmi2ValueReference)_vr[i];
     }
 
     fmi2GetRealTYPE* fmi2GetReal = fmu->fmi2GetReal_;
 
-    fmi2Real* _ref = (fmi2Real*)malloc(sizeof(fmi2Real) * size);
+    auto _ref = (fmi2Real*)malloc(sizeof(fmi2Real) * size);
     fmi2Status status = (*fmi2GetReal)((void*)c, __vr, size, _ref);
 
     env->SetDoubleArrayRegion(ref, 0, size, _ref);
@@ -202,11 +202,11 @@ JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi2_jni_Fmi2Library_getR
 {
     auto fmu = reinterpret_cast<FmuInstance*>(p);
 
-    auto _vr = reinterpret_cast<jlong*>(env->GetDirectBufferAddress(vr));
-    auto _ref = reinterpret_cast<fmi2Real *>(env->GetDirectBufferAddress(ref));
+    auto _vr = static_cast<jlong*>(env->GetDirectBufferAddress(vr));
+    auto _ref = static_cast<fmi2Real*>(env->GetDirectBufferAddress(ref));
 
     auto __vr = (fmi2ValueReference*)malloc(sizeof(fmi2ValueReference) * size);
-    for (unsigned int i = 0; i < size; ++i) {
+    for (auto i = 0; i < size; ++i) {
         __vr[i] = (fmi2ValueReference)_vr[i];
     }
 
@@ -225,8 +225,8 @@ JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi2_jni_Fmi2Library_getS
     const jsize size = env->GetArrayLength(vr);
     jlong* _vr = env->GetLongArrayElements(vr, nullptr);
 
-    fmi2ValueReference* __vr = (fmi2ValueReference*)malloc(sizeof(fmi2ValueReference) * size);
-    for (unsigned int i = 0; i < size; ++i) {
+    auto __vr = (fmi2ValueReference*)malloc(sizeof(fmi2ValueReference) * size);
+    for (auto i = 0; i < size; ++i) {
         __vr[i] = (fmi2ValueReference)_vr[i];
     }
 
@@ -254,18 +254,18 @@ JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi2_jni_Fmi2Library_getB
     const jsize size = env->GetArrayLength(vr);
     jlong* _vr = env->GetLongArrayElements(vr, 0);
 
-    fmi2ValueReference* __vr = (fmi2ValueReference*)malloc(sizeof(fmi2ValueReference) * size);
-    for (unsigned int i = 0; i < size; ++i) {
+    auto __vr = (fmi2ValueReference*)malloc(sizeof(fmi2ValueReference) * size);
+    for (auto i = 0; i < size; ++i) {
         __vr[i] = (fmi2ValueReference)_vr[i];
     }
 
-    fmi2Boolean* _ref = (fmi2Boolean*)malloc(sizeof(fmi2Boolean*) * size);
+    auto _ref = (fmi2Boolean*)malloc(sizeof(fmi2Boolean*) * size);
 
     fmi2GetBooleanTYPE* fmi2GetBoolean = fmu->fmi2GetBoolean_;
     fmi2Status status = (*fmi2GetBoolean)((void*)c, __vr, size, _ref);
 
-    for (int i = 0; i < size; i++) {
-        jboolean value = (jboolean)_ref[i];
+    for (auto i = 0; i < size; i++) {
+        auto value = (jboolean)_ref[i];
         env->SetBooleanArrayRegion(ref, i, 1, &value);
     }
 
@@ -284,8 +284,8 @@ JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi2_jni_Fmi2Library_setI
     jlong* _vr = env->GetLongArrayElements(vr, nullptr);
     jint* _values = env->GetIntArrayElements(values, nullptr);
 
-    fmi2ValueReference* __vr = (fmi2ValueReference*)malloc(sizeof(fmi2ValueReference) * size);
-    for (unsigned int i = 0; i < size; ++i) {
+    auto __vr = (fmi2ValueReference*)malloc(sizeof(fmi2ValueReference) * size);
+    for (auto i = 0; i < size; ++i) {
         __vr[i] = (fmi2ValueReference)_vr[i];
     }
 
@@ -308,8 +308,8 @@ JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi2_jni_Fmi2Library_setR
     jlong* _vr = env->GetLongArrayElements(vr, nullptr);
     jdouble* _values = env->GetDoubleArrayElements(values, nullptr);
 
-    fmi2ValueReference* __vr = (fmi2ValueReference*)malloc(sizeof(fmi2ValueReference) * size);
-    for (unsigned int i = 0; i < size; ++i) {
+    auto __vr = (fmi2ValueReference*)malloc(sizeof(fmi2ValueReference) * size);
+    for (auto i = 0; i < size; ++i) {
         __vr[i] = (fmi2ValueReference)_vr[i];
     }
 
@@ -328,11 +328,11 @@ JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi2_jni_Fmi2Library_setR
 {
     auto fmu = reinterpret_cast<FmuInstance*>(p);
 
-    auto _vr = reinterpret_cast<jlong*>(env->GetDirectBufferAddress(vr));
-    auto _values = reinterpret_cast<fmi2Real *>(env->GetDirectBufferAddress(values));
+    auto _vr = static_cast<jlong*>(env->GetDirectBufferAddress(vr));
+    auto _values = static_cast<fmi2Real *>(env->GetDirectBufferAddress(values));
 
     auto __vr = (fmi2ValueReference*)malloc(sizeof(fmi2ValueReference) * size);
-    for (unsigned int i = 0; i < size; ++i) {
+    for (auto i = 0; i < size; ++i) {
         __vr[i] = (fmi2ValueReference)_vr[i];
     }
 
@@ -351,14 +351,14 @@ JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi2_jni_Fmi2Library_setS
     const jsize size = env->GetArrayLength(vr);
     jlong* _vr = env->GetLongArrayElements(vr, nullptr);
 
-    fmi2ValueReference* __vr = (fmi2ValueReference*)malloc(sizeof(fmi2ValueReference) * size);
-    for (unsigned int i = 0; i < size; ++i) {
+    auto __vr = (fmi2ValueReference*)malloc(sizeof(fmi2ValueReference) * size);
+    for (auto i = 0; i < size; ++i) {
         __vr[i] = (fmi2ValueReference)_vr[i];
     }
 
     std::vector<const char*> _values(size);
-    for (int i = 0; i < size; i++) {
-        jstring str = (jstring)env->GetObjectArrayElement(values, i);
+    for (auto i = 0; i < size; i++) {
+        auto str = (jstring)env->GetObjectArrayElement(values, i);
         _values[i] = env->GetStringUTFChars(str, nullptr);
     }
 
@@ -380,8 +380,8 @@ JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi2_jni_Fmi2Library_setB
     jlong* _vr = env->GetLongArrayElements(vr, nullptr);
     jboolean* _values = env->GetBooleanArrayElements(values, nullptr);
 
-    fmi2ValueReference* __vr = (fmi2ValueReference*)malloc(sizeof(fmi2ValueReference) * size);
-    for (unsigned int i = 0; i < size; ++i) {
+    auto __vr = (fmi2ValueReference*)malloc(sizeof(fmi2ValueReference) * size);
+    for (auto i = 0; i < size; ++i) {
         __vr[i] = (fmi2ValueReference)_vr[i];
     }
 
@@ -423,7 +423,7 @@ JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi2_jni_Fmi2Library_free
 {
     auto fmu = reinterpret_cast<FmuInstance*>(p);
     fmi2FreeFMUstateTYPE* fmi2FreeFMUstate = fmu->fmi2FreeFMUstate_;
-    fmi2FMUstate _state = (fmi2FMUstate)state;
+    auto _state = (fmi2FMUstate)state;
     return (*fmi2FreeFMUstate)((void*)c, &_state);
 }
 
@@ -450,7 +450,7 @@ JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi2_jni_Fmi2Library_seri
 
     const jsize size = env->GetArrayLength(serializedState);
 
-    fmi2Byte* _serializedState = (fmi2Byte*)malloc(sizeof(fmi2Byte) * size);
+    auto _serializedState = (fmi2Byte*)malloc(sizeof(fmi2Byte) * size);
     fmi2SerializeFMUstateTYPE* fmi2SerializeFMUstate = fmu->fmi2SerializeFMUstate_;
     fmi2Status status = (*fmi2SerializeFMUstate)((void*)c, (fmi2FMUstate)state, _serializedState, size);
 
@@ -472,7 +472,7 @@ JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi2_jni_Fmi2Library_deSe
 
     fmi2DeSerializeFMUstateTYPE* fmi2DeSerializeFMUstate = fmu->fmi2DeSerializeFMUstate_;
 
-    fmi2FMUstate _state = (fmi2FMUstate)env->GetLongField(state, id);
+    auto _state = (fmi2FMUstate)env->GetLongField(state, id);
     fmi2Status status = (*fmi2DeSerializeFMUstate)((void*)c, (fmi2Byte*)_serializedState, size, &_state);
 
     env->SetLongField(state, id, (jlong)_state);

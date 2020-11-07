@@ -177,7 +177,7 @@ abstract class Fmi2LibraryWrapper<E : Fmi2Library>(
     }
 
     fun readRealDirect(vr: ByteBuffer, ref: ByteBuffer): FmiStatus {
-        return updateStatus(library.setRealDirect(c, vr, ref))
+        return updateStatus(library.getRealDirect(c, vr, ref))
     }
 
     /**

@@ -34,6 +34,7 @@ import no.ntnu.ihb.fmi4j.modeldescription.StringArray
 import no.ntnu.ihb.fmi4j.modeldescription.ValueReferences
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import java.nio.ByteBuffer
 
 /**
  * Base class for FMU instances
@@ -212,6 +213,10 @@ abstract class AbstractModelInstance<out E : CommonModelDescription, out T : Fmi
         return wrapper.readReal(vr, ref)
     }
 
+    fun readRealDirect(vr: ByteBuffer, ref: ByteBuffer): FmiStatus {
+        return wrapper.readRealDirect(vr, ref)
+    }
+
     override fun readString(vr: ValueReferences, ref: StringArray): FmiStatus {
         return wrapper.readString(vr, ref)
     }
@@ -226,6 +231,10 @@ abstract class AbstractModelInstance<out E : CommonModelDescription, out T : Fmi
 
     override fun writeReal(vr: ValueReferences, value: RealArray): FmiStatus {
         return wrapper.writeReal(vr, value)
+    }
+
+    fun writeRealDirect(vr: ByteBuffer, value: ByteBuffer): FmiStatus {
+        return wrapper.writeRealDirect(vr, value)
     }
 
     override fun writeString(vr: ValueReferences, value: StringArray): FmiStatus {
