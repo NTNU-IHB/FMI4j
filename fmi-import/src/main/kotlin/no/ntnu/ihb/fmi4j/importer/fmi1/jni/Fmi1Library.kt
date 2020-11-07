@@ -33,6 +33,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.Closeable
 import java.io.File
+import java.nio.ByteBuffer
 
 internal typealias NativeStatus = Int
 internal typealias FmiComponent = Long
@@ -71,11 +72,13 @@ abstract class Fmi1Library(
 
     private external fun getInteger(p: Long, c: FmiComponent, vr: ValueReferences, ref: IntArray): NativeStatus
     private external fun getReal(p: Long, c: FmiComponent, vr: ValueReferences, ref: DoubleArray): NativeStatus
+    private external fun getRealDirect(p: Long, c: FmiComponent, size: Int, vr: ByteBuffer, ref: ByteBuffer): NativeStatus
     private external fun getString(p: Long, c: FmiComponent, vr: ValueReferences, ref: Array<String>): NativeStatus
     private external fun getBoolean(p: Long, c: FmiComponent, vr: ValueReferences, ref: BooleanArray): NativeStatus
 
     private external fun setInteger(p: Long, c: FmiComponent, vr: ValueReferences, values: IntArray): NativeStatus
     private external fun setReal(p: Long, c: FmiComponent, vr: ValueReferences, values: DoubleArray): NativeStatus
+    private external fun setRealDirect(p: Long, c: FmiComponent, size: Int, vr: ByteBuffer, values: ByteBuffer): NativeStatus
     private external fun setString(p: Long, c: FmiComponent, vr: ValueReferences, values: Array<String>): NativeStatus
     private external fun setBoolean(p: Long, c: FmiComponent, vr: ValueReferences, values: BooleanArray): NativeStatus
 
@@ -108,6 +111,11 @@ abstract class Fmi1Library(
         return getReal(p, c, vr, ref).transform()
     }
 
+    fun getRealDirect(c: FmiComponent, vr: ByteBuffer, ref: ByteBuffer): FmiStatus {
+        val size = vr.capacity() / Long.SIZE_BYTES
+        return getRealDirect(p, c, size, vr, ref).transform()
+    }
+
     fun getString(c: FmiComponent, vr: ValueReferences, ref: Array<String>): FmiStatus {
         return getString(p, c, vr, ref).transform()
     }
@@ -123,6 +131,11 @@ abstract class Fmi1Library(
 
     fun setReal(c: FmiComponent, vr: ValueReferences, values: DoubleArray): FmiStatus {
         return setReal(p, c, vr, values).transform()
+    }
+
+    fun setRealDirect(c: FmiComponent, vr: ByteBuffer, values: ByteBuffer): FmiStatus {
+        val size = vr.capacity() / Long.SIZE_BYTES
+        return setRealDirect(p, c, size, vr, values).transform()
     }
 
     fun setString(c: FmiComponent, vr: ValueReferences, values: Array<String>): FmiStatus {
@@ -145,186 +158,3 @@ abstract class Fmi1Library(
 
 }
 
-/**
- * @author Lars Ivar Hatledal
- */
-abstract class Fmi1LibraryWrapper<E : Fmi1Library>(
-        protected var c: Long,
-        library: E
-) : VariableAccessor {
-
-    private val buffers: ArrayBuffers by lazy {
-        ArrayBuffers()
-    }
-
-    private var _library: E? = library
-
-    protected val library: E
-        get() = _library ?: throw IllegalAccessException("Library is no longer accessible!")
-
-    val isInstanceFreed: Boolean
-        get() = _library == null
-
-    /**
-     * The status returned from the last call to a FMU function
-     */
-    var lastStatus: FmiStatus = FmiStatus.NONE
-        internal set
-
-    /**
-     * Has terminate been called on the FMU?
-     */
-    var isTerminated: Boolean = false
-        protected set
-
-
-    protected fun updateStatus(status: FmiStatus): FmiStatus {
-        return status.also { lastStatus = it }
-    }
-
-    val typesPlatform: String
-        get() = library.getTypesPlatform()
-
-    val version: String
-        get() = library.getVersion()
-
-    fun terminate(): FmiStatus {
-        if (isTerminated) {
-            return FmiStatus.OK
-        } else {
-            return try {
-                updateStatus(library.terminate(c))
-            } catch (ex: Error) {
-                LOG.error("Error caught on fmi2Terminate: ${ex.javaClass.simpleName}")
-                updateStatus(FmiStatus.OK)
-            } finally {
-                isTerminated = true
-            }
-
-        }
-    }
-
-    internal fun freeInstance() {
-        if (!isInstanceFreed) {
-            var success = false
-            try {
-                library.freeInstance(c)
-                success = true
-            } catch (ex: Error) {
-                LOG.error("Error caught on fmiFreeInstance: ${ex.javaClass.simpleName}")
-            } finally {
-                val msg = if (success) "successfully" else "unsuccessfully"
-                LOG.debug("FMU instance '${library.instanceName}' freed $msg!")
-                _library = null
-                System.gc()
-            }
-        }
-    }
-
-
-    @Synchronized
-    fun readInteger(valueReference: ValueReference): IntegerRead {
-        return with(buffers) {
-            vr[0] = valueReference
-            IntegerRead(iv[0], updateStatus(library.getInteger(c, vr, iv)))
-        }
-    }
-
-    override fun readInteger(vr: ValueReferences, ref: IntArray): FmiStatus {
-        return updateStatus(library.getInteger(c, vr, ref))
-    }
-
-    @Synchronized
-    fun readReal(valueReference: ValueReference): RealRead {
-        return with(buffers) {
-            vr[0] = valueReference
-            RealRead(rv[0], updateStatus(library.getReal(c, vr, rv)))
-        }
-    }
-
-    override fun readReal(vr: ValueReferences, ref: DoubleArray): FmiStatus {
-        return updateStatus(library.getReal(c, vr, ref))
-    }
-
-    @Synchronized
-    fun readString(valueReference: ValueReference): StringRead {
-        return with(buffers) {
-            vr[0] = valueReference
-            StringRead(sv[0], updateStatus(library.getString(c, vr, sv)))
-        }
-    }
-
-    override fun readString(vr: ValueReferences, ref: StringArray): FmiStatus {
-        return updateStatus(library.getString(c, vr, ref))
-    }
-
-    @Synchronized
-    fun readBoolean(valueReference: ValueReference): BooleanRead {
-        return with(buffers) {
-            vr[0] = valueReference
-            BooleanRead(bv[0], updateStatus(library.getBoolean(c, vr, bv)))
-        }
-    }
-
-    override fun readBoolean(vr: ValueReferences, ref: BooleanArray): FmiStatus {
-        return updateStatus(library.getBoolean(c, vr, ref))
-    }
-
-    @Synchronized
-    fun writeInteger(valueReference: ValueReference, ref: Int): FmiStatus {
-        return with(buffers) {
-            vr[0] = valueReference
-            iv[0] = ref
-            writeInteger(vr, iv)
-        }
-    }
-
-    override fun writeInteger(vr: ValueReferences, value: IntArray): FmiStatus {
-        return updateStatus((library.setInteger(c, vr, value)))
-    }
-
-    @Synchronized
-    fun writeReal(valueReference: ValueReference, value: Double): FmiStatus {
-        return with(buffers) {
-            vr[0] = valueReference
-            rv[0] = value
-            writeReal(vr, rv)
-        }
-    }
-
-    override fun writeReal(vr: ValueReferences, value: DoubleArray): FmiStatus {
-        return updateStatus((library.setReal(c, vr, value)))
-    }
-
-
-    @Synchronized
-    fun writeString(valueReference: ValueReference, value: String): FmiStatus {
-        return with(buffers) {
-            vr[0] = valueReference
-            sv[0] = value
-            writeString(vr, sv)
-        }
-    }
-
-    override fun writeString(vr: ValueReferences, value: StringArray): FmiStatus {
-        return updateStatus((library.setString(c, vr, value)))
-    }
-
-    @Synchronized
-    fun writeBoolean(valueReference: ValueReference, value: Boolean): FmiStatus {
-        return with(buffers) {
-            vr[0] = valueReference
-            bv[0] = value
-            writeBoolean(vr, bv)
-        }
-    }
-
-    override fun writeBoolean(vr: ValueReferences, value: BooleanArray): FmiStatus {
-        return updateStatus(library.setBoolean(c, vr, value))
-    }
-
-    private companion object {
-        val LOG: Logger = LoggerFactory.getLogger(Fmi1LibraryWrapper::class.java)
-    }
-
-}
