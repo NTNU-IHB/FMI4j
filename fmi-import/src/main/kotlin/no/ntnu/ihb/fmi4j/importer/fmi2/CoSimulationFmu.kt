@@ -25,6 +25,7 @@
 package no.ntnu.ihb.fmi4j.importer.fmi2
 
 import no.ntnu.ihb.fmi4j.CoSimulationModel
+import no.ntnu.ihb.fmi4j.SlaveInstance
 import no.ntnu.ihb.fmi4j.importer.fmi2.jni.CoSimulationLibraryWrapper
 import no.ntnu.ihb.fmi4j.importer.fmi2.jni.Fmi2CoSimulationLibrary
 import no.ntnu.ihb.fmi4j.modeldescription.CoSimulationModelDescription
@@ -49,6 +50,10 @@ class CoSimulationFmu(
 
     private fun instantiate(instanceName: String, visible: Boolean, loggingOn: Boolean): Long {
         return fmu.instantiate(lib, instanceName, fmu.guid, 1, visible, loggingOn)
+    }
+
+    override fun newInstance(): CoSimulationSlave {
+        return super.newInstance() as CoSimulationSlave
     }
 
     override fun newInstance(instanceName: String): CoSimulationSlave {
