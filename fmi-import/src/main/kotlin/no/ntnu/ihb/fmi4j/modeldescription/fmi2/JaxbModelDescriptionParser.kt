@@ -31,12 +31,7 @@ import no.ntnu.ihb.fmi4j.modeldescription.ModelDescriptionProvider
 class JaxbModelDescriptionParser : ModelDescriptionParser() {
 
     override fun parse(xml: String): ModelDescriptionProvider {
-        val mapper = XmlMapper().apply {
-            /* enable(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT)
-             setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY)
-             setVisibility(PropertyAccessor.SETTER, JsonAutoDetect.Visibility.ANY)*/
-        }
-
+        val mapper = XmlMapper()
         return JaxbModelDescription(mapper.readValue(xml, Fmi2ModelDescription::class.java))
     }
 

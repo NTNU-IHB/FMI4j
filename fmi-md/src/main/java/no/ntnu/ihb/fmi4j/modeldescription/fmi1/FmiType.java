@@ -1,6 +1,8 @@
 
 package no.ntnu.ihb.fmi4j.modeldescription.fmi1;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import javax.xml.bind.annotation.*;
 import javax.xml.bind.annotation.adapters.NormalizedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
@@ -8,106 +10,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-/**
- * Type attributes of a scalar variable
- * 
- * <p>Java class for fmiType complex type.
- * 
- * <p>The following schema fragment specifies the expected content contained within this class.
- * 
- * <pre>
- * &lt;complexType name="fmiType">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;choice>
- *           &lt;element name="RealType">
- *             &lt;complexType>
- *               &lt;complexContent>
- *                 &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *                   &lt;attribute name="quantity" type="{http://www.w3.org/2001/XMLSchema}normalizedString" />
- *                   &lt;attribute name="unit" type="{http://www.w3.org/2001/XMLSchema}normalizedString" />
- *                   &lt;attribute name="displayUnit" type="{http://www.w3.org/2001/XMLSchema}normalizedString" />
- *                   &lt;attribute name="relativeQuantity" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" />
- *                   &lt;attribute name="min" type="{http://www.w3.org/2001/XMLSchema}double" />
- *                   &lt;attribute name="max" type="{http://www.w3.org/2001/XMLSchema}double" />
- *                   &lt;attribute name="nominal" type="{http://www.w3.org/2001/XMLSchema}double" />
- *                 &lt;/restriction>
- *               &lt;/complexContent>
- *             &lt;/complexType>
- *           &lt;/element>
- *           &lt;element name="IntegerType">
- *             &lt;complexType>
- *               &lt;complexContent>
- *                 &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *                   &lt;attribute name="quantity" type="{http://www.w3.org/2001/XMLSchema}normalizedString" />
- *                   &lt;attribute name="min" type="{http://www.w3.org/2001/XMLSchema}int" />
- *                   &lt;attribute name="max" type="{http://www.w3.org/2001/XMLSchema}int" />
- *                 &lt;/restriction>
- *               &lt;/complexContent>
- *             &lt;/complexType>
- *           &lt;/element>
- *           &lt;element name="BooleanType" type="{http://www.w3.org/2001/XMLSchema}anyType"/>
- *           &lt;element name="StringType" type="{http://www.w3.org/2001/XMLSchema}anyType"/>
- *           &lt;element name="EnumerationType">
- *             &lt;complexType>
- *               &lt;complexContent>
- *                 &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *                   &lt;sequence maxOccurs="unbounded" minOccurs="0">
- *                     &lt;element name="Item">
- *                       &lt;complexType>
- *                         &lt;complexContent>
- *                           &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *                             &lt;attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}normalizedString" />
- *                             &lt;attribute name="description" type="{http://www.w3.org/2001/XMLSchema}string" />
- *                           &lt;/restriction>
- *                         &lt;/complexContent>
- *                       &lt;/complexType>
- *                     &lt;/element>
- *                   &lt;/sequence>
- *                   &lt;attribute name="quantity" type="{http://www.w3.org/2001/XMLSchema}normalizedString" />
- *                   &lt;attribute name="min" type="{http://www.w3.org/2001/XMLSchema}int" />
- *                   &lt;attribute name="max" type="{http://www.w3.org/2001/XMLSchema}int" />
- *                 &lt;/restriction>
- *               &lt;/complexContent>
- *             &lt;/complexType>
- *           &lt;/element>
- *         &lt;/choice>
- *       &lt;/sequence>
- *       &lt;attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}normalizedString" />
- *       &lt;attribute name="description" type="{http://www.w3.org/2001/XMLSchema}string" />
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
- * </pre>
- * 
- * 
- */
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "fmiType", propOrder = {
-    "realType",
-    "integerType",
-    "booleanType",
-    "stringType",
-    "enumerationType"
-})
 public class FmiType {
 
-    @XmlElement(name = "RealType")
+    @JsonProperty(value = "RealType")
     protected FmiType.RealType realType;
-    @XmlElement(name = "IntegerType")
+    @JsonProperty(value = "IntegerType")
     protected FmiType.IntegerType integerType;
-    @XmlElement(name = "BooleanType")
+    @JsonProperty(value = "BooleanType")
     protected Object booleanType;
-    @XmlElement(name = "StringType")
+    @JsonProperty(value = "StringType")
     protected Object stringType;
-    @XmlElement(name = "EnumerationType")
+    @JsonProperty(value = "EnumerationType")
     protected FmiType.EnumerationType enumerationType;
-    @XmlAttribute(name = "name", required = true)
-    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
-    @XmlSchemaType(name = "normalizedString")
     protected String name;
-    @XmlAttribute(name = "description")
     protected String description;
 
     /**
@@ -316,7 +231,7 @@ public class FmiType {
     })
     public static class EnumerationType {
 
-        @XmlElement(name = "Item")
+        @JsonProperty(value = "Item")
         protected List<FmiType.EnumerationType.Item> item;
         @XmlAttribute(name = "quantity")
         @XmlJavaTypeAdapter(NormalizedStringAdapter.class)

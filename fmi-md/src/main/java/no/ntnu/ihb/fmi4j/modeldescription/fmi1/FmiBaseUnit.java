@@ -1,61 +1,23 @@
 
 package no.ntnu.ihb.fmi4j.modeldescription.fmi1;
 
-import javax.xml.bind.annotation.*;
-import javax.xml.bind.annotation.adapters.NormalizedStringAdapter;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
+
 import java.util.ArrayList;
 import java.util.List;
 
 
-/**
- * Conversions between units
- * 
- * <p>Java class for fmiBaseUnit complex type.
- * 
- * <p>The following schema fragment specifies the expected content contained within this class.
- * 
- * <pre>
- * &lt;complexType name="fmiBaseUnit">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence maxOccurs="unbounded" minOccurs="0">
- *         &lt;element name="DisplayUnitDefinition">
- *           &lt;complexType>
- *             &lt;complexContent>
- *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *                 &lt;attribute name="displayUnit" use="required" type="{http://www.w3.org/2001/XMLSchema}normalizedString" />
- *                 &lt;attribute name="gain" type="{http://www.w3.org/2001/XMLSchema}double" default="1" />
- *                 &lt;attribute name="offset" type="{http://www.w3.org/2001/XMLSchema}double" default="0" />
- *               &lt;/restriction>
- *             &lt;/complexContent>
- *           &lt;/complexType>
- *         &lt;/element>
- *       &lt;/sequence>
- *       &lt;attribute name="unit" use="required" type="{http://www.w3.org/2001/XMLSchema}normalizedString" />
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
- * </pre>
- * 
- * 
- */
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "fmiBaseUnit", propOrder = {
-    "displayUnitDefinition"
-})
 public class FmiBaseUnit {
 
-    @XmlElement(name = "DisplayUnitDefinition")
+    @JsonProperty(value = "DisplayUnitDefinition")
+    @JacksonXmlElementWrapper(useWrapping = false)
     protected List<FmiBaseUnit.DisplayUnitDefinition> displayUnitDefinition;
-    @XmlAttribute(name = "unit", required = true)
-    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
-    @XmlSchemaType(name = "normalizedString")
     protected String unit;
 
     /**
      * Gets the value of the displayUnitDefinition property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
@@ -107,36 +69,10 @@ public class FmiBaseUnit {
     }
 
 
-    /**
-     * <p>Java class for anonymous complex type.
-     * 
-     * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
-     * <pre>
-     * &lt;complexType>
-     *   &lt;complexContent>
-     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *       &lt;attribute name="displayUnit" use="required" type="{http://www.w3.org/2001/XMLSchema}normalizedString" />
-     *       &lt;attribute name="gain" type="{http://www.w3.org/2001/XMLSchema}double" default="1" />
-     *       &lt;attribute name="offset" type="{http://www.w3.org/2001/XMLSchema}double" default="0" />
-     *     &lt;/restriction>
-     *   &lt;/complexContent>
-     * &lt;/complexType>
-     * </pre>
-     * 
-     * 
-     */
-    @XmlAccessorType(XmlAccessType.FIELD)
-    @XmlType(name = "")
     public static class DisplayUnitDefinition {
 
-        @XmlAttribute(name = "displayUnit", required = true)
-        @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
-        @XmlSchemaType(name = "normalizedString")
         protected String displayUnit;
-        @XmlAttribute(name = "gain")
         protected Double gain;
-        @XmlAttribute(name = "offset")
         protected Double offset;
 
         /**

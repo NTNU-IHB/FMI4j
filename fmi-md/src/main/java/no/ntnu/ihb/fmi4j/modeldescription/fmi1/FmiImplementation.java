@@ -1,65 +1,14 @@
 
 package no.ntnu.ihb.fmi4j.modeldescription.fmi1;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 
-/**
- * XML structures related to the FMI co-simulation interface.
- * 
- * <p>Java class for fmiImplementation complex type.
- * 
- * <p>The following schema fragment specifies the expected content contained within this class.
- * 
- * <pre>
- * &lt;complexType name="fmiImplementation">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;choice>
- *         &lt;element name="CoSimulation_StandAlone">
- *           &lt;complexType>
- *             &lt;complexContent>
- *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *                 &lt;sequence>
- *                   &lt;element name="Capabilities" type="{}fmiCoSimulationCapabilities"/>
- *                 &lt;/sequence>
- *               &lt;/restriction>
- *             &lt;/complexContent>
- *           &lt;/complexType>
- *         &lt;/element>
- *         &lt;element name="CoSimulation_Tool">
- *           &lt;complexType>
- *             &lt;complexContent>
- *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *                 &lt;sequence>
- *                   &lt;element name="Capabilities" type="{}fmiCoSimulationCapabilities"/>
- *                   &lt;element name="Model" type="{}fmiCoSimulationModel"/>
- *                 &lt;/sequence>
- *               &lt;/restriction>
- *             &lt;/complexContent>
- *           &lt;/complexType>
- *         &lt;/element>
- *       &lt;/choice>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
- * </pre>
- * 
- * 
- */
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "fmiImplementation", propOrder = {
-    "coSimulationStandAlone",
-    "coSimulationTool"
-})
 public class FmiImplementation {
 
-    @XmlElement(name = "CoSimulation_StandAlone")
+    @JsonProperty(value = "CoSimulation_StandAlone")
     protected FmiImplementation.CoSimulationStandAlone coSimulationStandAlone;
-    @XmlElement(name = "CoSimulation_Tool")
+    @JsonProperty(value = "CoSimulation_Tool")
     protected FmiImplementation.CoSimulationTool coSimulationTool;
 
     /**
@@ -111,32 +60,9 @@ public class FmiImplementation {
     }
 
 
-    /**
-     * <p>Java class for anonymous complex type.
-     * 
-     * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
-     * <pre>
-     * &lt;complexType>
-     *   &lt;complexContent>
-     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *       &lt;sequence>
-     *         &lt;element name="Capabilities" type="{}fmiCoSimulationCapabilities"/>
-     *       &lt;/sequence>
-     *     &lt;/restriction>
-     *   &lt;/complexContent>
-     * &lt;/complexType>
-     * </pre>
-     * 
-     * 
-     */
-    @XmlAccessorType(XmlAccessType.FIELD)
-    @XmlType(name = "", propOrder = {
-        "capabilities"
-    })
     public static class CoSimulationStandAlone {
 
-        @XmlElement(name = "Capabilities", required = true)
+        @JsonProperty(value = "Capabilities", required = true)
         protected FmiCoSimulationCapabilities capabilities;
 
         /**
@@ -166,36 +92,11 @@ public class FmiImplementation {
     }
 
 
-    /**
-     * <p>Java class for anonymous complex type.
-     * 
-     * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
-     * <pre>
-     * &lt;complexType>
-     *   &lt;complexContent>
-     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *       &lt;sequence>
-     *         &lt;element name="Capabilities" type="{}fmiCoSimulationCapabilities"/>
-     *         &lt;element name="Model" type="{}fmiCoSimulationModel"/>
-     *       &lt;/sequence>
-     *     &lt;/restriction>
-     *   &lt;/complexContent>
-     * &lt;/complexType>
-     * </pre>
-     * 
-     * 
-     */
-    @XmlAccessorType(XmlAccessType.FIELD)
-    @XmlType(name = "", propOrder = {
-        "capabilities",
-        "model"
-    })
     public static class CoSimulationTool {
 
-        @XmlElement(name = "Capabilities", required = true)
+        @JsonProperty(value = "Capabilities", required = true)
         protected FmiCoSimulationCapabilities capabilities;
-        @XmlElement(name = "Model", required = true)
+        @JsonProperty(value = "Model", required = true)
         protected FmiCoSimulationModel model;
 
         /**
