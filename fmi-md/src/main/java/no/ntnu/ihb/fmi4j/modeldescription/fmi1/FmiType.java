@@ -2,10 +2,10 @@
 package no.ntnu.ihb.fmi4j.modeldescription.fmi1;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 
-import javax.xml.bind.annotation.*;
-import javax.xml.bind.annotation.adapters.NormalizedStringAdapter;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,15 +13,21 @@ import java.util.List;
 public class FmiType {
 
     @JsonProperty(value = "RealType")
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
     protected FmiType.RealType realType;
     @JsonProperty(value = "IntegerType")
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
     protected FmiType.IntegerType integerType;
     @JsonProperty(value = "BooleanType")
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
     protected Object booleanType;
     @JsonProperty(value = "StringType")
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
     protected Object stringType;
     @JsonProperty(value = "EnumerationType")
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
     protected FmiType.EnumerationType enumerationType;
+
     protected String name;
     protected String description;
 
@@ -194,52 +200,13 @@ public class FmiType {
     }
 
 
-    /**
-     * <p>Java class for anonymous complex type.
-     * 
-     * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
-     * <pre>
-     * &lt;complexType>
-     *   &lt;complexContent>
-     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *       &lt;sequence maxOccurs="unbounded" minOccurs="0">
-     *         &lt;element name="Item">
-     *           &lt;complexType>
-     *             &lt;complexContent>
-     *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *                 &lt;attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}normalizedString" />
-     *                 &lt;attribute name="description" type="{http://www.w3.org/2001/XMLSchema}string" />
-     *               &lt;/restriction>
-     *             &lt;/complexContent>
-     *           &lt;/complexType>
-     *         &lt;/element>
-     *       &lt;/sequence>
-     *       &lt;attribute name="quantity" type="{http://www.w3.org/2001/XMLSchema}normalizedString" />
-     *       &lt;attribute name="min" type="{http://www.w3.org/2001/XMLSchema}int" />
-     *       &lt;attribute name="max" type="{http://www.w3.org/2001/XMLSchema}int" />
-     *     &lt;/restriction>
-     *   &lt;/complexContent>
-     * &lt;/complexType>
-     * </pre>
-     * 
-     * 
-     */
-    @XmlAccessorType(XmlAccessType.FIELD)
-    @XmlType(name = "", propOrder = {
-        "item"
-    })
     public static class EnumerationType {
 
         @JsonProperty(value = "Item")
+        @JacksonXmlElementWrapper(useWrapping = false)
         protected List<FmiType.EnumerationType.Item> item;
-        @XmlAttribute(name = "quantity")
-        @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
-        @XmlSchemaType(name = "normalizedString")
         protected String quantity;
-        @XmlAttribute(name = "min")
         protected Integer min;
-        @XmlAttribute(name = "max")
         protected Integer max;
 
         /**
@@ -344,33 +311,9 @@ public class FmiType {
         }
 
 
-        /**
-         * <p>Java class for anonymous complex type.
-         * 
-         * <p>The following schema fragment specifies the expected content contained within this class.
-         * 
-         * <pre>
-         * &lt;complexType>
-         *   &lt;complexContent>
-         *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-         *       &lt;attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}normalizedString" />
-         *       &lt;attribute name="description" type="{http://www.w3.org/2001/XMLSchema}string" />
-         *     &lt;/restriction>
-         *   &lt;/complexContent>
-         * &lt;/complexType>
-         * </pre>
-         * 
-         * 
-         */
-        @XmlAccessorType(XmlAccessType.FIELD)
-        @XmlType(name = "")
         public static class Item {
 
-            @XmlAttribute(name = "name", required = true)
-            @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
-            @XmlSchemaType(name = "normalizedString")
             protected String name;
-            @XmlAttribute(name = "description")
             protected String description;
 
             /**
@@ -426,36 +369,10 @@ public class FmiType {
     }
 
 
-    /**
-     * <p>Java class for anonymous complex type.
-     * 
-     * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
-     * <pre>
-     * &lt;complexType>
-     *   &lt;complexContent>
-     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *       &lt;attribute name="quantity" type="{http://www.w3.org/2001/XMLSchema}normalizedString" />
-     *       &lt;attribute name="min" type="{http://www.w3.org/2001/XMLSchema}int" />
-     *       &lt;attribute name="max" type="{http://www.w3.org/2001/XMLSchema}int" />
-     *     &lt;/restriction>
-     *   &lt;/complexContent>
-     * &lt;/complexType>
-     * </pre>
-     * 
-     * 
-     */
-    @XmlAccessorType(XmlAccessType.FIELD)
-    @XmlType(name = "")
     public static class IntegerType {
 
-        @XmlAttribute(name = "quantity")
-        @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
-        @XmlSchemaType(name = "normalizedString")
         protected String quantity;
-        @XmlAttribute(name = "min")
         protected Integer min;
-        @XmlAttribute(name = "max")
         protected Integer max;
 
         /**
@@ -532,53 +449,14 @@ public class FmiType {
 
     }
 
-
-    /**
-     * <p>Java class for anonymous complex type.
-     * 
-     * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
-     * <pre>
-     * &lt;complexType>
-     *   &lt;complexContent>
-     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *       &lt;attribute name="quantity" type="{http://www.w3.org/2001/XMLSchema}normalizedString" />
-     *       &lt;attribute name="unit" type="{http://www.w3.org/2001/XMLSchema}normalizedString" />
-     *       &lt;attribute name="displayUnit" type="{http://www.w3.org/2001/XMLSchema}normalizedString" />
-     *       &lt;attribute name="relativeQuantity" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" />
-     *       &lt;attribute name="min" type="{http://www.w3.org/2001/XMLSchema}double" />
-     *       &lt;attribute name="max" type="{http://www.w3.org/2001/XMLSchema}double" />
-     *       &lt;attribute name="nominal" type="{http://www.w3.org/2001/XMLSchema}double" />
-     *     &lt;/restriction>
-     *   &lt;/complexContent>
-     * &lt;/complexType>
-     * </pre>
-     * 
-     * 
-     */
-    @XmlAccessorType(XmlAccessType.FIELD)
-    @XmlType(name = "")
     public static class RealType {
 
-        @XmlAttribute(name = "quantity")
-        @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
-        @XmlSchemaType(name = "normalizedString")
         protected String quantity;
-        @XmlAttribute(name = "unit")
-        @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
-        @XmlSchemaType(name = "normalizedString")
         protected String unit;
-        @XmlAttribute(name = "displayUnit")
-        @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
-        @XmlSchemaType(name = "normalizedString")
         protected String displayUnit;
-        @XmlAttribute(name = "relativeQuantity")
         protected Boolean relativeQuantity;
-        @XmlAttribute(name = "min")
         protected Double min;
-        @XmlAttribute(name = "max")
         protected Double max;
-        @XmlAttribute(name = "nominal")
         protected Double nominal;
 
         /**

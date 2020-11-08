@@ -1,84 +1,25 @@
 
 package no.ntnu.ihb.fmi4j.modeldescription.fmi2;
 
-import javax.xml.bind.annotation.*;
-import javax.xml.bind.annotation.adapters.NormalizedStringAdapter;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
+
 import java.util.ArrayList;
 import java.util.List;
 
 
-/**
- * Unit definition (with respect to SI base units) and default display units
- * 
- * <p>Java class for fmi2Unit complex type.
- * 
- * <p>The following schema fragment specifies the expected content contained within this class.
- * 
- * <pre>
- * &lt;complexType name="fmi2Unit">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="BaseUnit" minOccurs="0">
- *           &lt;complexType>
- *             &lt;complexContent>
- *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *                 &lt;attribute name="kg" type="{http://www.w3.org/2001/XMLSchema}int" default="0" />
- *                 &lt;attribute name="m" type="{http://www.w3.org/2001/XMLSchema}int" default="0" />
- *                 &lt;attribute name="s" type="{http://www.w3.org/2001/XMLSchema}int" default="0" />
- *                 &lt;attribute name="A" type="{http://www.w3.org/2001/XMLSchema}int" default="0" />
- *                 &lt;attribute name="K" type="{http://www.w3.org/2001/XMLSchema}int" default="0" />
- *                 &lt;attribute name="mol" type="{http://www.w3.org/2001/XMLSchema}int" default="0" />
- *                 &lt;attribute name="cd" type="{http://www.w3.org/2001/XMLSchema}int" default="0" />
- *                 &lt;attribute name="rad" type="{http://www.w3.org/2001/XMLSchema}int" default="0" />
- *                 &lt;attribute name="factor" type="{http://www.w3.org/2001/XMLSchema}double" default="1" />
- *                 &lt;attribute name="offset" type="{http://www.w3.org/2001/XMLSchema}double" default="0" />
- *               &lt;/restriction>
- *             &lt;/complexContent>
- *           &lt;/complexType>
- *         &lt;/element>
- *         &lt;sequence maxOccurs="unbounded" minOccurs="0">
- *           &lt;element name="DisplayUnit">
- *             &lt;complexType>
- *               &lt;complexContent>
- *                 &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *                   &lt;attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}normalizedString" />
- *                   &lt;attribute name="factor" type="{http://www.w3.org/2001/XMLSchema}double" default="1" />
- *                   &lt;attribute name="offset" type="{http://www.w3.org/2001/XMLSchema}double" default="0" />
- *                 &lt;/restriction>
- *               &lt;/complexContent>
- *             &lt;/complexType>
- *           &lt;/element>
- *         &lt;/sequence>
- *       &lt;/sequence>
- *       &lt;attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}normalizedString" />
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
- * </pre>
- * 
- * 
- */
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "fmi2Unit", propOrder = {
-    "baseUnit",
-    "displayUnit"
-})
 public class Fmi2Unit {
 
-    @XmlElement(name = "BaseUnit")
+    @JsonProperty(value = "BaseUnit")
     protected Fmi2Unit.BaseUnit baseUnit;
-    @XmlElement(name = "DisplayUnit")
+    @JsonProperty(value = "DisplayUnit")
+    @JacksonXmlElementWrapper(useWrapping = false)
     protected List<Fmi2Unit.DisplayUnit> displayUnit;
-    @XmlAttribute(name = "name", required = true)
-    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
-    @XmlSchemaType(name = "normalizedString")
     protected String name;
 
     /**
      * Gets the value of the baseUnit property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Fmi2Unit.BaseUnit }
@@ -154,55 +95,17 @@ public class Fmi2Unit {
     }
 
 
-    /**
-     * <p>Java class for anonymous complex type.
-     * 
-     * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
-     * <pre>
-     * &lt;complexType>
-     *   &lt;complexContent>
-     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *       &lt;attribute name="kg" type="{http://www.w3.org/2001/XMLSchema}int" default="0" />
-     *       &lt;attribute name="m" type="{http://www.w3.org/2001/XMLSchema}int" default="0" />
-     *       &lt;attribute name="s" type="{http://www.w3.org/2001/XMLSchema}int" default="0" />
-     *       &lt;attribute name="A" type="{http://www.w3.org/2001/XMLSchema}int" default="0" />
-     *       &lt;attribute name="K" type="{http://www.w3.org/2001/XMLSchema}int" default="0" />
-     *       &lt;attribute name="mol" type="{http://www.w3.org/2001/XMLSchema}int" default="0" />
-     *       &lt;attribute name="cd" type="{http://www.w3.org/2001/XMLSchema}int" default="0" />
-     *       &lt;attribute name="rad" type="{http://www.w3.org/2001/XMLSchema}int" default="0" />
-     *       &lt;attribute name="factor" type="{http://www.w3.org/2001/XMLSchema}double" default="1" />
-     *       &lt;attribute name="offset" type="{http://www.w3.org/2001/XMLSchema}double" default="0" />
-     *     &lt;/restriction>
-     *   &lt;/complexContent>
-     * &lt;/complexType>
-     * </pre>
-     * 
-     * 
-     */
-    @XmlAccessorType(XmlAccessType.FIELD)
-    @XmlType(name = "")
     public static class BaseUnit {
 
-        @XmlAttribute(name = "kg")
         protected Integer kg;
-        @XmlAttribute(name = "m")
         protected Integer m;
-        @XmlAttribute(name = "s")
         protected Integer s;
-        @XmlAttribute(name = "A")
         protected Integer a;
-        @XmlAttribute(name = "K")
         protected Integer k;
-        @XmlAttribute(name = "mol")
         protected Integer mol;
-        @XmlAttribute(name = "cd")
         protected Integer cd;
-        @XmlAttribute(name = "rad")
         protected Integer rad;
-        @XmlAttribute(name = "factor")
         protected Double factor;
-        @XmlAttribute(name = "offset")
         protected Double offset;
 
         /**
@@ -487,37 +390,10 @@ public class Fmi2Unit {
 
     }
 
-
-    /**
-     * <p>Java class for anonymous complex type.
-     * 
-     * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
-     * <pre>
-     * &lt;complexType>
-     *   &lt;complexContent>
-     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *       &lt;attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}normalizedString" />
-     *       &lt;attribute name="factor" type="{http://www.w3.org/2001/XMLSchema}double" default="1" />
-     *       &lt;attribute name="offset" type="{http://www.w3.org/2001/XMLSchema}double" default="0" />
-     *     &lt;/restriction>
-     *   &lt;/complexContent>
-     * &lt;/complexType>
-     * </pre>
-     * 
-     * 
-     */
-    @XmlAccessorType(XmlAccessType.FIELD)
-    @XmlType(name = "")
     public static class DisplayUnit {
 
-        @XmlAttribute(name = "name", required = true)
-        @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
-        @XmlSchemaType(name = "normalizedString")
         protected String name;
-        @XmlAttribute(name = "factor")
         protected Double factor;
-        @XmlAttribute(name = "offset")
         protected Double offset;
 
         /**
