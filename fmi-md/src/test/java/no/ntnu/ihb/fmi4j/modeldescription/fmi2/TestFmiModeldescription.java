@@ -16,7 +16,7 @@ public class TestFmiModeldescription {
 
     @BeforeAll
     static void setup() throws IOException {
-        File fmu = TestFMUs.get("2.0/cs/20Sim/4.6.4.8004/ControlledTemperature/ControlledTemperature.fmu");
+        File fmu = TestFMUs.get("2.0/cs/20sim/4.6.4.8004/ControlledTemperature/ControlledTemperature.fmu");
         String xml = FmiModelDescriptionUtil.extractModelDescriptionXml(fmu);
         md = new XmlMapper().readValue(xml, Fmi2ModelDescription.class);
     }
