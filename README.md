@@ -19,7 +19,6 @@ Compared to other FMI libraries targeting the JVM, FMI4j is **considerably faste
 Considering FMI-import, a significant speedup (2-5x) compared to other open-source FMI implementations for the JVM should be expected. 
 For FMI-export FMI4j is multiple orders of magnitude faster than any existing open source alternative.
 
-Only __JDK 1.8__ is supported.
 
 ***
 
