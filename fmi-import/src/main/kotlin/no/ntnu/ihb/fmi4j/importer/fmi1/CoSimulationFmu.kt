@@ -51,6 +51,10 @@ class CoSimulationFmu(
         return lib.instantiateSlave(instanceName, fmu.guid, fmu.fmuPath, loggingOn)
     }
 
+    override fun newInstance(): CoSimulationSlave {
+        return super.newInstance() as CoSimulationSlave
+    }
+
     override fun newInstance(instanceName: String): CoSimulationSlave {
         return newInstance(instanceName, loggingOn = false)
     }
