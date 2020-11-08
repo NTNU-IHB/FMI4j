@@ -1,10 +1,13 @@
 package no.ntnu.ihb.fmi4j.modeldescription.fmi2;
 
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import no.ntnu.ihb.fmi4j.TestFMUs;
+import no.ntnu.ihb.fmi4j.modeldescription.util.FmiModelDescriptionUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
 import java.io.IOException;
 
 public class TestFmiModeldescription {
@@ -13,8 +16,9 @@ public class TestFmiModeldescription {
 
     @BeforeAll
     static void setup() throws IOException {
-        md = new XmlMapper().readValue(TestFmiModeldescription.class.getClassLoader()
-                .getResource("fmi2/ControlledTemperature/modelDescription.xml"), Fmi2ModelDescription.class);
+        File fmu = TestFMUs.get("2.0/cs/20sim/4.6.4.8004/ControlledTemperature/ControlledTemperature.fmu");
+        String xml = FmiModelDescriptionUtil.extractModelDescriptionXml(fmu);
+        md = new XmlMapper().readValue(xml, Fmi2ModelDescription.class);
     }
 
     @Test
