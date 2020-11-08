@@ -2,7 +2,8 @@ package no.ntnu.ihb.fmi4j.importer.fmi1
 
 import no.ntnu.ihb.fmi4j.TestFMUs
 import no.ntnu.ihb.fmi4j.importer.AbstractFmu
-import no.ntnu.ihb.fmi4j.modeldescription.ModelDescriptionParser
+
+import no.ntnu.ihb.fmi4j.modeldescription.util.FmiModelDescriptionUtil
 import no.ntnu.ihb.fmi4j.readReal
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
@@ -16,7 +17,7 @@ internal class TestFmi1 {
     fun TestFmi1() {
 
         val file = TestFMUs.get("1.0/cs/BouncingBall.fmu")
-        Assertions.assertEquals("1.0", ModelDescriptionParser.extractVersion(file))
+        Assertions.assertEquals("1.0", FmiModelDescriptionUtil.extractVersion(file))
 
         Fmu.from(file).asCoSimulationFmu().use { fmu ->
 
