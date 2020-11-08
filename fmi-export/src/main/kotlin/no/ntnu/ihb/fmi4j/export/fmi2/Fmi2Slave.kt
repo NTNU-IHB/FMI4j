@@ -7,7 +7,6 @@ import java.io.Closeable
 import java.io.File
 import java.util.*
 import java.util.logging.Logger
-import javax.xml.bind.JAXB
 
 abstract class Fmi2Slave(
         args: Map<String, Any>
@@ -26,9 +25,10 @@ abstract class Fmi2Slave(
     protected open val automaticallyAssignStartValues = true
 
     val modelDescriptionXml: String by lazy {
-        String(ByteArrayOutputStream().also { bos ->
-            JAXB.marshal(modelDescription, bos)
-        }.toByteArray())
+        String(ByteArrayOutputStream().use {
+            modelDescription.toXML(it)
+            it.toByteArray()
+        })
     }
 
     fun getFmuResource(name: String): File {
@@ -269,10 +269,10 @@ abstract class Fmi2Slave(
             cs.isCanGetAndSetFMUstate = false
             cs.isCanSerializeFMUstate = false
             cs.isCanNotUseMemoryManagementFunctions = true
-            cs.isCanInterpolateInputs = slaveInfo?.canInterpolateInputs ?: false
             cs.modelIdentifier = modelDescription.modelName
             if (slaveInfo != null) {
                 cs.isNeedsExecutionTool = slaveInfo.needsExecutionTool
+                cs.isCanInterpolateInputs = slaveInfo.canInterpolateInputs
                 cs.isCanBeInstantiatedOnlyOncePerProcess = slaveInfo.canBeInstantiatedOnlyOncePerProcess
                 cs.isCanHandleVariableCommunicationStepSize = slaveInfo.canHandleVariableCommunicationStepSize
             }
@@ -297,7 +297,7 @@ abstract class Fmi2Slave(
                 ms.outputs = Fmi2VariableDependency()
                 outputs.forEach {
                     ms.outputs.unknown.add(Fmi2VariableDependency.Unknown().also { u ->
-                        u.index = it + 1
+                        u.index = (it + 1).toInt()
                     })
                 }
             }

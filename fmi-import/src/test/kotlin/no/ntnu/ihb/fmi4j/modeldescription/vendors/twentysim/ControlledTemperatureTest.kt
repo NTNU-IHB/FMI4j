@@ -149,7 +149,6 @@ class ControlledTemperatureTest {
     fun testSourceFiles() {
 
         val sourceFiles = modelDescription.attributes.sourceFiles
-        LOG.info("${sourceFiles.joinToString("\n")}")
         Assertions.assertTrue(sourceFiles.map { it.name }.containsAll(
                 Arrays.asList("EulerAngles.c",
                         "fmi2Functions.c",

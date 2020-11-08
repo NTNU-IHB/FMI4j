@@ -38,6 +38,8 @@ internal class TestKotlinFmi2Slave {
             Assertions.assertEquals(slave.getReal(longArrayOf(slave.getValueRef("subModel.out"))).first(), 99.0)
         }
 
+        println(slave.modelDescriptionXml)
+
     }
 
 }

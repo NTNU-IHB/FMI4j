@@ -7,7 +7,6 @@ class Identity(
         args: Map<String, Any>
 ) : Fmi2Slave(args) {
 
-
     private var real: Double = 0.0
     private var integer: Int = 0
     private var boolean: Boolean = false

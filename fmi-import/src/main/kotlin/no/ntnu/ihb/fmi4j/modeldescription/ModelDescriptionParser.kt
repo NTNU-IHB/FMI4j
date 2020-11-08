@@ -24,13 +24,16 @@
 
 package no.ntnu.ihb.fmi4j.modeldescription
 
-import java.io.*
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+import com.fasterxml.jackson.dataformat.xml.JacksonXmlModule
+import com.fasterxml.jackson.dataformat.xml.XmlMapper
+import java.io.File
+import java.io.FileInputStream
+import java.io.FileNotFoundException
+import java.io.InputStream
 import java.net.URL
 import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
-import javax.xml.bind.JAXB
-import javax.xml.bind.annotation.XmlAttribute
-import javax.xml.bind.annotation.XmlRootElement
 
 
 abstract class ModelDescriptionParser {
@@ -92,7 +95,7 @@ abstract class ModelDescriptionParser {
 
         @JvmStatic
         fun extractVersion(xml: String): String {
-            return JAXB.unmarshal(StringReader(xml), MockupModelDescription::class.java).fmiVersion
+            return XmlMapper().readValue(xml, MockupModelDescription::class.java).fmiVersion
         }
 
         @JvmStatic
@@ -107,7 +110,9 @@ abstract class ModelDescriptionParser {
 
         @JvmStatic
         fun extractGuid(xml: String): String {
-            return JAXB.unmarshal(StringReader(xml), MockupModelDescription::class.java).guid
+            val module = JacksonXmlModule()
+            val mapper = XmlMapper(module)
+            return mapper.readValue(xml, MockupModelDescription::class.java).guid
         }
 
         @JvmStatic
@@ -133,19 +138,10 @@ abstract class ModelDescriptionParser {
 
 }
 
-@XmlRootElement(name = "fmiModelDescription")
+@JsonIgnoreProperties(ignoreUnknown = true)
 private class MockupModelDescription {
 
-    @XmlAttribute(name = "fmiVersion", required = true)
-    private val fmiVersion_: String? = null
-
-    @XmlAttribute(name = "guid", required = true)
-    private val guid_: String? = null
-
-    val fmiVersion: String
-        get() = fmiVersion_!!
-
-    val guid: String
-        get() = guid_!!
+    lateinit var fmiVersion: String
+    lateinit var guid: String
 
 }

@@ -9,4 +9,5 @@ apply from: rootProject.file("gradle/bintraypublish.gradle")
 
 dependencies {
     api project(':fmi-md')
+    implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.11.3"
 }
