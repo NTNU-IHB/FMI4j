@@ -27,6 +27,7 @@ package no.ntnu.ihb.fmi4j
 import no.ntnu.ihb.fmi4j.modeldescription.RealArray
 import no.ntnu.ihb.fmi4j.modeldescription.StringArray
 import no.ntnu.ihb.fmi4j.modeldescription.ValueReferences
+import java.nio.ByteBuffer
 
 
 /**

@@ -1,57 +1,24 @@
 
 package no.ntnu.ihb.fmi4j.modeldescription.fmi2;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import org.w3c.dom.Element;
 
-import javax.xml.bind.annotation.*;
-import javax.xml.bind.annotation.adapters.NormalizedStringAdapter;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
 
-/**
- * <p>Java class for fmi2Annotation complex type.
- * 
- * <p>The following schema fragment specifies the expected content contained within this class.
- * 
- * <pre>
- * &lt;complexType name="fmi2Annotation">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence maxOccurs="unbounded">
- *         &lt;element name="Tool">
- *           &lt;complexType>
- *             &lt;complexContent>
- *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *                 &lt;sequence>
- *                   &lt;any processContents='lax' minOccurs="0"/>
- *                 &lt;/sequence>
- *                 &lt;attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}normalizedString" />
- *               &lt;/restriction>
- *             &lt;/complexContent>
- *           &lt;/complexType>
- *         &lt;/element>
- *       &lt;/sequence>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
- * </pre>
- * 
- * 
- */
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "fmi2Annotation", propOrder = {
-    "tool"
-})
 public class Fmi2Annotation {
 
-    @XmlElement(name = "Tool", required = true)
+    @JsonProperty(value = "Tool", required = true)
+    @JacksonXmlElementWrapper(useWrapping = false)
     protected List<Fmi2Annotation.Tool> tool;
 
     /**
      * Gets the value of the tool property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
@@ -73,43 +40,16 @@ public class Fmi2Annotation {
      */
     public List<Fmi2Annotation.Tool> getTool() {
         if (tool == null) {
-            tool = new ArrayList<Fmi2Annotation.Tool>();
+            tool = new ArrayList<>();
         }
         return this.tool;
     }
 
 
-    /**
-     * <p>Java class for anonymous complex type.
-     * 
-     * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
-     * <pre>
-     * &lt;complexType>
-     *   &lt;complexContent>
-     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *       &lt;sequence>
-     *         &lt;any processContents='lax' minOccurs="0"/>
-     *       &lt;/sequence>
-     *       &lt;attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}normalizedString" />
-     *     &lt;/restriction>
-     *   &lt;/complexContent>
-     * &lt;/complexType>
-     * </pre>
-     * 
-     * 
-     */
-    @XmlAccessorType(XmlAccessType.FIELD)
-    @XmlType(name = "", propOrder = {
-        "any"
-    })
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Tool {
 
-        @XmlAnyElement(lax = true)
         protected Object any;
-        @XmlAttribute(name = "name", required = true)
-        @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
-        @XmlSchemaType(name = "normalizedString")
         protected String name;
 
         /**

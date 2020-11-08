@@ -40,7 +40,7 @@ fun Fmi2ModelDescription.CoSimulation.convert(): CoSimulationAttributes {
             canHandleVariableCommunicationStepSize = this@convert.isCanHandleVariableCommunicationStepSize,
             canRunAsynchronuously = this@convert.isCanRunAsynchronuously,
             canInterpolateInputs = this@convert.isCanInterpolateInputs,
-            maxOutputDerivativeOrder = this@convert.getMaxOutputDerivativeOrder().toInt(),
+            maxOutputDerivativeOrder = this@convert.getMaxOutputDerivativeOrder(),
             sourceFiles = this@convert.sourceFiles?.file?.map { it.convert() } ?: emptyList()
     )
 

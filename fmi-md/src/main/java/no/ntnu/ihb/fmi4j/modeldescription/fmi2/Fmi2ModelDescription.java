@@ -1,314 +1,75 @@
 
 package no.ntnu.ihb.fmi4j.modeldescription.fmi2;
 
-import javax.xml.bind.annotation.*;
-import javax.xml.bind.annotation.adapters.NormalizedStringAdapter;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
+import com.fasterxml.jackson.dataformat.xml.ser.ToXmlGenerator;
+
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
-
-/**
- * <p>Java class for anonymous complex type.
- * 
- * <p>The following schema fragment specifies the expected content contained within this class.
- * 
- * <pre>
- * &lt;complexType>
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;sequence maxOccurs="2">
- *           &lt;element name="ModelExchange" minOccurs="0">
- *             &lt;complexType>
- *               &lt;complexContent>
- *                 &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *                   &lt;sequence>
- *                     &lt;element name="SourceFiles" minOccurs="0">
- *                       &lt;complexType>
- *                         &lt;complexContent>
- *                           &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *                             &lt;sequence maxOccurs="unbounded">
- *                               &lt;element name="File">
- *                                 &lt;complexType>
- *                                   &lt;complexContent>
- *                                     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *                                       &lt;attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}normalizedString" />
- *                                     &lt;/restriction>
- *                                   &lt;/complexContent>
- *                                 &lt;/complexType>
- *                               &lt;/element>
- *                             &lt;/sequence>
- *                           &lt;/restriction>
- *                         &lt;/complexContent>
- *                       &lt;/complexType>
- *                     &lt;/element>
- *                   &lt;/sequence>
- *                   &lt;attribute name="modelIdentifier" use="required" type="{http://www.w3.org/2001/XMLSchema}normalizedString" />
- *                   &lt;attribute name="needsExecutionTool" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" />
- *                   &lt;attribute name="completedIntegratorStepNotNeeded" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" />
- *                   &lt;attribute name="canBeInstantiatedOnlyOncePerProcess" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" />
- *                   &lt;attribute name="canNotUseMemoryManagementFunctions" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" />
- *                   &lt;attribute name="canGetAndSetFMUstate" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" />
- *                   &lt;attribute name="canSerializeFMUstate" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" />
- *                   &lt;attribute name="providesDirectionalDerivative" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" />
- *                 &lt;/restriction>
- *               &lt;/complexContent>
- *             &lt;/complexType>
- *           &lt;/element>
- *           &lt;element name="CoSimulation" minOccurs="0">
- *             &lt;complexType>
- *               &lt;complexContent>
- *                 &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *                   &lt;sequence>
- *                     &lt;element name="SourceFiles" minOccurs="0">
- *                       &lt;complexType>
- *                         &lt;complexContent>
- *                           &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *                             &lt;sequence maxOccurs="unbounded">
- *                               &lt;element name="File">
- *                                 &lt;complexType>
- *                                   &lt;complexContent>
- *                                     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *                                       &lt;attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}normalizedString" />
- *                                     &lt;/restriction>
- *                                   &lt;/complexContent>
- *                                 &lt;/complexType>
- *                               &lt;/element>
- *                             &lt;/sequence>
- *                           &lt;/restriction>
- *                         &lt;/complexContent>
- *                       &lt;/complexType>
- *                     &lt;/element>
- *                   &lt;/sequence>
- *                   &lt;attribute name="modelIdentifier" use="required" type="{http://www.w3.org/2001/XMLSchema}normalizedString" />
- *                   &lt;attribute name="needsExecutionTool" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" />
- *                   &lt;attribute name="canHandleVariableCommunicationStepSize" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" />
- *                   &lt;attribute name="canInterpolateInputs" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" />
- *                   &lt;attribute name="maxOutputDerivativeOrder" type="{http://www.w3.org/2001/XMLSchema}unsignedInt" default="0" />
- *                   &lt;attribute name="canRunAsynchronuously" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" />
- *                   &lt;attribute name="canBeInstantiatedOnlyOncePerProcess" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" />
- *                   &lt;attribute name="canNotUseMemoryManagementFunctions" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" />
- *                   &lt;attribute name="canGetAndSetFMUstate" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" />
- *                   &lt;attribute name="canSerializeFMUstate" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" />
- *                   &lt;attribute name="providesDirectionalDerivative" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" />
- *                 &lt;/restriction>
- *               &lt;/complexContent>
- *             &lt;/complexType>
- *           &lt;/element>
- *         &lt;/sequence>
- *         &lt;element name="UnitDefinitions" minOccurs="0">
- *           &lt;complexType>
- *             &lt;complexContent>
- *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *                 &lt;sequence maxOccurs="unbounded">
- *                   &lt;element name="Unit" type="{}fmi2Unit"/>
- *                 &lt;/sequence>
- *               &lt;/restriction>
- *             &lt;/complexContent>
- *           &lt;/complexType>
- *         &lt;/element>
- *         &lt;element name="TypeDefinitions" minOccurs="0">
- *           &lt;complexType>
- *             &lt;complexContent>
- *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *                 &lt;sequence maxOccurs="unbounded">
- *                   &lt;element name="SimpleType" type="{}fmi2SimpleType"/>
- *                 &lt;/sequence>
- *               &lt;/restriction>
- *             &lt;/complexContent>
- *           &lt;/complexType>
- *         &lt;/element>
- *         &lt;element name="LogCategories" minOccurs="0">
- *           &lt;complexType>
- *             &lt;complexContent>
- *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *                 &lt;sequence maxOccurs="unbounded">
- *                   &lt;element name="Category">
- *                     &lt;complexType>
- *                       &lt;complexContent>
- *                         &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *                           &lt;attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}normalizedString" />
- *                           &lt;attribute name="description" type="{http://www.w3.org/2001/XMLSchema}string" />
- *                         &lt;/restriction>
- *                       &lt;/complexContent>
- *                     &lt;/complexType>
- *                   &lt;/element>
- *                 &lt;/sequence>
- *               &lt;/restriction>
- *             &lt;/complexContent>
- *           &lt;/complexType>
- *         &lt;/element>
- *         &lt;element name="DefaultExperiment" minOccurs="0">
- *           &lt;complexType>
- *             &lt;complexContent>
- *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *                 &lt;attribute name="startTime" type="{http://www.w3.org/2001/XMLSchema}double" />
- *                 &lt;attribute name="stopTime" type="{http://www.w3.org/2001/XMLSchema}double" />
- *                 &lt;attribute name="tolerance" type="{http://www.w3.org/2001/XMLSchema}double" />
- *                 &lt;attribute name="stepSize" type="{http://www.w3.org/2001/XMLSchema}double" />
- *               &lt;/restriction>
- *             &lt;/complexContent>
- *           &lt;/complexType>
- *         &lt;/element>
- *         &lt;element name="VendorAnnotations" type="{}fmi2Annotation" minOccurs="0"/>
- *         &lt;element name="ModelVariables">
- *           &lt;complexType>
- *             &lt;complexContent>
- *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *                 &lt;sequence maxOccurs="unbounded">
- *                   &lt;element name="ScalarVariable" type="{}fmi2ScalarVariable"/>
- *                 &lt;/sequence>
- *               &lt;/restriction>
- *             &lt;/complexContent>
- *           &lt;/complexType>
- *         &lt;/element>
- *         &lt;element name="ModelStructure">
- *           &lt;complexType>
- *             &lt;complexContent>
- *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *                 &lt;sequence>
- *                   &lt;element name="Outputs" type="{}fmi2VariableDependency" minOccurs="0"/>
- *                   &lt;element name="Derivatives" type="{}fmi2VariableDependency" minOccurs="0"/>
- *                   &lt;element name="InitialUnknowns" minOccurs="0">
- *                     &lt;complexType>
- *                       &lt;complexContent>
- *                         &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *                           &lt;sequence maxOccurs="unbounded">
- *                             &lt;element name="Unknown">
- *                               &lt;complexType>
- *                                 &lt;complexContent>
- *                                   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *                                     &lt;attribute name="index" use="required" type="{http://www.w3.org/2001/XMLSchema}unsignedInt" />
- *                                     &lt;attribute name="dependencies">
- *                                       &lt;simpleType>
- *                                         &lt;list itemType="{http://www.w3.org/2001/XMLSchema}unsignedInt" />
- *                                       &lt;/simpleType>
- *                                     &lt;/attribute>
- *                                     &lt;attribute name="dependenciesKind">
- *                                       &lt;simpleType>
- *                                         &lt;list>
- *                                           &lt;simpleType>
- *                                             &lt;restriction base="{http://www.w3.org/2001/XMLSchema}normalizedString">
- *                                               &lt;enumeration value="dependent"/>
- *                                               &lt;enumeration value="constant"/>
- *                                               &lt;enumeration value="fixed"/>
- *                                               &lt;enumeration value="tunable"/>
- *                                               &lt;enumeration value="discrete"/>
- *                                             &lt;/restriction>
- *                                           &lt;/simpleType>
- *                                         &lt;/list>
- *                                       &lt;/simpleType>
- *                                     &lt;/attribute>
- *                                   &lt;/restriction>
- *                                 &lt;/complexContent>
- *                               &lt;/complexType>
- *                             &lt;/element>
- *                           &lt;/sequence>
- *                         &lt;/restriction>
- *                       &lt;/complexContent>
- *                     &lt;/complexType>
- *                   &lt;/element>
- *                 &lt;/sequence>
- *               &lt;/restriction>
- *             &lt;/complexContent>
- *           &lt;/complexType>
- *         &lt;/element>
- *       &lt;/sequence>
- *       &lt;attribute name="fmiVersion" use="required" type="{http://www.w3.org/2001/XMLSchema}normalizedString" fixed="2.0" />
- *       &lt;attribute name="modelName" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="guid" use="required" type="{http://www.w3.org/2001/XMLSchema}normalizedString" />
- *       &lt;attribute name="description" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="author" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="version" type="{http://www.w3.org/2001/XMLSchema}normalizedString" />
- *       &lt;attribute name="copyright" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="license" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="generationTool" type="{http://www.w3.org/2001/XMLSchema}normalizedString" />
- *       &lt;attribute name="generationDateAndTime" type="{http://www.w3.org/2001/XMLSchema}dateTime" />
- *       &lt;attribute name="variableNamingConvention" default="flat">
- *         &lt;simpleType>
- *           &lt;restriction base="{http://www.w3.org/2001/XMLSchema}normalizedString">
- *             &lt;enumeration value="flat"/>
- *             &lt;enumeration value="structured"/>
- *           &lt;/restriction>
- *         &lt;/simpleType>
- *       &lt;/attribute>
- *       &lt;attribute name="numberOfEventIndicators" type="{http://www.w3.org/2001/XMLSchema}unsignedInt" />
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
- * </pre>
- * 
- * 
- */
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
-    "modelExchange",
-    "coSimulation",
-    "unitDefinitions",
-    "typeDefinitions",
-    "logCategories",
-    "defaultExperiment",
-    "vendorAnnotations",
-    "modelVariables",
-    "modelStructure"
-})
-@XmlRootElement(name = "fmiModelDescription")
+@JsonRootName("fmiModelDescription")
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Fmi2ModelDescription {
 
-    @XmlElement(name = "ModelExchange", type = Fmi2ModelDescription.ModelExchange.class)
+    @JsonProperty(value = "ModelExchange")
     protected Fmi2ModelDescription.ModelExchange modelExchange;
-    @XmlElement(name = "CoSimulation", type = Fmi2ModelDescription.CoSimulation.class)
+    @JsonProperty(value = "CoSimulation")
     protected Fmi2ModelDescription.CoSimulation coSimulation;
-    @XmlElement(name = "UnitDefinitions")
+    @JsonProperty(value = "UnitDefinitions")
     protected Fmi2ModelDescription.UnitDefinitions unitDefinitions;
-    @XmlElement(name = "TypeDefinitions")
+    @JsonProperty(value = "TypeDefinitions")
     protected Fmi2ModelDescription.TypeDefinitions typeDefinitions;
-    @XmlElement(name = "LogCategories")
+    @JsonProperty(value = "LogCategories")
     protected Fmi2ModelDescription.LogCategories logCategories;
-    @XmlElement(name = "DefaultExperiment")
+    @JsonProperty(value = "DefaultExperiment")
     protected Fmi2ModelDescription.DefaultExperiment defaultExperiment;
-    @XmlElement(name = "VendorAnnotations")
+    @JsonProperty(value = "VendorAnnotations")
     protected Fmi2Annotation vendorAnnotations;
-    @XmlElement(name = "ModelVariables", required = true)
+    @JsonProperty(value = "ModelVariables", required = true)
     protected Fmi2ModelDescription.ModelVariables modelVariables;
-    @XmlElement(name = "ModelStructure", required = true)
+    @JsonProperty(value = "ModelStructure", required = true)
     protected Fmi2ModelDescription.ModelStructure modelStructure;
-    @XmlAttribute(name = "fmiVersion", required = true)
-    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
-    @XmlSchemaType(name = "normalizedString")
+
+    @JacksonXmlProperty(isAttribute = true)
     protected String fmiVersion;
-    @XmlAttribute(name = "modelName", required = true)
+    @JacksonXmlProperty(isAttribute = true)
     protected String modelName;
-    @XmlAttribute(name = "guid", required = true)
-    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
-    @XmlSchemaType(name = "normalizedString")
+    @JacksonXmlProperty(isAttribute = true)
     protected String guid;
-    @XmlAttribute(name = "description")
+    @JacksonXmlProperty(isAttribute = true)
     protected String description;
-    @XmlAttribute(name = "author")
+    @JacksonXmlProperty(isAttribute = true)
     protected String author;
-    @XmlAttribute(name = "version")
-    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
-    @XmlSchemaType(name = "normalizedString")
+    @JacksonXmlProperty(isAttribute = true)
     protected String version;
-    @XmlAttribute(name = "copyright")
+    @JacksonXmlProperty(isAttribute = true)
     protected String copyright;
-    @XmlAttribute(name = "license")
+    @JacksonXmlProperty(isAttribute = true)
     protected String license;
-    @XmlAttribute(name = "generationTool")
-    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
-    @XmlSchemaType(name = "normalizedString")
+    @JacksonXmlProperty(isAttribute = true)
     protected String generationTool;
-    @XmlAttribute(name = "generationDateAndTime")
-    @XmlSchemaType(name = "dateTime")
+    @JacksonXmlProperty(isAttribute = true)
     protected String generationDateAndTime;
-    @XmlAttribute(name = "variableNamingConvention")
-    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
+    @JacksonXmlProperty(isAttribute = true)
     protected String variableNamingConvention;
-    @XmlAttribute(name = "numberOfEventIndicators")
-    @XmlSchemaType(name = "unsignedInt")
+    @JacksonXmlProperty(isAttribute = true)
     protected Long numberOfEventIndicators;
+
+    public void toXML(OutputStream out) throws IOException {
+        new XmlMapper()
+                .configure(ToXmlGenerator.Feature.WRITE_XML_DECLARATION, true)
+                .setSerializationInclusion(JsonInclude.Include.NON_NULL)
+                .enable(SerializationFeature.INDENT_OUTPUT)
+                .writeValue(out, this);
+    }
 
 
     public ModelExchange getModelExchange() {
@@ -325,11 +86,9 @@ public class Fmi2ModelDescription {
 
     /**
      * Gets the value of the unitDefinitions property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Fmi2ModelDescription.UnitDefinitions }
-     *     
+     *
+     * @return possible object is
+     * {@link Fmi2ModelDescription.UnitDefinitions }
      */
     public Fmi2ModelDescription.UnitDefinitions getUnitDefinitions() {
         return unitDefinitions;
@@ -337,11 +96,9 @@ public class Fmi2ModelDescription {
 
     /**
      * Sets the value of the unitDefinitions property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Fmi2ModelDescription.UnitDefinitions }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Fmi2ModelDescription.UnitDefinitions }
      */
     public void setUnitDefinitions(Fmi2ModelDescription.UnitDefinitions value) {
         this.unitDefinitions = value;
@@ -349,11 +106,9 @@ public class Fmi2ModelDescription {
 
     /**
      * Gets the value of the typeDefinitions property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Fmi2ModelDescription.TypeDefinitions }
-     *     
+     *
+     * @return possible object is
+     * {@link Fmi2ModelDescription.TypeDefinitions }
      */
     public Fmi2ModelDescription.TypeDefinitions getTypeDefinitions() {
         return typeDefinitions;
@@ -361,11 +116,9 @@ public class Fmi2ModelDescription {
 
     /**
      * Sets the value of the typeDefinitions property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Fmi2ModelDescription.TypeDefinitions }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Fmi2ModelDescription.TypeDefinitions }
      */
     public void setTypeDefinitions(Fmi2ModelDescription.TypeDefinitions value) {
         this.typeDefinitions = value;
@@ -373,11 +126,9 @@ public class Fmi2ModelDescription {
 
     /**
      * Gets the value of the logCategories property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Fmi2ModelDescription.LogCategories }
-     *     
+     *
+     * @return possible object is
+     * {@link Fmi2ModelDescription.LogCategories }
      */
     public Fmi2ModelDescription.LogCategories getLogCategories() {
         return logCategories;
@@ -385,11 +136,9 @@ public class Fmi2ModelDescription {
 
     /**
      * Sets the value of the logCategories property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Fmi2ModelDescription.LogCategories }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Fmi2ModelDescription.LogCategories }
      */
     public void setLogCategories(Fmi2ModelDescription.LogCategories value) {
         this.logCategories = value;
@@ -397,11 +146,9 @@ public class Fmi2ModelDescription {
 
     /**
      * Gets the value of the defaultExperiment property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Fmi2ModelDescription.DefaultExperiment }
-     *     
+     *
+     * @return possible object is
+     * {@link Fmi2ModelDescription.DefaultExperiment }
      */
     public Fmi2ModelDescription.DefaultExperiment getDefaultExperiment() {
         return defaultExperiment;
@@ -409,11 +156,9 @@ public class Fmi2ModelDescription {
 
     /**
      * Sets the value of the defaultExperiment property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Fmi2ModelDescription.DefaultExperiment }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Fmi2ModelDescription.DefaultExperiment }
      */
     public void setDefaultExperiment(Fmi2ModelDescription.DefaultExperiment value) {
         this.defaultExperiment = value;
@@ -421,11 +166,9 @@ public class Fmi2ModelDescription {
 
     /**
      * Gets the value of the vendorAnnotations property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Fmi2Annotation }
-     *     
+     *
+     * @return possible object is
+     * {@link Fmi2Annotation }
      */
     public Fmi2Annotation getVendorAnnotations() {
         return vendorAnnotations;
@@ -433,11 +176,9 @@ public class Fmi2ModelDescription {
 
     /**
      * Sets the value of the vendorAnnotations property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Fmi2Annotation }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Fmi2Annotation }
      */
     public void setVendorAnnotations(Fmi2Annotation value) {
         this.vendorAnnotations = value;
@@ -445,11 +186,9 @@ public class Fmi2ModelDescription {
 
     /**
      * Gets the value of the modelVariables property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Fmi2ModelDescription.ModelVariables }
-     *     
+     *
+     * @return possible object is
+     * {@link Fmi2ModelDescription.ModelVariables }
      */
     public Fmi2ModelDescription.ModelVariables getModelVariables() {
         return modelVariables;
@@ -457,11 +196,9 @@ public class Fmi2ModelDescription {
 
     /**
      * Sets the value of the modelVariables property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Fmi2ModelDescription.ModelVariables }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Fmi2ModelDescription.ModelVariables }
      */
     public void setModelVariables(Fmi2ModelDescription.ModelVariables value) {
         this.modelVariables = value;
@@ -469,11 +206,9 @@ public class Fmi2ModelDescription {
 
     /**
      * Gets the value of the modelStructure property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Fmi2ModelDescription.ModelStructure }
-     *     
+     *
+     * @return possible object is
+     * {@link Fmi2ModelDescription.ModelStructure }
      */
     public Fmi2ModelDescription.ModelStructure getModelStructure() {
         return modelStructure;
@@ -481,11 +216,9 @@ public class Fmi2ModelDescription {
 
     /**
      * Sets the value of the modelStructure property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Fmi2ModelDescription.ModelStructure }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Fmi2ModelDescription.ModelStructure }
      */
     public void setModelStructure(Fmi2ModelDescription.ModelStructure value) {
         this.modelStructure = value;
@@ -493,11 +226,9 @@ public class Fmi2ModelDescription {
 
     /**
      * Gets the value of the fmiVersion property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getFmiVersion() {
         if (fmiVersion == null) {
@@ -509,11 +240,9 @@ public class Fmi2ModelDescription {
 
     /**
      * Sets the value of the fmiVersion property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
     public void setFmiVersion(String value) {
         this.fmiVersion = value;
@@ -521,11 +250,9 @@ public class Fmi2ModelDescription {
 
     /**
      * Gets the value of the modelName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getModelName() {
         return modelName;
@@ -533,11 +260,9 @@ public class Fmi2ModelDescription {
 
     /**
      * Sets the value of the modelName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
     public void setModelName(String value) {
         this.modelName = value;
@@ -545,11 +270,9 @@ public class Fmi2ModelDescription {
 
     /**
      * Gets the value of the guid property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getGuid() {
         return guid;
@@ -557,11 +280,9 @@ public class Fmi2ModelDescription {
 
     /**
      * Sets the value of the guid property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
     public void setGuid(String value) {
         this.guid = value;
@@ -569,11 +290,9 @@ public class Fmi2ModelDescription {
 
     /**
      * Gets the value of the description property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getDescription() {
         return description;
@@ -581,11 +300,9 @@ public class Fmi2ModelDescription {
 
     /**
      * Sets the value of the description property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
     public void setDescription(String value) {
         this.description = value;
@@ -593,11 +310,9 @@ public class Fmi2ModelDescription {
 
     /**
      * Gets the value of the author property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getAuthor() {
         return author;
@@ -605,11 +320,9 @@ public class Fmi2ModelDescription {
 
     /**
      * Sets the value of the author property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
     public void setAuthor(String value) {
         this.author = value;
@@ -617,11 +330,9 @@ public class Fmi2ModelDescription {
 
     /**
      * Gets the value of the version property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getVersion() {
         return version;
@@ -629,11 +340,9 @@ public class Fmi2ModelDescription {
 
     /**
      * Sets the value of the version property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
     public void setVersion(String value) {
         this.version = value;
@@ -641,11 +350,9 @@ public class Fmi2ModelDescription {
 
     /**
      * Gets the value of the copyright property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getCopyright() {
         return copyright;
@@ -653,11 +360,9 @@ public class Fmi2ModelDescription {
 
     /**
      * Sets the value of the copyright property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
     public void setCopyright(String value) {
         this.copyright = value;
@@ -665,11 +370,9 @@ public class Fmi2ModelDescription {
 
     /**
      * Gets the value of the license property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getLicense() {
         return license;
@@ -677,11 +380,9 @@ public class Fmi2ModelDescription {
 
     /**
      * Sets the value of the license property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
     public void setLicense(String value) {
         this.license = value;
@@ -689,11 +390,9 @@ public class Fmi2ModelDescription {
 
     /**
      * Gets the value of the generationTool property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getGenerationTool() {
         return generationTool;
@@ -701,11 +400,9 @@ public class Fmi2ModelDescription {
 
     /**
      * Sets the value of the generationTool property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
     public void setGenerationTool(String value) {
         this.generationTool = value;
@@ -713,11 +410,9 @@ public class Fmi2ModelDescription {
 
     /**
      * Gets the value of the generationDateAndTime property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getGenerationDateAndTime() {
         return generationDateAndTime;
@@ -725,11 +420,9 @@ public class Fmi2ModelDescription {
 
     /**
      * Sets the value of the generationDateAndTime property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
     public void setGenerationDateAndTime(String value) {
         this.generationDateAndTime = value;
@@ -737,11 +430,9 @@ public class Fmi2ModelDescription {
 
     /**
      * Gets the value of the variableNamingConvention property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getVariableNamingConvention() {
         if (variableNamingConvention == null) {
@@ -753,11 +444,9 @@ public class Fmi2ModelDescription {
 
     /**
      * Sets the value of the variableNamingConvention property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
     public void setVariableNamingConvention(String value) {
         this.variableNamingConvention = value;
@@ -765,11 +454,9 @@ public class Fmi2ModelDescription {
 
     /**
      * Gets the value of the numberOfEventIndicators property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Long }
-     *     
+     *
+     * @return possible object is
+     * {@link Long }
      */
     public Long getNumberOfEventIndicators() {
         return numberOfEventIndicators;
@@ -777,106 +464,47 @@ public class Fmi2ModelDescription {
 
     /**
      * Sets the value of the numberOfEventIndicators property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Long }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Long }
      */
     public void setNumberOfEventIndicators(Long value) {
         this.numberOfEventIndicators = value;
     }
 
 
-    /**
-     * <p>Java class for anonymous complex type.
-     * 
-     * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
-     * <pre>
-     * &lt;complexType>
-     *   &lt;complexContent>
-     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *       &lt;sequence>
-     *         &lt;element name="SourceFiles" minOccurs="0">
-     *           &lt;complexType>
-     *             &lt;complexContent>
-     *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *                 &lt;sequence maxOccurs="unbounded">
-     *                   &lt;element name="File">
-     *                     &lt;complexType>
-     *                       &lt;complexContent>
-     *                         &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *                           &lt;attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}normalizedString" />
-     *                         &lt;/restriction>
-     *                       &lt;/complexContent>
-     *                     &lt;/complexType>
-     *                   &lt;/element>
-     *                 &lt;/sequence>
-     *               &lt;/restriction>
-     *             &lt;/complexContent>
-     *           &lt;/complexType>
-     *         &lt;/element>
-     *       &lt;/sequence>
-     *       &lt;attribute name="modelIdentifier" use="required" type="{http://www.w3.org/2001/XMLSchema}normalizedString" />
-     *       &lt;attribute name="needsExecutionTool" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" />
-     *       &lt;attribute name="canHandleVariableCommunicationStepSize" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" />
-     *       &lt;attribute name="canInterpolateInputs" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" />
-     *       &lt;attribute name="maxOutputDerivativeOrder" type="{http://www.w3.org/2001/XMLSchema}unsignedInt" default="0" />
-     *       &lt;attribute name="canRunAsynchronuously" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" />
-     *       &lt;attribute name="canBeInstantiatedOnlyOncePerProcess" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" />
-     *       &lt;attribute name="canNotUseMemoryManagementFunctions" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" />
-     *       &lt;attribute name="canGetAndSetFMUstate" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" />
-     *       &lt;attribute name="canSerializeFMUstate" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" />
-     *       &lt;attribute name="providesDirectionalDerivative" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" />
-     *     &lt;/restriction>
-     *   &lt;/complexContent>
-     * &lt;/complexType>
-     * </pre>
-     * 
-     * 
-     */
-    @XmlAccessorType(XmlAccessType.FIELD)
-    @XmlType(name = "", propOrder = {
-        "sourceFiles"
-    })
     public static class CoSimulation {
 
-        @XmlElement(name = "SourceFiles")
+        @JsonProperty(value = "SourceFiles")
         protected Fmi2ModelDescription.CoSimulation.SourceFiles sourceFiles;
-        @XmlAttribute(name = "modelIdentifier", required = true)
-        @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
-        @XmlSchemaType(name = "normalizedString")
+        @JacksonXmlProperty(isAttribute = true)
         protected String modelIdentifier;
-        @XmlAttribute(name = "needsExecutionTool")
+        @JacksonXmlProperty(isAttribute = true)
         protected Boolean needsExecutionTool;
-        @XmlAttribute(name = "canHandleVariableCommunicationStepSize")
+        @JacksonXmlProperty(isAttribute = true)
         protected Boolean canHandleVariableCommunicationStepSize;
-        @XmlAttribute(name = "canInterpolateInputs")
+        @JacksonXmlProperty(isAttribute = true)
         protected Boolean canInterpolateInputs;
-        @XmlAttribute(name = "maxOutputDerivativeOrder")
-        @XmlSchemaType(name = "unsignedInt")
-        protected Long maxOutputDerivativeOrder;
-        @XmlAttribute(name = "canRunAsynchronuously")
+        @JacksonXmlProperty(isAttribute = true)
+        protected Integer maxOutputDerivativeOrder;
+        @JacksonXmlProperty(isAttribute = true)
         protected Boolean canRunAsynchronuously;
-        @XmlAttribute(name = "canBeInstantiatedOnlyOncePerProcess")
+        @JacksonXmlProperty(isAttribute = true)
         protected Boolean canBeInstantiatedOnlyOncePerProcess;
-        @XmlAttribute(name = "canNotUseMemoryManagementFunctions")
+        @JacksonXmlProperty(isAttribute = true)
         protected Boolean canNotUseMemoryManagementFunctions;
-        @XmlAttribute(name = "canGetAndSetFMUstate")
+        @JacksonXmlProperty(isAttribute = true)
         protected Boolean canGetAndSetFMUstate;
-        @XmlAttribute(name = "canSerializeFMUstate")
+        @JacksonXmlProperty(isAttribute = true)
         protected Boolean canSerializeFMUstate;
-        @XmlAttribute(name = "providesDirectionalDerivative")
+        @JacksonXmlProperty(isAttribute = true)
         protected Boolean providesDirectionalDerivative;
 
         /**
          * Gets the value of the sourceFiles property.
-         * 
-         * @return
-         *     possible object is
-         *     {@link Fmi2ModelDescription.CoSimulation.SourceFiles }
-         *     
+         *
+         * @return possible object is
+         * {@link Fmi2ModelDescription.CoSimulation.SourceFiles }
          */
         public Fmi2ModelDescription.CoSimulation.SourceFiles getSourceFiles() {
             return sourceFiles;
@@ -884,11 +512,9 @@ public class Fmi2ModelDescription {
 
         /**
          * Sets the value of the sourceFiles property.
-         * 
-         * @param value
-         *     allowed object is
-         *     {@link Fmi2ModelDescription.CoSimulation.SourceFiles }
-         *     
+         *
+         * @param value allowed object is
+         *              {@link Fmi2ModelDescription.CoSimulation.SourceFiles }
          */
         public void setSourceFiles(Fmi2ModelDescription.CoSimulation.SourceFiles value) {
             this.sourceFiles = value;
@@ -896,11 +522,9 @@ public class Fmi2ModelDescription {
 
         /**
          * Gets the value of the modelIdentifier property.
-         * 
-         * @return
-         *     possible object is
-         *     {@link String }
-         *     
+         *
+         * @return possible object is
+         * {@link String }
          */
         public String getModelIdentifier() {
             return modelIdentifier;
@@ -908,11 +532,9 @@ public class Fmi2ModelDescription {
 
         /**
          * Sets the value of the modelIdentifier property.
-         * 
-         * @param value
-         *     allowed object is
-         *     {@link String }
-         *     
+         *
+         * @param value allowed object is
+         *              {@link String }
          */
         public void setModelIdentifier(String value) {
             this.modelIdentifier = value;
@@ -920,12 +542,11 @@ public class Fmi2ModelDescription {
 
         /**
          * Gets the value of the needsExecutionTool property.
-         * 
-         * @return
-         *     possible object is
-         *     {@link Boolean }
-         *     
+         *
+         * @return possible object is
+         * {@link Boolean }
          */
+        @JsonIgnore
         public boolean isNeedsExecutionTool() {
             if (needsExecutionTool == null) {
                 return false;
@@ -936,24 +557,22 @@ public class Fmi2ModelDescription {
 
         /**
          * Sets the value of the needsExecutionTool property.
-         * 
-         * @param value
-         *     allowed object is
-         *     {@link Boolean }
-         *     
+         *
+         * @param value allowed object is
+         *              {@link Boolean }
          */
+        @JsonProperty
         public void setNeedsExecutionTool(Boolean value) {
             this.needsExecutionTool = value;
         }
 
         /**
          * Gets the value of the canHandleVariableCommunicationStepSize property.
-         * 
-         * @return
-         *     possible object is
-         *     {@link Boolean }
-         *     
+         *
+         * @return possible object is
+         * {@link Boolean }
          */
+        @JsonIgnore
         public boolean isCanHandleVariableCommunicationStepSize() {
             if (canHandleVariableCommunicationStepSize == null) {
                 return false;
@@ -964,24 +583,22 @@ public class Fmi2ModelDescription {
 
         /**
          * Sets the value of the canHandleVariableCommunicationStepSize property.
-         * 
-         * @param value
-         *     allowed object is
-         *     {@link Boolean }
-         *     
+         *
+         * @param value allowed object is
+         *              {@link Boolean }
          */
+        @JsonProperty
         public void setCanHandleVariableCommunicationStepSize(Boolean value) {
             this.canHandleVariableCommunicationStepSize = value;
         }
 
         /**
          * Gets the value of the canInterpolateInputs property.
-         * 
-         * @return
-         *     possible object is
-         *     {@link Boolean }
-         *     
+         *
+         * @return possible object is
+         * {@link Boolean }
          */
+        @JsonIgnore
         public boolean isCanInterpolateInputs() {
             if (canInterpolateInputs == null) {
                 return false;
@@ -992,27 +609,19 @@ public class Fmi2ModelDescription {
 
         /**
          * Sets the value of the canInterpolateInputs property.
-         * 
-         * @param value
-         *     allowed object is
-         *     {@link Boolean }
-         *     
+         *
+         * @param value allowed object is
+         *              {@link Boolean }
          */
+        @JsonProperty
         public void setCanInterpolateInputs(Boolean value) {
             this.canInterpolateInputs = value;
         }
 
-        /**
-         * Gets the value of the maxOutputDerivativeOrder property.
-         * 
-         * @return
-         *     possible object is
-         *     {@link Long }
-         *     
-         */
-        public long getMaxOutputDerivativeOrder() {
+        @JsonIgnore
+        public int getMaxOutputDerivativeOrder() {
             if (maxOutputDerivativeOrder == null) {
-                return  0L;
+                return 0;
             } else {
                 return maxOutputDerivativeOrder;
             }
@@ -1020,24 +629,22 @@ public class Fmi2ModelDescription {
 
         /**
          * Sets the value of the maxOutputDerivativeOrder property.
-         * 
-         * @param value
-         *     allowed object is
-         *     {@link Long }
-         *     
+         *
+         * @param value allowed object is
+         *              {@link Long }
          */
-        public void setMaxOutputDerivativeOrder(Long value) {
+        @JsonProperty
+        public void setMaxOutputDerivativeOrder(Integer value) {
             this.maxOutputDerivativeOrder = value;
         }
 
         /**
          * Gets the value of the canRunAsynchronuously property.
-         * 
-         * @return
-         *     possible object is
-         *     {@link Boolean }
-         *     
+         *
+         * @return possible object is
+         * {@link Boolean }
          */
+        @JsonIgnore
         public boolean isCanRunAsynchronuously() {
             if (canRunAsynchronuously == null) {
                 return false;
@@ -1048,24 +655,22 @@ public class Fmi2ModelDescription {
 
         /**
          * Sets the value of the canRunAsynchronuously property.
-         * 
-         * @param value
-         *     allowed object is
-         *     {@link Boolean }
-         *     
+         *
+         * @param value allowed object is
+         *              {@link Boolean }
          */
+        @JsonProperty
         public void setCanRunAsynchronuously(Boolean value) {
             this.canRunAsynchronuously = value;
         }
 
         /**
          * Gets the value of the canBeInstantiatedOnlyOncePerProcess property.
-         * 
-         * @return
-         *     possible object is
-         *     {@link Boolean }
-         *     
+         *
+         * @return possible object is
+         * {@link Boolean }
          */
+        @JsonIgnore
         public boolean isCanBeInstantiatedOnlyOncePerProcess() {
             if (canBeInstantiatedOnlyOncePerProcess == null) {
                 return false;
@@ -1076,24 +681,22 @@ public class Fmi2ModelDescription {
 
         /**
          * Sets the value of the canBeInstantiatedOnlyOncePerProcess property.
-         * 
-         * @param value
-         *     allowed object is
-         *     {@link Boolean }
-         *     
+         *
+         * @param value allowed object is
+         *              {@link Boolean }
          */
+        @JsonProperty
         public void setCanBeInstantiatedOnlyOncePerProcess(Boolean value) {
             this.canBeInstantiatedOnlyOncePerProcess = value;
         }
 
         /**
          * Gets the value of the canNotUseMemoryManagementFunctions property.
-         * 
-         * @return
-         *     possible object is
-         *     {@link Boolean }
-         *     
+         *
+         * @return possible object is
+         * {@link Boolean }
          */
+        @JsonIgnore
         public boolean isCanNotUseMemoryManagementFunctions() {
             if (canNotUseMemoryManagementFunctions == null) {
                 return false;
@@ -1104,24 +707,22 @@ public class Fmi2ModelDescription {
 
         /**
          * Sets the value of the canNotUseMemoryManagementFunctions property.
-         * 
-         * @param value
-         *     allowed object is
-         *     {@link Boolean }
-         *     
+         *
+         * @param value allowed object is
+         *              {@link Boolean }
          */
+        @JsonProperty
         public void setCanNotUseMemoryManagementFunctions(Boolean value) {
             this.canNotUseMemoryManagementFunctions = value;
         }
 
         /**
          * Gets the value of the canGetAndSetFMUstate property.
-         * 
-         * @return
-         *     possible object is
-         *     {@link Boolean }
-         *     
+         *
+         * @return possible object is
+         * {@link Boolean }
          */
+        @JsonIgnore
         public boolean isCanGetAndSetFMUstate() {
             if (canGetAndSetFMUstate == null) {
                 return false;
@@ -1132,24 +733,22 @@ public class Fmi2ModelDescription {
 
         /**
          * Sets the value of the canGetAndSetFMUstate property.
-         * 
-         * @param value
-         *     allowed object is
-         *     {@link Boolean }
-         *     
+         *
+         * @param value allowed object is
+         *              {@link Boolean }
          */
+        @JsonProperty
         public void setCanGetAndSetFMUstate(Boolean value) {
             this.canGetAndSetFMUstate = value;
         }
 
         /**
          * Gets the value of the canSerializeFMUstate property.
-         * 
-         * @return
-         *     possible object is
-         *     {@link Boolean }
-         *     
+         *
+         * @return possible object is
+         * {@link Boolean }
          */
+        @JsonIgnore
         public boolean isCanSerializeFMUstate() {
             if (canSerializeFMUstate == null) {
                 return false;
@@ -1160,24 +759,22 @@ public class Fmi2ModelDescription {
 
         /**
          * Sets the value of the canSerializeFMUstate property.
-         * 
-         * @param value
-         *     allowed object is
-         *     {@link Boolean }
-         *     
+         *
+         * @param value allowed object is
+         *              {@link Boolean }
          */
+        @JsonProperty
         public void setCanSerializeFMUstate(Boolean value) {
             this.canSerializeFMUstate = value;
         }
 
         /**
          * Gets the value of the providesDirectionalDerivative property.
-         * 
-         * @return
-         *     possible object is
-         *     {@link Boolean }
-         *     
+         *
+         * @return possible object is
+         * {@link Boolean }
          */
+        @JsonIgnore
         public boolean isProvidesDirectionalDerivative() {
             if (providesDirectionalDerivative == null) {
                 return false;
@@ -1188,116 +785,38 @@ public class Fmi2ModelDescription {
 
         /**
          * Sets the value of the providesDirectionalDerivative property.
-         * 
-         * @param value
-         *     allowed object is
-         *     {@link Boolean }
-         *     
+         *
+         * @param value allowed object is
+         *              {@link Boolean }
          */
+        @JsonProperty
         public void setProvidesDirectionalDerivative(Boolean value) {
             this.providesDirectionalDerivative = value;
         }
 
 
-        /**
-         * <p>Java class for anonymous complex type.
-         * 
-         * <p>The following schema fragment specifies the expected content contained within this class.
-         * 
-         * <pre>
-         * &lt;complexType>
-         *   &lt;complexContent>
-         *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-         *       &lt;sequence maxOccurs="unbounded">
-         *         &lt;element name="File">
-         *           &lt;complexType>
-         *             &lt;complexContent>
-         *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-         *                 &lt;attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}normalizedString" />
-         *               &lt;/restriction>
-         *             &lt;/complexContent>
-         *           &lt;/complexType>
-         *         &lt;/element>
-         *       &lt;/sequence>
-         *     &lt;/restriction>
-         *   &lt;/complexContent>
-         * &lt;/complexType>
-         * </pre>
-         * 
-         * 
-         */
-        @XmlAccessorType(XmlAccessType.FIELD)
-        @XmlType(name = "", propOrder = {
-            "file"
-        })
         public static class SourceFiles {
 
-            @XmlElement(name = "File", required = true)
+            @JsonProperty(value = "File", required = true)
+            @JacksonXmlElementWrapper(useWrapping = false)
             protected List<Fmi2ModelDescription.CoSimulation.SourceFiles.File> file;
 
-            /**
-             * Gets the value of the file property.
-             * 
-             * <p>
-             * This accessor method returns a reference to the live list,
-             * not a snapshot. Therefore any modification you make to the
-             * returned list will be present inside the JAXB object.
-             * This is why there is not a <CODE>set</CODE> method for the file property.
-             * 
-             * <p>
-             * For example, to add a new item, do as follows:
-             * <pre>
-             *    getFile().add(newItem);
-             * </pre>
-             * 
-             * 
-             * <p>
-             * Objects of the following type(s) are allowed in the list
-             * {@link Fmi2ModelDescription.CoSimulation.SourceFiles.File }
-             * 
-             * 
-             */
             public List<Fmi2ModelDescription.CoSimulation.SourceFiles.File> getFile() {
                 if (file == null) {
-                    file = new ArrayList<Fmi2ModelDescription.CoSimulation.SourceFiles.File>();
+                    file = new ArrayList<>();
                 }
                 return this.file;
             }
 
-
-            /**
-             * <p>Java class for anonymous complex type.
-             * 
-             * <p>The following schema fragment specifies the expected content contained within this class.
-             * 
-             * <pre>
-             * &lt;complexType>
-             *   &lt;complexContent>
-             *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-             *       &lt;attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}normalizedString" />
-             *     &lt;/restriction>
-             *   &lt;/complexContent>
-             * &lt;/complexType>
-             * </pre>
-             * 
-             * 
-             */
-            @XmlAccessorType(XmlAccessType.FIELD)
-            @XmlType(name = "")
             public static class File {
 
-                @XmlAttribute(name = "name", required = true)
-                @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
-                @XmlSchemaType(name = "normalizedString")
                 protected String name;
 
                 /**
                  * Gets the value of the name property.
-                 * 
-                 * @return
-                 *     possible object is
-                 *     {@link String }
-                 *     
+                 *
+                 * @return possible object is
+                 * {@link String }
                  */
                 public String getName() {
                     return name;
@@ -1305,11 +824,9 @@ public class Fmi2ModelDescription {
 
                 /**
                  * Sets the value of the name property.
-                 * 
-                 * @param value
-                 *     allowed object is
-                 *     {@link String }
-                 *     
+                 *
+                 * @param value allowed object is
+                 *              {@link String }
                  */
                 public void setName(String value) {
                     this.name = value;
@@ -1322,46 +839,22 @@ public class Fmi2ModelDescription {
     }
 
 
-    /**
-     * <p>Java class for anonymous complex type.
-     * 
-     * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
-     * <pre>
-     * &lt;complexType>
-     *   &lt;complexContent>
-     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *       &lt;attribute name="startTime" type="{http://www.w3.org/2001/XMLSchema}double" />
-     *       &lt;attribute name="stopTime" type="{http://www.w3.org/2001/XMLSchema}double" />
-     *       &lt;attribute name="tolerance" type="{http://www.w3.org/2001/XMLSchema}double" />
-     *       &lt;attribute name="stepSize" type="{http://www.w3.org/2001/XMLSchema}double" />
-     *     &lt;/restriction>
-     *   &lt;/complexContent>
-     * &lt;/complexType>
-     * </pre>
-     * 
-     * 
-     */
-    @XmlAccessorType(XmlAccessType.FIELD)
-    @XmlType(name = "")
     public static class DefaultExperiment {
 
-        @XmlAttribute(name = "startTime")
+        @JacksonXmlProperty(isAttribute = true)
         protected Double startTime;
-        @XmlAttribute(name = "stopTime")
+        @JacksonXmlProperty(isAttribute = true)
         protected Double stopTime;
-        @XmlAttribute(name = "tolerance")
+        @JacksonXmlProperty(isAttribute = true)
         protected Double tolerance;
-        @XmlAttribute(name = "stepSize")
+        @JacksonXmlProperty(isAttribute = true)
         protected Double stepSize;
 
         /**
          * Gets the value of the startTime property.
-         * 
-         * @return
-         *     possible object is
-         *     {@link Double }
-         *     
+         *
+         * @return possible object is
+         * {@link Double }
          */
         public Double getStartTime() {
             return startTime;
@@ -1369,11 +862,9 @@ public class Fmi2ModelDescription {
 
         /**
          * Sets the value of the startTime property.
-         * 
-         * @param value
-         *     allowed object is
-         *     {@link Double }
-         *     
+         *
+         * @param value allowed object is
+         *              {@link Double }
          */
         public void setStartTime(Double value) {
             this.startTime = value;
@@ -1381,11 +872,9 @@ public class Fmi2ModelDescription {
 
         /**
          * Gets the value of the stopTime property.
-         * 
-         * @return
-         *     possible object is
-         *     {@link Double }
-         *     
+         *
+         * @return possible object is
+         * {@link Double }
          */
         public Double getStopTime() {
             return stopTime;
@@ -1393,11 +882,9 @@ public class Fmi2ModelDescription {
 
         /**
          * Sets the value of the stopTime property.
-         * 
-         * @param value
-         *     allowed object is
-         *     {@link Double }
-         *     
+         *
+         * @param value allowed object is
+         *              {@link Double }
          */
         public void setStopTime(Double value) {
             this.stopTime = value;
@@ -1405,11 +892,9 @@ public class Fmi2ModelDescription {
 
         /**
          * Gets the value of the tolerance property.
-         * 
-         * @return
-         *     possible object is
-         *     {@link Double }
-         *     
+         *
+         * @return possible object is
+         * {@link Double }
          */
         public Double getTolerance() {
             return tolerance;
@@ -1417,11 +902,9 @@ public class Fmi2ModelDescription {
 
         /**
          * Sets the value of the tolerance property.
-         * 
-         * @param value
-         *     allowed object is
-         *     {@link Double }
-         *     
+         *
+         * @param value allowed object is
+         *              {@link Double }
          */
         public void setTolerance(Double value) {
             this.tolerance = value;
@@ -1429,11 +912,9 @@ public class Fmi2ModelDescription {
 
         /**
          * Gets the value of the stepSize property.
-         * 
-         * @return
-         *     possible object is
-         *     {@link Double }
-         *     
+         *
+         * @return possible object is
+         * {@link Double }
          */
         public Double getStepSize() {
             return stepSize;
@@ -1441,11 +922,9 @@ public class Fmi2ModelDescription {
 
         /**
          * Sets the value of the stepSize property.
-         * 
-         * @param value
-         *     allowed object is
-         *     {@link Double }
-         *     
+         *
+         * @param value allowed object is
+         *              {@link Double }
          */
         public void setStepSize(Double value) {
             this.stepSize = value;
@@ -1454,109 +933,49 @@ public class Fmi2ModelDescription {
     }
 
 
-    /**
-     * <p>Java class for anonymous complex type.
-     * 
-     * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
-     * <pre>
-     * &lt;complexType>
-     *   &lt;complexContent>
-     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *       &lt;sequence maxOccurs="unbounded">
-     *         &lt;element name="Category">
-     *           &lt;complexType>
-     *             &lt;complexContent>
-     *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *                 &lt;attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}normalizedString" />
-     *                 &lt;attribute name="description" type="{http://www.w3.org/2001/XMLSchema}string" />
-     *               &lt;/restriction>
-     *             &lt;/complexContent>
-     *           &lt;/complexType>
-     *         &lt;/element>
-     *       &lt;/sequence>
-     *     &lt;/restriction>
-     *   &lt;/complexContent>
-     * &lt;/complexType>
-     * </pre>
-     * 
-     * 
-     */
-    @XmlAccessorType(XmlAccessType.FIELD)
-    @XmlType(name = "", propOrder = {
-        "category"
-    })
     public static class LogCategories {
 
-        @XmlElement(name = "Category", required = true)
+        @JsonProperty(value = "Category", required = true)
+        @JacksonXmlElementWrapper(useWrapping = false)
         protected List<Fmi2ModelDescription.LogCategories.Category> category;
 
         /**
          * Gets the value of the category property.
-         * 
+         *
          * <p>
          * This accessor method returns a reference to the live list,
          * not a snapshot. Therefore any modification you make to the
          * returned list will be present inside the JAXB object.
          * This is why there is not a <CODE>set</CODE> method for the category property.
-         * 
+         *
          * <p>
          * For example, to add a new item, do as follows:
          * <pre>
          *    getCategory().add(newItem);
          * </pre>
-         * 
-         * 
+         *
+         *
          * <p>
          * Objects of the following type(s) are allowed in the list
          * {@link Fmi2ModelDescription.LogCategories.Category }
-         * 
-         * 
          */
         public List<Fmi2ModelDescription.LogCategories.Category> getCategory() {
             if (category == null) {
-                category = new ArrayList<Fmi2ModelDescription.LogCategories.Category>();
+                category = new ArrayList<>();
             }
             return this.category;
         }
 
-
-        /**
-         * <p>Java class for anonymous complex type.
-         * 
-         * <p>The following schema fragment specifies the expected content contained within this class.
-         * 
-         * <pre>
-         * &lt;complexType>
-         *   &lt;complexContent>
-         *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-         *       &lt;attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}normalizedString" />
-         *       &lt;attribute name="description" type="{http://www.w3.org/2001/XMLSchema}string" />
-         *     &lt;/restriction>
-         *   &lt;/complexContent>
-         * &lt;/complexType>
-         * </pre>
-         * 
-         * 
-         */
-        @XmlAccessorType(XmlAccessType.FIELD)
-        @XmlType(name = "")
         public static class Category {
 
-            @XmlAttribute(name = "name", required = true)
-            @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
-            @XmlSchemaType(name = "normalizedString")
             protected String name;
-            @XmlAttribute(name = "description")
             protected String description;
 
             /**
              * Gets the value of the name property.
-             * 
-             * @return
-             *     possible object is
-             *     {@link String }
-             *     
+             *
+             * @return possible object is
+             * {@link String }
              */
             public String getName() {
                 return name;
@@ -1564,11 +983,9 @@ public class Fmi2ModelDescription {
 
             /**
              * Sets the value of the name property.
-             * 
-             * @param value
-             *     allowed object is
-             *     {@link String }
-             *     
+             *
+             * @param value allowed object is
+             *              {@link String }
              */
             public void setName(String value) {
                 this.name = value;
@@ -1576,11 +993,9 @@ public class Fmi2ModelDescription {
 
             /**
              * Gets the value of the description property.
-             * 
-             * @return
-             *     possible object is
-             *     {@link String }
-             *     
+             *
+             * @return possible object is
+             * {@link String }
              */
             public String getDescription() {
                 return description;
@@ -1588,11 +1003,9 @@ public class Fmi2ModelDescription {
 
             /**
              * Sets the value of the description property.
-             * 
-             * @param value
-             *     allowed object is
-             *     {@link String }
-             *     
+             *
+             * @param value allowed object is
+             *              {@link String }
              */
             public void setDescription(String value) {
                 this.description = value;
@@ -1603,87 +1016,32 @@ public class Fmi2ModelDescription {
     }
 
 
-    /**
-     * List of capability flags that an FMI2 Model Exchange interface can provide
-     * 
-     * <p>Java class for anonymous complex type.
-     * 
-     * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
-     * <pre>
-     * &lt;complexType>
-     *   &lt;complexContent>
-     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *       &lt;sequence>
-     *         &lt;element name="SourceFiles" minOccurs="0">
-     *           &lt;complexType>
-     *             &lt;complexContent>
-     *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *                 &lt;sequence maxOccurs="unbounded">
-     *                   &lt;element name="File">
-     *                     &lt;complexType>
-     *                       &lt;complexContent>
-     *                         &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *                           &lt;attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}normalizedString" />
-     *                         &lt;/restriction>
-     *                       &lt;/complexContent>
-     *                     &lt;/complexType>
-     *                   &lt;/element>
-     *                 &lt;/sequence>
-     *               &lt;/restriction>
-     *             &lt;/complexContent>
-     *           &lt;/complexType>
-     *         &lt;/element>
-     *       &lt;/sequence>
-     *       &lt;attribute name="modelIdentifier" use="required" type="{http://www.w3.org/2001/XMLSchema}normalizedString" />
-     *       &lt;attribute name="needsExecutionTool" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" />
-     *       &lt;attribute name="completedIntegratorStepNotNeeded" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" />
-     *       &lt;attribute name="canBeInstantiatedOnlyOncePerProcess" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" />
-     *       &lt;attribute name="canNotUseMemoryManagementFunctions" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" />
-     *       &lt;attribute name="canGetAndSetFMUstate" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" />
-     *       &lt;attribute name="canSerializeFMUstate" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" />
-     *       &lt;attribute name="providesDirectionalDerivative" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" />
-     *     &lt;/restriction>
-     *   &lt;/complexContent>
-     * &lt;/complexType>
-     * </pre>
-     * 
-     * 
-     */
-    @XmlAccessorType(XmlAccessType.FIELD)
-    @XmlType(name = "", propOrder = {
-        "sourceFiles"
-    })
     public static class ModelExchange {
 
-        @XmlElement(name = "SourceFiles")
+        @JsonProperty(value = "SourceFiles")
         protected Fmi2ModelDescription.ModelExchange.SourceFiles sourceFiles;
-        @XmlAttribute(name = "modelIdentifier", required = true)
-        @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
-        @XmlSchemaType(name = "normalizedString")
+        @JacksonXmlProperty(isAttribute = true)
         protected String modelIdentifier;
-        @XmlAttribute(name = "needsExecutionTool")
+        @JacksonXmlProperty(isAttribute = true)
         protected Boolean needsExecutionTool;
-        @XmlAttribute(name = "completedIntegratorStepNotNeeded")
+        @JacksonXmlProperty(isAttribute = true)
         protected Boolean completedIntegratorStepNotNeeded;
-        @XmlAttribute(name = "canBeInstantiatedOnlyOncePerProcess")
+        @JacksonXmlProperty(isAttribute = true)
         protected Boolean canBeInstantiatedOnlyOncePerProcess;
-        @XmlAttribute(name = "canNotUseMemoryManagementFunctions")
+        @JacksonXmlProperty(isAttribute = true)
         protected Boolean canNotUseMemoryManagementFunctions;
-        @XmlAttribute(name = "canGetAndSetFMUstate")
+        @JacksonXmlProperty(isAttribute = true)
         protected Boolean canGetAndSetFMUstate;
-        @XmlAttribute(name = "canSerializeFMUstate")
+        @JacksonXmlProperty(isAttribute = true)
         protected Boolean canSerializeFMUstate;
-        @XmlAttribute(name = "providesDirectionalDerivative")
+        @JacksonXmlProperty(isAttribute = true)
         protected Boolean providesDirectionalDerivative;
 
         /**
          * Gets the value of the sourceFiles property.
-         * 
-         * @return
-         *     possible object is
-         *     {@link Fmi2ModelDescription.ModelExchange.SourceFiles }
-         *     
+         *
+         * @return possible object is
+         * {@link Fmi2ModelDescription.ModelExchange.SourceFiles }
          */
         public Fmi2ModelDescription.ModelExchange.SourceFiles getSourceFiles() {
             return sourceFiles;
@@ -1691,11 +1049,9 @@ public class Fmi2ModelDescription {
 
         /**
          * Sets the value of the sourceFiles property.
-         * 
-         * @param value
-         *     allowed object is
-         *     {@link Fmi2ModelDescription.ModelExchange.SourceFiles }
-         *     
+         *
+         * @param value allowed object is
+         *              {@link Fmi2ModelDescription.ModelExchange.SourceFiles }
          */
         public void setSourceFiles(Fmi2ModelDescription.ModelExchange.SourceFiles value) {
             this.sourceFiles = value;
@@ -1703,11 +1059,9 @@ public class Fmi2ModelDescription {
 
         /**
          * Gets the value of the modelIdentifier property.
-         * 
-         * @return
-         *     possible object is
-         *     {@link String }
-         *     
+         *
+         * @return possible object is
+         * {@link String }
          */
         public String getModelIdentifier() {
             return modelIdentifier;
@@ -1715,11 +1069,9 @@ public class Fmi2ModelDescription {
 
         /**
          * Sets the value of the modelIdentifier property.
-         * 
-         * @param value
-         *     allowed object is
-         *     {@link String }
-         *     
+         *
+         * @param value allowed object is
+         *              {@link String }
          */
         public void setModelIdentifier(String value) {
             this.modelIdentifier = value;
@@ -1727,11 +1079,9 @@ public class Fmi2ModelDescription {
 
         /**
          * Gets the value of the needsExecutionTool property.
-         * 
-         * @return
-         *     possible object is
-         *     {@link Boolean }
-         *     
+         *
+         * @return possible object is
+         * {@link Boolean }
          */
         public boolean isNeedsExecutionTool() {
             if (needsExecutionTool == null) {
@@ -1743,11 +1093,9 @@ public class Fmi2ModelDescription {
 
         /**
          * Sets the value of the needsExecutionTool property.
-         * 
-         * @param value
-         *     allowed object is
-         *     {@link Boolean }
-         *     
+         *
+         * @param value allowed object is
+         *              {@link Boolean }
          */
         public void setNeedsExecutionTool(Boolean value) {
             this.needsExecutionTool = value;
@@ -1755,11 +1103,9 @@ public class Fmi2ModelDescription {
 
         /**
          * Gets the value of the completedIntegratorStepNotNeeded property.
-         * 
-         * @return
-         *     possible object is
-         *     {@link Boolean }
-         *     
+         *
+         * @return possible object is
+         * {@link Boolean }
          */
         public boolean isCompletedIntegratorStepNotNeeded() {
             if (completedIntegratorStepNotNeeded == null) {
@@ -1771,11 +1117,9 @@ public class Fmi2ModelDescription {
 
         /**
          * Sets the value of the completedIntegratorStepNotNeeded property.
-         * 
-         * @param value
-         *     allowed object is
-         *     {@link Boolean }
-         *     
+         *
+         * @param value allowed object is
+         *              {@link Boolean }
          */
         public void setCompletedIntegratorStepNotNeeded(Boolean value) {
             this.completedIntegratorStepNotNeeded = value;
@@ -1783,11 +1127,9 @@ public class Fmi2ModelDescription {
 
         /**
          * Gets the value of the canBeInstantiatedOnlyOncePerProcess property.
-         * 
-         * @return
-         *     possible object is
-         *     {@link Boolean }
-         *     
+         *
+         * @return possible object is
+         * {@link Boolean }
          */
         public boolean isCanBeInstantiatedOnlyOncePerProcess() {
             if (canBeInstantiatedOnlyOncePerProcess == null) {
@@ -1799,11 +1141,9 @@ public class Fmi2ModelDescription {
 
         /**
          * Sets the value of the canBeInstantiatedOnlyOncePerProcess property.
-         * 
-         * @param value
-         *     allowed object is
-         *     {@link Boolean }
-         *     
+         *
+         * @param value allowed object is
+         *              {@link Boolean }
          */
         public void setCanBeInstantiatedOnlyOncePerProcess(Boolean value) {
             this.canBeInstantiatedOnlyOncePerProcess = value;
@@ -1811,11 +1151,9 @@ public class Fmi2ModelDescription {
 
         /**
          * Gets the value of the canNotUseMemoryManagementFunctions property.
-         * 
-         * @return
-         *     possible object is
-         *     {@link Boolean }
-         *     
+         *
+         * @return possible object is
+         * {@link Boolean }
          */
         public boolean isCanNotUseMemoryManagementFunctions() {
             if (canNotUseMemoryManagementFunctions == null) {
@@ -1827,11 +1165,9 @@ public class Fmi2ModelDescription {
 
         /**
          * Sets the value of the canNotUseMemoryManagementFunctions property.
-         * 
-         * @param value
-         *     allowed object is
-         *     {@link Boolean }
-         *     
+         *
+         * @param value allowed object is
+         *              {@link Boolean }
          */
         public void setCanNotUseMemoryManagementFunctions(Boolean value) {
             this.canNotUseMemoryManagementFunctions = value;
@@ -1839,11 +1175,9 @@ public class Fmi2ModelDescription {
 
         /**
          * Gets the value of the canGetAndSetFMUstate property.
-         * 
-         * @return
-         *     possible object is
-         *     {@link Boolean }
-         *     
+         *
+         * @return possible object is
+         * {@link Boolean }
          */
         public boolean isCanGetAndSetFMUstate() {
             if (canGetAndSetFMUstate == null) {
@@ -1855,11 +1189,9 @@ public class Fmi2ModelDescription {
 
         /**
          * Sets the value of the canGetAndSetFMUstate property.
-         * 
-         * @param value
-         *     allowed object is
-         *     {@link Boolean }
-         *     
+         *
+         * @param value allowed object is
+         *              {@link Boolean }
          */
         public void setCanGetAndSetFMUstate(Boolean value) {
             this.canGetAndSetFMUstate = value;
@@ -1867,11 +1199,9 @@ public class Fmi2ModelDescription {
 
         /**
          * Gets the value of the canSerializeFMUstate property.
-         * 
-         * @return
-         *     possible object is
-         *     {@link Boolean }
-         *     
+         *
+         * @return possible object is
+         * {@link Boolean }
          */
         public boolean isCanSerializeFMUstate() {
             if (canSerializeFMUstate == null) {
@@ -1883,11 +1213,9 @@ public class Fmi2ModelDescription {
 
         /**
          * Sets the value of the canSerializeFMUstate property.
-         * 
-         * @param value
-         *     allowed object is
-         *     {@link Boolean }
-         *     
+         *
+         * @param value allowed object is
+         *              {@link Boolean }
          */
         public void setCanSerializeFMUstate(Boolean value) {
             this.canSerializeFMUstate = value;
@@ -1895,11 +1223,9 @@ public class Fmi2ModelDescription {
 
         /**
          * Gets the value of the providesDirectionalDerivative property.
-         * 
-         * @return
-         *     possible object is
-         *     {@link Boolean }
-         *     
+         *
+         * @return possible object is
+         * {@link Boolean }
          */
         public boolean isProvidesDirectionalDerivative() {
             if (providesDirectionalDerivative == null) {
@@ -1911,75 +1237,20 @@ public class Fmi2ModelDescription {
 
         /**
          * Sets the value of the providesDirectionalDerivative property.
-         * 
-         * @param value
-         *     allowed object is
-         *     {@link Boolean }
-         *     
+         *
+         * @param value allowed object is
+         *              {@link Boolean }
          */
         public void setProvidesDirectionalDerivative(Boolean value) {
             this.providesDirectionalDerivative = value;
         }
 
-
-        /**
-         * <p>Java class for anonymous complex type.
-         * 
-         * <p>The following schema fragment specifies the expected content contained within this class.
-         * 
-         * <pre>
-         * &lt;complexType>
-         *   &lt;complexContent>
-         *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-         *       &lt;sequence maxOccurs="unbounded">
-         *         &lt;element name="File">
-         *           &lt;complexType>
-         *             &lt;complexContent>
-         *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-         *                 &lt;attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}normalizedString" />
-         *               &lt;/restriction>
-         *             &lt;/complexContent>
-         *           &lt;/complexType>
-         *         &lt;/element>
-         *       &lt;/sequence>
-         *     &lt;/restriction>
-         *   &lt;/complexContent>
-         * &lt;/complexType>
-         * </pre>
-         * 
-         * 
-         */
-        @XmlAccessorType(XmlAccessType.FIELD)
-        @XmlType(name = "", propOrder = {
-            "file"
-        })
         public static class SourceFiles {
 
-            @XmlElement(name = "File", required = true)
+            @JsonProperty(value = "File", required = true)
+            @JacksonXmlElementWrapper(useWrapping = false)
             protected List<Fmi2ModelDescription.ModelExchange.SourceFiles.File> file;
 
-            /**
-             * Gets the value of the file property.
-             * 
-             * <p>
-             * This accessor method returns a reference to the live list,
-             * not a snapshot. Therefore any modification you make to the
-             * returned list will be present inside the JAXB object.
-             * This is why there is not a <CODE>set</CODE> method for the file property.
-             * 
-             * <p>
-             * For example, to add a new item, do as follows:
-             * <pre>
-             *    getFile().add(newItem);
-             * </pre>
-             * 
-             * 
-             * <p>
-             * Objects of the following type(s) are allowed in the list
-             * {@link Fmi2ModelDescription.ModelExchange.SourceFiles.File }
-             * 
-             * 
-             */
             public List<Fmi2ModelDescription.ModelExchange.SourceFiles.File> getFile() {
                 if (file == null) {
                     file = new ArrayList<Fmi2ModelDescription.ModelExchange.SourceFiles.File>();
@@ -1987,40 +1258,15 @@ public class Fmi2ModelDescription {
                 return this.file;
             }
 
-
-            /**
-             * <p>Java class for anonymous complex type.
-             * 
-             * <p>The following schema fragment specifies the expected content contained within this class.
-             * 
-             * <pre>
-             * &lt;complexType>
-             *   &lt;complexContent>
-             *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-             *       &lt;attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}normalizedString" />
-             *     &lt;/restriction>
-             *   &lt;/complexContent>
-             * &lt;/complexType>
-             * </pre>
-             * 
-             * 
-             */
-            @XmlAccessorType(XmlAccessType.FIELD)
-            @XmlType(name = "")
             public static class File {
 
-                @XmlAttribute(name = "name", required = true)
-                @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
-                @XmlSchemaType(name = "normalizedString")
                 protected String name;
 
                 /**
                  * Gets the value of the name property.
-                 * 
-                 * @return
-                 *     possible object is
-                 *     {@link String }
-                 *     
+                 *
+                 * @return possible object is
+                 * {@link String }
                  */
                 public String getName() {
                     return name;
@@ -2028,11 +1274,9 @@ public class Fmi2ModelDescription {
 
                 /**
                  * Sets the value of the name property.
-                 * 
-                 * @param value
-                 *     allowed object is
-                 *     {@link String }
-                 *     
+                 *
+                 * @param value allowed object is
+                 *              {@link String }
                  */
                 public void setName(String value) {
                     this.name = value;
@@ -2044,361 +1288,97 @@ public class Fmi2ModelDescription {
 
     }
 
-
-    /**
-     * <p>Java class for anonymous complex type.
-     * 
-     * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
-     * <pre>
-     * &lt;complexType>
-     *   &lt;complexContent>
-     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *       &lt;sequence>
-     *         &lt;element name="Outputs" type="{}fmi2VariableDependency" minOccurs="0"/>
-     *         &lt;element name="Derivatives" type="{}fmi2VariableDependency" minOccurs="0"/>
-     *         &lt;element name="InitialUnknowns" minOccurs="0">
-     *           &lt;complexType>
-     *             &lt;complexContent>
-     *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *                 &lt;sequence maxOccurs="unbounded">
-     *                   &lt;element name="Unknown">
-     *                     &lt;complexType>
-     *                       &lt;complexContent>
-     *                         &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *                           &lt;attribute name="index" use="required" type="{http://www.w3.org/2001/XMLSchema}unsignedInt" />
-     *                           &lt;attribute name="dependencies">
-     *                             &lt;simpleType>
-     *                               &lt;list itemType="{http://www.w3.org/2001/XMLSchema}unsignedInt" />
-     *                             &lt;/simpleType>
-     *                           &lt;/attribute>
-     *                           &lt;attribute name="dependenciesKind">
-     *                             &lt;simpleType>
-     *                               &lt;list>
-     *                                 &lt;simpleType>
-     *                                   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}normalizedString">
-     *                                     &lt;enumeration value="dependent"/>
-     *                                     &lt;enumeration value="constant"/>
-     *                                     &lt;enumeration value="fixed"/>
-     *                                     &lt;enumeration value="tunable"/>
-     *                                     &lt;enumeration value="discrete"/>
-     *                                   &lt;/restriction>
-     *                                 &lt;/simpleType>
-     *                               &lt;/list>
-     *                             &lt;/simpleType>
-     *                           &lt;/attribute>
-     *                         &lt;/restriction>
-     *                       &lt;/complexContent>
-     *                     &lt;/complexType>
-     *                   &lt;/element>
-     *                 &lt;/sequence>
-     *               &lt;/restriction>
-     *             &lt;/complexContent>
-     *           &lt;/complexType>
-     *         &lt;/element>
-     *       &lt;/sequence>
-     *     &lt;/restriction>
-     *   &lt;/complexContent>
-     * &lt;/complexType>
-     * </pre>
-     * 
-     * 
-     */
-    @XmlAccessorType(XmlAccessType.FIELD)
-    @XmlType(name = "", propOrder = {
-        "outputs",
-        "derivatives",
-        "initialUnknowns"
-    })
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class ModelStructure {
 
-        @XmlElement(name = "Outputs")
+        @JsonProperty(value = "Outputs")
         protected Fmi2VariableDependency outputs;
-        @XmlElement(name = "Derivatives")
+        @JsonProperty(value = "Derivatives")
         protected Fmi2VariableDependency derivatives;
-        @XmlElement(name = "InitialUnknowns")
+        @JsonProperty(value = "InitialUnknowns")
         protected Fmi2ModelDescription.ModelStructure.InitialUnknowns initialUnknowns;
 
-        /**
-         * Gets the value of the outputs property.
-         * 
-         * @return
-         *     possible object is
-         *     {@link Fmi2VariableDependency }
-         *     
-         */
+        public ModelStructure() {
+        }
+
+        protected ModelStructure(String dummy) {
+        }
+
         public Fmi2VariableDependency getOutputs() {
             return outputs;
         }
 
-        /**
-         * Sets the value of the outputs property.
-         * 
-         * @param value
-         *     allowed object is
-         *     {@link Fmi2VariableDependency }
-         *     
-         */
         public void setOutputs(Fmi2VariableDependency value) {
             this.outputs = value;
         }
 
-        /**
-         * Gets the value of the derivatives property.
-         * 
-         * @return
-         *     possible object is
-         *     {@link Fmi2VariableDependency }
-         *     
-         */
         public Fmi2VariableDependency getDerivatives() {
             return derivatives;
         }
 
-        /**
-         * Sets the value of the derivatives property.
-         * 
-         * @param value
-         *     allowed object is
-         *     {@link Fmi2VariableDependency }
-         *     
-         */
         public void setDerivatives(Fmi2VariableDependency value) {
             this.derivatives = value;
         }
 
         /**
          * Gets the value of the initialUnknowns property.
-         * 
-         * @return
-         *     possible object is
-         *     {@link Fmi2ModelDescription.ModelStructure.InitialUnknowns }
-         *     
+         *
+         * @return possible object is
+         * {@link Fmi2ModelDescription.ModelStructure.InitialUnknowns }
          */
         public Fmi2ModelDescription.ModelStructure.InitialUnknowns getInitialUnknowns() {
             return initialUnknowns;
         }
 
-        /**
-         * Sets the value of the initialUnknowns property.
-         * 
-         * @param value
-         *     allowed object is
-         *     {@link Fmi2ModelDescription.ModelStructure.InitialUnknowns }
-         *     
-         */
         public void setInitialUnknowns(Fmi2ModelDescription.ModelStructure.InitialUnknowns value) {
             this.initialUnknowns = value;
         }
 
-
-        /**
-         * <p>Java class for anonymous complex type.
-         * 
-         * <p>The following schema fragment specifies the expected content contained within this class.
-         * 
-         * <pre>
-         * &lt;complexType>
-         *   &lt;complexContent>
-         *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-         *       &lt;sequence maxOccurs="unbounded">
-         *         &lt;element name="Unknown">
-         *           &lt;complexType>
-         *             &lt;complexContent>
-         *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-         *                 &lt;attribute name="index" use="required" type="{http://www.w3.org/2001/XMLSchema}unsignedInt" />
-         *                 &lt;attribute name="dependencies">
-         *                   &lt;simpleType>
-         *                     &lt;list itemType="{http://www.w3.org/2001/XMLSchema}unsignedInt" />
-         *                   &lt;/simpleType>
-         *                 &lt;/attribute>
-         *                 &lt;attribute name="dependenciesKind">
-         *                   &lt;simpleType>
-         *                     &lt;list>
-         *                       &lt;simpleType>
-         *                         &lt;restriction base="{http://www.w3.org/2001/XMLSchema}normalizedString">
-         *                           &lt;enumeration value="dependent"/>
-         *                           &lt;enumeration value="constant"/>
-         *                           &lt;enumeration value="fixed"/>
-         *                           &lt;enumeration value="tunable"/>
-         *                           &lt;enumeration value="discrete"/>
-         *                         &lt;/restriction>
-         *                       &lt;/simpleType>
-         *                     &lt;/list>
-         *                   &lt;/simpleType>
-         *                 &lt;/attribute>
-         *               &lt;/restriction>
-         *             &lt;/complexContent>
-         *           &lt;/complexType>
-         *         &lt;/element>
-         *       &lt;/sequence>
-         *     &lt;/restriction>
-         *   &lt;/complexContent>
-         * &lt;/complexType>
-         * </pre>
-         * 
-         * 
-         */
-        @XmlAccessorType(XmlAccessType.FIELD)
-        @XmlType(name = "", propOrder = {
-            "unknown"
-        })
         public static class InitialUnknowns {
 
-            @XmlElement(name = "Unknown", required = true)
+            @JsonProperty(value = "Unknown", required = true)
+            @JacksonXmlElementWrapper(useWrapping = false)
             protected List<Fmi2ModelDescription.ModelStructure.InitialUnknowns.Unknown> unknown;
 
-            /**
-             * Gets the value of the unknown property.
-             * 
-             * <p>
-             * This accessor method returns a reference to the live list,
-             * not a snapshot. Therefore any modification you make to the
-             * returned list will be present inside the JAXB object.
-             * This is why there is not a <CODE>set</CODE> method for the unknown property.
-             * 
-             * <p>
-             * For example, to add a new item, do as follows:
-             * <pre>
-             *    getUnknown().add(newItem);
-             * </pre>
-             * 
-             * 
-             * <p>
-             * Objects of the following type(s) are allowed in the list
-             * {@link Fmi2ModelDescription.ModelStructure.InitialUnknowns.Unknown }
-             * 
-             * 
-             */
             public List<Fmi2ModelDescription.ModelStructure.InitialUnknowns.Unknown> getUnknown() {
                 if (unknown == null) {
-                    unknown = new ArrayList<Fmi2ModelDescription.ModelStructure.InitialUnknowns.Unknown>();
+                    unknown = new ArrayList<>();
                 }
                 return this.unknown;
             }
 
-
-            /**
-             * <p>Java class for anonymous complex type.
-             * 
-             * <p>The following schema fragment specifies the expected content contained within this class.
-             * 
-             * <pre>
-             * &lt;complexType>
-             *   &lt;complexContent>
-             *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-             *       &lt;attribute name="index" use="required" type="{http://www.w3.org/2001/XMLSchema}unsignedInt" />
-             *       &lt;attribute name="dependencies">
-             *         &lt;simpleType>
-             *           &lt;list itemType="{http://www.w3.org/2001/XMLSchema}unsignedInt" />
-             *         &lt;/simpleType>
-             *       &lt;/attribute>
-             *       &lt;attribute name="dependenciesKind">
-             *         &lt;simpleType>
-             *           &lt;list>
-             *             &lt;simpleType>
-             *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}normalizedString">
-             *                 &lt;enumeration value="dependent"/>
-             *                 &lt;enumeration value="constant"/>
-             *                 &lt;enumeration value="fixed"/>
-             *                 &lt;enumeration value="tunable"/>
-             *                 &lt;enumeration value="discrete"/>
-             *               &lt;/restriction>
-             *             &lt;/simpleType>
-             *           &lt;/list>
-             *         &lt;/simpleType>
-             *       &lt;/attribute>
-             *     &lt;/restriction>
-             *   &lt;/complexContent>
-             * &lt;/complexType>
-             * </pre>
-             * 
-             * 
-             */
-            @XmlAccessorType(XmlAccessType.FIELD)
-            @XmlType(name = "")
             public static class Unknown {
 
-                @XmlAttribute(name = "index", required = true)
-                @XmlSchemaType(name = "unsignedInt")
-                protected long index;
-                @XmlAttribute(name = "dependencies")
-                protected List<Long> dependencies;
-                @XmlAttribute(name = "dependenciesKind")
-                protected List<String> dependenciesKind;
+                @JacksonXmlProperty(isAttribute = true)
+                private int index;
+                @JacksonXmlProperty(isAttribute = true)
+                private String dependencies;
+                @JacksonXmlProperty(isAttribute = true)
+                private String dependenciesKind;
 
-                /**
-                 * Gets the value of the index property.
-                 * 
-                 */
-                public long getIndex() {
+                public int getIndex() {
                     return index;
                 }
 
-                /**
-                 * Sets the value of the index property.
-                 * 
-                 */
-                public void setIndex(long value) {
+                public void setIndex(int value) {
                     this.index = value;
                 }
 
-                /**
-                 * Gets the value of the dependencies property.
-                 * 
-                 * <p>
-                 * This accessor method returns a reference to the live list,
-                 * not a snapshot. Therefore any modification you make to the
-                 * returned list will be present inside the JAXB object.
-                 * This is why there is not a <CODE>set</CODE> method for the dependencies property.
-                 * 
-                 * <p>
-                 * For example, to add a new item, do as follows:
-                 * <pre>
-                 *    getDependencies().add(newItem);
-                 * </pre>
-                 * 
-                 * 
-                 * <p>
-                 * Objects of the following type(s) are allowed in the list
-                 * {@link Long }
-                 * 
-                 * 
-                 */
-                public List<Long> getDependencies() {
-                    if (dependencies == null) {
-                        dependencies = new ArrayList<Long>();
+                public List<Integer> getDependencies() {
+                    if (dependencies == null || dependencies.isEmpty()) {
+                        return new ArrayList<>();
+                    } else {
+                        String[] split = dependencies.trim().split(" ");
+                        return Arrays.stream(split).map(Integer::parseInt).collect(Collectors.toList());
                     }
-                    return this.dependencies;
                 }
 
-                /**
-                 * Gets the value of the dependenciesKind property.
-                 * 
-                 * <p>
-                 * This accessor method returns a reference to the live list,
-                 * not a snapshot. Therefore any modification you make to the
-                 * returned list will be present inside the JAXB object.
-                 * This is why there is not a <CODE>set</CODE> method for the dependenciesKind property.
-                 * 
-                 * <p>
-                 * For example, to add a new item, do as follows:
-                 * <pre>
-                 *    getDependenciesKind().add(newItem);
-                 * </pre>
-                 * 
-                 * 
-                 * <p>
-                 * Objects of the following type(s) are allowed in the list
-                 * {@link String }
-                 * 
-                 * 
-                 */
                 public List<String> getDependenciesKind() {
-                    if (dependenciesKind == null) {
-                        dependenciesKind = new ArrayList<String>();
+                    if (dependenciesKind == null || dependencies.isEmpty()) {
+                        return new ArrayList<>();
+                    } else {
+                        return Arrays.asList(dependenciesKind.split(" "));
                     }
-                    return this.dependenciesKind;
                 }
 
             }
@@ -2408,179 +1388,105 @@ public class Fmi2ModelDescription {
     }
 
 
-    /**
-     * <p>Java class for anonymous complex type.
-     * 
-     * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
-     * <pre>
-     * &lt;complexType>
-     *   &lt;complexContent>
-     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *       &lt;sequence maxOccurs="unbounded">
-     *         &lt;element name="ScalarVariable" type="{}fmi2ScalarVariable"/>
-     *       &lt;/sequence>
-     *     &lt;/restriction>
-     *   &lt;/complexContent>
-     * &lt;/complexType>
-     * </pre>
-     * 
-     * 
-     */
-    @XmlAccessorType(XmlAccessType.FIELD)
-    @XmlType(name = "", propOrder = {
-        "scalarVariable"
-    })
     public static class ModelVariables {
 
-        @XmlElement(name = "ScalarVariable", required = true)
+        @JsonProperty(value = "ScalarVariable", required = true)
+        @JacksonXmlElementWrapper(useWrapping = false)
         protected List<Fmi2ScalarVariable> scalarVariable;
 
         /**
          * Gets the value of the scalarVariable property.
-         * 
+         *
          * <p>
          * This accessor method returns a reference to the live list,
          * not a snapshot. Therefore any modification you make to the
          * returned list will be present inside the JAXB object.
          * This is why there is not a <CODE>set</CODE> method for the scalarVariable property.
-         * 
+         *
          * <p>
          * For example, to add a new item, do as follows:
          * <pre>
          *    getScalarVariable().add(newItem);
          * </pre>
-         * 
-         * 
+         *
+         *
          * <p>
          * Objects of the following type(s) are allowed in the list
          * {@link Fmi2ScalarVariable }
-         * 
-         * 
          */
         public List<Fmi2ScalarVariable> getScalarVariable() {
             if (scalarVariable == null) {
-                scalarVariable = new ArrayList<Fmi2ScalarVariable>();
+                scalarVariable = new ArrayList<>();
             }
             return this.scalarVariable;
         }
 
     }
 
-
-    /**
-     * <p>Java class for anonymous complex type.
-     * 
-     * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
-     * <pre>
-     * &lt;complexType>
-     *   &lt;complexContent>
-     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *       &lt;sequence maxOccurs="unbounded">
-     *         &lt;element name="SimpleType" type="{}fmi2SimpleType"/>
-     *       &lt;/sequence>
-     *     &lt;/restriction>
-     *   &lt;/complexContent>
-     * &lt;/complexType>
-     * </pre>
-     * 
-     * 
-     */
-    @XmlAccessorType(XmlAccessType.FIELD)
-    @XmlType(name = "", propOrder = {
-        "simpleType"
-    })
     public static class TypeDefinitions {
 
-        @XmlElement(name = "SimpleType", required = true)
+        @JsonProperty(value = "SimpleType", required = true)
+        @JacksonXmlElementWrapper(useWrapping = false)
         protected List<Fmi2SimpleType> simpleType;
 
         /**
          * Gets the value of the simpleType property.
-         * 
+         *
          * <p>
          * This accessor method returns a reference to the live list,
          * not a snapshot. Therefore any modification you make to the
          * returned list will be present inside the JAXB object.
          * This is why there is not a <CODE>set</CODE> method for the simpleType property.
-         * 
+         *
          * <p>
          * For example, to add a new item, do as follows:
          * <pre>
          *    getSimpleType().add(newItem);
          * </pre>
-         * 
-         * 
+         *
+         *
          * <p>
          * Objects of the following type(s) are allowed in the list
          * {@link Fmi2SimpleType }
-         * 
-         * 
          */
         public List<Fmi2SimpleType> getSimpleType() {
             if (simpleType == null) {
-                simpleType = new ArrayList<Fmi2SimpleType>();
+                simpleType = new ArrayList<>();
             }
             return this.simpleType;
         }
 
     }
 
-
-    /**
-     * <p>Java class for anonymous complex type.
-     * 
-     * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
-     * <pre>
-     * &lt;complexType>
-     *   &lt;complexContent>
-     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *       &lt;sequence maxOccurs="unbounded">
-     *         &lt;element name="Unit" type="{}fmi2Unit"/>
-     *       &lt;/sequence>
-     *     &lt;/restriction>
-     *   &lt;/complexContent>
-     * &lt;/complexType>
-     * </pre>
-     * 
-     * 
-     */
-    @XmlAccessorType(XmlAccessType.FIELD)
-    @XmlType(name = "", propOrder = {
-        "unit"
-    })
     public static class UnitDefinitions {
 
-        @XmlElement(name = "Unit", required = true)
+        @JsonProperty(value = "Unit", required = true)
+        @JacksonXmlElementWrapper(useWrapping = false)
         protected List<Fmi2Unit> unit;
 
         /**
          * Gets the value of the unit property.
-         * 
+         *
          * <p>
          * This accessor method returns a reference to the live list,
          * not a snapshot. Therefore any modification you make to the
          * returned list will be present inside the JAXB object.
          * This is why there is not a <CODE>set</CODE> method for the unit property.
-         * 
+         *
          * <p>
          * For example, to add a new item, do as follows:
          * <pre>
          *    getUnit().add(newItem);
          * </pre>
-         * 
-         * 
+         *
+         *
          * <p>
          * Objects of the following type(s) are allowed in the list
          * {@link Fmi2Unit }
-         * 
-         * 
          */
         public List<Fmi2Unit> getUnit() {
             if (unit == null) {
-                unit = new ArrayList<Fmi2Unit>();
+                unit = new ArrayList<>();
             }
             return this.unit;
         }

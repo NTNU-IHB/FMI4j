@@ -1,12 +1,15 @@
 package no.ntnu.ihb.fmi4j
 
+
 import picocli.CommandLine
-import java.io.*
+import java.io.BufferedOutputStream
+import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
 import java.net.URLClassLoader
 import java.nio.file.Files
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
-import javax.xml.bind.JAXB
 
 private const val DUMMY_INSTANCE_NAME = "dummyInstance"
 
@@ -37,7 +40,7 @@ class FmuBuilder(
             fmuArgs["resourceLocation"] = tempResourcesDir.absolutePath
         }
 
-        val classLoader = URLClassLoader(arrayOf(jarFile.toURI().toURL()), null)
+        val classLoader = URLClassLoader(arrayOf(jarFile.toURI().toURL()))
 
         val superClass = classLoader.loadClass("no.ntnu.ihb.fmi4j.export.fmi2.Fmi2Slave")
         val subClass = classLoader.loadClass(mainClass)
@@ -46,6 +49,7 @@ class FmuBuilder(
         val mdClass = classLoader.loadClass("no.ntnu.ihb.fmi4j.modeldescription.fmi2.Fmi2ModelDescription")
         val mdCsClass = classLoader.loadClass("no.ntnu.ihb.fmi4j.modeldescription.fmi2.Fmi2ModelDescription\$CoSimulation")
         val mdCsMethod = mdClass.getMethod("getCoSimulation")
+        val toXml = superClass.getMethod("getModelDescriptionXml")
         val mdCsModelIdentifierMethod = mdCsClass.getMethod("getModelIdentifier")
 
         val define = superClass.getDeclaredMethod("__define__")
@@ -56,11 +60,10 @@ class FmuBuilder(
         val mdCs = mdCsMethod.invoke(md)
         val modelIdentifier = mdCsModelIdentifierMethod.invoke(mdCs) as String
 
+        val xml = toXml.invoke(instance) as String
+
         val close = superClass.getDeclaredMethod("close")
         close.invoke(instance)
-
-        val bos = ByteArrayOutputStream()
-        JAXB.marshal(md, bos)
 
         val destDir = dest ?: File(".")
         val destFile = File(destDir, "${modelIdentifier}.fmu").apply {
@@ -73,7 +76,7 @@ class FmuBuilder(
         ZipOutputStream(BufferedOutputStream(FileOutputStream(destFile))).use { zos ->
 
             zos.putNextEntry(ZipEntry("modelDescription.xml"))
-            zos.write(bos.toByteArray())
+            zos.write(xml.toByteArray())
             zos.closeEntry()
 
             zos.putNextEntry(ZipEntry("resources/"))

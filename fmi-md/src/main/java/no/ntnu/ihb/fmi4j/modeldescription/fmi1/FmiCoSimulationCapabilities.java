@@ -1,58 +1,17 @@
 
 package no.ntnu.ihb.fmi4j.modeldescription.fmi1;
 
-import javax.xml.bind.annotation.*;
 
-
-/**
- * List of capability flags that an FMI co-simulation interface can provide
- * 
- * <p>Java class for fmiCoSimulationCapabilities complex type.
- * 
- * <p>The following schema fragment specifies the expected content contained within this class.
- * 
- * <pre>
- * &lt;complexType name="fmiCoSimulationCapabilities">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;attribute name="canHandleVariableCommunicationStepSize" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" />
- *       &lt;attribute name="canHandleEvents" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" />
- *       &lt;attribute name="canRejectSteps" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" />
- *       &lt;attribute name="canInterpolateInputs" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" />
- *       &lt;attribute name="maxOutputDerivativeOrder" type="{http://www.w3.org/2001/XMLSchema}unsignedInt" default="0" />
- *       &lt;attribute name="canRunAsynchronuously" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" />
- *       &lt;attribute name="canSignalEvents" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" />
- *       &lt;attribute name="canBeInstantiatedOnlyOncePerProcess" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" />
- *       &lt;attribute name="canNotUseMemoryManagementFunctions" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" />
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
- * </pre>
- * 
- * 
- */
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "fmiCoSimulationCapabilities")
 public class FmiCoSimulationCapabilities {
 
-    @XmlAttribute(name = "canHandleVariableCommunicationStepSize")
     protected Boolean canHandleVariableCommunicationStepSize;
-    @XmlAttribute(name = "canHandleEvents")
     protected Boolean canHandleEvents;
-    @XmlAttribute(name = "canRejectSteps")
     protected Boolean canRejectSteps;
-    @XmlAttribute(name = "canInterpolateInputs")
     protected Boolean canInterpolateInputs;
-    @XmlAttribute(name = "maxOutputDerivativeOrder")
-    @XmlSchemaType(name = "unsignedInt")
     protected Long maxOutputDerivativeOrder;
-    @XmlAttribute(name = "canRunAsynchronuously")
     protected Boolean canRunAsynchronuously;
-    @XmlAttribute(name = "canSignalEvents")
     protected Boolean canSignalEvents;
-    @XmlAttribute(name = "canBeInstantiatedOnlyOncePerProcess")
     protected Boolean canBeInstantiatedOnlyOncePerProcess;
-    @XmlAttribute(name = "canNotUseMemoryManagementFunctions")
     protected Boolean canNotUseMemoryManagementFunctions;
 
     /**

@@ -1,18 +1,19 @@
 package no.ntnu.ihb.fmi4j.modeldescription.fmi2;
 
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import javax.xml.bind.JAXB;
+import java.io.IOException;
 
 public class TestFmiModeldescription {
 
     private static Fmi2ModelDescription md;
 
     @BeforeAll
-    static void setup() {
-        md = JAXB.unmarshal(TestFmiModeldescription.class.getClassLoader()
+    static void setup() throws IOException {
+        md = new XmlMapper().readValue(TestFmiModeldescription.class.getClassLoader()
                 .getResource("fmi2/ControlledTemperature/modelDescription.xml"), Fmi2ModelDescription.class);
     }
 

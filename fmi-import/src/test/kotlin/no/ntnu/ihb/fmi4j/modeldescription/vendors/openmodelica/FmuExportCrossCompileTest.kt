@@ -5,15 +5,11 @@ import no.ntnu.ihb.fmi4j.modeldescription.ModelDescriptionParser
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class FmuExportCrossCompileTest {
 
     private companion object {
-
-        val LOG: Logger = LoggerFactory.getLogger(FmuExportCrossCompileTest::class.java)
 
         val modelDescription = TestFMUs.get("2.0/cs/OpenModelica/v1.11.0/FmuExportCrossCompile/FmuExportCrossCompile.fmu").let {
             ModelDescriptionParser.parseModelDescription(it)
@@ -40,8 +36,6 @@ class FmuExportCrossCompileTest {
 
     @Test
     fun testVariableNamingConvention() {
-        val variableNamingConvention = modelDescription.variableNamingConvention
-        LOG.info("variableNamingConvention=$variableNamingConvention")
         Assertions.assertEquals(modelDescription.variableNamingConvention, "structured")
     }
 

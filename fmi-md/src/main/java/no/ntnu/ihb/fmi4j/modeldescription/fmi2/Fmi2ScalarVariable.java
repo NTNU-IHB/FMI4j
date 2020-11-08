@@ -1,166 +1,43 @@
 
 package no.ntnu.ihb.fmi4j.modeldescription.fmi2;
 
-import javax.xml.bind.annotation.*;
-import javax.xml.bind.annotation.adapters.NormalizedStringAdapter;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 
 
-/**
- * Properties of a scalar variable
- * 
- * <p>Java class for fmi2ScalarVariable complex type.
- * 
- * <p>The following schema fragment specifies the expected content contained within this class.
- * 
- * <pre>
- * &lt;complexType name="fmi2ScalarVariable">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;choice>
- *           &lt;element name="Real">
- *             &lt;complexType>
- *               &lt;complexContent>
- *                 &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *                   &lt;attGroup ref="{}fmi2RealAttributes"/>
- *                   &lt;attribute name="declaredType" type="{http://www.w3.org/2001/XMLSchema}normalizedString" />
- *                   &lt;attribute name="start" type="{http://www.w3.org/2001/XMLSchema}double" />
- *                   &lt;attribute name="derivative" type="{http://www.w3.org/2001/XMLSchema}unsignedInt" />
- *                   &lt;attribute name="reinit" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" />
- *                 &lt;/restriction>
- *               &lt;/complexContent>
- *             &lt;/complexType>
- *           &lt;/element>
- *           &lt;element name="Integer">
- *             &lt;complexType>
- *               &lt;complexContent>
- *                 &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *                   &lt;attGroup ref="{}fmi2IntegerAttributes"/>
- *                   &lt;attribute name="declaredType" type="{http://www.w3.org/2001/XMLSchema}normalizedString" />
- *                   &lt;attribute name="start" type="{http://www.w3.org/2001/XMLSchema}int" />
- *                 &lt;/restriction>
- *               &lt;/complexContent>
- *             &lt;/complexType>
- *           &lt;/element>
- *           &lt;element name="Boolean">
- *             &lt;complexType>
- *               &lt;complexContent>
- *                 &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *                   &lt;attribute name="declaredType" type="{http://www.w3.org/2001/XMLSchema}normalizedString" />
- *                   &lt;attribute name="start" type="{http://www.w3.org/2001/XMLSchema}boolean" />
- *                 &lt;/restriction>
- *               &lt;/complexContent>
- *             &lt;/complexType>
- *           &lt;/element>
- *           &lt;element name="String">
- *             &lt;complexType>
- *               &lt;complexContent>
- *                 &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *                   &lt;attribute name="declaredType" type="{http://www.w3.org/2001/XMLSchema}normalizedString" />
- *                   &lt;attribute name="start" type="{http://www.w3.org/2001/XMLSchema}string" />
- *                 &lt;/restriction>
- *               &lt;/complexContent>
- *             &lt;/complexType>
- *           &lt;/element>
- *           &lt;element name="Enumeration">
- *             &lt;complexType>
- *               &lt;complexContent>
- *                 &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *                   &lt;attribute name="declaredType" use="required" type="{http://www.w3.org/2001/XMLSchema}normalizedString" />
- *                   &lt;attribute name="quantity" type="{http://www.w3.org/2001/XMLSchema}normalizedString" />
- *                   &lt;attribute name="min" type="{http://www.w3.org/2001/XMLSchema}int" />
- *                   &lt;attribute name="max" type="{http://www.w3.org/2001/XMLSchema}int" />
- *                   &lt;attribute name="start" type="{http://www.w3.org/2001/XMLSchema}int" />
- *                 &lt;/restriction>
- *               &lt;/complexContent>
- *             &lt;/complexType>
- *           &lt;/element>
- *         &lt;/choice>
- *         &lt;element name="Annotations" type="{}fmi2Annotation" minOccurs="0"/>
- *       &lt;/sequence>
- *       &lt;attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}normalizedString" />
- *       &lt;attribute name="valueReference" use="required" type="{http://www.w3.org/2001/XMLSchema}unsignedInt" />
- *       &lt;attribute name="description" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="causality" default="local">
- *         &lt;simpleType>
- *           &lt;restriction base="{http://www.w3.org/2001/XMLSchema}normalizedString">
- *             &lt;enumeration value="parameter"/>
- *             &lt;enumeration value="calculatedParameter"/>
- *             &lt;enumeration value="input"/>
- *             &lt;enumeration value="output"/>
- *             &lt;enumeration value="local"/>
- *             &lt;enumeration value="independent"/>
- *           &lt;/restriction>
- *         &lt;/simpleType>
- *       &lt;/attribute>
- *       &lt;attribute name="variability" default="continuous">
- *         &lt;simpleType>
- *           &lt;restriction base="{http://www.w3.org/2001/XMLSchema}normalizedString">
- *             &lt;enumeration value="constant"/>
- *             &lt;enumeration value="fixed"/>
- *             &lt;enumeration value="tunable"/>
- *             &lt;enumeration value="discrete"/>
- *             &lt;enumeration value="continuous"/>
- *           &lt;/restriction>
- *         &lt;/simpleType>
- *       &lt;/attribute>
- *       &lt;attribute name="initial">
- *         &lt;simpleType>
- *           &lt;restriction base="{http://www.w3.org/2001/XMLSchema}normalizedString">
- *             &lt;enumeration value="exact"/>
- *             &lt;enumeration value="approx"/>
- *             &lt;enumeration value="calculated"/>
- *           &lt;/restriction>
- *         &lt;/simpleType>
- *       &lt;/attribute>
- *       &lt;attribute name="canHandleMultipleSetPerTimeInstant" type="{http://www.w3.org/2001/XMLSchema}boolean" />
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
- * </pre>
- * 
- * 
- */
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "fmi2ScalarVariable", propOrder = {
-    "real",
-    "integer",
-    "_boolean",
-    "string",
-    "enumeration",
-    "annotations"
-})
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Fmi2ScalarVariable {
 
-    @XmlElement(name = "Real")
+    @JsonProperty(value = "Real")
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
     protected Fmi2ScalarVariable.Real real;
-    @XmlElement(name = "Integer")
+    @JsonProperty(value = "Integer")
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
     protected Fmi2ScalarVariable.Integer integer;
-    @XmlElement(name = "Boolean")
+    @JsonProperty(value = "Boolean")
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
     protected Fmi2ScalarVariable.Boolean _boolean;
-    @XmlElement(name = "String")
+    @JsonProperty(value = "String")
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
     protected Fmi2ScalarVariable.String string;
-    @XmlElement(name = "Enumeration")
+    @JsonProperty(value = "Enumeration")
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
     protected Fmi2ScalarVariable.Enumeration enumeration;
-    @XmlElement(name = "Annotations")
+    @JsonProperty(value = "Annotations")
     protected Fmi2Annotation annotations;
-    @XmlAttribute(name = "name", required = true)
-    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
-    @XmlSchemaType(name = "normalizedString")
+    @JacksonXmlProperty(isAttribute = true)
     protected java.lang.String name;
-    @XmlAttribute(name = "valueReference", required = true)
-    @XmlSchemaType(name = "unsignedInt")
+    @JacksonXmlProperty(isAttribute = true)
     protected long valueReference;
-    @XmlAttribute(name = "description")
+    @JacksonXmlProperty(isAttribute = true)
     protected java.lang.String description;
-    @XmlAttribute(name = "causality")
+    @JacksonXmlProperty(isAttribute = true)
     protected Fmi2Causality causality;
-    @XmlAttribute(name = "variability")
+    @JacksonXmlProperty(isAttribute = true)
     protected Fmi2Variability variability;
-    @XmlAttribute(name = "initial")
+    @JacksonXmlProperty(isAttribute = true)
     protected Fmi2Initial initial;
-    @XmlAttribute(name = "canHandleMultipleSetPerTimeInstant")
+    @JacksonXmlProperty(isAttribute = true)
     protected java.lang.Boolean canHandleMultipleSetPerTimeInstant;
 
     /**
@@ -379,6 +256,7 @@ public class Fmi2ScalarVariable {
      *     {@link Fmi2Causality }
      *     
      */
+    @JsonIgnore
     public Fmi2Causality getCausality() {
         if (causality == null) {
             return Fmi2Causality.local;
@@ -395,6 +273,7 @@ public class Fmi2ScalarVariable {
      *     {@link Fmi2Causality }
      *     
      */
+    @JsonProperty
     public void setCausality(Fmi2Causality value) {
         this.causality = value;
     }
@@ -407,6 +286,7 @@ public class Fmi2ScalarVariable {
      *     {@link Fmi2Variability }
      *     
      */
+    @JsonIgnore
     public Fmi2Variability getVariability() {
         if (variability == null) {
             return Fmi2Variability.continuous;
@@ -423,6 +303,7 @@ public class Fmi2ScalarVariable {
      *     {@link Fmi2Variability }
      *     
      */
+    @JsonProperty
     public void setVariability(Fmi2Variability value) {
         this.variability = value;
     }
@@ -435,6 +316,7 @@ public class Fmi2ScalarVariable {
      *     {@link Fmi2Initial }
      *     
      */
+    @JsonIgnore
     public Fmi2Initial getInitial() {
         if (initial == null) {
             return Fmi2Initial.undefined;
@@ -451,6 +333,7 @@ public class Fmi2ScalarVariable {
      *     {@link Fmi2Initial }
      *     
      */
+    @JsonProperty
     public void setInitial(Fmi2Initial value) {
         this.initial = value;
     }
@@ -475,38 +358,17 @@ public class Fmi2ScalarVariable {
      *     {@link java.lang.Boolean }
      *     
      */
+    @JsonProperty
     public void setCanHandleMultipleSetPerTimeInstant(java.lang.Boolean value) {
         this.canHandleMultipleSetPerTimeInstant = value;
     }
 
-
-    /**
-     * <p>Java class for anonymous complex type.
-     * 
-     * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
-     * <pre>
-     * &lt;complexType>
-     *   &lt;complexContent>
-     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *       &lt;attribute name="declaredType" type="{http://www.w3.org/2001/XMLSchema}normalizedString" />
-     *       &lt;attribute name="start" type="{http://www.w3.org/2001/XMLSchema}boolean" />
-     *     &lt;/restriction>
-     *   &lt;/complexContent>
-     * &lt;/complexType>
-     * </pre>
-     * 
-     * 
-     */
-    @XmlAccessorType(XmlAccessType.FIELD)
-    @XmlType(name = "")
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Boolean {
 
-        @XmlAttribute(name = "declaredType")
-        @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
-        @XmlSchemaType(name = "normalizedString")
+        @JacksonXmlProperty(isAttribute = true)
         protected java.lang.String declaredType;
-        @XmlAttribute(name = "start")
+        @JacksonXmlProperty(isAttribute = true)
         protected java.lang.Boolean start;
 
         /**
@@ -559,45 +421,18 @@ public class Fmi2ScalarVariable {
 
     }
 
-
-    /**
-     * <p>Java class for anonymous complex type.
-     * 
-     * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
-     * <pre>
-     * &lt;complexType>
-     *   &lt;complexContent>
-     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *       &lt;attribute name="declaredType" use="required" type="{http://www.w3.org/2001/XMLSchema}normalizedString" />
-     *       &lt;attribute name="quantity" type="{http://www.w3.org/2001/XMLSchema}normalizedString" />
-     *       &lt;attribute name="min" type="{http://www.w3.org/2001/XMLSchema}int" />
-     *       &lt;attribute name="max" type="{http://www.w3.org/2001/XMLSchema}int" />
-     *       &lt;attribute name="start" type="{http://www.w3.org/2001/XMLSchema}int" />
-     *     &lt;/restriction>
-     *   &lt;/complexContent>
-     * &lt;/complexType>
-     * </pre>
-     * 
-     * 
-     */
-    @XmlAccessorType(XmlAccessType.FIELD)
-    @XmlType(name = "")
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Enumeration {
 
-        @XmlAttribute(name = "declaredType", required = true)
-        @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
-        @XmlSchemaType(name = "normalizedString")
+        @JacksonXmlProperty(isAttribute = true)
         protected java.lang.String declaredType;
-        @XmlAttribute(name = "quantity")
-        @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
-        @XmlSchemaType(name = "normalizedString")
+        @JacksonXmlProperty(isAttribute = true)
         protected java.lang.String quantity;
-        @XmlAttribute(name = "min")
+        @JacksonXmlProperty(isAttribute = true)
         protected java.lang.Integer min;
-        @XmlAttribute(name = "max")
+        @JacksonXmlProperty(isAttribute = true)
         protected java.lang.Integer max;
-        @XmlAttribute(name = "start")
+        @JacksonXmlProperty(isAttribute = true)
         protected java.lang.Integer start;
 
         /**
@@ -722,43 +557,18 @@ public class Fmi2ScalarVariable {
 
     }
 
-
-    /**
-     * <p>Java class for anonymous complex type.
-     * 
-     * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
-     * <pre>
-     * &lt;complexType>
-     *   &lt;complexContent>
-     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *       &lt;attGroup ref="{}fmi2IntegerAttributes"/>
-     *       &lt;attribute name="declaredType" type="{http://www.w3.org/2001/XMLSchema}normalizedString" />
-     *       &lt;attribute name="start" type="{http://www.w3.org/2001/XMLSchema}int" />
-     *     &lt;/restriction>
-     *   &lt;/complexContent>
-     * &lt;/complexType>
-     * </pre>
-     * 
-     * 
-     */
-    @XmlAccessorType(XmlAccessType.FIELD)
-    @XmlType(name = "")
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Integer {
 
-        @XmlAttribute(name = "declaredType")
-        @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
-        @XmlSchemaType(name = "normalizedString")
+        @JacksonXmlProperty(isAttribute = true)
         protected java.lang.String declaredType;
-        @XmlAttribute(name = "start")
+        @JacksonXmlProperty(isAttribute = true)
         protected java.lang.Integer start;
-        @XmlAttribute(name = "quantity")
-        @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
-        @XmlSchemaType(name = "normalizedString")
+        @JacksonXmlProperty(isAttribute = true)
         protected java.lang.String quantity;
-        @XmlAttribute(name = "min")
+        @JacksonXmlProperty(isAttribute = true)
         protected java.lang.Integer min;
-        @XmlAttribute(name = "max")
+        @JacksonXmlProperty(isAttribute = true)
         protected java.lang.Integer max;
 
         /**
@@ -883,64 +693,31 @@ public class Fmi2ScalarVariable {
 
     }
 
-
-    /**
-     * <p>Java class for anonymous complex type.
-     * 
-     * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
-     * <pre>
-     * &lt;complexType>
-     *   &lt;complexContent>
-     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *       &lt;attGroup ref="{}fmi2RealAttributes"/>
-     *       &lt;attribute name="declaredType" type="{http://www.w3.org/2001/XMLSchema}normalizedString" />
-     *       &lt;attribute name="start" type="{http://www.w3.org/2001/XMLSchema}double" />
-     *       &lt;attribute name="derivative" type="{http://www.w3.org/2001/XMLSchema}unsignedInt" />
-     *       &lt;attribute name="reinit" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" />
-     *     &lt;/restriction>
-     *   &lt;/complexContent>
-     * &lt;/complexType>
-     * </pre>
-     * 
-     * 
-     */
-    @XmlAccessorType(XmlAccessType.FIELD)
-    @XmlType(name = "")
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Real {
-
-        @XmlAttribute(name = "declaredType")
-        @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
-        @XmlSchemaType(name = "normalizedString")
+        @JacksonXmlProperty(isAttribute = true)
         protected java.lang.String declaredType;
-        @XmlAttribute(name = "start")
+        @JacksonXmlProperty(isAttribute = true)
         protected Double start;
-        @XmlAttribute(name = "derivative")
-        @XmlSchemaType(name = "unsignedInt")
+        @JacksonXmlProperty(isAttribute = true)
         protected Long derivative;
-        @XmlAttribute(name = "reinit")
+        @JacksonXmlProperty(isAttribute = true)
         protected java.lang.Boolean reinit;
-        @XmlAttribute(name = "quantity")
-        @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
-        @XmlSchemaType(name = "normalizedString")
+        @JacksonXmlProperty(isAttribute = true)
         protected java.lang.String quantity;
-        @XmlAttribute(name = "unit")
-        @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
-        @XmlSchemaType(name = "normalizedString")
+        @JacksonXmlProperty(isAttribute = true)
         protected java.lang.String unit;
-        @XmlAttribute(name = "displayUnit")
-        @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
-        @XmlSchemaType(name = "normalizedString")
+        @JacksonXmlProperty(isAttribute = true)
         protected java.lang.String displayUnit;
-        @XmlAttribute(name = "relativeQuantity")
+        @JacksonXmlProperty(isAttribute = true)
         protected java.lang.Boolean relativeQuantity;
-        @XmlAttribute(name = "min")
+        @JacksonXmlProperty(isAttribute = true)
         protected Double min;
-        @XmlAttribute(name = "max")
+        @JacksonXmlProperty(isAttribute = true)
         protected Double max;
-        @XmlAttribute(name = "nominal")
+        @JacksonXmlProperty(isAttribute = true)
         protected Double nominal;
-        @XmlAttribute(name = "unbounded")
+        @JacksonXmlProperty(isAttribute = true)
         protected java.lang.Boolean unbounded;
 
         /**
@@ -1017,12 +794,13 @@ public class Fmi2ScalarVariable {
 
         /**
          * Gets the value of the reinit property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link java.lang.Boolean }
-         *     
+         *
          */
+        @JsonIgnore
         public boolean isReinit() {
             if (reinit == null) {
                 return false;
@@ -1123,6 +901,7 @@ public class Fmi2ScalarVariable {
          *     {@link java.lang.Boolean }
          *     
          */
+        @JsonIgnore
         public boolean isRelativeQuantity() {
             if (relativeQuantity == null) {
                 return false;
@@ -1223,6 +1002,7 @@ public class Fmi2ScalarVariable {
          *     {@link java.lang.Boolean }
          *     
          */
+        @JsonIgnore
         public boolean isUnbounded() {
             if (unbounded == null) {
                 return false;
@@ -1245,34 +1025,12 @@ public class Fmi2ScalarVariable {
 
     }
 
-
-    /**
-     * <p>Java class for anonymous complex type.
-     * 
-     * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
-     * <pre>
-     * &lt;complexType>
-     *   &lt;complexContent>
-     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *       &lt;attribute name="declaredType" type="{http://www.w3.org/2001/XMLSchema}normalizedString" />
-     *       &lt;attribute name="start" type="{http://www.w3.org/2001/XMLSchema}string" />
-     *     &lt;/restriction>
-     *   &lt;/complexContent>
-     * &lt;/complexType>
-     * </pre>
-     * 
-     * 
-     */
-    @XmlAccessorType(XmlAccessType.FIELD)
-    @XmlType(name = "")
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class String {
 
-        @XmlAttribute(name = "declaredType")
-        @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
-        @XmlSchemaType(name = "normalizedString")
+        @JacksonXmlProperty(isAttribute = true)
         protected java.lang.String declaredType;
-        @XmlAttribute(name = "start")
+        @JacksonXmlProperty(isAttribute = true)
         protected java.lang.String start;
 
         /**
