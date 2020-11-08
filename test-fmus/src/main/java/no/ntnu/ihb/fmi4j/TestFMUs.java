@@ -9,7 +9,8 @@ public class TestFMUs {
         while (!projectFolder.getName().toLowerCase().equals("fmi4j")) {
             projectFolder = projectFolder.getParentFile();
         }
-        return new File(projectFolder, "test-fmus/fmus" + File.separator + path).getAbsoluteFile();
+        String child = "test-fmus" + File.separator + "fmus" + File.separator + path;
+        return new File(projectFolder, child).getAbsoluteFile();
     }
 
 }
