@@ -124,7 +124,7 @@ JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi1_jni_Fmi1Library_getR
 {
     auto fmu = reinterpret_cast<FmuInstance*>(p);
 
-    auto _vr = static_cast<fmiValueReference*>(env->GetDirectBufferAddress(vr));
+    auto _vr = static_cast<jlong*>(env->GetDirectBufferAddress(vr));
     auto _ref = static_cast<fmiReal *>(env->GetDirectBufferAddress(ref));
 
     auto __vr = (fmiValueReference*)malloc(sizeof(fmiValueReference) * size);
@@ -255,7 +255,7 @@ JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi1_jni_Fmi1Library_setR
 {
     auto fmu = reinterpret_cast<FmuInstance*>(p);
 
-    auto _vr = static_cast<fmiValueReference*>(env->GetDirectBufferAddress(vr));
+    auto _vr = static_cast<jlong*>(env->GetDirectBufferAddress(vr));
     auto _values = static_cast<fmiReal *>(env->GetDirectBufferAddress(values));
 
     auto __vr = (fmiValueReference*)malloc(sizeof(fmiValueReference) * size);
