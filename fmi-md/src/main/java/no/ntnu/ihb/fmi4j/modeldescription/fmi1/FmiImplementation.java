@@ -2,6 +2,8 @@
 package no.ntnu.ihb.fmi4j.modeldescription.fmi1;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
 
 
 public class FmiImplementation {
@@ -63,6 +65,7 @@ public class FmiImplementation {
     public static class CoSimulationStandAlone {
 
         @JsonProperty(value = "Capabilities", required = true)
+        @JsonSetter(nulls = Nulls.AS_EMPTY)
         protected FmiCoSimulationCapabilities capabilities;
 
         /**
