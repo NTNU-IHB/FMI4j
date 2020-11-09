@@ -1,0 +1,2389 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fmiModelDescription modelName="VesselFmu" modelIdentifier="sintefjfmu" description=""
+                     guid="b71f76f7-b51e-40d5-affb-f63905622e2b" fmiVersion="1.0" numberOfContinuousStates="0"
+                     numberOfEventIndicators="0" generationDateAndTime="2019-06-14T08:07:46.541+01:00">
+    <VendorAnnotations>
+        <Tool name="sintef-jfmi">
+            <Annotation name="className" value="no.marintek.simulator.fmu.VesselModelFmuWrapper"/>
+        </Tool>
+    </VendorAnnotations>
+    <ModelVariables>
+        <ScalarVariable name="wavesInit.length" valueReference="0"
+                        description="Wave model init data: Length of wave patch (set to -1 for auto-estimate from initial parameters)"
+                        variability="parameter" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="10.0"
+                  max="1000000.0" nominal="1.0" start="1280.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="wavesInit.seastate_ramp_time" valueReference="1"
+                        description="Wave model init data: Seastate ramp time" variability="parameter" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="s" displayUnit="" relativeQuantity="false" min="0.0" max="100000.0"
+                  nominal="1.0" start="30.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="wavesInit.init_peak_period" valueReference="2"
+                        description="Wave model init data: Initial peak period (applied to auto-estimate patch_length)"
+                        variability="parameter" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="s" displayUnit="" relativeQuantity="false" min="1.0" max="100.0"
+                  nominal="1.0" start="10.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="initial_north_position" valueReference="3" description="Initial north position"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-1000000.0"
+                  max="1000000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="initial_east_position" valueReference="4" description="Initial east position"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-1.0E7" max="1.0E7"
+                  nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="initial_down_position" valueReference="5" description="Initial down position"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-1.0E7" max="1.0E7"
+                  nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="initial_heading" valueReference="6" description="Initial heading" variability="continuous"
+                        causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="deg" displayUnit="" relativeQuantity="false" min="-360.0"
+                  max="360.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="initial_pitch" valueReference="7" description="Initial pitch" variability="continuous"
+                        causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="deg" displayUnit="" relativeQuantity="false" min="-360.0"
+                  max="360.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="initial_roll" valueReference="8" description="Initial roll" variability="continuous"
+                        causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="deg" displayUnit="" relativeQuantity="false" min="-360.0"
+                  max="360.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="initial_surge_velocity" valueReference="9" description="Initial surge velocity"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m/s" displayUnit="" relativeQuantity="false" min="-100.0"
+                  max="100.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="initial_sway_velocity" valueReference="10" description="Initial sway velocity"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m/s" displayUnit="" relativeQuantity="false" min="-100.0"
+                  max="100.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="initial_heave_velocity" valueReference="11" description="Initial heave velocity"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m/s" displayUnit="" relativeQuantity="false" min="-100.0"
+                  max="100.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="initial_pitch_velocity" valueReference="12" description="Initial pitch velocity"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="deg" displayUnit="" relativeQuantity="false" min="-360.0"
+                  max="360.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="initial_roll_velocity" valueReference="13" description="Initial roll velocity"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="deg" displayUnit="" relativeQuantity="false" min="-360.0"
+                  max="360.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="initial_yaw_velocity" valueReference="14" description="Initial yaw velocity"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="deg" displayUnit="" relativeQuantity="false" min="-360.0"
+                  max="360.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="input_global_wind_dir" valueReference="15" description="Wind direction (0 is from north)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="deg" displayUnit="" relativeQuantity="false" min="-360.0"
+                  max="360.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="input_global_wind_vel" valueReference="16" description="Wind velocity"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m/s" displayUnit="" relativeQuantity="false" min="0.0" max="100.0"
+                  nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="wind_reference_height" valueReference="17" description="Reference height for wind model"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="0.0" max="1000.0"
+                  nominal="1.0" start="10.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="global_cur_dir" valueReference="18"
+                        description="Global current direction (0 is towards north)" variability="continuous"
+                        causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="deg" displayUnit="" relativeQuantity="false" min="-360.0"
+                  max="360.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="global_cur_vel" valueReference="19" description="Global current velocity"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m/s" displayUnit="" relativeQuantity="false" min="-100.0"
+                  max="100.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="wave_height" valueReference="20" description="Significant wave height, Hs (m)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="0.0" max="500.0"
+                  nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="peak_period" valueReference="21" description="Peak period, Tp (s)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="s" displayUnit="" relativeQuantity="false" min="0.1" max="100.0"
+                  nominal="1.0" start="7.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="peakedness" valueReference="22"
+                        description="Spectral peakedness factor (gamma, only for spectrum 3)" variability="continuous"
+                        causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="-" displayUnit="" relativeQuantity="false" min="1.0" max="100.0"
+                  nominal="1.0" start="3.3" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="wave_direction" valueReference="23" description="Wave direction (0 is from north)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="deg" displayUnit="" relativeQuantity="false" min="-360.0"
+                  max="360.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="swell_direction" valueReference="24" description="Wave swell direction  (Torsethaugen)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="deg" displayUnit="" relativeQuantity="false" min="-360.0"
+                  max="360.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="spreading_angle" valueReference="25" description="Wave spreading angle"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="deg" displayUnit="" relativeQuantity="false" min="10.0" max="180.0"
+                  nominal="1.0" start="90.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="wave_time_offset" valueReference="26"
+                        description="Time offset for wave internal time vs simulation time" variability="continuous"
+                        causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="s" displayUnit="" relativeQuantity="false" min="-1000000.0"
+                  max="1000000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="externalSolverCgShipMotion.ned.north" valueReference="27"
+                        description="NED north position of CG" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-1000000.0"
+                  max="1000000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="externalSolverCgShipMotion.ned.east" valueReference="28"
+                        description="NED east position of CG" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-1000000.0"
+                  max="1000000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="externalSolverCgShipMotion.ned.down" valueReference="29"
+                        description="NED down position of CG" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-1000000.0"
+                  max="1000000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="externalSolverCgShipMotion.linearVelocity.surge" valueReference="30"
+                        description="Surge velocity of CG" variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m/s" displayUnit="" relativeQuantity="false" min="-1000000.0"
+                  max="1000000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="externalSolverCgShipMotion.linearVelocity.sway" valueReference="31"
+                        description="Sway velocity of CG" variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m/s" displayUnit="" relativeQuantity="false" min="-1000000.0"
+                  max="1000000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="externalSolverCgShipMotion.linearVelocity.heave" valueReference="32"
+                        description="Heave velocity of CG" variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m/s" displayUnit="" relativeQuantity="false" min="-1000000.0"
+                  max="1000000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="externalSolverCgShipMotion.linearAcceleration.surge" valueReference="33"
+                        description="Surge acceleration of CG" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="m/s^2" displayUnit="" relativeQuantity="false" min="-1000000.0"
+                  max="1000000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="externalSolverCgShipMotion.linearAcceleration.sway" valueReference="34"
+                        description="Sway acceleration of CG" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="m/s^2" displayUnit="" relativeQuantity="false" min="-1000000.0"
+                  max="1000000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="externalSolverCgShipMotion.linearAcceleration.heave" valueReference="35"
+                        description="Heave acceleration of CG" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="m/s^2" displayUnit="" relativeQuantity="false" min="-1000000.0"
+                  max="1000000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="externalSolverCgShipMotion.angularDisplacement.roll" valueReference="36"
+                        description="Roll angle of vessel" variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="deg" displayUnit="" relativeQuantity="false" min="-1000000.0"
+                  max="1000000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="externalSolverCgShipMotion.angularVelocity.roll" valueReference="37"
+                        description="Roll velocity of vessel" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="deg/s" displayUnit="" relativeQuantity="false" min="-1000000.0"
+                  max="1000000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="externalSolverCgShipMotion.angularAcceleration.roll" valueReference="38"
+                        description="Roll acceleration of vessel" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="deg/s^2" displayUnit="" relativeQuantity="false" min="-1000000.0"
+                  max="1000000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="externalSolverCgShipMotion.angularDisplacement.pitch" valueReference="39"
+                        description="Pitch angle of vessel" variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="deg" displayUnit="" relativeQuantity="false" min="-1000000.0"
+                  max="1000000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="externalSolverCgShipMotion.angularVelocity.pitch" valueReference="40"
+                        description="Pitch velocity of vessel" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="deg/s" displayUnit="" relativeQuantity="false" min="-1000000.0"
+                  max="1000000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="externalSolverCgShipMotion.angularAcceleration.pitch" valueReference="41"
+                        description="Pitch acceleration of vessel" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="deg/s^2" displayUnit="" relativeQuantity="false" min="-1000000.0"
+                  max="1000000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="externalSolverCgShipMotion.angularDisplacement.yaw" valueReference="42"
+                        description="Yaw angle of vessel" variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="deg" displayUnit="" relativeQuantity="false" min="-1000000.0"
+                  max="1000000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="externalSolverCgShipMotion.angularVelocity.yaw" valueReference="43"
+                        description="Yaw velocity of vessel" variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="deg/s" displayUnit="" relativeQuantity="false" min="-1000000.0"
+                  max="1000000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="externalSolverCgShipMotion.angularAcceleration.yaw" valueReference="44"
+                        description="Yaw acceleration of vessel" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="deg/s^2" displayUnit="" relativeQuantity="false" min="-1000000.0"
+                  max="1000000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="length_between_perpendiculars" valueReference="45"
+                        description="Length between perpendiculars, Lpp" variability="continuous" causality="output"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="0.1" max="1000.0"
+                  nominal="1.0" start="1.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="loaded_draught_at_amidships" valueReference="46" description="Loaded draught at amidships"
+                        variability="continuous" causality="output" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="0.1" max="100.0"
+                  nominal="1.0" start="1.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="cg_wave_elevation" valueReference="47" description="Wave elevation at CG"
+                        variability="continuous" causality="output" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-1000.0"
+                  max="1000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="wind_direction_relative_to_ship" valueReference="48"
+                        description="Wind direction relative to ship (AWA)" variability="continuous" causality="output"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="deg" displayUnit="" relativeQuantity="false" min="-360.0"
+                  max="360.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="wind_velocity_relative_to_ship" valueReference="49"
+                        description="Wind velocity relative to ship (AWS)" variability="continuous" causality="output"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="m/s" displayUnit="" relativeQuantity="false" min="0.0" max="500.0"
+                  nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="global_wind_dir" valueReference="50"
+                        description="Actual global wind direction including ramping (TWA)" variability="continuous"
+                        causality="output" alias="noAlias">
+            <Real declaredType="" quantity="" unit="deg" displayUnit="" relativeQuantity="false" min="-360.0"
+                  max="360.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="global_wind_vel" valueReference="51"
+                        description="Actual global wind velocity including ramping (TWS)" variability="continuous"
+                        causality="output" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m/s" displayUnit="" relativeQuantity="false" min="0.0" max="500.0"
+                  nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="cur_surge_vel" valueReference="52"
+                        description="Decomposed surge velocity component of current" variability="continuous"
+                        causality="output" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m/s" displayUnit="" relativeQuantity="false" min="-500.0"
+                  max="500.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="cur_sway_vel" valueReference="53"
+                        description="Decomposed sway velocity component of current" variability="continuous"
+                        causality="output" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m/s" displayUnit="" relativeQuantity="false" min="-500.0"
+                  max="500.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="cg_x_rel_ap" valueReference="54" description="x-position of CG rel AP (pos. fwd)"
+                        variability="continuous" causality="output" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-1000000.0"
+                  max="1000000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="cg_y_rel_cl" valueReference="55" description="y-position of CG rel CL (pos. starboard)"
+                        variability="continuous" causality="output" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-1000000.0"
+                  max="1000000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="cg_z_rel_bl" valueReference="56" description="z.position of CG rel BL (pos. up)"
+                        variability="continuous" causality="output" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-1000000.0"
+                  max="1000000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="cgShipMotion.ned.north" valueReference="57" description="NED north position of CG"
+                        variability="continuous" causality="output" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-1000000.0"
+                  max="1000000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="cgShipMotion.ned.east" valueReference="58" description="NED east position of CG"
+                        variability="continuous" causality="output" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-1000000.0"
+                  max="1000000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="cgShipMotion.ned.down" valueReference="59" description="NED down position of CG"
+                        variability="continuous" causality="output" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-1000000.0"
+                  max="1000000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="cg_average_surge_speed" valueReference="60" description="Average forward speed of CG"
+                        variability="continuous" causality="output" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m/s" displayUnit="" relativeQuantity="false" min="-1000.0"
+                  max="1000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="cgShipMotion.linearVelocity.surge" valueReference="61" description="Surge velocity of CG"
+                        variability="continuous" causality="output" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m/s" displayUnit="" relativeQuantity="false" min="-1000000.0"
+                  max="1000000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="cgShipMotion.linearVelocity.sway" valueReference="62" description="Sway velocity of CG"
+                        variability="continuous" causality="output" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m/s" displayUnit="" relativeQuantity="false" min="-1000000.0"
+                  max="1000000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="cgShipMotion.linearVelocity.heave" valueReference="63" description="Heave velocity of CG"
+                        variability="continuous" causality="output" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m/s" displayUnit="" relativeQuantity="false" min="-1000000.0"
+                  max="1000000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="cgShipMotion.linearAcceleration.surge" valueReference="64"
+                        description="Surge acceleration of CG" variability="continuous" causality="output"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="m/s^2" displayUnit="" relativeQuantity="false" min="-1000000.0"
+                  max="1000000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="cgShipMotion.linearAcceleration.sway" valueReference="65"
+                        description="Sway acceleration of CG" variability="continuous" causality="output"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="m/s^2" displayUnit="" relativeQuantity="false" min="-1000000.0"
+                  max="1000000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="cgShipMotion.linearAcceleration.heave" valueReference="66"
+                        description="Heave acceleration of CG" variability="continuous" causality="output"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="m/s^2" displayUnit="" relativeQuantity="false" min="-1000000.0"
+                  max="1000000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="cgShipMotion.angularDisplacement.roll" valueReference="67"
+                        description="Roll angle of vessel" variability="continuous" causality="output" alias="noAlias">
+            <Real declaredType="" quantity="" unit="deg" displayUnit="" relativeQuantity="false" min="-1000000.0"
+                  max="1000000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="cgShipMotion.angularVelocity.roll" valueReference="68"
+                        description="Roll velocity of vessel" variability="continuous" causality="output"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="deg/s" displayUnit="" relativeQuantity="false" min="-1000000.0"
+                  max="1000000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="cgShipMotion.angularAcceleration.roll" valueReference="69"
+                        description="Roll acceleration of vessel" variability="continuous" causality="output"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="deg/s^2" displayUnit="" relativeQuantity="false" min="-1000000.0"
+                  max="1000000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="cgShipMotion.angularDisplacement.pitch" valueReference="70"
+                        description="Pitch angle of vessel" variability="continuous" causality="output" alias="noAlias">
+            <Real declaredType="" quantity="" unit="deg" displayUnit="" relativeQuantity="false" min="-1000000.0"
+                  max="1000000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="cgShipMotion.angularVelocity.pitch" valueReference="71"
+                        description="Pitch velocity of vessel" variability="continuous" causality="output"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="deg/s" displayUnit="" relativeQuantity="false" min="-1000000.0"
+                  max="1000000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="cgShipMotion.angularAcceleration.pitch" valueReference="72"
+                        description="Pitch acceleration of vessel" variability="continuous" causality="output"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="deg/s^2" displayUnit="" relativeQuantity="false" min="-1000000.0"
+                  max="1000000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="cgShipMotion.angularDisplacement.yaw" valueReference="73"
+                        description="Yaw angle of vessel" variability="continuous" causality="output" alias="noAlias">
+            <Real declaredType="" quantity="" unit="deg" displayUnit="" relativeQuantity="false" min="-1000000.0"
+                  max="1000000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="cgShipMotion.angularVelocity.yaw" valueReference="74" description="Yaw velocity of vessel"
+                        variability="continuous" causality="output" alias="noAlias">
+            <Real declaredType="" quantity="" unit="deg/s" displayUnit="" relativeQuantity="false" min="-1000000.0"
+                  max="1000000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="cgShipMotion.angularAcceleration.yaw" valueReference="75"
+                        description="Yaw acceleration of vessel" variability="continuous" causality="output"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="deg/s^2" displayUnit="" relativeQuantity="false" min="-1000000.0"
+                  max="1000000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="manoeuvringHullForce.force.surge" valueReference="76"
+                        description="Manoeuvring hull force in surge" variability="continuous" causality="output"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="manoeuvringHullForce.force.sway" valueReference="77"
+                        description="Manoeuvring hull force in sway" variability="continuous" causality="output"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="manoeuvringHullForce.force.heave" valueReference="78"
+                        description="Manoeuvring hull force in heave" variability="continuous" causality="output"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="manoeuvringHullForce.moment.roll" valueReference="79"
+                        description="Manoeuvring hull moment in roll" variability="continuous" causality="output"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="Nm" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="manoeuvringHullForce.moment.pitch" valueReference="80"
+                        description="Manoeuvring hull moment in pitch" variability="continuous" causality="output"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="Nm" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="manoeuvringHullForce.moment.yaw" valueReference="81"
+                        description="Manoeuvring hull moment in yaw" variability="continuous" causality="output"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="Nm" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="totalHullForce.force.surge" valueReference="82" description="Total hull force in surge"
+                        variability="continuous" causality="output" alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="totalHullForce.force.sway" valueReference="83" description="Total hull force in sway"
+                        variability="continuous" causality="output" alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="totalHullForce.force.heave" valueReference="84" description="Total hull force in heave"
+                        variability="continuous" causality="output" alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="totalHullForce.moment.roll" valueReference="85" description="Total hull moment in roll"
+                        variability="continuous" causality="output" alias="noAlias">
+            <Real declaredType="" quantity="" unit="Nm" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="totalHullForce.moment.pitch" valueReference="86" description="Total hull moment in pitch"
+                        variability="continuous" causality="output" alias="noAlias">
+            <Real declaredType="" quantity="" unit="Nm" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="totalHullForce.moment.yaw" valueReference="87" description="Total hull moment in yaw"
+                        variability="continuous" causality="output" alias="noAlias">
+            <Real declaredType="" quantity="" unit="Nm" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[0].force.surge" valueReference="88"
+                        description="Additional Body Force 0 - Surge force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[0].force.sway" valueReference="89"
+                        description="Additional Body Force 0 - Sway force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[0].force.heave" valueReference="90"
+                        description="Additional Body Force 0 - Heave force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[0].moment.roll" valueReference="91"
+                        description="Additional Body Force 0 - Roll moment" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="Nm" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[0].moment.pitch" valueReference="92"
+                        description="Additional Body Force 0 - Pitch moment" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="Nm" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[0].moment.yaw" valueReference="93"
+                        description="Additional Body Force 0 - Yaw moment" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="Nm" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[0].pointOfAttackRel2APAndBL.xpos" valueReference="94"
+                        description="Additional Body Force 0 - Point of attack X rel AP (pos. fwd)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[0].pointOfAttackRel2APAndBL.ypos" valueReference="95"
+                        description="Additional Body Force 0 - Point of attack Y rel CL (pos. starboard)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[0].pointOfAttackRel2APAndBL.zpos" valueReference="96"
+                        description="Additional Body Force 0 - Point of attack Z rel BL (pos. up)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="-9999.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[0].force.north" valueReference="97"
+                        description="Additional Ned Force 0 - North force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[0].force.east" valueReference="98"
+                        description="Additional Ned Force 0 - East force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[0].force.down" valueReference="99"
+                        description="Additional Ned Force 0 - Down force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[0].pointOfAttackRel2APAndBL.xpos" valueReference="100"
+                        description="Additional Ned Force 0 - Point of attack X rel AP (pos. fwd)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[0].pointOfAttackRel2APAndBL.ypos" valueReference="101"
+                        description="Additional Ned Force 0 - Point of attack Y rel CL (pos. starboard)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[0].pointOfAttackRel2APAndBL.zpos" valueReference="102"
+                        description="Additional Ned Force 0 - Point of attack Z rel BL (pos. up)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="-9999.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[1].force.surge" valueReference="103"
+                        description="Additional Body Force 1 - Surge force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[1].force.sway" valueReference="104"
+                        description="Additional Body Force 1 - Sway force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[1].force.heave" valueReference="105"
+                        description="Additional Body Force 1 - Heave force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[1].moment.roll" valueReference="106"
+                        description="Additional Body Force 1 - Roll moment" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="Nm" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[1].moment.pitch" valueReference="107"
+                        description="Additional Body Force 1 - Pitch moment" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="Nm" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[1].moment.yaw" valueReference="108"
+                        description="Additional Body Force 1 - Yaw moment" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="Nm" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[1].pointOfAttackRel2APAndBL.xpos" valueReference="109"
+                        description="Additional Body Force 1 - Point of attack X rel AP (pos. fwd)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[1].pointOfAttackRel2APAndBL.ypos" valueReference="110"
+                        description="Additional Body Force 1 - Point of attack Y rel CL (pos. starboard)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[1].pointOfAttackRel2APAndBL.zpos" valueReference="111"
+                        description="Additional Body Force 1 - Point of attack Z rel BL (pos. up)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="-9999.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[1].force.north" valueReference="112"
+                        description="Additional Ned Force 1 - North force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[1].force.east" valueReference="113"
+                        description="Additional Ned Force 1 - East force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[1].force.down" valueReference="114"
+                        description="Additional Ned Force 1 - Down force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[1].pointOfAttackRel2APAndBL.xpos" valueReference="115"
+                        description="Additional Ned Force 1 - Point of attack X rel AP (pos. fwd)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[1].pointOfAttackRel2APAndBL.ypos" valueReference="116"
+                        description="Additional Ned Force 1 - Point of attack Y rel CL (pos. starboard)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[1].pointOfAttackRel2APAndBL.zpos" valueReference="117"
+                        description="Additional Ned Force 1 - Point of attack Z rel BL (pos. up)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="-9999.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[2].force.surge" valueReference="118"
+                        description="Additional Body Force 2 - Surge force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[2].force.sway" valueReference="119"
+                        description="Additional Body Force 2 - Sway force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[2].force.heave" valueReference="120"
+                        description="Additional Body Force 2 - Heave force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[2].moment.roll" valueReference="121"
+                        description="Additional Body Force 2 - Roll moment" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="Nm" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[2].moment.pitch" valueReference="122"
+                        description="Additional Body Force 2 - Pitch moment" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="Nm" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[2].moment.yaw" valueReference="123"
+                        description="Additional Body Force 2 - Yaw moment" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="Nm" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[2].pointOfAttackRel2APAndBL.xpos" valueReference="124"
+                        description="Additional Body Force 2 - Point of attack X rel AP (pos. fwd)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[2].pointOfAttackRel2APAndBL.ypos" valueReference="125"
+                        description="Additional Body Force 2 - Point of attack Y rel CL (pos. starboard)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[2].pointOfAttackRel2APAndBL.zpos" valueReference="126"
+                        description="Additional Body Force 2 - Point of attack Z rel BL (pos. up)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="-9999.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[2].force.north" valueReference="127"
+                        description="Additional Ned Force 2 - North force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[2].force.east" valueReference="128"
+                        description="Additional Ned Force 2 - East force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[2].force.down" valueReference="129"
+                        description="Additional Ned Force 2 - Down force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[2].pointOfAttackRel2APAndBL.xpos" valueReference="130"
+                        description="Additional Ned Force 2 - Point of attack X rel AP (pos. fwd)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[2].pointOfAttackRel2APAndBL.ypos" valueReference="131"
+                        description="Additional Ned Force 2 - Point of attack Y rel CL (pos. starboard)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[2].pointOfAttackRel2APAndBL.zpos" valueReference="132"
+                        description="Additional Ned Force 2 - Point of attack Z rel BL (pos. up)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="-9999.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[3].force.surge" valueReference="133"
+                        description="Additional Body Force 3 - Surge force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[3].force.sway" valueReference="134"
+                        description="Additional Body Force 3 - Sway force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[3].force.heave" valueReference="135"
+                        description="Additional Body Force 3 - Heave force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[3].moment.roll" valueReference="136"
+                        description="Additional Body Force 3 - Roll moment" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="Nm" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[3].moment.pitch" valueReference="137"
+                        description="Additional Body Force 3 - Pitch moment" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="Nm" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[3].moment.yaw" valueReference="138"
+                        description="Additional Body Force 3 - Yaw moment" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="Nm" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[3].pointOfAttackRel2APAndBL.xpos" valueReference="139"
+                        description="Additional Body Force 3 - Point of attack X rel AP (pos. fwd)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[3].pointOfAttackRel2APAndBL.ypos" valueReference="140"
+                        description="Additional Body Force 3 - Point of attack Y rel CL (pos. starboard)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[3].pointOfAttackRel2APAndBL.zpos" valueReference="141"
+                        description="Additional Body Force 3 - Point of attack Z rel BL (pos. up)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="-9999.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[3].force.north" valueReference="142"
+                        description="Additional Ned Force 3 - North force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[3].force.east" valueReference="143"
+                        description="Additional Ned Force 3 - East force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[3].force.down" valueReference="144"
+                        description="Additional Ned Force 3 - Down force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[3].pointOfAttackRel2APAndBL.xpos" valueReference="145"
+                        description="Additional Ned Force 3 - Point of attack X rel AP (pos. fwd)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[3].pointOfAttackRel2APAndBL.ypos" valueReference="146"
+                        description="Additional Ned Force 3 - Point of attack Y rel CL (pos. starboard)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[3].pointOfAttackRel2APAndBL.zpos" valueReference="147"
+                        description="Additional Ned Force 3 - Point of attack Z rel BL (pos. up)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="-9999.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[4].force.surge" valueReference="148"
+                        description="Additional Body Force 4 - Surge force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[4].force.sway" valueReference="149"
+                        description="Additional Body Force 4 - Sway force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[4].force.heave" valueReference="150"
+                        description="Additional Body Force 4 - Heave force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[4].moment.roll" valueReference="151"
+                        description="Additional Body Force 4 - Roll moment" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="Nm" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[4].moment.pitch" valueReference="152"
+                        description="Additional Body Force 4 - Pitch moment" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="Nm" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[4].moment.yaw" valueReference="153"
+                        description="Additional Body Force 4 - Yaw moment" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="Nm" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[4].pointOfAttackRel2APAndBL.xpos" valueReference="154"
+                        description="Additional Body Force 4 - Point of attack X rel AP (pos. fwd)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[4].pointOfAttackRel2APAndBL.ypos" valueReference="155"
+                        description="Additional Body Force 4 - Point of attack Y rel CL (pos. starboard)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[4].pointOfAttackRel2APAndBL.zpos" valueReference="156"
+                        description="Additional Body Force 4 - Point of attack Z rel BL (pos. up)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="-9999.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[4].force.north" valueReference="157"
+                        description="Additional Ned Force 4 - North force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[4].force.east" valueReference="158"
+                        description="Additional Ned Force 4 - East force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[4].force.down" valueReference="159"
+                        description="Additional Ned Force 4 - Down force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[4].pointOfAttackRel2APAndBL.xpos" valueReference="160"
+                        description="Additional Ned Force 4 - Point of attack X rel AP (pos. fwd)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[4].pointOfAttackRel2APAndBL.ypos" valueReference="161"
+                        description="Additional Ned Force 4 - Point of attack Y rel CL (pos. starboard)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[4].pointOfAttackRel2APAndBL.zpos" valueReference="162"
+                        description="Additional Ned Force 4 - Point of attack Z rel BL (pos. up)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="-9999.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[5].force.surge" valueReference="163"
+                        description="Additional Body Force 5 - Surge force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[5].force.sway" valueReference="164"
+                        description="Additional Body Force 5 - Sway force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[5].force.heave" valueReference="165"
+                        description="Additional Body Force 5 - Heave force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[5].moment.roll" valueReference="166"
+                        description="Additional Body Force 5 - Roll moment" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="Nm" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[5].moment.pitch" valueReference="167"
+                        description="Additional Body Force 5 - Pitch moment" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="Nm" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[5].moment.yaw" valueReference="168"
+                        description="Additional Body Force 5 - Yaw moment" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="Nm" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[5].pointOfAttackRel2APAndBL.xpos" valueReference="169"
+                        description="Additional Body Force 5 - Point of attack X rel AP (pos. fwd)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[5].pointOfAttackRel2APAndBL.ypos" valueReference="170"
+                        description="Additional Body Force 5 - Point of attack Y rel CL (pos. starboard)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[5].pointOfAttackRel2APAndBL.zpos" valueReference="171"
+                        description="Additional Body Force 5 - Point of attack Z rel BL (pos. up)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="-9999.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[5].force.north" valueReference="172"
+                        description="Additional Ned Force 5 - North force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[5].force.east" valueReference="173"
+                        description="Additional Ned Force 5 - East force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[5].force.down" valueReference="174"
+                        description="Additional Ned Force 5 - Down force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[5].pointOfAttackRel2APAndBL.xpos" valueReference="175"
+                        description="Additional Ned Force 5 - Point of attack X rel AP (pos. fwd)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[5].pointOfAttackRel2APAndBL.ypos" valueReference="176"
+                        description="Additional Ned Force 5 - Point of attack Y rel CL (pos. starboard)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[5].pointOfAttackRel2APAndBL.zpos" valueReference="177"
+                        description="Additional Ned Force 5 - Point of attack Z rel BL (pos. up)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="-9999.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[6].force.surge" valueReference="178"
+                        description="Additional Body Force 6 - Surge force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[6].force.sway" valueReference="179"
+                        description="Additional Body Force 6 - Sway force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[6].force.heave" valueReference="180"
+                        description="Additional Body Force 6 - Heave force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[6].moment.roll" valueReference="181"
+                        description="Additional Body Force 6 - Roll moment" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="Nm" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[6].moment.pitch" valueReference="182"
+                        description="Additional Body Force 6 - Pitch moment" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="Nm" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[6].moment.yaw" valueReference="183"
+                        description="Additional Body Force 6 - Yaw moment" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="Nm" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[6].pointOfAttackRel2APAndBL.xpos" valueReference="184"
+                        description="Additional Body Force 6 - Point of attack X rel AP (pos. fwd)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[6].pointOfAttackRel2APAndBL.ypos" valueReference="185"
+                        description="Additional Body Force 6 - Point of attack Y rel CL (pos. starboard)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[6].pointOfAttackRel2APAndBL.zpos" valueReference="186"
+                        description="Additional Body Force 6 - Point of attack Z rel BL (pos. up)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="-9999.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[6].force.north" valueReference="187"
+                        description="Additional Ned Force 6 - North force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[6].force.east" valueReference="188"
+                        description="Additional Ned Force 6 - East force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[6].force.down" valueReference="189"
+                        description="Additional Ned Force 6 - Down force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[6].pointOfAttackRel2APAndBL.xpos" valueReference="190"
+                        description="Additional Ned Force 6 - Point of attack X rel AP (pos. fwd)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[6].pointOfAttackRel2APAndBL.ypos" valueReference="191"
+                        description="Additional Ned Force 6 - Point of attack Y rel CL (pos. starboard)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[6].pointOfAttackRel2APAndBL.zpos" valueReference="192"
+                        description="Additional Ned Force 6 - Point of attack Z rel BL (pos. up)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="-9999.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[7].force.surge" valueReference="193"
+                        description="Additional Body Force 7 - Surge force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[7].force.sway" valueReference="194"
+                        description="Additional Body Force 7 - Sway force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[7].force.heave" valueReference="195"
+                        description="Additional Body Force 7 - Heave force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[7].moment.roll" valueReference="196"
+                        description="Additional Body Force 7 - Roll moment" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="Nm" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[7].moment.pitch" valueReference="197"
+                        description="Additional Body Force 7 - Pitch moment" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="Nm" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[7].moment.yaw" valueReference="198"
+                        description="Additional Body Force 7 - Yaw moment" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="Nm" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[7].pointOfAttackRel2APAndBL.xpos" valueReference="199"
+                        description="Additional Body Force 7 - Point of attack X rel AP (pos. fwd)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[7].pointOfAttackRel2APAndBL.ypos" valueReference="200"
+                        description="Additional Body Force 7 - Point of attack Y rel CL (pos. starboard)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[7].pointOfAttackRel2APAndBL.zpos" valueReference="201"
+                        description="Additional Body Force 7 - Point of attack Z rel BL (pos. up)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="-9999.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[7].force.north" valueReference="202"
+                        description="Additional Ned Force 7 - North force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[7].force.east" valueReference="203"
+                        description="Additional Ned Force 7 - East force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[7].force.down" valueReference="204"
+                        description="Additional Ned Force 7 - Down force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[7].pointOfAttackRel2APAndBL.xpos" valueReference="205"
+                        description="Additional Ned Force 7 - Point of attack X rel AP (pos. fwd)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[7].pointOfAttackRel2APAndBL.ypos" valueReference="206"
+                        description="Additional Ned Force 7 - Point of attack Y rel CL (pos. starboard)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[7].pointOfAttackRel2APAndBL.zpos" valueReference="207"
+                        description="Additional Ned Force 7 - Point of attack Z rel BL (pos. up)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="-9999.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[8].force.surge" valueReference="208"
+                        description="Additional Body Force 8 - Surge force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[8].force.sway" valueReference="209"
+                        description="Additional Body Force 8 - Sway force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[8].force.heave" valueReference="210"
+                        description="Additional Body Force 8 - Heave force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[8].moment.roll" valueReference="211"
+                        description="Additional Body Force 8 - Roll moment" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="Nm" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[8].moment.pitch" valueReference="212"
+                        description="Additional Body Force 8 - Pitch moment" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="Nm" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[8].moment.yaw" valueReference="213"
+                        description="Additional Body Force 8 - Yaw moment" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="Nm" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[8].pointOfAttackRel2APAndBL.xpos" valueReference="214"
+                        description="Additional Body Force 8 - Point of attack X rel AP (pos. fwd)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[8].pointOfAttackRel2APAndBL.ypos" valueReference="215"
+                        description="Additional Body Force 8 - Point of attack Y rel CL (pos. starboard)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[8].pointOfAttackRel2APAndBL.zpos" valueReference="216"
+                        description="Additional Body Force 8 - Point of attack Z rel BL (pos. up)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="-9999.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[8].force.north" valueReference="217"
+                        description="Additional Ned Force 8 - North force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[8].force.east" valueReference="218"
+                        description="Additional Ned Force 8 - East force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[8].force.down" valueReference="219"
+                        description="Additional Ned Force 8 - Down force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[8].pointOfAttackRel2APAndBL.xpos" valueReference="220"
+                        description="Additional Ned Force 8 - Point of attack X rel AP (pos. fwd)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[8].pointOfAttackRel2APAndBL.ypos" valueReference="221"
+                        description="Additional Ned Force 8 - Point of attack Y rel CL (pos. starboard)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[8].pointOfAttackRel2APAndBL.zpos" valueReference="222"
+                        description="Additional Ned Force 8 - Point of attack Z rel BL (pos. up)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="-9999.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[9].force.surge" valueReference="223"
+                        description="Additional Body Force 9 - Surge force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[9].force.sway" valueReference="224"
+                        description="Additional Body Force 9 - Sway force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[9].force.heave" valueReference="225"
+                        description="Additional Body Force 9 - Heave force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[9].moment.roll" valueReference="226"
+                        description="Additional Body Force 9 - Roll moment" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="Nm" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[9].moment.pitch" valueReference="227"
+                        description="Additional Body Force 9 - Pitch moment" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="Nm" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[9].moment.yaw" valueReference="228"
+                        description="Additional Body Force 9 - Yaw moment" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="Nm" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[9].pointOfAttackRel2APAndBL.xpos" valueReference="229"
+                        description="Additional Body Force 9 - Point of attack X rel AP (pos. fwd)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[9].pointOfAttackRel2APAndBL.ypos" valueReference="230"
+                        description="Additional Body Force 9 - Point of attack Y rel CL (pos. starboard)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[9].pointOfAttackRel2APAndBL.zpos" valueReference="231"
+                        description="Additional Body Force 9 - Point of attack Z rel BL (pos. up)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="-9999.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[9].force.north" valueReference="232"
+                        description="Additional Ned Force 9 - North force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[9].force.east" valueReference="233"
+                        description="Additional Ned Force 9 - East force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[9].force.down" valueReference="234"
+                        description="Additional Ned Force 9 - Down force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[9].pointOfAttackRel2APAndBL.xpos" valueReference="235"
+                        description="Additional Ned Force 9 - Point of attack X rel AP (pos. fwd)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[9].pointOfAttackRel2APAndBL.ypos" valueReference="236"
+                        description="Additional Ned Force 9 - Point of attack Y rel CL (pos. starboard)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[9].pointOfAttackRel2APAndBL.zpos" valueReference="237"
+                        description="Additional Ned Force 9 - Point of attack Z rel BL (pos. up)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="-9999.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[10].force.surge" valueReference="238"
+                        description="Additional Body Force 10 - Surge force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[10].force.sway" valueReference="239"
+                        description="Additional Body Force 10 - Sway force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[10].force.heave" valueReference="240"
+                        description="Additional Body Force 10 - Heave force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[10].moment.roll" valueReference="241"
+                        description="Additional Body Force 10 - Roll moment" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="Nm" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[10].moment.pitch" valueReference="242"
+                        description="Additional Body Force 10 - Pitch moment" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="Nm" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[10].moment.yaw" valueReference="243"
+                        description="Additional Body Force 10 - Yaw moment" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="Nm" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[10].pointOfAttackRel2APAndBL.xpos" valueReference="244"
+                        description="Additional Body Force 10 - Point of attack X rel AP (pos. fwd)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[10].pointOfAttackRel2APAndBL.ypos" valueReference="245"
+                        description="Additional Body Force 10 - Point of attack Y rel CL (pos. starboard)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[10].pointOfAttackRel2APAndBL.zpos" valueReference="246"
+                        description="Additional Body Force 10 - Point of attack Z rel BL (pos. up)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="-9999.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[10].force.north" valueReference="247"
+                        description="Additional Ned Force 10 - North force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[10].force.east" valueReference="248"
+                        description="Additional Ned Force 10 - East force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[10].force.down" valueReference="249"
+                        description="Additional Ned Force 10 - Down force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[10].pointOfAttackRel2APAndBL.xpos" valueReference="250"
+                        description="Additional Ned Force 10 - Point of attack X rel AP (pos. fwd)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[10].pointOfAttackRel2APAndBL.ypos" valueReference="251"
+                        description="Additional Ned Force 10 - Point of attack Y rel CL (pos. starboard)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[10].pointOfAttackRel2APAndBL.zpos" valueReference="252"
+                        description="Additional Ned Force 10 - Point of attack Z rel BL (pos. up)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="-9999.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[11].force.surge" valueReference="253"
+                        description="Additional Body Force 11 - Surge force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[11].force.sway" valueReference="254"
+                        description="Additional Body Force 11 - Sway force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[11].force.heave" valueReference="255"
+                        description="Additional Body Force 11 - Heave force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[11].moment.roll" valueReference="256"
+                        description="Additional Body Force 11 - Roll moment" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="Nm" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[11].moment.pitch" valueReference="257"
+                        description="Additional Body Force 11 - Pitch moment" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="Nm" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[11].moment.yaw" valueReference="258"
+                        description="Additional Body Force 11 - Yaw moment" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="Nm" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[11].pointOfAttackRel2APAndBL.xpos" valueReference="259"
+                        description="Additional Body Force 11 - Point of attack X rel AP (pos. fwd)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[11].pointOfAttackRel2APAndBL.ypos" valueReference="260"
+                        description="Additional Body Force 11 - Point of attack Y rel CL (pos. starboard)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[11].pointOfAttackRel2APAndBL.zpos" valueReference="261"
+                        description="Additional Body Force 11 - Point of attack Z rel BL (pos. up)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="-9999.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[11].force.north" valueReference="262"
+                        description="Additional Ned Force 11 - North force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[11].force.east" valueReference="263"
+                        description="Additional Ned Force 11 - East force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[11].force.down" valueReference="264"
+                        description="Additional Ned Force 11 - Down force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[11].pointOfAttackRel2APAndBL.xpos" valueReference="265"
+                        description="Additional Ned Force 11 - Point of attack X rel AP (pos. fwd)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[11].pointOfAttackRel2APAndBL.ypos" valueReference="266"
+                        description="Additional Ned Force 11 - Point of attack Y rel CL (pos. starboard)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[11].pointOfAttackRel2APAndBL.zpos" valueReference="267"
+                        description="Additional Ned Force 11 - Point of attack Z rel BL (pos. up)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="-9999.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[12].force.surge" valueReference="268"
+                        description="Additional Body Force 12 - Surge force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[12].force.sway" valueReference="269"
+                        description="Additional Body Force 12 - Sway force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[12].force.heave" valueReference="270"
+                        description="Additional Body Force 12 - Heave force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[12].moment.roll" valueReference="271"
+                        description="Additional Body Force 12 - Roll moment" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="Nm" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[12].moment.pitch" valueReference="272"
+                        description="Additional Body Force 12 - Pitch moment" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="Nm" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[12].moment.yaw" valueReference="273"
+                        description="Additional Body Force 12 - Yaw moment" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="Nm" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[12].pointOfAttackRel2APAndBL.xpos" valueReference="274"
+                        description="Additional Body Force 12 - Point of attack X rel AP (pos. fwd)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[12].pointOfAttackRel2APAndBL.ypos" valueReference="275"
+                        description="Additional Body Force 12 - Point of attack Y rel CL (pos. starboard)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[12].pointOfAttackRel2APAndBL.zpos" valueReference="276"
+                        description="Additional Body Force 12 - Point of attack Z rel BL (pos. up)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="-9999.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[12].force.north" valueReference="277"
+                        description="Additional Ned Force 12 - North force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[12].force.east" valueReference="278"
+                        description="Additional Ned Force 12 - East force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[12].force.down" valueReference="279"
+                        description="Additional Ned Force 12 - Down force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[12].pointOfAttackRel2APAndBL.xpos" valueReference="280"
+                        description="Additional Ned Force 12 - Point of attack X rel AP (pos. fwd)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[12].pointOfAttackRel2APAndBL.ypos" valueReference="281"
+                        description="Additional Ned Force 12 - Point of attack Y rel CL (pos. starboard)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[12].pointOfAttackRel2APAndBL.zpos" valueReference="282"
+                        description="Additional Ned Force 12 - Point of attack Z rel BL (pos. up)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="-9999.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[13].force.surge" valueReference="283"
+                        description="Additional Body Force 13 - Surge force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[13].force.sway" valueReference="284"
+                        description="Additional Body Force 13 - Sway force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[13].force.heave" valueReference="285"
+                        description="Additional Body Force 13 - Heave force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[13].moment.roll" valueReference="286"
+                        description="Additional Body Force 13 - Roll moment" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="Nm" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[13].moment.pitch" valueReference="287"
+                        description="Additional Body Force 13 - Pitch moment" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="Nm" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[13].moment.yaw" valueReference="288"
+                        description="Additional Body Force 13 - Yaw moment" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="Nm" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[13].pointOfAttackRel2APAndBL.xpos" valueReference="289"
+                        description="Additional Body Force 13 - Point of attack X rel AP (pos. fwd)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[13].pointOfAttackRel2APAndBL.ypos" valueReference="290"
+                        description="Additional Body Force 13 - Point of attack Y rel CL (pos. starboard)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[13].pointOfAttackRel2APAndBL.zpos" valueReference="291"
+                        description="Additional Body Force 13 - Point of attack Z rel BL (pos. up)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="-9999.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[13].force.north" valueReference="292"
+                        description="Additional Ned Force 13 - North force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[13].force.east" valueReference="293"
+                        description="Additional Ned Force 13 - East force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[13].force.down" valueReference="294"
+                        description="Additional Ned Force 13 - Down force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[13].pointOfAttackRel2APAndBL.xpos" valueReference="295"
+                        description="Additional Ned Force 13 - Point of attack X rel AP (pos. fwd)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[13].pointOfAttackRel2APAndBL.ypos" valueReference="296"
+                        description="Additional Ned Force 13 - Point of attack Y rel CL (pos. starboard)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[13].pointOfAttackRel2APAndBL.zpos" valueReference="297"
+                        description="Additional Ned Force 13 - Point of attack Z rel BL (pos. up)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="-9999.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[14].force.surge" valueReference="298"
+                        description="Additional Body Force 14 - Surge force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[14].force.sway" valueReference="299"
+                        description="Additional Body Force 14 - Sway force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[14].force.heave" valueReference="300"
+                        description="Additional Body Force 14 - Heave force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[14].moment.roll" valueReference="301"
+                        description="Additional Body Force 14 - Roll moment" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="Nm" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[14].moment.pitch" valueReference="302"
+                        description="Additional Body Force 14 - Pitch moment" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="Nm" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[14].moment.yaw" valueReference="303"
+                        description="Additional Body Force 14 - Yaw moment" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="Nm" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[14].pointOfAttackRel2APAndBL.xpos" valueReference="304"
+                        description="Additional Body Force 14 - Point of attack X rel AP (pos. fwd)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[14].pointOfAttackRel2APAndBL.ypos" valueReference="305"
+                        description="Additional Body Force 14 - Point of attack Y rel CL (pos. starboard)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[14].pointOfAttackRel2APAndBL.zpos" valueReference="306"
+                        description="Additional Body Force 14 - Point of attack Z rel BL (pos. up)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="-9999.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[14].force.north" valueReference="307"
+                        description="Additional Ned Force 14 - North force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[14].force.east" valueReference="308"
+                        description="Additional Ned Force 14 - East force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[14].force.down" valueReference="309"
+                        description="Additional Ned Force 14 - Down force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[14].pointOfAttackRel2APAndBL.xpos" valueReference="310"
+                        description="Additional Ned Force 14 - Point of attack X rel AP (pos. fwd)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[14].pointOfAttackRel2APAndBL.ypos" valueReference="311"
+                        description="Additional Ned Force 14 - Point of attack Y rel CL (pos. starboard)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[14].pointOfAttackRel2APAndBL.zpos" valueReference="312"
+                        description="Additional Ned Force 14 - Point of attack Z rel BL (pos. up)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="-9999.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[15].force.surge" valueReference="313"
+                        description="Additional Body Force 15 - Surge force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[15].force.sway" valueReference="314"
+                        description="Additional Body Force 15 - Sway force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[15].force.heave" valueReference="315"
+                        description="Additional Body Force 15 - Heave force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[15].moment.roll" valueReference="316"
+                        description="Additional Body Force 15 - Roll moment" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="Nm" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[15].moment.pitch" valueReference="317"
+                        description="Additional Body Force 15 - Pitch moment" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="Nm" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[15].moment.yaw" valueReference="318"
+                        description="Additional Body Force 15 - Yaw moment" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="Nm" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[15].pointOfAttackRel2APAndBL.xpos" valueReference="319"
+                        description="Additional Body Force 15 - Point of attack X rel AP (pos. fwd)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[15].pointOfAttackRel2APAndBL.ypos" valueReference="320"
+                        description="Additional Body Force 15 - Point of attack Y rel CL (pos. starboard)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[15].pointOfAttackRel2APAndBL.zpos" valueReference="321"
+                        description="Additional Body Force 15 - Point of attack Z rel BL (pos. up)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="-9999.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[15].force.north" valueReference="322"
+                        description="Additional Ned Force 15 - North force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[15].force.east" valueReference="323"
+                        description="Additional Ned Force 15 - East force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[15].force.down" valueReference="324"
+                        description="Additional Ned Force 15 - Down force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[15].pointOfAttackRel2APAndBL.xpos" valueReference="325"
+                        description="Additional Ned Force 15 - Point of attack X rel AP (pos. fwd)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[15].pointOfAttackRel2APAndBL.ypos" valueReference="326"
+                        description="Additional Ned Force 15 - Point of attack Y rel CL (pos. starboard)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[15].pointOfAttackRel2APAndBL.zpos" valueReference="327"
+                        description="Additional Ned Force 15 - Point of attack Z rel BL (pos. up)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="-9999.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[16].force.surge" valueReference="328"
+                        description="Additional Body Force 16 - Surge force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[16].force.sway" valueReference="329"
+                        description="Additional Body Force 16 - Sway force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[16].force.heave" valueReference="330"
+                        description="Additional Body Force 16 - Heave force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[16].moment.roll" valueReference="331"
+                        description="Additional Body Force 16 - Roll moment" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="Nm" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[16].moment.pitch" valueReference="332"
+                        description="Additional Body Force 16 - Pitch moment" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="Nm" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[16].moment.yaw" valueReference="333"
+                        description="Additional Body Force 16 - Yaw moment" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="Nm" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[16].pointOfAttackRel2APAndBL.xpos" valueReference="334"
+                        description="Additional Body Force 16 - Point of attack X rel AP (pos. fwd)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[16].pointOfAttackRel2APAndBL.ypos" valueReference="335"
+                        description="Additional Body Force 16 - Point of attack Y rel CL (pos. starboard)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[16].pointOfAttackRel2APAndBL.zpos" valueReference="336"
+                        description="Additional Body Force 16 - Point of attack Z rel BL (pos. up)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="-9999.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[16].force.north" valueReference="337"
+                        description="Additional Ned Force 16 - North force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[16].force.east" valueReference="338"
+                        description="Additional Ned Force 16 - East force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[16].force.down" valueReference="339"
+                        description="Additional Ned Force 16 - Down force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[16].pointOfAttackRel2APAndBL.xpos" valueReference="340"
+                        description="Additional Ned Force 16 - Point of attack X rel AP (pos. fwd)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[16].pointOfAttackRel2APAndBL.ypos" valueReference="341"
+                        description="Additional Ned Force 16 - Point of attack Y rel CL (pos. starboard)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[16].pointOfAttackRel2APAndBL.zpos" valueReference="342"
+                        description="Additional Ned Force 16 - Point of attack Z rel BL (pos. up)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="-9999.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[17].force.surge" valueReference="343"
+                        description="Additional Body Force 17 - Surge force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[17].force.sway" valueReference="344"
+                        description="Additional Body Force 17 - Sway force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[17].force.heave" valueReference="345"
+                        description="Additional Body Force 17 - Heave force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[17].moment.roll" valueReference="346"
+                        description="Additional Body Force 17 - Roll moment" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="Nm" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[17].moment.pitch" valueReference="347"
+                        description="Additional Body Force 17 - Pitch moment" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="Nm" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[17].moment.yaw" valueReference="348"
+                        description="Additional Body Force 17 - Yaw moment" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="Nm" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[17].pointOfAttackRel2APAndBL.xpos" valueReference="349"
+                        description="Additional Body Force 17 - Point of attack X rel AP (pos. fwd)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[17].pointOfAttackRel2APAndBL.ypos" valueReference="350"
+                        description="Additional Body Force 17 - Point of attack Y rel CL (pos. starboard)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[17].pointOfAttackRel2APAndBL.zpos" valueReference="351"
+                        description="Additional Body Force 17 - Point of attack Z rel BL (pos. up)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="-9999.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[17].force.north" valueReference="352"
+                        description="Additional Ned Force 17 - North force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[17].force.east" valueReference="353"
+                        description="Additional Ned Force 17 - East force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[17].force.down" valueReference="354"
+                        description="Additional Ned Force 17 - Down force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[17].pointOfAttackRel2APAndBL.xpos" valueReference="355"
+                        description="Additional Ned Force 17 - Point of attack X rel AP (pos. fwd)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[17].pointOfAttackRel2APAndBL.ypos" valueReference="356"
+                        description="Additional Ned Force 17 - Point of attack Y rel CL (pos. starboard)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[17].pointOfAttackRel2APAndBL.zpos" valueReference="357"
+                        description="Additional Ned Force 17 - Point of attack Z rel BL (pos. up)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="-9999.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[18].force.surge" valueReference="358"
+                        description="Additional Body Force 18 - Surge force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[18].force.sway" valueReference="359"
+                        description="Additional Body Force 18 - Sway force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[18].force.heave" valueReference="360"
+                        description="Additional Body Force 18 - Heave force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[18].moment.roll" valueReference="361"
+                        description="Additional Body Force 18 - Roll moment" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="Nm" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[18].moment.pitch" valueReference="362"
+                        description="Additional Body Force 18 - Pitch moment" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="Nm" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[18].moment.yaw" valueReference="363"
+                        description="Additional Body Force 18 - Yaw moment" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="Nm" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[18].pointOfAttackRel2APAndBL.xpos" valueReference="364"
+                        description="Additional Body Force 18 - Point of attack X rel AP (pos. fwd)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[18].pointOfAttackRel2APAndBL.ypos" valueReference="365"
+                        description="Additional Body Force 18 - Point of attack Y rel CL (pos. starboard)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[18].pointOfAttackRel2APAndBL.zpos" valueReference="366"
+                        description="Additional Body Force 18 - Point of attack Z rel BL (pos. up)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="-9999.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[18].force.north" valueReference="367"
+                        description="Additional Ned Force 18 - North force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[18].force.east" valueReference="368"
+                        description="Additional Ned Force 18 - East force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[18].force.down" valueReference="369"
+                        description="Additional Ned Force 18 - Down force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[18].pointOfAttackRel2APAndBL.xpos" valueReference="370"
+                        description="Additional Ned Force 18 - Point of attack X rel AP (pos. fwd)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[18].pointOfAttackRel2APAndBL.ypos" valueReference="371"
+                        description="Additional Ned Force 18 - Point of attack Y rel CL (pos. starboard)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[18].pointOfAttackRel2APAndBL.zpos" valueReference="372"
+                        description="Additional Ned Force 18 - Point of attack Z rel BL (pos. up)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="-9999.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[19].force.surge" valueReference="373"
+                        description="Additional Body Force 19 - Surge force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[19].force.sway" valueReference="374"
+                        description="Additional Body Force 19 - Sway force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[19].force.heave" valueReference="375"
+                        description="Additional Body Force 19 - Heave force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[19].moment.roll" valueReference="376"
+                        description="Additional Body Force 19 - Roll moment" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="Nm" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[19].moment.pitch" valueReference="377"
+                        description="Additional Body Force 19 - Pitch moment" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="Nm" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[19].moment.yaw" valueReference="378"
+                        description="Additional Body Force 19 - Yaw moment" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="Nm" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[19].pointOfAttackRel2APAndBL.xpos" valueReference="379"
+                        description="Additional Body Force 19 - Point of attack X rel AP (pos. fwd)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[19].pointOfAttackRel2APAndBL.ypos" valueReference="380"
+                        description="Additional Body Force 19 - Point of attack Y rel CL (pos. starboard)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalBodyForce[19].pointOfAttackRel2APAndBL.zpos" valueReference="381"
+                        description="Additional Body Force 19 - Point of attack Z rel BL (pos. up)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="-9999.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[19].force.north" valueReference="382"
+                        description="Additional Ned Force 19 - North force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[19].force.east" valueReference="383"
+                        description="Additional Ned Force 19 - East force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[19].force.down" valueReference="384"
+                        description="Additional Ned Force 19 - Down force" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Real declaredType="" quantity="" unit="N" displayUnit="" relativeQuantity="false" min="-1.0E12"
+                  max="1.0E12" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[19].pointOfAttackRel2APAndBL.xpos" valueReference="385"
+                        description="Additional Ned Force 19 - Point of attack X rel AP (pos. fwd)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[19].pointOfAttackRel2APAndBL.ypos" valueReference="386"
+                        description="Additional Ned Force 19 - Point of attack Y rel CL (pos. starboard)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="0.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="additionalNedForce[19].pointOfAttackRel2APAndBL.zpos" valueReference="387"
+                        description="Additional Ned Force 19 - Point of attack Z rel BL (pos. up)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Real declaredType="" quantity="" unit="m" displayUnit="" relativeQuantity="false" min="-10000.0"
+                  max="10000.0" nominal="1.0" start="-9999.0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="wavesInit.n_fft" valueReference="0"
+                        description="Wave model init data: Number components in FFT (value 2^n)" variability="parameter"
+                        causality="input" alias="noAlias">
+            <Integer declaredType="" quantity="" min="64" max="1024" start="128" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="wavesInit.n_active_HF" valueReference="1"
+                        description="Wave model init data: Number active HF components (first-order forces)"
+                        variability="parameter" causality="input" alias="noAlias">
+            <Integer declaredType="" quantity="" min="1" max="1000000" start="16384" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="wavesInit.n_active_LF" valueReference="2"
+                        description="Wave model init data: Number active LF components (wave drift forces)"
+                        variability="parameter" causality="input" alias="noAlias">
+            <Integer declaredType="" quantity="" min="1" max="1000000" start="1024" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="wind_spectrum" valueReference="3"
+                        description="Wind spectrum; 0=Static,1=Davenport,2=Harris" variability="continuous"
+                        causality="input" alias="noAlias">
+            <Integer declaredType="" quantity="" min="0" max="2" start="0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="wave_spectrum" valueReference="4"
+                        description="Wave spectrum; -1=User,0=Regular,1=P-M,2=Jonswap,3=Jonswap(gamma),4=Torsethhaugen"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Integer declaredType="" quantity="" min="-1" max="4" start="0" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="redirect_system_out" valueReference="0"
+                        description="Redirect output to debug file c:/vesselfmu.txt" variability="parameter"
+                        causality="input" alias="noAlias">
+            <Boolean declaredType="" start="false" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="initialize_using_hydrostatics" valueReference="1"
+                        description="When true uses hydrostatics to find initial values for all DOF except surge_velocity, heading, north_position and east_position"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Boolean declaredType="" start="true" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="reset_position" valueReference="2" description="Pulse to reset position"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Boolean declaredType="" start="false" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="reset_velocity" valueReference="3" description="Pulse to reset velocity"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Boolean declaredType="" start="false" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="use_external_solver" valueReference="4"
+                        description="Use external solver for vessel motions" variability="continuous" causality="input"
+                        alias="noAlias">
+            <Boolean declaredType="" start="false" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="wind_ramping" valueReference="5"
+                        description="Ramp changes in wind inputs (as opposed to applying changes instantly)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Boolean declaredType="" start="true" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="current_ramping" valueReference="6"
+                        description="Ramp changes in current inputs (as opposed to applying changes instantly)"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Boolean declaredType="" start="true" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="wave_first_order_on" valueReference="7" description="Include first order wave forces"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Boolean declaredType="" start="true" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="wave_second_order_on" valueReference="8"
+                        description="Include slowly varying wave drift forces" variability="continuous"
+                        causality="input" alias="noAlias">
+            <Boolean declaredType="" start="true" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="wave_nmriwf_on" valueReference="9"
+                        description="Include nonlinear modification restoring and incident wave forces"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Boolean declaredType="" start="false" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="update_seastate" valueReference="10"
+                        description="Pulse to notify that the seastate should be updated based on the new input data"
+                        variability="continuous" causality="input" alias="noAlias">
+            <Boolean declaredType="" start="false" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="redirect_system_out_file" valueReference="0"
+                        description="Filename to use for debug output" variability="parameter" causality="input"
+                        alias="noAlias">
+            <String declaredType="" start="c:/vesselfmu.txt" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="unzipFolder" valueReference="1" description="Folder to unzip vessel model input files"
+                        variability="parameter" causality="input" alias="noAlias">
+            <String declaredType="" start="%fmu%/resources/temp" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="vesselZipFile" valueReference="2" description="Zip file with vessel model inputs"
+                        variability="parameter" causality="input" alias="noAlias">
+            <String declaredType="" start="%fmu%/resources/vesselmodel.zip" fixed="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="tsw_input_file" valueReference="3" description="Path to .tsw input file"
+                        variability="continuous" causality="input" alias="noAlias">
+            <String declaredType="" start="-" fixed="false"/>
+        </ScalarVariable>
+    </ModelVariables>
+    <Implementation>
+        <CoSimulation_StandAlone>
+            <Capabilities/>
+        </CoSimulation_StandAlone>
+    </Implementation>
+</fmiModelDescription>
