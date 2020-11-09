@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.io.IOException;
 
-public class TestFmiModeldescription {
+public class TestFmi2Modeldescription {
 
     private static Fmi2ModelDescription md;
 
