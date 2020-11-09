@@ -7,12 +7,12 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.io.IOException;
 
-public class TestFmiModelDescription {
+public class TestVesselFmu {
 
     @Test
     public void testVesselFmu() throws IOException {
 
-        File xml = new File(TestFmiModelDescription.class.getClassLoader()
+        File xml = new File(TestVesselFmu.class.getClassLoader()
                 .getResource("fmi1.0/VesselFmu/modelDescription.xml").getFile());
 
         XmlMapper mapper = new XmlMapper();

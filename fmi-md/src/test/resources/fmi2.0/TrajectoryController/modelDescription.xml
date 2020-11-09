@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fmiModelDescription fmiVersion="2.0" modelName="TrajectoryController" guid="1580553180731" description=" 
+ This FMU controls the vessel along a path constructed of Waypoints (WPs) (currently support for 11 WPs). 
+A PID regulator aims at maintaining the speed along the path and another PID regulator aims to maintain the 
+heading of the vessel such that the course (direction of the vessel total speed) is directed towards the 
+point on the path given by a lookahead distance from the vessel (chapters 10.3 and 12.2.6/12.2.8 of Fossen's 
+ HANDBOOK OF MARINE CRAFT HYDRODYNAMICS AND MOTION CONTROL ).  
+" author="Mechlab, NTNU, Aalesund" generationTool="SIANI FMU Builder v2.6.0"
+                     generationDateAndTime="2020-02-01T10:33:00Z">
+    <CoSimulation modelIdentifier="TrajectoryController" needsExecutionTool="false"
+                  canHandleVariableCommunicationStepSize="true" canGetAndSetFMUstate="true"></CoSimulation>
+    <DefaultExperiment/>
+    <ModelVariables>
+        <ScalarVariable name="northPosition" valueReference="1" causality="input" variability="discrete"
+                        canHandleMultipleSetPerTimeInstant="true">
+            <Real unit="m" start="0.0"/>
+        </ScalarVariable>
+        <ScalarVariable name="eastPosition" valueReference="2" causality="input" variability="discrete" previous="1"
+                        canHandleMultipleSetPerTimeInstant="true">
+            <Real unit="m" start="0.0"/>
+        </ScalarVariable>
+        <ScalarVariable name="surgeVelocity" valueReference="3" causality="input" variability="discrete" previous="2"
+                        canHandleMultipleSetPerTimeInstant="true">
+            <Real unit="m/s" start="0.0"/>
+        </ScalarVariable>
+        <ScalarVariable name="swayVelocity" valueReference="4" causality="input" variability="discrete" previous="3"
+                        canHandleMultipleSetPerTimeInstant="true">
+            <Real unit="m/s" start="0.0"/>
+        </ScalarVariable>
+        <ScalarVariable name="headingAngle" valueReference="5" causality="input" variability="discrete" previous="4"
+                        canHandleMultipleSetPerTimeInstant="true">
+            <Real unit="deg" start="0.0"/>
+        </ScalarVariable>
+        <ScalarVariable name="autopilot.heading.kp" valueReference="6" causality="input" variability="discrete"
+                        previous="5" canHandleMultipleSetPerTimeInstant="true">
+            <Real start="0.0"/>
+        </ScalarVariable>
+        <ScalarVariable name="autopilot.heading.ki" valueReference="7" causality="input" variability="discrete"
+                        previous="6" canHandleMultipleSetPerTimeInstant="true">
+            <Real start="0.0"/>
+        </ScalarVariable>
+        <ScalarVariable name="autopilot.heading.kd" valueReference="8" causality="input" variability="discrete"
+                        previous="7" canHandleMultipleSetPerTimeInstant="true">
+            <Real start="0.0"/>
+        </ScalarVariable>
+        <ScalarVariable name="autopilot.speed.kp" valueReference="9" causality="input" variability="discrete"
+                        previous="8" canHandleMultipleSetPerTimeInstant="true">
+            <Real start="0.0"/>
+        </ScalarVariable>
+        <ScalarVariable name="autopilot.speed.ki" valueReference="10" causality="input" variability="discrete"
+                        previous="9" canHandleMultipleSetPerTimeInstant="true">
+            <Real start="0.0"/>
+        </ScalarVariable>
+        <ScalarVariable name="autopilot.speed.kd" valueReference="11" causality="input" variability="discrete"
+                        previous="10" canHandleMultipleSetPerTimeInstant="true">
+            <Real start="0.0"/>
+        </ScalarVariable>
+        <ScalarVariable name="targetWP.north" valueReference="12" causality="input" variability="discrete" previous="11"
+                        canHandleMultipleSetPerTimeInstant="true">
+            <Real unit="m" start="0.0"/>
+        </ScalarVariable>
+        <ScalarVariable name="targetWP.east" valueReference="13" causality="input" variability="discrete" previous="12"
+                        canHandleMultipleSetPerTimeInstant="true">
+            <Real unit="m" start="0.0"/>
+        </ScalarVariable>
+        <ScalarVariable name="targetWP.speed" valueReference="14" causality="input" variability="discrete" previous="13"
+                        canHandleMultipleSetPerTimeInstant="true">
+            <Real unit="m/s" start="0.0"/>
+        </ScalarVariable>
+        <ScalarVariable name="prevWP.north" valueReference="15" causality="input" variability="discrete" previous="14"
+                        canHandleMultipleSetPerTimeInstant="true">
+            <Real unit="m" start="0.0"/>
+        </ScalarVariable>
+        <ScalarVariable name="prevWP.east" valueReference="16" causality="input" variability="discrete" previous="15"
+                        canHandleMultipleSetPerTimeInstant="true">
+            <Real unit="m" start="0.0"/>
+        </ScalarVariable>
+        <ScalarVariable name="prevWP.speed" valueReference="17" causality="input" variability="discrete" previous="16"
+                        canHandleMultipleSetPerTimeInstant="true">
+            <Real unit="m/s" start="0.0"/>
+        </ScalarVariable>
+        <ScalarVariable name="enable" valueReference="18"
+                        description="Enable regulation of the vessel speed and heading relative to waypoints."
+                        causality="input" variability="discrete" previous="17"
+                        canHandleMultipleSetPerTimeInstant="true">
+            <Boolean start="false"/>
+        </ScalarVariable>
+        <ScalarVariable name="rudderCommand" valueReference="19" description="Angle of the main azimuth thrusters."
+                        causality="output" variability="discrete" previous="18"
+                        canHandleMultipleSetPerTimeInstant="true">
+            <Real unit="deg"/>
+        </ScalarVariable>
+        <ScalarVariable name="forceCommand" valueReference="20"
+                        description="The force command issued to the main azimuth thrusters." causality="output"
+                        variability="discrete" previous="19" canHandleMultipleSetPerTimeInstant="true">
+            <Real unit="N"/>
+        </ScalarVariable>
+        <ScalarVariable name="desiredSpeed" valueReference="21" causality="output" variability="discrete" previous="20"
+                        canHandleMultipleSetPerTimeInstant="true">
+            <Real unit="m/s"/>
+        </ScalarVariable>
+        <ScalarVariable name="lookaheadDistance" valueReference="22"
+                        description="The aggressiveness of the LOS guidance commands can be controlled with this distance (lookaheadDistance > 0)."
+                        causality="parameter" variability="tunable" previous="21"
+                        canHandleMultipleSetPerTimeInstant="true">
+            <Real unit="m" start="0.0"/>
+        </ScalarVariable>
+        <ScalarVariable name="shouldLog" valueReference="23"
+                        description="If the fmu should log certain debug information and write it to file. false = no logging, true = logging. Log is stored in the user.home directory."
+                        causality="input" variability="discrete" previous="22"
+                        canHandleMultipleSetPerTimeInstant="true">
+            <Boolean start="false"/>
+        </ScalarVariable>
+    </ModelVariables>
+    <ModelStructure>
+        <Outputs>
+
+        </Outputs>
+        <Derivatives>
+
+        </Derivatives>
+        <InitialUnknowns>
+
+        </InitialUnknowns>
+    </ModelStructure>
+</fmiModelDescription>

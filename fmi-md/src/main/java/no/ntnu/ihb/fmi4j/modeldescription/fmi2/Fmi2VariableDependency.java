@@ -16,6 +16,12 @@ import java.util.stream.Collectors;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Fmi2VariableDependency {
 
+    public Fmi2VariableDependency() {
+    }
+
+    protected Fmi2VariableDependency(String dummy) {
+    }
+
     @JsonProperty(value = "Unknown", required = true)
     @JacksonXmlElementWrapper(useWrapping = false)
     protected List<Fmi2VariableDependency.Unknown> unknown;

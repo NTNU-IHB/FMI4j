@@ -1340,6 +1340,12 @@ public class Fmi2ModelDescription {
             @JacksonXmlElementWrapper(useWrapping = false)
             protected List<Fmi2ModelDescription.ModelStructure.InitialUnknowns.Unknown> unknown;
 
+            public InitialUnknowns() {
+            }
+
+            protected InitialUnknowns(String dummy) {
+            }
+
             public List<Fmi2ModelDescription.ModelStructure.InitialUnknowns.Unknown> getUnknown() {
                 if (unknown == null) {
                     unknown = new ArrayList<>();
