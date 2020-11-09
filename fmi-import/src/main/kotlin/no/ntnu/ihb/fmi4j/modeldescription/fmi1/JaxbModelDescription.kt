@@ -80,8 +80,6 @@ class JaxbModelDescription internal constructor(
             md.implementation.coSimulationTool != null -> md.implementation.coSimulationTool.capabilities
             else -> throw IllegalStateException("Both coSimulationStandAlone and coSimulationTool can't be null!")
         }
-
-        md.implementation.coSimulationStandAlone.capabilities
         return JaxbCoSimulationModelDescription(this, capabilities.convert(md.modelIdentifier))
     }
 
