@@ -27,6 +27,7 @@ package no.ntnu.ihb.fmi4j.importer.fmi2
 import no.ntnu.ihb.fmi4j.FmiStatus
 import no.ntnu.ihb.fmi4j.FmuState
 import no.ntnu.ihb.fmi4j.ModelInstance
+import no.ntnu.ihb.fmi4j.importer.DirectAccessor
 import no.ntnu.ihb.fmi4j.importer.fmi2.jni.Fmi2LibraryWrapper
 import no.ntnu.ihb.fmi4j.modeldescription.CommonModelDescription
 import no.ntnu.ihb.fmi4j.modeldescription.RealArray
@@ -45,7 +46,7 @@ abstract class AbstractModelInstance<out E : CommonModelDescription, out T : Fmi
         override val instanceName: String,
         val wrapper: T,
         override val modelDescription: E
-) : ModelInstance<E> {
+) : ModelInstance<E>, DirectAccessor {
 
     val typesPlatform
         get() = wrapper.typesPlatform
@@ -213,7 +214,7 @@ abstract class AbstractModelInstance<out E : CommonModelDescription, out T : Fmi
         return wrapper.readReal(vr, ref)
     }
 
-    fun readRealDirect(vr: ByteBuffer, ref: ByteBuffer): FmiStatus {
+    override fun readRealDirect(vr: ByteBuffer, ref: ByteBuffer): FmiStatus {
         return wrapper.readRealDirect(vr, ref)
     }
 
@@ -233,7 +234,7 @@ abstract class AbstractModelInstance<out E : CommonModelDescription, out T : Fmi
         return wrapper.writeReal(vr, value)
     }
 
-    fun writeRealDirect(vr: ByteBuffer, value: ByteBuffer): FmiStatus {
+    override fun writeRealDirect(vr: ByteBuffer, value: ByteBuffer): FmiStatus {
         return wrapper.writeRealDirect(vr, value)
     }
 
