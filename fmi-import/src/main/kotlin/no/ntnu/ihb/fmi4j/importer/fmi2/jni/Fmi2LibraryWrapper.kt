@@ -10,7 +10,6 @@ import no.ntnu.ihb.fmi4j.util.LongByReference
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.nio.ByteBuffer
-import java.nio.ByteOrder
 
 /**
  * @author Lars Ivar Hatledal
@@ -122,7 +121,7 @@ abstract class Fmi2LibraryWrapper<E : Fmi2Library>(
                 LOG.error("Error caught on fmi2FreeInstance: ${ex.javaClass.simpleName}")
             } finally {
                 val msg = if (success) "successfully" else "unsuccessfully"
-                LOG.debug("FMU instance '${library.instanceName}' freed $msg!")
+                LOG.debug("FMU instance '${library.instanceNames[c]}' freed $msg!")
                 _library = null
                 System.gc()
             }

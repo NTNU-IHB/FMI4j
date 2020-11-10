@@ -46,7 +46,7 @@ open class Fmi2Library(
 ) : Closeable {
 
     private var isClosed = false
-    internal lateinit var instanceName: String
+    internal val instanceNames: MutableMap<Long, String> = mutableMapOf()
     protected val p: Long = load(lib.parent, lib.name)
 
     override fun close() {
@@ -139,7 +139,7 @@ open class Fmi2Library(
     fun instantiate(instanceName: String, type: Int, guid: String,
                     resourceLocation: String, visible: Boolean, loggingOn: Boolean): Long {
         return instantiate(p, instanceName, type, guid, resourceLocation, visible, loggingOn).also {
-            this.instanceName = instanceName
+            instanceNames[it] = instanceName
         }
     }
 
