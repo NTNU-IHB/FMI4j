@@ -3,8 +3,6 @@ package no.ntnu.ihb.fmi4j
 import no.ntnu.ihb.fmi4j.importer.fmi2.Fmu
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.condition.EnabledOnOs
-import org.junit.jupiter.api.condition.OS
 import java.io.File
 import java.io.FileFilter
 
@@ -82,6 +80,28 @@ internal class TestBuilder {
                 Assertions.assertEquals(10.0, slave.readReal("speed").value)
             }
         }
+
+    }
+
+    @Test
+    fun testParallelInstantiate() {
+
+        FmuBuilder.main(arrayOf(
+                "-m", "$group.KotlinTestFmi2Slave",
+                "-f", jar,
+                "-d", dest))
+
+        val fmuFile = File(dest, "KotlinTestFmi2Slave.fmu")
+        Assertions.assertTrue(fmuFile.exists())
+
+        Fmu.from(fmuFile).asCoSimulationFmu().use { fmu ->
+            (0..10).toList().parallelStream().forEach {
+                fmu.newInstance().use { slave ->
+                    slave.simpleSetup()
+                }
+            }
+        }
+
     }
 
 }
