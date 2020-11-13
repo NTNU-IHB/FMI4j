@@ -6,7 +6,7 @@ package no.ntnu.ihb.fmi4j.modeldescription.fmi1;
  * change their values only at events instants and it is therefore only necessary to store
  * them at event times).
  */
-public enum  FmiVariability {
+public enum FmiVariability {
 
     /**
      * The value of the variable is fixed and does not change.

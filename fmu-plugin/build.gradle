@@ -17,6 +17,7 @@ dependencies {
 
     testImplementation gradleTestKit()
     testImplementation project(":fmi-import")
+    testImplementation group: 'com.sun.xml.bind', name: 'jaxb-core', version: '2.3.0.1'
 }
 
 gradlePlugin {

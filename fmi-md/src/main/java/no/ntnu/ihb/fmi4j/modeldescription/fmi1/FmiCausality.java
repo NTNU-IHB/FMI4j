@@ -7,7 +7,7 @@ package no.ntnu.ihb.fmi4j.modeldescription.fmi1;
 public enum FmiCausality {
 
     /**
-     *  A value can be provided from the outside. Initially, the value is set to its
+     * A value can be provided from the outside. Initially, the value is set to its
      * "start" value (see below).
      */
     input,

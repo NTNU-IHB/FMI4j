@@ -5,14 +5,12 @@ import org.gradle.internal.impldep.org.junit.rules.TemporaryFolder
 import org.gradle.testkit.runner.GradleRunner
 import org.gradle.testkit.runner.TaskOutcome
 import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.io.File
 
 internal class ApplyPluginTest {
 
     @Test
-    @Disabled
     fun testApplyPlugin() {
 
         val realOut = 2.0
@@ -33,7 +31,7 @@ internal class ApplyPluginTest {
             writeText("""
                 plugins {
                     id "java-library" 
-                    id "no.ntnu.ihb.fmi4j.fmu-export" version "0.33.3"
+                    id "no.ntnu.ihb.fmi4j.fmu-export" version "0.34.5"
                 }
                 
                 configurations.all {
@@ -92,6 +90,8 @@ internal class ApplyPluginTest {
                 .withProjectDir(testProjectDir.root)
                 .withArguments(taskName)
                 .build()
+
+        println(result.output)
 
         Assertions.assertEquals(TaskOutcome.SUCCESS, result.task(":$taskName")?.outcome)
 

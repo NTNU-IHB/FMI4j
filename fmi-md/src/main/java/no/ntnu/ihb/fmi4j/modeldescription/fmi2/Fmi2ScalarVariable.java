@@ -1,52 +1,171 @@
 
 package no.ntnu.ihb.fmi4j.modeldescription.fmi2;
 
-import com.fasterxml.jackson.annotation.*;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
+import javax.xml.bind.annotation.*;
+import javax.xml.bind.annotation.adapters.NormalizedStringAdapter;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 
-@JsonIgnoreProperties(ignoreUnknown = true)
+/**
+ * Properties of a scalar variable
+ *
+ * <p>Java class for fmi2ScalarVariable complex type.
+ *
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ *
+ * <pre>
+ * &lt;complexType name="fmi2ScalarVariable">
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;sequence>
+ *         &lt;choice>
+ *           &lt;element name="Real">
+ *             &lt;complexType>
+ *               &lt;complexContent>
+ *                 &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *                   &lt;attGroup ref="{}fmi2RealAttributes"/>
+ *                   &lt;attribute name="declaredType" type="{http://www.w3.org/2001/XMLSchema}normalizedString" />
+ *                   &lt;attribute name="start" type="{http://www.w3.org/2001/XMLSchema}double" />
+ *                   &lt;attribute name="derivative" type="{http://www.w3.org/2001/XMLSchema}unsignedInt" />
+ *                   &lt;attribute name="reinit" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" />
+ *                 &lt;/restriction>
+ *               &lt;/complexContent>
+ *             &lt;/complexType>
+ *           &lt;/element>
+ *           &lt;element name="Integer">
+ *             &lt;complexType>
+ *               &lt;complexContent>
+ *                 &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *                   &lt;attGroup ref="{}fmi2IntegerAttributes"/>
+ *                   &lt;attribute name="declaredType" type="{http://www.w3.org/2001/XMLSchema}normalizedString" />
+ *                   &lt;attribute name="start" type="{http://www.w3.org/2001/XMLSchema}int" />
+ *                 &lt;/restriction>
+ *               &lt;/complexContent>
+ *             &lt;/complexType>
+ *           &lt;/element>
+ *           &lt;element name="Boolean">
+ *             &lt;complexType>
+ *               &lt;complexContent>
+ *                 &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *                   &lt;attribute name="declaredType" type="{http://www.w3.org/2001/XMLSchema}normalizedString" />
+ *                   &lt;attribute name="start" type="{http://www.w3.org/2001/XMLSchema}boolean" />
+ *                 &lt;/restriction>
+ *               &lt;/complexContent>
+ *             &lt;/complexType>
+ *           &lt;/element>
+ *           &lt;element name="String">
+ *             &lt;complexType>
+ *               &lt;complexContent>
+ *                 &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *                   &lt;attribute name="declaredType" type="{http://www.w3.org/2001/XMLSchema}normalizedString" />
+ *                   &lt;attribute name="start" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *                 &lt;/restriction>
+ *               &lt;/complexContent>
+ *             &lt;/complexType>
+ *           &lt;/element>
+ *           &lt;element name="Enumeration">
+ *             &lt;complexType>
+ *               &lt;complexContent>
+ *                 &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *                   &lt;attribute name="declaredType" use="required" type="{http://www.w3.org/2001/XMLSchema}normalizedString" />
+ *                   &lt;attribute name="quantity" type="{http://www.w3.org/2001/XMLSchema}normalizedString" />
+ *                   &lt;attribute name="min" type="{http://www.w3.org/2001/XMLSchema}int" />
+ *                   &lt;attribute name="max" type="{http://www.w3.org/2001/XMLSchema}int" />
+ *                   &lt;attribute name="start" type="{http://www.w3.org/2001/XMLSchema}int" />
+ *                 &lt;/restriction>
+ *               &lt;/complexContent>
+ *             &lt;/complexType>
+ *           &lt;/element>
+ *         &lt;/choice>
+ *         &lt;element name="Annotations" type="{}fmi2Annotation" minOccurs="0"/>
+ *       &lt;/sequence>
+ *       &lt;attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}normalizedString" />
+ *       &lt;attribute name="valueReference" use="required" type="{http://www.w3.org/2001/XMLSchema}unsignedInt" />
+ *       &lt;attribute name="description" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *       &lt;attribute name="causality" default="local">
+ *         &lt;simpleType>
+ *           &lt;restriction base="{http://www.w3.org/2001/XMLSchema}normalizedString">
+ *             &lt;enumeration value="parameter"/>
+ *             &lt;enumeration value="calculatedParameter"/>
+ *             &lt;enumeration value="input"/>
+ *             &lt;enumeration value="output"/>
+ *             &lt;enumeration value="local"/>
+ *             &lt;enumeration value="independent"/>
+ *           &lt;/restriction>
+ *         &lt;/simpleType>
+ *       &lt;/attribute>
+ *       &lt;attribute name="variability" default="continuous">
+ *         &lt;simpleType>
+ *           &lt;restriction base="{http://www.w3.org/2001/XMLSchema}normalizedString">
+ *             &lt;enumeration value="constant"/>
+ *             &lt;enumeration value="fixed"/>
+ *             &lt;enumeration value="tunable"/>
+ *             &lt;enumeration value="discrete"/>
+ *             &lt;enumeration value="continuous"/>
+ *           &lt;/restriction>
+ *         &lt;/simpleType>
+ *       &lt;/attribute>
+ *       &lt;attribute name="initial">
+ *         &lt;simpleType>
+ *           &lt;restriction base="{http://www.w3.org/2001/XMLSchema}normalizedString">
+ *             &lt;enumeration value="exact"/>
+ *             &lt;enumeration value="approx"/>
+ *             &lt;enumeration value="calculated"/>
+ *           &lt;/restriction>
+ *         &lt;/simpleType>
+ *       &lt;/attribute>
+ *       &lt;attribute name="canHandleMultipleSetPerTimeInstant" type="{http://www.w3.org/2001/XMLSchema}boolean" />
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
+ * </pre>
+ */
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "fmi2ScalarVariable", propOrder = {
+        "real",
+        "integer",
+        "_boolean",
+        "string",
+        "enumeration",
+        "annotations"
+})
 public class Fmi2ScalarVariable {
 
-    @JsonProperty(value = "Real")
-    @JsonSetter(nulls = Nulls.AS_EMPTY)
+    @XmlElement(name = "Real")
     protected Fmi2ScalarVariable.Real real;
-    @JsonProperty(value = "Integer")
-    @JsonSetter(nulls = Nulls.AS_EMPTY)
+    @XmlElement(name = "Integer")
     protected Fmi2ScalarVariable.Integer integer;
-    @JsonProperty(value = "Boolean")
-    @JsonSetter(nulls = Nulls.AS_EMPTY)
+    @XmlElement(name = "Boolean")
     protected Fmi2ScalarVariable.Boolean _boolean;
-    @JsonProperty(value = "String")
-    @JsonSetter(nulls = Nulls.AS_EMPTY)
+    @XmlElement(name = "String")
     protected Fmi2ScalarVariable.String string;
-    @JsonProperty(value = "Enumeration")
-    @JsonSetter(nulls = Nulls.AS_EMPTY)
+    @XmlElement(name = "Enumeration")
     protected Fmi2ScalarVariable.Enumeration enumeration;
-    @JsonProperty(value = "Annotations")
+    @XmlElement(name = "Annotations")
     protected Fmi2Annotation annotations;
-    @JacksonXmlProperty(isAttribute = true)
+    @XmlAttribute(name = "name", required = true)
+    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
+    @XmlSchemaType(name = "normalizedString")
     protected java.lang.String name;
-    @JacksonXmlProperty(isAttribute = true)
+    @XmlAttribute(name = "valueReference", required = true)
+    @XmlSchemaType(name = "unsignedInt")
     protected long valueReference;
-    @JacksonXmlProperty(isAttribute = true)
+    @XmlAttribute(name = "description")
     protected java.lang.String description;
-    @JacksonXmlProperty(isAttribute = true)
+    @XmlAttribute(name = "causality")
     protected Fmi2Causality causality;
-    @JacksonXmlProperty(isAttribute = true)
+    @XmlAttribute(name = "variability")
     protected Fmi2Variability variability;
-    @JacksonXmlProperty(isAttribute = true)
+    @XmlAttribute(name = "initial")
     protected Fmi2Initial initial;
-    @JacksonXmlProperty(isAttribute = true)
+    @XmlAttribute(name = "canHandleMultipleSetPerTimeInstant")
     protected java.lang.Boolean canHandleMultipleSetPerTimeInstant;
 
     /**
      * Gets the value of the real property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Fmi2ScalarVariable.Real }
-     *     
+     *
+     * @return possible object is
+     * {@link Fmi2ScalarVariable.Real }
      */
     public Fmi2ScalarVariable.Real getReal() {
         return real;
@@ -54,11 +173,9 @@ public class Fmi2ScalarVariable {
 
     /**
      * Sets the value of the real property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Fmi2ScalarVariable.Real }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Fmi2ScalarVariable.Real }
      */
     public void setReal(Fmi2ScalarVariable.Real value) {
         this.real = value;
@@ -66,11 +183,9 @@ public class Fmi2ScalarVariable {
 
     /**
      * Gets the value of the integer property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Fmi2ScalarVariable.Integer }
-     *     
+     *
+     * @return possible object is
+     * {@link Fmi2ScalarVariable.Integer }
      */
     public Fmi2ScalarVariable.Integer getInteger() {
         return integer;
@@ -78,11 +193,9 @@ public class Fmi2ScalarVariable {
 
     /**
      * Sets the value of the integer property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Fmi2ScalarVariable.Integer }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Fmi2ScalarVariable.Integer }
      */
     public void setInteger(Fmi2ScalarVariable.Integer value) {
         this.integer = value;
@@ -90,11 +203,9 @@ public class Fmi2ScalarVariable {
 
     /**
      * Gets the value of the boolean property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Fmi2ScalarVariable.Boolean }
-     *     
+     *
+     * @return possible object is
+     * {@link Fmi2ScalarVariable.Boolean }
      */
     public Fmi2ScalarVariable.Boolean getBoolean() {
         return _boolean;
@@ -102,11 +213,9 @@ public class Fmi2ScalarVariable {
 
     /**
      * Sets the value of the boolean property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Fmi2ScalarVariable.Boolean }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Fmi2ScalarVariable.Boolean }
      */
     public void setBoolean(Fmi2ScalarVariable.Boolean value) {
         this._boolean = value;
@@ -114,11 +223,9 @@ public class Fmi2ScalarVariable {
 
     /**
      * Gets the value of the string property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Fmi2ScalarVariable.String }
-     *     
+     *
+     * @return possible object is
+     * {@link Fmi2ScalarVariable.String }
      */
     public Fmi2ScalarVariable.String getString() {
         return string;
@@ -126,11 +233,9 @@ public class Fmi2ScalarVariable {
 
     /**
      * Sets the value of the string property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Fmi2ScalarVariable.String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Fmi2ScalarVariable.String }
      */
     public void setString(Fmi2ScalarVariable.String value) {
         this.string = value;
@@ -138,11 +243,9 @@ public class Fmi2ScalarVariable {
 
     /**
      * Gets the value of the enumeration property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Fmi2ScalarVariable.Enumeration }
-     *     
+     *
+     * @return possible object is
+     * {@link Fmi2ScalarVariable.Enumeration }
      */
     public Fmi2ScalarVariable.Enumeration getEnumeration() {
         return enumeration;
@@ -150,11 +253,9 @@ public class Fmi2ScalarVariable {
 
     /**
      * Sets the value of the enumeration property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Fmi2ScalarVariable.Enumeration }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Fmi2ScalarVariable.Enumeration }
      */
     public void setEnumeration(Fmi2ScalarVariable.Enumeration value) {
         this.enumeration = value;
@@ -162,11 +263,9 @@ public class Fmi2ScalarVariable {
 
     /**
      * Gets the value of the annotations property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Fmi2Annotation }
-     *     
+     *
+     * @return possible object is
+     * {@link Fmi2Annotation }
      */
     public Fmi2Annotation getAnnotations() {
         return annotations;
@@ -174,11 +273,9 @@ public class Fmi2ScalarVariable {
 
     /**
      * Sets the value of the annotations property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Fmi2Annotation }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Fmi2Annotation }
      */
     public void setAnnotations(Fmi2Annotation value) {
         this.annotations = value;
@@ -186,11 +283,9 @@ public class Fmi2ScalarVariable {
 
     /**
      * Gets the value of the name property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @return possible object is
+     * {@link java.lang.String }
      */
     public java.lang.String getName() {
         return name;
@@ -198,11 +293,9 @@ public class Fmi2ScalarVariable {
 
     /**
      * Sets the value of the name property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link java.lang.String }
      */
     public void setName(java.lang.String value) {
         this.name = value;
@@ -210,7 +303,6 @@ public class Fmi2ScalarVariable {
 
     /**
      * Gets the value of the valueReference property.
-     * 
      */
     public long getValueReference() {
         return valueReference;
@@ -218,7 +310,6 @@ public class Fmi2ScalarVariable {
 
     /**
      * Sets the value of the valueReference property.
-     * 
      */
     public void setValueReference(long value) {
         this.valueReference = value;
@@ -226,11 +317,9 @@ public class Fmi2ScalarVariable {
 
     /**
      * Gets the value of the description property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @return possible object is
+     * {@link java.lang.String }
      */
     public java.lang.String getDescription() {
         return description;
@@ -238,11 +327,9 @@ public class Fmi2ScalarVariable {
 
     /**
      * Sets the value of the description property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link java.lang.String }
      */
     public void setDescription(java.lang.String value) {
         this.description = value;
@@ -250,13 +337,10 @@ public class Fmi2ScalarVariable {
 
     /**
      * Gets the value of the causality property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Fmi2Causality }
-     *     
+     *
+     * @return possible object is
+     * {@link Fmi2Causality }
      */
-    @JsonIgnore
     public Fmi2Causality getCausality() {
         if (causality == null) {
             return Fmi2Causality.local;
@@ -267,26 +351,20 @@ public class Fmi2ScalarVariable {
 
     /**
      * Sets the value of the causality property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Fmi2Causality }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Fmi2Causality }
      */
-    @JsonProperty
     public void setCausality(Fmi2Causality value) {
         this.causality = value;
     }
 
     /**
      * Gets the value of the variability property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Fmi2Variability }
-     *     
+     *
+     * @return possible object is
+     * {@link Fmi2Variability }
      */
-    @JsonIgnore
     public Fmi2Variability getVariability() {
         if (variability == null) {
             return Fmi2Variability.continuous;
@@ -297,54 +375,42 @@ public class Fmi2ScalarVariable {
 
     /**
      * Sets the value of the variability property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Fmi2Variability }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Fmi2Variability }
      */
-    @JsonProperty
     public void setVariability(Fmi2Variability value) {
         this.variability = value;
     }
 
     /**
      * Gets the value of the initial property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Fmi2Initial }
-     *     
+     *
+     * @return possible object is
+     * {@link Fmi2Initial }
      */
-    @JsonIgnore
     public Fmi2Initial getInitial() {
         if (initial == null) {
             return Fmi2Initial.undefined;
-        } else {
-            return initial;
         }
+        return initial;
     }
 
     /**
      * Sets the value of the initial property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Fmi2Initial }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link  Fmi2Initial }
      */
-    @JsonProperty
     public void setInitial(Fmi2Initial value) {
         this.initial = value;
     }
 
     /**
      * Gets the value of the canHandleMultipleSetPerTimeInstant property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link java.lang.Boolean }
-     *     
+     *
+     * @return possible object is
+     * {@link java.lang.Boolean }
      */
     public java.lang.Boolean isCanHandleMultipleSetPerTimeInstant() {
         return canHandleMultipleSetPerTimeInstant;
@@ -352,32 +418,47 @@ public class Fmi2ScalarVariable {
 
     /**
      * Sets the value of the canHandleMultipleSetPerTimeInstant property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link java.lang.Boolean }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link java.lang.Boolean }
      */
-    @JsonProperty
     public void setCanHandleMultipleSetPerTimeInstant(java.lang.Boolean value) {
         this.canHandleMultipleSetPerTimeInstant = value;
     }
 
-    @JsonIgnoreProperties(ignoreUnknown = true)
+
+    /**
+     * <p>Java class for anonymous complex type.
+     *
+     * <p>The following schema fragment specifies the expected content contained within this class.
+     *
+     * <pre>
+     * &lt;complexType>
+     *   &lt;complexContent>
+     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+     *       &lt;attribute name="declaredType" type="{http://www.w3.org/2001/XMLSchema}normalizedString" />
+     *       &lt;attribute name="start" type="{http://www.w3.org/2001/XMLSchema}boolean" />
+     *     &lt;/restriction>
+     *   &lt;/complexContent>
+     * &lt;/complexType>
+     * </pre>
+     */
+    @XmlAccessorType(XmlAccessType.FIELD)
+    @XmlType(name = "")
     public static class Boolean {
 
-        @JacksonXmlProperty(isAttribute = true)
+        @XmlAttribute(name = "declaredType")
+        @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
+        @XmlSchemaType(name = "normalizedString")
         protected java.lang.String declaredType;
-        @JacksonXmlProperty(isAttribute = true)
+        @XmlAttribute(name = "start")
         protected java.lang.Boolean start;
 
         /**
          * Gets the value of the declaredType property.
-         * 
-         * @return
-         *     possible object is
-         *     {@link java.lang.String }
-         *     
+         *
+         * @return possible object is
+         * {@link java.lang.String }
          */
         public java.lang.String getDeclaredType() {
             return declaredType;
@@ -385,11 +466,9 @@ public class Fmi2ScalarVariable {
 
         /**
          * Sets the value of the declaredType property.
-         * 
-         * @param value
-         *     allowed object is
-         *     {@link java.lang.String }
-         *     
+         *
+         * @param value allowed object is
+         *              {@link java.lang.String }
          */
         public void setDeclaredType(java.lang.String value) {
             this.declaredType = value;
@@ -397,11 +476,9 @@ public class Fmi2ScalarVariable {
 
         /**
          * Gets the value of the start property.
-         * 
-         * @return
-         *     possible object is
-         *     {@link java.lang.Boolean }
-         *     
+         *
+         * @return possible object is
+         * {@link java.lang.Boolean }
          */
         public java.lang.Boolean isStart() {
             return start;
@@ -409,11 +486,9 @@ public class Fmi2ScalarVariable {
 
         /**
          * Sets the value of the start property.
-         * 
-         * @param value
-         *     allowed object is
-         *     {@link java.lang.Boolean }
-         *     
+         *
+         * @param value allowed object is
+         *              {@link java.lang.Boolean }
          */
         public void setStart(java.lang.Boolean value) {
             this.start = value;
@@ -421,27 +496,50 @@ public class Fmi2ScalarVariable {
 
     }
 
-    @JsonIgnoreProperties(ignoreUnknown = true)
+
+    /**
+     * <p>Java class for anonymous complex type.
+     *
+     * <p>The following schema fragment specifies the expected content contained within this class.
+     *
+     * <pre>
+     * &lt;complexType>
+     *   &lt;complexContent>
+     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+     *       &lt;attribute name="declaredType" use="required" type="{http://www.w3.org/2001/XMLSchema}normalizedString" />
+     *       &lt;attribute name="quantity" type="{http://www.w3.org/2001/XMLSchema}normalizedString" />
+     *       &lt;attribute name="min" type="{http://www.w3.org/2001/XMLSchema}int" />
+     *       &lt;attribute name="max" type="{http://www.w3.org/2001/XMLSchema}int" />
+     *       &lt;attribute name="start" type="{http://www.w3.org/2001/XMLSchema}int" />
+     *     &lt;/restriction>
+     *   &lt;/complexContent>
+     * &lt;/complexType>
+     * </pre>
+     */
+    @XmlAccessorType(XmlAccessType.FIELD)
+    @XmlType(name = "")
     public static class Enumeration {
 
-        @JacksonXmlProperty(isAttribute = true)
+        @XmlAttribute(name = "declaredType", required = true)
+        @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
+        @XmlSchemaType(name = "normalizedString")
         protected java.lang.String declaredType;
-        @JacksonXmlProperty(isAttribute = true)
+        @XmlAttribute(name = "quantity")
+        @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
+        @XmlSchemaType(name = "normalizedString")
         protected java.lang.String quantity;
-        @JacksonXmlProperty(isAttribute = true)
+        @XmlAttribute(name = "min")
         protected java.lang.Integer min;
-        @JacksonXmlProperty(isAttribute = true)
+        @XmlAttribute(name = "max")
         protected java.lang.Integer max;
-        @JacksonXmlProperty(isAttribute = true)
+        @XmlAttribute(name = "start")
         protected java.lang.Integer start;
 
         /**
          * Gets the value of the declaredType property.
-         * 
-         * @return
-         *     possible object is
-         *     {@link java.lang.String }
-         *     
+         *
+         * @return possible object is
+         * {@link java.lang.String }
          */
         public java.lang.String getDeclaredType() {
             return declaredType;
@@ -449,11 +547,9 @@ public class Fmi2ScalarVariable {
 
         /**
          * Sets the value of the declaredType property.
-         * 
-         * @param value
-         *     allowed object is
-         *     {@link java.lang.String }
-         *     
+         *
+         * @param value allowed object is
+         *              {@link java.lang.String }
          */
         public void setDeclaredType(java.lang.String value) {
             this.declaredType = value;
@@ -461,11 +557,9 @@ public class Fmi2ScalarVariable {
 
         /**
          * Gets the value of the quantity property.
-         * 
-         * @return
-         *     possible object is
-         *     {@link java.lang.String }
-         *     
+         *
+         * @return possible object is
+         * {@link java.lang.String }
          */
         public java.lang.String getQuantity() {
             return quantity;
@@ -473,11 +567,9 @@ public class Fmi2ScalarVariable {
 
         /**
          * Sets the value of the quantity property.
-         * 
-         * @param value
-         *     allowed object is
-         *     {@link java.lang.String }
-         *     
+         *
+         * @param value allowed object is
+         *              {@link java.lang.String }
          */
         public void setQuantity(java.lang.String value) {
             this.quantity = value;
@@ -485,11 +577,9 @@ public class Fmi2ScalarVariable {
 
         /**
          * Gets the value of the min property.
-         * 
-         * @return
-         *     possible object is
-         *     {@link java.lang.Integer }
-         *     
+         *
+         * @return possible object is
+         * {@link java.lang.Integer }
          */
         public java.lang.Integer getMin() {
             return min;
@@ -497,11 +587,9 @@ public class Fmi2ScalarVariable {
 
         /**
          * Sets the value of the min property.
-         * 
-         * @param value
-         *     allowed object is
-         *     {@link java.lang.Integer }
-         *     
+         *
+         * @param value allowed object is
+         *              {@link java.lang.Integer }
          */
         public void setMin(java.lang.Integer value) {
             this.min = value;
@@ -509,11 +597,9 @@ public class Fmi2ScalarVariable {
 
         /**
          * Gets the value of the max property.
-         * 
-         * @return
-         *     possible object is
-         *     {@link java.lang.Integer }
-         *     
+         *
+         * @return possible object is
+         * {@link java.lang.Integer }
          */
         public java.lang.Integer getMax() {
             return max;
@@ -521,11 +607,9 @@ public class Fmi2ScalarVariable {
 
         /**
          * Sets the value of the max property.
-         * 
-         * @param value
-         *     allowed object is
-         *     {@link java.lang.Integer }
-         *     
+         *
+         * @param value allowed object is
+         *              {@link java.lang.Integer }
          */
         public void setMax(java.lang.Integer value) {
             this.max = value;
@@ -533,11 +617,9 @@ public class Fmi2ScalarVariable {
 
         /**
          * Gets the value of the start property.
-         * 
-         * @return
-         *     possible object is
-         *     {@link java.lang.Integer }
-         *     
+         *
+         * @return possible object is
+         * {@link java.lang.Integer }
          */
         public java.lang.Integer getStart() {
             return start;
@@ -545,11 +627,9 @@ public class Fmi2ScalarVariable {
 
         /**
          * Sets the value of the start property.
-         * 
-         * @param value
-         *     allowed object is
-         *     {@link java.lang.Integer }
-         *     
+         *
+         * @param value allowed object is
+         *              {@link java.lang.Integer }
          */
         public void setStart(java.lang.Integer value) {
             this.start = value;
@@ -557,27 +637,48 @@ public class Fmi2ScalarVariable {
 
     }
 
-    @JsonIgnoreProperties(ignoreUnknown = true)
+
+    /**
+     * <p>Java class for anonymous complex type.
+     *
+     * <p>The following schema fragment specifies the expected content contained within this class.
+     *
+     * <pre>
+     * &lt;complexType>
+     *   &lt;complexContent>
+     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+     *       &lt;attGroup ref="{}fmi2IntegerAttributes"/>
+     *       &lt;attribute name="declaredType" type="{http://www.w3.org/2001/XMLSchema}normalizedString" />
+     *       &lt;attribute name="start" type="{http://www.w3.org/2001/XMLSchema}int" />
+     *     &lt;/restriction>
+     *   &lt;/complexContent>
+     * &lt;/complexType>
+     * </pre>
+     */
+    @XmlAccessorType(XmlAccessType.FIELD)
+    @XmlType(name = "")
     public static class Integer {
 
-        @JacksonXmlProperty(isAttribute = true)
+        @XmlAttribute(name = "declaredType")
+        @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
+        @XmlSchemaType(name = "normalizedString")
         protected java.lang.String declaredType;
-        @JacksonXmlProperty(isAttribute = true)
+        @XmlAttribute(name = "start")
         protected java.lang.Integer start;
-        @JacksonXmlProperty(isAttribute = true)
+        @XmlAttribute(name = "quantity")
+        @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
+        @XmlSchemaType(name = "normalizedString")
         protected java.lang.String quantity;
-        @JacksonXmlProperty(isAttribute = true)
+        @XmlAttribute(name = "min")
         protected java.lang.Integer min;
-        @JacksonXmlProperty(isAttribute = true)
+        @XmlAttribute(name = "max")
         protected java.lang.Integer max;
 
         /**
          * Gets the value of the declaredType property.
-         * 
-         * @return
-         *     possible object is
-         *     {@link java.lang.String }
-         *     
+         *
+         * @return possible object is
+         * {@link java.lang.String }
          */
         public java.lang.String getDeclaredType() {
             return declaredType;
@@ -585,11 +686,9 @@ public class Fmi2ScalarVariable {
 
         /**
          * Sets the value of the declaredType property.
-         * 
-         * @param value
-         *     allowed object is
-         *     {@link java.lang.String }
-         *     
+         *
+         * @param value allowed object is
+         *              {@link java.lang.String }
          */
         public void setDeclaredType(java.lang.String value) {
             this.declaredType = value;
@@ -597,11 +696,9 @@ public class Fmi2ScalarVariable {
 
         /**
          * Gets the value of the start property.
-         * 
-         * @return
-         *     possible object is
-         *     {@link java.lang.Integer }
-         *     
+         *
+         * @return possible object is
+         * {@link java.lang.Integer }
          */
         public java.lang.Integer getStart() {
             return start;
@@ -609,11 +706,9 @@ public class Fmi2ScalarVariable {
 
         /**
          * Sets the value of the start property.
-         * 
-         * @param value
-         *     allowed object is
-         *     {@link java.lang.Integer }
-         *     
+         *
+         * @param value allowed object is
+         *              {@link java.lang.Integer }
          */
         public void setStart(java.lang.Integer value) {
             this.start = value;
@@ -621,11 +716,9 @@ public class Fmi2ScalarVariable {
 
         /**
          * Gets the value of the quantity property.
-         * 
-         * @return
-         *     possible object is
-         *     {@link java.lang.String }
-         *     
+         *
+         * @return possible object is
+         * {@link java.lang.String }
          */
         public java.lang.String getQuantity() {
             return quantity;
@@ -633,11 +726,9 @@ public class Fmi2ScalarVariable {
 
         /**
          * Sets the value of the quantity property.
-         * 
-         * @param value
-         *     allowed object is
-         *     {@link java.lang.String }
-         *     
+         *
+         * @param value allowed object is
+         *              {@link java.lang.String }
          */
         public void setQuantity(java.lang.String value) {
             this.quantity = value;
@@ -645,11 +736,9 @@ public class Fmi2ScalarVariable {
 
         /**
          * Gets the value of the min property.
-         * 
-         * @return
-         *     possible object is
-         *     {@link java.lang.Integer }
-         *     
+         *
+         * @return possible object is
+         * {@link java.lang.Integer }
          */
         public java.lang.Integer getMin() {
             return min;
@@ -657,11 +746,9 @@ public class Fmi2ScalarVariable {
 
         /**
          * Sets the value of the min property.
-         * 
-         * @param value
-         *     allowed object is
-         *     {@link java.lang.Integer }
-         *     
+         *
+         * @param value allowed object is
+         *              {@link java.lang.Integer }
          */
         public void setMin(java.lang.Integer value) {
             this.min = value;
@@ -669,11 +756,9 @@ public class Fmi2ScalarVariable {
 
         /**
          * Gets the value of the max property.
-         * 
-         * @return
-         *     possible object is
-         *     {@link java.lang.Integer }
-         *     
+         *
+         * @return possible object is
+         * {@link java.lang.Integer }
          */
         public java.lang.Integer getMax() {
             return max;
@@ -681,11 +766,9 @@ public class Fmi2ScalarVariable {
 
         /**
          * Sets the value of the max property.
-         * 
-         * @param value
-         *     allowed object is
-         *     {@link java.lang.Integer }
-         *     
+         *
+         * @param value allowed object is
+         *              {@link java.lang.Integer }
          */
         public void setMax(java.lang.Integer value) {
             this.max = value;
@@ -693,40 +776,69 @@ public class Fmi2ScalarVariable {
 
     }
 
-    @JsonIgnoreProperties(ignoreUnknown = true)
+
+    /**
+     * <p>Java class for anonymous complex type.
+     *
+     * <p>The following schema fragment specifies the expected content contained within this class.
+     *
+     * <pre>
+     * &lt;complexType>
+     *   &lt;complexContent>
+     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+     *       &lt;attGroup ref="{}fmi2RealAttributes"/>
+     *       &lt;attribute name="declaredType" type="{http://www.w3.org/2001/XMLSchema}normalizedString" />
+     *       &lt;attribute name="start" type="{http://www.w3.org/2001/XMLSchema}double" />
+     *       &lt;attribute name="derivative" type="{http://www.w3.org/2001/XMLSchema}unsignedInt" />
+     *       &lt;attribute name="reinit" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" />
+     *     &lt;/restriction>
+     *   &lt;/complexContent>
+     * &lt;/complexType>
+     * </pre>
+     */
+    @XmlAccessorType(XmlAccessType.FIELD)
+    @XmlType(name = "")
     public static class Real {
-        @JacksonXmlProperty(isAttribute = true)
+
+        @XmlAttribute(name = "declaredType")
+        @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
+        @XmlSchemaType(name = "normalizedString")
         protected java.lang.String declaredType;
-        @JacksonXmlProperty(isAttribute = true)
+        @XmlAttribute(name = "start")
         protected Double start;
-        @JacksonXmlProperty(isAttribute = true)
+        @XmlAttribute(name = "derivative")
+        @XmlSchemaType(name = "unsignedInt")
         protected Long derivative;
-        @JacksonXmlProperty(isAttribute = true)
+        @XmlAttribute(name = "reinit")
         protected java.lang.Boolean reinit;
-        @JacksonXmlProperty(isAttribute = true)
+        @XmlAttribute(name = "quantity")
+        @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
+        @XmlSchemaType(name = "normalizedString")
         protected java.lang.String quantity;
-        @JacksonXmlProperty(isAttribute = true)
+        @XmlAttribute(name = "unit")
+        @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
+        @XmlSchemaType(name = "normalizedString")
         protected java.lang.String unit;
-        @JacksonXmlProperty(isAttribute = true)
+        @XmlAttribute(name = "displayUnit")
+        @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
+        @XmlSchemaType(name = "normalizedString")
         protected java.lang.String displayUnit;
-        @JacksonXmlProperty(isAttribute = true)
+        @XmlAttribute(name = "relativeQuantity")
         protected java.lang.Boolean relativeQuantity;
-        @JacksonXmlProperty(isAttribute = true)
+        @XmlAttribute(name = "min")
         protected Double min;
-        @JacksonXmlProperty(isAttribute = true)
+        @XmlAttribute(name = "max")
         protected Double max;
-        @JacksonXmlProperty(isAttribute = true)
+        @XmlAttribute(name = "nominal")
         protected Double nominal;
-        @JacksonXmlProperty(isAttribute = true)
+        @XmlAttribute(name = "unbounded")
         protected java.lang.Boolean unbounded;
 
         /**
          * Gets the value of the declaredType property.
-         * 
-         * @return
-         *     possible object is
-         *     {@link java.lang.String }
-         *     
+         *
+         * @return possible object is
+         * {@link java.lang.String }
          */
         public java.lang.String getDeclaredType() {
             return declaredType;
@@ -734,11 +846,9 @@ public class Fmi2ScalarVariable {
 
         /**
          * Sets the value of the declaredType property.
-         * 
-         * @param value
-         *     allowed object is
-         *     {@link java.lang.String }
-         *     
+         *
+         * @param value allowed object is
+         *              {@link java.lang.String }
          */
         public void setDeclaredType(java.lang.String value) {
             this.declaredType = value;
@@ -746,11 +856,9 @@ public class Fmi2ScalarVariable {
 
         /**
          * Gets the value of the start property.
-         * 
-         * @return
-         *     possible object is
-         *     {@link Double }
-         *     
+         *
+         * @return possible object is
+         * {@link Double }
          */
         public Double getStart() {
             return start;
@@ -758,11 +866,9 @@ public class Fmi2ScalarVariable {
 
         /**
          * Sets the value of the start property.
-         * 
-         * @param value
-         *     allowed object is
-         *     {@link Double }
-         *     
+         *
+         * @param value allowed object is
+         *              {@link Double }
          */
         public void setStart(Double value) {
             this.start = value;
@@ -770,11 +876,9 @@ public class Fmi2ScalarVariable {
 
         /**
          * Gets the value of the derivative property.
-         * 
-         * @return
-         *     possible object is
-         *     {@link Long }
-         *     
+         *
+         * @return possible object is
+         * {@link Long }
          */
         public Long getDerivative() {
             return derivative;
@@ -782,11 +886,9 @@ public class Fmi2ScalarVariable {
 
         /**
          * Sets the value of the derivative property.
-         * 
-         * @param value
-         *     allowed object is
-         *     {@link Long }
-         *     
+         *
+         * @param value allowed object is
+         *              {@link Long }
          */
         public void setDerivative(Long value) {
             this.derivative = value;
@@ -795,12 +897,9 @@ public class Fmi2ScalarVariable {
         /**
          * Gets the value of the reinit property.
          *
-         * @return
-         *     possible object is
-         *     {@link java.lang.Boolean }
-         *
+         * @return possible object is
+         * {@link java.lang.Boolean }
          */
-        @JsonIgnore
         public boolean isReinit() {
             if (reinit == null) {
                 return false;
@@ -811,11 +910,9 @@ public class Fmi2ScalarVariable {
 
         /**
          * Sets the value of the reinit property.
-         * 
-         * @param value
-         *     allowed object is
-         *     {@link java.lang.Boolean }
-         *     
+         *
+         * @param value allowed object is
+         *              {@link java.lang.Boolean }
          */
         public void setReinit(java.lang.Boolean value) {
             this.reinit = value;
@@ -823,11 +920,9 @@ public class Fmi2ScalarVariable {
 
         /**
          * Gets the value of the quantity property.
-         * 
-         * @return
-         *     possible object is
-         *     {@link java.lang.String }
-         *     
+         *
+         * @return possible object is
+         * {@link java.lang.String }
          */
         public java.lang.String getQuantity() {
             return quantity;
@@ -835,11 +930,9 @@ public class Fmi2ScalarVariable {
 
         /**
          * Sets the value of the quantity property.
-         * 
-         * @param value
-         *     allowed object is
-         *     {@link java.lang.String }
-         *     
+         *
+         * @param value allowed object is
+         *              {@link java.lang.String }
          */
         public void setQuantity(java.lang.String value) {
             this.quantity = value;
@@ -847,11 +940,9 @@ public class Fmi2ScalarVariable {
 
         /**
          * Gets the value of the unit property.
-         * 
-         * @return
-         *     possible object is
-         *     {@link java.lang.String }
-         *     
+         *
+         * @return possible object is
+         * {@link java.lang.String }
          */
         public java.lang.String getUnit() {
             return unit;
@@ -859,11 +950,9 @@ public class Fmi2ScalarVariable {
 
         /**
          * Sets the value of the unit property.
-         * 
-         * @param value
-         *     allowed object is
-         *     {@link java.lang.String }
-         *     
+         *
+         * @param value allowed object is
+         *              {@link java.lang.String }
          */
         public void setUnit(java.lang.String value) {
             this.unit = value;
@@ -871,11 +960,9 @@ public class Fmi2ScalarVariable {
 
         /**
          * Gets the value of the displayUnit property.
-         * 
-         * @return
-         *     possible object is
-         *     {@link java.lang.String }
-         *     
+         *
+         * @return possible object is
+         * {@link java.lang.String }
          */
         public java.lang.String getDisplayUnit() {
             return displayUnit;
@@ -883,11 +970,9 @@ public class Fmi2ScalarVariable {
 
         /**
          * Sets the value of the displayUnit property.
-         * 
-         * @param value
-         *     allowed object is
-         *     {@link java.lang.String }
-         *     
+         *
+         * @param value allowed object is
+         *              {@link java.lang.String }
          */
         public void setDisplayUnit(java.lang.String value) {
             this.displayUnit = value;
@@ -895,13 +980,10 @@ public class Fmi2ScalarVariable {
 
         /**
          * Gets the value of the relativeQuantity property.
-         * 
-         * @return
-         *     possible object is
-         *     {@link java.lang.Boolean }
-         *     
+         *
+         * @return possible object is
+         * {@link java.lang.Boolean }
          */
-        @JsonIgnore
         public boolean isRelativeQuantity() {
             if (relativeQuantity == null) {
                 return false;
@@ -912,11 +994,9 @@ public class Fmi2ScalarVariable {
 
         /**
          * Sets the value of the relativeQuantity property.
-         * 
-         * @param value
-         *     allowed object is
-         *     {@link java.lang.Boolean }
-         *     
+         *
+         * @param value allowed object is
+         *              {@link java.lang.Boolean }
          */
         public void setRelativeQuantity(java.lang.Boolean value) {
             this.relativeQuantity = value;
@@ -924,11 +1004,9 @@ public class Fmi2ScalarVariable {
 
         /**
          * Gets the value of the min property.
-         * 
-         * @return
-         *     possible object is
-         *     {@link Double }
-         *     
+         *
+         * @return possible object is
+         * {@link Double }
          */
         public Double getMin() {
             return min;
@@ -936,11 +1014,9 @@ public class Fmi2ScalarVariable {
 
         /**
          * Sets the value of the min property.
-         * 
-         * @param value
-         *     allowed object is
-         *     {@link Double }
-         *     
+         *
+         * @param value allowed object is
+         *              {@link Double }
          */
         public void setMin(Double value) {
             this.min = value;
@@ -948,11 +1024,9 @@ public class Fmi2ScalarVariable {
 
         /**
          * Gets the value of the max property.
-         * 
-         * @return
-         *     possible object is
-         *     {@link Double }
-         *     
+         *
+         * @return possible object is
+         * {@link Double }
          */
         public Double getMax() {
             return max;
@@ -960,11 +1034,9 @@ public class Fmi2ScalarVariable {
 
         /**
          * Sets the value of the max property.
-         * 
-         * @param value
-         *     allowed object is
-         *     {@link Double }
-         *     
+         *
+         * @param value allowed object is
+         *              {@link Double }
          */
         public void setMax(Double value) {
             this.max = value;
@@ -972,11 +1044,9 @@ public class Fmi2ScalarVariable {
 
         /**
          * Gets the value of the nominal property.
-         * 
-         * @return
-         *     possible object is
-         *     {@link Double }
-         *     
+         *
+         * @return possible object is
+         * {@link Double }
          */
         public Double getNominal() {
             return nominal;
@@ -984,11 +1054,9 @@ public class Fmi2ScalarVariable {
 
         /**
          * Sets the value of the nominal property.
-         * 
-         * @param value
-         *     allowed object is
-         *     {@link Double }
-         *     
+         *
+         * @param value allowed object is
+         *              {@link Double }
          */
         public void setNominal(Double value) {
             this.nominal = value;
@@ -996,13 +1064,10 @@ public class Fmi2ScalarVariable {
 
         /**
          * Gets the value of the unbounded property.
-         * 
-         * @return
-         *     possible object is
-         *     {@link java.lang.Boolean }
-         *     
+         *
+         * @return possible object is
+         * {@link java.lang.Boolean }
          */
-        @JsonIgnore
         public boolean isUnbounded() {
             if (unbounded == null) {
                 return false;
@@ -1013,11 +1078,9 @@ public class Fmi2ScalarVariable {
 
         /**
          * Sets the value of the unbounded property.
-         * 
-         * @param value
-         *     allowed object is
-         *     {@link java.lang.Boolean }
-         *     
+         *
+         * @param value allowed object is
+         *              {@link java.lang.Boolean }
          */
         public void setUnbounded(java.lang.Boolean value) {
             this.unbounded = value;
@@ -1025,21 +1088,39 @@ public class Fmi2ScalarVariable {
 
     }
 
-    @JsonIgnoreProperties(ignoreUnknown = true)
+
+    /**
+     * <p>Java class for anonymous complex type.
+     *
+     * <p>The following schema fragment specifies the expected content contained within this class.
+     *
+     * <pre>
+     * &lt;complexType>
+     *   &lt;complexContent>
+     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+     *       &lt;attribute name="declaredType" type="{http://www.w3.org/2001/XMLSchema}normalizedString" />
+     *       &lt;attribute name="start" type="{http://www.w3.org/2001/XMLSchema}string" />
+     *     &lt;/restriction>
+     *   &lt;/complexContent>
+     * &lt;/complexType>
+     * </pre>
+     */
+    @XmlAccessorType(XmlAccessType.FIELD)
+    @XmlType(name = "")
     public static class String {
 
-        @JacksonXmlProperty(isAttribute = true)
+        @XmlAttribute(name = "declaredType")
+        @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
+        @XmlSchemaType(name = "normalizedString")
         protected java.lang.String declaredType;
-        @JacksonXmlProperty(isAttribute = true)
+        @XmlAttribute(name = "start")
         protected java.lang.String start;
 
         /**
          * Gets the value of the declaredType property.
-         * 
-         * @return
-         *     possible object is
-         *     {@link java.lang.String }
-         *     
+         *
+         * @return possible object is
+         * {@link java.lang.String }
          */
         public java.lang.String getDeclaredType() {
             return declaredType;
@@ -1047,11 +1128,9 @@ public class Fmi2ScalarVariable {
 
         /**
          * Sets the value of the declaredType property.
-         * 
-         * @param value
-         *     allowed object is
-         *     {@link java.lang.String }
-         *     
+         *
+         * @param value allowed object is
+         *              {@link java.lang.String }
          */
         public void setDeclaredType(java.lang.String value) {
             this.declaredType = value;
@@ -1059,11 +1138,9 @@ public class Fmi2ScalarVariable {
 
         /**
          * Gets the value of the start property.
-         * 
-         * @return
-         *     possible object is
-         *     {@link java.lang.String }
-         *     
+         *
+         * @return possible object is
+         * {@link java.lang.String }
          */
         public java.lang.String getStart() {
             return start;
@@ -1071,11 +1148,9 @@ public class Fmi2ScalarVariable {
 
         /**
          * Sets the value of the start property.
-         * 
-         * @param value
-         *     allowed object is
-         *     {@link java.lang.String }
-         *     
+         *
+         * @param value allowed object is
+         *              {@link java.lang.String }
          */
         public void setStart(java.lang.String value) {
             this.start = value;

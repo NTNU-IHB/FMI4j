@@ -7,6 +7,7 @@ import java.io.Closeable
 import java.io.File
 import java.util.*
 import java.util.logging.Logger
+import javax.xml.bind.JAXB
 
 abstract class Fmi2Slave(
         args: Map<String, Any>
@@ -26,7 +27,7 @@ abstract class Fmi2Slave(
 
     val modelDescriptionXml: String by lazy {
         String(ByteArrayOutputStream().use {
-            modelDescription.toXML(it)
+            JAXB.marshal(modelDescription, it)
             it.toByteArray()
         })
     }
@@ -297,7 +298,7 @@ abstract class Fmi2Slave(
                 ms.outputs = Fmi2VariableDependency()
                 outputs.forEach {
                     ms.outputs.unknown.add(Fmi2VariableDependency.Unknown().also { u ->
-                        u.index = (it + 1).toInt()
+                        u.index = (it + 1)
                     })
                 }
             }
