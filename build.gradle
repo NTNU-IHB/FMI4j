@@ -15,6 +15,8 @@ group = "no.ntnu.ihb.fmi4j"
 version = rootProject.file("VERSION").readLines()[0]
 println("Building ${rootProject.name} v$version")
 
+ext.jackson_version = "2.11.3"
+
 subprojects { sub ->
 
     group = rootProject.group

@@ -1,6 +1,5 @@
 package no.ntnu.ihb.fmi4j.modeldescription.fmi2;
 
-import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import no.ntnu.ihb.fmi4j.TestFMUs;
 import no.ntnu.ihb.fmi4j.modeldescription.util.FmiModelDescriptionUtil;
 import org.junit.jupiter.api.Assertions;
@@ -18,7 +17,7 @@ public class TestControlledTemperature {
     static void setup() throws IOException {
         File fmu = TestFMUs.get("2.0/cs/20sim/4.6.4.8004/ControlledTemperature/ControlledTemperature.fmu");
         String xml = FmiModelDescriptionUtil.extractModelDescriptionXml(fmu);
-        md = new XmlMapper().readValue(xml, Fmi2ModelDescription.class);
+        md = Fmi2ModelDescription.fromXml(xml);
     }
 
     @Test
