@@ -17,6 +17,9 @@ dependencies {
 
     testImplementation gradleTestKit()
     testImplementation project(":fmi-import")
+    testImplementation group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.1'
+    testImplementation group: 'com.sun.xml.bind', name: 'jaxb-impl', version: '2.3.3'
+    testImplementation group: 'com.sun.xml.bind', name: 'jaxb-core', version: '2.3.0.1'
 }
 
 gradlePlugin {
@@ -40,4 +43,4 @@ pluginBundle {
     }
 }
 
-testClasses.dependsOn(publishToMavenLocal)
+testClasses.dependsOn(":fmu-builder:publishToMavenLocal")
