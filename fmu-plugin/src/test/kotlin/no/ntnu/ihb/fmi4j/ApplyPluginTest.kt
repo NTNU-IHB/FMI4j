@@ -5,12 +5,14 @@ import org.gradle.internal.impldep.org.junit.rules.TemporaryFolder
 import org.gradle.testkit.runner.GradleRunner
 import org.gradle.testkit.runner.TaskOutcome
 import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.io.File
 
 internal class ApplyPluginTest {
 
     @Test
+    @Disabled
     fun testApplyPlugin() {
 
         val realOut = 2.0
