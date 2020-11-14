@@ -1,6 +1,5 @@
 package no.ntnu.ihb.fmi4j.export.fmi2;
 
-import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import no.ntnu.ihb.fmi4j.modeldescription.fmi2.Fmi2ModelDescription;
 import no.ntnu.ihb.fmi4j.modeldescription.fmi2.Fmi2ScalarVariable;
 import org.junit.jupiter.api.Assertions;
@@ -9,7 +8,6 @@ import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,7 +16,7 @@ class Fmi2Fmi2SlaveModelDescriptionTest {
     private static Fmi2ModelDescription md;
 
     @BeforeAll
-    static void setUp() throws IOException {
+    static void setUp() throws Exception {
         Map<String, Object> args = new HashMap<String, Object>() {{
             put("instanceName", "instance");
         }};
@@ -27,9 +25,8 @@ class Fmi2Fmi2SlaveModelDescriptionTest {
         slave.__define__();
         System.out.println(slave.getModelDescriptionXml());
 
-        XmlMapper mapper = new XmlMapper();
-        mapper.writeValue(bos, slave.getModelDescription());
-        md = mapper.readValue(new ByteArrayInputStream(bos.toByteArray()), Fmi2ModelDescription.class);
+        slave.getModelDescription().toXml(bos);
+        md = Fmi2ModelDescription.fromXml(new ByteArrayInputStream(bos.toByteArray()));
 
     }
 

@@ -24,7 +24,6 @@
 
 package no.ntnu.ihb.fmi4j.modeldescription.fmi1
 
-import com.fasterxml.jackson.dataformat.xml.XmlMapper
 import no.ntnu.ihb.fmi4j.modeldescription.ModelDescriptionParser
 import no.ntnu.ihb.fmi4j.modeldescription.ModelDescriptionProvider
 
@@ -32,8 +31,7 @@ import no.ntnu.ihb.fmi4j.modeldescription.ModelDescriptionProvider
 class JaxbModelDescriptionParser : ModelDescriptionParser() {
 
     override fun parse(xml: String): ModelDescriptionProvider {
-        val mapper = XmlMapper()
-        return JaxbModelDescription(mapper.readValue(xml, FmiModelDescription::class.java))
+        return JaxbModelDescription(FmiModelDescription.fromXml(xml))
     }
 
 }

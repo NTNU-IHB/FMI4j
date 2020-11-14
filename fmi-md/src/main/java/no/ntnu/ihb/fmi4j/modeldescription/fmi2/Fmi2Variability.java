@@ -42,4 +42,5 @@ public enum Fmi2Variability {
      */
     continuous;
 
+
 }
