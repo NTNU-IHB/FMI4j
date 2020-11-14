@@ -26,13 +26,11 @@ package no.ntnu.ihb.fmi4j.modeldescription.fmi2
 
 import no.ntnu.ihb.fmi4j.modeldescription.ModelDescriptionParser
 import no.ntnu.ihb.fmi4j.modeldescription.ModelDescriptionProvider
-import java.io.StringReader
-import javax.xml.bind.JAXB
 
 class JaxbModelDescriptionParser : ModelDescriptionParser() {
 
     override fun parse(xml: String): ModelDescriptionProvider {
-        return JaxbModelDescription(JAXB.unmarshal(StringReader(xml), Fmi2ModelDescription::class.java))
+        return JaxbModelDescription(Fmi2ModelDescription.fromXml(xml))
     }
 
 }

@@ -1,9 +1,11 @@
 
 package no.ntnu.ihb.fmi4j.modeldescription.fmi2;
 
+import javax.xml.bind.JAXB;
 import javax.xml.bind.annotation.*;
 import javax.xml.bind.annotation.adapters.NormalizedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -323,6 +325,7 @@ public class Fmi2ModelDescription {
     public void setCoSimulation(CoSimulation coSimulation) {
         this.coSimulation = coSimulation;
     }
+
 
     /**
      * Gets the value of the unitDefinitions property.
@@ -2332,6 +2335,24 @@ public class Fmi2ModelDescription {
             return this.unit;
         }
 
+    }
+
+    public static Fmi2ModelDescription fromXml(File xml) throws IOException {
+        return fromXml(new FileInputStream(xml));
+    }
+
+    public static Fmi2ModelDescription fromXml(InputStream is) throws IOException {
+        try (BufferedInputStream bis = new BufferedInputStream(is)) {
+            return JAXB.unmarshal(bis, Fmi2ModelDescription.class);
+        }
+    }
+
+    public static Fmi2ModelDescription fromXml(String xml) {
+        return JAXB.unmarshal(new StringReader(xml), Fmi2ModelDescription.class);
+    }
+
+    public void toXml(OutputStream out) {
+        JAXB.marshal(this, out);
     }
 
 }

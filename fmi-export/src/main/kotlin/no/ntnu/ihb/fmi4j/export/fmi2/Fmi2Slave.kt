@@ -7,7 +7,6 @@ import java.io.Closeable
 import java.io.File
 import java.util.*
 import java.util.logging.Logger
-import javax.xml.bind.JAXB
 
 abstract class Fmi2Slave(
         args: Map<String, Any>
@@ -26,9 +25,9 @@ abstract class Fmi2Slave(
     protected open val automaticallyAssignStartValues = true
 
     val modelDescriptionXml: String by lazy {
-        String(ByteArrayOutputStream().use {
-            JAXB.marshal(modelDescription, it)
-            it.toByteArray()
+        String(ByteArrayOutputStream().use { baos ->
+            modelDescription.toXml(baos)
+            baos.toByteArray()
         })
     }
 

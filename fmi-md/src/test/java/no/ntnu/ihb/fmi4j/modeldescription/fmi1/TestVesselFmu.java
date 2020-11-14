@@ -3,7 +3,6 @@ package no.ntnu.ihb.fmi4j.modeldescription.fmi1;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import javax.xml.bind.JAXB;
 import java.io.File;
 import java.io.IOException;
 
@@ -15,7 +14,7 @@ public class TestVesselFmu {
         File xmlFile = new File(TestVesselFmu.class.getClassLoader()
                 .getResource("fmi1.0/VesselFmu/modelDescription.xml").getFile());
 
-        FmiModelDescription md = JAXB.unmarshal(xmlFile, FmiModelDescription.class);
+        FmiModelDescription md = FmiModelDescription.fromXml(xmlFile);
 
         Assertions.assertNotNull(md.getImplementation().getCoSimulationStandAlone().capabilities);
 

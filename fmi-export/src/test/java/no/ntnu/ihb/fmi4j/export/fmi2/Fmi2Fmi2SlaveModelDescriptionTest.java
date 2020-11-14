@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import javax.xml.bind.JAXB;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
@@ -17,7 +16,7 @@ class Fmi2Fmi2SlaveModelDescriptionTest {
     private static Fmi2ModelDescription md;
 
     @BeforeAll
-    static void setUp() {
+    static void setUp() throws Exception {
         Map<String, Object> args = new HashMap<String, Object>() {{
             put("instanceName", "instance");
         }};
@@ -26,8 +25,8 @@ class Fmi2Fmi2SlaveModelDescriptionTest {
         slave.__define__();
         System.out.println(slave.getModelDescriptionXml());
 
-        JAXB.marshal(slave.getModelDescription(), bos);
-        md = JAXB.unmarshal(new ByteArrayInputStream(bos.toByteArray()), Fmi2ModelDescription.class);
+        slave.getModelDescription().toXml(bos);
+        md = Fmi2ModelDescription.fromXml(new ByteArrayInputStream(bos.toByteArray()));
 
     }
 

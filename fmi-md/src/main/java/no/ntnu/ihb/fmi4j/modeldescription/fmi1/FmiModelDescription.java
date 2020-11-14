@@ -1,9 +1,11 @@
 
 package no.ntnu.ihb.fmi4j.modeldescription.fmi1;
 
+import javax.xml.bind.JAXB;
 import javax.xml.bind.annotation.*;
 import javax.xml.bind.annotation.adapters.NormalizedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.io.*;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -1114,7 +1116,7 @@ public class FmiModelDescription {
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setValue(String value) {
                     this.value = value;
@@ -1125,5 +1127,24 @@ public class FmiModelDescription {
         }
 
     }
+
+    public static FmiModelDescription fromXml(File xml) throws IOException {
+        return fromXml(new FileInputStream(xml));
+    }
+
+    public static FmiModelDescription fromXml(InputStream is) throws IOException {
+        try (BufferedInputStream bis = new BufferedInputStream(is)) {
+            return JAXB.unmarshal(bis, FmiModelDescription.class);
+        }
+    }
+
+    public static FmiModelDescription fromXml(String xml) {
+        return JAXB.unmarshal(new StringReader(xml), FmiModelDescription.class);
+    }
+
+    public void toXml(OutputStream out) {
+        JAXB.marshal(this, out);
+    }
+
 
 }
