@@ -7,7 +7,8 @@ apply from: rootProject.file("gradle/mavenpublish.gradle")
 apply from: rootProject.file("gradle/bintraypublish.gradle")
 
 dependencies {
-    implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-xml:$jackson_version"
-
+    implementation group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.1'
+    implementation group: 'com.sun.xml.bind', name: 'jaxb-impl', version: '2.3.3'
+    implementation group: 'com.sun.xml.bind', name: 'jaxb-core', version: '2.3.0.1'
     testImplementation project(":test-fmus")
 }

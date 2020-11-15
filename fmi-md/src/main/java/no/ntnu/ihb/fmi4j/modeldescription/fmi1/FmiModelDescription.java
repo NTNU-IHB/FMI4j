@@ -1,50 +1,195 @@
 
 package no.ntnu.ihb.fmi4j.modeldescription.fmi1;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
-
+import javax.xml.bind.JAXB;
+import javax.xml.bind.annotation.*;
+import javax.xml.bind.annotation.adapters.NormalizedStringAdapter;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.io.*;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
 
-@JsonIgnoreProperties(ignoreUnknown = true)
+/**
+ * <p>Java class for anonymous complex type.
+ *
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ *
+ * <pre>
+ * &lt;complexType>
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;sequence>
+ *         &lt;element name="UnitDefinitions" minOccurs="0">
+ *           &lt;complexType>
+ *             &lt;complexContent>
+ *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *                 &lt;sequence maxOccurs="unbounded" minOccurs="0">
+ *                   &lt;element name="BaseUnit" type="{}fmiBaseUnit"/>
+ *                 &lt;/sequence>
+ *               &lt;/restriction>
+ *             &lt;/complexContent>
+ *           &lt;/complexType>
+ *         &lt;/element>
+ *         &lt;element name="TypeDefinitions" minOccurs="0">
+ *           &lt;complexType>
+ *             &lt;complexContent>
+ *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *                 &lt;sequence maxOccurs="unbounded" minOccurs="0">
+ *                   &lt;element name="Type" type="{}fmiType"/>
+ *                 &lt;/sequence>
+ *               &lt;/restriction>
+ *             &lt;/complexContent>
+ *           &lt;/complexType>
+ *         &lt;/element>
+ *         &lt;element name="DefaultExperiment" minOccurs="0">
+ *           &lt;complexType>
+ *             &lt;complexContent>
+ *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *                 &lt;attribute name="startTime" type="{http://www.w3.org/2001/XMLSchema}double" />
+ *                 &lt;attribute name="stopTime" type="{http://www.w3.org/2001/XMLSchema}double" />
+ *                 &lt;attribute name="tolerance" type="{http://www.w3.org/2001/XMLSchema}double" />
+ *               &lt;/restriction>
+ *             &lt;/complexContent>
+ *           &lt;/complexType>
+ *         &lt;/element>
+ *         &lt;element name="VendorAnnotations" minOccurs="0">
+ *           &lt;complexType>
+ *             &lt;complexContent>
+ *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *                 &lt;sequence maxOccurs="unbounded" minOccurs="0">
+ *                   &lt;element name="Tool">
+ *                     &lt;complexType>
+ *                       &lt;complexContent>
+ *                         &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *                           &lt;sequence maxOccurs="unbounded" minOccurs="0">
+ *                             &lt;element name="Annotation">
+ *                               &lt;complexType>
+ *                                 &lt;complexContent>
+ *                                   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *                                     &lt;attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *                                     &lt;attribute name="value" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *                                   &lt;/restriction>
+ *                                 &lt;/complexContent>
+ *                               &lt;/complexType>
+ *                             &lt;/element>
+ *                           &lt;/sequence>
+ *                           &lt;attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *                         &lt;/restriction>
+ *                       &lt;/complexContent>
+ *                     &lt;/complexType>
+ *                   &lt;/element>
+ *                 &lt;/sequence>
+ *               &lt;/restriction>
+ *             &lt;/complexContent>
+ *           &lt;/complexType>
+ *         &lt;/element>
+ *         &lt;element name="ModelVariables" minOccurs="0">
+ *           &lt;complexType>
+ *             &lt;complexContent>
+ *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *                 &lt;sequence maxOccurs="unbounded" minOccurs="0">
+ *                   &lt;element name="ScalarVariable" type="{}fmiScalarVariable"/>
+ *                 &lt;/sequence>
+ *               &lt;/restriction>
+ *             &lt;/complexContent>
+ *           &lt;/complexType>
+ *         &lt;/element>
+ *         &lt;element name="Implementation" type="{}fmiImplementation" minOccurs="0"/>
+ *       &lt;/sequence>
+ *       &lt;attribute name="fmiVersion" use="required" type="{http://www.w3.org/2001/XMLSchema}normalizedString" fixed="1.0" />
+ *       &lt;attribute name="modelName" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *       &lt;attribute name="modelIdentifier" use="required" type="{http://www.w3.org/2001/XMLSchema}normalizedString" />
+ *       &lt;attribute name="guid" use="required" type="{http://www.w3.org/2001/XMLSchema}normalizedString" />
+ *       &lt;attribute name="description" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *       &lt;attribute name="author" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *       &lt;attribute name="version" type="{http://www.w3.org/2001/XMLSchema}decimal" />
+ *       &lt;attribute name="generationTool" type="{http://www.w3.org/2001/XMLSchema}normalizedString" />
+ *       &lt;attribute name="generationDateAndTime" type="{http://www.w3.org/2001/XMLSchema}dateTime" />
+ *       &lt;attribute name="variableNamingConvention" default="flat">
+ *         &lt;simpleType>
+ *           &lt;restriction base="{http://www.w3.org/2001/XMLSchema}normalizedString">
+ *             &lt;enumeration value="flat"/>
+ *             &lt;enumeration value="structured"/>
+ *           &lt;/restriction>
+ *         &lt;/simpleType>
+ *       &lt;/attribute>
+ *       &lt;attribute name="numberOfContinuousStates" use="required" type="{http://www.w3.org/2001/XMLSchema}unsignedInt" />
+ *       &lt;attribute name="numberOfEventIndicators" use="required" type="{http://www.w3.org/2001/XMLSchema}unsignedInt" />
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
+ * </pre>
+ */
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "", propOrder = {
+        "unitDefinitions",
+        "typeDefinitions",
+        "defaultExperiment",
+        "vendorAnnotations",
+        "modelVariables",
+        "implementation"
+})
+@XmlRootElement(name = "fmiModelDescription")
 public class FmiModelDescription {
 
-    @JsonProperty(value = "UnitDefinitions")
+    @XmlElement(name = "UnitDefinitions")
     protected FmiModelDescription.UnitDefinitions unitDefinitions;
-    @JsonProperty(value = "TypeDefinitions")
+    @XmlElement(name = "TypeDefinitions")
     protected FmiModelDescription.TypeDefinitions typeDefinitions;
-    @JsonProperty(value = "DefaultExperiment")
+    @XmlElement(name = "DefaultExperiment")
     protected FmiModelDescription.DefaultExperiment defaultExperiment;
-    @JsonProperty(value = "VendorAnnotations")
+    @XmlElement(name = "VendorAnnotations")
     protected FmiModelDescription.VendorAnnotations vendorAnnotations;
-    @JsonProperty(value = "ModelVariables")
+    @XmlElement(name = "ModelVariables")
     protected FmiModelDescription.ModelVariables modelVariables;
-    @JsonProperty(value = "Implementation")
+    @XmlElement(name = "Implementation")
     protected FmiImplementation implementation;
-
+    @XmlAttribute(name = "fmiVersion", required = true)
+    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
+    @XmlSchemaType(name = "normalizedString")
     protected String fmiVersion;
+    @XmlAttribute(name = "modelName", required = true)
     protected String modelName;
+    @XmlAttribute(name = "modelIdentifier", required = true)
+    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
+    @XmlSchemaType(name = "normalizedString")
     protected String modelIdentifier;
+    @XmlAttribute(name = "guid", required = true)
+    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
+    @XmlSchemaType(name = "normalizedString")
     protected String guid;
+    @XmlAttribute(name = "description")
     protected String description;
+    @XmlAttribute(name = "author")
     protected String author;
+    @XmlAttribute(name = "version")
     protected String version;
+    @XmlAttribute(name = "generationTool")
+    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
+    @XmlSchemaType(name = "normalizedString")
     protected String generationTool;
+    @XmlAttribute(name = "generationDateAndTime")
+    @XmlSchemaType(name = "normalizedString")
     protected String generationDateAndTime;
+    @XmlAttribute(name = "variableNamingConvention")
+    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     protected String variableNamingConvention;
+    @XmlAttribute(name = "numberOfContinuousStates", required = true)
+    @XmlSchemaType(name = "unsignedInt")
     protected long numberOfContinuousStates;
+    @XmlAttribute(name = "numberOfEventIndicators", required = true)
+    @XmlSchemaType(name = "unsignedInt")
     protected long numberOfEventIndicators;
 
     /**
      * Gets the value of the unitDefinitions property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link FmiModelDescription.UnitDefinitions }
-     *     
+     *
      */
     public FmiModelDescription.UnitDefinitions getUnitDefinitions() {
         return unitDefinitions;
@@ -335,8 +480,8 @@ public class FmiModelDescription {
      * 
      * @return
      *     possible object is
-     *     {@link String }
-     *     
+     *     {@link BigDecimal }
+     *
      */
     public String getVersion() {
         return version;
@@ -347,8 +492,8 @@ public class FmiModelDescription {
      * 
      * @param value
      *     allowed object is
-     *     {@link String }
-     *     
+     *     {@link BigDecimal }
+     *
      */
     public void setVersion(String value) {
         this.version = value;
@@ -368,31 +513,43 @@ public class FmiModelDescription {
 
     /**
      * Sets the value of the generationTool property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setGenerationTool(String value) {
         this.generationTool = value;
     }
 
+    /**
+     * Gets the value of the generationDateAndTime property.
+     *
+     * @return possible object is
+     * {@link String }
+     */
     public String getGenerationDateAndTime() {
         return generationDateAndTime;
     }
 
+    /**
+     * Sets the value of the generationDateAndTime property.
+     *
+     * @param value allowed object is
+     *              {@link String }
+     */
     public void setGenerationDateAndTime(String value) {
         this.generationDateAndTime = value;
     }
 
     /**
      * Gets the value of the variableNamingConvention property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getVariableNamingConvention() {
         if (variableNamingConvention == null) {
@@ -440,26 +597,48 @@ public class FmiModelDescription {
 
     /**
      * Sets the value of the numberOfEventIndicators property.
-     * 
+     *
      */
     public void setNumberOfEventIndicators(long value) {
         this.numberOfEventIndicators = value;
     }
 
 
+    /**
+     * <p>Java class for anonymous complex type.
+     *
+     * <p>The following schema fragment specifies the expected content contained within this class.
+     *
+     * <pre>
+     * &lt;complexType>
+     *   &lt;complexContent>
+     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+     *       &lt;attribute name="startTime" type="{http://www.w3.org/2001/XMLSchema}double" />
+     *       &lt;attribute name="stopTime" type="{http://www.w3.org/2001/XMLSchema}double" />
+     *       &lt;attribute name="tolerance" type="{http://www.w3.org/2001/XMLSchema}double" />
+     *     &lt;/restriction>
+     *   &lt;/complexContent>
+     * &lt;/complexType>
+     * </pre>
+     */
+    @XmlAccessorType(XmlAccessType.FIELD)
+    @XmlType(name = "")
     public static class DefaultExperiment {
 
+        @XmlAttribute(name = "startTime")
         protected Double startTime;
+        @XmlAttribute(name = "stopTime")
         protected Double stopTime;
+        @XmlAttribute(name = "tolerance")
         protected Double tolerance;
 
         /**
          * Gets the value of the startTime property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link Double }
-         *     
+         *
          */
         public Double getStartTime() {
             return startTime;
@@ -528,10 +707,30 @@ public class FmiModelDescription {
     }
 
 
+    /**
+     * <p>Java class for anonymous complex type.
+     *
+     * <p>The following schema fragment specifies the expected content contained within this class.
+     *
+     * <pre>
+     * &lt;complexType>
+     *   &lt;complexContent>
+     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+     *       &lt;sequence maxOccurs="unbounded" minOccurs="0">
+     *         &lt;element name="ScalarVariable" type="{}fmiScalarVariable"/>
+     *       &lt;/sequence>
+     *     &lt;/restriction>
+     *   &lt;/complexContent>
+     * &lt;/complexType>
+     * </pre>
+     */
+    @XmlAccessorType(XmlAccessType.FIELD)
+    @XmlType(name = "", propOrder = {
+            "scalarVariable"
+    })
     public static class ModelVariables {
 
-        @JsonProperty(value = "ScalarVariable")
-        @JacksonXmlElementWrapper(useWrapping = false)
+        @XmlElement(name = "ScalarVariable")
         protected List<FmiScalarVariable> scalarVariable;
 
         /**
@@ -542,14 +741,14 @@ public class FmiModelDescription {
          * not a snapshot. Therefore any modification you make to the
          * returned list will be present inside the JAXB object.
          * This is why there is not a <CODE>set</CODE> method for the scalarVariable property.
-         * 
+         *
          * <p>
          * For example, to add a new item, do as follows:
          * <pre>
          *    getScalarVariable().add(newItem);
          * </pre>
-         * 
-         * 
+         *
+         *
          * <p>
          * Objects of the following type(s) are allowed in the list
          * {@link FmiScalarVariable }
@@ -566,10 +765,30 @@ public class FmiModelDescription {
     }
 
 
+    /**
+     * <p>Java class for anonymous complex type.
+     *
+     * <p>The following schema fragment specifies the expected content contained within this class.
+     *
+     * <pre>
+     * &lt;complexType>
+     *   &lt;complexContent>
+     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+     *       &lt;sequence maxOccurs="unbounded" minOccurs="0">
+     *         &lt;element name="Type" type="{}fmiType"/>
+     *       &lt;/sequence>
+     *     &lt;/restriction>
+     *   &lt;/complexContent>
+     * &lt;/complexType>
+     * </pre>
+     */
+    @XmlAccessorType(XmlAccessType.FIELD)
+    @XmlType(name = "", propOrder = {
+            "type"
+    })
     public static class TypeDefinitions {
 
-        @JsonProperty(value = "Type")
-        @JacksonXmlElementWrapper(useWrapping = false)
+        @XmlElement(name = "Type")
         protected List<FmiType> type;
 
         /**
@@ -580,14 +799,14 @@ public class FmiModelDescription {
          * not a snapshot. Therefore any modification you make to the
          * returned list will be present inside the JAXB object.
          * This is why there is not a <CODE>set</CODE> method for the type property.
-         * 
+         *
          * <p>
          * For example, to add a new item, do as follows:
          * <pre>
          *    getType().add(newItem);
          * </pre>
-         * 
-         * 
+         *
+         *
          * <p>
          * Objects of the following type(s) are allowed in the list
          * {@link FmiType }
@@ -604,10 +823,30 @@ public class FmiModelDescription {
     }
 
 
+    /**
+     * <p>Java class for anonymous complex type.
+     *
+     * <p>The following schema fragment specifies the expected content contained within this class.
+     *
+     * <pre>
+     * &lt;complexType>
+     *   &lt;complexContent>
+     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+     *       &lt;sequence maxOccurs="unbounded" minOccurs="0">
+     *         &lt;element name="BaseUnit" type="{}fmiBaseUnit"/>
+     *       &lt;/sequence>
+     *     &lt;/restriction>
+     *   &lt;/complexContent>
+     * &lt;/complexType>
+     * </pre>
+     */
+    @XmlAccessorType(XmlAccessType.FIELD)
+    @XmlType(name = "", propOrder = {
+            "baseUnit"
+    })
     public static class UnitDefinitions {
 
-        @JsonProperty(value = "BaseUnit")
-        @JacksonXmlElementWrapper(useWrapping = false)
+        @XmlElement(name = "BaseUnit")
         protected List<FmiBaseUnit> baseUnit;
 
         /**
@@ -618,14 +857,14 @@ public class FmiModelDescription {
          * not a snapshot. Therefore any modification you make to the
          * returned list will be present inside the JAXB object.
          * This is why there is not a <CODE>set</CODE> method for the baseUnit property.
-         * 
+         *
          * <p>
          * For example, to add a new item, do as follows:
          * <pre>
          *    getBaseUnit().add(newItem);
          * </pre>
-         * 
-         * 
+         *
+         *
          * <p>
          * Objects of the following type(s) are allowed in the list
          * {@link FmiBaseUnit }
@@ -634,7 +873,7 @@ public class FmiModelDescription {
          */
         public List<FmiBaseUnit> getBaseUnit() {
             if (baseUnit == null) {
-                baseUnit = new ArrayList<>();
+                baseUnit = new ArrayList<FmiBaseUnit>();
             }
             return this.baseUnit;
         }
@@ -642,10 +881,50 @@ public class FmiModelDescription {
     }
 
 
+    /**
+     * <p>Java class for anonymous complex type.
+     *
+     * <p>The following schema fragment specifies the expected content contained within this class.
+     *
+     * <pre>
+     * &lt;complexType>
+     *   &lt;complexContent>
+     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+     *       &lt;sequence maxOccurs="unbounded" minOccurs="0">
+     *         &lt;element name="Tool">
+     *           &lt;complexType>
+     *             &lt;complexContent>
+     *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+     *                 &lt;sequence maxOccurs="unbounded" minOccurs="0">
+     *                   &lt;element name="Annotation">
+     *                     &lt;complexType>
+     *                       &lt;complexContent>
+     *                         &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+     *                           &lt;attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
+     *                           &lt;attribute name="value" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
+     *                         &lt;/restriction>
+     *                       &lt;/complexContent>
+     *                     &lt;/complexType>
+     *                   &lt;/element>
+     *                 &lt;/sequence>
+     *                 &lt;attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
+     *               &lt;/restriction>
+     *             &lt;/complexContent>
+     *           &lt;/complexType>
+     *         &lt;/element>
+     *       &lt;/sequence>
+     *     &lt;/restriction>
+     *   &lt;/complexContent>
+     * &lt;/complexType>
+     * </pre>
+     */
+    @XmlAccessorType(XmlAccessType.FIELD)
+    @XmlType(name = "", propOrder = {
+            "tool"
+    })
     public static class VendorAnnotations {
 
-        @JsonProperty(value = "Tool")
-        @JacksonXmlElementWrapper(useWrapping = false)
+        @XmlElement(name = "Tool")
         protected List<FmiModelDescription.VendorAnnotations.Tool> tool;
 
         /**
@@ -656,14 +935,14 @@ public class FmiModelDescription {
          * not a snapshot. Therefore any modification you make to the
          * returned list will be present inside the JAXB object.
          * This is why there is not a <CODE>set</CODE> method for the tool property.
-         * 
+         *
          * <p>
          * For example, to add a new item, do as follows:
          * <pre>
          *    getTool().add(newItem);
          * </pre>
-         * 
-         * 
+         *
+         *
          * <p>
          * Objects of the following type(s) are allowed in the list
          * {@link FmiModelDescription.VendorAnnotations.Tool }
@@ -678,15 +957,47 @@ public class FmiModelDescription {
         }
 
 
+        /**
+         * <p>Java class for anonymous complex type.
+         *
+         * <p>The following schema fragment specifies the expected content contained within this class.
+         *
+         * <pre>
+         * &lt;complexType>
+         *   &lt;complexContent>
+         *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+         *       &lt;sequence maxOccurs="unbounded" minOccurs="0">
+         *         &lt;element name="Annotation">
+         *           &lt;complexType>
+         *             &lt;complexContent>
+         *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+         *                 &lt;attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
+         *                 &lt;attribute name="value" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
+         *               &lt;/restriction>
+         *             &lt;/complexContent>
+         *           &lt;/complexType>
+         *         &lt;/element>
+         *       &lt;/sequence>
+         *       &lt;attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
+         *     &lt;/restriction>
+         *   &lt;/complexContent>
+         * &lt;/complexType>
+         * </pre>
+         */
+        @XmlAccessorType(XmlAccessType.FIELD)
+        @XmlType(name = "", propOrder = {
+                "annotation"
+        })
         public static class Tool {
 
-            @JsonProperty(value = "Annotation")
+            @XmlElement(name = "Annotation")
             protected List<FmiModelDescription.VendorAnnotations.Tool.Annotation> annotation;
+            @XmlAttribute(name = "name", required = true)
             protected String name;
 
             /**
              * Gets the value of the annotation property.
-             * 
+             *
              * <p>
              * This accessor method returns a reference to the live list,
              * not a snapshot. Therefore any modification you make to the
@@ -708,14 +1019,14 @@ public class FmiModelDescription {
              */
             public List<FmiModelDescription.VendorAnnotations.Tool.Annotation> getAnnotation() {
                 if (annotation == null) {
-                    annotation = new ArrayList<>();
+                    annotation = new ArrayList<FmiModelDescription.VendorAnnotations.Tool.Annotation>();
                 }
                 return this.annotation;
             }
 
             /**
              * Gets the value of the name property.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link String }
@@ -738,18 +1049,38 @@ public class FmiModelDescription {
             }
 
 
+            /**
+             * <p>Java class for anonymous complex type.
+             *
+             * <p>The following schema fragment specifies the expected content contained within this class.
+             *
+             * <pre>
+             * &lt;complexType>
+             *   &lt;complexContent>
+             *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+             *       &lt;attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
+             *       &lt;attribute name="value" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
+             *     &lt;/restriction>
+             *   &lt;/complexContent>
+             * &lt;/complexType>
+             * </pre>
+             */
+            @XmlAccessorType(XmlAccessType.FIELD)
+            @XmlType(name = "")
             public static class Annotation {
 
+                @XmlAttribute(name = "name", required = true)
                 protected String name;
+                @XmlAttribute(name = "value", required = true)
                 protected String value;
 
                 /**
                  * Gets the value of the name property.
-                 * 
+                 *
                  * @return
                  *     possible object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public String getName() {
                     return name;
@@ -785,7 +1116,7 @@ public class FmiModelDescription {
                  * @param value
                  *     allowed object is
                  *     {@link String }
-                 *     
+                 *
                  */
                 public void setValue(String value) {
                     this.value = value;
@@ -796,5 +1127,24 @@ public class FmiModelDescription {
         }
 
     }
+
+    public static FmiModelDescription fromXml(File xml) throws IOException {
+        return fromXml(new FileInputStream(xml));
+    }
+
+    public static FmiModelDescription fromXml(InputStream is) throws IOException {
+        try (BufferedInputStream bis = new BufferedInputStream(is)) {
+            return JAXB.unmarshal(bis, FmiModelDescription.class);
+        }
+    }
+
+    public static FmiModelDescription fromXml(String xml) {
+        return JAXB.unmarshal(new StringReader(xml), FmiModelDescription.class);
+    }
+
+    public void toXml(OutputStream out) {
+        JAXB.marshal(this, out);
+    }
+
 
 }

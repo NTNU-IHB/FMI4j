@@ -33,7 +33,7 @@ internal class ApplyPluginTest {
             writeText("""
                 plugins {
                     id "java-library" 
-                    id "no.ntnu.ihb.fmi4j.fmu-export" version "0.33.3"
+                    id "no.ntnu.ihb.fmi4j.fmu-export" version "0.34.5"
                 }
                 
                 configurations.all {
@@ -92,6 +92,8 @@ internal class ApplyPluginTest {
                 .withProjectDir(testProjectDir.root)
                 .withArguments(taskName)
                 .build()
+
+        println(result.output)
 
         Assertions.assertEquals(TaskOutcome.SUCCESS, result.task(":$taskName")?.outcome)
 

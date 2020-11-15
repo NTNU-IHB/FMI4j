@@ -11,7 +11,6 @@ apply from: rootProject.file("gradle/bintraypublish.gradle")
 
 dependencies {
     api project(':fmi-md')
-    implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-xml:$jackson_version"
 
     testImplementation project(':test-fmus')
 }
