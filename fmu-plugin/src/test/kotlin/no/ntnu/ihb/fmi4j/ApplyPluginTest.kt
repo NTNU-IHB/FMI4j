@@ -33,7 +33,7 @@ internal class ApplyPluginTest {
             writeText("""
                 plugins {
                     id "java-library" 
-                    id "no.ntnu.ihb.fmi4j.fmu-export" version "0.34.5"
+                    id "no.ntnu.ihb.fmi4j.fmu-export" version "0.34.6"
                 }
                 
                 configurations.all {
@@ -64,6 +64,8 @@ internal class ApplyPluginTest {
                 import java.util.Map;
                 import no.ntnu.ihb.fmi4j.export.fmi2.Fmi2Slave;
                 import no.ntnu.ihb.fmi4j.modeldescription.fmi2.Fmi2Causality;
+                
+                import com.google.gson.Gson; 
                 
                 public class MySlave extends Fmi2Slave {
 

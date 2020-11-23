@@ -12,6 +12,7 @@ import java.io.File
 import java.net.URI
 
 open class FmuExportPluginExt {
+    var version = "0.34.6"
     var outputDir: String? = null
     var mainClasses: MutableList<String> = mutableListOf()
 }
@@ -69,7 +70,7 @@ class FmuExportPlugin: Plugin<Project> {
 
             override fun beforeResolve(deps: ResolvableDependencies) {
                 val compileDefs = project.configurations.getByName("compile").dependencies
-                compileDefs.add(project.dependencies.create("no.ntnu.ihb.fmi4j:fmi-export:0.34.5"))
+                compileDefs.add(project.dependencies.create("no.ntnu.ihb.fmi4j:fmi-export:${ext.version}"))
                 project.gradle.removeListener(this)
             }
 
