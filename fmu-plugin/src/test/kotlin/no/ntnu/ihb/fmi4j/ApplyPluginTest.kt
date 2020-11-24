@@ -6,14 +6,14 @@ import org.gradle.testkit.runner.GradleRunner
 import org.gradle.testkit.runner.TaskOutcome
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.condition.EnabledOnOs
-import org.junit.jupiter.api.condition.OS
+import org.junit.jupiter.api.condition.EnabledOnJre
+import org.junit.jupiter.api.condition.JRE
 import java.io.File
 
 internal class ApplyPluginTest {
 
     @Test
-    @EnabledOnOs(OS.WINDOWS)
+    @EnabledOnJre(JRE.JAVA_8)
     fun testApplyPlugin() {
 
         val intOut = -89
