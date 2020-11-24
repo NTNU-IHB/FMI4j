@@ -1,5 +1,7 @@
 package no.ntnu.ihb.fmi4j
 
+import no.ntnu.ihb.fmi4j.slaves.KotlinTestingExtendingFmi2Slave
+import no.ntnu.ihb.fmi4j.slaves.KotlinTestingFmi2Slave
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 

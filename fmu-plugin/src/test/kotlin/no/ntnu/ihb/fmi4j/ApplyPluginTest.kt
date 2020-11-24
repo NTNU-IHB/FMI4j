@@ -5,16 +5,15 @@ import org.gradle.internal.impldep.org.junit.rules.TemporaryFolder
 import org.gradle.testkit.runner.GradleRunner
 import org.gradle.testkit.runner.TaskOutcome
 import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.io.File
 
 internal class ApplyPluginTest {
 
     @Test
-    @Disabled
     fun testApplyPlugin() {
 
+        val intOut = -89
         val realOut = 2.0
         val testProjectDir = TemporaryFolder().apply { create() }
 
@@ -23,9 +22,11 @@ internal class ApplyPluginTest {
                 pluginManagement {
                     repositories {
                         mavenCentral()
-                        mavenLocal()
+                        maven { url "https://plugins.gradle.org/m2/" }
+                        maven { url "https://dl.bintray.com/ntnu-ihb/mvn" }
+                        //mavenLocal()
                     }
-                }
+              }
                 rootProject.name = "testPlugin"
             """.trimIndent())
         }
@@ -33,7 +34,7 @@ internal class ApplyPluginTest {
             writeText("""
                 plugins {
                     id "java-library" 
-                    id "no.ntnu.ihb.fmi4j.fmu-export" version "0.34.6"
+                    id "no.ntnu.ihb.fmi4j.fmu-export" version "0.34.8"
                 }
                 
                 configurations.all {
@@ -43,7 +44,8 @@ internal class ApplyPluginTest {
                 
                 repositories {
                     mavenCentral()
-                    mavenLocal()
+                    //maven { url "https://dl.bintray.com/ntnu-ihb/mvn" }
+                    //mavenLocal()
                 }
 
                 dependencies {
@@ -63,13 +65,17 @@ internal class ApplyPluginTest {
                 
                 import java.util.Map;
                 import no.ntnu.ihb.fmi4j.export.fmi2.Fmi2Slave;
+                import no.ntnu.ihb.fmi4j.export.fmi2.ScalarVariable;
                 import no.ntnu.ihb.fmi4j.modeldescription.fmi2.Fmi2Causality;
                 
-                import com.google.gson.Gson; 
+                import com.google.gson.Gson; //test Gson import
                 
                 public class MySlave extends Fmi2Slave {
 
-                    double realOut = ${realOut};
+                    private double realOut = ${realOut};
+                    
+                    @ScalarVariable
+                    private int intOut = ${intOut};
                     
                     public MySlave(Map<String, Object> args) {
                         super(args);
@@ -105,6 +111,7 @@ internal class ApplyPluginTest {
         Fmu.from(generatedFmu).asCoSimulationFmu().use { fmu ->
             fmu.newInstance().use {
                 Assertions.assertEquals(realOut, it.readReal(0).value)
+                Assertions.assertEquals(intOut, it.readInteger(0).value)
             }
         }
 

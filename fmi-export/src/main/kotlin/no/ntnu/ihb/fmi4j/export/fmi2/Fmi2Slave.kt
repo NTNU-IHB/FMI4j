@@ -293,11 +293,15 @@ abstract class Fmi2Slave(
 
         }
 
-        javaClass.declaredFields.forEach { field ->
-            field.getAnnotation(ScalarVariable::class.java)?.also { v ->
-                processAnnotatedField(field, v)
+        var cls: Class<*> = javaClass
+        do {
+            cls.declaredFields.forEach { field ->
+                field.getAnnotation(ScalarVariable::class.java)?.also { v ->
+                    processAnnotatedField(field, v)
+                }
             }
-        }
+            cls = cls.superclass
+        } while (cls != Fmi2Slave::class.java)
 
     }
 
