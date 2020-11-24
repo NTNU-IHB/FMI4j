@@ -25,11 +25,6 @@ jobs:
         with:
           java-version: 11
 
-      #      - name: search for livjvm.so
-      #        if: startsWith(runner.os, 'Linux')
-      #        run: |
-      #          find /opt/hostedtoolcache/jdk/8.0.265/x64/ -name "libjvm.so"
-
       - name: Build
         run: ./gradlew clean build
         shell: bash
