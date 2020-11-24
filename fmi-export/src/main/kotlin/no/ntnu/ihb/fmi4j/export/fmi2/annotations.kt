@@ -1,5 +1,9 @@
 package no.ntnu.ihb.fmi4j.export.fmi2
 
+import no.ntnu.ihb.fmi4j.modeldescription.fmi2.Fmi2Causality
+import no.ntnu.ihb.fmi4j.modeldescription.fmi2.Fmi2Initial
+import no.ntnu.ihb.fmi4j.modeldescription.fmi2.Fmi2Variability
+
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.RUNTIME)
 annotation class SlaveInfo(
@@ -22,3 +26,20 @@ annotation class DefaultExperiment(
         val stepSize: Double = -1.0,
         val stopTime: Double = -1.0
 )
+
+@Target(AnnotationTarget.FIELD)
+@Retention(AnnotationRetention.RUNTIME)
+annotation class ScalarVariable(
+        val name: String = "",
+        val descrition: String = "",
+        val causality: Fmi2Causality = Fmi2Causality.local,
+        val variability: Fmi2Variability = Fmi2Variability.continuous,
+        val initial: Fmi2Initial = Fmi2Initial.undefined
+)
+
+internal fun Variable<*>.applyAnnotation(v: ScalarVariable) {
+    this.initial(v.initial)
+    this.causality(v.causality)
+    this.variability(v.variability)
+    if (v.descrition.isNotEmpty()) this.description(v.descrition)
+}

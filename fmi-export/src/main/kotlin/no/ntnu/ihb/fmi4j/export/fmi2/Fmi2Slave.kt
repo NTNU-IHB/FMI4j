@@ -5,6 +5,10 @@ import no.ntnu.ihb.fmi4j.modeldescription.fmi2.*
 import java.io.ByteArrayOutputStream
 import java.io.Closeable
 import java.io.File
+import java.lang.reflect.Field
+import java.lang.reflect.Modifier
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.*
 import java.util.logging.Logger
 
@@ -244,6 +248,60 @@ abstract class Fmi2Slave(
 
     protected abstract fun registerVariables()
 
+    private fun registerAnnotatedVariables() {
+
+        fun processAnnotatedField(f: Field, v: ScalarVariable) {
+
+            f.isAccessible = true
+            val name = if (v.name.isNotEmpty()) v.name else f.name
+
+            when (f.type) {
+                Int::class, Int::class.java -> {
+                    register(integer(name) { f.getInt(this) }.also { iv ->
+                        if (!Modifier.isFinal(f.modifiers)) {
+                            iv.setter { f.setInt(this, it) }
+                        }
+                        iv.applyAnnotation(v)
+                    })
+                }
+                Double::class, Double::class.java -> {
+                    register(real(name) { f.getDouble(this) }.also { iv ->
+                        if (!Modifier.isFinal(f.modifiers)) {
+                            iv.setter { f.setDouble(this, it) }
+                        }
+                        iv.applyAnnotation(v)
+                    })
+                }
+                Boolean::class, Boolean::class.java -> {
+                    register(boolean(name) { f.getBoolean(this) }.also { iv ->
+                        if (!Modifier.isFinal(f.modifiers)) {
+                            iv.setter { f.setBoolean(this, it) }
+                        }
+                        iv.applyAnnotation(v)
+                    })
+                }
+                String::class, String::class.java -> {
+                    register(string(name) { f.get(this) as String }.also { iv ->
+                        if (!Modifier.isFinal(f.modifiers)) {
+                            iv.setter { f.set(this, it) }
+                        }
+                        iv.applyAnnotation(v)
+                    })
+                }
+                else -> throw IllegalArgumentException("Unsupported type: ${f.type}")
+            }
+
+        }
+
+        javaClass.declaredFields.forEach { field ->
+            field.getAnnotation(ScalarVariable::class.java)?.also { v ->
+                processAnnotatedField(field, v)
+            }
+        }
+
+    }
+
+
     fun __define__() {
 
         modelDescription.fmiVersion = "2.0"
@@ -286,6 +344,7 @@ abstract class Fmi2Slave(
             }
         }
 
+        registerAnnotatedVariables()
         registerVariables()
 
         val variables = modelDescription.modelVariables.scalarVariable
@@ -308,7 +367,16 @@ abstract class Fmi2Slave(
     }
 
     private companion object {
+
         private val LOG: Logger = Logger.getLogger(Fmi2Slave::class.java.name)
+
+        private fun getDateAndTime(): String {
+            val now = LocalDateTime.now()
+            val dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(now)
+            val timeFormat = DateTimeFormatter.ofPattern("HH:mm:ss").format(now)
+            return "${dateFormat}T${timeFormat}Z"
+        }
+
     }
 
 }
