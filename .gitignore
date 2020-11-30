@@ -1,5 +1,3 @@
-
-
 #Java class files
 *.class
 
@@ -45,6 +43,8 @@ gradle.properties
 .idea/
 out/
 build/
+
+schema/
 
 *.iml
 
