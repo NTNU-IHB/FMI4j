@@ -3,13 +3,11 @@ plugins {
     id 'kotlin'
 }
 
+apply from: rootProject.file("gradle/jaxb.gradle")
 apply from: rootProject.file("gradle/junit.gradle")
 apply from: rootProject.file("gradle/mavenpublish.gradle")
 apply from: rootProject.file("gradle/bintraypublish.gradle")
 
 dependencies {
     api project(':fmi-md')
-    implementation group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.1'
-    implementation group: 'com.sun.xml.bind', name: 'jaxb-impl', version: '2.3.3'
-    implementation group: 'com.sun.xml.bind', name: 'jaxb-core', version: '2.3.0.1'
 }
