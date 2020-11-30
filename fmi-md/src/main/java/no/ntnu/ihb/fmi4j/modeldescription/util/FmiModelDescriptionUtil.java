@@ -1,9 +1,8 @@
 package no.ntnu.ihb.fmi4j.modeldescription.util;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-
+import javax.xml.bind.JAXB;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlRootElement;
 import java.io.*;
 import java.net.URL;
 import java.util.zip.ZipEntry;
@@ -25,7 +24,7 @@ public class FmiModelDescriptionUtil {
 
         try (ZipInputStream zis = new ZipInputStream(new BufferedInputStream(is))) {
             ZipEntry nextEntry;
-            while ((nextEntry =  zis.getNextEntry()) != null) {
+            while ((nextEntry = zis.getNextEntry()) != null) {
                 if (nextEntry.getName().equals(MODEL_DESC_FILE)) {
                     try (BufferedReader br = new BufferedReader(new InputStreamReader(zis))) {
                         String line;
@@ -49,8 +48,8 @@ public class FmiModelDescriptionUtil {
         return extractVersion(extractModelDescriptionXml(file));
     }
 
-    public static String extractVersion(String xml) throws JsonProcessingException {
-        return new XmlMapper().readValue(xml, MockupModelDescription.class).fmiVersion;
+    public static String extractVersion(String xml) {
+        return JAXB.unmarshal(new StringReader(xml), MockupModelDescription.class).fmiVersion;
     }
 
     public static String extractGuid(URL url) throws IOException {
@@ -61,14 +60,16 @@ public class FmiModelDescriptionUtil {
         return extractGuid(extractModelDescriptionXml(file));
     }
 
-    public static String extractGuid(String xml) throws JsonProcessingException {
-        return new XmlMapper().readValue(xml, MockupModelDescription.class).guid;
+    public static String extractGuid(String xml) {
+        return JAXB.unmarshal(new StringReader(xml), MockupModelDescription.class).guid;
     }
 
-    @JsonIgnoreProperties(ignoreUnknown = true)
+    @XmlRootElement(name = "fmiModelDescription")
     private static class MockupModelDescription {
 
+        @XmlAttribute(name = "guid")
         public String guid;
+        @XmlAttribute(name = "fmiVersion")
         public String fmiVersion;
 
     }

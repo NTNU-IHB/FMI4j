@@ -3,11 +3,11 @@ plugins {
     id 'kotlin'
 }
 
+apply from: rootProject.file("gradle/jaxb.gradle")
 apply from: rootProject.file("gradle/junit.gradle")
 apply from: rootProject.file("gradle/mavenpublish.gradle")
 apply from: rootProject.file("gradle/bintraypublish.gradle")
 
 dependencies {
     api project(':fmi-md')
-    implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.11.3"
 }

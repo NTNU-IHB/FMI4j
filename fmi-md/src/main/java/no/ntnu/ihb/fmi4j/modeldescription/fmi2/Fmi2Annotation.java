@@ -1,19 +1,50 @@
 
 package no.ntnu.ihb.fmi4j.modeldescription.fmi2;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import org.w3c.dom.Element;
 
+import javax.xml.bind.annotation.*;
+import javax.xml.bind.annotation.adapters.NormalizedStringAdapter;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
 
+/**
+ * <p>Java class for fmi2Annotation complex type.
+ *
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ *
+ * <pre>
+ * &lt;complexType name="fmi2Annotation">
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;sequence maxOccurs="unbounded">
+ *         &lt;element name="Tool">
+ *           &lt;complexType>
+ *             &lt;complexContent>
+ *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *                 &lt;sequence>
+ *                   &lt;any processContents='lax' minOccurs="0"/>
+ *                 &lt;/sequence>
+ *                 &lt;attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}normalizedString" />
+ *               &lt;/restriction>
+ *             &lt;/complexContent>
+ *           &lt;/complexType>
+ *         &lt;/element>
+ *       &lt;/sequence>
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
+ * </pre>
+ */
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "fmi2Annotation", propOrder = {
+        "tool"
+})
 public class Fmi2Annotation {
 
-    @JsonProperty(value = "Tool", required = true)
-    @JacksonXmlElementWrapper(useWrapping = false)
+    @XmlElement(name = "Tool", required = true)
     protected List<Fmi2Annotation.Tool> tool;
 
     /**
@@ -24,42 +55,67 @@ public class Fmi2Annotation {
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the tool property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getTool().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Fmi2Annotation.Tool }
-     * 
-     * 
+     *
+     *
      */
     public List<Fmi2Annotation.Tool> getTool() {
         if (tool == null) {
-            tool = new ArrayList<>();
+            tool = new ArrayList<Fmi2Annotation.Tool>();
         }
         return this.tool;
     }
 
 
-    @JsonIgnoreProperties(ignoreUnknown = true)
+    /**
+     * <p>Java class for anonymous complex type.
+     *
+     * <p>The following schema fragment specifies the expected content contained within this class.
+     *
+     * <pre>
+     * &lt;complexType>
+     *   &lt;complexContent>
+     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+     *       &lt;sequence>
+     *         &lt;any processContents='lax' minOccurs="0"/>
+     *       &lt;/sequence>
+     *       &lt;attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}normalizedString" />
+     *     &lt;/restriction>
+     *   &lt;/complexContent>
+     * &lt;/complexType>
+     * </pre>
+     */
+    @XmlAccessorType(XmlAccessType.FIELD)
+    @XmlType(name = "", propOrder = {
+            "any"
+    })
     public static class Tool {
 
+        @XmlAnyElement(lax = true)
         protected Object any;
+        @XmlAttribute(name = "name", required = true)
+        @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
+        @XmlSchemaType(name = "normalizedString")
         protected String name;
 
         /**
          * Gets the value of the any property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link Element }
          *     {@link Object }
-         *     
+         *
          */
         public Object getAny() {
             return any;
@@ -67,12 +123,12 @@ public class Fmi2Annotation {
 
         /**
          * Sets the value of the any property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link Element }
          *     {@link Object }
-         *     
+         *
          */
         public void setAny(Object value) {
             this.any = value;
@@ -80,11 +136,11 @@ public class Fmi2Annotation {
 
         /**
          * Gets the value of the name property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getName() {
             return name;
@@ -92,11 +148,11 @@ public class Fmi2Annotation {
 
         /**
          * Sets the value of the name property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setName(String value) {
             this.name = value;

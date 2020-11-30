@@ -1,5 +1,7 @@
 package no.ntnu.ihb.fmi4j
 
+import no.ntnu.ihb.fmi4j.slaves.KotlinTestingExtendingFmi2Slave
+import no.ntnu.ihb.fmi4j.slaves.KotlinTestingFmi2Slave
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
@@ -13,12 +15,14 @@ internal class TestKotlinFmi2Slave {
         }
         slave.setupExperiment(1.0, -1.0, -1.0)
 
-        with(slave.modelDescription) {
-            Assertions.assertEquals("str", modelVariables.scalarVariable[0].name)
-            Assertions.assertEquals("start", modelVariables.scalarVariable[1].name)
-            Assertions.assertEquals("container.value", modelVariables.scalarVariable[3].name)
-            Assertions.assertEquals("container.container.value", modelVariables.scalarVariable[4].name)
-            Assertions.assertEquals(slave.getString(longArrayOf(slave.getValueRef("str"))).first(), "1.0")
+        slave.modelDescription.apply {
+            Assertions.assertNotNull(modelVariables.scalarVariable.firstOrNull { it.name == "real" })
+            Assertions.assertNotNull(modelVariables.scalarVariable.firstOrNull { it.name == "str" })
+            Assertions.assertNotNull(modelVariables.scalarVariable.firstOrNull { it.name == "start" })
+            Assertions.assertNotNull(modelVariables.scalarVariable.firstOrNull { it.name == "container.value" })
+            Assertions.assertNotNull(modelVariables.scalarVariable.firstOrNull { it.name == "container.container.value" })
+            Assertions.assertEquals("1.0", slave.getString(longArrayOf(slave.getValueRef("str"))).first())
+            Assertions.assertEquals(123.0, slave.getReal(longArrayOf(slave.getValueRef("real"))).first())
         }
 
     }
@@ -32,10 +36,10 @@ internal class TestKotlinFmi2Slave {
         slave.setupExperiment(1.0, -1.0, -1.0)
         slave.modelDescription.modelVariables.scalarVariable
         slave.modelDescription.apply {
-            Assertions.assertEquals("container.value", modelVariables.scalarVariable[3].name)
-            Assertions.assertEquals("container.container.value", modelVariables.scalarVariable[4].name)
-            Assertions.assertEquals(slave.getString(longArrayOf(slave.getValueRef("str"))).first(), "1.0")
-            Assertions.assertEquals(slave.getReal(longArrayOf(slave.getValueRef("subModel.out"))).first(), 99.0)
+            Assertions.assertNotNull(modelVariables.scalarVariable.firstOrNull { it.name == "container.value" })
+            Assertions.assertNotNull(modelVariables.scalarVariable.firstOrNull { it.name == "container.container.value" })
+            Assertions.assertEquals(slave.str, slave.getString(longArrayOf(slave.getValueRef("str"))).first())
+            Assertions.assertEquals(99.0, slave.getReal(longArrayOf(slave.getValueRef("subModel.out"))).first())
         }
 
     }

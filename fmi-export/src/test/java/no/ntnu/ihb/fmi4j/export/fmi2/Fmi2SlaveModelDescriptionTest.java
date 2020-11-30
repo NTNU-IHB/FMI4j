@@ -1,6 +1,5 @@
 package no.ntnu.ihb.fmi4j.export.fmi2;
 
-import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import no.ntnu.ihb.fmi4j.modeldescription.fmi2.Fmi2ModelDescription;
 import no.ntnu.ihb.fmi4j.modeldescription.fmi2.Fmi2ScalarVariable;
 import org.junit.jupiter.api.Assertions;
@@ -9,16 +8,15 @@ import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-class Fmi2Fmi2SlaveModelDescriptionTest {
+class Fmi2SlaveModelDescriptionTest {
 
     private static Fmi2ModelDescription md;
 
     @BeforeAll
-    static void setUp() throws IOException {
+    static void setUp() throws Exception {
         Map<String, Object> args = new HashMap<String, Object>() {{
             put("instanceName", "instance");
         }};
@@ -27,9 +25,8 @@ class Fmi2Fmi2SlaveModelDescriptionTest {
         slave.__define__();
         System.out.println(slave.getModelDescriptionXml());
 
-        XmlMapper mapper = new XmlMapper();
-        mapper.writeValue(bos, slave.getModelDescription());
-        md = mapper.readValue(new ByteArrayInputStream(bos.toByteArray()), Fmi2ModelDescription.class);
+        slave.getModelDescription().toXml(bos);
+        md = Fmi2ModelDescription.fromXml(new ByteArrayInputStream(bos.toByteArray()));
 
     }
 
@@ -42,7 +39,7 @@ class Fmi2Fmi2SlaveModelDescriptionTest {
     @Test
     void testReal() {
         Fmi2ScalarVariable var = md.getModelVariables().getScalarVariable()
-                .stream().filter(v -> v.getValueReference() == 0).findFirst().get();
+                .stream().filter(v -> v.getName().equals("realIn")).findFirst().get();
 
         Assertions.assertNotNull(var);
         Assertions.assertEquals(2.0, (double) var.getReal().getStart());
@@ -51,13 +48,13 @@ class Fmi2Fmi2SlaveModelDescriptionTest {
     @Test
     void testReals() {
         Fmi2ScalarVariable v1 = md.getModelVariables().getScalarVariable()
-                .stream().filter(v -> v.getValueReference() == 1).findFirst().get();
+                .stream().filter(v -> v.getName().equals("realsParams[0]")).findFirst().get();
 
         Assertions.assertNotNull(v1);
         Assertions.assertEquals(50.0, (double) v1.getReal().getStart());
 
         Fmi2ScalarVariable v2 = md.getModelVariables().getScalarVariable()
-                .stream().filter(v -> v.getValueReference() == 2).findFirst().get();
+                .stream().filter(v -> v.getName().equals("realsParams[1]")).findFirst().get();
 
         Assertions.assertNotNull(v2);
         Assertions.assertEquals(200.0, (double) v2.getReal().getStart());

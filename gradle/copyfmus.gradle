@@ -1,7 +1,0 @@
-
-task (copyTestFmus, type: Copy) {
-    from "$rootDir/fmus"
-    into "$projectDir/src/test/resources/fmus"
-}
-
-clean.dependsOn(copyTestFmus)

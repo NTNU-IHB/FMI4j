@@ -1,20 +1,77 @@
 
 package no.ntnu.ihb.fmi4j.modeldescription.fmi2;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
-
+import javax.xml.bind.annotation.*;
+import javax.xml.bind.annotation.adapters.NormalizedStringAdapter;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
 
+/**
+ * Unit definition (with respect to SI base units) and default display units
+ *
+ * <p>Java class for fmi2Unit complex type.
+ *
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ *
+ * <pre>
+ * &lt;complexType name="fmi2Unit">
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;sequence>
+ *         &lt;element name="BaseUnit" minOccurs="0">
+ *           &lt;complexType>
+ *             &lt;complexContent>
+ *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *                 &lt;attribute name="kg" type="{http://www.w3.org/2001/XMLSchema}int" default="0" />
+ *                 &lt;attribute name="m" type="{http://www.w3.org/2001/XMLSchema}int" default="0" />
+ *                 &lt;attribute name="s" type="{http://www.w3.org/2001/XMLSchema}int" default="0" />
+ *                 &lt;attribute name="A" type="{http://www.w3.org/2001/XMLSchema}int" default="0" />
+ *                 &lt;attribute name="K" type="{http://www.w3.org/2001/XMLSchema}int" default="0" />
+ *                 &lt;attribute name="mol" type="{http://www.w3.org/2001/XMLSchema}int" default="0" />
+ *                 &lt;attribute name="cd" type="{http://www.w3.org/2001/XMLSchema}int" default="0" />
+ *                 &lt;attribute name="rad" type="{http://www.w3.org/2001/XMLSchema}int" default="0" />
+ *                 &lt;attribute name="factor" type="{http://www.w3.org/2001/XMLSchema}double" default="1" />
+ *                 &lt;attribute name="offset" type="{http://www.w3.org/2001/XMLSchema}double" default="0" />
+ *               &lt;/restriction>
+ *             &lt;/complexContent>
+ *           &lt;/complexType>
+ *         &lt;/element>
+ *         &lt;sequence maxOccurs="unbounded" minOccurs="0">
+ *           &lt;element name="DisplayUnit">
+ *             &lt;complexType>
+ *               &lt;complexContent>
+ *                 &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *                   &lt;attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}normalizedString" />
+ *                   &lt;attribute name="factor" type="{http://www.w3.org/2001/XMLSchema}double" default="1" />
+ *                   &lt;attribute name="offset" type="{http://www.w3.org/2001/XMLSchema}double" default="0" />
+ *                 &lt;/restriction>
+ *               &lt;/complexContent>
+ *             &lt;/complexType>
+ *           &lt;/element>
+ *         &lt;/sequence>
+ *       &lt;/sequence>
+ *       &lt;attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}normalizedString" />
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
+ * </pre>
+ */
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "fmi2Unit", propOrder = {
+        "baseUnit",
+        "displayUnit"
+})
 public class Fmi2Unit {
 
-    @JsonProperty(value = "BaseUnit")
+    @XmlElement(name = "BaseUnit")
     protected Fmi2Unit.BaseUnit baseUnit;
-    @JsonProperty(value = "DisplayUnit")
-    @JacksonXmlElementWrapper(useWrapping = false)
+    @XmlElement(name = "DisplayUnit")
     protected List<Fmi2Unit.DisplayUnit> displayUnit;
+    @XmlAttribute(name = "name", required = true)
+    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
+    @XmlSchemaType(name = "normalizedString")
     protected String name;
 
     /**
@@ -23,7 +80,7 @@ public class Fmi2Unit {
      * @return
      *     possible object is
      *     {@link Fmi2Unit.BaseUnit }
-     *     
+     *
      */
     public Fmi2Unit.BaseUnit getBaseUnit() {
         return baseUnit;
@@ -31,11 +88,11 @@ public class Fmi2Unit {
 
     /**
      * Sets the value of the baseUnit property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Fmi2Unit.BaseUnit }
-     *     
+     *
      */
     public void setBaseUnit(Fmi2Unit.BaseUnit value) {
         this.baseUnit = value;
@@ -43,25 +100,25 @@ public class Fmi2Unit {
 
     /**
      * Gets the value of the displayUnit property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the displayUnit property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getDisplayUnit().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Fmi2Unit.DisplayUnit }
-     * 
-     * 
+     *
+     *
      */
     public List<Fmi2Unit.DisplayUnit> getDisplayUnit() {
         if (displayUnit == null) {
@@ -72,11 +129,11 @@ public class Fmi2Unit {
 
     /**
      * Gets the value of the name property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getName() {
         return name;
@@ -84,37 +141,73 @@ public class Fmi2Unit {
 
     /**
      * Sets the value of the name property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setName(String value) {
         this.name = value;
     }
 
 
+    /**
+     * <p>Java class for anonymous complex type.
+     *
+     * <p>The following schema fragment specifies the expected content contained within this class.
+     *
+     * <pre>
+     * &lt;complexType>
+     *   &lt;complexContent>
+     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+     *       &lt;attribute name="kg" type="{http://www.w3.org/2001/XMLSchema}int" default="0" />
+     *       &lt;attribute name="m" type="{http://www.w3.org/2001/XMLSchema}int" default="0" />
+     *       &lt;attribute name="s" type="{http://www.w3.org/2001/XMLSchema}int" default="0" />
+     *       &lt;attribute name="A" type="{http://www.w3.org/2001/XMLSchema}int" default="0" />
+     *       &lt;attribute name="K" type="{http://www.w3.org/2001/XMLSchema}int" default="0" />
+     *       &lt;attribute name="mol" type="{http://www.w3.org/2001/XMLSchema}int" default="0" />
+     *       &lt;attribute name="cd" type="{http://www.w3.org/2001/XMLSchema}int" default="0" />
+     *       &lt;attribute name="rad" type="{http://www.w3.org/2001/XMLSchema}int" default="0" />
+     *       &lt;attribute name="factor" type="{http://www.w3.org/2001/XMLSchema}double" default="1" />
+     *       &lt;attribute name="offset" type="{http://www.w3.org/2001/XMLSchema}double" default="0" />
+     *     &lt;/restriction>
+     *   &lt;/complexContent>
+     * &lt;/complexType>
+     * </pre>
+     */
+    @XmlAccessorType(XmlAccessType.FIELD)
+    @XmlType(name = "")
     public static class BaseUnit {
 
+        @XmlAttribute(name = "kg")
         protected Integer kg;
+        @XmlAttribute(name = "m")
         protected Integer m;
+        @XmlAttribute(name = "s")
         protected Integer s;
+        @XmlAttribute(name = "A")
         protected Integer a;
+        @XmlAttribute(name = "K")
         protected Integer k;
+        @XmlAttribute(name = "mol")
         protected Integer mol;
+        @XmlAttribute(name = "cd")
         protected Integer cd;
+        @XmlAttribute(name = "rad")
         protected Integer rad;
+        @XmlAttribute(name = "factor")
         protected Double factor;
+        @XmlAttribute(name = "offset")
         protected Double offset;
 
         /**
          * Gets the value of the kg property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link Integer }
-         *     
+         *
          */
         public int getKg() {
             if (kg == null) {
@@ -126,11 +219,11 @@ public class Fmi2Unit {
 
         /**
          * Sets the value of the kg property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link Integer }
-         *     
+         *
          */
         public void setKg(Integer value) {
             this.kg = value;
@@ -138,11 +231,11 @@ public class Fmi2Unit {
 
         /**
          * Gets the value of the m property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link Integer }
-         *     
+         *
          */
         public int getM() {
             if (m == null) {
@@ -154,11 +247,11 @@ public class Fmi2Unit {
 
         /**
          * Sets the value of the m property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link Integer }
-         *     
+         *
          */
         public void setM(Integer value) {
             this.m = value;
@@ -166,11 +259,11 @@ public class Fmi2Unit {
 
         /**
          * Gets the value of the s property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link Integer }
-         *     
+         *
          */
         public int getS() {
             if (s == null) {
@@ -182,11 +275,11 @@ public class Fmi2Unit {
 
         /**
          * Sets the value of the s property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link Integer }
-         *     
+         *
          */
         public void setS(Integer value) {
             this.s = value;
@@ -194,11 +287,11 @@ public class Fmi2Unit {
 
         /**
          * Gets the value of the a property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link Integer }
-         *     
+         *
          */
         public int getA() {
             if (a == null) {
@@ -210,11 +303,11 @@ public class Fmi2Unit {
 
         /**
          * Sets the value of the a property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link Integer }
-         *     
+         *
          */
         public void setA(Integer value) {
             this.a = value;
@@ -222,11 +315,11 @@ public class Fmi2Unit {
 
         /**
          * Gets the value of the k property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link Integer }
-         *     
+         *
          */
         public int getK() {
             if (k == null) {
@@ -238,11 +331,11 @@ public class Fmi2Unit {
 
         /**
          * Sets the value of the k property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link Integer }
-         *     
+         *
          */
         public void setK(Integer value) {
             this.k = value;
@@ -250,11 +343,11 @@ public class Fmi2Unit {
 
         /**
          * Gets the value of the mol property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link Integer }
-         *     
+         *
          */
         public int getMol() {
             if (mol == null) {
@@ -266,11 +359,11 @@ public class Fmi2Unit {
 
         /**
          * Sets the value of the mol property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link Integer }
-         *     
+         *
          */
         public void setMol(Integer value) {
             this.mol = value;
@@ -278,11 +371,11 @@ public class Fmi2Unit {
 
         /**
          * Gets the value of the cd property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link Integer }
-         *     
+         *
          */
         public int getCd() {
             if (cd == null) {
@@ -294,11 +387,11 @@ public class Fmi2Unit {
 
         /**
          * Sets the value of the cd property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link Integer }
-         *     
+         *
          */
         public void setCd(Integer value) {
             this.cd = value;
@@ -306,11 +399,11 @@ public class Fmi2Unit {
 
         /**
          * Gets the value of the rad property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link Integer }
-         *     
+         *
          */
         public int getRad() {
             if (rad == null) {
@@ -322,11 +415,11 @@ public class Fmi2Unit {
 
         /**
          * Sets the value of the rad property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link Integer }
-         *     
+         *
          */
         public void setRad(Integer value) {
             this.rad = value;
@@ -334,11 +427,11 @@ public class Fmi2Unit {
 
         /**
          * Gets the value of the factor property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link Double }
-         *     
+         *
          */
         public double getFactor() {
             if (factor == null) {
@@ -350,11 +443,11 @@ public class Fmi2Unit {
 
         /**
          * Sets the value of the factor property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link Double }
-         *     
+         *
          */
         public void setFactor(Double value) {
             this.factor = value;
@@ -362,11 +455,11 @@ public class Fmi2Unit {
 
         /**
          * Gets the value of the offset property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link Double }
-         *     
+         *
          */
         public double getOffset() {
             if (offset == null) {
@@ -378,11 +471,11 @@ public class Fmi2Unit {
 
         /**
          * Sets the value of the offset property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link Double }
-         *     
+         *
          */
         public void setOffset(Double value) {
             this.offset = value;
@@ -390,19 +483,44 @@ public class Fmi2Unit {
 
     }
 
+
+    /**
+     * <p>Java class for anonymous complex type.
+     *
+     * <p>The following schema fragment specifies the expected content contained within this class.
+     *
+     * <pre>
+     * &lt;complexType>
+     *   &lt;complexContent>
+     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+     *       &lt;attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}normalizedString" />
+     *       &lt;attribute name="factor" type="{http://www.w3.org/2001/XMLSchema}double" default="1" />
+     *       &lt;attribute name="offset" type="{http://www.w3.org/2001/XMLSchema}double" default="0" />
+     *     &lt;/restriction>
+     *   &lt;/complexContent>
+     * &lt;/complexType>
+     * </pre>
+     */
+    @XmlAccessorType(XmlAccessType.FIELD)
+    @XmlType(name = "")
     public static class DisplayUnit {
 
+        @XmlAttribute(name = "name", required = true)
+        @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
+        @XmlSchemaType(name = "normalizedString")
         protected String name;
+        @XmlAttribute(name = "factor")
         protected Double factor;
+        @XmlAttribute(name = "offset")
         protected Double offset;
 
         /**
          * Gets the value of the name property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         public String getName() {
             return name;
@@ -410,11 +528,11 @@ public class Fmi2Unit {
 
         /**
          * Sets the value of the name property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setName(String value) {
             this.name = value;
@@ -422,11 +540,11 @@ public class Fmi2Unit {
 
         /**
          * Gets the value of the factor property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link Double }
-         *     
+         *
          */
         public double getFactor() {
             if (factor == null) {
@@ -438,11 +556,11 @@ public class Fmi2Unit {
 
         /**
          * Sets the value of the factor property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link Double }
-         *     
+         *
          */
         public void setFactor(Double value) {
             this.factor = value;
@@ -450,11 +568,11 @@ public class Fmi2Unit {
 
         /**
          * Gets the value of the offset property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link Double }
-         *     
+         *
          */
         public double getOffset() {
             if (offset == null) {
@@ -466,11 +584,11 @@ public class Fmi2Unit {
 
         /**
          * Sets the value of the offset property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link Double }
-         *     
+         *
          */
         public void setOffset(Double value) {
             this.offset = value;

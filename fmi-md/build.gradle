@@ -2,12 +2,11 @@ plugins {
     id "java-library"
 }
 
+apply from: rootProject.file("gradle/jaxb.gradle")
 apply from: rootProject.file("gradle/junit.gradle")
 apply from: rootProject.file("gradle/mavenpublish.gradle")
 apply from: rootProject.file("gradle/bintraypublish.gradle")
 
 dependencies {
-    implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.11.3"
-
     testImplementation project(":test-fmus")
 }

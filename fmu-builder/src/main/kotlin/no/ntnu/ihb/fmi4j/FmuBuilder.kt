@@ -40,7 +40,9 @@ class FmuBuilder(
             fmuArgs["resourceLocation"] = tempResourcesDir.absolutePath
         }
 
-        val classLoader = URLClassLoader(arrayOf(jarFile.toURI().toURL()))
+        val classLoader = URLClassLoader(arrayOf(
+                jarFile.toURI().toURL()
+        ))
 
         val superClass = classLoader.loadClass("no.ntnu.ihb.fmi4j.export.fmi2.Fmi2Slave")
         val subClass = classLoader.loadClass(mainClass)
