@@ -37,7 +37,7 @@ internal class ApplyPluginTest {
             writeText("""
                 plugins {
                     id "java-library" 
-                    id "no.ntnu.ihb.fmi4j.fmu-export" version "0.34.8"
+                    id "no.ntnu.ihb.fmi4j.fmu-export" version "0.35.0"
                 }
                 
                 configurations.all {
@@ -75,21 +75,16 @@ internal class ApplyPluginTest {
                 
                 public class MySlave extends Fmi2Slave {
 
+                    @ScalarVariable(causality = Fmi2Causality.output)
                     private double realOut = ${realOut};
                     
-                    @ScalarVariable
+                    @ScalarVariable(causality = Fmi2Causality.output)
                     private int intOut = ${intOut};
                     
                     public MySlave(Map<String, Object> args) {
                         super(args);
                     }
-                    
-                    @Override
-                    protected void registerVariables() {
-                        register(real("realOut", () -> realOut)
-                                .causality(Fmi2Causality.output));
-                    }
-                    
+
                     @Override
                     public void doStep(double t, double dt) {
                     }

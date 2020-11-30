@@ -12,7 +12,7 @@ import java.io.File
 import java.net.URI
 
 open class FmuExportPluginExt {
-    var version = "0.34.8"
+    var version = "0.35.0"
     var outputDir: String? = null
     var mainClasses: MutableList<String> = mutableListOf()
 }
