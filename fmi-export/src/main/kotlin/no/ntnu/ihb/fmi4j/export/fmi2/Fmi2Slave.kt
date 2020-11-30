@@ -1,6 +1,9 @@
 package no.ntnu.ihb.fmi4j.export.fmi2
 
-import no.ntnu.ihb.fmi4j.export.*
+import no.ntnu.ihb.fmi4j.export.BooleanVector
+import no.ntnu.ihb.fmi4j.export.IntVector
+import no.ntnu.ihb.fmi4j.export.RealVector
+import no.ntnu.ihb.fmi4j.export.StringVector
 import no.ntnu.ihb.fmi4j.modeldescription.fmi2.*
 import java.io.ByteArrayOutputStream
 import java.io.Closeable
@@ -128,20 +131,9 @@ abstract class Fmi2Slave(
     }
 
     protected fun integer(name: String, getter: Getter<Int>) = IntVariable(name, getter)
-    protected fun integer(name: String, values: IntVector) = IntVariables(name, values)
-    protected fun integer(name: String, values: IntArray) = IntVariables(name, IntVectorArray(values))
-
     protected fun real(name: String, getter: Getter<Double>) = RealVariable(name, getter)
-    protected fun real(name: String, values: RealVector) = RealVariables(name, values)
-    protected fun real(name: String, values: DoubleArray) = RealVariables(name, RealVectorArray(values))
-
     protected fun boolean(name: String, getter: Getter<Boolean>) = BooleanVariable(name, getter)
-    protected fun boolean(name: String, values: BooleanVector) = BooleanVariables(name, values)
-    protected fun boolean(name: String, values: BooleanArray) = BooleanVariables(name, BooleanVectorArray(values))
-
     protected fun string(name: String, getter: Getter<String>) = StringVariable(name, getter)
-    protected fun string(name: String, values: StringVector) = StringVariables(name, values)
-    protected fun string(name: String, values: Array<String>) = StringVariables(name, StringVectorArray(values))
 
 
     private fun internalRegister(v: Variable<*>, vr: Long): Fmi2ScalarVariable {
@@ -177,10 +169,6 @@ abstract class Fmi2Slave(
 
     }
 
-    protected fun register(v: IntVariables) {
-        v.build().forEach { register(it) }
-    }
-
     protected fun register(v: RealVariable) {
 
         val vr = v.__overrideValueReference ?: realAccessors.size.toLong()
@@ -201,10 +189,6 @@ abstract class Fmi2Slave(
         }
     }
 
-    protected fun register(v: RealVariables) {
-        v.build().forEach { register(it) }
-    }
-
     protected fun register(v: BooleanVariable) {
 
         val vr = v.__overrideValueReference ?: boolAccessors.size.toLong()
@@ -219,10 +203,6 @@ abstract class Fmi2Slave(
                 }
             }
         }
-    }
-
-    protected fun register(v: BooleanVariables) {
-        v.build().forEach { register(it) }
     }
 
     protected fun register(v: StringVariable) {
@@ -242,53 +222,138 @@ abstract class Fmi2Slave(
 
     }
 
-    protected fun register(v: StringVariables) {
-        v.build().forEach { register(it) }
-    }
-
-    protected abstract fun registerVariables()
+    protected open fun registerVariables() {}
 
     private fun registerAnnotatedVariables() {
 
-        fun processAnnotatedField(f: Field, v: ScalarVariable) {
+        fun processAnnotatedField(field: Field, annotation: ScalarVariable) {
 
-            f.isAccessible = true
-            val name = if (v.name.isNotEmpty()) v.name else f.name
+            field.isAccessible = true
+            val name = if (annotation.name.isNotEmpty()) annotation.name else field.name
 
-            when (f.type) {
+            when (val type = field.type) {
                 Int::class, Int::class.java -> {
-                    register(integer(name) { f.getInt(this) }.also { iv ->
-                        if (!Modifier.isFinal(f.modifiers)) {
-                            iv.setter { f.setInt(this, it) }
+                    register(integer(name) { field.getInt(this) }.also { iv ->
+                        if (!Modifier.isFinal(field.modifiers)) {
+                            iv.setter { field.setInt(this, it) }
                         }
-                        iv.applyAnnotation(v)
+                        iv.applyAnnotation(annotation)
                     })
+                }
+                IntArray::class.java -> {
+                    val values = field.get(this) as? IntArray
+                            ?: throw IllegalStateException("Field ${field.name} cannot be null!")
+                    for (index in values.indices) {
+                        register(integer("${name}[$index]") { values[index] }.also { iv ->
+                            iv.setter { values[index] = it }
+                            iv.applyAnnotation(annotation)
+                        })
+                    }
                 }
                 Double::class, Double::class.java -> {
-                    register(real(name) { f.getDouble(this) }.also { iv ->
-                        if (!Modifier.isFinal(f.modifiers)) {
-                            iv.setter { f.setDouble(this, it) }
+                    register(real(name) { field.getDouble(this) }.also { iv ->
+                        if (!Modifier.isFinal(field.modifiers)) {
+                            iv.setter { field.setDouble(this, it) }
                         }
-                        iv.applyAnnotation(v)
+                        iv.applyAnnotation(annotation)
                     })
+                }
+                DoubleArray::class.java -> {
+                    val values = field.get(this) as? DoubleArray
+                            ?: throw IllegalStateException("Field ${field.name} cannot be null!")
+                    for (index in values.indices) {
+                        register(real("${name}[$index]") { values[index] }.also { iv ->
+                            iv.setter { values[index] = it }
+                            iv.applyAnnotation(annotation)
+                        })
+                    }
                 }
                 Boolean::class, Boolean::class.java -> {
-                    register(boolean(name) { f.getBoolean(this) }.also { iv ->
-                        if (!Modifier.isFinal(f.modifiers)) {
-                            iv.setter { f.setBoolean(this, it) }
+                    register(boolean(name) { field.getBoolean(this) }.also { iv ->
+                        if (!Modifier.isFinal(field.modifiers)) {
+                            iv.setter { field.setBoolean(this, it) }
                         }
-                        iv.applyAnnotation(v)
+                        iv.applyAnnotation(annotation)
                     })
+                }
+                BooleanArray::class.java -> {
+                    val values = field.get(this) as? BooleanArray
+                            ?: throw IllegalStateException("Field ${field.name} cannot be null!")
+                    for (index in values.indices) {
+                        register(boolean("${name}[$index]") { values[index] }.also { iv ->
+                            iv.setter { values[index] = it }
+                            iv.applyAnnotation(annotation)
+                        })
+                    }
                 }
                 String::class, String::class.java -> {
-                    register(string(name) { f.get(this) as String }.also { iv ->
-                        if (!Modifier.isFinal(f.modifiers)) {
-                            iv.setter { f.set(this, it) }
+                    register(string(name) { field.get(this) as String }.also { iv ->
+                        if (!Modifier.isFinal(field.modifiers)) {
+                            iv.setter { field.set(this, it) }
                         }
-                        iv.applyAnnotation(v)
+                        iv.applyAnnotation(annotation)
                     })
                 }
-                else -> throw IllegalArgumentException("Unsupported type: ${f.type}")
+                Array<String>::class.java -> {
+                    val values = field.get(this) as? Array<*>
+                            ?: throw IllegalStateException("Field ${field.name} cannot be null!")
+                    for (value in values) {
+                        require(value?.javaClass == String::class.java)
+                    }
+                    @Suppress("UNCHECKED_CAST")
+                    values as Array<String>
+                    for (index in values.indices) {
+                        register(string("${name}[$index]") { values[index] }.also { iv ->
+                            iv.setter { values[index] = it }
+                            iv.applyAnnotation(annotation)
+                        })
+                    }
+                }
+                else -> {
+                    when {
+                        IntVector::class.java.isAssignableFrom(type) -> {
+                            val values = field.get(this) as? IntVector
+                                    ?: throw IllegalStateException("Field ${field.name} cannot be null!")
+                            for (index in 0 until values.size) {
+                                register(integer("${name}[$index]") { values[index] }.also { iv ->
+                                    iv.setter { values[index] = it }
+                                    iv.applyAnnotation(annotation)
+                                })
+                            }
+                        }
+                        RealVector::class.java.isAssignableFrom(type) -> {
+                            val values = field.get(this) as? RealVector
+                                    ?: throw IllegalStateException("Field ${field.name} cannot be null!")
+                            for (index in 0 until values.size) {
+                                register(real("${name}[$index]") { values[index] }.also { iv ->
+                                    iv.setter { values[index] = it }
+                                    iv.applyAnnotation(annotation)
+                                })
+                            }
+                        }
+                        BooleanVector::class.java.isAssignableFrom(type) -> {
+                            val values = field.get(this) as? BooleanVector
+                                    ?: throw IllegalStateException("Field ${field.name} cannot be null!")
+                            for (index in 0 until values.size) {
+                                register(boolean("${name}[$index]") { values[index] }.also { iv ->
+                                    iv.setter { values[index] = it }
+                                    iv.applyAnnotation(annotation)
+                                })
+                            }
+                        }
+                        StringVector::class.java.isAssignableFrom(type) -> {
+                            val values = field.get(this) as? StringVector
+                                    ?: throw IllegalStateException("Field ${field.name} cannot be null!")
+                            for (index in 0 until values.size) {
+                                register(string("${name}[$index]") { values[index] }.also { iv ->
+                                    iv.setter { values[index] = it }
+                                    iv.applyAnnotation(annotation)
+                                })
+                            }
+                        }
+                        else -> throw IllegalStateException("Unsupported variable type: $type")
+                    }
+                }
             }
 
         }
