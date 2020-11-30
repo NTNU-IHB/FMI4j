@@ -39,7 +39,7 @@ class Fmi2SlaveModelDescriptionTest {
     @Test
     void testReal() {
         Fmi2ScalarVariable var = md.getModelVariables().getScalarVariable()
-                .stream().filter(v -> v.getValueReference() == 0).findFirst().get();
+                .stream().filter(v -> v.getName().equals("realIn")).findFirst().get();
 
         Assertions.assertNotNull(var);
         Assertions.assertEquals(2.0, (double) var.getReal().getStart());
@@ -48,13 +48,13 @@ class Fmi2SlaveModelDescriptionTest {
     @Test
     void testReals() {
         Fmi2ScalarVariable v1 = md.getModelVariables().getScalarVariable()
-                .stream().filter(v -> v.getValueReference() == 1).findFirst().get();
+                .stream().filter(v -> v.getName().equals("realsParams[0]")).findFirst().get();
 
         Assertions.assertNotNull(v1);
         Assertions.assertEquals(50.0, (double) v1.getReal().getStart());
 
         Fmi2ScalarVariable v2 = md.getModelVariables().getScalarVariable()
-                .stream().filter(v -> v.getValueReference() == 2).findFirst().get();
+                .stream().filter(v -> v.getName().equals("realsParams[1]")).findFirst().get();
 
         Assertions.assertNotNull(v2);
         Assertions.assertEquals(200.0, (double) v2.getReal().getStart());
