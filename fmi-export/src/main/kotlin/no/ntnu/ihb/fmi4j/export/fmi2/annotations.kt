@@ -31,7 +31,7 @@ annotation class DefaultExperiment(
 @Retention(AnnotationRetention.RUNTIME)
 annotation class ScalarVariable(
         val name: String = "",
-        val descrition: String = "",
+        val description: String = "",
         val causality: Fmi2Causality = Fmi2Causality.local,
         val variability: Fmi2Variability = Fmi2Variability.continuous,
         val initial: Fmi2Initial = Fmi2Initial.undefined
@@ -41,5 +41,5 @@ internal fun Variable<*>.applyAnnotation(v: ScalarVariable) {
     this.initial(v.initial)
     this.causality(v.causality)
     this.variability(v.variability)
-    if (v.descrition.isNotEmpty()) this.description(v.descrition)
+    if (v.description.isNotEmpty()) this.description(v.description)
 }
