@@ -11,7 +11,7 @@ import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-class Fmi2Fmi2SlaveModelDescriptionTest {
+class Fmi2SlaveModelDescriptionTest {
 
     private static Fmi2ModelDescription md;
 
