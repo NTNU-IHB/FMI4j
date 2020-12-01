@@ -38,10 +38,10 @@ interface VariableReader {
     fun readReal(vr: ValueReferences, ref: RealArray): FmiStatus
     fun readString(vr: ValueReferences, ref: StringArray): FmiStatus
     fun readBoolean(vr: ValueReferences, ref: BooleanArray): FmiStatus
-    fun readALl(intVr: ValueReferences, intRefs: IntArray,
-                realVr: ValueReferences, realRefs: DoubleArray,
-                strVr: ValueReferences, strRefs: StringArray,
-                boolVr: ValueReferences, boolRefs: BooleanArray
+    fun readALl(intVr: ValueReferences?, intRefs: IntArray?,
+                realVr: ValueReferences?, realRefs: DoubleArray?,
+                strVr: ValueReferences?, strRefs: StringArray?,
+                boolVr: ValueReferences?, boolRefs: BooleanArray?
     ): FmiStatus
 
 }
@@ -56,10 +56,10 @@ interface VariableWriter {
     fun writeReal(vr: ValueReferences, value: RealArray): FmiStatus
     fun writeString(vr: ValueReferences, value: StringArray): FmiStatus
     fun writeBoolean(vr: ValueReferences, value: BooleanArray): FmiStatus
-    fun writeAll(intVr: ValueReferences, intValues: IntArray,
-                 realVr: ValueReferences, realValues: DoubleArray,
-                 strVr: ValueReferences, strValues: StringArray,
-                 boolVr: ValueReferences, boolValues: BooleanArray): FmiStatus
+    fun writeAll(intVr: ValueReferences?, intValues: IntArray?,
+                 realVr: ValueReferences?, realValues: DoubleArray?,
+                 strVr: ValueReferences?, strValues: StringArray?,
+                 boolVr: ValueReferences?, boolValues: BooleanArray?): FmiStatus
 
 }
 

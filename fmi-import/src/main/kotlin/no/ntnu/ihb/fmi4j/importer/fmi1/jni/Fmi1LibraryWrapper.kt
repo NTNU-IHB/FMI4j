@@ -138,7 +138,11 @@ abstract class Fmi1LibraryWrapper<E : Fmi1Library>(
         return updateStatus(library.getBoolean(c, vr, ref))
     }
 
-    override fun readALl(intVr: ValueReferences, intRefs: IntArray, realVr: ValueReferences, realRefs: DoubleArray, strVr: ValueReferences, strRefs: StringArray, boolVr: ValueReferences, boolRefs: BooleanArray): FmiStatus {
+    override fun readALl(
+            intVr: ValueReferences?, intRefs: IntArray?,
+            realVr: ValueReferences?, realRefs: DoubleArray?,
+            strVr: ValueReferences?, strRefs: StringArray?,
+            boolVr: ValueReferences?, boolRefs: BooleanArray?): FmiStatus {
         return updateStatus(library.getAllVariables(c, intVr, intRefs, realVr, realRefs, strVr, strRefs, boolVr, boolRefs))
     }
 
@@ -199,7 +203,10 @@ abstract class Fmi1LibraryWrapper<E : Fmi1Library>(
         return updateStatus(library.setBoolean(c, vr, value))
     }
 
-    override fun writeAll(intVr: ValueReferences, intValues: IntArray, realVr: ValueReferences, realValues: DoubleArray, strVr: ValueReferences, strValues: StringArray, boolVr: ValueReferences, boolValues: BooleanArray): FmiStatus {
+    override fun writeAll(intVr: ValueReferences?, intValues: IntArray?,
+                          realVr: ValueReferences?, realValues: DoubleArray?,
+                          strVr: ValueReferences?, strValues: StringArray?,
+                          boolVr: ValueReferences?, boolValues: BooleanArray?): FmiStatus {
         return updateStatus(library.setAllVariables(c, intVr, intValues, realVr, realValues, strVr, strValues, boolVr, boolValues))
     }
 
