@@ -24,11 +24,10 @@
 
 package no.ntnu.ihb.fmi4j.importer.fmi1.jni
 
-import no.ntnu.ihb.fmi4j.*
+import no.ntnu.ihb.fmi4j.FMI4j
+import no.ntnu.ihb.fmi4j.FmiStatus
 import no.ntnu.ihb.fmi4j.modeldescription.StringArray
-import no.ntnu.ihb.fmi4j.modeldescription.ValueReference
 import no.ntnu.ihb.fmi4j.modeldescription.ValueReferences
-import no.ntnu.ihb.fmi4j.util.ArrayBuffers
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.Closeable
@@ -75,13 +74,26 @@ abstract class Fmi1Library(
     private external fun getRealDirect(p: Long, c: FmiComponent, size: Int, vr: ByteBuffer, ref: ByteBuffer): NativeStatus
     private external fun getString(p: Long, c: FmiComponent, vr: ValueReferences, ref: Array<String>): NativeStatus
     private external fun getBoolean(p: Long, c: FmiComponent, vr: ValueReferences, ref: BooleanArray): NativeStatus
+    private external fun getAllVariables(
+            p: Long, c: FmiComponent,
+            intVr: ValueReferences, intRef: IntArray,
+            realVr: ValueReferences, realRef: DoubleArray,
+            strVr: ValueReferences, strRef: StringArray,
+            boolVr: ValueReferences, boolRef: BooleanArray
+    ): NativeStatus
 
     private external fun setInteger(p: Long, c: FmiComponent, vr: ValueReferences, values: IntArray): NativeStatus
     private external fun setReal(p: Long, c: FmiComponent, vr: ValueReferences, values: DoubleArray): NativeStatus
     private external fun setRealDirect(p: Long, c: FmiComponent, size: Int, vr: ByteBuffer, values: ByteBuffer): NativeStatus
     private external fun setString(p: Long, c: FmiComponent, vr: ValueReferences, values: Array<String>): NativeStatus
     private external fun setBoolean(p: Long, c: FmiComponent, vr: ValueReferences, values: BooleanArray): NativeStatus
-
+    private external fun setAllVariables(
+            p: Long, c: FmiComponent,
+            intVr: ValueReferences, intValues: IntArray,
+            realVr: ValueReferences, realValues: DoubleArray,
+            strVr: ValueReferences, strValues: StringArray,
+            boolVr: ValueReferences, boolValues: BooleanArray
+    ): NativeStatus
 
     protected fun NativeStatus.transform(): FmiStatus {
         return FmiStatus.valueOf(this)
@@ -124,6 +136,14 @@ abstract class Fmi1Library(
         return getBoolean(p, c, vr, ref).transform()
     }
 
+    fun getAllVariables(c: FmiComponent,
+                        intVr: ValueReferences, intRefs: IntArray,
+                        realVr: ValueReferences, realRefs: DoubleArray,
+                        strVr: ValueReferences, strRefs: StringArray,
+                        boolVr: ValueReferences, boolRefs: BooleanArray
+    ): FmiStatus {
+        return getAllVariables(c, p, intVr, intRefs, realVr, realRefs, strVr, strRefs, boolVr, boolRefs).transform()
+    }
 
     fun setInteger(c: FmiComponent, vr: ValueReferences, values: IntArray): FmiStatus {
         return setInteger(p, c, vr, values).transform()
@@ -145,6 +165,16 @@ abstract class Fmi1Library(
     fun setBoolean(c: FmiComponent, vr: ValueReferences, values: BooleanArray): FmiStatus {
         return setBoolean(p, c, vr, values).transform()
     }
+
+    fun setAllVariables(c: FmiComponent,
+                        intVr: ValueReferences, intValues: IntArray,
+                        realVr: ValueReferences, realValues: DoubleArray,
+                        strVr: ValueReferences, strValues: StringArray,
+                        boolVr: ValueReferences, boolValues: BooleanArray
+    ): FmiStatus {
+        return setAllVariables(c, p, intVr, intValues, realVr, realValues, strVr, strValues, boolVr, boolValues).transform()
+    }
+
 
     private companion object {
 

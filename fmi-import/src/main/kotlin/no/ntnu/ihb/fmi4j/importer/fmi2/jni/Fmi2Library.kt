@@ -99,7 +99,7 @@ open class Fmi2Library(
     private external fun getRealDirect(p: Long, c: Fmi2Component, size: Int, vr: ByteBuffer, ref: ByteBuffer): NativeStatus
     private external fun getString(p: Long, c: Fmi2Component, vr: ValueReferences, ref: Array<String>): NativeStatus
     private external fun getBoolean(p: Long, c: Fmi2Component, vr: ValueReferences, ref: BooleanArray): NativeStatus
-    private external fun getAll(
+    private external fun getAllVariables(
             p: Long, c: FmiComponent,
             intVr: ValueReferences, intRef: IntArray,
             realVr: ValueReferences, realRef: DoubleArray,
@@ -113,7 +113,7 @@ open class Fmi2Library(
     private external fun setRealDirect(p: Long, c: Fmi2Component, size: Int, vr: ByteBuffer, values: ByteBuffer): NativeStatus
     private external fun setString(p: Long, c: Fmi2Component, vr: ValueReferences, values: Array<String>): NativeStatus
     private external fun setBoolean(p: Long, c: Fmi2Component, vr: ValueReferences, values: BooleanArray): NativeStatus
-    private external fun setAll(
+    private external fun setAllVariables(
             p: Long, c: FmiComponent,
             intVr: ValueReferences, intValues: IntArray,
             realVr: ValueReferences, realValues: DoubleArray,
@@ -214,13 +214,13 @@ open class Fmi2Library(
         return getBoolean(p, c, vr, ref).transform()
     }
 
-    fun getAll(c: Fmi2Component,
-               intVr: ValueReferences, intRefs: IntArray,
-               realVr: ValueReferences, realRefs: DoubleArray,
-               strVr: ValueReferences, strRefs: StringArray,
-               boolVr: ValueReferences, boolRefs: BooleanArray
+    fun getAllVariables(c: Fmi2Component,
+                        intVr: ValueReferences, intRefs: IntArray,
+                        realVr: ValueReferences, realRefs: DoubleArray,
+                        strVr: ValueReferences, strRefs: StringArray,
+                        boolVr: ValueReferences, boolRefs: BooleanArray
     ): FmiStatus {
-        return getAll(c, p, intVr, intRefs, realVr, realRefs, strVr, strRefs, boolVr, boolRefs).transform()
+        return getAllVariables(c, p, intVr, intRefs, realVr, realRefs, strVr, strRefs, boolVr, boolRefs).transform()
     }
 
 
@@ -245,13 +245,13 @@ open class Fmi2Library(
         return setBoolean(p, c, vr, values).transform()
     }
 
-    fun setAll(c: Fmi2Component,
-               intVr: ValueReferences, intValues: IntArray,
-               realVr: ValueReferences, realValues: DoubleArray,
-               strVr: ValueReferences, strValues: StringArray,
-               boolVr: ValueReferences, boolValues: BooleanArray
+    fun setAllVariables(c: Fmi2Component,
+                        intVr: ValueReferences, intValues: IntArray,
+                        realVr: ValueReferences, realValues: DoubleArray,
+                        strVr: ValueReferences, strValues: StringArray,
+                        boolVr: ValueReferences, boolValues: BooleanArray
     ): FmiStatus {
-        return setAll(c, p, intVr, intValues, realVr, realValues, strVr, strValues, boolVr, boolValues).transform()
+        return setAllVariables(c, p, intVr, intValues, realVr, realValues, strVr, strValues, boolVr, boolValues).transform()
     }
 
 
