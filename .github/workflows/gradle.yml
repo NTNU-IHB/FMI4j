@@ -1,6 +1,6 @@
 name: Build
 
-on: [push]
+on: [ push ]
 
 jobs:
   build:
@@ -8,9 +8,9 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest]
+        os: [ ubuntu-latest, windows-latest ]
         jvm-version: [ 8, 11 ]
-    
+
     steps:
       - uses: actions/checkout@v2
 
@@ -21,10 +21,10 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
-      - name: Set up JDK ${{runner.jvm-version}}
+      - name: Set up JDK ${{matrix.jvm-version}}
         uses: actions/setup-java@v1
         with:
-          java-version: ${{runner.jvm-version}}
+          java-version: ${{matrix.jvm-version}}
 
       - name: Build
         run: ./gradlew clean build
