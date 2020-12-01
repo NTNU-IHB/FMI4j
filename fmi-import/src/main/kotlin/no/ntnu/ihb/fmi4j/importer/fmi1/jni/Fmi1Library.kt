@@ -139,7 +139,7 @@ abstract class Fmi1Library(
                         strVr: ValueReferences?, strRefs: StringArray?,
                         boolVr: ValueReferences?, boolRefs: BooleanArray?
     ): FmiStatus {
-        return getAllVariables(c, p, intVr, intRefs, realVr, realRefs, strVr, strRefs, boolVr, boolRefs).transform()
+        return getAllVariables(p, c, intVr, intRefs, realVr, realRefs, strVr, strRefs, boolVr, boolRefs).transform()
     }
 
     fun setInteger(c: FmiComponent, vr: ValueReferences, values: IntArray): FmiStatus {
@@ -169,7 +169,7 @@ abstract class Fmi1Library(
                         strVr: ValueReferences?, strValues: StringArray?,
                         boolVr: ValueReferences?, boolValues: BooleanArray?
     ): FmiStatus {
-        return setAllVariables(c, p, intVr, intValues, realVr, realValues, strVr, strValues, boolVr, boolValues).transform()
+        return setAllVariables(p, c, intVr, intValues, realVr, realValues, strVr, strValues, boolVr, boolValues).transform()
     }
 
 

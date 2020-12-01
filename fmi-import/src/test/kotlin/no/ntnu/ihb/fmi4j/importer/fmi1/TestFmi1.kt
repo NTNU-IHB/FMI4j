@@ -64,8 +64,30 @@ internal class TestFmi1 {
         AbstractFmu.from(file).asCoSimulationFmu().use { fmu ->
 
             fmu.newInstance().use { slave ->
+
                 Assertions.assertTrue(slave.simpleSetup())
+
+                val realValue = 123.0
+                val doubleRef = DoubleArray(1)
+
+                slave.writeAll(
+                        null, null,
+                        longArrayOf(0), doubleArrayOf(realValue),
+                        null, null,
+                        null, null
+                )
+
                 Assertions.assertTrue(slave.doStep(0.1))
+
+                slave.readAll(
+                        null, null,
+                        longArrayOf(0), doubleRef,
+                        null, null,
+                        null, null
+                )
+
+                Assertions.assertEquals(realValue, doubleRef.first())
+
                 Assertions.assertTrue(slave.terminate())
             }
 
