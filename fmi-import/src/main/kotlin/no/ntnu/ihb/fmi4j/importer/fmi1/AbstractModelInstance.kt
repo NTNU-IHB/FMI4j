@@ -112,7 +112,7 @@ abstract class AbstractModelInstance<out E : CommonModelDescription, out T : Fmi
         return wrapper.readBoolean(vr, ref)
     }
 
-    override fun readALl(intVr: ValueReferences?, intRefs: IntArray?, realVr: ValueReferences?, realRefs: DoubleArray?, strVr: ValueReferences?, strRefs: StringArray?, boolVr: ValueReferences?, boolRefs: BooleanArray?): FmiStatus {
+    override fun readAll(intVr: ValueReferences?, intRefs: IntArray?, realVr: ValueReferences?, realRefs: DoubleArray?, strVr: ValueReferences?, strRefs: StringArray?, boolVr: ValueReferences?, boolRefs: BooleanArray?): FmiStatus {
         return wrapper.writeAll(intVr, intRefs, realVr, realRefs, strVr, strRefs, boolVr, boolRefs)
     }
 

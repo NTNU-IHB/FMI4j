@@ -38,7 +38,7 @@ interface VariableReader {
     fun readReal(vr: ValueReferences, ref: RealArray): FmiStatus
     fun readString(vr: ValueReferences, ref: StringArray): FmiStatus
     fun readBoolean(vr: ValueReferences, ref: BooleanArray): FmiStatus
-    fun readALl(intVr: ValueReferences?, intRefs: IntArray?,
+    fun readAll(intVr: ValueReferences?, intRefs: IntArray?,
                 realVr: ValueReferences?, realRefs: DoubleArray?,
                 strVr: ValueReferences?, strRefs: StringArray?,
                 boolVr: ValueReferences?, boolRefs: BooleanArray?

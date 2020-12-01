@@ -138,7 +138,7 @@ abstract class Fmi1LibraryWrapper<E : Fmi1Library>(
         return updateStatus(library.getBoolean(c, vr, ref))
     }
 
-    override fun readALl(
+    override fun readAll(
             intVr: ValueReferences?, intRefs: IntArray?,
             realVr: ValueReferences?, realRefs: DoubleArray?,
             strVr: ValueReferences?, strRefs: StringArray?,

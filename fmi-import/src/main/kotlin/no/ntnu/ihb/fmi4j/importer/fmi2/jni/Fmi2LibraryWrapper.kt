@@ -215,7 +215,7 @@ abstract class Fmi2LibraryWrapper<E : Fmi2Library>(
         return updateStatus(library.getBoolean(c, vr, ref))
     }
 
-    override fun readALl(intVr: ValueReferences?, intRefs: IntArray?,
+    override fun readAll(intVr: ValueReferences?, intRefs: IntArray?,
                          realVr: ValueReferences?, realRefs: DoubleArray?,
                          strVr: ValueReferences?, strRefs: StringArray?,
                          boolVr: ValueReferences?, boolRefs: BooleanArray?): FmiStatus {
