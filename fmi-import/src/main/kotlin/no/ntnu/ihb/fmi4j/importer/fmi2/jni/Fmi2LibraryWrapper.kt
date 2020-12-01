@@ -215,6 +215,13 @@ abstract class Fmi2LibraryWrapper<E : Fmi2Library>(
         return updateStatus(library.getBoolean(c, vr, ref))
     }
 
+    override fun readAll(intVr: ValueReferences?, intRefs: IntArray?,
+                         realVr: ValueReferences?, realRefs: DoubleArray?,
+                         strVr: ValueReferences?, strRefs: StringArray?,
+                         boolVr: ValueReferences?, boolRefs: BooleanArray?): FmiStatus {
+        return updateStatus(library.getAllVariables(c, intVr, intRefs, realVr, realRefs, strVr, strRefs, boolVr, boolRefs))
+    }
+
     /**
      * @see Fmi2Library.setInteger
      */
@@ -295,10 +302,19 @@ abstract class Fmi2LibraryWrapper<E : Fmi2Library>(
         return updateStatus(library.setBoolean(c, vr, value))
     }
 
+    override fun writeAll(intVr: ValueReferences?, intValues: IntArray?,
+                          realVr: ValueReferences?, realValues: DoubleArray?,
+                          strVr: ValueReferences?, strValues: StringArray?,
+                          boolVr: ValueReferences?, boolValues: BooleanArray?): FmiStatus {
+        return updateStatus(library.setAllVariables(c, intVr, intValues, realVr, realValues, strVr, strValues, boolVr, boolValues))
+    }
+
     /**
      * @see Fmi2Library.getDirectionalDerivative
      */
-    fun getDirectionalDerivative(vUnknown_ref: ValueReferences, vKnown_ref: ValueReferences, dvKnown: DoubleArray, dvUnknown: DoubleArray): FmiStatus {
+    fun getDirectionalDerivative(
+            vUnknown_ref: ValueReferences, vKnown_ref: ValueReferences,
+            dvKnown: DoubleArray, dvUnknown: DoubleArray): FmiStatus {
         return updateStatus(library.getDirectionalDerivative(c,
                 vUnknown_ref, vKnown_ref, dvKnown, dvUnknown))
     }
