@@ -215,11 +215,13 @@ abstract class Fmi2LibraryWrapper<E : Fmi2Library>(
         return updateStatus(library.getBoolean(c, vr, ref))
     }
 
-    override fun readAll(intVr: ValueReferences?, intRefs: IntArray?,
-                         realVr: ValueReferences?, realRefs: DoubleArray?,
-                         strVr: ValueReferences?, strRefs: StringArray?,
-                         boolVr: ValueReferences?, boolRefs: BooleanArray?): FmiStatus {
-        return updateStatus(library.getAllVariables(c, intVr, intRefs, realVr, realRefs, strVr, strRefs, boolVr, boolRefs))
+    override fun readAll(
+        intVr: ValueReferences?, intRefs: IntArray?,
+        realVr: ValueReferences?, realRefs: DoubleArray?,
+        boolVr: ValueReferences?, boolRefs: BooleanArray?,
+        strVr: ValueReferences?, strRefs: StringArray?
+    ): FmiStatus {
+        return updateStatus(library.getAll(c, intVr, intRefs, realVr, realRefs, boolVr, boolRefs, strVr, strRefs))
     }
 
     /**
@@ -302,11 +304,25 @@ abstract class Fmi2LibraryWrapper<E : Fmi2Library>(
         return updateStatus(library.setBoolean(c, vr, value))
     }
 
-    override fun writeAll(intVr: ValueReferences?, intValues: IntArray?,
-                          realVr: ValueReferences?, realValues: DoubleArray?,
-                          strVr: ValueReferences?, strValues: StringArray?,
-                          boolVr: ValueReferences?, boolValues: BooleanArray?): FmiStatus {
-        return updateStatus(library.setAllVariables(c, intVr, intValues, realVr, realValues, strVr, strValues, boolVr, boolValues))
+    override fun writeAll(
+        intVr: ValueReferences?, intValues: IntArray?,
+        realVr: ValueReferences?, realValues: DoubleArray?,
+        boolVr: ValueReferences?, boolValues: BooleanArray?,
+        strVr: ValueReferences?, strValues: StringArray?
+    ): FmiStatus {
+        return updateStatus(
+            library.setAll(
+                c,
+                intVr,
+                intValues,
+                realVr,
+                realValues,
+                boolVr,
+                boolValues,
+                strVr,
+                strValues
+            )
+        )
     }
 
     /**

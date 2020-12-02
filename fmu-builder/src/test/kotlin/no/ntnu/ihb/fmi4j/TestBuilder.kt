@@ -22,11 +22,14 @@ internal class TestBuilder {
 
         val testFile = File(javaClass.classLoader.getResource("TestFile.txt")!!.file)
 
-        FmuBuilder.main(arrayOf(
+        FmuBuilder.main(
+            arrayOf(
                 "-m", "$group.JavaTestFmi2Slave",
                 "-f", jar,
                 "-d", dest,
-                "-r", testFile.absolutePath))
+                "-r", testFile.absolutePath
+            )
+        )
 
         for (i in 0..2) {
 
@@ -60,10 +63,13 @@ internal class TestBuilder {
 
     @Test
     fun testKotlinClass() {
-        FmuBuilder.main(arrayOf(
+        FmuBuilder.main(
+            arrayOf(
                 "-m", "$group.KotlinTestFmi2Slave",
                 "-f", jar,
-                "-d", dest))
+                "-d", dest
+            )
+        )
 
         val fmuFile = File(dest, "KotlinTestFmi2Slave.fmu")
         Assertions.assertTrue(fmuFile.exists())
@@ -86,10 +92,13 @@ internal class TestBuilder {
     @Test
     fun testParallelInstantiate() {
 
-        FmuBuilder.main(arrayOf(
+        FmuBuilder.main(
+            arrayOf(
                 "-m", "$group.KotlinTestFmi2Slave",
                 "-f", jar,
-                "-d", dest))
+                "-d", dest
+            )
+        )
 
         val fmuFile = File(dest, "KotlinTestFmi2Slave.fmu")
         Assertions.assertTrue(fmuFile.exists())

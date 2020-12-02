@@ -29,6 +29,7 @@ import no.ntnu.ihb.fmi4j.FmiStatus
 import no.ntnu.ihb.fmi4j.importer.fmi1.jni.FmiComponent
 import no.ntnu.ihb.fmi4j.modeldescription.StringArray
 import no.ntnu.ihb.fmi4j.modeldescription.ValueReferences
+import no.ntnu.ihb.fmi4j.modeldescription.stringArrayOf
 import no.ntnu.ihb.fmi4j.util.IntByReference
 import no.ntnu.ihb.fmi4j.util.LongByReference
 import org.slf4j.Logger
@@ -44,7 +45,7 @@ internal typealias Fmi2Component = Long
  * @author Lars Ivar Hatledal
  */
 open class Fmi2Library(
-        lib: File
+    lib: File
 ) : Closeable {
 
     private var isClosed = false
@@ -67,55 +68,110 @@ open class Fmi2Library(
     private external fun getVersion(p: Long): String
     private external fun getTypesPlatform(p: Long): String
 
-    private external fun instantiate(p: Long, instanceName: String, type: Int, guid: String,
-                                     resourceLocation: String, visible: Boolean, loggingOn: Boolean): Long
+    private external fun instantiate(
+        p: Long, instanceName: String, type: Int, guid: String,
+        resourceLocation: String, visible: Boolean, loggingOn: Boolean
+    ): Long
 
-    private external fun setDebugLogging(p: Long, c: Fmi2Component,
-                                         loggingOn: Boolean, categories: Array<String>): NativeStatus
+    private external fun setDebugLogging(
+        p: Long, c: Fmi2Component,
+        loggingOn: Boolean, categories: Array<String>
+    ): NativeStatus
 
-    private external fun setupExperiment(p: Long, c: Fmi2Component,
-                                         tolerance: Double, startTime: Double, stopTime: Double): NativeStatus
+    private external fun setupExperiment(
+        p: Long, c: Fmi2Component,
+        tolerance: Double, startTime: Double, stopTime: Double
+    ): NativeStatus
 
     private external fun enterInitializationMode(p: Long, c: Fmi2Component): NativeStatus
     private external fun exitInitializationMode(p: Long, c: Fmi2Component): NativeStatus
 
-
-    private external fun terminate(p: Long, c: Fmi2Component): NativeStatus
-
     private external fun reset(p: Long, c: Fmi2Component): NativeStatus
-
+    private external fun terminate(p: Long, c: Fmi2Component): NativeStatus
     private external fun freeInstance(p: Long, c: Fmi2Component)
 
-    private external fun getDirectionalDerivative(p: Long, c: Fmi2Component,
-                                                  vUnknown_ref: ValueReferences, vKnownRef: ValueReferences,
-                                                  dvKnown: DoubleArray, dvUnknown: DoubleArray): NativeStatus
+    private external fun getDirectionalDerivative(
+        p: Long, c: Fmi2Component,
+        vUnknown_ref: ValueReferences, vKnownRef: ValueReferences,
+        dvKnown: DoubleArray, dvUnknown: DoubleArray
+    ): NativeStatus
 
 
-    private external fun getInteger(p: Long, c: Fmi2Component, vr: ValueReferences, ref: IntArray): NativeStatus
-    private external fun getReal(p: Long, c: Fmi2Component, vr: ValueReferences, ref: DoubleArray): NativeStatus
-    private external fun getRealDirect(p: Long, c: Fmi2Component, size: Int, vr: ByteBuffer, ref: ByteBuffer): NativeStatus
-    private external fun getString(p: Long, c: Fmi2Component, vr: ValueReferences, ref: Array<String>): NativeStatus
-    private external fun getBoolean(p: Long, c: Fmi2Component, vr: ValueReferences, ref: BooleanArray): NativeStatus
-    private external fun getAllVariables(
-            p: Long, c: FmiComponent,
-            intVr: ValueReferences?, intRef: IntArray?,
-            realVr: ValueReferences?, realRef: DoubleArray?,
-            strVr: ValueReferences?, strRef: StringArray?,
-            boolVr: ValueReferences?, boolRef: BooleanArray?
+    private external fun getInteger(
+        p: Long,
+        c: Fmi2Component,
+        vr: ValueReferences,
+        nvr: Int,
+        ref: IntArray
+    ): NativeStatus
+
+    private external fun getReal(
+        p: Long,
+        c: Fmi2Component,
+        vr: ValueReferences,
+        nvr: Int,
+        ref: DoubleArray
+    ): NativeStatus
+
+    private external fun getRealDirect(
+        p: Long, c: Fmi2Component,
+        vr: ByteBuffer, nvr: Int, ref: ByteBuffer
+    ): NativeStatus
+
+    private external fun getString(
+        p: Long,
+        c: Fmi2Component,
+        vr: ValueReferences,
+        nvr: Int,
+        ref: Array<String>
+    ): NativeStatus
+
+    private external fun getBoolean(
+        p: Long,
+        c: Fmi2Component,
+        vr: ValueReferences,
+        nvr: Int,
+        ref: BooleanArray
+    ): NativeStatus
+
+    private external fun getAll(
+        p: Long, c: FmiComponent,
+        intVr: ValueReferences, nIntvr: Int, intRef: IntArray,
+        realVr: ValueReferences, nRealVr: Int, realRef: DoubleArray,
+        boolVr: ValueReferences, nBoolVr: Int, boolRef: BooleanArray,
+        strVr: ValueReferences, nStrvr: Int, strRef: StringArray
     ): NativeStatus
 
 
     private external fun setInteger(p: Long, c: Fmi2Component, vr: ValueReferences, values: IntArray): NativeStatus
     private external fun setReal(p: Long, c: Fmi2Component, vr: ValueReferences, values: DoubleArray): NativeStatus
-    private external fun setRealDirect(p: Long, c: Fmi2Component, size: Int, vr: ByteBuffer, values: ByteBuffer): NativeStatus
-    private external fun setString(p: Long, c: Fmi2Component, vr: ValueReferences, values: Array<String>): NativeStatus
-    private external fun setBoolean(p: Long, c: Fmi2Component, vr: ValueReferences, values: BooleanArray): NativeStatus
-    private external fun setAllVariables(
-            p: Long, c: FmiComponent,
-            intVr: ValueReferences?, intValues: IntArray?,
-            realVr: ValueReferences?, realValues: DoubleArray?,
-            strVr: ValueReferences?, strValues: StringArray?,
-            boolVr: ValueReferences?, boolValues: BooleanArray?
+    private external fun setRealDirect(
+        p: Long, c: Fmi2Component,
+        vr: ByteBuffer, nvr: Int, values: ByteBuffer
+    ): NativeStatus
+
+    private external fun setString(
+        p: Long,
+        c: Fmi2Component,
+        vr: ValueReferences,
+        nvr: Int,
+        values: Array<String>
+    ): NativeStatus
+
+    private external fun setBoolean(
+        p: Long,
+        c: Fmi2Component,
+        vr: ValueReferences,
+        nvr: Int,
+        values: BooleanArray
+    ): NativeStatus
+
+    private external fun setAll(
+        p: Long, c: FmiComponent,
+        intVr: ValueReferences, nIntvr: Int, intValues: IntArray,
+        realVr: ValueReferences, nRealVr: Int, realValues: DoubleArray,
+        boolVr: ValueReferences, nBoolVr: Int, boolValues: BooleanArray,
+        strVr: ValueReferences, nStrVr: Int, strValues: StringArray
     ): NativeStatus
 
     private external fun getFMUstate(p: Long, c: Fmi2Component, state: LongByReference): NativeStatus
@@ -124,16 +180,19 @@ open class Fmi2Library(
 
 
     private external fun serializedFMUstateSize(
-            p: Long, c: Fmi2Component,
-            state: Long, size: IntByReference): NativeStatus
+        p: Long, c: Fmi2Component,
+        state: Long, size: IntByReference
+    ): NativeStatus
 
     private external fun serializeFMUstate(
-            p: Long, c: Fmi2Component,
-            state: Long, serializedState: ByteArray): NativeStatus
+        p: Long, c: Fmi2Component,
+        state: Long, serializedState: ByteArray
+    ): NativeStatus
 
     private external fun deSerializeFMUstate(
-            p: Long, c: Fmi2Component,
-            state: LongByReference, serializedState: ByteArray): NativeStatus
+        p: Long, c: Fmi2Component,
+        state: LongByReference, serializedState: ByteArray
+    ): NativeStatus
 
 
     protected fun NativeStatus.transform(): FmiStatus {
@@ -148,8 +207,10 @@ open class Fmi2Library(
         return getTypesPlatform(p)
     }
 
-    fun instantiate(instanceName: String, type: Int, guid: String,
-                    resourceLocation: String, visible: Boolean, loggingOn: Boolean): Long {
+    fun instantiate(
+        instanceName: String, type: Int, guid: String,
+        resourceLocation: String, visible: Boolean, loggingOn: Boolean
+    ): Long {
         return instantiate(p, instanceName, type, guid, resourceLocation, visible, loggingOn).also {
             instanceNames[it] = instanceName
         }
@@ -159,8 +220,10 @@ open class Fmi2Library(
         return setDebugLogging(p, c, loggingOn, categories).transform()
     }
 
-    fun setupExperiment(c: Fmi2Component,
-                        tolerance: Double, startTime: Double, stopTime: Double): FmiStatus {
+    fun setupExperiment(
+        c: Fmi2Component,
+        tolerance: Double, startTime: Double, stopTime: Double
+    ): FmiStatus {
         return setupExperiment(p, c, tolerance, startTime, stopTime).transform()
     }
 
@@ -184,41 +247,50 @@ open class Fmi2Library(
         freeInstance(p, c)
     }
 
-    fun getDirectionalDerivative(c: Fmi2Component,
-                                 vUnknown_ref: ValueReferences, vKnownRef: ValueReferences,
-                                 dvKnown: DoubleArray, dvUnknown: DoubleArray): FmiStatus {
+    fun getDirectionalDerivative(
+        c: Fmi2Component,
+        vUnknown_ref: ValueReferences, vKnownRef: ValueReferences,
+        dvKnown: DoubleArray, dvUnknown: DoubleArray
+    ): FmiStatus {
         return getDirectionalDerivative(p, c, vUnknown_ref, vKnownRef, dvKnown, dvUnknown).transform()
     }
 
 
     fun getInteger(c: Fmi2Component, vr: ValueReferences, ref: IntArray): FmiStatus {
-        return getInteger(p, c, vr, ref).transform()
+        return getInteger(p, c, vr, vr.size, ref).transform()
     }
 
     fun getReal(c: Fmi2Component, vr: ValueReferences, ref: DoubleArray): FmiStatus {
-        return getReal(p, c, vr, ref).transform()
+        return getReal(p, c, vr, vr.size, ref).transform()
     }
 
     fun getRealDirect(c: Fmi2Component, vr: ByteBuffer, ref: ByteBuffer): FmiStatus {
         val size = vr.capacity() / Long.SIZE_BYTES
-        return getRealDirect(p, c, size, vr, ref).transform()
+        return getRealDirect(p, c, vr, size, ref).transform()
     }
 
     fun getString(c: Fmi2Component, vr: ValueReferences, ref: Array<String>): FmiStatus {
-        return getString(p, c, vr, ref).transform()
+        return getString(p, c, vr, vr.size, ref).transform()
     }
 
     fun getBoolean(c: Fmi2Component, vr: ValueReferences, ref: BooleanArray): FmiStatus {
-        return getBoolean(p, c, vr, ref).transform()
+        return getBoolean(p, c, vr, vr.size, ref).transform()
     }
 
-    fun getAllVariables(c: Fmi2Component,
-                        intVr: ValueReferences?, intRefs: IntArray?,
-                        realVr: ValueReferences?, realRefs: DoubleArray?,
-                        strVr: ValueReferences?, strRefs: StringArray?,
-                        boolVr: ValueReferences?, boolRefs: BooleanArray?
+    fun getAll(
+        c: Fmi2Component,
+        intVr: ValueReferences?, intRefs: IntArray?,
+        realVr: ValueReferences?, realRefs: DoubleArray?,
+        boolVr: ValueReferences?, boolRefs: BooleanArray?,
+        strVr: ValueReferences?, strRefs: StringArray?
     ): FmiStatus {
-        return getAllVariables(p, c, intVr, intRefs, realVr, realRefs, strVr, strRefs, boolVr, boolRefs).transform()
+        return getAll(
+            p, c,
+            intVr ?: emptyLongArray, intVr?.size ?: 0, intRefs ?: emptyIntArray,
+            realVr ?: emptyLongArray, realVr?.size ?: 0, realRefs ?: emptyDoubleArray,
+            boolVr ?: emptyLongArray, boolVr?.size ?: 0, boolRefs ?: emptyBooleanArray,
+            strVr ?: emptyLongArray, strVr?.size ?: 0, strRefs ?: emptyStringArray
+        ).transform()
     }
 
 
@@ -232,24 +304,31 @@ open class Fmi2Library(
 
     fun setRealDirect(c: Fmi2Component, vr: ByteBuffer, values: ByteBuffer): FmiStatus {
         val size = vr.capacity() / Long.SIZE_BYTES
-        return setRealDirect(p, c, size, vr, values).transform()
+        return setRealDirect(p, c, vr, size, values).transform()
     }
 
     fun setString(c: Fmi2Component, vr: ValueReferences, values: Array<String>): FmiStatus {
-        return setString(p, c, vr, values).transform()
+        return setString(p, c, vr, vr.size, values).transform()
     }
 
     fun setBoolean(c: Fmi2Component, vr: ValueReferences, values: BooleanArray): FmiStatus {
-        return setBoolean(p, c, vr, values).transform()
+        return setBoolean(p, c, vr, vr.size, values).transform()
     }
 
-    fun setAllVariables(c: Fmi2Component,
-                        intVr: ValueReferences?, intValues: IntArray?,
-                        realVr: ValueReferences?, realValues: DoubleArray?,
-                        strVr: ValueReferences?, strValues: StringArray?,
-                        boolVr: ValueReferences?, boolValues: BooleanArray?
+    fun setAll(
+        c: Fmi2Component,
+        intVr: ValueReferences?, intValues: IntArray?,
+        realVr: ValueReferences?, realValues: DoubleArray?,
+        boolVr: ValueReferences?, boolValues: BooleanArray?,
+        strVr: ValueReferences?, strValues: StringArray?
     ): FmiStatus {
-        return setAllVariables(p, c, intVr, intValues, realVr, realValues, strVr, strValues, boolVr, boolValues).transform()
+        return setAll(
+            p, c,
+            intVr ?: emptyLongArray, intVr?.size ?: 0, intValues ?: emptyIntArray,
+            realVr ?: emptyLongArray, realVr?.size ?: 0, realValues ?: emptyDoubleArray,
+            boolVr ?: emptyLongArray, boolVr?.size ?: 0, boolValues ?: emptyBooleanArray,
+            strVr ?: emptyLongArray, strVr?.size ?: 0, strValues ?: emptyStringArray
+        ).transform()
     }
 
 
@@ -282,6 +361,12 @@ open class Fmi2Library(
     private companion object {
 
         private val LOG: Logger = LoggerFactory.getLogger(Fmi2Library::class.java)
+
+        private val emptyLongArray = longArrayOf()
+        private val emptyIntArray = intArrayOf()
+        private val emptyDoubleArray = doubleArrayOf()
+        private val emptyBooleanArray = booleanArrayOf()
+        private val emptyStringArray = stringArrayOf()
 
         init {
             FMI4j.init()

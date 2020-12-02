@@ -3,14 +3,14 @@
 #define FMI4J_SLAVEINSTANCE_HPP
 
 #include <cppfmu/cppfmu_cs.hpp>
-
 #include <jni.h>
 #include <string>
 
 namespace fmi4j
 {
 
-struct jstring_ref {
+struct jstring_ref
+{
     const char* c_str;
     jstring j_str;
 };
@@ -34,9 +34,20 @@ public:
     void SetInteger(const cppfmu::FMIValueReference* vr, std::size_t nvr, const cppfmu::FMIInteger* value) override;
     void SetBoolean(const cppfmu::FMIValueReference* vr, std::size_t nvr, const cppfmu::FMIBoolean* value) override;
     void SetString(const cppfmu::FMIValueReference* vr, std::size_t nvr, cppfmu::FMIString const* value) override;
+    void SetAll(
+        const cppfmu::FMIValueReference* intVr, std::size_t nIntvr, cppfmu::FMIInteger* intValue,
+        const cppfmu::FMIValueReference* realVr, std::size_t nRealvr, cppfmu::FMIReal* realValue,
+        const cppfmu::FMIValueReference* boolVr, std::size_t nBoolvr, cppfmu::FMIBoolean* boolValue,
+        const cppfmu::FMIValueReference* strVr, std::size_t nStrvr, cppfmu::FMIString* strValue) const override;
+
     void GetInteger(const cppfmu::FMIValueReference* vr, std::size_t nvr, cppfmu::FMIInteger* value) const override;
     void GetBoolean(const cppfmu::FMIValueReference* vr, std::size_t nvr, cppfmu::FMIBoolean* value) const override;
     void GetString(const cppfmu::FMIValueReference* vr, std::size_t nvr, cppfmu::FMIString* value) const override;
+    void GetAll(
+        const cppfmu::FMIValueReference* intVr, std::size_t nIntvr, cppfmu::FMIInteger* intValue,
+        const cppfmu::FMIValueReference* realVr, std::size_t nRealvr, cppfmu::FMIReal* realValue,
+        const cppfmu::FMIValueReference* boolVr, std::size_t nBoolvr, cppfmu::FMIBoolean* boolValue,
+        const cppfmu::FMIValueReference* strVr, std::size_t nStrvr, cppfmu::FMIString* strValue) const override;
 
     ~SlaveInstance() override;
 
@@ -73,20 +84,28 @@ private:
     jmethodID getStringId_;
     jmethodID setStringId_;
 
+    jmethodID getAllId_;
+    jmethodID setAllId_;
+
+    jmethodID bulkIntValues_;
+    jmethodID bulkRealValues_;
+    jmethodID bulkBoolValues_;
+    jmethodID bulkStrValues_;
+
     void initialize();
     void onClose();
 
     mutable std::vector<jstring_ref> strBuffer;
 
-    inline void clearStrBuffer(JNIEnv *env) const {
+    inline void clearStrBuffer(JNIEnv* env) const
+    {
         if (!strBuffer.empty()) {
-            for (auto obj: strBuffer) {
+            for (auto obj : strBuffer) {
                 env->ReleaseStringUTFChars(obj.j_str, obj.c_str);
             }
             strBuffer.clear();
         }
     }
-
 };
 
 } // namespace fmi4j
