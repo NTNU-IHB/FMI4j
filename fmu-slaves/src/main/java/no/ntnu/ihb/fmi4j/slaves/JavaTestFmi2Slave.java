@@ -1,6 +1,7 @@
 package no.ntnu.ihb.fmi4j.slaves;
 
 import no.ntnu.ihb.fmi4j.export.fmi2.Fmi2Slave;
+import no.ntnu.ihb.fmi4j.export.fmi2.ScalarVariable;
 import no.ntnu.ihb.fmi4j.export.fmi2.SlaveInfo;
 import no.ntnu.ihb.fmi4j.modeldescription.fmi2.Fmi2Causality;
 import no.ntnu.ihb.fmi4j.modeldescription.fmi2.Fmi2Variability;
@@ -17,10 +18,15 @@ import java.util.Map;
 )
 public class JavaTestFmi2Slave extends Fmi2Slave {
 
+    @ScalarVariable(causality = Fmi2Causality.output)
     protected double realOut = 2.0;
+    @ScalarVariable(causality = Fmi2Causality.parameter)
     protected double param = 1.0;
+    @ScalarVariable(causality = Fmi2Causality.output)
     protected int intOut = 1;
+    @ScalarVariable(causality = Fmi2Causality.output)
     protected double speed = 99.0;
+    @ScalarVariable
     protected String testContent = "per";
 
     public JavaTestFmi2Slave(@NotNull Map<String, Object> args) {

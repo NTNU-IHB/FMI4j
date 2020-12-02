@@ -1,6 +1,5 @@
 package no.ntnu.ihb.fmi4j.export.fmi2
 
-import no.ntnu.ihb.fmi4j.export.*
 import no.ntnu.ihb.fmi4j.modeldescription.fmi2.Fmi2Causality
 import no.ntnu.ihb.fmi4j.modeldescription.fmi2.Fmi2Initial
 import no.ntnu.ihb.fmi4j.modeldescription.fmi2.Fmi2ScalarVariable
@@ -108,41 +107,6 @@ class IntVariable(
 
 }
 
-class IntVariables(
-        name: String,
-        private val values: IntVector
-) : Variable<IntVariables>(name) {
-
-    private var min: Int? = null
-    private var max: Int? = null
-
-    fun min(value: Int?) = apply {
-        this.min = value
-    }
-
-    fun max(value: Int?) = apply {
-        this.max = value
-    }
-
-    internal fun build(): List<IntVariable> {
-
-        return IntRange(0, values.lastIndex).map { i ->
-            IntVariable("$name[$i]") { values[i] }.also { v ->
-                v.causality(causality)
-                v.variability(variability)
-                v.initial(initial)
-                if (variability != Fmi2Variability.constant) {
-                    v.setter { values[i] = it }
-                }
-                v.min(min)
-                v.max(max)
-            }
-        }
-
-    }
-
-}
-
 class RealVariable(
         name: String,
         val getter: Getter<Double>
@@ -192,47 +156,6 @@ class RealVariable(
 
 }
 
-class RealVariables(
-        name: String,
-        private val values: RealVector
-) : Variable<RealVariables>(name) {
-
-    private var min: Double? = null
-    private var max: Double? = null
-    private var unit: String? = null
-
-    fun min(value: Double?) = apply {
-        this.min = value
-    }
-
-    fun max(value: Double?) = apply {
-        this.max = value
-    }
-
-    fun unit(value: String?) = apply {
-        this.unit = value
-    }
-
-    internal fun build(): List<RealVariable> {
-
-        return IntRange(0, values.lastIndex).map { i ->
-            RealVariable("$name[$i]") { values[i] }.also { v ->
-                v.causality(causality)
-                v.variability(variability)
-                v.initial(initial)
-                if (variability != Fmi2Variability.constant) {
-                    v.setter { values[i] = it }
-                }
-                v.unit(unit)
-                v.min(min)
-                v.max(max)
-            }
-        }
-
-    }
-
-}
-
 class BooleanVariable(
         name: String,
         val getter: Getter<Boolean>
@@ -254,28 +177,6 @@ class BooleanVariable(
 
 }
 
-class BooleanVariables(
-        name: String,
-        private val values: BooleanVector
-) : Variable<BooleanVariables>(name) {
-
-    internal fun build(): List<BooleanVariable> {
-
-        return IntRange(0, values.lastIndex).map { i ->
-            BooleanVariable("$name[$i]") { values[i] }.also { v ->
-                v.causality(causality)
-                v.variability(variability)
-                v.initial(initial)
-                if (variability != Fmi2Variability.constant) {
-                    v.setter { values[i] = it }
-                }
-            }
-        }
-
-    }
-
-}
-
 class StringVariable(
         name: String,
         val getter: Getter<String>
@@ -293,28 +194,6 @@ class StringVariable(
 
     fun setter(setter: Setter<String>) = apply {
         this.setter = setter
-    }
-
-}
-
-class StringVariables(
-        name: String,
-        private val values: StringVector
-) : Variable<StringVariables>(name) {
-
-    internal fun build(): List<StringVariable> {
-
-        return IntRange(0, values.lastIndex).map { i ->
-            StringVariable("$name[$i]") { values[i] }.also { v ->
-                v.causality(causality)
-                v.variability(variability)
-                v.initial(initial)
-                if (variability != Fmi2Variability.constant) {
-                    v.setter { values[i] = it }
-                }
-            }
-        }
-
     }
 
 }

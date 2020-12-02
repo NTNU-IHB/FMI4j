@@ -64,10 +64,16 @@ class Demo {
 )
 public class JavaSlave extends Fmi2Slave {
     
+    @ScalarVariable
     private int intOut = 99;
+    @ScalarVariable
     private double realOut = 2.0;
+    @ScalarVariable
     private double[] realsOut = {50.0, 200.0};
+    @ScalarVariable
     private String[] string = {"Hello", "world!"};
+    
+    private ComplexObject obj = ComplexObject();
     
     public JavaSlave(Map<String, Object> args) {
         super(args);
@@ -75,14 +81,10 @@ public class JavaSlave extends Fmi2Slave {
 
     @Override
     protected void registerVariables() {
-        register(integer("intOut", () -> intOut)
+        register(integer("complexInt", () -> obj.integer)
                 .causality(Fmi2Causality.output));
-        register(real("realOut", () -> realOut)
+        register(real("complexReal", () -> obj.real)
                 .causality(Fmi2Causality.output));
-        register(real("realsOut", realsOut)
-                .causality(Fmi2Causality.output));
-        register(string("string", string)
-                .causality(Fmi2Causality.local));
     }
 
     @Override

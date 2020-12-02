@@ -19,14 +19,19 @@ class JavaTestingFmi2Slave extends Fmi2Slave {
 
     private static final Logger LOG = Logger.getLogger(JavaTestingFmi2Slave.class.getName());
 
-    protected double realIn = 2.0;
+    @ScalarVariable(causality = Fmi2Causality.parameter)
     protected final double[] realsParams = {50.0, 200.0};
+    @ScalarVariable(name = "string", causality = Fmi2Causality.local, initial = Fmi2Initial.exact)
     protected final String[] stringParams = {"Hello", "world!"};
+    @ScalarVariable(causality = Fmi2Causality.local)
     protected final Vector3 vector3 = new Vector3(1, 2, 3);
-    protected final Container container = new Container();
-
-    private double aParameter = 123;
+    @ScalarVariable(causality = Fmi2Causality.parameter, variability = Fmi2Variability.constant)
     private final int someParameter = 30;
+    protected final Container container = new Container();
+    @ScalarVariable(causality = Fmi2Causality.input)
+    protected double realIn = 2.0;
+    @ScalarVariable(causality = Fmi2Causality.parameter, variability = Fmi2Variability.tunable)
+    private double aParameter = 123;
 
     public JavaTestingFmi2Slave(@NotNull Map<String, Object> args) {
         super(args);
@@ -34,27 +39,9 @@ class JavaTestingFmi2Slave extends Fmi2Slave {
 
     @Override
     protected void registerVariables() {
-
-        register(real("realIn", () -> realIn)
-                .causality(Fmi2Causality.input)
-                .setter((value) -> realIn = value));
-        register(real("realsParams", realsParams)
-                .causality(Fmi2Causality.parameter));
-        register(string("string", stringParams)
-                .causality(Fmi2Causality.local)
-                .initial(Fmi2Initial.exact));
-        register(real("vector3", vector3)
-                .causality(Fmi2Causality.local));
         register(real("container.speed", () -> container.speed)
                 .setter((value) -> container.speed = value)
                 .causality(Fmi2Causality.local));
-        register(real("aParameter", () -> aParameter)
-                .setter((value) -> aParameter = value)
-                .causality(Fmi2Causality.parameter)
-                .variability(Fmi2Variability.tunable));
-        register(integer("someParameter", () -> someParameter)
-                .causality(Fmi2Causality.local)
-                .variability(Fmi2Variability.constant));
     }
 
     @Override

@@ -53,10 +53,10 @@ abstract class Fmi1LibraryWrapper<E : Fmi1Library>(
         get() = library.getVersion()
 
     fun terminate(): FmiStatus {
-        if (isTerminated) {
-            return FmiStatus.OK
+        return if (isTerminated) {
+            FmiStatus.OK
         } else {
-            return try {
+            try {
                 updateStatus(library.terminate(c))
             } catch (ex: Error) {
                 LOG.error("Error caught on fmi2Terminate: ${ex.javaClass.simpleName}")
@@ -138,6 +138,15 @@ abstract class Fmi1LibraryWrapper<E : Fmi1Library>(
         return updateStatus(library.getBoolean(c, vr, ref))
     }
 
+    override fun readAll(
+            intVr: ValueReferences?, intRefs: IntArray?,
+            realVr: ValueReferences?, realRefs: DoubleArray?,
+            strVr: ValueReferences?, strRefs: StringArray?,
+            boolVr: ValueReferences?, boolRefs: BooleanArray?): FmiStatus {
+        return updateStatus(library.getAllVariables(c, intVr, intRefs, realVr, realRefs, strVr, strRefs, boolVr, boolRefs))
+    }
+
+
     @Synchronized
     fun writeInteger(valueReference: ValueReference, ref: Int): FmiStatus {
         return with(buffers) {
@@ -192,6 +201,13 @@ abstract class Fmi1LibraryWrapper<E : Fmi1Library>(
 
     override fun writeBoolean(vr: ValueReferences, value: BooleanArray): FmiStatus {
         return updateStatus(library.setBoolean(c, vr, value))
+    }
+
+    override fun writeAll(intVr: ValueReferences?, intValues: IntArray?,
+                          realVr: ValueReferences?, realValues: DoubleArray?,
+                          strVr: ValueReferences?, strValues: StringArray?,
+                          boolVr: ValueReferences?, boolValues: BooleanArray?): FmiStatus {
+        return updateStatus(library.setAllVariables(c, intVr, intValues, realVr, realValues, strVr, strValues, boolVr, boolValues))
     }
 
     private companion object {

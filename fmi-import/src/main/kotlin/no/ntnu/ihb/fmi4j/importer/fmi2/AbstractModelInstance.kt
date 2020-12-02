@@ -118,9 +118,6 @@ abstract class AbstractModelInstance<out E : CommonModelDescription, out T : Fmi
 
     /**
      * Terminates the FMU
-     *
-     * @param freeInstance true if you are completely finished with the fmuInstance
-     *
      */
     override fun terminate(): Boolean {
         if (isTerminated) return false
@@ -146,9 +143,6 @@ abstract class AbstractModelInstance<out E : CommonModelDescription, out T : Fmi
         }
     }
 
-    /**
-     * @see Fmi2Library.getFMUstate
-     */
     override fun getFMUstate(): FmuState {
         if (!modelDescription.attributes.canGetAndSetFMUstate) {
             throw UnsupportedOperationException("Method call not allowed, FMU cannot get and set FMU state!")
@@ -156,9 +150,6 @@ abstract class AbstractModelInstance<out E : CommonModelDescription, out T : Fmi
         return wrapper.getFMUState()
     }
 
-    /**
-     * @see Fmi2Library.setFMUstate
-     */
     override fun setFMUstate(state: FmuState): Boolean {
         if (!modelDescription.attributes.canGetAndSetFMUstate) {
             throw UnsupportedOperationException("Method call not allowed, FMU '${modelDescription.modelName}' cannot get and set FMU state!")
@@ -166,9 +157,6 @@ abstract class AbstractModelInstance<out E : CommonModelDescription, out T : Fmi
         return wrapper.setFMUState(state).isOK()
     }
 
-    /**
-     * @see Fmi2Library.freeFMUstate
-     */
     override fun freeFMUstate(state: FmuState): Boolean {
         if (!modelDescription.attributes.canGetAndSetFMUstate) {
             throw UnsupportedOperationException("Method call not allowed, FMU '${modelDescription.modelName}' cannot get and set FMU state!")
@@ -176,9 +164,6 @@ abstract class AbstractModelInstance<out E : CommonModelDescription, out T : Fmi
         return wrapper.freeFMUState(state).isOK()
     }
 
-    /**
-     * @see Fmi2Library.serializedFMUstateSize
-     */
     fun serializedFMUstateSize(fmuState: FmuState): Int {
         if (!modelDescription.attributes.canSerializeFMUstate) {
             throw UnsupportedOperationException("Method call not allowed, FMU '${modelDescription.modelName}' cannot serialize/deserialize FMU state!")
@@ -186,9 +171,6 @@ abstract class AbstractModelInstance<out E : CommonModelDescription, out T : Fmi
         return wrapper.serializedFMUStateSize(fmuState)
     }
 
-    /**
-     * @see Fmi2Library.serializeFMUstate
-     */
     override fun serializeFMUstate(state: FmuState): ByteArray {
         if (!modelDescription.attributes.canSerializeFMUstate) {
             throw UnsupportedOperationException("Method call not allowed, FMU '${modelDescription.modelName}' cannot serialize/deserialize FMU state!")
@@ -196,9 +178,6 @@ abstract class AbstractModelInstance<out E : CommonModelDescription, out T : Fmi
         return wrapper.serializeFMUState(state)
     }
 
-    /**
-     * @see Fmi2Library.deSerializeFMUstate
-     */
     override fun deSerializeFMUstate(state: ByteArray): FmuState {
         if (!modelDescription.attributes.canSerializeFMUstate) {
             throw UnsupportedOperationException("Method call not allowed, FMU '${modelDescription.modelName}' cannot serialize/deserialize FMU state!")
@@ -226,6 +205,10 @@ abstract class AbstractModelInstance<out E : CommonModelDescription, out T : Fmi
         return wrapper.readBoolean(vr, ref)
     }
 
+    override fun readAll(intVr: ValueReferences?, intRefs: IntArray?, realVr: ValueReferences?, realRefs: DoubleArray?, strVr: ValueReferences?, strRefs: StringArray?, boolVr: ValueReferences?, boolRefs: BooleanArray?): FmiStatus {
+        return wrapper.readAll(intVr, intRefs, realVr, realRefs, strVr, strRefs, boolVr, boolRefs)
+    }
+
     override fun writeInteger(vr: ValueReferences, value: IntArray): FmiStatus {
         return wrapper.writeInteger(vr, value)
     }
@@ -245,6 +228,11 @@ abstract class AbstractModelInstance<out E : CommonModelDescription, out T : Fmi
     override fun writeBoolean(vr: ValueReferences, value: BooleanArray): FmiStatus {
         return wrapper.writeBoolean(vr, value)
     }
+
+    override fun writeAll(intVr: ValueReferences?, intValues: IntArray?, realVr: ValueReferences?, realValues: DoubleArray?, strVr: ValueReferences?, strValues: StringArray?, boolVr: ValueReferences?, boolValues: BooleanArray?): FmiStatus {
+        return wrapper.writeAll(intVr, intValues, realVr, realValues, strVr, strValues, boolVr, boolValues)
+    }
+
 
     private companion object {
         private val LOG: Logger = LoggerFactory.getLogger(AbstractModelInstance::class.java)

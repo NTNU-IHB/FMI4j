@@ -4,9 +4,6 @@ interface ScalarVector {
     val size: Int
 }
 
-val ScalarVector.lastIndex: Int
-    get() = size - 1
-
 interface IntVector : ScalarVector {
     operator fun get(index: Int): Int
     operator fun set(index: Int, value: Int)
