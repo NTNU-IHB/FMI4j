@@ -15,8 +15,8 @@ import java.nio.ByteBuffer
  * @author Lars Ivar Hatledal
  */
 abstract class Fmi2LibraryWrapper<E : Fmi2Library>(
-        protected var c: Long,
-        library: E
+    protected var c: Long,
+    library: E
 ) : VariableAccessor {
 
     private val buffers: ArrayBuffers by lazy {
@@ -313,14 +313,10 @@ abstract class Fmi2LibraryWrapper<E : Fmi2Library>(
         return updateStatus(
             library.setAll(
                 c,
-                intVr,
-                intValues,
-                realVr,
-                realValues,
-                boolVr,
-                boolValues,
-                strVr,
-                strValues
+                intVr, intValues,
+                realVr, realValues,
+                boolVr, boolValues,
+                strVr, strValues
             )
         )
     }
@@ -329,10 +325,14 @@ abstract class Fmi2LibraryWrapper<E : Fmi2Library>(
      * @see Fmi2Library.getDirectionalDerivative
      */
     fun getDirectionalDerivative(
-            vUnknown_ref: ValueReferences, vKnown_ref: ValueReferences,
-            dvKnown: DoubleArray, dvUnknown: DoubleArray): FmiStatus {
-        return updateStatus(library.getDirectionalDerivative(c,
-                vUnknown_ref, vKnown_ref, dvKnown, dvUnknown))
+        vUnknown_ref: ValueReferences, vKnown_ref: ValueReferences,
+        dvKnown: DoubleArray, dvUnknown: DoubleArray
+    ): FmiStatus {
+        return updateStatus(
+            library.getDirectionalDerivative(
+                c, vUnknown_ref, vKnown_ref, dvKnown, dvUnknown
+            )
+        )
     }
 
     /**

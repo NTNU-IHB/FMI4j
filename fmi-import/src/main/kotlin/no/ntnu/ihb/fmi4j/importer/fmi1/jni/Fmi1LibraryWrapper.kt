@@ -13,8 +13,8 @@ import java.nio.ByteBuffer
  * @author Lars Ivar Hatledal
  */
 abstract class Fmi1LibraryWrapper<E : Fmi1Library>(
-        protected var c: Long,
-        library: E
+    protected var c: Long,
+    library: E
 ) : VariableAccessor {
 
     private val buffers: ArrayBuffers by lazy {
@@ -213,14 +213,10 @@ abstract class Fmi1LibraryWrapper<E : Fmi1Library>(
         return updateStatus(
             library.setAll(
                 c,
-                intVr,
-                intValues,
-                realVr,
-                realValues,
-                boolVr,
-                boolValues,
-                strVr,
-                strValues
+                intVr, intValues,
+                realVr, realValues,
+                boolVr, boolValues,
+                strVr, strValues
             )
         )
     }
