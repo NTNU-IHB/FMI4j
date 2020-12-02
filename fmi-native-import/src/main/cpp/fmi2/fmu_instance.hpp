@@ -84,13 +84,15 @@ public:
 
     fmi2GetIntegerTYPE* fmi2GetInteger_;
     fmi2GetRealTYPE* fmi2GetReal_;
-    fmi2GetStringTYPE* fmi2GetString_;
     fmi2GetBooleanTYPE* fmi2GetBoolean_;
+    fmi2GetStringTYPE* fmi2GetString_;
+    fmi2GetAllTYPE* fmi2GetAllType_;
 
     fmi2SetIntegerTYPE* fmi2SetInteger_;
     fmi2SetRealTYPE* fmi2SetReal_;
-    fmi2SetStringTYPE* fmi2SetString_;
     fmi2SetBooleanTYPE* fmi2SetBoolean_;
+    fmi2SetStringTYPE* fmi2SetString_;
+    fmi2SetAllTYPE* fmi2SetAllType_;
 
     fmi2GetFMUstateTYPE* fmi2GetFMUstate_;
     fmi2SetFMUstateTYPE* fmi2SetFMUstate_;
@@ -146,13 +148,15 @@ public:
 
         fmi2GetInteger_ = load_function<fmi2GetIntegerTYPE*>(handle_, "fmi2GetInteger");
         fmi2GetReal_ = load_function<fmi2GetRealTYPE*>(handle_, "fmi2GetReal");
-        fmi2GetString_ = load_function<fmi2GetStringTYPE*>(handle_, "fmi2GetString");
         fmi2GetBoolean_ = load_function<fmi2GetBooleanTYPE*>(handle_, "fmi2GetBoolean");
+        fmi2GetString_ = load_function<fmi2GetStringTYPE*>(handle_, "fmi2GetString");
+        fmi2GetAllType_ = load_function<fmi2GetAllTYPE*>(handle_, "fmi2SetAll");
 
         fmi2SetInteger_ = load_function<fmi2SetIntegerTYPE*>(handle_, "fmi2SetInteger");
         fmi2SetReal_ = load_function<fmi2SetRealTYPE*>(handle_, "fmi2SetReal");
-        fmi2SetString_ = load_function<fmi2SetStringTYPE*>(handle_, "fmi2SetString");
         fmi2SetBoolean_ = load_function<fmi2SetBooleanTYPE*>(handle_, "fmi2SetBoolean");
+        fmi2SetString_ = load_function<fmi2SetStringTYPE*>(handle_, "fmi2SetString");
+        fmi2SetAllType_ = load_function<fmi2SetAllTYPE*>(handle_, "fmi2SetAll");
 
         fmi2GetFMUstate_ = load_function<fmi2GetFMUstateTYPE*>(handle_, "fmi2GetFMUstate");
         fmi2SetFMUstate_ = load_function<fmi2SetFMUstateTYPE*>(handle_, "fmi2SetFMUstate");

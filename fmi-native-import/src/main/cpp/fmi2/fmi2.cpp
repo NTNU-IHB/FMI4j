@@ -397,24 +397,31 @@ JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi2_jni_Fmi2Library_setB
 
 JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi2_jni_Fmi2Library_setAllVariables(JNIEnv* env, jobject obj, jlong p, jlong c, jlongArray intVr, jintArray intValues, jlongArray realVr, jdoubleArray realValues, jlongArray strVr, jobjectArray strValues, jlongArray boolVr, jbooleanArray boolValues)
 {
-    jint intStatus = JNI_TRUE;
-    if (intVr != nullptr) {
-        intStatus = Java_no_ntnu_ihb_fmi4j_importer_fmi2_jni_Fmi2Library_setInteger(env, obj, p, c, intVr, intValues);
-    }
-    jint realStatus = JNI_TRUE;
-    if (realVr != nullptr) {
-        realStatus = Java_no_ntnu_ihb_fmi4j_importer_fmi2_jni_Fmi2Library_setReal(env, obj, p, c, realVr, realValues);
-    }
-    jint strStatus = JNI_TRUE;
-    if (strVr != nullptr) {
-        strStatus = Java_no_ntnu_ihb_fmi4j_importer_fmi2_jni_Fmi2Library_setString(env, obj, p, c, strVr, strValues);
-    }
-    jint boolStatus = JNI_TRUE;
-    if (boolVr != nullptr) {
-        boolStatus = Java_no_ntnu_ihb_fmi4j_importer_fmi2_jni_Fmi2Library_setBoolean(env, obj, p, c, boolVr, boolValues);
-    }
+    auto fmu = reinterpret_cast<FmuInstance*>(p);
 
-    return (intStatus + realStatus + strStatus + boolStatus == 4) ? JNI_TRUE : JNI_FALSE;
+    fmi2SetAllTYPE* fmi2SetAll = fmu->fmi2SetAllType_;
+    if (fmi2SetAll != nullptr) {
+
+    } else {
+        jint intStatus = JNI_TRUE;
+        if (intVr != nullptr) {
+            intStatus = Java_no_ntnu_ihb_fmi4j_importer_fmi2_jni_Fmi2Library_setInteger(env, obj, p, c, intVr, intValues);
+        }
+        jint realStatus = JNI_TRUE;
+        if (realVr != nullptr) {
+            realStatus = Java_no_ntnu_ihb_fmi4j_importer_fmi2_jni_Fmi2Library_setReal(env, obj, p, c, realVr, realValues);
+        }
+        jint strStatus = JNI_TRUE;
+        if (strVr != nullptr) {
+            strStatus = Java_no_ntnu_ihb_fmi4j_importer_fmi2_jni_Fmi2Library_setString(env, obj, p, c, strVr, strValues);
+        }
+        jint boolStatus = JNI_TRUE;
+        if (boolVr != nullptr) {
+            boolStatus = Java_no_ntnu_ihb_fmi4j_importer_fmi2_jni_Fmi2Library_setBoolean(env, obj, p, c, boolVr, boolValues);
+        }
+
+        return (intStatus + realStatus + strStatus + boolStatus == 4) ? JNI_TRUE : JNI_FALSE;
+    }
 }
 
 
