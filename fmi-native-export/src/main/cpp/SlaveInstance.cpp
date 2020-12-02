@@ -62,7 +62,7 @@ SlaveInstance::SlaveInstance(
 
     jclass bulkCls = FindClass(env, classLoader_, "no.ntnu.ihb.fmi4j.export.BulkRead");
     bulkIntValuesId_ = GetMethodID(env, bulkCls, "getIntValues", "()[I");
-    bulkStrValuesId_ = GetMethodID(env, bulkCls, "getRealValues", "()[D");
+    bulkRealValuesId_ = GetMethodID(env, bulkCls, "getRealValues", "()[D");
     bulkBoolValuesId_ = GetMethodID(env, bulkCls, "getBoolValues", "()[Z");
     bulkStrValuesId_ = GetMethodID(env, bulkCls, "getStrValues", "()[Ljava/lang/String;");
 
@@ -431,15 +431,11 @@ void SlaveInstance::GetAll(
         env->SetLongArrayRegion(strVrArray, 0, nStrvr, strVrArrayElements);
 
         jobject read = env->CallObjectMethod(slaveInstance_, getAllId_, intVrArray, realVrArray, boolVrArray, strVrArray);
-        std::cout << "retrn" << std::endl;
         auto intValueArray = reinterpret_cast<jintArray>(env->CallObjectMethod(read, bulkIntValuesId_));
-        std::cout << "crash1" << std::endl;
         auto realValueArray = reinterpret_cast<jdoubleArray>(env->CallObjectMethod(read, bulkRealValuesId_));
-        std::cout << "crash2" << std::endl;
         auto boolValueArray = reinterpret_cast<jbooleanArray>(env->CallObjectMethod(read, bulkBoolValuesId_));
-        std::cout << "crash3" << std::endl;
         auto strValueArray = reinterpret_cast<jobjectArray>(env->CallObjectMethod(read, bulkStrValuesId_));
-        std::cout << "not ok" << std::endl;
+
         auto intArrayElements = env->GetIntArrayElements(intValueArray, nullptr);
         for (auto i = 0; i < nIntvr; i++) {
             intValue[i] = static_cast<fmi2Integer>(intArrayElements[i]);

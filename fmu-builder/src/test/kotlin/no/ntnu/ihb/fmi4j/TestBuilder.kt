@@ -94,8 +94,7 @@ internal class TestBuilder {
                     null, null
                 )
                 Assertions.assertEquals(10.0, ref.first())
-
-                println(ref.toList())
+                Assertions.assertEquals(true, slave.readBoolean("getAllInvoked").value)
 
             }
         }
