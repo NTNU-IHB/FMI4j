@@ -84,10 +84,10 @@ public:
         std::size_t nvr,
         const FMIString value[]);
     virtual void SetAll(
-        const FMIValueReference intVr[], std::size_t nIntvr, FMIInteger intValue[],
-        const FMIValueReference realVr[], std::size_t nRealvr, FMIReal realValue[],
-        const FMIValueReference boolVr[], std::size_t nBoolvr, FMIBoolean boolValue[],
-        const FMIValueReference strVr[], std::size_t nStrvr, FMIString strValue[]) const;
+        const FMIValueReference intVr[], std::size_t nIntvr, const FMIInteger intValue[],
+        const FMIValueReference realVr[], std::size_t nRealvr, const FMIReal realValue[],
+        const FMIValueReference boolVr[], std::size_t nBoolvr, const FMIBoolean boolValue[],
+        const FMIValueReference strVr[], std::size_t nStrvr, const FMIString strValue[]) const;
 
     /* Called from fmi2GetXxx()/fmiGetXxx().
      * Throws std::logic_error by default.

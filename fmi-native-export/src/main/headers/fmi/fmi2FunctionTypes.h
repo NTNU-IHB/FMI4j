@@ -183,10 +183,10 @@ typedef fmi2Status fmi2GetIntegerTYPE(fmi2Component, const fmi2ValueReference[],
 typedef fmi2Status fmi2GetBooleanTYPE(fmi2Component, const fmi2ValueReference[], size_t, fmi2Boolean[]);
 typedef fmi2Status fmi2GetStringTYPE(fmi2Component, const fmi2ValueReference[], size_t, fmi2String[]);
 typedef fmi2Status fmi2GetAllTYPE(fmi2Component,
-    const fmi2ValueReference[], size_t, const fmi2Integer[],
-    const fmi2ValueReference[], size_t, const fmi2Real[],
-    const fmi2ValueReference[], size_t, const fmi2Boolean[],
-    const fmi2ValueReference[], size_t, const fmi2String[]);
+    const fmi2ValueReference[], size_t, fmi2Integer[],
+    const fmi2ValueReference[], size_t, fmi2Real[],
+    const fmi2ValueReference[], size_t, fmi2Boolean[],
+    const fmi2ValueReference[], size_t, fmi2String[]);
 
 typedef fmi2Status fmi2SetRealTYPE(fmi2Component, const fmi2ValueReference[], size_t, const fmi2Real[]);
 typedef fmi2Status fmi2SetIntegerTYPE(fmi2Component, const fmi2ValueReference[], size_t, const fmi2Integer[]);

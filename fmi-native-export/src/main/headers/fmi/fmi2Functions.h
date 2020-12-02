@@ -271,11 +271,13 @@ Common Functions
    FMI2_Export fmi2GetIntegerTYPE fmi2GetInteger;
    FMI2_Export fmi2GetBooleanTYPE fmi2GetBoolean;
    FMI2_Export fmi2GetStringTYPE  fmi2GetString;
+   FMI2_Export fmi2GetAllTYPE     fmi2GetAll;
 
    FMI2_Export fmi2SetRealTYPE    fmi2SetReal;
    FMI2_Export fmi2SetIntegerTYPE fmi2SetInteger;
    FMI2_Export fmi2SetBooleanTYPE fmi2SetBoolean;
    FMI2_Export fmi2SetStringTYPE  fmi2SetString;
+   FMI2_Export fmi2SetAllTYPE     fmi2SetAll;
 
 /* Getting and setting the internal FMU state */
    FMI2_Export fmi2GetFMUstateTYPE            fmi2GetFMUstate;

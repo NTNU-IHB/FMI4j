@@ -295,9 +295,7 @@ JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi2_jni_Fmi2Library_getA
 {
     auto fmu = reinterpret_cast<FmuInstance*>(p);
 
-    std::cout << "" << std::endl;
-
-    fmi2GetAllTYPE* fmi2GetAll = fmu->fmi2GetAllType_;
+    fmi2GetAllTYPE* fmi2GetAll = fmu->fmi2GetAll_;
     std::cout << (fmi2GetAll != nullptr) << std::endl;
     if (fmi2GetAll != nullptr) {
 
@@ -498,7 +496,7 @@ JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi2_jni_Fmi2Library_setA
 {
     auto fmu = reinterpret_cast<FmuInstance*>(p);
 
-    fmi2SetAllTYPE* fmi2SetAll = fmu->fmi2SetAllType_;
+    fmi2SetAllTYPE* fmi2SetAll = fmu->fmi2SetAll_;
     if (fmi2SetAll != nullptr) {
 
         jlong* _intVr = env->GetLongArrayElements(intVr, nullptr);

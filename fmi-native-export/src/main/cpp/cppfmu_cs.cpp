@@ -94,10 +94,10 @@ void SlaveInstance::SetString(
 }
 
 void SlaveInstance::SetAll(
-    const FMIValueReference* intVr, std::size_t nIntvr, FMIInteger* intValue,
-    const FMIValueReference* realVr, std::size_t nRealvr, FMIReal* realValue,
-    const FMIValueReference* boolVr, std::size_t nBoolvr, FMIBoolean* boolValue,
-    const FMIValueReference* strVr, std::size_t nStrvr, FMIString* strValue) const
+    const FMIValueReference[], std::size_t nIntvr, const FMIInteger[],
+    const FMIValueReference[], std::size_t realVr, const FMIReal[],
+    const FMIValueReference[], std::size_t boolVr, const FMIBoolean[],
+    const FMIValueReference[], std::size_t strVr, const FMIString[]) const
 {
 }
 
@@ -147,10 +147,10 @@ void SlaveInstance::GetString(
 
 
 void SlaveInstance::GetAll(
-    const FMIValueReference* intVr, std::size_t nIntvr, FMIInteger* intValue,
-    const FMIValueReference* realVr, std::size_t nRealvr, FMIReal* realValue,
-    const FMIValueReference* boolVr, std::size_t nBoolvr, FMIBoolean* boolValue,
-    const FMIValueReference* strVr, std::size_t nStrvr, FMIString* strValue) const
+    const FMIValueReference[], std::size_t, FMIInteger[],
+    const FMIValueReference[], std::size_t, FMIReal[],
+    const FMIValueReference[], std::size_t, FMIBoolean[],
+    const FMIValueReference[], std::size_t, FMIString[]) const
 {
 }
 
