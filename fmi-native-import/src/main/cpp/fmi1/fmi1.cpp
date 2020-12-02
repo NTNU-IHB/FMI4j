@@ -182,14 +182,13 @@ JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi1_jni_Fmi1Library_getA
     jlongArray boolVr, jint nBoolvr, jbooleanArray boolRef,
     jlongArray strVr, jint nStrvr, jobjectArray strRef)
 {
-    jint intStatus = Java_no_ntnu_ihb_fmi4j_importer_fmi1_jni_Fmi1Library_getInteger
-            (env, obj, p, c, intVr, nIntvr, intRef);
+    jint intStatus = Java_no_ntnu_ihb_fmi4j_importer_fmi1_jni_Fmi1Library_getInteger(env, obj, p, c, intVr, nIntvr, intRef);
     jint realStatus = Java_no_ntnu_ihb_fmi4j_importer_fmi1_jni_Fmi1Library_getReal(
-            env, obj, p, c, realVr, nRealvr, realRef);
+        env, obj, p, c, realVr, nRealvr, realRef);
     jint boolStatus = Java_no_ntnu_ihb_fmi4j_importer_fmi1_jni_Fmi1Library_getBoolean(
-            env, obj, p, c, boolVr, nBoolvr, boolRef);
+        env, obj, p, c, boolVr, nBoolvr, boolRef);
     jint strStatus = Java_no_ntnu_ihb_fmi4j_importer_fmi1_jni_Fmi1Library_getString(
-            env, obj, p, c, strVr, nStrvr, strRef);
+        env, obj, p, c, strVr, nStrvr, strRef);
 
     return (intStatus + realStatus + boolStatus + strStatus == 4) ? JNI_TRUE : JNI_FALSE;
 }
@@ -319,13 +318,13 @@ JNIEXPORT jint JNICALL Java_no_ntnu_ihb_fmi4j_importer_fmi1_jni_Fmi1Library_setA
     jlongArray strVr, jint nStrvr, jobjectArray strValues)
 {
     jint intStatus = Java_no_ntnu_ihb_fmi4j_importer_fmi1_jni_Fmi1Library_setInteger(
-            env, obj, p, c, intVr, nIntvr, intValues);
+        env, obj, p, c, intVr, nIntvr, intValues);
     jint realStatus = Java_no_ntnu_ihb_fmi4j_importer_fmi1_jni_Fmi1Library_setReal(
-            env, obj, p, c, realVr, nRealvr, realValues);
+        env, obj, p, c, realVr, nRealvr, realValues);
     jint boolStatus = Java_no_ntnu_ihb_fmi4j_importer_fmi1_jni_Fmi1Library_setBoolean(
-            env, obj, p, c, boolVr, nBoolVr, boolValues);
+        env, obj, p, c, boolVr, nBoolVr, boolValues);
     jint strStatus = Java_no_ntnu_ihb_fmi4j_importer_fmi1_jni_Fmi1Library_setString(
-            env, obj, p, c, strVr, nStrvr, strValues);
+        env, obj, p, c, strVr, nStrvr, strValues);
 
     return (intStatus + realStatus + boolStatus + strStatus == 4) ? JNI_TRUE : JNI_FALSE;
 }

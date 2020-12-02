@@ -76,7 +76,8 @@ internal class TestBuilder {
 
         Fmu.from(fmuFile).asCoSimulationFmu().use { fmu ->
 
-            val modelIdentifier = fmu.modelDescription.attributes.modelIdentifier
+            val md = fmu.modelDescription
+            val modelIdentifier = md.attributes.modelIdentifier
             List(2) { i -> fmu.newInstance("${modelIdentifier}_$i") }.forEach { slave ->
                 Assertions.assertTrue(slave.simpleSetup())
                 Assertions.assertEquals(10.0, slave.readReal("speed").value)
@@ -84,6 +85,18 @@ internal class TestBuilder {
                 Assertions.assertEquals(-1.0, slave.readReal("speed").value)
                 slave.reset()
                 Assertions.assertEquals(10.0, slave.readReal("speed").value)
+
+                val ref = DoubleArray(1)
+                slave.readAll(
+                    null, null,
+                    longArrayOf(md.getValueReference("speed")), ref,
+                    null, null,
+                    null, null
+                )
+                Assertions.assertEquals(10.0, ref.first())
+
+                println(ref.toList())
+
             }
         }
 

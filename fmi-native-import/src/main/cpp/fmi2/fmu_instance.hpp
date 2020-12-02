@@ -150,7 +150,7 @@ public:
         fmi2GetReal_ = load_function<fmi2GetRealTYPE*>(handle_, "fmi2GetReal");
         fmi2GetBoolean_ = load_function<fmi2GetBooleanTYPE*>(handle_, "fmi2GetBoolean");
         fmi2GetString_ = load_function<fmi2GetStringTYPE*>(handle_, "fmi2GetString");
-        fmi2GetAllType_ = load_function<fmi2GetAllTYPE*>(handle_, "fmi2SetAll");
+        fmi2GetAllType_ = load_function<fmi2GetAllTYPE*>(handle_, "fmi2GetAll");
 
         fmi2SetInteger_ = load_function<fmi2SetIntegerTYPE*>(handle_, "fmi2SetInteger");
         fmi2SetReal_ = load_function<fmi2SetRealTYPE*>(handle_, "fmi2SetReal");

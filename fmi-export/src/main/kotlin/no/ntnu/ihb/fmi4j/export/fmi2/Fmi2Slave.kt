@@ -83,36 +83,32 @@ abstract class Fmi2Slave(
         }
     }
 
-    open fun getAll(intVr: LongArray?, realVr: LongArray?, boolVr: LongArray?, strVr: LongArray?): BulkRead {
+    open fun getAll(intVr: LongArray, realVr: LongArray, boolVr: LongArray, strVr: LongArray): BulkRead {
         return BulkRead(
-            intVr?.let { getInteger(it) },
-            realVr?.let { getReal(it) },
-            boolVr?.let { getBoolean(it) },
-            strVr?.let { getString(it) }
+            getInteger(intVr),
+            getReal(realVr),
+            getBoolean(boolVr),
+            getString(strVr)
         )
     }
 
     open fun setAll(
-        intVr: LongArray?,
-        intValues: IntArray?,
-        realVr: LongArray?,
-        realValues: DoubleArray?,
-        boolVr: LongArray?,
-        boolValues: BooleanArray?,
-        strVr: LongArray?,
-        strValues: Array<String>?
+        intVr: LongArray, intValues: IntArray,
+        realVr: LongArray, realValues: DoubleArray,
+        boolVr: LongArray, boolValues: BooleanArray,
+        strVr: LongArray, strValues: Array<String>
     ) {
 
-        if (intVr != null && intValues != null) {
+        if (intVr.isNotEmpty()) {
             setInteger(intVr, intValues)
         }
-        if (realVr != null && realValues != null) {
+        if (realVr.isNotEmpty()) {
             setReal(realVr, realValues)
         }
-        if (boolVr != null && boolValues != null) {
+        if (boolVr.isNotEmpty()) {
             setBoolean(boolVr, boolValues)
         }
-        if (strVr != null && strValues != null) {
+        if (strVr.isNotEmpty()) {
             setString(strVr, strValues)
         }
 
@@ -124,10 +120,7 @@ abstract class Fmi2Slave(
                 setter?.set(values[i]) ?: LOG.warning(
                     "Trying to set value of " +
                             "${
-                                getVariableName(
-                                    vr[i],
-                                    Fmi2VariableType.INTEGER
-                                )
+                                getVariableName(vr[i], Fmi2VariableType.INTEGER)
                             } on variable without a specified setter!"
                 )
             }
@@ -151,10 +144,7 @@ abstract class Fmi2Slave(
                 setter?.set(values[i]) ?: LOG.warning(
                     "Trying to set value of " +
                             "${
-                                getVariableName(
-                                    vr[i],
-                                    Fmi2VariableType.BOOLEAN
-                                )
+                                getVariableName(vr[i], Fmi2VariableType.BOOLEAN)
                             } on variable without a specified setter!"
                 )
             }
