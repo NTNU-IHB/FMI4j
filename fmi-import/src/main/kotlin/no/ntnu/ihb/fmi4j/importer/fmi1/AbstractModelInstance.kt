@@ -43,9 +43,9 @@ import java.nio.ByteBuffer
  * @author Lars Ivar Hatledal
  */
 abstract class AbstractModelInstance<out E : CommonModelDescription, out T : Fmi1LibraryWrapper<*>> internal constructor(
-        override val instanceName: String,
-        val wrapper: T,
-        override val modelDescription: E
+    override val instanceName: String,
+    val wrapper: T,
+    override val modelDescription: E
 ) : ModelInstance<E>, DirectAccessor {
 
     val typesPlatform
@@ -170,7 +170,11 @@ abstract class AbstractModelInstance<out E : CommonModelDescription, out T : Fmi
         throw IllegalStateException("Feature not available for FMI 1.0")
     }
 
-    override fun getDirectionalDerivative(vUnknownRef: ValueReferences, vKnownRef: ValueReferences, dvKnown: RealArray): RealArray {
+    override fun getDirectionalDerivative(
+        vUnknownRef: ValueReferences,
+        vKnownRef: ValueReferences,
+        dvKnown: RealArray
+    ): RealArray {
         throw IllegalStateException("Feature not available for FMI 1.0")
     }
 

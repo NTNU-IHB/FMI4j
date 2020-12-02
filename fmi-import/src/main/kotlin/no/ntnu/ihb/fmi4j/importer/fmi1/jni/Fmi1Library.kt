@@ -245,4 +245,3 @@ abstract class Fmi1Library(
     }
 
 }
-

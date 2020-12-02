@@ -98,19 +98,13 @@ open class Fmi2Library(
 
 
     private external fun getInteger(
-        p: Long,
-        c: Fmi2Component,
-        vr: ValueReferences,
-        nvr: Int,
-        ref: IntArray
+        p: Long, c: Fmi2Component,
+        vr: ValueReferences, nvr: Int, ref: IntArray
     ): NativeStatus
 
     private external fun getReal(
-        p: Long,
-        c: Fmi2Component,
-        vr: ValueReferences,
-        nvr: Int,
-        ref: DoubleArray
+        p: Long, c: Fmi2Component,
+        vr: ValueReferences, nvr: Int, ref: DoubleArray
     ): NativeStatus
 
     private external fun getRealDirect(
@@ -119,19 +113,13 @@ open class Fmi2Library(
     ): NativeStatus
 
     private external fun getString(
-        p: Long,
-        c: Fmi2Component,
-        vr: ValueReferences,
-        nvr: Int,
-        ref: Array<String>
+        p: Long, c: Fmi2Component,
+        vr: ValueReferences, nvr: Int, ref: Array<String>
     ): NativeStatus
 
     private external fun getBoolean(
-        p: Long,
-        c: Fmi2Component,
-        vr: ValueReferences,
-        nvr: Int,
-        ref: BooleanArray
+        p: Long, c: Fmi2Component,
+        vr: ValueReferences, nvr: Int, ref: BooleanArray
     ): NativeStatus
 
     private external fun getAll(
@@ -151,19 +139,13 @@ open class Fmi2Library(
     ): NativeStatus
 
     private external fun setString(
-        p: Long,
-        c: Fmi2Component,
-        vr: ValueReferences,
-        nvr: Int,
-        values: Array<String>
+        p: Long, c: Fmi2Component,
+        vr: ValueReferences, nvr: Int, values: Array<String>
     ): NativeStatus
 
     private external fun setBoolean(
-        p: Long,
-        c: Fmi2Component,
-        vr: ValueReferences,
-        nvr: Int,
-        values: BooleanArray
+        p: Long, c: Fmi2Component,
+        vr: ValueReferences, nvr: Int, values: BooleanArray
     ): NativeStatus
 
     private external fun setAll(
@@ -375,4 +357,3 @@ open class Fmi2Library(
     }
 
 }
-

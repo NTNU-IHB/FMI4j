@@ -43,9 +43,9 @@ import java.nio.ByteBuffer
  * @author Lars Ivar Hatledal
  */
 abstract class AbstractModelInstance<out E : CommonModelDescription, out T : Fmi2LibraryWrapper<*>> internal constructor(
-        override val instanceName: String,
-        val wrapper: T,
-        override val modelDescription: E
+    override val instanceName: String,
+    val wrapper: T,
+    override val modelDescription: E
 ) : ModelInstance<E>, DirectAccessor {
 
     val typesPlatform
@@ -77,8 +77,8 @@ abstract class AbstractModelInstance<out E : CommonModelDescription, out T : Fmi
         get() = wrapper.lastStatus
 
 
-    fun setDebugLogging(loggingOn: Boolean, categories: Array<String>): FmiStatus
-            = wrapper.setDebugLogging(loggingOn, categories)
+    fun setDebugLogging(loggingOn: Boolean, categories: Array<String>): FmiStatus =
+        wrapper.setDebugLogging(loggingOn, categories)
 
     /**
      * Call init with provided start and stop
@@ -136,7 +136,11 @@ abstract class AbstractModelInstance<out E : CommonModelDescription, out T : Fmi
         wrapper.freeInstance()
     }
 
-    override fun getDirectionalDerivative(vUnknownRef: ValueReferences, vKnownRef: ValueReferences, dvKnown: RealArray): RealArray {
+    override fun getDirectionalDerivative(
+        vUnknownRef: ValueReferences,
+        vKnownRef: ValueReferences,
+        dvKnown: RealArray
+    ): RealArray {
         check(modelDescription.attributes.providesDirectionalDerivative) { "Illegal call. FMU does not provide directional derivatives!" }
         return RealArray(vUnknownRef.size).also { dvUnknown ->
             wrapper.getDirectionalDerivative(vUnknownRef, vKnownRef, dvKnown, dvUnknown)
