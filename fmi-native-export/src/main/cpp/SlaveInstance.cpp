@@ -261,41 +261,68 @@ void SlaveInstance::SetAll(
     const cppfmu::FMIValueReference* strVr, std::size_t nStrvr, const cppfmu::FMIString* strValue) const
 {
     jvm_invoke(jvm_, [this, intVr, nIntvr, intValue, realVr, nRealvr, realValue, boolVr, nBoolvr, boolValue, strVr, nStrvr, strValue](JNIEnv* env) {
-
         auto intVrArray = env->NewLongArray(nIntvr);
         auto realVrArray = env->NewLongArray(nIntvr);
         auto boolVrArray = env->NewLongArray(nIntvr);
         auto strVrArray = env->NewLongArray(nStrvr);
 
+        auto intValueArray = env->NewIntArray(nIntvr);
+        auto realValueArray = env->NewDoubleArray(nRealvr);
+        auto boolValueArray = env->NewBooleanArray(nBoolvr);
+        auto strValueArray = env->NewObjectArray(nStrvr, env->FindClass("java/lang/String"), nullptr);
+
+        auto intValueArrayElements = reinterpret_cast<jint*>(malloc(sizeof(jint) * nIntvr));
         auto intVrArrayElements = reinterpret_cast<jlong*>(malloc(sizeof(jlong) * nIntvr));
-        for (int i = 0; i < nIntvr; i++) {
+        for (auto i = 0; i < nIntvr; i++) {
             intVrArrayElements[i] = static_cast<jlong>(intVr[i]);
+            intValueArrayElements[i] = static_cast<jint>(intValue[i]);
         }
         env->SetLongArrayRegion(intVrArray, 0, nIntvr, intVrArrayElements);
+        env->SetIntArrayRegion(intValueArray, 0, nIntvr, intValueArrayElements);
 
+        auto realValueArrayElements = reinterpret_cast<jdouble*>(malloc(sizeof(jdouble) * nRealvr));
         auto realVrArrayElements = reinterpret_cast<jlong*>(malloc(sizeof(jlong) * nRealvr));
-        for (int i = 0; i < nRealvr; i++) {
+        for (auto i = 0; i < nRealvr; i++) {
             realVrArrayElements[i] = static_cast<jlong>(realVr[i]);
+            realValueArrayElements[i] = realValue[i];
         }
         env->SetLongArrayRegion(realVrArray, 0, nRealvr, realVrArrayElements);
+        env->SetDoubleArrayRegion(realValueArray, 0, nRealvr, realValueArrayElements);
 
+        auto boolValueArrayElements = reinterpret_cast<jboolean*>(malloc(sizeof(jboolean) * nBoolvr));
         auto boolVrArrayElements = reinterpret_cast<jlong*>(malloc(sizeof(jlong) * nBoolvr));
-        for (int i = 0; i < nBoolvr; i++) {
+        for (auto i = 0; i < nBoolvr; i++) {
             boolVrArrayElements[i] = static_cast<jlong>(boolVr[i]);
+            boolValueArrayElements[i] = static_cast<jboolean>(boolValue[i]);
         }
         env->SetLongArrayRegion(boolVrArray, 0, nBoolvr, boolVrArrayElements);
+        env->SetBooleanArrayRegion(boolValueArray, 0, nBoolvr, boolValueArrayElements);
 
         auto strVrArrayElements = reinterpret_cast<jlong*>(malloc(sizeof(jlong) * nStrvr));
-        for (int i = 0; i < nStrvr; i++) {
+        for (auto i = 0; i < nStrvr; i++) {
             strVrArrayElements[i] = static_cast<jlong>(strVr[i]);
+
+            const char* cStr = strValue[i];
+            jstring jStr = env->NewStringUTF(cStr);
+            jstring_ref ref{
+                cStr = cStr,
+                jStr = jStr};
+            strBuffer.push_back(ref);
+
+            env->SetObjectArrayElement(strValueArray, i, jStr);
         }
         env->SetLongArrayRegion(strVrArray, 0, nStrvr, strVrArrayElements);
+
+        env->CallVoidMethod(slaveInstance_, setAllId_,
+            intVrArray, intValueArray,
+            realVrArray, realValueArray,
+            boolVrArray, boolValueArray,
+            strVrArray, strValueArray);
 
         free(intVrArrayElements);
         free(realVrArrayElements);
         free(boolVrArrayElements);
         free(strVrArrayElements);
-
     });
 }
 
@@ -400,7 +427,6 @@ void SlaveInstance::GetAll(
 {
 
     jvm_invoke(jvm_, [this, intVr, nIntvr, intValue, realVr, nRealvr, realValue, boolVr, nBoolvr, boolValue, strVr, nStrvr, strValue](JNIEnv* env) {
-
         auto intVrArray = env->NewLongArray(nIntvr);
         auto realVrArray = env->NewLongArray(nRealvr);
         auto boolVrArray = env->NewLongArray(nBoolvr);
@@ -471,7 +497,6 @@ void SlaveInstance::GetAll(
         env->ReleaseDoubleArrayElements(realValueArray, realArrayElements, 0);
         env->ReleaseBooleanArrayElements(boolValueArray, boolArrayElements, 0);
     });
-
 }
 
 void SlaveInstance::onClose()

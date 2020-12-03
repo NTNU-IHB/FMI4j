@@ -31,5 +31,8 @@ typealias ValueReferences = LongArray
 typealias RealArray = DoubleArray
 typealias StringArray = Array<String>
 
+fun StringArray(size: Int) = no.ntnu.ihb.fmi4j.modeldescription.StringArray(size) { "" }
+
 fun realArrayOf(vararg elements: Double): RealArray = doubleArrayOf(*elements)
 fun stringArrayOf(vararg elements: String): StringArray = arrayOf(*elements)
+
