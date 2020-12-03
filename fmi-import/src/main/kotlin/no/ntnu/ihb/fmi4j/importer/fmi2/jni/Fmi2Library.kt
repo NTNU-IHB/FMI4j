@@ -131,8 +131,16 @@ open class Fmi2Library(
     ): NativeStatus
 
 
-    private external fun setInteger(p: Long, c: Fmi2Component, vr: ValueReferences, values: IntArray): NativeStatus
-    private external fun setReal(p: Long, c: Fmi2Component, vr: ValueReferences, values: DoubleArray): NativeStatus
+    private external fun setInteger(
+        p: Long, c: Fmi2Component,
+        vr: ValueReferences, nvr: Int, values: IntArray
+    ): NativeStatus
+
+    private external fun setReal(
+        p: Long, c: Fmi2Component,
+        vr: ValueReferences, nvr: Int, values: DoubleArray
+    ): NativeStatus
+
     private external fun setRealDirect(
         p: Long, c: Fmi2Component,
         vr: ByteBuffer, nvr: Int, values: ByteBuffer
@@ -277,11 +285,11 @@ open class Fmi2Library(
 
 
     fun setInteger(c: Fmi2Component, vr: ValueReferences, values: IntArray): FmiStatus {
-        return setInteger(p, c, vr, values).transform()
+        return setInteger(p, c, vr, vr.size, values).transform()
     }
 
     fun setReal(c: Fmi2Component, vr: ValueReferences, values: DoubleArray): FmiStatus {
-        return setReal(p, c, vr, values).transform()
+        return setReal(p, c, vr, vr.size, values).transform()
     }
 
     fun setRealDirect(c: Fmi2Component, vr: ByteBuffer, values: ByteBuffer): FmiStatus {
