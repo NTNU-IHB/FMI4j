@@ -298,6 +298,7 @@ void SlaveInstance::SetAll(
         env->SetLongArrayRegion(boolVrArray, 0, nBoolvr, boolVrArrayElements);
         env->SetBooleanArrayRegion(boolValueArray, 0, nBoolvr, boolValueArrayElements);
 
+        clearStrBuffer(env);
         auto strVrArrayElements = reinterpret_cast<jlong*>(malloc(sizeof(jlong) * nStrvr));
         for (auto i = 0; i < nStrvr; i++) {
             strVrArrayElements[i] = static_cast<jlong>(strVr[i]);
