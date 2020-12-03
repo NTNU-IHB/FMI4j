@@ -23,6 +23,10 @@ internal class TestKotlinFmi2Slave {
             Assertions.assertNotNull(modelVariables.scalarVariable.firstOrNull { it.name == "container.container.value" })
             Assertions.assertEquals("1.0", slave.getString(longArrayOf(slave.getValueRef("str"))).first())
             Assertions.assertEquals(123.0, slave.getReal(longArrayOf(slave.getValueRef("real"))).first())
+
+            slave.setReal(longArrayOf(slave.getValueRef("real")), doubleArrayOf(-99.0))
+            Assertions.assertEquals(-99.0, slave.getReal(longArrayOf(slave.getValueRef("real"))).first())
+
         }
 
     }
