@@ -109,7 +109,7 @@ internal class TestBuilder {
         val vrs = longArrayOf(0)
 
         val intValue = intArrayOf(99)
-        val realvalue = doubleArrayOf(12.3)
+        val realValue = doubleArrayOf(12.3)
         val boolValue = booleanArrayOf(true)
         val strValue = stringArrayOf("Hello identity")
 
@@ -126,7 +126,7 @@ internal class TestBuilder {
 
                 slave.writeAll(
                     vrs, intValue,
-                    vrs, realvalue,
+                    vrs, realValue,
                     vrs, boolValue,
                     vrs, strValue
                 )
@@ -140,7 +140,7 @@ internal class TestBuilder {
                     vrs, strRef
                 )
                 Assertions.assertEquals(intRef.first(), intValue.first())
-                Assertions.assertEquals(realRef.first(), realvalue.first())
+                Assertions.assertEquals(realRef.first(), realValue.first())
                 Assertions.assertEquals(boolRef.first(), boolValue.first())
                 Assertions.assertEquals(strRef.first(), strValue.first())
 
