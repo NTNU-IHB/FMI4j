@@ -9,21 +9,17 @@ open class KotlinTestingFmi2Slave(
 ) : Fmi2Slave(args) {
 
     @ScalarVariable(causality = Fmi2Causality.local)
-    val real = 123.0
+    var real = 123.0
 
+    @ScalarVariable(causality = Fmi2Causality.output)
     lateinit var str: String
+
+    @ScalarVariable(causality = Fmi2Causality.input)
     var start: Double = 5.0
 
     private val container = TestContainer()
 
     override fun registerVariables() {
-
-        register(string("str") { str }
-                .causality(Fmi2Causality.output))
-
-        register(real("start") { start }
-                .causality(Fmi2Causality.input))
-
         register(real("subModel.out") { 99.0 })
         register(real("container.value") { container.value })
         register(integer("container.container.value") { container.container.value })
