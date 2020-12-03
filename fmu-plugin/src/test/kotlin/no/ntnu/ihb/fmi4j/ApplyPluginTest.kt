@@ -37,7 +37,7 @@ internal class ApplyPluginTest {
             writeText("""
                 plugins {
                     id "java-library" 
-                    id "no.ntnu.ihb.fmi4j.fmu-export" version "0.35.0"
+                    id "no.ntnu.ihb.fmi4j.fmu-export" version "0.36.0"
                 }
                 
                 configurations.all {
@@ -71,7 +71,7 @@ internal class ApplyPluginTest {
                 import no.ntnu.ihb.fmi4j.export.fmi2.ScalarVariable;
                 import no.ntnu.ihb.fmi4j.modeldescription.fmi2.Fmi2Causality;
                 
-                import com.google.gson.Gson; //test Gson import
+                import com.google.gson.Gson; //test import of external dependecy
                 
                 public class MySlave extends Fmi2Slave {
 
