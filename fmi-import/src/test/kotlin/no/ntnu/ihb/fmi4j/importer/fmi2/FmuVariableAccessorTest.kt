@@ -6,15 +6,9 @@ import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class FmuVariableAccessorTest {
-
-    companion object {
-        private val LOG: Logger = LoggerFactory.getLogger(FmuVariableAccessorTest::class.java)
-    }
 
     private val fmu = TestFMUs.get("2.0/cs/20sim/4.6.4.8004/ControlledTemperature/ControlledTemperature.fmu").let {
         Fmu.from(it).asCoSimulationFmu()
@@ -35,15 +29,20 @@ class FmuVariableAccessorTest {
             slave.modelVariables.forEach { variable ->
                 when (variable) {
                     is IntegerVariable -> Assertions.assertEquals(
-                            variable.read(slave), slave.readInteger(variable.valueReference))
+                        variable.read(slave), slave.readInteger(variable.valueReference)
+                    )
                     is RealVariable -> Assertions.assertEquals(
-                            variable.read(slave), slave.readReal(variable.valueReference))
+                        variable.read(slave), slave.readReal(variable.valueReference)
+                    )
                     is StringVariable -> Assertions.assertEquals(
-                            variable.read(slave), slave.readString(variable.valueReference))
+                        variable.read(slave), slave.readString(variable.valueReference)
+                    )
                     is BooleanVariable -> Assertions.assertEquals(
-                            variable.read(slave), slave.readBoolean(variable.valueReference))
+                        variable.read(slave), slave.readBoolean(variable.valueReference)
+                    )
                     is EnumerationVariable -> Assertions.assertEquals(
-                            variable.read(slave), slave.readInteger(variable.valueReference))
+                        variable.read(slave), slave.readInteger(variable.valueReference)
+                    )
                 }
             }
 
@@ -61,20 +60,25 @@ class FmuVariableAccessorTest {
             slave.modelVariables.forEach { variable ->
                 when (variable) {
                     is IntegerVariable -> Assertions.assertEquals(
-                            slave.readInteger(variable.valueReference),
-                            slave.readInteger(variable.name))
+                        slave.readInteger(variable.valueReference),
+                        slave.readInteger(variable.name)
+                    )
                     is RealVariable -> Assertions.assertEquals(
-                            slave.readReal(variable.valueReference),
-                            slave.readReal(variable.name))
+                        slave.readReal(variable.valueReference),
+                        slave.readReal(variable.name)
+                    )
                     is StringVariable -> Assertions.assertEquals(
-                            slave.readString(variable.valueReference),
-                            slave.readString(variable.name))
+                        slave.readString(variable.valueReference),
+                        slave.readString(variable.name)
+                    )
                     is BooleanVariable -> Assertions.assertEquals(
-                            slave.readBoolean(variable.valueReference),
-                            slave.readBoolean(variable.name))
+                        slave.readBoolean(variable.valueReference),
+                        slave.readBoolean(variable.name)
+                    )
                     is EnumerationVariable -> Assertions.assertEquals(
-                            slave.readInteger(variable.valueReference),
-                            slave.readInteger(variable.name))
+                        slave.readInteger(variable.valueReference),
+                        slave.readInteger(variable.name)
+                    )
                 }
             }
 

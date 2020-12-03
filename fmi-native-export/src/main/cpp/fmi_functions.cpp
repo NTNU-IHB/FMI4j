@@ -293,6 +293,26 @@ fmi2Status fmi2GetString(
     }
 }
 
+fmi2Status fmi2GetAll(
+    fmi2Component c,
+    const fmi2ValueReference intVr[], size_t nIntvr, fmi2Integer intValue[],
+    const fmi2ValueReference realVr[], size_t nRealvr, fmi2Real realValue[],
+    const fmi2ValueReference boolVr[], size_t nBoolvr, fmi2Boolean boolValue[],
+    const fmi2ValueReference strVr[], size_t nStrvr, fmi2String strValue[])
+{
+    const auto component = reinterpret_cast<Component*>(c);
+    try {
+        component->slave->GetAll(intVr, nIntvr, intValue, realVr, nRealvr, realValue, boolVr, nBoolvr, boolValue, strVr, nStrvr, strValue);
+        return fmi2OK;
+    } catch (const cppfmu::FatalError& e) {
+        component->logger.Log(fmi2Fatal, "", e.what());
+        return fmi2Fatal;
+    } catch (const std::exception& e) {
+        component->logger.Log(fmi2Error, "", e.what());
+        return fmi2Error;
+    }
+}
+
 
 fmi2Status fmi2SetReal(
     fmi2Component c,
@@ -360,6 +380,26 @@ fmi2Status fmi2SetString(
     const auto component = reinterpret_cast<Component*>(c);
     try {
         component->slave->SetString(vr, nvr, value);
+        return fmi2OK;
+    } catch (const cppfmu::FatalError& e) {
+        component->logger.Log(fmi2Fatal, "", e.what());
+        return fmi2Fatal;
+    } catch (const std::exception& e) {
+        component->logger.Log(fmi2Error, "", e.what());
+        return fmi2Error;
+    }
+}
+
+fmi2Status fmi2SetAll(
+    fmi2Component c,
+    const fmi2ValueReference intVr[], size_t nIntvr, const fmi2Integer intValue[],
+    const fmi2ValueReference realVr[], size_t nRealvr, const fmi2Real realValue[],
+    const fmi2ValueReference boolVr[], size_t nBoolvr, const fmi2Boolean boolValue[],
+    const fmi2ValueReference strVr[], size_t nStrvr, const fmi2String strValue[])
+{
+    const auto component = reinterpret_cast<Component*>(c);
+    try {
+        component->slave->SetAll(intVr, nIntvr, intValue, realVr, nRealvr, realValue, boolVr, nBoolvr, boolValue, strVr, nStrvr, strValue);
         return fmi2OK;
     } catch (const cppfmu::FatalError& e) {
         component->logger.Log(fmi2Fatal, "", e.what());

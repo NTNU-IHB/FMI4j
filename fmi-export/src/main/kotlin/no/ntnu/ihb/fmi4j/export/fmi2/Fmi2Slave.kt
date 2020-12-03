@@ -1,9 +1,6 @@
 package no.ntnu.ihb.fmi4j.export.fmi2
 
-import no.ntnu.ihb.fmi4j.export.BooleanVector
-import no.ntnu.ihb.fmi4j.export.IntVector
-import no.ntnu.ihb.fmi4j.export.RealVector
-import no.ntnu.ihb.fmi4j.export.StringVector
+import no.ntnu.ihb.fmi4j.export.*
 import no.ntnu.ihb.fmi4j.modeldescription.fmi2.*
 import java.io.ByteArrayOutputStream
 import java.io.Closeable
@@ -16,12 +13,12 @@ import java.util.*
 import java.util.logging.Logger
 
 abstract class Fmi2Slave(
-        args: Map<String, Any>
+    args: Map<String, Any>
 ) : Closeable {
 
     val modelDescription = Fmi2ModelDescription()
     val instanceName: String = args["instanceName"] as? String
-            ?: throw IllegalStateException("Missing 'instanceName'")
+        ?: throw IllegalStateException("Missing 'instanceName'")
     private val resourceLocation: String? = args["resourceLocation"] as? String
 
     private val intAccessors: MutableList<IntVariable> = mutableListOf()
@@ -44,14 +41,14 @@ abstract class Fmi2Slave(
 
     fun getVariableName(vr: Long, type: Fmi2VariableType): Long {
         return modelDescription.modelVariables.scalarVariable
-                .firstOrNull { it.valueReference == vr && it.type() == type }?.valueReference
-                ?: throw IllegalArgumentException("No such variable with valueReference $vr!")
+            .firstOrNull { it.valueReference == vr && it.type() == type }?.valueReference
+            ?: throw IllegalArgumentException("No such variable with valueReference $vr!")
     }
 
     fun getValueRef(name: String): Long {
         return modelDescription.modelVariables.scalarVariable
-                .firstOrNull { it.name == name }?.valueReference
-                ?: throw IllegalArgumentException("No such variable with name $name!")
+            .firstOrNull { it.name == name }?.valueReference
+            ?: throw IllegalArgumentException("No such variable with name $name!")
     }
 
     open fun setupExperiment(startTime: Double, stopTime: Double, tolerance: Double) {}
@@ -68,27 +65,9 @@ abstract class Fmi2Slave(
         }
     }
 
-    open fun setInteger(vr: LongArray, values: IntArray) {
-        for (i in vr.indices) {
-            intAccessors[vr[i].toInt()].apply {
-                setter?.set(values[i]) ?: LOG.warning("Trying to set value of " +
-                        "${getVariableName(vr[i], Fmi2VariableType.INTEGER)} on variable without a specified setter!")
-            }
-        }
-    }
-
     open fun getReal(vr: LongArray): DoubleArray {
         return DoubleArray(vr.size) { i ->
             realAccessors[vr[i].toInt()].getter.get()
-        }
-    }
-
-    open fun setReal(vr: LongArray, values: DoubleArray) {
-        for (i in vr.indices) {
-            realAccessors[vr[i].toInt()].apply {
-                setter?.set(values[i]) ?: LOG.warning("Trying to set value of " +
-                        "${getVariableName(vr[i], Fmi2VariableType.REAL)} on variable without a specified setter!")
-            }
         }
     }
 
@@ -98,26 +77,87 @@ abstract class Fmi2Slave(
         }
     }
 
-    open fun setBoolean(vr: LongArray, values: BooleanArray) {
-        for (i in vr.indices) {
-            boolAccessors[vr[i].toInt()].apply {
-                setter?.set(values[i]) ?: LOG.warning("Trying to set value of " +
-                        "${getVariableName(vr[i], Fmi2VariableType.BOOLEAN)} on variable without a specified setter!")
-            }
-        }
-    }
-
     open fun getString(vr: LongArray): Array<String> {
         return Array(vr.size) { i ->
             stringAccessors[vr[i].toInt()].getter.get()
         }
     }
 
+    open fun getAll(intVr: LongArray, realVr: LongArray, boolVr: LongArray, strVr: LongArray): BulkRead {
+        return BulkRead(
+            getInteger(intVr),
+            getReal(realVr),
+            getBoolean(boolVr),
+            getString(strVr)
+        )
+    }
+
+    open fun setAll(
+        intVr: LongArray, intValues: IntArray,
+        realVr: LongArray, realValues: DoubleArray,
+        boolVr: LongArray, boolValues: BooleanArray,
+        strVr: LongArray, strValues: Array<String>
+    ) {
+
+        if (intVr.isNotEmpty()) {
+            setInteger(intVr, intValues)
+        }
+        if (realVr.isNotEmpty()) {
+            setReal(realVr, realValues)
+        }
+        if (boolVr.isNotEmpty()) {
+            setBoolean(boolVr, boolValues)
+        }
+        if (strVr.isNotEmpty()) {
+            setString(strVr, strValues)
+        }
+
+    }
+
+    open fun setInteger(vr: LongArray, values: IntArray) {
+        for (i in vr.indices) {
+            intAccessors[vr[i].toInt()].apply {
+                setter?.set(values[i]) ?: LOG.warning(
+                    "Trying to set value of " +
+                            "${
+                                getVariableName(vr[i], Fmi2VariableType.INTEGER)
+                            } on variable without a specified setter!"
+                )
+            }
+        }
+    }
+
+    open fun setReal(vr: LongArray, values: DoubleArray) {
+        for (i in vr.indices) {
+            realAccessors[vr[i].toInt()].apply {
+                setter?.set(values[i]) ?: LOG.warning(
+                    "Trying to set value of " +
+                            "${getVariableName(vr[i], Fmi2VariableType.REAL)} on variable without a specified setter!"
+                )
+            }
+        }
+    }
+
+    open fun setBoolean(vr: LongArray, values: BooleanArray) {
+        for (i in vr.indices) {
+            boolAccessors[vr[i].toInt()].apply {
+                setter?.set(values[i]) ?: LOG.warning(
+                    "Trying to set value of " +
+                            "${
+                                getVariableName(vr[i], Fmi2VariableType.BOOLEAN)
+                            } on variable without a specified setter!"
+                )
+            }
+        }
+    }
+
     open fun setString(vr: LongArray, values: Array<String>) {
         for (i in vr.indices) {
             stringAccessors[vr[i].toInt()].apply {
-                setter?.set(values[i]) ?: LOG.warning("Trying to set value of " +
-                        "${getVariableName(vr[i], Fmi2VariableType.STRING)} on variable without a specified setter!")
+                setter?.set(values[i]) ?: LOG.warning(
+                    "Trying to set value of " +
+                            "${getVariableName(vr[i], Fmi2VariableType.STRING)} on variable without a specified setter!"
+                )
             }
         }
     }
@@ -242,7 +282,7 @@ abstract class Fmi2Slave(
                 }
                 IntArray::class.java -> {
                     val values = field.get(this) as? IntArray
-                            ?: throw IllegalStateException("Field ${field.name} cannot be null!")
+                        ?: throw IllegalStateException("Field ${field.name} cannot be null!")
                     for (index in values.indices) {
                         register(integer("${name}[$index]") { values[index] }.also { iv ->
                             iv.setter { values[index] = it }
@@ -260,7 +300,7 @@ abstract class Fmi2Slave(
                 }
                 DoubleArray::class.java -> {
                     val values = field.get(this) as? DoubleArray
-                            ?: throw IllegalStateException("Field ${field.name} cannot be null!")
+                        ?: throw IllegalStateException("Field ${field.name} cannot be null!")
                     for (index in values.indices) {
                         register(real("${name}[$index]") { values[index] }.also { iv ->
                             iv.setter { values[index] = it }
@@ -278,7 +318,7 @@ abstract class Fmi2Slave(
                 }
                 BooleanArray::class.java -> {
                     val values = field.get(this) as? BooleanArray
-                            ?: throw IllegalStateException("Field ${field.name} cannot be null!")
+                        ?: throw IllegalStateException("Field ${field.name} cannot be null!")
                     for (index in values.indices) {
                         register(boolean("${name}[$index]") { values[index] }.also { iv ->
                             iv.setter { values[index] = it }
@@ -296,7 +336,7 @@ abstract class Fmi2Slave(
                 }
                 Array<String>::class.java -> {
                     val values = field.get(this) as? Array<*>
-                            ?: throw IllegalStateException("Field ${field.name} cannot be null!")
+                        ?: throw IllegalStateException("Field ${field.name} cannot be null!")
                     for (value in values) {
                         require(value?.javaClass == String::class.java)
                     }
@@ -313,7 +353,7 @@ abstract class Fmi2Slave(
                     when {
                         IntVector::class.java.isAssignableFrom(type) -> {
                             val values = field.get(this) as? IntVector
-                                    ?: throw IllegalStateException("Field ${field.name} cannot be null!")
+                                ?: throw IllegalStateException("Field ${field.name} cannot be null!")
                             for (index in 0 until values.size) {
                                 register(integer("${name}[$index]") { values[index] }.also { iv ->
                                     iv.setter { values[index] = it }
@@ -323,7 +363,7 @@ abstract class Fmi2Slave(
                         }
                         RealVector::class.java.isAssignableFrom(type) -> {
                             val values = field.get(this) as? RealVector
-                                    ?: throw IllegalStateException("Field ${field.name} cannot be null!")
+                                ?: throw IllegalStateException("Field ${field.name} cannot be null!")
                             for (index in 0 until values.size) {
                                 register(real("${name}[$index]") { values[index] }.also { iv ->
                                     iv.setter { values[index] = it }
@@ -333,7 +373,7 @@ abstract class Fmi2Slave(
                         }
                         BooleanVector::class.java.isAssignableFrom(type) -> {
                             val values = field.get(this) as? BooleanVector
-                                    ?: throw IllegalStateException("Field ${field.name} cannot be null!")
+                                ?: throw IllegalStateException("Field ${field.name} cannot be null!")
                             for (index in 0 until values.size) {
                                 register(boolean("${name}[$index]") { values[index] }.also { iv ->
                                     iv.setter { values[index] = it }
@@ -343,7 +383,7 @@ abstract class Fmi2Slave(
                         }
                         StringVector::class.java.isAssignableFrom(type) -> {
                             val values = field.get(this) as? StringVector
-                                    ?: throw IllegalStateException("Field ${field.name} cannot be null!")
+                                ?: throw IllegalStateException("Field ${field.name} cannot be null!")
                             for (index in 0 until values.size) {
                                 register(string("${name}[$index]") { values[index] }.also { iv ->
                                     iv.setter { values[index] = it }

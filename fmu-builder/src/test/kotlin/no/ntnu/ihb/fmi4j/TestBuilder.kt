@@ -1,6 +1,8 @@
 package no.ntnu.ihb.fmi4j
 
 import no.ntnu.ihb.fmi4j.importer.fmi2.Fmu
+import no.ntnu.ihb.fmi4j.modeldescription.StringArray
+import no.ntnu.ihb.fmi4j.modeldescription.stringArrayOf
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import java.io.File
@@ -22,11 +24,14 @@ internal class TestBuilder {
 
         val testFile = File(javaClass.classLoader.getResource("TestFile.txt")!!.file)
 
-        FmuBuilder.main(arrayOf(
+        FmuBuilder.main(
+            arrayOf(
                 "-m", "$group.JavaTestFmi2Slave",
                 "-f", jar,
                 "-d", dest,
-                "-r", testFile.absolutePath))
+                "-r", testFile.absolutePath
+            )
+        )
 
         for (i in 0..2) {
 
@@ -60,17 +65,21 @@ internal class TestBuilder {
 
     @Test
     fun testKotlinClass() {
-        FmuBuilder.main(arrayOf(
+        FmuBuilder.main(
+            arrayOf(
                 "-m", "$group.KotlinTestFmi2Slave",
                 "-f", jar,
-                "-d", dest))
+                "-d", dest
+            )
+        )
 
         val fmuFile = File(dest, "KotlinTestFmi2Slave.fmu")
         Assertions.assertTrue(fmuFile.exists())
 
         Fmu.from(fmuFile).asCoSimulationFmu().use { fmu ->
 
-            val modelIdentifier = fmu.modelDescription.attributes.modelIdentifier
+            val md = fmu.modelDescription
+            val modelIdentifier = md.attributes.modelIdentifier
             List(2) { i -> fmu.newInstance("${modelIdentifier}_$i") }.forEach { slave ->
                 Assertions.assertTrue(slave.simpleSetup())
                 Assertions.assertEquals(10.0, slave.readReal("speed").value)
@@ -78,18 +87,79 @@ internal class TestBuilder {
                 Assertions.assertEquals(-1.0, slave.readReal("speed").value)
                 slave.reset()
                 Assertions.assertEquals(10.0, slave.readReal("speed").value)
+                slave.close()
             }
         }
 
     }
 
     @Test
+    fun testGetAndSetAll() {
+        FmuBuilder.main(
+            arrayOf(
+                "-m", "$group.Identity",
+                "-f", jar,
+                "-d", dest
+            )
+        )
+
+        val fmuFile = File(dest, "Identity.fmu")
+        Assertions.assertTrue(fmuFile.exists())
+
+        val vrs = longArrayOf(0)
+
+        val intValue = intArrayOf(99)
+        val realvalue = doubleArrayOf(12.3)
+        val boolValue = booleanArrayOf(true)
+        val strValue = stringArrayOf("Hello identity")
+
+        val intRef = IntArray(1)
+        val realRef = DoubleArray(1)
+        val boolRef = BooleanArray(1)
+        val strRef = StringArray(1)
+
+        Fmu.from(fmuFile).asCoSimulationFmu().use { fmu ->
+
+            fmu.newInstance().use { slave ->
+
+                Assertions.assertTrue(slave.simpleSetup())
+
+                slave.writeAll(
+                    vrs, intValue,
+                    vrs, realvalue,
+                    vrs, boolValue,
+                    vrs, strValue
+                )
+
+                Assertions.assertEquals(true, slave.readBoolean("setAllInvoked").value)
+
+                slave.readAll(
+                    vrs, intRef,
+                    vrs, realRef,
+                    vrs, boolRef,
+                    vrs, strRef
+                )
+                Assertions.assertEquals(intRef.first(), intValue.first())
+                Assertions.assertEquals(realRef.first(), realvalue.first())
+                Assertions.assertEquals(boolRef.first(), boolValue.first())
+                Assertions.assertEquals(strRef.first(), strValue.first())
+
+                Assertions.assertEquals(true, slave.readBoolean("getAllInvoked").value)
+
+            }
+        }
+    }
+
+    @Test
     fun testParallelInstantiate() {
 
-        FmuBuilder.main(arrayOf(
+        FmuBuilder.main(
+            arrayOf(
                 "-m", "$group.KotlinTestFmi2Slave",
                 "-f", jar,
-                "-d", dest))
+                "-d", dest
+            )
+        )
 
         val fmuFile = File(dest, "KotlinTestFmi2Slave.fmu")
         Assertions.assertTrue(fmuFile.exists())

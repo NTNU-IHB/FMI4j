@@ -6,85 +6,55 @@
 #ifndef CPPFMU_COMMON_HPP
 #define CPPFMU_COMMON_HPP
 
-#include <algorithm>    // std::find()
-#include <cstddef>      // std::size_t
-#include <functional>   // std::function
-#include <memory>       // std::shared_ptr, std::unique_ptr
-#include <new>          // std::bad_alloc
-#include <stdexcept>    // std::runtime_error
-#include <string>       // std::basic_string, std::char_traits
-#include <utility>      // std::forward
+#include <algorithm> // std::find()
+#include <cstddef> // std::size_t
+#include <functional> // std::function
+#include <memory> // std::shared_ptr, std::unique_ptr
+#include <new> // std::bad_alloc
+#include <stdexcept> // std::runtime_error
+#include <string> // std::basic_string, std::char_traits
+#include <utility> // std::forward
+#include <vector>
 
 
-extern "C"
-{
-#ifdef CPPFMU_USE_FMI_1_0
-#   include <fmiFunctions.h>
-#else
-#    include <fmi/fmi2Functions.h>
-#endif
+extern "C" {
+#include <fmi/fmi2Functions.h>
 }
 
 
 // CPPFMU_NOEXCEPT evaluates to 'noexcept' on compilers that support it.
 #if (__cplusplus >= 201103L) || (defined(_MSC_VER) && _MSC_VER >= 1900)
-#   define CPPFMU_NOEXCEPT noexcept
+#    define CPPFMU_NOEXCEPT noexcept
 #else
-#   define CPPFMU_NOEXCEPT
+#    define CPPFMU_NOEXCEPT
 #endif
 
 
 namespace cppfmu
 {
 
-// Aliases for FMI types and enums
-#ifdef CPPFMU_USE_FMI_1_0
-    typedef fmiReal FMIReal;
-    typedef fmiInteger FMIInteger;
-    typedef fmiBoolean FMIBoolean;
-    typedef fmiString FMIString;
-    typedef fmiCallbackFunctions FMICallbackFunctions;
-    typedef fmiCallbackAllocateMemory FMICallbackAllocateMemory;
-    typedef fmiCallbackFreeMemory FMICallbackFreeMemory;
-    typedef fmiCallbackLogger FMICallbackLogger;
-    typedef fmiComponent FMIComponent;
-    typedef fmiComponent FMIComponentEnvironment;
-    typedef fmiStatus FMIStatus;
-    typedef fmiValueReference FMIValueReference;
+typedef fmi2Real FMIReal;
+typedef fmi2Integer FMIInteger;
+typedef fmi2Boolean FMIBoolean;
+typedef fmi2String FMIString;
+typedef fmi2CallbackFunctions FMICallbackFunctions;
+typedef fmi2CallbackAllocateMemory FMICallbackAllocateMemory;
+typedef fmi2CallbackFreeMemory FMICallbackFreeMemory;
+typedef fmi2CallbackLogger FMICallbackLogger;
+typedef fmi2Component FMIComponent;
+typedef fmi2ComponentEnvironment FMIComponentEnvironment;
+typedef fmi2Status FMIStatus;
+typedef fmi2ValueReference FMIValueReference;
 
-    const FMIBoolean FMIFalse = fmiFalse;
-    const FMIBoolean FMITrue = fmiTrue;
+const FMIBoolean FMIFalse = fmi2False;
+const FMIBoolean FMITrue = fmi2True;
 
-    const FMIStatus FMIOK = fmiOK;
-    const FMIStatus FMIWarning = fmiWarning;
-    const FMIStatus FMIDiscard = fmiDiscard;
-    const FMIStatus FMIError = fmiError;
-    const FMIStatus FMIFatal = fmiFatal;
-    const FMIStatus FMIPending = fmiPending;
-#else
-    typedef fmi2Real FMIReal;
-    typedef fmi2Integer FMIInteger;
-    typedef fmi2Boolean FMIBoolean;
-    typedef fmi2String FMIString;
-    typedef fmi2CallbackFunctions FMICallbackFunctions;
-    typedef fmi2CallbackAllocateMemory FMICallbackAllocateMemory;
-    typedef fmi2CallbackFreeMemory FMICallbackFreeMemory;
-    typedef fmi2CallbackLogger FMICallbackLogger;
-    typedef fmi2Component FMIComponent;
-    typedef fmi2ComponentEnvironment FMIComponentEnvironment;
-    typedef fmi2Status FMIStatus;
-    typedef fmi2ValueReference FMIValueReference;
-
-    const FMIBoolean FMIFalse = fmi2False;
-    const FMIBoolean FMITrue = fmi2True;
-
-    const FMIStatus FMIOK = fmi2OK;
-    const FMIStatus FMIWarning = fmi2Warning;
-    const FMIStatus FMIDiscard = fmi2Discard;
-    const FMIStatus FMIError = fmi2Error;
-    const FMIStatus FMIFatal = fmi2Fatal;
-    const FMIStatus FMIPending = fmi2Pending;
-#endif
+const FMIStatus FMIOK = fmi2OK;
+const FMIStatus FMIWarning = fmi2Warning;
+const FMIStatus FMIDiscard = fmi2Discard;
+const FMIStatus FMIError = fmi2Error;
+const FMIStatus FMIFatal = fmi2Fatal;
+const FMIStatus FMIPending = fmi2Pending;
 
 
 // ============================================================================
@@ -162,7 +132,9 @@ class Allocator
 public:
     using value_type = T;
 
-    explicit Allocator(const Memory& memory) : m_memory{memory} { }
+    explicit Allocator(const Memory& memory)
+        : m_memory{memory}
+    { }
 
     template<typename U>
     Allocator(const Allocator<U>& other) CPPFMU_NOEXCEPT
@@ -202,7 +174,10 @@ public:
     // required by GCC and MSVC.
 
     template<typename U>
-    struct rebind { using other = Allocator<U>; };
+    struct rebind
+    {
+        using other = Allocator<U>;
+    };
 
 #if defined(__GNUC__) && (__GNUC__ < 5)
     using pointer = T*;
@@ -212,17 +187,19 @@ public:
     using size_type = std::size_t;
     using difference_type = std::ptrdiff_t;
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wmissing-field-initializers"
-    Allocator() : m_memory{fmiCallbackFunctions{}} { }
-#pragma GCC diagnostic pop
+#    pragma GCC diagnostic push
+#    pragma GCC diagnostic ignored "-Wmissing-field-initializers"
+    Allocator()
+        : m_memory{fmiCallbackFunctions{}}
+    { }
+#    pragma GCC diagnostic pop
 #endif
 
 #ifdef _MSC_VER
     template<typename U, typename... Args>
     void construct(U* p, Args&&... args)
     {
-        ::new((void*) p) U(std::forward<Args>(args)...);
+        ::new ((void*)p) U(std::forward<Args>(args)...);
     }
 
     template<typename U>
@@ -304,7 +281,7 @@ UniquePtr<T> AllocateUnique(const Memory& memory, Args&&... args)
 {
     return UniquePtr<T>{
         New<T>(memory, std::forward<Args>(args)...),
-        [memory] (void* ptr) { Delete(memory, reinterpret_cast<T*>(ptr)); }};
+        [memory](void* ptr) { Delete(memory, reinterpret_cast<T*>(ptr)); }};
 }
 
 
@@ -314,15 +291,12 @@ UniquePtr<T> AllocateUnique(const Memory& memory, Args&&... args)
 
 namespace detail
 {
-    template<typename Container, typename Item>
-    bool CanFind(const Container& container, const Item& item)
-    {
-        return container.end() != std::find(
-            container.begin(),
-            container.end(),
-            item);
-    }
+template<typename Container, typename Item>
+bool CanFind(const Container& container, const Item& item)
+{
+    return container.end() != std::find(container.begin(), container.end(), item);
 }
+} // namespace detail
 
 
 /* A class that can be used to log messages from model code.  All messages are
