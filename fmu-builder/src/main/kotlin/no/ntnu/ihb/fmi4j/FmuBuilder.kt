@@ -22,7 +22,7 @@ class FmuBuilder(
     @JvmOverloads
     fun build(dest: File? = null): File {
 
-        require(jarFile.exists()) { "No such File '$jarFile'" }
+        require(jarFile.exists()) { "No such File '${jarFile.absoluteFile}'" }
         require(jarFile.name.endsWith(".jar")) { "File $jarFile is not a .jar!" }
 
         var tempResourcesDir: File? = null
