@@ -26,7 +26,7 @@ class CalculatedParameterTest {
     @Test
     fun test() {
 
-        ModelDescriptionParser.parseModelDescription(xml).also {
+        ModelDescriptionParser.parse(xml).also {
             Assertions.assertEquals("1234", it.guid)
             Assertions.assertEquals(1, it.modelVariables.reals.size)
             Assertions.assertEquals("test", it.asCoSimulationModelDescription().attributes.modelIdentifier)

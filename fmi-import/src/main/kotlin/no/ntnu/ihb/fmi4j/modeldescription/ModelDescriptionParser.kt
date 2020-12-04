@@ -24,59 +24,44 @@
 
 package no.ntnu.ihb.fmi4j.modeldescription
 
+import no.ntnu.ihb.fmi4j.modeldescription.fmi1.FmiModelDescription
+import no.ntnu.ihb.fmi4j.modeldescription.fmi2.Fmi2ModelDescription
 import no.ntnu.ihb.fmi4j.modeldescription.util.FmiModelDescriptionUtil
 import java.io.File
-import java.io.FileInputStream
-import java.io.FileNotFoundException
 import java.io.InputStream
 import java.net.URL
 
 
-abstract class ModelDescriptionParser {
+object ModelDescriptionParser {
 
-    abstract fun parse(xml: String): ModelDescriptionProvider
-
+    @JvmStatic
     fun parse(url: URL): ModelDescriptionProvider {
-        return parse(url.openStream())
+        return parse(FmiModelDescriptionUtil.extractModelDescriptionXml(url))
     }
 
+    @JvmStatic
     fun parse(file: File): ModelDescriptionProvider {
-        if (!file.exists()) {
-            throw FileNotFoundException("No such file '${file.absolutePath}'!")
-        }
-        return parse(FileInputStream(file))
+        return parse(FmiModelDescriptionUtil.extractModelDescriptionXml(file))
     }
 
+    @JvmStatic
     fun parse(stream: InputStream): ModelDescriptionProvider {
         return parse(FmiModelDescriptionUtil.extractModelDescriptionXml(stream))
     }
 
-    companion object {
-
-        @JvmStatic
-        fun parseModelDescription(url: URL): ModelDescriptionProvider {
-            return parseModelDescription(FmiModelDescriptionUtil.extractModelDescriptionXml(url))
-        }
-
-        @JvmStatic
-        fun parseModelDescription(file: File): ModelDescriptionProvider {
-            return parseModelDescription(FmiModelDescriptionUtil.extractModelDescriptionXml(file))
-        }
-
-        @JvmStatic
-        fun parseModelDescription(stream: InputStream): ModelDescriptionProvider {
-            return parseModelDescription(FmiModelDescriptionUtil.extractModelDescriptionXml(stream))
-        }
-
-        @JvmStatic
-        fun parseModelDescription(xml: String): ModelDescriptionProvider {
-            return when (val version = FmiModelDescriptionUtil.extractVersion(xml)) {
-                "1.0" -> no.ntnu.ihb.fmi4j.modeldescription.fmi1.JaxbModelDescriptionParser().parse(xml)
-                "2.0" -> no.ntnu.ihb.fmi4j.modeldescription.fmi2.JaxbModelDescriptionParser().parse(xml)
-                else -> throw UnsupportedOperationException("Unsupported FMI version: '$version'")
+    @JvmStatic
+    fun parse(xml: String): ModelDescriptionProvider {
+        return when (val version = FmiModelDescriptionUtil.extractVersion(xml)) {
+            "1.0" -> {
+                val md = FmiModelDescription.fromXml(xml)
+                no.ntnu.ihb.fmi4j.modeldescription.fmi1.JaxbModelDescription(md)
             }
+            "2.0" -> {
+                val md = Fmi2ModelDescription.fromXml(xml)
+                no.ntnu.ihb.fmi4j.modeldescription.fmi2.JaxbModelDescription(md)
+            }
+            else -> throw UnsupportedOperationException("Unsupported FMI version: '$version'")
         }
-
     }
 
 }

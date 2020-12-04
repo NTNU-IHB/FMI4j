@@ -26,8 +26,8 @@ package no.ntnu.ihb.fmi4j.importer.fmi2
 
 import no.ntnu.ihb.fmi4j.importer.AbstractFmu
 import no.ntnu.ihb.fmi4j.importer.fmi2.jni.Fmi2Library
+import no.ntnu.ihb.fmi4j.modeldescription.ModelDescriptionParser
 import no.ntnu.ihb.fmi4j.modeldescription.ModelDescriptionProvider
-import no.ntnu.ihb.fmi4j.modeldescription.fmi2.JaxbModelDescriptionParser
 import no.ntnu.ihb.fmi4j.util.OsUtil
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -58,7 +58,7 @@ class Fmu internal constructor(
     }
 
     override val modelDescription: ModelDescriptionProvider by lazy {
-        JaxbModelDescriptionParser().parse(modelDescriptionXml)
+        ModelDescriptionParser.parse(modelDescriptionXml)
     }
 
     private val resourcesPath: String

@@ -12,7 +12,7 @@ class FmuExportCrossCompileTest {
     private companion object {
 
         val modelDescription = TestFMUs.get("2.0/cs/OpenModelica/v1.11.0/FmuExportCrossCompile/FmuExportCrossCompile.fmu").let {
-            ModelDescriptionParser.parseModelDescription(it)
+            ModelDescriptionParser.parse(it)
         }
 
     }

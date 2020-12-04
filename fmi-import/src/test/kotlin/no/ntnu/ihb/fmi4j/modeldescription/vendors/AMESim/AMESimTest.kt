@@ -12,7 +12,7 @@ class AMESimTest {
     companion object {
 
         val md = TestFMUs.get("2.0/cs/AMESim/15/MIS_cs/MIS_cs.fmu").let {
-            ModelDescriptionParser.parseModelDescription(it).asCoSimulationModelDescription()
+            ModelDescriptionParser.parse(it).asCoSimulationModelDescription()
         }
 
     }
