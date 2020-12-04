@@ -19,18 +19,6 @@ class TestIllegalFmuInstanceType {
         }
     }
 
-
-//    @Test
-//    fun testNewInstanceCS() {
-//        Assertions.assertThrows(IllegalStateException::class.java) {
-//            TestFMUs.fmi20().me()
-//                    .vendor("SystemModeler").version("5.0")
-//                    .name("ControlledTemperature").fmu().use {
-//                it.asCoSimulationFmu()
-//            }
-//        }
-//    }
-
     @Test
     fun testWrongExtension() {
         Assertions.assertThrows(IllegalArgumentException::class.java) {

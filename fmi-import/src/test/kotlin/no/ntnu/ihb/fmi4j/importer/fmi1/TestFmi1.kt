@@ -2,6 +2,8 @@ package no.ntnu.ihb.fmi4j.importer.fmi1
 
 import no.ntnu.ihb.fmi4j.TestFMUs
 import no.ntnu.ihb.fmi4j.importer.AbstractFmu
+import no.ntnu.ihb.fmi4j.modeldescription.StringArray
+import no.ntnu.ihb.fmi4j.modeldescription.stringArrayOf
 
 import no.ntnu.ihb.fmi4j.modeldescription.util.FmiModelDescriptionUtil
 import no.ntnu.ihb.fmi4j.readReal
@@ -60,8 +62,8 @@ internal class TestFmi1 {
 
     @Test
     fun testIdentity() {
-        val file = TestFMUs.get("1.0/cs/identity.fmu")
-        AbstractFmu.from(file).asCoSimulationFmu().use { fmu ->
+        val fmuFile = TestFMUs.get("1.0/cs/identity.fmu")
+        AbstractFmu.from(fmuFile).asCoSimulationFmu().use { fmu ->
 
             fmu.newInstance().use { slave ->
 
@@ -71,24 +73,73 @@ internal class TestFmi1 {
                 val doubleRef = DoubleArray(1)
 
                 slave.writeAll(
-                        null, null,
-                        longArrayOf(0), doubleArrayOf(realValue),
-                        null, null,
-                        null, null
+                    null, null,
+                    longArrayOf(0), doubleArrayOf(realValue),
+                    null, null,
+                    null, null
                 )
 
                 Assertions.assertTrue(slave.doStep(0.1))
 
                 slave.readAll(
-                        null, null,
-                        longArrayOf(0), doubleRef,
-                        null, null,
-                        null, null
+                    null, null,
+                    longArrayOf(0), doubleRef,
+                    null, null,
+                    null, null
                 )
 
                 Assertions.assertEquals(realValue, doubleRef.first())
 
                 Assertions.assertTrue(slave.terminate())
+            }
+
+        }
+    }
+
+    @Test
+    fun testIdentity2() {
+        val fmuFile = TestFMUs.get("1.0/cs/identity.fmu")
+
+        val vrs = longArrayOf(0)
+
+        val intValue = intArrayOf(99)
+        val realValue = doubleArrayOf(12.3)
+        val boolValue = booleanArrayOf(true)
+        val strValue = stringArrayOf("Hello identity")
+
+        val intRef = IntArray(1)
+        val realRef = DoubleArray(1)
+        val boolRef = BooleanArray(1)
+        val strRef = StringArray(1)
+
+        Fmu.from(fmuFile).asCoSimulationFmu().use { fmu ->
+
+            val md = fmu.modelDescription
+            Assertions.assertEquals("no.viproma.demo.identity", md.modelName)
+
+            fmu.newInstance().use { slave ->
+
+                Assertions.assertTrue(slave.simpleSetup())
+
+                slave.writeInteger(vrs, intValue)
+                slave.writeReal(vrs, realValue)
+                slave.writeBoolean(vrs, boolValue)
+                slave.writeString(vrs, strValue)
+
+                Assertions.assertTrue(slave.doStep(0.1))
+
+                slave.readInteger(vrs, intRef)
+                slave.readReal(vrs, realRef)
+                slave.readBoolean(vrs, boolRef)
+                slave.readString(vrs, strRef)
+
+                Assertions.assertEquals(intRef.first(), intValue.first())
+                Assertions.assertEquals(realRef.first(), realValue.first())
+                Assertions.assertEquals(boolRef.first(), boolValue.first())
+                Assertions.assertEquals(strRef.first(), strValue.first())
+
+                Assertions.assertTrue(slave.terminate())
+
             }
 
         }

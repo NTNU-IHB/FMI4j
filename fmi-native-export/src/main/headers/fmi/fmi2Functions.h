@@ -100,7 +100,7 @@
                     meeting with additional improvements (by Martin Otter, DLR).
    - Dec. 3 , 2008: First version by Martin Otter (DLR) and Hans Olsson (Dynasim).
 
-   Copyright © 2008-2011 MODELISAR consortium,
+   Copyright Â© 2008-2011 MODELISAR consortium,
                2012-2013 Modelica Association Project "FMI"
                All rights reserved.
    This file is licensed by the copyright holders under the BSD 2-Clause License
@@ -199,10 +199,12 @@ Common Functions
 #define fmi2GetInteger               fmi2FullName(fmi2GetInteger)
 #define fmi2GetBoolean               fmi2FullName(fmi2GetBoolean)
 #define fmi2GetString                fmi2FullName(fmi2GetString)
+#define fmi2GetAll                   fmi2FullName(fmi2GetAll)
 #define fmi2SetReal                  fmi2FullName(fmi2SetReal)
 #define fmi2SetInteger               fmi2FullName(fmi2SetInteger)
 #define fmi2SetBoolean               fmi2FullName(fmi2SetBoolean)
 #define fmi2SetString                fmi2FullName(fmi2SetString)
+#define fmi2SetAll                   fmi2FullName(fmi2SetAll)
 #define fmi2GetFMUstate              fmi2FullName(fmi2GetFMUstate)
 #define fmi2SetFMUstate              fmi2FullName(fmi2SetFMUstate)
 #define fmi2FreeFMUstate             fmi2FullName(fmi2FreeFMUstate)
@@ -269,11 +271,13 @@ Common Functions
    FMI2_Export fmi2GetIntegerTYPE fmi2GetInteger;
    FMI2_Export fmi2GetBooleanTYPE fmi2GetBoolean;
    FMI2_Export fmi2GetStringTYPE  fmi2GetString;
+   FMI2_Export fmi2GetAllTYPE     fmi2GetAll;
 
    FMI2_Export fmi2SetRealTYPE    fmi2SetReal;
    FMI2_Export fmi2SetIntegerTYPE fmi2SetInteger;
    FMI2_Export fmi2SetBooleanTYPE fmi2SetBoolean;
    FMI2_Export fmi2SetStringTYPE  fmi2SetString;
+   FMI2_Export fmi2SetAllTYPE     fmi2SetAll;
 
 /* Getting and setting the internal FMU state */
    FMI2_Export fmi2GetFMUstateTYPE            fmi2GetFMUstate;

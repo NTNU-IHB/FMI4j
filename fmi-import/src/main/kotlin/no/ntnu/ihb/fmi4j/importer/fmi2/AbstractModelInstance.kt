@@ -43,9 +43,9 @@ import java.nio.ByteBuffer
  * @author Lars Ivar Hatledal
  */
 abstract class AbstractModelInstance<out E : CommonModelDescription, out T : Fmi2LibraryWrapper<*>> internal constructor(
-        override val instanceName: String,
-        val wrapper: T,
-        override val modelDescription: E
+    override val instanceName: String,
+    val wrapper: T,
+    override val modelDescription: E
 ) : ModelInstance<E>, DirectAccessor {
 
     val typesPlatform
@@ -77,8 +77,8 @@ abstract class AbstractModelInstance<out E : CommonModelDescription, out T : Fmi
         get() = wrapper.lastStatus
 
 
-    fun setDebugLogging(loggingOn: Boolean, categories: Array<String>): FmiStatus
-            = wrapper.setDebugLogging(loggingOn, categories)
+    fun setDebugLogging(loggingOn: Boolean, categories: Array<String>): FmiStatus =
+        wrapper.setDebugLogging(loggingOn, categories)
 
     /**
      * Call init with provided start and stop
@@ -136,7 +136,11 @@ abstract class AbstractModelInstance<out E : CommonModelDescription, out T : Fmi
         wrapper.freeInstance()
     }
 
-    override fun getDirectionalDerivative(vUnknownRef: ValueReferences, vKnownRef: ValueReferences, dvKnown: RealArray): RealArray {
+    override fun getDirectionalDerivative(
+        vUnknownRef: ValueReferences,
+        vKnownRef: ValueReferences,
+        dvKnown: RealArray
+    ): RealArray {
         check(modelDescription.attributes.providesDirectionalDerivative) { "Illegal call. FMU does not provide directional derivatives!" }
         return RealArray(vUnknownRef.size).also { dvUnknown ->
             wrapper.getDirectionalDerivative(vUnknownRef, vKnownRef, dvKnown, dvUnknown)
@@ -205,8 +209,13 @@ abstract class AbstractModelInstance<out E : CommonModelDescription, out T : Fmi
         return wrapper.readBoolean(vr, ref)
     }
 
-    override fun readAll(intVr: ValueReferences?, intRefs: IntArray?, realVr: ValueReferences?, realRefs: DoubleArray?, strVr: ValueReferences?, strRefs: StringArray?, boolVr: ValueReferences?, boolRefs: BooleanArray?): FmiStatus {
-        return wrapper.readAll(intVr, intRefs, realVr, realRefs, strVr, strRefs, boolVr, boolRefs)
+    override fun readAll(
+        intVr: ValueReferences?, intRefs: IntArray?,
+        realVr: ValueReferences?, realRefs: DoubleArray?,
+        boolVr: ValueReferences?, boolRefs: BooleanArray?,
+        strVr: ValueReferences?, strRefs: StringArray?
+    ): FmiStatus {
+        return wrapper.readAll(intVr, intRefs, realVr, realRefs, boolVr, boolRefs, strVr, strRefs)
     }
 
     override fun writeInteger(vr: ValueReferences, value: IntArray): FmiStatus {
@@ -229,8 +238,13 @@ abstract class AbstractModelInstance<out E : CommonModelDescription, out T : Fmi
         return wrapper.writeBoolean(vr, value)
     }
 
-    override fun writeAll(intVr: ValueReferences?, intValues: IntArray?, realVr: ValueReferences?, realValues: DoubleArray?, strVr: ValueReferences?, strValues: StringArray?, boolVr: ValueReferences?, boolValues: BooleanArray?): FmiStatus {
-        return wrapper.writeAll(intVr, intValues, realVr, realValues, strVr, strValues, boolVr, boolValues)
+    override fun writeAll(
+        intVr: ValueReferences?, intValues: IntArray?,
+        realVr: ValueReferences?, realValues: DoubleArray?,
+        boolVr: ValueReferences?, boolValues: BooleanArray?,
+        strVr: ValueReferences?, strValues: StringArray?
+    ): FmiStatus {
+        return wrapper.writeAll(intVr, intValues, realVr, realValues, boolVr, boolValues, strVr, strValues)
     }
 
 

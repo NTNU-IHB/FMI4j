@@ -4,7 +4,6 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 #include <cppfmu/cppfmu_cs.hpp>
-
 #include <stdexcept>
 
 
@@ -94,6 +93,14 @@ void SlaveInstance::SetString(
     }
 }
 
+void SlaveInstance::SetAll(
+    const FMIValueReference[], std::size_t nIntvr, const FMIInteger[],
+    const FMIValueReference[], std::size_t realVr, const FMIReal[],
+    const FMIValueReference[], std::size_t boolVr, const FMIBoolean[],
+    const FMIValueReference[], std::size_t strVr, const FMIString[]) const
+{
+}
+
 
 void SlaveInstance::GetReal(
     const FMIValueReference /*vr*/[],
@@ -136,6 +143,15 @@ void SlaveInstance::GetString(
     if (nvr != 0) {
         throw std::logic_error("Attempted to set nonexistent variable");
     }
+}
+
+
+void SlaveInstance::GetAll(
+    const FMIValueReference[], std::size_t, FMIInteger[],
+    const FMIValueReference[], std::size_t, FMIReal[],
+    const FMIValueReference[], std::size_t, FMIBoolean[],
+    const FMIValueReference[], std::size_t, FMIString[]) const
+{
 }
 
 

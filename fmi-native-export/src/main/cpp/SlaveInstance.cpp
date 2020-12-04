@@ -32,14 +32,11 @@ SlaveInstance::SlaveInstance(
     classLoader_ = env->NewGlobalRef(create_classloader(env, classpath));
 
     jclass slaveCls = FindClass(env, classLoader_, slaveName_);
-    if (slaveCls == nullptr) {
-        std::string msg = "Unable to locate slave class '" + slaveName_ + "'!";
-        throw cppfmu::FatalError(msg.c_str());
-    }
 
     ctorId_ = env->GetMethodID(slaveCls, "<init>", "(Ljava/util/Map;)V");
     if (ctorId_ == nullptr) {
-        std::string msg = "Unable to locate 1 arg constructor that takes a Map for slave class '" + slaveName_ + "'!";
+        std::string msg =
+            "Unable to locate 1 arg constructor that takes a Map for slave class '" + slaveName_ + "'!";
         throw cppfmu::FatalError(msg.c_str());
     }
 
@@ -63,6 +60,15 @@ SlaveInstance::SlaveInstance(
     getStringId_ = GetMethodID(env, slaveCls, "getString", "([J)[Ljava/lang/String;");
     setStringId_ = GetMethodID(env, slaveCls, "setString", "([J[Ljava/lang/String;)V");
 
+    jclass bulkCls = FindClass(env, classLoader_, "no.ntnu.ihb.fmi4j.export.BulkRead");
+    bulkIntValuesId_ = GetMethodID(env, bulkCls, "getIntValues", "()[I");
+    bulkRealValuesId_ = GetMethodID(env, bulkCls, "getRealValues", "()[D");
+    bulkBoolValuesId_ = GetMethodID(env, bulkCls, "getBoolValues", "()[Z");
+    bulkStrValuesId_ = GetMethodID(env, bulkCls, "getStrValues", "()[Ljava/lang/String;");
+
+    getAllId_ = GetMethodID(env, slaveCls, "getAll", "([J[J[J[J)Lno/ntnu/ihb/fmi4j/export/BulkRead;");
+    setAllId_ = GetMethodID(env, slaveCls, "setAll", "([J[I[J[D[J[Z[J[Ljava/lang/String;)V");
+
     initialize();
 }
 
@@ -72,17 +78,16 @@ void SlaveInstance::initialize()
         env->DeleteGlobalRef(slaveInstance_);
 
         jclass slaveCls = FindClass(env, classLoader_, slaveName_);
-        if (slaveCls == nullptr) {
-            std::string msg = "Unable to locate slave class '" + slaveName_ + "'!";
-            throw cppfmu::FatalError(msg.c_str());
-        }
 
         jclass mapCls = env->FindClass("java/util/HashMap");
         jmethodID mapCtor = GetMethodID(env, mapCls, "<init>", "()V");
-        jmethodID putId = GetMethodID(env, mapCls, "put", "(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;");
+        jmethodID putId = GetMethodID(env, mapCls, "put",
+            "(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;");
         jobject map = env->NewObject(mapCls, mapCtor);
-        env->CallObjectMethod(map, putId, env->NewStringUTF("instanceName"), env->NewStringUTF(instanceName_.c_str()));
-        env->CallObjectMethod(map, putId, env->NewStringUTF("resourceLocation"), env->NewStringUTF(resources_.c_str()));
+        env->CallObjectMethod(map, putId, env->NewStringUTF("instanceName"),
+            env->NewStringUTF(instanceName_.c_str()));
+        env->CallObjectMethod(map, putId, env->NewStringUTF("resourceLocation"),
+            env->NewStringUTF(resources_.c_str()));
 
         slaveInstance_ = env->NewGlobalRef(env->NewObject(slaveCls, ctorId_, map));
         if (slaveInstance_ == nullptr) {
@@ -95,7 +100,9 @@ void SlaveInstance::initialize()
     });
 }
 
-void SlaveInstance::SetupExperiment(cppfmu::FMIBoolean toleranceDefined, cppfmu::FMIReal tolerance, cppfmu::FMIReal tStart, cppfmu::FMIBoolean stopTimeDefined, cppfmu::FMIReal tStop)
+void SlaveInstance::SetupExperiment(cppfmu::FMIBoolean toleranceDefined, cppfmu::FMIReal tolerance,
+    cppfmu::FMIReal tStart, cppfmu::FMIBoolean stopTimeDefined,
+    cppfmu::FMIReal tStop)
 {
     double stop = stopTimeDefined ? tStop : -1;
     double tol = toleranceDefined ? tolerance : -1;
@@ -118,7 +125,8 @@ void SlaveInstance::ExitInitializationMode()
     });
 }
 
-bool SlaveInstance::DoStep(cppfmu::FMIReal currentCommunicationPoint, cppfmu::FMIReal communicationStepSize, cppfmu::FMIBoolean, cppfmu::FMIReal& endOfStep)
+bool SlaveInstance::DoStep(cppfmu::FMIReal currentCommunicationPoint, cppfmu::FMIReal communicationStepSize,
+    cppfmu::FMIBoolean, cppfmu::FMIReal& endOfStep)
 {
     bool status = true;
     jvm_invoke(jvm_, [this, &status, currentCommunicationPoint, communicationStepSize](JNIEnv* env) {
@@ -143,30 +151,6 @@ void SlaveInstance::Terminate()
     });
 }
 
-void SlaveInstance::SetReal(const cppfmu::FMIValueReference* vr, std::size_t nvr, const cppfmu::FMIReal* value)
-{
-    jvm_invoke(jvm_, [this, vr, nvr, value](JNIEnv* env) {
-        auto vrArray = env->NewLongArray(nvr);
-        auto vrArrayElements = reinterpret_cast<jlong*>(malloc(sizeof(jlong) * nvr));
-
-        auto valueArray = env->NewDoubleArray(nvr);
-        auto valueArrayElements = reinterpret_cast<jdouble*>(malloc(sizeof(jdouble) * nvr));
-
-        for (int i = 0; i < nvr; i++) {
-            vrArrayElements[i] = static_cast<jlong>(vr[i]);
-            valueArrayElements[i] = value[i];
-        }
-
-        env->SetLongArrayRegion(vrArray, 0, nvr, vrArrayElements);
-        env->SetDoubleArrayRegion(valueArray, 0, nvr, valueArrayElements);
-
-        env->CallVoidMethod(slaveInstance_, setRealId_, vrArray, valueArray);
-
-        free(vrArrayElements);
-        free(valueArrayElements);
-    });
-}
-
 void SlaveInstance::SetInteger(const cppfmu::FMIValueReference* vr, std::size_t nvr, const cppfmu::FMIInteger* value)
 {
     jvm_invoke(jvm_, [this, vr, nvr, value](JNIEnv* env) {
@@ -185,6 +169,30 @@ void SlaveInstance::SetInteger(const cppfmu::FMIValueReference* vr, std::size_t 
         env->SetIntArrayRegion(valueArray, 0, nvr, valueArrayElements);
 
         env->CallVoidMethod(slaveInstance_, setIntegerId_, vrArray, valueArray);
+
+        free(vrArrayElements);
+        free(valueArrayElements);
+    });
+}
+
+void SlaveInstance::SetReal(const cppfmu::FMIValueReference* vr, std::size_t nvr, const cppfmu::FMIReal* value)
+{
+    jvm_invoke(jvm_, [this, vr, nvr, value](JNIEnv* env) {
+        auto vrArray = env->NewLongArray(nvr);
+        auto vrArrayElements = reinterpret_cast<jlong*>(malloc(sizeof(jlong) * nvr));
+
+        auto valueArray = env->NewDoubleArray(nvr);
+        auto valueArrayElements = reinterpret_cast<jdouble*>(malloc(sizeof(jdouble) * nvr));
+
+        for (int i = 0; i < nvr; i++) {
+            vrArrayElements[i] = static_cast<jlong>(vr[i]);
+            valueArrayElements[i] = value[i];
+        }
+
+        env->SetLongArrayRegion(vrArray, 0, nvr, vrArrayElements);
+        env->SetDoubleArrayRegion(valueArray, 0, nvr, valueArrayElements);
+
+        env->CallVoidMethod(slaveInstance_, setRealId_, vrArray, valueArray);
 
         free(vrArrayElements);
         free(valueArrayElements);
@@ -232,8 +240,7 @@ void SlaveInstance::SetString(const cppfmu::FMIValueReference* vr, std::size_t n
             jstring jStr = env->NewStringUTF(cStr);
             jstring_ref ref{
                 cStr = cStr,
-                jStr = jStr
-            };
+                jStr = jStr};
             strBuffer.push_back(ref);
 
             env->SetObjectArrayElement(valueArray, i, jStr);
@@ -247,41 +254,87 @@ void SlaveInstance::SetString(const cppfmu::FMIValueReference* vr, std::size_t n
     });
 }
 
-void SlaveInstance::GetReal(const cppfmu::FMIValueReference* vr, std::size_t nvr, cppfmu::FMIReal* value) const
+void SlaveInstance::SetAll(
+    const cppfmu::FMIValueReference* intVr, std::size_t nIntvr, const cppfmu::FMIInteger* intValue,
+    const cppfmu::FMIValueReference* realVr, std::size_t nRealvr, const cppfmu::FMIReal* realValue,
+    const cppfmu::FMIValueReference* boolVr, std::size_t nBoolvr, const cppfmu::FMIBoolean* boolValue,
+    const cppfmu::FMIValueReference* strVr, std::size_t nStrvr, const cppfmu::FMIString* strValue) const
 {
-    jvm_invoke(jvm_, [this, vr, nvr, value](JNIEnv* env) {
-        auto vrArray = env->NewLongArray(nvr);
-        auto vrArrayElements = reinterpret_cast<jlong*>(malloc(sizeof(jlong) * nvr));
+    jvm_invoke(jvm_, [this, intVr, nIntvr, intValue, realVr, nRealvr, realValue, boolVr, nBoolvr, boolValue, strVr, nStrvr, strValue](JNIEnv* env) {
+        auto intVrArray = env->NewLongArray(nIntvr);
+        auto realVrArray = env->NewLongArray(nIntvr);
+        auto boolVrArray = env->NewLongArray(nIntvr);
+        auto strVrArray = env->NewLongArray(nStrvr);
 
-        for (int i = 0; i < nvr; i++) {
-            vrArrayElements[i] = static_cast<jlong>(vr[i]);
+        auto intValueArray = env->NewIntArray(nIntvr);
+        auto realValueArray = env->NewDoubleArray(nRealvr);
+        auto boolValueArray = env->NewBooleanArray(nBoolvr);
+        auto strValueArray = env->NewObjectArray(nStrvr, env->FindClass("java/lang/String"), nullptr);
+
+        auto intValueArrayElements = reinterpret_cast<jint*>(malloc(sizeof(jint) * nIntvr));
+        auto intVrArrayElements = reinterpret_cast<jlong*>(malloc(sizeof(jlong) * nIntvr));
+        for (auto i = 0; i < nIntvr; i++) {
+            intVrArrayElements[i] = static_cast<jlong>(intVr[i]);
+            intValueArrayElements[i] = static_cast<jint>(intValue[i]);
         }
+        env->SetLongArrayRegion(intVrArray, 0, nIntvr, intVrArrayElements);
+        env->SetIntArrayRegion(intValueArray, 0, nIntvr, intValueArrayElements);
 
-        env->SetLongArrayRegion(vrArray, 0, nvr, vrArrayElements);
-
-        auto valueArray = reinterpret_cast<jdoubleArray>(env->CallObjectMethod(slaveInstance_, getRealId_, vrArray));
-        auto valueArrayElements = env->GetDoubleArrayElements(valueArray, nullptr);
-
-        for (int i = 0; i < nvr; i++) {
-            value[i] = valueArrayElements[i];
+        auto realValueArrayElements = reinterpret_cast<jdouble*>(malloc(sizeof(jdouble) * nRealvr));
+        auto realVrArrayElements = reinterpret_cast<jlong*>(malloc(sizeof(jlong) * nRealvr));
+        for (auto i = 0; i < nRealvr; i++) {
+            realVrArrayElements[i] = static_cast<jlong>(realVr[i]);
+            realValueArrayElements[i] = realValue[i];
         }
+        env->SetLongArrayRegion(realVrArray, 0, nRealvr, realVrArrayElements);
+        env->SetDoubleArrayRegion(realValueArray, 0, nRealvr, realValueArrayElements);
 
-        free(vrArrayElements);
-        env->ReleaseDoubleArrayElements(valueArray, valueArrayElements, 0);
+        auto boolValueArrayElements = reinterpret_cast<jboolean*>(malloc(sizeof(jboolean) * nBoolvr));
+        auto boolVrArrayElements = reinterpret_cast<jlong*>(malloc(sizeof(jlong) * nBoolvr));
+        for (auto i = 0; i < nBoolvr; i++) {
+            boolVrArrayElements[i] = static_cast<jlong>(boolVr[i]);
+            boolValueArrayElements[i] = static_cast<jboolean>(boolValue[i]);
+        }
+        env->SetLongArrayRegion(boolVrArray, 0, nBoolvr, boolVrArrayElements);
+        env->SetBooleanArrayRegion(boolValueArray, 0, nBoolvr, boolValueArrayElements);
+
+        clearStrBuffer(env);
+        auto strVrArrayElements = reinterpret_cast<jlong*>(malloc(sizeof(jlong) * nStrvr));
+        for (auto i = 0; i < nStrvr; i++) {
+            strVrArrayElements[i] = static_cast<jlong>(strVr[i]);
+
+            const char* cStr = strValue[i];
+            jstring jStr = env->NewStringUTF(cStr);
+            jstring_ref ref{
+                cStr = cStr,
+                jStr = jStr};
+            strBuffer.push_back(ref);
+
+            env->SetObjectArrayElement(strValueArray, i, jStr);
+        }
+        env->SetLongArrayRegion(strVrArray, 0, nStrvr, strVrArrayElements);
+
+        env->CallVoidMethod(slaveInstance_, setAllId_,
+            intVrArray, intValueArray,
+            realVrArray, realValueArray,
+            boolVrArray, boolValueArray,
+            strVrArray, strValueArray);
+
+        free(intVrArrayElements);
+        free(realVrArrayElements);
+        free(boolVrArrayElements);
+        free(strVrArrayElements);
     });
 }
-
 
 void SlaveInstance::GetInteger(const cppfmu::FMIValueReference* vr, std::size_t nvr, cppfmu::FMIInteger* value) const
 {
     jvm_invoke(jvm_, [this, vr, nvr, value](JNIEnv* env) {
         auto vrArray = env->NewLongArray(nvr);
         auto vrArrayElements = reinterpret_cast<jlong*>(malloc(sizeof(jlong) * nvr));
-
         for (int i = 0; i < nvr; i++) {
             vrArrayElements[i] = static_cast<jlong>(vr[i]);
         }
-
         env->SetLongArrayRegion(vrArray, 0, nvr, vrArrayElements);
 
         auto valueArray = reinterpret_cast<jintArray>(env->CallObjectMethod(slaveInstance_, getIntegerId_, vrArray));
@@ -296,16 +349,36 @@ void SlaveInstance::GetInteger(const cppfmu::FMIValueReference* vr, std::size_t 
     });
 }
 
+void SlaveInstance::GetReal(const cppfmu::FMIValueReference* vr, std::size_t nvr, cppfmu::FMIReal* value) const
+{
+    jvm_invoke(jvm_, [this, vr, nvr, value](JNIEnv* env) {
+        auto vrArray = env->NewLongArray(nvr);
+        auto vrArrayElements = reinterpret_cast<jlong*>(malloc(sizeof(jlong) * nvr));
+        for (int i = 0; i < nvr; i++) {
+            vrArrayElements[i] = static_cast<jlong>(vr[i]);
+        }
+        env->SetLongArrayRegion(vrArray, 0, nvr, vrArrayElements);
+
+        auto valueArray = reinterpret_cast<jdoubleArray>(env->CallObjectMethod(slaveInstance_, getRealId_, vrArray));
+        auto valueArrayElements = env->GetDoubleArrayElements(valueArray, nullptr);
+
+        for (int i = 0; i < nvr; i++) {
+            value[i] = valueArrayElements[i];
+        }
+
+        free(vrArrayElements);
+        env->ReleaseDoubleArrayElements(valueArray, valueArrayElements, 0);
+    });
+}
+
 void SlaveInstance::GetBoolean(const cppfmu::FMIValueReference* vr, std::size_t nvr, cppfmu::FMIBoolean* value) const
 {
     jvm_invoke(jvm_, [this, vr, nvr, value](JNIEnv* env) {
         auto vrArray = env->NewLongArray(nvr);
         auto vrArrayElements = reinterpret_cast<jlong*>(malloc(sizeof(jlong) * nvr));
-
         for (int i = 0; i < nvr; i++) {
             vrArrayElements[i] = static_cast<jlong>(vr[i]);
         }
-
         env->SetLongArrayRegion(vrArray, 0, nvr, vrArrayElements);
 
         auto valueArray = reinterpret_cast<jbooleanArray>(env->CallObjectMethod(slaveInstance_, getBooleanId_, vrArray));
@@ -327,27 +400,103 @@ void SlaveInstance::GetString(const cppfmu::FMIValueReference* vr, std::size_t n
 
         auto vrArray = env->NewLongArray(nvr);
         auto vrArrayElements = reinterpret_cast<jlong*>(malloc(sizeof(jlong) * nvr));
-
         for (int i = 0; i < nvr; i++) {
             vrArrayElements[i] = static_cast<jlong>(vr[i]);
         }
-
         env->SetLongArrayRegion(vrArray, 0, nvr, vrArrayElements);
 
         auto valueArray = reinterpret_cast<jobjectArray>(env->CallObjectMethod(slaveInstance_, getStringId_, vrArray));
-
         for (int i = 0; i < nvr; i++) {
             auto jStr = reinterpret_cast<jstring>(env->GetObjectArrayElement(valueArray, i));
             auto cStr = env->GetStringUTFChars(jStr, nullptr);
             value[i] = cStr;
             jstring_ref ref{
                 cStr = cStr,
-                jStr = jStr
-            };
+                jStr = jStr};
             strBuffer.push_back(ref);
         }
 
         free(vrArrayElements);
+    });
+}
+
+void SlaveInstance::GetAll(
+    const cppfmu::FMIValueReference* intVr, std::size_t nIntvr, cppfmu::FMIInteger* intValue,
+    const cppfmu::FMIValueReference* realVr, std::size_t nRealvr, cppfmu::FMIReal* realValue,
+    const cppfmu::FMIValueReference* boolVr, std::size_t nBoolvr, cppfmu::FMIBoolean* boolValue,
+    const cppfmu::FMIValueReference* strVr, std::size_t nStrvr, cppfmu::FMIString* strValue) const
+{
+
+    jvm_invoke(jvm_, [this, intVr, nIntvr, intValue, realVr, nRealvr, realValue, boolVr, nBoolvr, boolValue, strVr, nStrvr, strValue](JNIEnv* env) {
+        auto intVrArray = env->NewLongArray(nIntvr);
+        auto realVrArray = env->NewLongArray(nRealvr);
+        auto boolVrArray = env->NewLongArray(nBoolvr);
+        auto strVrArray = env->NewLongArray(nStrvr);
+
+        auto intVrArrayElements = reinterpret_cast<jlong*>(malloc(sizeof(jlong) * nIntvr));
+        for (int i = 0; i < nIntvr; i++) {
+            intVrArrayElements[i] = static_cast<jlong>(intVr[i]);
+        }
+        env->SetLongArrayRegion(intVrArray, 0, nIntvr, intVrArrayElements);
+
+        auto realVrArrayElements = reinterpret_cast<jlong*>(malloc(sizeof(jlong) * nRealvr));
+        for (int i = 0; i < nRealvr; i++) {
+            realVrArrayElements[i] = static_cast<jlong>(realVr[i]);
+        }
+        env->SetLongArrayRegion(realVrArray, 0, nRealvr, realVrArrayElements);
+
+        auto boolVrArrayElements = reinterpret_cast<jlong*>(malloc(sizeof(jlong) * nBoolvr));
+        for (int i = 0; i < nBoolvr; i++) {
+            boolVrArrayElements[i] = static_cast<jlong>(boolVr[i]);
+        }
+        env->SetLongArrayRegion(boolVrArray, 0, nBoolvr, boolVrArrayElements);
+
+        auto strVrArrayElements = reinterpret_cast<jlong*>(malloc(sizeof(jlong) * nStrvr));
+        for (int i = 0; i < nStrvr; i++) {
+            strVrArrayElements[i] = static_cast<jlong>(strVr[i]);
+        }
+        env->SetLongArrayRegion(strVrArray, 0, nStrvr, strVrArrayElements);
+
+        jobject read = env->CallObjectMethod(slaveInstance_, getAllId_, intVrArray, realVrArray, boolVrArray, strVrArray);
+        auto intValueArray = reinterpret_cast<jintArray>(env->CallObjectMethod(read, bulkIntValuesId_));
+        auto realValueArray = reinterpret_cast<jdoubleArray>(env->CallObjectMethod(read, bulkRealValuesId_));
+        auto boolValueArray = reinterpret_cast<jbooleanArray>(env->CallObjectMethod(read, bulkBoolValuesId_));
+        auto strValueArray = reinterpret_cast<jobjectArray>(env->CallObjectMethod(read, bulkStrValuesId_));
+
+        auto intArrayElements = env->GetIntArrayElements(intValueArray, nullptr);
+        for (auto i = 0; i < nIntvr; i++) {
+            intValue[i] = static_cast<fmi2Integer>(intArrayElements[i]);
+        }
+
+        auto realArrayElements = env->GetDoubleArrayElements(realValueArray, nullptr);
+        for (auto i = 0; i < nRealvr; i++) {
+            realValue[i] = realArrayElements[i];
+        }
+
+        auto boolArrayElements = env->GetBooleanArrayElements(boolValueArray, nullptr);
+        for (auto i = 0; i < nBoolvr; i++) {
+            boolValue[i] = static_cast<fmi2Boolean>(boolArrayElements[i]);
+        }
+
+        clearStrBuffer(env);
+        for (auto i = 0; i < nStrvr; i++) {
+            auto jStr = reinterpret_cast<jstring>(env->GetObjectArrayElement(strValueArray, i));
+            auto cStr = env->GetStringUTFChars(jStr, nullptr);
+            strValue[i] = cStr;
+            jstring_ref ref{
+                cStr = cStr,
+                jStr = jStr};
+            strBuffer.push_back(ref);
+        }
+
+        free(intVrArrayElements);
+        free(realVrArrayElements);
+        free(boolVrArrayElements);
+        free(strVrArrayElements);
+
+        env->ReleaseIntArrayElements(intValueArray, intArrayElements, 0);
+        env->ReleaseDoubleArrayElements(realValueArray, realArrayElements, 0);
+        env->ReleaseBooleanArrayElements(boolValueArray, boolArrayElements, 0);
     });
 }
 
