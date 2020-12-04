@@ -64,6 +64,11 @@ abstract class ModelDescriptionParser {
         }
 
         @JvmStatic
+        fun parseModelDescription(stream: InputStream): ModelDescriptionProvider {
+            return parseModelDescription(FmiModelDescriptionUtil.extractModelDescriptionXml(stream))
+        }
+
+        @JvmStatic
         fun parseModelDescription(xml: String): ModelDescriptionProvider {
             return when (val version = FmiModelDescriptionUtil.extractVersion(xml)) {
                 "1.0" -> no.ntnu.ihb.fmi4j.modeldescription.fmi1.JaxbModelDescriptionParser().parse(xml)
