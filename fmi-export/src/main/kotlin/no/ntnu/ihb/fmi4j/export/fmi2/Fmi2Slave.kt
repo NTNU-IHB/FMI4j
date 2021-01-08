@@ -118,10 +118,9 @@ abstract class Fmi2Slave(
         for (i in vr.indices) {
             intAccessors[vr[i].toInt()].apply {
                 setter?.set(values[i]) ?: LOG.warning(
-                    "Trying to set value of " +
-                            "${
-                                getVariableName(vr[i], Fmi2VariableType.INTEGER)
-                            } on variable without a specified setter!"
+                    "Trying to assign value=${values[i]} to variable '${
+                        getVariableName(vr[i], Fmi2VariableType.INTEGER)
+                    }' without a specified setter!"
                 )
             }
         }
@@ -131,8 +130,9 @@ abstract class Fmi2Slave(
         for (i in vr.indices) {
             realAccessors[vr[i].toInt()].apply {
                 setter?.set(values[i]) ?: LOG.warning(
-                    "Trying to set value of " +
-                            "${getVariableName(vr[i], Fmi2VariableType.REAL)} on variable without a specified setter!"
+                    "Trying to assign value=${values[i]} to variable '${
+                        getVariableName(vr[i], Fmi2VariableType.REAL)
+                    }' without a specified setter!"
                 )
             }
         }
@@ -142,10 +142,9 @@ abstract class Fmi2Slave(
         for (i in vr.indices) {
             boolAccessors[vr[i].toInt()].apply {
                 setter?.set(values[i]) ?: LOG.warning(
-                    "Trying to set value of " +
-                            "${
-                                getVariableName(vr[i], Fmi2VariableType.BOOLEAN)
-                            } on variable without a specified setter!"
+                    "Trying to assign value=${values[i]} to variable '${
+                        getVariableName(vr[i], Fmi2VariableType.BOOLEAN)
+                    }' without a specified setter!"
                 )
             }
         }
@@ -155,8 +154,9 @@ abstract class Fmi2Slave(
         for (i in vr.indices) {
             stringAccessors[vr[i].toInt()].apply {
                 setter?.set(values[i]) ?: LOG.warning(
-                    "Trying to set value of " +
-                            "${getVariableName(vr[i], Fmi2VariableType.STRING)} on variable without a specified setter!"
+                    "Trying to assign value=${values[i]} to variable '${
+                        getVariableName(vr[i], Fmi2VariableType.STRING)
+                    }' without a specified setter!"
                 )
             }
         }
