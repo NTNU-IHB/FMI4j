@@ -37,7 +37,7 @@ internal class ApplyPluginTest {
             writeText("""
                 plugins {
                     id "java-library" 
-                    id "no.ntnu.ihb.fmi4j.fmu-export" version "0.36.2"
+                    id "no.ntnu.ihb.fmi4j.fmu-export" version "0.36.4"
                 }
                 
                 configurations.all {
