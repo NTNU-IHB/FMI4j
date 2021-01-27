@@ -87,7 +87,7 @@ public:
         const FMIValueReference intVr[], std::size_t nIntvr, const FMIInteger intValue[],
         const FMIValueReference realVr[], std::size_t nRealvr, const FMIReal realValue[],
         const FMIValueReference boolVr[], std::size_t nBoolvr, const FMIBoolean boolValue[],
-        const FMIValueReference strVr[], std::size_t nStrvr, const FMIString strValue[]) const;
+        const FMIValueReference strVr[], std::size_t nStrvr, const FMIString strValue[]);
 
     /* Called from fmi2GetXxx()/fmiGetXxx().
      * Throws std::logic_error by default.

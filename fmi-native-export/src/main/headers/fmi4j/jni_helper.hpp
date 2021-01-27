@@ -47,7 +47,7 @@ jmethodID GetStaticMethodID(JNIEnv* env, jclass cls, const char* name, const cha
     return id;
 }
 
-jclass FindClass(JNIEnv* env, jobject classLoaderInstance, const std::string& name)
+jclass FindClass(JNIEnv* env, jobject classLoaderInstance, const std::string& name, bool throwOnFailure = true)
 {
     const char* cName = name.c_str();
     jstring jName = env->NewStringUTF(cName);
@@ -59,13 +59,10 @@ jclass FindClass(JNIEnv* env, jobject classLoaderInstance, const std::string& na
 
     jboolean flag = env->ExceptionCheck();
     if (flag) {
-        env->ExceptionDescribe();
+        if (throwOnFailure) {
+            env->ExceptionDescribe();
+        }
         env->ExceptionClear();
-    }
-
-    if (cls == nullptr) {
-        std::string msg = "[FMI4j native] Unable to find class '" + name + "'!";
-        throw cppfmu::FatalError(msg.c_str());
     }
 
     env->DeleteLocalRef(jName);
