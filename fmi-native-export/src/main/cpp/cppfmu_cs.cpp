@@ -94,10 +94,10 @@ void SlaveInstance::SetString(
 }
 
 void SlaveInstance::SetAll(
-    const FMIValueReference[], std::size_t nIntvr, const FMIInteger[],
-    const FMIValueReference[], std::size_t realVr, const FMIReal[],
-    const FMIValueReference[], std::size_t boolVr, const FMIBoolean[],
-    const FMIValueReference[], std::size_t strVr, const FMIString[]) const
+    const FMIValueReference[], std::size_t, const FMIInteger[],
+    const FMIValueReference[], std::size_t, const FMIReal[],
+    const FMIValueReference[], std::size_t, const FMIBoolean[],
+    const FMIValueReference[], std::size_t, const FMIString[])
 {
 }
 
