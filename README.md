@@ -104,6 +104,9 @@ Usage: fmu-builder [-h] [-d=<destFile>] -f=<jarFile> -m=<mainClass>
   -m, --main=<mainClass>   Fully qualified name of the main class.
 ```
 
+In order to build the `fmu-builder` tool, clone this repository and invoke `./gradlew installDist`. 
+The distribution will be located in the folder _fmu-builder-app/build/install_.
+
 *** 
 
 Would you rather build FMUs using Python? Check out [PythonFMU](https://github.com/NTNU-IHB/PythonFMU)! <br>
