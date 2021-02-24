@@ -13,7 +13,6 @@ class TestExtend {
         val slave = SimpleSlave(mapOf("instanceName" to "instance"))
         Assertions.assertDoesNotThrow {
             slave.__define__()
-
         }
 
         val slaveChild = SimpleSlaveChild(mapOf("instanceName" to "instance"))
