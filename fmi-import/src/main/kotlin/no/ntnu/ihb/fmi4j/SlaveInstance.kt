@@ -36,8 +36,9 @@ interface SlaveInstance : ModelInstance<CoSimulationModelDescription> {
     /**
      * Step simulation forward in time
      *
+     * @param currentTime current simulation time
      * @param stepSize time to step simulation forward (in seconds)
      */
-    fun doStep(stepSize: Double): Boolean
+    fun doStep(currentTime: Double, stepSize: Double): Boolean
 
 }

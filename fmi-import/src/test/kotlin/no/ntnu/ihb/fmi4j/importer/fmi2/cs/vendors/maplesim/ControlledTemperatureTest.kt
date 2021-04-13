@@ -40,14 +40,16 @@ class ControlledTemperatureTest {
                     val tempInputValue = slave.modelDescription
                             .getVariableByName("outputs[2]").asRealVariable()
 
-                    val stepSize = 1.0 / 100
+                    var t = 0.0
+                    val dt = 1.0 / 100
                     for (i in 0..4) {
-                        Assertions.assertTrue(slave.doStep(stepSize))
+                        Assertions.assertTrue(slave.doStep(t, dt))
+                        t += dt
                         Assertions.assertEquals(slave.lastStatus, FmiStatus.OK)
 
                         tempInputValue.read(slave).also {
                             Assertions.assertTrue(it.status == FmiStatus.OK)
-                            LOG.info("t=${slave.simulationTime}, outputs[2]=${it.value}")
+                            LOG.info("t=$t, outputs[2]=${it.value}")
                         }
 
                     }

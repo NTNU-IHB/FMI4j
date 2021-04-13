@@ -32,7 +32,7 @@ import java.io.Closeable
 
 
 class CoSimulationFmu(
-        private val fmu: Fmu
+    private val fmu: Fmu
 ) : CoSimulationModel, Closeable by fmu {
 
     override val modelDescription: CoSimulationModelDescription by lazy {

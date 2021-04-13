@@ -77,9 +77,7 @@ open class ModelExchangeInstance internal constructor(
     }
 
     fun setTime(time: Double): FmiStatus {
-        return wrapper.setTime(time).also {
-            simulationTime = time
-        }
+        return wrapper.setTime(time)
     }
 
     fun setContinuousStates(x: DoubleArray) = wrapper.setContinuousStates(x)

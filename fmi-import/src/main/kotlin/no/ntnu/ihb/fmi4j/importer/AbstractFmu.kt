@@ -26,7 +26,6 @@ package no.ntnu.ihb.fmi4j.importer
 
 import no.ntnu.ihb.fmi4j.CoSimulationModel
 import no.ntnu.ihb.fmi4j.ModelExchangeModel
-import no.ntnu.ihb.fmi4j.modeldescription.ModelDescriptionParser
 import no.ntnu.ihb.fmi4j.modeldescription.ModelDescriptionProvider
 import no.ntnu.ihb.fmi4j.modeldescription.util.FmiModelDescriptionUtil
 import no.ntnu.ihb.fmi4j.util.extractContentTo
@@ -39,8 +38,8 @@ import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
 
 abstract class AbstractFmu internal constructor(
-        val name: String,
-        protected val extractedFmu: File
+    val name: String,
+    protected val extractedFmu: File
 ) : Closeable {
 
     val guid: String
@@ -217,7 +216,8 @@ abstract class AbstractFmu internal constructor(
         }
 
         private fun returnCorrectFmuType(fmuName: String, temp: File): AbstractFmu {
-            return when (val version = FmiModelDescriptionUtil.extractVersion(getModelDescriptionFileFromExtractedFmuDir(temp).readText())) {
+            return when (val version =
+                FmiModelDescriptionUtil.extractVersion(getModelDescriptionFileFromExtractedFmuDir(temp).readText())) {
                 "1.0" -> no.ntnu.ihb.fmi4j.importer.fmi1.Fmu(fmuName, temp)
                 "2.0" -> no.ntnu.ihb.fmi4j.importer.fmi2.Fmu(fmuName, temp)
                 else -> {

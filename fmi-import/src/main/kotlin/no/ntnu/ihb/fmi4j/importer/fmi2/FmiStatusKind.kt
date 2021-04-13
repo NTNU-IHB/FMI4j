@@ -29,7 +29,7 @@ package no.ntnu.ihb.fmi4j.importer.fmi2
  * @author Lars Ivar Hatledal
  */
 enum class FmiStatusKind(
-        val code: Int
+    val code: Int
 ) {
 
     /**

@@ -63,12 +63,6 @@ abstract class AbstractModelInstance<out E : CommonModelDescription, out T : Fmi
     protected val stopDefined
         get() = stopTime > startTime
 
-    /**
-     * Current simulation time
-     */
-    override var simulationTime: Double = 0.0
-        internal set
-
     override val lastStatus: FmiStatus
         get() = wrapper.lastStatus
 

@@ -46,16 +46,18 @@ class ControlledTemperatureTest {
                     val temperatureRoom = slave.modelDescription
                         .getVariableByName("Temperature_Room").asRealVariable()
 
+                    var t = 0.0
                     val dt = 1.0 / 100
                     for (i in 0..4) {
-                        Assertions.assertTrue(slave.doStep(dt))
+                        Assertions.assertTrue(slave.doStep(t, dt))
                         Assertions.assertTrue(slave.lastStatus.isOK())
+                        t += dt
 
                         val read = temperatureRoom.read(slave)
                         Assertions.assertTrue(read.status == FmiStatus.OK)
                         val value = read.value
 
-                        LOG.info("t=${slave.simulationTime}, Temperature_Room=$value")
+                        LOG.info("t=$t, Temperature_Room=$value")
                     }
 
                 }
@@ -86,10 +88,12 @@ class ControlledTemperatureTest {
 
                     Assertions.assertTrue(slave.simpleSetup())
 
+                    var t = 0.0
                     val dt = 1.0 / 100
                     for (i in 0..4) {
-                        Assertions.assertTrue(slave.doStep(dt))
+                        Assertions.assertTrue(slave.doStep(t, dt))
                         Assertions.assertTrue(slave.lastStatus.isOK())
+                        t += dt
 
                         slave.readRealDirect(vrs, refs)
                         refs.asDoubleBuffer().get(ref)

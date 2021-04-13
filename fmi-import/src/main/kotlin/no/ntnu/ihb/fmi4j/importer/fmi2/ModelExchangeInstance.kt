@@ -48,9 +48,7 @@ open class ModelExchangeInstance internal constructor(
      * @param time
      */
     fun setTime(time: Double): FmiStatus {
-        return wrapper.setTime(time).also {
-            simulationTime = time
-        }
+        return wrapper.setTime(time)
     }
 
     /**

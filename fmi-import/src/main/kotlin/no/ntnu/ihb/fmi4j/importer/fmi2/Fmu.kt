@@ -42,8 +42,8 @@ import java.net.URL
  * @author Lars Ivar Hatledal
  */
 class Fmu internal constructor(
-        name: String,
-        extractedFmu: File
+    name: String,
+    extractedFmu: File
 ) : AbstractFmu(name, extractedFmu) {
 
     private val libraries = mutableListOf<Fmi2Library>()
@@ -76,8 +76,10 @@ class Fmu internal constructor(
     }
 
     fun getAbsoluteLibraryPath(modelIdentifier: String): File {
-        return File(extractedFmu, BINARIES_FOLDER + File.separator + OsUtil.libraryFolderName + OsUtil.platformBitness
-                + File.separator + modelIdentifier + "." + OsUtil.libExtension)
+        return File(
+            extractedFmu, BINARIES_FOLDER + File.separator + OsUtil.libraryFolderName + OsUtil.platformBitness
+                    + File.separator + modelIdentifier + "." + OsUtil.libExtension
+        )
     }
 
     internal fun registerLibrary(library: Fmi2Library) {
@@ -88,8 +90,10 @@ class Fmu internal constructor(
         instances.add(instance)
     }
 
-    internal fun instantiate(library: Fmi2Library, instanceName: String, guid: String,
-                             fmiType: Int, visible: Boolean, loggingOn: Boolean): Long {
+    internal fun instantiate(
+        library: Fmi2Library, instanceName: String, guid: String,
+        fmiType: Int, visible: Boolean, loggingOn: Boolean
+    ): Long {
         LOG.trace("Calling instantiate: visible=$visible, loggingOn=$loggingOn")
         return library.instantiate(instanceName, fmiType, guid, resourcesPath, visible, loggingOn)
     }
