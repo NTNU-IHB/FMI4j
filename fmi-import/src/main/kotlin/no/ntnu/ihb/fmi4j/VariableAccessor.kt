@@ -43,7 +43,21 @@ interface VariableReader {
         realVr: ValueReferences?, realRefs: DoubleArray?,
         boolVr: ValueReferences?, boolRefs: BooleanArray?,
         strVr: ValueReferences?, strRefs: StringArray?
-    ): FmiStatus
+    ): FmiStatus {
+        if (intVr != null && intRefs != null) {
+            readInteger(intVr, intRefs)
+        }
+        if (realVr != null && realRefs != null) {
+            readReal(realVr, realRefs)
+        }
+        if (boolVr != null && boolRefs != null) {
+            readBoolean(boolVr, boolRefs)
+        }
+        if (strVr != null && strRefs != null) {
+            readString(strVr, strRefs)
+        }
+        return FmiStatus.OK
+    }
 
 }
 
@@ -62,7 +76,21 @@ interface VariableWriter {
         realVr: ValueReferences?, realValues: DoubleArray?,
         boolVr: ValueReferences?, boolValues: BooleanArray?,
         strVr: ValueReferences?, strValues: StringArray?,
-    ): FmiStatus
+    ): FmiStatus {
+        if (intVr != null && intValues != null) {
+            writeInteger(intVr, intValues)
+        }
+        if (realVr != null && realValues != null) {
+            writeReal(realVr, realValues)
+        }
+        if (boolVr != null && boolValues != null) {
+            writeBoolean(boolVr, boolValues)
+        }
+        if (strVr != null && strValues != null) {
+            writeString(strVr, strValues)
+        }
+        return FmiStatus.OK
+    }
 
 }
 

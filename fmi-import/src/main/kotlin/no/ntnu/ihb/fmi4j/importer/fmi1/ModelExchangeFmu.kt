@@ -36,7 +36,7 @@ import java.io.Closeable
  * @author Lars Ivar Hatledal
  */
 class ModelExchangeFmu(
-        private val fmu: Fmu
+    private val fmu: Fmu
 ) : ModelExchangeModel, Closeable by fmu {
 
     override val modelDescription: ModelExchangeModelDescription by lazy {

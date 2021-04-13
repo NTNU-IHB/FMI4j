@@ -46,22 +46,16 @@ class CoSimulationSlave internal constructor(
     /**
      * @see CoSimulationLibraryWrapper.doStep
      */
-    override fun doStep(stepSize: Double): Boolean {
+    override fun doStep(currentTime: Double, stepSize: Double): Boolean {
 
-        val tNext = (simulationTime + stepSize)
+        val tNext = (currentTime + stepSize)
 
         if (stopDefined && tNext > stopTime) {
             LOG.warn("Cannot perform doStep! tNext=$tNext > stopTime=$stopTime")
             return false
         }
 
-        return wrapper.doStep(simulationTime, stepSize, noSetFMUStatePriorToCurrent = true).let { status ->
-            (status == FmiStatus.OK).also { success ->
-                if (success) {
-                    simulationTime = tNext
-                }
-            }
-        }
+        return wrapper.doStep(currentTime, stepSize, noSetFMUStatePriorToCurrent = true).isOK()
 
     }
 

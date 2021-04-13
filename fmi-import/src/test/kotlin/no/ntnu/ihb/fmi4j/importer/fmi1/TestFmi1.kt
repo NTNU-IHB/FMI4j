@@ -31,8 +31,11 @@ internal class TestFmi1 {
                 slave.simpleSetup()
                 Assertions.assertEquals(1.0, slave.readReal("h").value)
 
-                while (slave.simulationTime < 3.0) {
-                    slave.doStep(1E-2)
+                var t = 0.0
+                val dt = 1E-2
+                while (t < 3.0) {
+                    slave.doStep(t, dt)
+                    t += dt
                 }
 
                 Assertions.assertEquals(0.014, slave.readReal("h").value, 1e-3)
@@ -79,7 +82,7 @@ internal class TestFmi1 {
                     null, null
                 )
 
-                Assertions.assertTrue(slave.doStep(0.1))
+                Assertions.assertTrue(slave.doStep(0.0, 0.1))
 
                 slave.readAll(
                     null, null,
@@ -126,7 +129,7 @@ internal class TestFmi1 {
                 slave.writeBoolean(vrs, boolValue)
                 slave.writeString(vrs, strValue)
 
-                Assertions.assertTrue(slave.doStep(0.1))
+                Assertions.assertTrue(slave.doStep(0.0, 0.1))
 
                 slave.readInteger(vrs, intRef)
                 slave.readReal(vrs, realRef)

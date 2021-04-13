@@ -46,11 +46,6 @@ interface SimpleModelInstance : VariableAccessor, Closeable {
     val isTerminated: Boolean
 
     /**
-     * Current simulation time
-     */
-    val simulationTime: Double
-
-    /**
      * The last status returned by the FMU
      */
     val lastStatus: FmiStatus
@@ -79,13 +74,10 @@ interface SimpleModelInstance : VariableAccessor, Closeable {
     }
 
     fun setupExperiment(start: Double = 0.0, stop: Double = 0.0, tolerance: Double = 0.0): Boolean
-
     fun enterInitializationMode(): Boolean
-
     fun exitInitializationMode(): Boolean
 
     fun reset(): Boolean
-
     fun terminate(): Boolean
 
     fun getFMUstate(): FmuState

@@ -30,14 +30,16 @@ class VanDerPolTest {
             val x0 = slave.modelVariables
                     .getByName(variableName).asRealVariable()
 
+            var t = 0.0
             val stop = 1.0
-            val macroStep = 1E-2
-            while (slave.simulationTime <= stop) {
+            val dt = 1E-2
+            while (t <= stop) {
                 x0.read(slave).also { read ->
                     Assertions.assertEquals(FmiStatus.OK, read.status)
-                    LOG.info("t=${slave.simulationTime}, $variableName=${read.value}")
+                    LOG.info("t=$t, $variableName=${read.value}")
                 }
-                Assertions.assertTrue(slave.doStep(macroStep))
+                Assertions.assertTrue(slave.doStep(t, dt))
+                t += dt
             }
 
         }

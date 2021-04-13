@@ -35,7 +35,7 @@ import java.io.Closeable
  * @author Lars Ivar Hatledal
  */
 class ModelExchangeFmu(
-        private val fmu: Fmu
+    private val fmu: Fmu
 ) : ModelExchangeModel, Closeable by fmu {
 
     override val modelDescription: ModelExchangeModelDescription by lazy {
@@ -59,7 +59,7 @@ class ModelExchangeFmu(
     }
 
     fun newInstance(instanceName: String, visible: Boolean = false, loggingOn: Boolean = false): ModelExchangeInstance {
-        val c = instantiate(instanceName,  visible, loggingOn)
+        val c = instantiate(instanceName, visible, loggingOn)
         val wrapper = ModelExchangeLibraryWrapper(c, lib)
         return ModelExchangeInstance(instanceName, wrapper, modelDescription).also {
             fmu.registerInstance(it)

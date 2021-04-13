@@ -38,10 +38,14 @@ import org.slf4j.LoggerFactory
  * @author Lars Ivar Hatledal
  */
 class CoSimulationSlave internal constructor(
-        instanceName: String,
-        wrapper: CoSimulationLibraryWrapper,
-        modelDescription: CoSimulationModelDescription
-) : SlaveInstance, AbstractModelInstance<CoSimulationModelDescription, CoSimulationLibraryWrapper>(instanceName, wrapper, modelDescription) {
+    instanceName: String,
+    wrapper: CoSimulationLibraryWrapper,
+    modelDescription: CoSimulationModelDescription
+) : SlaveInstance, AbstractModelInstance<CoSimulationModelDescription, CoSimulationLibraryWrapper>(
+    instanceName,
+    wrapper,
+    modelDescription
+) {
 
     /**
      * Call init with provided start and stop
@@ -62,8 +66,6 @@ class CoSimulationSlave internal constructor(
             stopTime = stop
         }
 
-        simulationTime = start
-
         return true.also {
             wrapper.lastStatus = FmiStatus.OK
         }
@@ -73,22 +75,16 @@ class CoSimulationSlave internal constructor(
         return wrapper.initializeSlave(startTime, stopTime).isOK()
     }
 
-    override fun doStep(stepSize: Double): Boolean {
+    override fun doStep(currentTime: Double, stepSize: Double): Boolean {
 
-        val tNext = (simulationTime + stepSize)
+        val tNext = (currentTime + stepSize)
 
         if (stopDefined && tNext > stopTime) {
             LOG.warn("Cannot perform doStep! tNext=$tNext > stopTime=$stopTime")
             return false
         }
 
-        return wrapper.doStep(simulationTime, stepSize, newStep = true).let { status ->
-            (status == FmiStatus.OK).also { success ->
-                if (success) {
-                    simulationTime = tNext
-                }
-            }
-        }
+        return wrapper.doStep(currentTime, stepSize, newStep = true).isOK()
 
     }
 
