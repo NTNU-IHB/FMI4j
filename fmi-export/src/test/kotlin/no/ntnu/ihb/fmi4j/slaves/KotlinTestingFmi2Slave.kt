@@ -5,7 +5,7 @@ import no.ntnu.ihb.fmi4j.export.fmi2.ScalarVariable
 import no.ntnu.ihb.fmi4j.modeldescription.fmi2.Fmi2Causality
 
 open class KotlinTestingFmi2Slave(
-        args: Map<String, Any>
+    args: Map<String, Any>
 ) : Fmi2Slave(args) {
 
     @ScalarVariable(causality = Fmi2Causality.local)
@@ -34,7 +34,7 @@ open class KotlinTestingFmi2Slave(
 }
 
 open class KotlinTestingExtendingFmi2Slave(
-        args: Map<String, Any>
+    args: Map<String, Any>
 ) : KotlinTestingFmi2Slave(args) {
 
     override fun doStep(currentTime: Double, dt: Double) {}
