@@ -4,8 +4,6 @@
 [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/NTNU-IHB/FMI4j/issues)
 
 [![CI](https://github.com/NTNU-IHB/FMI4j/workflows/Build/badge.svg)](https://github.com/NTNU-IHB/FMI4j/actions)
-[![Bintray](https://api.bintray.com/packages/ntnu-ihb/mvn/FMI4j/images/download.svg) ](https://bintray.com/ntnu-ihb/mvn/FMI4j/_latestVersion)
-
 [![Gitter](https://badges.gitter.im/NTNU-IHB/FMI4j.svg)](https://gitter.im/NTNU-IHB/FMI4j?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 
@@ -22,7 +20,7 @@ For FMI-export FMI4j is multiple orders of magnitude faster than any existing op
 
 ***
 
-Artifacts are available through [Bintray](https://bintray.com/ntnu-ihb/mvn/FMI4j).
+Artifacts are available through [Central](https://bintray.com/ntnu-ihb/mvn/FMI4j).
 
 
 ### <a name="api"></a> FMI import

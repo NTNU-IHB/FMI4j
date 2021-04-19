@@ -1,6 +1,5 @@
 plugins {
     id "base"
-    id "com.jfrog.bintray" version "1.8.4" apply(false)
     id "org.jetbrains.kotlin.jvm" version "1.4.30" apply false
 }
 
@@ -11,7 +10,7 @@ wrapper {
     gradleVersion = '6.7'
 }
 
-group = "no.ntnu.ihb.fmi4j"
+group = "info.laht.fmi4j"
 version = rootProject.file("VERSION").readLines()[0]
 println("Building ${rootProject.name} v$version")
 
