@@ -38,12 +38,14 @@ class Demo {
 
         slave.simpleSetup();
         
+        double t = 0;
         double stop = 10;
         double stepSize = 1.0/100;
-        while(slave.getSimulationTime() <= stop) {
-            if (!slave.doStep(stepSize)) {
+        while(t <= stop) {
+            if (!slave.doStep(t, stepSize)) {
                 break;
             }
+            t += stepSize;
         }
         slave.terminate(); //or close, try with resources is also supported
         fmu.close();
