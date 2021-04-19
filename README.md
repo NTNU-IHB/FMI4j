@@ -20,9 +20,6 @@ For FMI-export FMI4j is multiple orders of magnitude faster than any existing op
 
 ***
 
-Artifacts are available through [Central](https://bintray.com/ntnu-ihb/mvn/FMI4j).
-
-
 ### <a name="api"></a> FMI import
 
 ```java
