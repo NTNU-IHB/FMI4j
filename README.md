@@ -17,7 +17,7 @@ Compared to other FMI libraries targeting the JVM, FMI4j is **considerably faste
 Considering FMI-import, a significant speedup (2-5x) compared to other open-source FMI implementations for the JVM should be expected. 
 For FMI-export FMI4j is multiple orders of magnitude faster than any existing open source alternative.
 
-Maven articfacts are available through [Central](https://search.maven.org/search?q=g:info.laht.fmi4j)
+Maven artifacts are available through [Central](https://search.maven.org/search?q=g:info.laht.fmi4j)
 
 ***
 
