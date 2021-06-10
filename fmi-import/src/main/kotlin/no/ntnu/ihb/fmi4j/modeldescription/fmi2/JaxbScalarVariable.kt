@@ -25,6 +25,7 @@
 package no.ntnu.ihb.fmi4j.modeldescription.fmi2
 
 import no.ntnu.ihb.fmi4j.modeldescription.variables.*
+import java.util.*
 
 class JaxbScalarVariable internal constructor(
         private val v: Fmi2ScalarVariable
@@ -43,12 +44,12 @@ class JaxbScalarVariable internal constructor(
             if (upperCaseIndex != -1) {
                 causalityString = causalityString.substring(0, upperCaseIndex) + "_" + causalityString.substring(upperCaseIndex, causalityString.length)
             }
-            Causality.valueOf(causalityString.toUpperCase())
+            Causality.valueOf(causalityString.uppercase(Locale.getDefault()))
         }
     override val variability: Variability?
-        get() = v.variability?.let { Variability.valueOf(it.name.toUpperCase()) }
+        get() = v.variability?.let { Variability.valueOf(it.name.uppercase(Locale.getDefault())) }
     override val initial: Initial?
-        get() = v.initial?.let { Initial.valueOf(it.name.toUpperCase()) }
+        get() = v.initial?.let { Initial.valueOf(it.name.uppercase(Locale.getDefault())) }
 
     override val type: VariableType
         get() = when {

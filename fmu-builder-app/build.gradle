@@ -4,7 +4,7 @@ plugins {
     id "com.github.johnrengelman.shadow" version "4.0.4"
 }
 
-mainClassName = "${group}.FmuBuilder"
+mainClassName = "no.ntnu.ihb.fmi4j.FmuBuilder"
 
 dependencies {
     compile project(':fmu-builder')

@@ -173,7 +173,7 @@ abstract class AbstractFmu internal constructor(
         @Throws(IOException::class, FileNotFoundException::class)
         fun from(file: File): AbstractFmu {
 
-            val extension = file.extension.toLowerCase()
+            val extension = file.extension.lowercase(Locale.getDefault())
             require(extension == FMU_EXTENSION) { "File '${file.absolutePath}' is not an FMU! Invalid extension found: .$extension" }
 
             if (!file.exists()) {

@@ -24,6 +24,8 @@
 
 package no.ntnu.ihb.fmi4j.modeldescription.variables
 
+import java.util.*
+
 
 /**
  * @author Lars Ivar Hatledal
@@ -76,6 +78,7 @@ enum class VariableType {
     INTEGER, REAL, BOOLEAN, STRING, ENUMERATION;
 
     val typeName: String
-        get() = name.toLowerCase().capitalize()
+        get() = name.lowercase(Locale.getDefault())
+            .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
 
 }
