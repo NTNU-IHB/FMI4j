@@ -46,7 +46,6 @@ interface CoSimulationModel: Model<CoSimulationModelDescription> {
 
     override val modelDescription: CoSimulationModelDescription
 
-    @JvmDefault
     override fun newInstance(): SlaveInstance {
         val modelIdentifier = modelDescription.attributes.modelIdentifier
         return newInstance("${modelIdentifier}_${UUID.randomUUID()}")
@@ -60,7 +59,6 @@ interface ModelExchangeModel: Model<ModelExchangeModelDescription> {
 
     override val modelDescription: ModelExchangeModelDescription
 
-    @JvmDefault
     override fun newInstance(): ModelInstance<ModelExchangeModelDescription> {
         val modelIdentifier = modelDescription.attributes.modelIdentifier
         return newInstance("${modelIdentifier}_${UUID.randomUUID()}")
