@@ -1,6 +1,6 @@
 package no.ntnu.ihb.fmi4j.modeldescription.fmi2;
 
-import no.ntnu.ihb.fmi4j.modeldescription.fmi1.TestVesselFmu;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -10,10 +10,13 @@ public class TestTrajectoryController {
 
     @Test
     public void test() throws IOException {
-        File xmlFile = new File(TestVesselFmu.class.getClassLoader()
-                .getResource("fmi2.0/TrajectoryController/modelDescription.xml").getFile());
+
+        String file = TestTrajectoryController.class.getClassLoader()
+                .getResource("fmi2.0/TrajectoryController/modelDescription.xml").getFile();
+        File xmlFile = new File(file.replace("%20", " "));
 
         Fmi2ModelDescription md = Fmi2ModelDescription.fromXml(xmlFile);
+        Assertions.assertEquals(md.modelName, "TrajectoryController");
     }
 
 }

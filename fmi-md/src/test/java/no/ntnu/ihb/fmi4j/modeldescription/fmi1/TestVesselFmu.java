@@ -11,8 +11,9 @@ public class TestVesselFmu {
     @Test
     public void testVesselFmu() throws IOException {
 
-        File xmlFile = new File(TestVesselFmu.class.getClassLoader()
-                .getResource("fmi1.0/VesselFmu/modelDescription.xml").getFile());
+        String file = TestVesselFmu.class.getClassLoader()
+                .getResource("fmi1.0/VesselFmu/modelDescription.xml").getFile();
+        File xmlFile = new File(file.replace("%20", " "));
 
         FmiModelDescription md = FmiModelDescription.fromXml(xmlFile);
 
