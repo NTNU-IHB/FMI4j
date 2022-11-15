@@ -82,7 +82,7 @@ class IntegerVariable (
             add("valueReference=$valueReference")
             start?.also { add("start=$start") }
             min?.also { add("min=$min") }
-            max?.also { add("min=$min") }
+            max?.also { add("max=$max") }
             causality?.also { add("causality=$causality") }
             variability?.also { add("variability=$variability") }
             initial?.also { add("initial=$initial") }
@@ -113,7 +113,7 @@ class RealVariable (
             add("valueReference=$valueReference")
             start?.also { add("start=$start") }
             min?.also { add("min=$min") }
-            max?.also { add("min=$min") }
+            max?.also { add("max=$max") }
             causality?.also { add("causality=$causality") }
             variability?.also { add("variability=$variability") }
             initial?.also { add("initial=$initial") }
@@ -213,7 +213,7 @@ class EnumerationVariable (
             add("valueReference=$valueReference")
             start?.also { add("start=$start") }
             min?.also { add("min=$min") }
-            max?.also { add("min=$min") }
+            max?.also { add("max=$max") }
             quantity?.also { add("quantity=$quantity") }
             causality?.also { add("causality=$causality") }
             variability?.also { add("variability=$variability") }
